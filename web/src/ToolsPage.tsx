@@ -117,7 +117,7 @@ export default function ToolsPage({
               <strong>{state.java}</strong>
             </div>
             <div>
-              <small>Zelix KlassMaster</small>
+              <small>EDZKM</small>
               <strong>27.0.0</strong>
             </div>
             <div>
@@ -162,7 +162,7 @@ export default function ToolsPage({
         <Section title={t("Help & reference", "帮助与参考")}>
           <div className="help-links">
             {[
-              ["015", "ZKM overview", "ZKM 概览"],
+              ["015", "EDZKM overview", "EDZKM 概览"],
               ["016", "Class browser", "类浏览器"],
               ["012", "Build Helper", "构建向导"],
               ["011", "Script Helper", "脚本向导"],
@@ -192,8 +192,8 @@ export default function ToolsPage({
         <Section title={t("About this workbench", "关于工作台")}>
           <p>
             {t(
-              "An independent community interface for Open ZelixKlassMaster 27. Not an official Zelix product.",
-              "Open ZelixKlassMaster 27 的独立社区界面，并非 Zelix 官方产品。",
+              "EDZKM is an independent community Java obfuscation workbench based on Zelix KlassMaster 27. Not an official Zelix product.",
+              "EDZKM 是基于 Zelix KlassMaster 27 的独立社区 Java 混淆工作台，并非 Zelix 官方产品。",
             )}
           </p>
           <div className="license-pills">

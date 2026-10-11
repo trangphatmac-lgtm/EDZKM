@@ -78,7 +78,7 @@ public class TrimExcludeTypeDialog extends OwnedFrameDialogBase implements Actio
     }
 
     public TrimExcludeTypeDialog(JFrame jFrame, DialogCallback dialogCallback1) {
-        super(jFrame, "Zelix KlassMaster Trim Exclude Parameter Type");
+        super(jFrame, "EDZKM Trim Exclude Parameter Type");
         this.callback = dialogCallback1;
         this.showCenteredOnOwner();
     }

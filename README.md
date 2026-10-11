@@ -1,90 +1,171 @@
-# Open ZelixKlassMaster™ 27
+<div align="center">
 
-<p align="center">
-  <img src="./img/zkmrip.png" alt="2" width="100%">
-</p>
-<p align="center">
-  <img src="./img/follow.jpg" alt="2" width="20%" />
-  <img src="./img/deobf3.jpg" alt="3" width="20%" />
-  <img src="./img/heavy.jpg" alt="4" width="20%" />
-</p>
 
-### Join Discord：https://discord.gg/TPjtZt75Vs
+# EDZKM
 
-youtube：【ZelixKlassMaster27 fully deobf+idea ready】 https://youtu.be/GhLJreiEuCU
+<p><strong>An Open Source & enhanced implementation of ZelixKlassMaster™ Java obfuscation.</strong></p>
+</div>
 
-bilibili：【最新最热 zkm 27 原始码泄露视频 开源去验证可直接构建】 https://www.bilibili.com/video/BV1Eyhd6zE1Y/
+## Features
 
-## requirements
+- **Project workspace** — manage JARs, class directories, dependencies, build settings, scripts, and run history in one place.
+- **Build Helper** — configure trimming, name exclusions, obfuscation, and output options; preview the generated script or run the build.
+- **Class browser** — explore package and inheritance trees, inspect bytecode, and edit supported class properties, fields, method modifiers, and constants.
+- **Source comparison** — view original and obfuscated classes side by side using bundled CFR 0.152 or Vineflower 1.12.0, with ChangeLog mapping and manual pairing.
+- **Script studio** — edit multiple ZKM scripts with Monaco, syntax highlighting, completion, validation, and execution logs.
+- **Runtime output comparison** — run original and obfuscated programs with configurable arguments, standard input, working directory, and timeouts; compare stdout, stderr, and exit codes.
+- **Developer tools** — translate stack traces with ChangeLogs and convert ProGuard configurations into scripts.
+- **Local desktop integration** — browse files with native dialogs, open project/output folders, and export built JARs.
+- **English and Simplified Chinese** — switch languages and choose light, dark, or system theme.
 
-- Java 17 or newer to run the packaged application
-- JDK 17+, Node.js 22+ and npm to build from source
+The packaged application includes the frontend, editor, decompilers, and runtime dependencies. Running EDZKM itself requires no Node.js installation or internet connection.
 
-## modify
+## Requirements
 
-full offline, deobf, rename, fix, patch auth, and more....
+| Purpose | Requirements |
+| --- | --- |
+| Run the packaged application | Java 17 or newer |
+| Build from source | JDK 17+, Node.js 22+, and npm |
+| Use the Web interface | A modern browser on the same machine |
+| Run the smoke tests | Python 3 and a JDK |
+| Run browser tests | Playwright Chromium; see [Testing](#testing) |
 
-## build
+On Linux, native file dialogs require `zenity` or `kdialog`, and opening folders requires `xdg-open`. Paths can also be entered directly.
 
-```
+## Build
+
+From the repository root:
+
+```sh
 sh gradlew jar
 ```
 
-output: `build/libs/zkm27.jar`
+On Windows:
 
-## runnnnnnnnnn
-
-Web UI (default; opens the browser automatically):
-
-```
-sh gradlew run
+```powershell
+.\gradlew.bat jar
 ```
 
-or directly:
+Gradle installs the locked frontend dependencies, builds the Web UI, compiles the Java code, and packages the application and its dependencies into:
 
+```text
+build/libs/zkm27.jar
 ```
+
+Use this bundled JAR for distribution. The `-thin.jar` is not the standalone application. The first build needs access to the Gradle, Maven, and npm dependency downloads.
+
+## Run
+
+### Web workbench (default)
+
+```sh
 java -jar build/libs/zkm27.jar
 ```
 
-Original Swing interface:
+The application starts a local server and opens the browser automatically. To use a fixed port without opening a browser:
+
+```sh
+java -jar build/libs/zkm27.jar --web --port 8270 --no-browser
+```
+
+Open the full URL printed in the terminal, including its `#token=` fragment. The server binds to `127.0.0.1` and chooses an available port by default. Closing the browser tab leaves the application running; use the workbench's quit button to stop its tasks and server.
+
+You can also launch it from Gradle:
+
+```sh
+sh gradlew run
+```
+
+### Swing desktop interface
 
 ```sh
 java -jar build/libs/zkm27.jar --swing
 ```
 
-Use `--web --port 8270 --no-browser` for a fixed local port without opening the browser.
-The single JAR includes the React/Monaco frontend and CFR 0.152 / Vineflower 1.12.0; runtime is fully offline.
+The Web settings page can also launch Swing in a separate process.
 
-[Web workbench guide / 中文使用说明](docs/WEB_WORKBENCH.md) · [Swing feature migration checklist](docs/WEB_FEATURES.md)
+### Command-line scripts
 
-Script mode:
-
-```
+```sh
 java -jar build/libs/zkm27.jar script.zkm
 ```
 
-## IntelliJ IDEA
+To validate a script without executing it:
 
-1. open the project folder, wait for the gradle sync.
-2. set the project SDK to JDK 17+.
-3. select the **start** run configuration in `.idea/runConfigurations/` and hit run.
+```sh
+java -jar build/libs/zkm27.jar -p script.zkm
+```
 
-## join us
+EDZKM retains the existing ZKM script syntax, `.zkm` files, Java package names, configuration keys, and `zkm27.jar` filename for compatibility. The user-facing application name is EDZKM.
 
-> this source code was generated via decompilation and may contain minor behavioral discrepancies or bugs. Although we have worked hard to fix them, 100% accuracy cannot be guaranteed.
->
-> Contributions and bug reports are welcome—please feel free to open an **Issue** or submit a **PR**!
+## Typical workflow
 
-## thx
+1. Create or open a project, add your input JARs or class directories, and configure dependencies.
+2. Use **Build Helper** to set trimming, inclusion/exclusion rules, obfuscation options, and the output directory.
+3. Open **Class browser** to inspect the original code. Select an obfuscated or comparison view to preview the current configuration, or select an existing run.
+4. Build the project, inspect its logs and mappings, and export the resulting JAR from the project page or output step.
+5. Use **Runtime output** to compare the behavior of original and obfuscated programs.
+6. Send the generated configuration to **Script studio** when you need more control or repeatable command-line builds.
 
-- **original obfuscated software:** Zelix KlassMaster 27.0.0
-- **some deobfuscation, symbol recovery, rename, mapping:** completed by Claude™ and Codex™ under human supervision
-- **flowdeobf, indydeobf, deobf tools:** NoHackClient™
-- **Java Deobfuscator**
-- **Recaf**
+Preview output is stored under the run directory. Script `execute` statements retain their normal behavior during both previews and regular builds.
 
-## legal & disclaimers
+## Project data
 
-- **Affiliation:** This project is an independent community development and is **NOT AN OFFICIAL ZELIX PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH ZELIX PTY LTD.**
-- **Assets & Code:** No proprietary assets or un-obfuscated original source code are distributed directly within this repository. (All third-party assets and code belong to their respective owners).
+Each project stores its settings in `project.zkm.json`. Supporting directories include:
 
+```text
+scripts/       Saved scripts
+imports/       Copies of files imported by drag and drop
+work/          Recoverable working copies after edits and transformations
+runs/          Per-run settings, scripts, logs, mappings, and bytecode snapshots
+```
+
+Recent projects and decompiler caches are stored in `~/.zkm-workbench`. Override that location when needed:
+
+```sh
+java -Dzkm.web.home=/path/to/workbench-data -jar build/libs/zkm27.jar
+```
+
+Editing classes in the Web UI updates a project working copy. Files outside the project remain referenced by their paths; relocate missing inputs and dependencies when moving a project to another machine.
+
+## Development and testing
+
+Open the repository as a Gradle project in IntelliJ IDEA, select JDK 17 or newer, and run the included **start** configuration. It builds and starts the packaged application.
+
+### Testing
+
+Run the Java and frontend tests, then exercise the packaged launcher and engine:
+
+```sh
+sh gradlew test jar
+npm --prefix web test
+python3 tests/test_launcher.py
+python3 tests/run_smoke.py
+```
+
+Run the browser integration tests after building the JAR:
+
+```sh
+cd web
+npx playwright install chromium
+npm run test:e2e
+```
+
+The [CI workflow](.github/workflows/web-workbench.yml) defines checks for Windows, macOS, and Linux on Java 17 and 21.
+
+
+The settings page also includes bundled engine help and third-party license information. JAR dependency notices are packaged under `META-INF/licenses/`.
+
+## Project background and credits
+
+This project contains reconstructed and modified code derived through decompilation. Behavioral differences and bugs may remain; bug reports and contributions are welcome.
+
+- Original software: **Zelix KlassMaster 27.0.0**.
+- Community reconstruction and deobfuscation work: **NoHackClient**.
+- Symbol recovery, renaming, and fixes: human-supervised work with **Claude** and **Codex**.
+- Supporting tools: **Java Deobfuscator** and **Recaf**.
+- Web interface and inspection tools: **React**, **Monaco Editor**, **CFR**, and **Vineflower**, with their respective license notices included in the application.
+
+EDZKM is an independent community project. It is not an official Zelix product and is not affiliated with or endorsed by Zelix Pty Ltd. Existing copyright notices and third-party license attributions remain with their respective owners.
+
+###### "ZELIX" "KLASSMASTER" are trademarks owned by Zelix Pty Ltd (PO BOX 6016, Narraweena NSW 2099, Australia). All trademarks belong to their original owner.

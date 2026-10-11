@@ -43,7 +43,7 @@ public abstract class ExclusionOptionsController implements HelperDialogMarker {
         if (ba == 1) {
             this.obfuscateOptions = new ObfuscateOptions(SystemEnvironmentConstants.USER_DIR, this.getOptionsFileName());
             this.exclusionSettings.saveToFile(SystemEnvironmentConstants.USER_DIR, "ZKM_EX.ser");
-            this.showOptionsDialog("Zelix KlassMaster - " + this.getOperationName() + " Options", this.mainWindow, this.obfuscateOptions, dialogCallback1);
+            this.showOptionsDialog("EDZKM - " + this.getOperationName() + " Options", this.mainWindow, this.obfuscateOptions, dialogCallback1);
         }
     }
 
@@ -72,7 +72,7 @@ public abstract class ExclusionOptionsController implements HelperDialogMarker {
         }
 
         new NameExclusionsDialog(
-                "Zelix KlassMaster - " + this.getOperationName() + " Name Exclusions",
+                "EDZKM - " + this.getOperationName() + " Name Exclusions",
                 this.mainWindow,
                 this.exclusionSettings,
                 this.rootPackage,

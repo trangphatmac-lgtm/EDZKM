@@ -24,6 +24,7 @@ public class ZKM extends ZkmApiBase {
     
     
     public static void main(String[] strings) {
+        System.setProperty("apple.awt.application.name", "EDZKM");
         try {
             SystemPropertiesFileLoader.loadSystemProperties();
             if (HiddenOptionFlags.DEBUG_REDIRECT_OUT) {

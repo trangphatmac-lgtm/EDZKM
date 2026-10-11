@@ -123,7 +123,7 @@ public class EvaluationLicenseDialog extends EscapeClosingDialogBase implements 
     }
 
     public EvaluationLicenseDialog(JFrame jFrame, KlassMaster klassMaster, DialogCallback dialogCallback1) throws ZkmException, IOException {
-        super(jFrame, "Zelix KlassMaster Evaluation", true);
+        super(jFrame, "EDZKM Evaluation", true);
         this.dialogCallback = dialogCallback1;
         this.ownerFrame = jFrame;
         this.buildLayout(klassMaster);

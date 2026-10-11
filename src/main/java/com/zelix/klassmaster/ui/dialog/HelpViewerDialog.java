@@ -154,7 +154,7 @@ public class HelpViewerDialog extends EscapeClosableFrame implements ActionListe
     }
 
     public void initComponents() {
-        this.setTitle("Zelix KlassMaster - Help");
+        this.setTitle("EDZKM - Help");
         Container container1 = this.getContentPane();
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);

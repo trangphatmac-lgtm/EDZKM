@@ -43,7 +43,7 @@ public class TrimWizardController implements HelperDialogMarker {
 
     public void showTrimOptionsDialog(ZkmMainWindow zkmMainWindow, TrimOptions trimOptions1, DialogCallback dialogCallback1) {
         new DeleteAttributesDialog(
-                "Zelix KlassMaster - Trim Options", "OK", GuiResources.getTooltipText("PERFORM_TRIM"), zkmMainWindow, trimOptions1, dialogCallback1
+                "EDZKM - Trim Options", "OK", GuiResources.getTooltipText("PERFORM_TRIM"), zkmMainWindow, trimOptions1, dialogCallback1
         );
     }
 

@@ -56,7 +56,7 @@ public class ZkmScriptTokenMgrError extends Error implements ZkmScriptConstants 
                 break;
             }
         }
-        return "Zelix KlassMaster encountered " + (b ? "unexpected <EOF> " : ("\"" + addEscapes(String.valueOf((char) n4)) + "\"" + " (ascii " + n4 + "),")) + ZkmScriptTokenMgrError.LINE_SEPARATOR + "\tat line " + (int) n2 + ", column " + (int) n3 + (b ? "" : (ZkmScriptTokenMgrError.LINE_SEPARATOR + "\tafter : \"" + addEscapes(s) + "\"")) + ZkmScriptTokenMgrError.LINE_SEPARATOR + "LEXICAL ERROR " + ((str == null) ? "" : ("while inside a " + str + ".")) + ((str2 == null) ? "" : (" " + str2));
+        return "EDZKM encountered " + (b ? "unexpected <EOF> " : ("\"" + addEscapes(String.valueOf((char) n4)) + "\"" + " (ascii " + n4 + "),")) + ZkmScriptTokenMgrError.LINE_SEPARATOR + "\tat line " + (int) n2 + ", column " + (int) n3 + (b ? "" : (ZkmScriptTokenMgrError.LINE_SEPARATOR + "\tafter : \"" + addEscapes(s) + "\"")) + ZkmScriptTokenMgrError.LINE_SEPARATOR + "LEXICAL ERROR " + ((str == null) ? "" : ("while inside a " + str + ".")) + ((str2 == null) ? "" : (" " + str2));
     }
 
     public static final String addEscapes(final String s) {
@@ -119,7 +119,7 @@ public class ZkmScriptTokenMgrError extends Error implements ZkmScriptConstants 
             case 1:
             case 2:
             case 3: {
-                return "Zelix KlassMaster internal parser error (" + this.errorCode + ")";
+                return "EDZKM internal parser error (" + this.errorCode + ")";
             }
             default: {
                 return super.getMessage();

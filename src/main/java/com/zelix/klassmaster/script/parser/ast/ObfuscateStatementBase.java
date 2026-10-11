@@ -88,7 +88,7 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
             File file1 = ZkmFileUtils.writeStringToTempFile(text, observableHolder);
             if (file1 != null) {
                 scriptEnvironment1.logMessage(
-                        "Mapping file '" + mappingFileName + "' into " + "Zelix KlassMaster" + " format : '" + (String) observableHolder.getValue() + "'"
+                        "Mapping file '" + mappingFileName + "' into " + "EDZKM" + " format : '" + (String) observableHolder.getValue() + "'"
                 );
                 return file1.getAbsolutePath();
             }
@@ -97,18 +97,18 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
                     "Error creating temporary file while translating '"
                             + mappingFileName
                             + "' into "
-                            + "Zelix KlassMaster"
+                            + "EDZKM"
                             + " format : '"
                             + (String) observableHolder.getValue()
                             + "'"
             );
         } catch (IOException iOException1) {
             scriptEnvironment1.logSeriousError_v(
-                    "Error translating '" + mappingFileName + "' into " + "Zelix KlassMaster" + " format : '" + iOException1.getMessage() + "' (A)"
+                    "Error translating '" + mappingFileName + "' into " + "EDZKM" + " format : '" + iOException1.getMessage() + "' (A)"
             );
         } catch (ProGuardMappingParseException proGuardMappingParseException) {
             scriptEnvironment1.logSeriousError_v(
-                    "Error translating '" + mappingFileName + "' into " + "Zelix KlassMaster" + " format : '" + proGuardMappingParseException.getMessage() + "' (B)"
+                    "Error translating '" + mappingFileName + "' into " + "EDZKM" + " format : '" + proGuardMappingParseException.getMessage() + "' (B)"
             );
         } finally {
             try {
@@ -356,7 +356,7 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
 
                     String absolutePath = file1.getAbsolutePath();
                     String logFileName = scriptEnvironment1.getLogFileName();
-                    this.checkChangeLogFileClash(absolutePath, logFileName, "ZKM log", scriptEnvironment1);
+                    this.checkChangeLogFileClash(absolutePath, logFileName, "EDZKM log", scriptEnvironment1);
                     String trimLogFileName = scriptEnvironment1.getTrimLogFileName();
                     this.checkChangeLogFileClash(absolutePath, trimLogFileName, "trim log", scriptEnvironment1);
                     ChangeLogInputFile changeLogInputFile;
@@ -517,7 +517,7 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
 
                 String absolutePathValue2 = absolutePath;
                 String logFileName = scriptEnvironment1.getLogFileName();
-                this.checkChangeLogFileClash(absolutePathValue2, logFileName, "ZKM log", scriptEnvironment1);
+                this.checkChangeLogFileClash(absolutePathValue2, logFileName, "EDZKM log", scriptEnvironment1);
                 String trimLogFileName = scriptEnvironment1.getTrimLogFileName();
                 this.checkChangeLogFileClash(absolutePathValue2, trimLogFileName, "trim log", scriptEnvironment1);
                 String changeLogEncoding = AbstractChangeLog.getChangeLogEncoding();

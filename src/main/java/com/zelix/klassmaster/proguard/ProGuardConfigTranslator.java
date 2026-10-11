@@ -631,7 +631,7 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
             StringBuilder stringBuilder4 = new StringBuilder(100);
             StringBuilder stringBuilder5 = new StringBuilder(100);
             stringBuilder5.append("java -jar ZKM.jar ");
-            stringBuilder4.append("Some ProGuard options must appear as Zelix KlassMaster command line options as shown below.");
+            stringBuilder4.append("Some ProGuard options must appear as EDZKM command line options as shown below.");
             if (this.verbose) {
                 stringBuilder5.append("-v");
                 stringBuilder5.append(' ');

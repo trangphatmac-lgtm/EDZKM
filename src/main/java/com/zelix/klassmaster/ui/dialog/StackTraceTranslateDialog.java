@@ -426,7 +426,7 @@ public class StackTraceTranslateDialog extends OwnedFrameDialogBase implements A
     }
 
     public StackTraceTranslateDialog(ZkmMainWindow zkmMainWindow, UserPreferences userPreferences1) throws ZkmException, IOException {
-        super(zkmMainWindow, "Zelix KlassMaster - Stack Trace Translate");
+        super(zkmMainWindow, "EDZKM - Stack Trace Translate");
         this.bytecodeClasspath = zkmMainWindow.getClasspath();
         this.initPreferences(userPreferences1);
     }

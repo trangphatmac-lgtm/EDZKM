@@ -184,7 +184,7 @@ public class IncludeParamTypeDialog extends OwnedFrameDialogBase implements Acti
     }
 
     public IncludeParamTypeDialog(JFrame jFrame, DialogCallback dialogCallback1) {
-        super(jFrame, "Zelix KlassMaster Include Parameter Type");
+        super(jFrame, "EDZKM Include Parameter Type");
         this.callback = dialogCallback1;
         this.showCenteredOnOwner();
     }

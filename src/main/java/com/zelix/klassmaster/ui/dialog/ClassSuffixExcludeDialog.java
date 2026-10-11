@@ -30,7 +30,7 @@ public class ClassSuffixExcludeDialog extends ExcludeParameterDialogBase {
     }
 
     public ClassSuffixExcludeDialog(JFrame jFrame, RenameFilterModel renameFilterModel, DialogCallback dialogCallback1) {
-        super(jFrame, "Zelix KlassMaster Class Suffix Exclude Parameter", renameFilterModel, 1, dialogCallback1);
+        super(jFrame, "EDZKM Class Suffix Exclude Parameter", renameFilterModel, 1, dialogCallback1);
     }
 
     @Override

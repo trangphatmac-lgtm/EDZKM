@@ -13,7 +13,7 @@ public class MultiLineLabelCanvas extends Canvas {
     public static int lineSpacing = 1;
     public boolean linesWrapped;
     public Vector lines;
-    public String text = "Zelix KlassMaster could not find the class java.lang.Object. Please select the archive file that contains the Java bootstrap classes that you wish Zelix KlassMaster to use.";
+    public String text = "EDZKM could not find the class java.lang.Object. Please select the archive file that contains the Java bootstrap classes that you wish EDZKM to use.";
     public int wrapWidth = 250;
     public FontMetrics fontMetrics;
     public int ascent;

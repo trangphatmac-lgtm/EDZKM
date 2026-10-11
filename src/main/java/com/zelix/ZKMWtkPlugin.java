@@ -21,11 +21,11 @@ public class ZKMWtkPlugin extends WtkPluginConstants implements Obfuscator {
     public void createScriptFile(File file1, File file2) {
         this.jadFile = file1;
         if (this.jadFile == null) {
-            throw new IllegalArgumentException("ZKM: Null JAD file.");
+            throw new IllegalArgumentException("EDZKM: Null JAD file.");
         }
 
         if (!this.jadFile.exists()) {
-            throw new IllegalArgumentException("ZKM: JAD file '" + this.jadFile.getAbsolutePath() + "' does not exist.");
+            throw new IllegalArgumentException("EDZKM: JAD file '" + this.jadFile.getAbsolutePath() + "' does not exist.");
         }
     }
 }

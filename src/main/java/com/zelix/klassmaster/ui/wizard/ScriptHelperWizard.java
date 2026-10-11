@@ -54,7 +54,7 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
 
     public void showScriptDialog(String string) {
         ScriptHelperStepCallback scriptHelperStepCallback = new ScriptHelperStepCallback(this);
-        new BuildHelperScriptDialog(super.mainWindow, "ZKM Script Helper", string, super.userPreferences, scriptHelperStepCallback);
+        new BuildHelperScriptDialog(super.mainWindow, "EDZKM Script Helper", string, super.userPreferences, scriptHelperStepCallback);
     }
 
     public static void accessOnExcludeResult(ScriptHelperWizard scriptHelperWizard, Integer integer) {
@@ -76,7 +76,7 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
     @Override
     public void showIntroduction() {
         ScriptHelperIntroCallback scriptHelperIntroCallback = new ScriptHelperIntroCallback(this);
-        new ProceedConfirmDialog(super.mainWindow, "ZKM Script Helper", "Next", "Cancel", "001", "011", 500, 400, scriptHelperIntroCallback);
+        new ProceedConfirmDialog(super.mainWindow, "EDZKM Script Helper", "Next", "Cancel", "001", "011", 500, 400, scriptHelperIntroCallback);
     }
 
     public void onTrimOptionsResult(TrimOptions trimOptions1, int ba) throws ZkmException, IOException {
@@ -115,7 +115,7 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
             }
 
             super.userPreferences.savePreferences();
-            this.showScriptDialog(this.buildEquivalentScript("ZKM Script Helper", super.openedLocations));
+            this.showScriptDialog(this.buildEquivalentScript("EDZKM Script Helper", super.openedLocations));
         } else if (integerValue == 2) {
             if (super.obfuscateOptions.aj == 1) {
                 this.showReferenceInclusionsDialog();
@@ -181,7 +181,7 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
         ScriptHelperCallback scriptHelperCallback = new ScriptHelperCallback(this);
         new ClasspathStepDialog(
                 super.mainWindow,
-                "ZKM Script Helper - \"classpath\" Statement",
+                "EDZKM Script Helper - \"classpath\" Statement",
                 zkmClasspath,
                 GuiResources.getTooltipText("CLASSPATH_MSG"),
                 GuiResources.getTooltipText("OK_PROCEED"),
@@ -244,7 +244,7 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
         ScriptHelperRefIncludeCallback scriptHelperRefIncludeCallback = new ScriptHelperRefIncludeCallback(this);
         super.referenceIncludeStore = ReferenceObfIncludeStore.loadFromFile(SystemEnvironmentConstants.USER_DIR);
         new InclusionParametersDialog(
-                "ZKM Script Helper - \"obfuscateReferencesInclude\" Statement",
+                "EDZKM Script Helper - \"obfuscateReferencesInclude\" Statement",
                 super.mainWindow,
                 super.referenceIncludeStore,
                 super.scriptEnvironment,
@@ -282,7 +282,7 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
         super.mainWindow.setEnabled(false);
         new WizardOpenClassesDialog(
                 super.mainWindow,
-                "ZKM Script Helper - \"open\" Statement",
+                "EDZKM Script Helper - \"open\" Statement",
                 "Next",
                 false,
                 super.userPreferences.getOpenClassesDirectory(),
@@ -371,7 +371,7 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
     public void showTrimOptionsDialog(TrimOptions trimOptions1) {
         ScriptHelperTrimCallback scriptHelperTrimCallback = new ScriptHelperTrimCallback(this);
         new TrimOptionsWizardDialog(
-                "ZKM Script Helper - \"trim\" Statement", GuiResources.getTooltipText("OK_PROCEED"), super.mainWindow, trimOptions1, scriptHelperTrimCallback
+                "EDZKM Script Helper - \"trim\" Statement", GuiResources.getTooltipText("OK_PROCEED"), super.mainWindow, trimOptions1, scriptHelperTrimCallback
         );
     }
 

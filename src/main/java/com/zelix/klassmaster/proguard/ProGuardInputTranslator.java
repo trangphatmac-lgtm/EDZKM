@@ -132,7 +132,7 @@ public class ProGuardInputTranslator {
             PrintWriter printWriter = null;
             String s2;
             try {
-                s2 = "ERROR: Error while translating input from ProGuard to Zelix KlassMaster format : '" + throwableValue.getMessage() + "' (B)";
+                s2 = "ERROR: Error while translating input from ProGuard to EDZKM format : '" + throwableValue.getMessage() + "' (B)";
                 printWriter = new PrintWriter(new FileWriter(file));
                 printWriter.println(string);
                 printWriter.println(s2);
@@ -140,7 +140,7 @@ public class ProGuardInputTranslator {
                 printWriter.flush();
                 printWriter.close();
             } catch (final IOException ioException) {
-                s2 = "ERROR: Error while translating input from ProGuard to Zelix KlassMaster format : '" + throwableValue.getMessage() + "' (C)";
+                s2 = "ERROR: Error while translating input from ProGuard to EDZKM format : '" + throwableValue.getMessage() + "' (C)";
             } finally {
                 if (printWriter != null) {
                     printWriter.close();
@@ -526,7 +526,7 @@ public class ProGuardInputTranslator {
         } catch (AssertionFailedException assertionFailedException) {
             throw assertionFailedException;
         } catch (Throwable throwable) {
-            String string3 = "ERROR: Error while translating input from ProGuard to Zelix KlassMaster format : '"
+            String string3 = "ERROR: Error while translating input from ProGuard to EDZKM format : '"
                     + (throwable.getMessage() != null ? throwable.getMessage() : throwable)
                     + "' (A)'. See '"
                     + string

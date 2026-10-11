@@ -100,7 +100,7 @@ public class ChangeLogParseException extends Exception implements ChangeLogConst
 
         String string2 = this.currentToken.k;
         ChangeLogToken changeLogToken = this.currentToken.h;
-        String string1 = "Zelix KlassMaster encountered \"";
+        String string1 = "EDZKM encountered \"";
 
         for (int i = 0; i < lengthValue; i++) {
             if (i != 0) {

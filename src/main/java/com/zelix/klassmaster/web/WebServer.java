@@ -94,7 +94,7 @@ public final class WebServer implements AutoCloseable {
         send(
             exchange,
             401,
-            Json.map("code", "UNAUTHORIZED", "message", "Open the launch URL printed by ZKM"));
+            Json.map("code", "UNAUTHORIZED", "message", "Open the launch URL printed by EDZKM"));
         return;
       }
       if (path.equals("/api/v1/events")) {

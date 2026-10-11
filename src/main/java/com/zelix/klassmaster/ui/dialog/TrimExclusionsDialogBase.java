@@ -129,19 +129,19 @@ public abstract class TrimExclusionsDialogBase extends ExclusionWizardDialogBase
                 string2 = "*.*";
             }
 
-            new ClassParameterPartDialog(this, "Zelix KlassMaster Trim Class Exclude Parameter", this.parseParameter(string2), 2, dialogCallback1);
+            new ClassParameterPartDialog(this, "EDZKM Trim Class Exclude Parameter", this.parseParameter(string2), 2, dialogCallback1);
         } else if (string.equals("3")) {
             if (string2 == null) {
                 string2 = "*.* *";
             }
 
-            new FieldExcludeParameterDialog(this, "Zelix KlassMaster Trim Field Exclude Parameter", this.parseParameter(string2), 2, dialogCallback1);
+            new FieldExcludeParameterDialog(this, "EDZKM Trim Field Exclude Parameter", this.parseParameter(string2), 2, dialogCallback1);
         } else if (string.equals("4")) {
             if (string2 == null) {
                 string2 = "*.* *(*)";
             }
 
-            new MethodSpecifierDialog(this, "Zelix KlassMaster Trim Method Exclude Parameter", this.parseParameter(string2), 2, dialogCallback1);
+            new MethodSpecifierDialog(this, "EDZKM Trim Method Exclude Parameter", this.parseParameter(string2), 2, dialogCallback1);
         }
     }
 

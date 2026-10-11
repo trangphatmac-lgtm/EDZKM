@@ -1,7 +1,6 @@
 package com.zelix.klassmaster.ui.component;
 
 import com.zelix.klassmaster.KlassMaster;
-import com.zelix.klassmaster.config.HiddenOptionFlags;
 import com.zelix.klassmaster.exceptions.ZkmException;
 
 import java.awt.Color;
@@ -54,9 +53,8 @@ public class BannerPnl extends BevelBorderPanel {
         this.setFont(KlassMaster.getDefaultFont());
         this.constraintLayout = new ConstraintLayout(this);
         this.setLayout(this.constraintLayout);
-        Image image1 = this.getToolkit().getImage(HiddenOptionFlags.USER_PREFERENCES.getClass().getResource("1.png"));
-        Image image2 = this.getToolkit().getImage(HiddenOptionFlags.USER_PREFERENCES.getClass().getResource("1.gif"));
-        this.imagePnl = new ImagePnl(image1, image2);
+        Image brandImage = BrandingImages.banner();
+        this.imagePnl = new ImagePnl(brandImage, brandImage);
         if (!this.imagePnl.isPrimaryImageLoaded()) {
             this.setBackground(FALLBACK_BACKGROUND);
             this.setForeground(Color.black);

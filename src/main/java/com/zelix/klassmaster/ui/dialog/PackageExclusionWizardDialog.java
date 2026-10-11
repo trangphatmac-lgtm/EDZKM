@@ -82,19 +82,19 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
                 string2 = "*.*";
             }
 
-            new ClassParameterPartDialog(this, "Zelix KlassMaster Class Exclude Parameter", this.parseParameter(string2), 1, dialogCallback1);
+            new ClassParameterPartDialog(this, "EDZKM Class Exclude Parameter", this.parseParameter(string2), 1, dialogCallback1);
         } else if (string.equals("3")) {
             if (string2 == null) {
                 string2 = "*.* *";
             }
 
-            new FieldExcludeParameterDialog(this, "Zelix KlassMaster Field Exclude Parameter", this.parseParameter(string2), 1, dialogCallback1);
+            new FieldExcludeParameterDialog(this, "EDZKM Field Exclude Parameter", this.parseParameter(string2), 1, dialogCallback1);
         } else if (string.equals("4")) {
             if (string2 == null) {
                 string2 = "*.* *(*)";
             }
 
-            new MethodSpecifierDialog(this, "Zelix KlassMaster Method Exclude Parameter", this.parseParameter(string2), 1, dialogCallback1);
+            new MethodSpecifierDialog(this, "EDZKM Method Exclude Parameter", this.parseParameter(string2), 1, dialogCallback1);
         } else if (string.equals("5")) {
             if (string2 == null) {
                 string2 = "*.<link>X";

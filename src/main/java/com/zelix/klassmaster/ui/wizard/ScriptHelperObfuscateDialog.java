@@ -17,7 +17,7 @@ public class ScriptHelperObfuscateDialog extends BuildHelperObfuscateOptionsDial
             DialogCallback dialogCallback1
     ) {
         super(
-                "ZKM Script Helper - \"obfuscate\" Statement", toolTipText, zkmMainWindow, obfuscateOptions1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1
+                "EDZKM Script Helper - \"obfuscate\" Statement", toolTipText, zkmMainWindow, obfuscateOptions1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1
         );
     }
 

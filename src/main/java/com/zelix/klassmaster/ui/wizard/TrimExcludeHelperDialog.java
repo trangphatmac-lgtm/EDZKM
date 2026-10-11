@@ -109,7 +109,7 @@ public class TrimExcludeHelperDialog extends TrimExclusionsDialogBase implements
             DialogCallback dialogCallback1
     ) throws ZkmException, IOException {
         super(
-                "ZKM Script Helper - \"trimExclude\" Statement",
+                "EDZKM Script Helper - \"trimExclude\" Statement",
                 zkmMainWindow,
                 vector,
                 trimExcludeSettings1,

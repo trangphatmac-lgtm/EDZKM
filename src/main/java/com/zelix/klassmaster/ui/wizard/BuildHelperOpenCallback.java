@@ -26,7 +26,7 @@ public class BuildHelperOpenCallback extends OperationStatusCallback {
                     "Error while opening classes."
                             + string
                             + " Cannot proceed to next step. Please adjust your "
-                            + "Zelix KlassMaster"
+                            + "EDZKM"
                             + " classpath or class file selections."
             );
             BuildHelperWizard.accessShowOpenClassesDialog(this.wizard, this.wizard.inputRoots);

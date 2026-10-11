@@ -131,9 +131,9 @@ public class ZkmScriptParseException extends Exception implements ZkmScriptConst
         String string4;
         if (parameterDescription.length() > 0) {
             stringBuilder.append(parameterDescription);
-            string4 = "Zelix KlassMaster encountered \"";
+            string4 = "EDZKM encountered \"";
         } else {
-            string4 = "Zelix KlassMaster encountered \"";
+            string4 = "EDZKM encountered \"";
         }
 
         String message = string4;

@@ -92,7 +92,7 @@ public class SaveAllStatementDialog extends SaveClassesDialog implements HelperD
     }
 
     public SaveAllStatementDialog(JFrame jFrame, String string, String initialDirectory, DialogCallback dialogCallback1) {
-        super(jFrame, "ZKM Script Helper - \"saveAll\" Statement", "Next", string, initialDirectory, dialogCallback1);
+        super(jFrame, "EDZKM Script Helper - \"saveAll\" Statement", "Next", string, initialDirectory, dialogCallback1);
     }
 
     public void goPrevious() throws ZkmException, IOException {

@@ -37,7 +37,7 @@ public final class WebLauncher {
                       Path.of(System.getProperty("user.home"), ".zkm-workbench").toString())));
       server.start();
       String url = server.url();
-      System.out.println("ZKM Workbench: " + url);
+      System.out.println("EDZKM Workbench: " + url);
       System.out.println("Swing: java -jar zkm27.jar --swing");
       Runtime.getRuntime().addShutdownHook(new Thread(server::close));
       if (browser) {

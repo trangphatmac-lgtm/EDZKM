@@ -39,7 +39,7 @@ public class ObfuscateWizardFlow extends ExclusionOptionsController {
         } else if (ba == 2 || ba == 5) {
             ObfuscateOptionsCallback obfuscateOptionsCallback = new ObfuscateOptionsCallback(this);
             this.showOptionsDialog(
-                    "Zelix KlassMaster - " + this.getOperationName() + " Options", super.mainWindow, super.obfuscateOptions, obfuscateOptionsCallback
+                    "EDZKM - " + this.getOperationName() + " Options", super.mainWindow, super.obfuscateOptions, obfuscateOptionsCallback
             );
         }
     }
@@ -65,7 +65,7 @@ public class ObfuscateWizardFlow extends ExclusionOptionsController {
     public void showReferenceInclusionsDialog(ZkmMainWindow zkmMainWindow, DialogCallback dialogCallback1) throws ZkmException, IOException {
         this.referenceIncludeStore = ReferenceObfIncludeStore.loadFromFile(SystemEnvironmentConstants.USER_DIR);
         new InclusionParametersDialog(
-                "Zelix KlassMaster - Reference Obfuscation Inclusions", zkmMainWindow, this.referenceIncludeStore, super.scriptEnvironment, dialogCallback1
+                "EDZKM - Reference Obfuscation Inclusions", zkmMainWindow, this.referenceIncludeStore, super.scriptEnvironment, dialogCallback1
         );
     }
 

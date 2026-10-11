@@ -289,13 +289,13 @@ public class ScriptEnvironment extends AbstractMessageLog {
 
     public void validateLogFileName(String string, String string1) {
         if (string == null) {
-            throw new ZkmRuntimeException("The Zelix KlassMaster log file name cannot be null");
+            throw new ZkmRuntimeException("The EDZKM log file name cannot be null");
         }
 
         boolean caseSensitiveFileSystemValue;
         if (ZkmFileUtils.caseSensitiveFileSystem) {
             if (string.equals(string1)) {
-                throw new ZkmRuntimeException("The Zelix KlassMaster log file name cannot be the same as the Trim log file name. : " + ZkmFileUtils.OS_NAME);
+                throw new ZkmRuntimeException("The EDZKM log file name cannot be the same as the Trim log file name. : " + ZkmFileUtils.OS_NAME);
             }
 
             caseSensitiveFileSystemValue = ZkmFileUtils.caseSensitiveFileSystem;
@@ -304,7 +304,7 @@ public class ScriptEnvironment extends AbstractMessageLog {
         }
 
         if (!caseSensitiveFileSystemValue && string.equalsIgnoreCase(string1)) {
-            throw new ZkmRuntimeException("The Zelix KlassMaster log file name cannot be the same as the Trim log file name. : " + ZkmFileUtils.OS_NAME);
+            throw new ZkmRuntimeException("The EDZKM log file name cannot be the same as the Trim log file name. : " + ZkmFileUtils.OS_NAME);
         }
     }
 

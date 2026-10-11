@@ -10,7 +10,7 @@ public class PackageExcludeDialog extends ExcludeParameterDialogBase {
     public PackageNameParamPanel packagePanel;
 
     public PackageExcludeDialog(JFrame jFrame, RenameFilterModel renameFilterModel, DialogCallback dialogCallback1) {
-        super(jFrame, "Zelix KlassMaster Package Exclude Parameter", renameFilterModel, 1, dialogCallback1);
+        super(jFrame, "EDZKM Package Exclude Parameter", renameFilterModel, 1, dialogCallback1);
     }
 
     @Override

@@ -202,7 +202,7 @@ public class ExcludeParameterTypeDialog extends OwnedFrameDialogBase implements 
     }
 
     public ExcludeParameterTypeDialog(JFrame jFrame, DialogCallback dialogCallback1) {
-        super(jFrame, "Zelix KlassMaster Exclude Parameter Type");
+        super(jFrame, "EDZKM Exclude Parameter Type");
         this.dialogCallback = dialogCallback1;
         this.showCenteredOnOwner();
     }

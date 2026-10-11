@@ -3839,7 +3839,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     if (programClass12.getClassConstantPool().getEntryCount() > 65535) {
                         programClass12.checkConstantPoolSize(
                                 "Auto Reflection Handling",
-                                "Consider using ZKM Script 'accessedByReflection' statement to specify only those classes, fields and methods which are actually accessed by Reflection and for which the Reflection access has not been resolved by Zelix KlassMaster."
+                                "Consider using ZKM Script 'accessedByReflection' statement to specify only those classes, fields and methods which are actually accessed by Reflection and for which the Reflection access has not been resolved by EDZKM."
                         );
                     }
                 }

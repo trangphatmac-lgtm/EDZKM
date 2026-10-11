@@ -520,7 +520,7 @@ public class StackTraceTranslator {
         long currentThreadId = ZkmUtils.getCurrentThreadId();
         if (ownerThreadId != -1L && currentThreadId != ownerThreadId) {
             throw new ZkmRuntimeException(
-                    "FATAL ERROR: : Zelix KlassMaster Stack Trace Translate Tool is not thread safe. If you need to run more than once instance concurrently then each instance must run in a separate JVM."
+                    "FATAL ERROR: : EDZKM Stack Trace Translate Tool is not thread safe. If you need to run more than once instance concurrently then each instance must run in a separate JVM."
             );
         }
 

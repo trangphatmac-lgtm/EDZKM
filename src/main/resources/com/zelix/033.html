@@ -36,7 +36,7 @@ Contents:
 </ul>
 
 <h2><a name="<a name="Overview">Overview</a></h2>
-The Zelix KlassMaster<sup><font size=-2>TM</font></sup> "Obfuscate" tool renames classes, fields and methods to make your bytecode smaller 
+The EDZKM "Obfuscate" tool renames classes, fields and methods to make your bytecode smaller
 and to reduce the meaningfulness of source code produced by a decompiler. 
 It can also obfuscate the control flow, obfuscate field and method references, encrypt the String literals and encrypt integer constants in your bytecode to give added protection against decompilation.
 However, flow obfuscation, String Encryption and Integer Constant Encryption will slightly increase your bytecode size and slightly slow your bytecode.
@@ -115,29 +115,29 @@ yes
 </table>
 
 <h2><a name="inputLogBox">"Use input change log file" box</a></h2>
-Select this box if you want Zelix KlassMaster to use an input change log. 
-Zelix KlassMaster will use the name mappings in the input change log as a definitive guide when renaming package, class, field and method names.
-It can be very useful to have Zelix KlassMaster rename your classes, fields and methods to match the previous release if you intend to distribute 
+Select this box if you want EDZKM to use an input change log.
+EDZKM will use the name mappings in the input change log as a definitive guide when renaming package, class, field and method names.
+It can be very useful to have EDZKM rename your classes, fields and methods to match the previous release if you intend to distribute
 only the changed portion of your application in the form of a patch.
 
 <h2><a name="inputLogField">"Use input change log file" field</a></h2>
-You can enter the name of the input change log into this field. If you enter an unqualified file name then Zelix KlassMaster will look for it
-in the folder from which Zelix KlassMaster was started. You can also enter a relative or absolute path.
+You can enter the name of the input change log into this field. If you enter an unqualified file name then EDZKM will look for it
+in the folder from which EDZKM was started. You can also enter a relative or absolute path.
 
 <h2><a name="inputLogList">Use input change log file ". . ." button</a></h2>
 Click this button to open a file selection dialog to find and select the input change log that you wish to use.  
 The selected file name will appear in the <b>"use input change log file"</b> field.
 
 <h2><a name="outputLogBox">"Produce a change log file" box</a></h2>
-Select this box if you want Zelix KlassMaster to produce a change log. 
+Select this box if you want EDZKM to produce a change log.
 The change log will record the mappings of original package, class, field and method names to new obfuscated names.
 It is highly recommended that you select this option and keep the change log produced in a safe place. 
 You will need it to translate stack traces produced by your obfuscated bytecode using the <a href="035.html">Stack Trace Translate tool</a>.
 You can also use it as an input change log to ensure compatible renaming in future releases.
 
 <h2><a name="outputLogField">"Produce a change log file" field</a></h2>
-You can enter the name of the output change log into this field. If you enter an unqualified file name then Zelix KlassMaster will create it
-in the folder from which Zelix KlassMaster was started. You can also enter a relative or absolute path.
+You can enter the name of the output change log into this field. If you enter an unqualified file name then EDZKM will create it
+in the folder from which EDZKM was started. You can also enter a relative or absolute path.
 <p>
 If the specified file already exists then it will be overwritten. Note that you should keep the change log produced when you obfuscate your final release in a safe place.
 
@@ -146,9 +146,9 @@ Click this button to open a file selection dialog to find and select an output c
 The selected file name will appear in the <b>"Produce a change log file"</b> field.
 
 <h2><a name="obfuscateFlow">"Obfuscate control flow" list</a></h2>
-This list determines whether Zelix KlassMaster will obfuscate the control flow of your methods.  
+This list determines whether EDZKM will obfuscate the control flow of your methods.
 Flow obfuscation can provide extra protection against decompilation. 
-You should see the Zelix KlassMaster documentation for more detail.
+You should see the EDZKM documentation for more detail.
 <p>
 <table border=1>
 <tr>
@@ -197,7 +197,7 @@ However, it increases the risk that your bytecode will not run on some buggy JIT
 </table>
 
 <h2><a name="exception">"Exception ofuscation"</a></h2>
-This list determines whether Zelix KlassMaster will perform a kind of flow obfuscation which involves exceptions. 
+This list determines whether EDZKM will perform a kind of flow obfuscation which involves exceptions.
 <p>
 <table border=1>
 <tr>
@@ -213,7 +213,7 @@ This list determines whether Zelix KlassMaster will perform a kind of flow obfus
 none
 </td>
 <td valign="top">
-This setting instructs Zelix KlassMaster to not perform Exception obfuscation.
+This setting instructs EDZKM to not perform Exception obfuscation.
 </td>
 </tr>
 <tr>
@@ -221,7 +221,7 @@ This setting instructs Zelix KlassMaster to not perform Exception obfuscation.
 light
 </td>
 <td valign="top">
-This setting instructs Zelix KlassMaster to perform Exception obfuscation.
+This setting instructs EDZKM to perform Exception obfuscation.
 </td>
 </tr>
 <tr>
@@ -229,17 +229,17 @@ This setting instructs Zelix KlassMaster to perform Exception obfuscation.
 heavy
 </td>
 <td valign="top">
-This setting instructs Zelix KlassMaster to perform Exception obfuscation in a more aggressive fashion.
+This setting instructs EDZKM to perform Exception obfuscation in a more aggressive fashion.
 </td>
 </tr>
 </table>
 
 <h2><a name="encryptStrings">"Encrypt String literals" list</a></h2>
-This list determines whether Zelix KlassMaster will encrypt the String literals in your classes.  
+This list determines whether EDZKM will encrypt the String literals in your classes.
 String encryption can provide extra protection against decompilation.
-Zelix KlassMaster changes the values of your String literals to equivalent encrypted values and 
+EDZKM changes the values of your String literals to equivalent encrypted values and
 then adds a decrypt method to each affected class to decrypt the literal at runtime.
-You should see the Zelix KlassMaster documentation for more detail.
+You should see the EDZKM documentation for more detail.
 <p>
 <table border=1>
 <tr>
@@ -263,7 +263,7 @@ Select this setting if you don't want to use String encryption.
 normal
 </td>
 <td valign="top">
-Select this setting if you want Zelix KlassMaster to encrypt your String literals in the most basic fashion. 
+Select this setting if you want EDZKM to encrypt your String literals in the most basic fashion.
 This setting will leave String literals in interfaces unencrypted.
 </td>
 </tr>
@@ -272,7 +272,7 @@ This setting will leave String literals in interfaces unencrypted.
 aggressive
 </td>
 <td valign="top">
-This setting encrypts your String literals as with the "normal" setting but Zelix KlassMaster will attempt to use a more sophisticated approach that 
+This setting encrypts your String literals as with the "normal" setting but EDZKM will attempt to use a more sophisticated approach that
 allows the encryption of Strings in interfaces.
 </td>
 </tr>
@@ -300,11 +300,11 @@ If you use &quot;enhanced&quot; String Encryption then you should also consider 
 
 
 <h2><a name="encryptIntegers">"Encrypt integer constants" list</a></h2>
-This list determines whether Zelix KlassMaster will encrypt the integer constants in your classes.  
+This list determines whether EDZKM will encrypt the integer constants in your classes.
 Integer Constant Encryption can provide extra protection against decompilation.
-Zelix KlassMaster changes the values of your integer constants to equivalent encrypted values and 
+EDZKM changes the values of your integer constants to equivalent encrypted values and
 then adds a decrypt method to each affected class to decrypt the constant at runtime.
-You should see the Zelix KlassMaster documentation for more detail.
+You should see the EDZKM documentation for more detail.
 <p>
 <table border=1>
 <tr>
@@ -328,7 +328,7 @@ Select this setting if you don't want to use Integer Constant Encryption.
 normal
 </td>
 <td valign="top">
-Select this setting if you want Zelix KlassMaster to encrypt your integer constants in the following basic fashion. 
+Select this setting if you want EDZKM to encrypt your integer constants in the following basic fashion.
 Any integer, byte, char or short fields which are directly initialized with a value other than -1, 0 or 1 will have their initialization values encrypted.
 Also, if there is a reference in a method to an integer constant that is less than Short.MIN_VALUE and greater than Short.MAX_VALUE, then that integer value will be encrypted.
 </td>
@@ -338,7 +338,7 @@ Also, if there is a reference in a method to an integer constant that is less th
 aggressive
 </td>
 <td valign="top">
-Select this setting if you want Zelix KlassMaster to encrypt your integer constants in the following fashion. 
+Select this setting if you want EDZKM to encrypt your integer constants in the following fashion.
 Any integer, byte, char or short fields which are directly initialized with a value other than -1, 0 or 1 will have their initialization values encrypted.
 Also, if there is a reference in a method to an integer constant that is less than -1 and greater than 5, then that integer value will be encrypted.
 </td>
@@ -348,11 +348,11 @@ Also, if there is a reference in a method to an integer constant that is less th
 If you use Integer Constant Encryption then you should also consider selecting "normal", "random" or "flowObfuscate" in the <a href="#parameterChanges">"Method parameter changes" list</a> so that it is harder to reverse.
 
 <h2><a name="encryptLongs">"Encrypt long constants" list</a></h2>
-This list determines whether Zelix KlassMaster will encrypt the longconstants in your classes.  
+This list determines whether EDZKM will encrypt the longconstants in your classes.
 Long Constant Encryption can provide extra protection against decompilation.
-Zelix KlassMaster changes the values of your long constants to equivalent encrypted values and 
+EDZKM changes the values of your long constants to equivalent encrypted values and
 then adds a decrypt method to each affected class to decrypt the constant at runtime.
-You should see the Zelix KlassMaster documentation for more detail.
+You should see the EDZKM documentation for more detail.
 <p>
 <table border=1>
 <tr>
@@ -376,7 +376,7 @@ Select this setting if you don't want to use Long Constant Encryption.
 normal
 </td>
 <td valign="top">
-Select this setting if you want Zelix KlassMaster to encrypt your long constants in the following basic fashion. 
+Select this setting if you want EDZKM to encrypt your long constants in the following basic fashion.
 Any long fields which are directly initialized with a value other than 0 or 1 will have their initialization values encrypted.
 Also, if there is a reference in a method to an long constant other than 0 or 1 then that long value will be encrypted.
 </td>
@@ -387,7 +387,7 @@ If you use Long Constant Encryption then you should also consider selecting "nor
 
 
 <h2><a name="mixedCase">"Mixed case class names" list</a></h2>
-This list determines whether Zelix KlassMaster will use mixed case when it obfuscates your class names.
+This list determines whether EDZKM will use mixed case when it obfuscates your class names.
 If your classes will ever be stored outside of an archive file in a file system which is not case sensitive
 (e.g. Linux) then you should not choose to have mixed case class names. Otherwise classes may be overwritten.
 <p>
@@ -427,7 +427,7 @@ Select this setting if you want to allow mixed case names only for classes which
 </table>
 
 <h2><a name="collapse">"Collapse packages" box</a></h2>
-Select this box if you want Zelix KlassMaster to recursively collapse subpackages into their superpackages. 
+Select this box if you want EDZKM to recursively collapse subpackages into their superpackages.
 Effectively, classes in subpackages will be moved into their superpackages.  
 By reducing the overall length of the package names, <b>this option reduces the length of fully qualified class names and therefore reduces the size of the bytecode.</b>
 <p>
@@ -438,7 +438,7 @@ that appears to the immediate right of the <b>"Collapse packages"</b> box.
 If the the <b>"Default name"</b> field is empty then packages with no excluded superpackage will be collapsed into the Java default package "" (which is no package at all).
 <p>
 Remember that one of the purposes served by package names is to ensure that fully qualified class names are unique. 
-If you collapse your packages into the Java default package (ie. no package) then Zelix KlassMaster will ensure that your class names are unique within your application.
+If you collapse your packages into the Java default package (ie. no package) then EDZKM will ensure that your class names are unique within your application.
 However, you must be sure that there will be no <u>runtime</u> name clashes with other default package classes in the runtime classpath. 
 <p>
 Take as an example the following set of packages.
@@ -517,7 +517,7 @@ If the <b>"Default name"</b> field is empty then the packages will be collapsed 
 Please see the help on <a href="#collapse">"Collapse packages"</a> box above for more detail on the collapse package functionality.
 
 <h2><a name="aggressiveMethodRenaming">"Aggressive method renaming" box</a></h2>
-If you select this option, Zelix KlassMaster will rename your methods more aggressively.
+If you select this option, EDZKM will rename your methods more aggressively.
 The resulting bytecode will run without problem but you may have difficulties compiling Java source against
 your obfuscated bytecode.
 <p>
@@ -525,12 +525,12 @@ Select this option only if your application is stand-alone and self-contained.  
 your classes make up an extensible framework or a class library.
 
 <h2><a name="randomize">"Randomize obfuscation" box</a></h2>
-If you select this box then Zelix KlassMaster will attempt to generate new obfuscated names in a random fashion. 
-By default, if the opened classes are unchanged, Zelix KlassMaster will generate the same obfuscated names.
+If you select this box then EDZKM will attempt to generate new obfuscated names in a random fashion.
+By default, if the opened classes are unchanged, EDZKM will generate the same obfuscated names.
 Do not select this box if you would like your classes to be obfuscated with some consistentency each time.
 
 <h2><a name="innerClass">"Keep inner class information" list</a></h2>
-This list determines what Zelix KlassMaster will do with any Inner Class attributes that may be present in your bytecode. 
+This list determines what EDZKM will do with any Inner Class attributes that may be present in your bytecode.
 It is these Inner Class attributes that make one class the inner class of another.
 <table border=1>
 <tr>
@@ -572,7 +572,7 @@ However, Inner Class attributes are used by some debuggers and by compilers.
 If you need to compile other classes against your obfuscated inner classes then you should select <b>true</b> or <b>if&nbsp;name&nbsp;not&nbsp;obfuscated</b>.
 
 <h2><a name="generics">"Keep generics information" list</a></h2>
-This list determines what Zelix KlassMaster will do with any generics information that may be present in your bytecode. 
+This list determines what EDZKM will do with any generics information that may be present in your bytecode.
 (Genericity was introduced with the JDK 1.5.0.)
 <table border=1>
 <tr>
@@ -606,7 +606,7 @@ However, generics information is used by some debuggers and by compilers.
 If you need to compile other classes against your obfuscated classes then you should select <b>true</b>.
 
 <h2><a name="localVariables">"Local variables table" list</a></h2>
-This list determines what Zelix KlassMaster will do with your local variable names.
+This list determines what EDZKM will do with your local variable names.
 Local variable names are optionally stored as debugging information in your class files.
 Note that the names that you give to your method parameters are local variable names.
 <p>
@@ -686,7 +686,7 @@ Many IDE's will preview a method's signature including its parameter names which
 The <code>keep visible parameters if name not obfuscated</code> and  <code>keep parameters if name not obfuscated</code> options assume that you would only want to do this for methods which have not been affected by Name Obfuscation.
 
 <h2><a name="lineNumbers">"Line number tables"</a></h2>
-This list determines what Zelix KlassMaster will do to the Line Number tables that may exist within your bytecode.
+This list determines what EDZKM will do to the Line Number tables that may exist within your bytecode.
 Line Number tables are optional structures that hold debugging information.
 They allow the JVM to determine which source file line number is associated with any particular compiled instruction.
 This information is used to display line numbers in stack traces.
@@ -705,7 +705,7 @@ This information is used to display line numbers in stack traces.
 delete
 </td>
 <td valign="top">
-This setting instructs Zelix KlassMaster to delete all Line Number table information. 
+This setting instructs EDZKM to delete all Line Number table information.
 It reduces the size of bytecode that contains Line Number tables but it means that stack traces produced by the bytecode cannot contain line numbers.
 </td>
 </tr>
@@ -714,9 +714,9 @@ It reduces the size of bytecode that contains Line Number tables but it means th
 scramble
 </td>
 <td valign="top">
-This setting instructs Zelix KlassMaster to scramble all Line Number table information.
+This setting instructs EDZKM to scramble all Line Number table information.
 There is no size reduction but the JVM will be able to produce stack traces containing line numbers. 
-However, because the line numbers will be scrambled, you would have to use a tool like the inbuilt Zelix KlassMaster Change Log Translate tool to convert them back to the original line numbers.
+However, because the line numbers will be scrambled, you would have to use a tool like the inbuilt EDZKM Change Log Translate tool to convert them back to the original line numbers.
 Most importantly, it would be very difficult for a decompiler to make use of the scrambled line number information to improve the quality of the source code it produces.
 </td>
 </tr>
@@ -725,7 +725,7 @@ Most importantly, it would be very difficult for a decompiler to make use of the
 keep
 </td>
 <td valign="top">
-This setting instructs Zelix KlassMaster to keep all Line Number table information in its original form.
+This setting instructs EDZKM to keep all Line Number table information in its original form.
 There is no size reduction and there is a risk that the original line number information could be used by a decompiler to improve the quality of the source code it produces.
 However, any stack trace line numbers will map directly to the original source code.
 </td>
@@ -733,23 +733,23 @@ However, any stack trace line numbers will map directly to the original source c
 </table>
 
 <h2><a name="obfuscateReferences">"Obfuscate References" box</a></h2>
-Select this box if you want Zelix KlassMaster to obfuscate certain field and/or method references by replacing them with Reflection API calls.
+Select this box if you want EDZKM to obfuscate certain field and/or method references by replacing them with Reflection API calls.
 This is called Reference Obfuscation.
 If you select this box then you will be asked to specify which field and/or method references you want to have obscured.
 <p>
 If you elect to use Reference Obfuscation then you should also consider selecing "normal" or "random" in the <a href="#parameterChanges">"Method parameter changes" list</a> so that it is harder to reverse.
 
 <h2><a name="autoReflection">"Auto reflection handling" box</a></h2>
-Select this box if you want Zelix KlassMaster to automatically handle Reflection API calls.
+Select this box if you want EDZKM to automatically handle Reflection API calls.
 <p>
 If you get warning messages saying that an "AutoReflection hash is vulnerable to brute force attack" then you should consider using the ZKM Script interface rather than the GUI.
 The ZKM Script "accessedByReflection" and/or "accessedByReflectionExclude" statements allow you to specify which classes, fields and methods should be mapped by AutoReflection.
 
 <h2><a name="parameterChanges">"Method parameter changes" list</a></h2>
-Select "normal", "random" or "flowObfuscate" from this list if you want to allow Zelix KlassMaster to add special additional parameters to some of your methods. 
+Select "normal", "random" or "flowObfuscate" from this list if you want to allow EDZKM to add special additional parameters to some of your methods.
 The "normal" & "random" options are only relevant if you are also using &quot;enhanced&quot; String Encryption or Reference Obfuscation.
 <p>
-If you allow Zelix KlassMaster to add additional method parameters then it can make its &quot;enhanced&quot; String Encryption and Reference Obfuscation much more difficult to reverse.
+If you allow EDZKM to add additional method parameters then it can make its &quot;enhanced&quot; String Encryption and Reference Obfuscation much more difficult to reverse.
 See <a href="#encrypt">"Encrypt String literals" list</a> and <a href="#obfuscateReferences">"Obfuscate References" box</a> above.
 <p>
 The disadvantage is that it interlinks your classes such that the obfuscated application must be released as a whole and will not be suitable for &quot;patching&quot; with changed subsets of the classes. 
@@ -768,7 +768,7 @@ The disadvantage is that it interlinks your classes such that the obfuscated app
 none
 </td>
 <td valign="top">
-This setting instructs Zelix KlassMaster to not change any method parameters.
+This setting instructs EDZKM to not change any method parameters.
 </td>
 </tr>
 <tr>
@@ -776,7 +776,7 @@ This setting instructs Zelix KlassMaster to not change any method parameters.
 normal
 </td>
 <td valign="top">
-This setting instructs Zelix KlassMaster to change any method parameters in a standard fashion.
+This setting instructs EDZKM to change any method parameters in a standard fashion.
 </td>
 </tr>
 <tr>
@@ -792,23 +792,23 @@ Same as "normal" but the additional parameters will be of a more random type and
 flowObfuscate
 </td>
 <td valign="top">
-Same as "random" but Zelix KlassMaster will also attempt to obfuscate the flow in the changed methods making use of the changed parameters. 
+Same as "random" but EDZKM will also attempt to obfuscate the flow in the changed methods making use of the changed parameters.
 This flow obfuscation would be in addition to any flow obfuscation specified in the <a href="#obfuscateFlow">"Obfuscate control flow" list</a>.
 </td>
 </tr>
 </table>
 
 <h2><a name="parameterObfuscation">"Method parameter obfuscation" box</a></h2>
-Select this box if you want Zelix KlassMaster to obfuscate method parameter lists so that there is just the single Object[] parameter. 
+Select this box if you want EDZKM to obfuscate method parameter lists so that there is just the single Object[] parameter.
 Note that only methods that will have their names obfuscated will be eligible for method parameter obfuscation.
 
 
 <h2><a name="keepBalanced">"Keep balanced locks" box</a></h2>
-Select this box if you want Zelix KlassMaster to maintain "structured locking".
+Select this box if you want EDZKM to maintain "structured locking".
 You should select this box if your classes will be used to generate bytecode for the Android ART verifier.
 
 <h2><a name="preverify">"Preverify" box</a></h2>
-Select this box if you want Zelix KlassMaster to preverify your classes.
+Select this box if you want EDZKM to preverify your classes.
 If any of your classes are Java 6 or better then you should select this box unless you know that they will not be run on a JVM.
 You don't need to select this box if your classes will be used only to generate bytecode for Android.
 

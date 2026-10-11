@@ -83,13 +83,13 @@ public class InclusionParametersDialog extends ParameterListDialog implements He
                 string2 = "*.* *";
             }
 
-            new FieldExcludeParameterDialog(this, "Zelix KlassMaster - Field Include Parameter", this.parseParameter(string2), 3, dialogCallback1);
+            new FieldExcludeParameterDialog(this, "EDZKM - Field Include Parameter", this.parseParameter(string2), 3, dialogCallback1);
         } else if (string.equals("2")) {
             if (string2 == null) {
                 string2 = "*.* *(*)";
             }
 
-            new MethodSpecifierDialog(this, "Zelix KlassMaster - Method Include Parameter", this.parseParameter(string2), 3, dialogCallback1);
+            new MethodSpecifierDialog(this, "EDZKM - Method Include Parameter", this.parseParameter(string2), 3, dialogCallback1);
         }
     }
 

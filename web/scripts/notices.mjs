@@ -7,7 +7,7 @@ const names = [
   "monaco-editor",
   "lucide-react",
 ];
-let result = "ZKM Web Workbench — frontend third-party notices\n\n";
+let result = "EDZKM Web Workbench — frontend third-party notices\n\n";
 for (const name of names) {
   const root = join("node_modules", name),
     pkg = JSON.parse(await readFile(join(root, "package.json"), "utf8"));

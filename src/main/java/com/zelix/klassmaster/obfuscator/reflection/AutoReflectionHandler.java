@@ -238,7 +238,7 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 + " : "
                                 + arrayList1.size()
                                 + " : Consider using ZKM Script 'accessedByReflection' statement to specify only those classes, fields and methods which are actually accessed by Reflection and for which the Reflection access has not been resolved by "
-                                + "Zelix KlassMaster"
+                                + "EDZKM"
                                 + "."
                                 + ""
                 );

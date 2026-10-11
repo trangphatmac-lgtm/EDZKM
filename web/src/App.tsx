@@ -295,7 +295,7 @@ export default function App() {
     return (
       <div className="connection-failure">
         <Layers size={40} />
-        <h1>ZKM Workbench</h1>
+        <h1>EDZKM Workbench</h1>
         <p>{failure}</p>
         <p>
           {t(
@@ -309,7 +309,7 @@ export default function App() {
     return (
       <div className="loading-page" style={{ height: "100vh" }}>
         <span className="spinner" />
-        {t("Connecting to ZKM…", "正在连接 ZKM…")}
+        {t("Connecting to EDZKM…", "正在连接 EDZKM…")}
       </div>
     );
   return (
@@ -346,7 +346,7 @@ export default function App() {
               <Layers size={25} />
             </div>
             <span>
-              ZKM<strong>WORKBENCH</strong>
+              EDZKM<strong>WORKBENCH</strong>
             </span>
             <small>27</small>
           </div>
@@ -413,7 +413,7 @@ export default function App() {
         <div className="workspace">
           <header className="topbar">
             <div className="breadcrumbs">
-              <span>{project?.name || "Zelix KlassMaster"}</span>
+              <span>{project?.name || "EDZKM"}</span>
               <span>/</span>
               <strong>
                 {t(
@@ -460,8 +460,8 @@ export default function App() {
                   if (
                     confirm(
                       t(
-                        "Stop all tasks and quit ZKM?",
-                        "停止全部任务并退出 ZKM？",
+                        "Stop all tasks and quit EDZKM?",
+                        "停止全部任务并退出 EDZKM？",
                       ),
                     )
                   )
@@ -605,7 +605,7 @@ export default function App() {
             <span>
               {t("Local processing", "本地处理")}
               <span>UTF-8</span>
-              <span>ZKM 27</span>
+              <span>EDZKM 27</span>
             </span>
           </footer>
         </div>{" "}

@@ -114,7 +114,7 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
             try {
                 oldClassName = this.translator.translateClassName(key);
             } catch (ZkmException zkmException) {
-                oldClassName = "ZKM ERROR (2): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
+                oldClassName = "EDZKM ERROR (2): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
             }
 
             return oldClassName;
@@ -134,7 +134,7 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
                     string2 = ZkmUtils.toQuotedListString(ZkmUtils.describeTempFileNames(this.classpathErrorPaths));
                 }
 
-                translatedStackTrace = "ZKM ERROR (1): \""
+                translatedStackTrace = "EDZKM ERROR (1): \""
                         + zkmException.getMessage()
                         + "\""
                         + JvmVersionMessages.LINE_SEPARATOR
@@ -182,7 +182,7 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
                 strings = ((java.lang.String[]) (arrayList.toArray(strings)));
                 return this.translator.getOriginalMethodName(key, keyValue, strings, keyArgument2);
             } catch (ZkmException zkmException) {
-                return "ZKM ERROR (5): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
+                return "EDZKM ERROR (5): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
             }
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
@@ -233,7 +233,7 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
             try {
                 return this.translator.getOriginalMethodName(key, keyArgument, strings, keyArgument2);
             } catch (ZkmException zkmException) {
-                return "ZKM ERROR (4): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
+                return "EDZKM ERROR (4): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
             }
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
@@ -260,7 +260,7 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
                 stringBuffer.append("]");
                 oldMethodSignatures = stringBuffer.toString();
             } catch (ZkmException zkmException) {
-                oldMethodSignatures = "ZKM ERROR (3): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
+                oldMethodSignatures = "EDZKM ERROR (3): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
             }
 
             return oldMethodSignatures;

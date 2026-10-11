@@ -145,7 +145,7 @@ export default function ProjectPage() {
           <div />
           <div />
           <Layers size={75} strokeWidth={1} />
-          <span>ZKM / 27</span>
+          <span>EDZKM / 27</span>
         </div>
       </div>
       <div className="quick-cards">

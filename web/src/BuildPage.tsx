@@ -373,8 +373,8 @@ export default function BuildPage() {
               />
               <p className="notice">
                 {t(
-                  "Preview runs redirect ZKM output to the run directory. Script execute commands keep their original behavior.",
-                  "试运行将 ZKM 输出重定向到运行目录；脚本 execute 命令保持原始行为。",
+                  "Preview runs redirect EDZKM output to the run directory. Script execute commands keep their original behavior.",
+                  "试运行将 EDZKM 输出重定向到运行目录；脚本 execute 命令保持原始行为。",
                 )}
               </p>
             </Section>

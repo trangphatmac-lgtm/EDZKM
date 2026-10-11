@@ -122,7 +122,7 @@ public class ProGuardTranslateDialog extends OwnedFrameDialogBase implements Act
     public boolean firstShow = true;
 
     public ProGuardTranslateDialog(ZkmMainWindow zkmMainWindow, UserPreferences userPreferences1) {
-        super(zkmMainWindow, "Zelix KlassMaster - ProGuard Configuration Translate");
+        super(zkmMainWindow, "EDZKM - ProGuard Configuration Translate");
         this.initPreferences(userPreferences1);
     }
 

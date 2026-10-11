@@ -28,6 +28,7 @@ import com.zelix.klassmaster.script.parser.ZkmScriptParser;
 import com.zelix.klassmaster.script.parser.ast.ZkmScriptASTInput;
 import com.zelix.klassmaster.ui.StartupDialogCallback;
 import com.zelix.klassmaster.ui.ZkmMainWindow;
+import com.zelix.klassmaster.ui.component.BrandingImages;
 import com.zelix.klassmaster.ui.component.SwingUtils;
 import com.zelix.klassmaster.ui.dialog.EvaluationLicenseDialog;
 import com.zelix.klassmaster.util.BooleanFlag;
@@ -136,16 +137,7 @@ public class KlassMaster extends LicenseDetails {
     }
 
     public static Image getLogoImage(Component component1) {
-        String string;
-        if (!SystemEnvironmentConstants.OS_NAME.equals("SunOS")
-                && !SystemEnvironmentConstants.OS_NAME.equals("Solaris")
-                && !SystemEnvironmentConstants.OS_NAME.equals("HP_UX")) {
-            string = "2.gif";
-        } else {
-            string = "3.gif";
-        }
-
-        return component1.getToolkit().getImage(HiddenOptionFlags.USER_PREFERENCES.getClass().getResource(string));
+        return BrandingImages.windowIcon();
     }
 
     public void printUsageAndFail() {
@@ -458,7 +450,7 @@ public class KlassMaster extends LicenseDetails {
 
     public void initBannerText() throws ZkmException, IOException {
         if (this.bannerTitle == null || this.bannerLines == null) {
-            String string = "Zelix KlassMaster" + EVALUATION_SUFFIX + " " + "27.0.0";
+            String string = "EDZKM" + EVALUATION_SUFFIX + " " + "27.0.0";
             Integer integer = 1;
             String licenseField = this.getLicenseField(30828586125445L, integer);
             this.bannerTitle = ZkmUtils.getBracketedTimestamp() + " " + string + (licenseField != null && !licenseField.equals("none") ? " - License #" + licenseField : "");
@@ -767,7 +759,7 @@ public class KlassMaster extends LicenseDetails {
 
     public void printUsage(PrintStream printStream) {
         printStream.println();
-        printStream.println("Usage: java -jar ZKM.jar [[-options] <scriptFileName>]");
+        printStream.println("Usage: java -jar zkm27.jar [[-options] <scriptFileName>]");
         printStream.println();
         printStream.println("Where <scriptFileName> is name of ZKM Script file to execute (non-GUI mode).");
         printStream.println();
@@ -953,7 +945,7 @@ public class KlassMaster extends LicenseDetails {
         long currentThreadId = ZkmUtils.getCurrentThreadId();
         if (activeInstanceId != -1L && currentThreadId != activeInstanceId) {
             throw new ZkmRuntimeException(
-                    "Zelix KlassMaster is not thread safe. If you need to run more than once instance concurrently then each instance must run in a separate JVM with different 'java.io.tmpdir' System property values."
+                    "EDZKM is not thread safe. If you need to run more than once instance concurrently then each instance must run in a separate JVM with different 'java.io.tmpdir' System property values."
             );
         }
 
@@ -1063,7 +1055,7 @@ public class KlassMaster extends LicenseDetails {
         LoadLogWriterTask loadLogWriterTask = new LoadLogWriterTask(this, consoleMessageReporter, classRepository1, noOpCallback, printWriter1);
         new Thread(loadLogWriterTask).start();
         ZkmMainWindow zkmMainWindow = new ZkmMainWindow(
-                "Zelix KlassMaster" + EVALUATION_SUFFIX, classRepository1, observableHolder1, zkmClasspath, printWriter1, HiddenOptionFlags.USER_PREFERENCES
+                "EDZKM" + EVALUATION_SUFFIX, classRepository1, observableHolder1, zkmClasspath, printWriter1, HiddenOptionFlags.USER_PREFERENCES
         );
         classRepository1.addObserver(zkmMainWindow);
         Dimension dimension = zkmMainWindow.getSize();
@@ -1233,7 +1225,7 @@ public class KlassMaster extends LicenseDetails {
             printWriter.println(
                     ZkmUtils.getBracketedTimestamp() + " Default directory set to '" + scriptEnvironment1.getDefaultDirectory().getAbsolutePath() + "'"
             );
-            printWriter.println(ZkmUtils.getBracketedTimestamp() + ' ' + "Zelix KlassMaster" + " log file is '" + logFileNameValue + "'");
+            printWriter.println(ZkmUtils.getBracketedTimestamp() + ' ' + "EDZKM" + " log file is '" + logFileNameValue + "'");
         }
 
         if (verboseArgument) {

@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ZKM extends ZkmApiBase {
     public static void main(String[] stringArray) {
+        System.setProperty("apple.awt.application.name", "EDZKM");
         if (com.zelix.klassmaster.web.WebLauncher.launchIfRequested(stringArray)) return;
         legacyMain(stringArray);
     }

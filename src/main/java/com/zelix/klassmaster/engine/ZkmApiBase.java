@@ -79,15 +79,15 @@ public abstract class ZkmApiBase extends StartupErrorMessages {
 
     public static void run(File file1, String string, File file2, String string1, String string2) throws ZkmException, IOException {
         if (file2 == null) {
-            throw new IllegalArgumentException("ZKM: Null output JAR file.");
+            throw new IllegalArgumentException("EDZKM: Null output JAR file.");
         }
 
         if (string == null || string.length() <= 4) {
-            throw new IllegalArgumentException("ZKM: Invalid input JAR file name: '" + string + "'");
+            throw new IllegalArgumentException("EDZKM: Invalid input JAR file name: '" + string + "'");
         }
 
         if (string2 == null || string2.length() < 1) {
-            throw new IllegalArgumentException("ZKM: Invalid project directory name: '" + string2 + "'");
+            throw new IllegalArgumentException("EDZKM: Invalid project directory name: '" + string2 + "'");
         }
 
         if (string1 != null && string1.length() != 0) {
@@ -100,30 +100,30 @@ public abstract class ZkmApiBase extends StartupErrorMessages {
                 Object[] objects = new Object[]{file1, string, file2, string1, string2, Boolean.TRUE, observableHolder};
                 constructor.newInstance(objects);
             } catch (InstantiationException instantiationException) {
-                System.err.println("ZKM: Unexpected Error (A). Please report the problem to bugs2@zelix.com");
+                System.err.println("EDZKM: Unexpected Error (A). Please report the problem to bugs2@zelix.com");
             } catch (IllegalAccessException illegalAccessException) {
-                System.err.println("ZKM: Unexpected Error (B). Please report the problem to bugs2@zelix.com");
+                System.err.println("EDZKM: Unexpected Error (B). Please report the problem to bugs2@zelix.com");
             } catch (NoClassDefFoundError noClassDefFoundError) {
-                System.err.println("ZKM: Classpath is: \"" + string1 + "\"");
-                System.err.println("ZKM: Unexpected Error (C). Please report the problem to bugs2@zelix.com");
+                System.err.println("EDZKM: Classpath is: \"" + string1 + "\"");
+                System.err.println("EDZKM: Unexpected Error (C). Please report the problem to bugs2@zelix.com");
             } catch (InvocationTargetException invocationTargetException) {
                 Throwable throwable = invocationTargetException.getTargetException();
                 if (throwable instanceof LicenseExpiredException) {
-                    System.err.println("ERROR: ZKM Evaluation has expired: " + throwable.getMessage());
+                    System.err.println("ERROR: EDZKM Evaluation has expired: " + throwable.getMessage());
                 } else if (throwable instanceof ZkmRuntimeException) {
-                    System.err.println("ZKM: " + throwable.getMessage());
+                    System.err.println("EDZKM: " + throwable.getMessage());
                 } else {
                     printTrimmedStackTrace(throwable, (PrintWriter) observableHolder.getValue());
-                    System.err.println("ZKM: Unexpected Error (D). Please report the problem to bugs2@zelix.com");
+                    System.err.println("EDZKM: Unexpected Error (D). Please report the problem to bugs2@zelix.com");
                 }
             } catch (NoSuchMethodException noSuchMethodException) {
-                System.err.println("ZKM: Unexpected Error (E). Please report the problem to bugs2@zelix.com");
+                System.err.println("EDZKM: Unexpected Error (E). Please report the problem to bugs2@zelix.com");
             } catch (Throwable throwable1) {
                 printTrimmedStackTrace(throwable1, (PrintWriter) observableHolder.getValue());
-                System.err.println("ZKM: Unexpected Error (F). Please report the problem to bugs2@zelix.com");
+                System.err.println("EDZKM: Unexpected Error (F). Please report the problem to bugs2@zelix.com");
             }
         } else {
-            throw new IllegalArgumentException("ZKM: Invalid classpath: '" + string1 + "'");
+            throw new IllegalArgumentException("EDZKM: Invalid classpath: '" + string1 + "'");
         }
     }
 
@@ -314,42 +314,42 @@ public abstract class ZkmApiBase extends StartupErrorMessages {
 
             Class.forName(ZkmUtils.decodeHiddenString()).getConstructor(class1).newInstance(objects);
         } catch (InstantiationException instantiationException) {
-            throw new Exception("ZKM: Unexpected Error (A). Please report the problem to bugs2@zelix.com");
+            throw new Exception("EDZKM: Unexpected Error (A). Please report the problem to bugs2@zelix.com");
         } catch (IllegalAccessException illegalAccessException) {
-            throw new Exception("ZKM: Unexpected Error (B). Please report the problem to bugs2@zelix.com");
+            throw new Exception("EDZKM: Unexpected Error (B). Please report the problem to bugs2@zelix.com");
         } catch (NoClassDefFoundError noClassDefFoundError) {
             String property = System.getProperty("java.class.path");
-            System.err.println("ZKM: Classpath is: \"" + property + "\"");
+            System.err.println("EDZKM: Classpath is: \"" + property + "\"");
             if (property != null) {
                 if (property.indexOf("ZKM.jar") == -1) {
-                    throw new Exception("ZKM: Startup Error. (Check that ZKM.jar is in classpath) (1)");
+                    throw new Exception("EDZKM: Startup Error. (Check that ZKM.jar is in classpath) (1)");
                 }
 
                 if (isZkmJarInClasspath(property)) {
-                    throw new Exception("ZKM: Unexpected Error (C). Please report the problem to bugs2@zelix.com");
+                    throw new Exception("EDZKM: Unexpected Error (C). Please report the problem to bugs2@zelix.com");
                 }
 
-                throw new Exception("ZKM: Startup Error. (ZKM.jar not found where specified by classpath)");
+                throw new Exception("EDZKM: Startup Error. (ZKM.jar not found where specified by classpath)");
             }
 
-            throw new Exception("ZKM: Startup Error. (Check that ZKM.jar is in classpath) (2)");
+            throw new Exception("EDZKM: Startup Error. (Check that ZKM.jar is in classpath) (2)");
         } catch (InvocationTargetException invocationTargetException) {
             Throwable throwable = invocationTargetException.getTargetException();
             if (throwable instanceof LicenseExpiredException) {
-                throw new Exception("ZKM Evaluation has expired: " + throwable.getMessage());
+                throw new Exception("EDZKM Evaluation has expired: " + throwable.getMessage());
             }
 
             if (throwable instanceof ZkmRuntimeException) {
-                throw new Exception("ZKM: " + throwable.getMessage());
+                throw new Exception("EDZKM: " + throwable.getMessage());
             }
 
             printTrimmedStackTrace(throwable, (PrintWriter) observableHolder.getValue());
-            throw new Exception("ZKM: Unexpected Error (D). Please report the problem to bugs2@zelix.com");
+            throw new Exception("EDZKM: Unexpected Error (D). Please report the problem to bugs2@zelix.com");
         } catch (NoSuchMethodException noSuchMethodException) {
-            throw new Exception("ZKM: Unexpected Error (E). Please report the problem to bugs2@zelix.com");
+            throw new Exception("EDZKM: Unexpected Error (E). Please report the problem to bugs2@zelix.com");
         } catch (Throwable throwable1) {
             printTrimmedStackTrace(throwable1, (PrintWriter) observableHolder.getValue());
-            throw new Exception("ZKM: Unexpected Error (F). Please report the problem to bugs2@zelix.com");
+            throw new Exception("EDZKM: Unexpected Error (F). Please report the problem to bugs2@zelix.com");
         } finally {
             PrintStream printStream3;
             if (savedStderr != null) {

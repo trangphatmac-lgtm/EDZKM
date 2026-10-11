@@ -83,7 +83,7 @@ public class TrimExclusionsDialog extends TrimExclusionsBaseDialog {
             DialogCallback dialogCallback1
     ) throws ZkmException, IOException {
         super(
-                "Zelix KlassMaster - Trim Exclusions", zkmMainWindow, list1, trimExcludeSettings1, classRepository1, trimOptions1, scriptEnvironment1, dialogCallback1
+                "EDZKM - Trim Exclusions", zkmMainWindow, list1, trimExcludeSettings1, classRepository1, trimOptions1, scriptEnvironment1, dialogCallback1
         );
     }
 }

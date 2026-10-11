@@ -141,7 +141,7 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
                 return false;
             }
 
-            if (this.clashesWithLogFile(file1.getAbsolutePath(), this.scriptEnvironment.getLogFileName(), "ZKM log", this.logFileInTxt)) {
+            if (this.clashesWithLogFile(file1.getAbsolutePath(), this.scriptEnvironment.getLogFileName(), "EDZKM log", this.logFileInTxt)) {
                 return false;
             }
 
@@ -170,7 +170,7 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
                     this.logFileOutTxt.selectAll();
                     SwingUtils.requestFocusOnEdt(this.logFileOutTxt);
                     return false;
-                } else if (this.clashesWithLogFile(file2.getAbsolutePath(), this.scriptEnvironment.getLogFileName(), "ZKM log", this.logFileOutTxt)) {
+                } else if (this.clashesWithLogFile(file2.getAbsolutePath(), this.scriptEnvironment.getLogFileName(), "EDZKM log", this.logFileOutTxt)) {
                     return false;
                 } else {
                     return (!(this.clashesWithLogFile(file2.getAbsolutePath(), this.scriptEnvironment.getTrimLogFileName(), "trim log", this.logFileOutTxt)) && (this.openOutputChangeLog(string1)));

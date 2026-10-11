@@ -286,7 +286,7 @@ public class ClassHierarchy extends ChangeObservable {
                 + " by '"
                 + classFileBase1.getDisplayLocationName()
                 + "' which has not been opened inside "
-                + "Zelix KlassMaster"
+                + "EDZKM"
                 + ". '"
                 + classFileBase1.getDottedClassName()
                 + "' is then extended or implemented by '"

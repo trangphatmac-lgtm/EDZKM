@@ -220,7 +220,7 @@ public abstract class NameModifiersEditPanel extends ObservingPanel implements P
                         this.mainWindow,
                         "Opened classes not useable",
                         "Opened classes not useable for the reason shown below.",
-                        this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "Zelix KlassMaster" + " classpath or class file selections."
+                        this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "EDZKM" + " classpath or class file selections."
                 );
                 return;
             }
@@ -259,7 +259,7 @@ public abstract class NameModifiersEditPanel extends ObservingPanel implements P
                         this.mainWindow,
                         "Opened classes not useable",
                         "Opened classes not useable for the reason shown below.",
-                        this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "Zelix KlassMaster" + " classpath or class file selections."
+                        this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "EDZKM" + " classpath or class file selections."
                 );
                 return;
             }

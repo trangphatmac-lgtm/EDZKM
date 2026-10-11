@@ -158,7 +158,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                     this,
                     "Opened classes not useable",
                     "Opened classes not useable for the reason shown below.",
-                    this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "Zelix KlassMaster" + " classpath or class file selections."
+                    this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "EDZKM" + " classpath or class file selections."
             );
         } else if (this.classRepository.isClasspathChanged()) {
             new MessageBoxDialog(this, "Classpath changed", "Classpath has been changed but the classes have not been reopened. You must reopen the classes. (G)");
@@ -210,7 +210,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         this.setEnabled(false);
         new OpenClassesDialog(
                 this,
-                "Zelix KlassMaster - Open Classes",
+                "EDZKM - Open Classes",
                 "OK",
                 true,
                 this.userPreferences.getOpenClassesDirectory(),
@@ -486,7 +486,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                     this,
                     "Opened classes not useable",
                     "Opened classes not useable for the reason shown below.",
-                    this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "Zelix KlassMaster" + " classpath or class file selections."
+                    this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "EDZKM" + " classpath or class file selections."
             );
         } else if (this.classRepository.isClasspathChanged()) {
             new MessageBoxDialog(this, "Classpath changed", "Classpath has been changed but the classes have not been reopened. You must reopen the classes. (H)");
@@ -551,7 +551,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
     public void showInitialHelper() throws ZkmException, IOException {
         if (!this.classpath.isRuntimeClassesFound()) {
             String classpathValue = this.classpath.getClasspath();
-            String classpathValue2 = FileSelectorDialog.selectBootstrapArchive(this, "Zelix KlassMaster - Select Java Bootstrap classes path", classpathValue);
+            String classpathValue2 = FileSelectorDialog.selectBootstrapArchive(this, "EDZKM - Select Java Bootstrap classes path", classpathValue);
             if (classpathValue2 != null && ZkmClasspath.isRuntimeArchivePath(classpathValue2)) {
                 this.userPreferences.setClasspath(classpathValue2);
                 this.userPreferences.savePreferences();
@@ -597,7 +597,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                     this,
                     "Opened classes not useable",
                     "Opened classes not useable for the reason shown below.",
-                    this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "Zelix KlassMaster" + " classpath or class file selections."
+                    this.classRepository.getOpenErrorMessage() + " : Please adjust your " + "EDZKM" + " classpath or class file selections."
             );
             this.setBusy(false);
         } else {
@@ -736,7 +736,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         this.buildHelperItem.setAccelerator(KeyStroke.getKeyStroke(85, menuShortcutKeyMaskValue6));
         this.buildHelperItem.addActionListener(mainMenuActionForwarder);
         jMenu1.add(this.buildHelperItem);
-        this.scriptHelperItem = new JMenuItem("ZKM Script Helper...");
+        this.scriptHelperItem = new JMenuItem("EDZKM Script Helper...");
         this.scriptHelperItem.setMnemonic('z');
         int menuShortcutKeyMaskValue7 = menuShortcutKeyMask;
         this.scriptHelperItem.setAccelerator(KeyStroke.getKeyStroke(90, menuShortcutKeyMaskValue7));
@@ -778,7 +778,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         this.browserHelpItem.setAccelerator(KeyStroke.getKeyStroke(82, menuShortcutKeyMaskValue12));
         this.browserHelpItem.addActionListener(mainMenuActionForwarder);
         jMenu3.add(this.browserHelpItem);
-        this.overviewHelpItem = new JMenuItem("ZKM Overview");
+        this.overviewHelpItem = new JMenuItem("EDZKM Overview");
         this.overviewHelpItem.setMnemonic('k');
         int menuShortcutKeyMaskValue13 = menuShortcutKeyMask;
         this.overviewHelpItem.setAccelerator(KeyStroke.getKeyStroke(75, menuShortcutKeyMaskValue13));
@@ -1001,7 +1001,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                 this.setBusy(true);
                 new SaveClassesDialog(
                         this,
-                        "Zelix KlassMaster - Select a Folder",
+                        "EDZKM - Select a Folder",
                         "OK",
                         GuiResources.getTooltipText("SAVE_CLASSES"),
                         this.userPreferences.getLastSavePath(),
@@ -1042,7 +1042,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
             } else if (jMenuItem == this.classpathItem) {
                 this.showClasspathDialog();
             } else if (jMenuItem == this.aboutItem) {
-                new AboutDialog(this, "About Zelix KlassMaster" + KlassMaster.EVALUATION_SUFFIX, this.classRepository.getApplication());
+                new AboutDialog(this, "About EDZKM" + KlassMaster.EVALUATION_SUFFIX, this.classRepository.getApplication());
             } else if (jMenuItem == this.browserHelpItem) {
                 GuiResources.showHelpTopic("016");
             } else if (jMenuItem == this.overviewHelpItem) {

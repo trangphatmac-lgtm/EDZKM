@@ -65,7 +65,7 @@ public class ExcludeHelperDialog extends PackageExclusionWizardDialog implements
             ScriptEnvironment scriptEnvironment1,
             DialogCallback dialogCallback1
     ) throws ZkmException, IOException {
-        super("ZKM Script Helper - \"exclude\" Statement", zkmMainWindow, exclusionWizardSettings, rootPackageNode1, vector, scriptEnvironment1, dialogCallback1);
+        super("EDZKM Script Helper - \"exclude\" Statement", zkmMainWindow, exclusionWizardSettings, rootPackageNode1, vector, scriptEnvironment1, dialogCallback1);
     }
 
     @Override

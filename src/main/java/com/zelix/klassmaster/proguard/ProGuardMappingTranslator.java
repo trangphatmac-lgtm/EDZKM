@@ -125,7 +125,7 @@ public class ProGuardMappingTranslator {
         stringBuilder.append("// Translated from '");
         stringBuilder.append(this.mappingFileName);
         stringBuilder.append("' by ");
-        stringBuilder.append("Zelix KlassMaster");
+        stringBuilder.append("EDZKM");
         stringBuilder.append(' ');
         stringBuilder.append("version 27.0.0");
         stringBuilder.append(' ');

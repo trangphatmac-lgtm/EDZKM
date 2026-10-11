@@ -14,7 +14,7 @@ Contents:
 <h2><a name="Overview">Overview</a></h2>
 Reflection API calls such as <code>Class.forName(String)</code> can cause problems for obfuscators. If a class, field or method is being accessed by name using the Reflection API and the class, field or method name is obfuscated then, if not appropriately handled, the API call would be broken.
 <p>
-Zelix KlassMaster<sup><font size=-2>TM</font></sup> can automatically handle  simple Reflection API calls.  It detects the calls and analyzes the source of the String parameter that specifies the class, field or method name.  If the ultimate source of the name is a String literal then Zelix KlassMaster will automatically change the value of the String literal to match the obfuscated class, field or method name. However, if Zelix KlassMaster cannot successfully analyze and automatically deal with a reflection API call then it reports the call in the pane above this one.  It reports 
+EDZKM can automatically handle  simple Reflection API calls.  It detects the calls and analyzes the source of the String parameter that specifies the class, field or method name.  If the ultimate source of the name is a String literal then EDZKM will automatically change the value of the String literal to match the obfuscated class, field or method name. However, if EDZKM cannot successfully analyze and automatically deal with a reflection API call then it reports the call in the pane above this one.  It reports
 <ul>
 <li>the name of your class containing the Reflection API call
 <li>the signature of your method containing the Reflection API call

@@ -8,7 +8,7 @@ public abstract class NameMatchingSpecifierNode extends ComplexSpecifierNode imp
         return ((QualifiedNameMatcher) this.jjtGetChild(0)).matchesName(string);
     }
 
-    public NameMatchingSpecifierNode(int ba) {
-        super(ba);
+    public NameMatchingSpecifierNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 }

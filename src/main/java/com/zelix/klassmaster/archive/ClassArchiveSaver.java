@@ -140,13 +140,13 @@ public class ClassArchiveSaver {
 
                 while (enumeration.hasMoreElements()) {
                     ZipEntry zipEntry1 = (ZipEntry) enumeration.nextElement();
-                    String string = zipEntry1.getName();
-                    String string1 = string.toUpperCase();
-                    if (string1.startsWith("META-INF/services/".toUpperCase()) && string.length() > ServiceProviderFile.SERVICES_PREFIX_LENGTH) {
+                    String name = zipEntry1.getName();
+                    String string1 = name.toUpperCase();
+                    if (string1.startsWith("META-INF/services/".toUpperCase()) && name.length() > ServiceProviderFile.SERVICES_PREFIX_LENGTH) {
                         try {
                             ServiceProviderFile serviceProviderFile = new ServiceProviderFile(zipFile1, zipEntry1);
-                            String string2 = serviceProviderFile.getServiceName();
-                            listMultimap1.addValue(string2, serviceProviderFile);
+                            String serviceName = serviceProviderFile.getServiceName();
+                            listMultimap1.addValue(serviceName, serviceProviderFile);
                         } catch (IOException iOException) {
                             this.messageReporter.reportError("FILE ERROR:", "Error reading service provider in '" + zipFile1.getName() + "' : " + iOException);
                         }
@@ -158,7 +158,7 @@ public class ClassArchiveSaver {
 
             while (iterator1.hasNext()) {
                 Entry entry2 = (Entry) iterator1.next();
-                String string3 = (String) entry2.getKey();
+                String key = (String) entry2.getKey();
                 List list2 = (List) entry2.getValue();
                 Iterator iterator2 = list2.iterator();
                 ServiceProviderFile serviceProviderFile1 = (ServiceProviderFile) iterator2.next();
@@ -168,25 +168,16 @@ public class ClassArchiveSaver {
                     serviceProviderFile1.mergeFrom(serviceProviderFile2);
                 }
 
-                String string4 = serviceProviderFile1.getTranslatedEntryName(this.classRenameMap);
-                if (!this.isAlreadyWritten(zipOutputStream1, string4)) {
-                    boolean bl = this.compressionMode == 1 || this.compressionMode == 3 && serviceProviderFile1.isCompressed();
+                String translatedEntryName = serviceProviderFile1.getTranslatedEntryName(this.classRenameMap);
+                if (!this.isAlreadyWritten(zipOutputStream1, translatedEntryName)) {
+                    boolean compressed = this.compressionMode == 1 || this.compressionMode == 3 && serviceProviderFile1.isCompressed();
 
-                    SetMultiMap setMultiMap;
-                    label86:
-                    {
-                        try {
-                            serviceProviderFile1.writeTranslated(zipOutputStream1, this.entryTimestamp, this.classRenameMap, bl);
-                        } catch (IOException iOException1) {
-                            this.messageReporter.reportError("FILE ERROR:", "Error writing service provider 'META-INF/services/" + string3 + "' : " + iOException1);
-                            setMultiMap = this.writtenEntries;
-                            break label86;
-                        }
-
-                        setMultiMap = this.writtenEntries;
+                    try {
+                        serviceProviderFile1.writeTranslated(zipOutputStream1, this.entryTimestamp, this.classRenameMap, compressed);
+                    } catch (IOException exception) {
+                        this.messageReporter.reportError("FILE ERROR:", "Error writing service provider 'META-INF/services/" + key + "' : " + exception);
                     }
-
-                    setMultiMap.addValue(zipOutputStream1, string4);
+                    this.writtenEntries.addValue(zipOutputStream1, translatedEntryName);
                 }
             }
         }
@@ -194,8 +185,8 @@ public class ClassArchiveSaver {
 
     public void writeGeneratedClasses(SetValuedMap setValuedMap, Map map1, SetMultiMap setMultiMap, SetMultiMap setMultiMap1) throws ZkmException, IOException {
         if (!setValuedMap.isEmpty()) {
-            int ba = this.sourceArchives.length;
-            TwoKeySetMultiMap twoKeySetMultiMap = new TwoKeySetMultiMap(ba, setValuedMap.getKeyCount(), 7);
+            int lengthValue = this.sourceArchives.length;
+            TwoKeySetMultiMap twoKeySetMultiMap = new TwoKeySetMultiMap(lengthValue, setValuedMap.getKeyCount(), 7);
             HashSet hashSet = ZkmUtils.createHashSet();
             Iterator iterator = setValuedMap.keySet().iterator();
 
@@ -228,18 +219,18 @@ public class ClassArchiveSaver {
                 if (!this.saveToSingleArchive) {
                     this.writeClassFile(programClass4, (byte[]) null);
                 } else {
-                    String string7 = this.getClassEntryName(programClass4);
+                    String classEntryName = this.getClassEntryName(programClass4);
                     boolean bl1 = this.compressionMode == 1;
-                    if (!this.isAlreadyWritten(this.singleArchiveOutput, string7)) {
+                    if (!this.isAlreadyWritten(this.singleArchiveOutput, classEntryName)) {
                         ZipOutputStream zipOutputStream4 = this.singleArchiveOutput;
                         File file4 = this.saveLocation;
-                        String string9 = this.saveLocation.getAbsolutePath();
+                        String absolutePath = this.saveLocation.getAbsolutePath();
                         Boolean boolean1 = bl1;
-                        String string4 = string9;
+                        String absolutePathValue = absolutePath;
                         File file1 = file4;
                         ZipOutputStream zipOutputStream1 = zipOutputStream4;
-                        String string3 = string7;
-                        this.writeClassEntry(programClass4, (byte[]) null, string3, zipOutputStream1, file1, string4, boolean1);
+                        String classEntryNameValue = classEntryName;
+                        this.writeClassEntry(programClass4, (byte[]) null, classEntryNameValue, zipOutputStream1, file1, absolutePathValue, boolean1);
                     }
                 }
             }
@@ -265,13 +256,13 @@ public class ClassArchiveSaver {
                         String string2 = string1 + programClass3.getClassName() + ".class";
                         if (!this.isAlreadyWritten(zipOutputStream3, string2)) {
                             File file3 = (File) this.outputArchiveFiles.get(sourceArchive2);
-                            String string8 = zipFile1.getName();
+                            String name = zipFile1.getName();
                             Boolean boolean2 = bl;
-                            String string6 = string8;
+                            String nameValue = name;
                             File file2 = file3;
                             ZipOutputStream zipOutputStream2 = zipOutputStream3;
-                            String string5 = string2;
-                            this.writeClassEntry(programClass3, (byte[]) null, string5, zipOutputStream2, file2, string6, boolean2);
+                            String entryName = string2;
+                            this.writeClassEntry(programClass3, (byte[]) null, entryName, zipOutputStream2, file2, nameValue, boolean2);
                             this.recordEntryPath(string2, sourceArchive2, setMultiMap, setMultiMap1);
                         }
                     }
@@ -330,11 +321,11 @@ public class ClassArchiveSaver {
             }
         }
 
-        int ba = 0;
-        int bc = ba;
+        int classeIndex = 0;
+        int classeIndexValue = classeIndex;
 
-        for (ProgramClass[] programClass3 = this.classes; bc < programClass3.length; programClass3 = this.classes) {
-            ProgramClass programClass1 = this.classes[ba];
+        for (ProgramClass[] programClass3 = this.classes; classeIndexValue < programClass3.length; programClass3 = this.classes) {
+            ProgramClass programClass1 = this.classes[classeIndex];
             String string4 = (String) ZkmUtils.mapOrSelf(programClass1.getClassName(), this.originalClassNames);
             string4 = ZkmUtils.slashesToDots(string4);
             if (!programClass1.isGenerated()) {
@@ -346,18 +337,18 @@ public class ClassArchiveSaver {
                     ZipEntry zipEntry1 = null;
                     ZipOutputStream zipOutputStream1 = null;
                     File file1 = null;
-                    boolean bl = false;
+                    boolean boolean1Value = false;
                     if (!inputFileLocation.isArchiveEntry()) {
                         if (inputFileLocation.isPlainFile() && this.saveToSingleArchive) {
                             zipOutputStream1 = this.singleArchiveOutput;
-                            bl = this.compressionMode == 1;
+                            boolean1Value = this.compressionMode == 1;
                         }
                     } else {
                         SourceArchive sourceArchive1 = inputFileLocation.getSourceArchive();
                         zipFile1 = (ZipFile) this.openZipFiles.get(sourceArchive1);
                         zipEntry1 = zipFile1.getEntry(inputFileLocation.getName());
                         zipOutputStream1 = (ZipOutputStream) this.archiveOutputStreams.get(sourceArchive1);
-                        bl = this.compressionMode == 1 || this.compressionMode == 3 && zipEntry1.getMethod() == 8;
+                        boolean1Value = this.compressionMode == 1 || this.compressionMode == 3 && zipEntry1.getMethod() == 8;
                         file1 = (File) this.outputArchiveFiles.get(sourceArchive1);
                     }
 
@@ -375,7 +366,7 @@ public class ClassArchiveSaver {
                             if (zipOutputStream1 == null) {
                                 this.copyUnchangedClassFile(programClass1, inputFileLocation.getName());
                             } else if (!this.isAlreadyWritten(zipOutputStream1, zipEntry1.getName())) {
-                                this.copyZipEntry(zipFile1, zipEntry1, zipOutputStream1, bl);
+                                this.copyZipEntry(zipFile1, zipEntry1, zipOutputStream1, boolean1Value);
                                 setMultiMap.addValue(zipOutputStream1, zipEntry1.getName());
                                 if (programClass1.hasVersionedVariants()) {
                                     List list3 = programClass1.getVersionedVariants();
@@ -385,22 +376,22 @@ public class ClassArchiveSaver {
                                         ClassFileBase classFileBase1 = (ClassFileBase) iterator2.next();
                                         InputFileLocation inputFileLocation2 = classFileBase1.getInputLocation();
                                         ZipEntry zipEntry2 = zipFile1.getEntry(inputFileLocation2.getName());
-                                        this.copyZipEntry(zipFile1, zipEntry2, zipOutputStream1, bl);
+                                        this.copyZipEntry(zipFile1, zipEntry2, zipOutputStream1, boolean1Value);
                                         setMultiMap.addValue(zipOutputStream1, zipEntry2.getName());
                                     }
                                 }
                             }
                         } else if (this.saveToSingleArchive) {
-                            String string5 = this.getClassEntryName(programClass1);
-                            if (!this.isAlreadyWritten(zipOutputStream1, string5)) {
-                                this.writeFileEntry(inputFileLocation.getName(), string5, zipOutputStream1, bl);
+                            String classEntryName = this.getClassEntryName(programClass1);
+                            if (!this.isAlreadyWritten(zipOutputStream1, classEntryName)) {
+                                this.writeFileEntry(inputFileLocation.getName(), classEntryName, zipOutputStream1, boolean1Value);
                             }
                         } else {
                             this.copyUnchangedClassFile(programClass1, inputFileLocation.getName());
                         }
                     } else {
                         if (bl1) {
-                            String string = this.fixedClassesExclusions.getBrokenReason(programClass1);
+                            String brokenReason = this.fixedClassesExclusions.getBrokenReason(programClass1);
                             this.scriptEnvironment
                                     .logError(
                                             "'Fixed' class '"
@@ -408,21 +399,21 @@ public class ClassArchiveSaver {
                                                     + "' NOT saved unchanged in spite of '"
                                                     + "ZKM_FIXED_TOTALLY_UNCHANGED"
                                                     + "' being set because : '"
-                                                    + string
+                                                    + brokenReason
                                                     + "'."
                                     );
                         }
 
-                        byte[] bb = (byte[]) map3.get(programClass1);
+                        byte[] classBytesValue = (byte[]) map3.get(programClass1);
                         if (!inputFileLocation.isPlainFile()) {
                             if (zipOutputStream1 != null) {
-                                String string6 = inputFileLocation.getName();
-                                String string2 = (String) map1.get(inputFileLocation);
-                                if (!this.isAlreadyWritten(zipOutputStream1, string2)) {
-                                    String string7 = zipFile1.getName();
-                                    Boolean boolean1 = bl;
-                                    this.writeClassEntry(programClass1, bb, string2, zipOutputStream1, file1, string7, boolean1);
-                                    setMultiMap.addValue(zipOutputStream1, string6);
+                                String name = inputFileLocation.getName();
+                                String entryName = (String) map1.get(inputFileLocation);
+                                if (!this.isAlreadyWritten(zipOutputStream1, entryName)) {
+                                    String nameValue = zipFile1.getName();
+                                    Boolean boolean1 = boolean1Value;
+                                    this.writeClassEntry(programClass1, classBytesValue, entryName, zipOutputStream1, file1, nameValue, boolean1);
+                                    setMultiMap.addValue(zipOutputStream1, name);
                                     if (programClass1.hasVersionedVariants()) {
                                         List list2 = programClass1.getVersionedVariants();
                                         Iterator iterator1 = list2.iterator();
@@ -430,34 +421,34 @@ public class ClassArchiveSaver {
                                         while (iterator1.hasNext()) {
                                             ClassFileBase classFileBase = (ClassFileBase) iterator1.next();
                                             InputFileLocation inputFileLocation1 = classFileBase.getInputLocation();
-                                            String string3 = (String) map1.get(inputFileLocation1);
+                                            String entryNameValue = (String) map1.get(inputFileLocation1);
                                             this.writeClassEntry(
-                                                    (ProgramClass) classFileBase, (byte[]) map3.get(classFileBase), string3, zipOutputStream1, file1, zipFile1.getName(), bl
+                                                    (ProgramClass) classFileBase, (byte[]) map3.get(classFileBase), entryNameValue, zipOutputStream1, file1, zipFile1.getName(), boolean1Value
                                             );
-                                            setMultiMap.addValue(zipOutputStream1, string3);
+                                            setMultiMap.addValue(zipOutputStream1, entryNameValue);
                                         }
                                     }
                                 }
                             } else {
-                                this.writeClassFile(this.classes[ba], bb);
+                                this.writeClassFile(this.classes[classeIndex], classBytesValue);
                             }
                         } else if (this.saveToSingleArchive) {
-                            String string1 = this.getClassEntryName(this.classes[ba]);
-                            if (!this.isAlreadyWritten(zipOutputStream1, string1)) {
-                                ProgramClass programClass2 = this.classes[ba];
+                            String classEntryNameValue = this.getClassEntryName(this.classes[classeIndex]);
+                            if (!this.isAlreadyWritten(zipOutputStream1, classEntryNameValue)) {
+                                ProgramClass programClass2 = this.classes[classeIndex];
                                 File file2 = this.saveLocation;
-                                String string8 = this.saveLocation.getAbsolutePath();
-                                Boolean boolean2 = bl;
-                                this.writeClassEntry(programClass2, bb, string1, zipOutputStream1, file2, string8, boolean2);
+                                String absolutePath = this.saveLocation.getAbsolutePath();
+                                Boolean boolean2 = boolean1Value;
+                                this.writeClassEntry(programClass2, classBytesValue, classEntryNameValue, zipOutputStream1, file2, absolutePath, boolean2);
                             }
                         } else {
-                            this.writeClassFile(this.classes[ba], bb);
+                            this.writeClassFile(this.classes[classeIndex], classBytesValue);
                         }
                     }
                 }
             }
 
-            bc = ++ba;
+            classeIndexValue = ++classeIndex;
         }
 
         this.writeGeneratedClasses(setValuedMap, map2, setMultiMap1, setMultiMap2);
@@ -468,9 +459,9 @@ public class ClassArchiveSaver {
     public void rewriteTextResourceFiles(InputFileLocation[] inputFileLocations, HashMap hashMap, boolean bl) throws ZkmException, IOException {
         if (inputFileLocations != null) {
             for (InputFileLocation inputFileLocation : inputFileLocations) {
-                String string = inputFileLocation.getQualifiedName();
+                String qualifiedName = inputFileLocation.getQualifiedName();
                 File file1 = inputFileLocation.getFile();
-                String string1 = inputFileLocation.getExpectedFinalSha256();
+                String expectedFinalSha256 = inputFileLocation.getExpectedFinalSha256();
                 MutableInt mutableInt = new MutableInt(0);
                 MutableInt mutableInt1 = new MutableInt(0);
                 MutableInt mutableInt2 = new MutableInt(Integer.MAX_VALUE);
@@ -516,7 +507,7 @@ public class ClassArchiveSaver {
                                 boolean bl1 = bl6;
                                 ObservableHolder observableHolder2 = observableHolder;
                                 EnumerableMap enumerableMap1 = enumerableMap;
-                                boolean bl2 = bl1;
+                                boolean compressed = bl1;
                                 ZipOutputStream zipOutputStream1 = zipOutputStream3;
                                 String string3 = string2;
                                 MutableInt mutableInt3 = mutableInt2;
@@ -524,7 +515,7 @@ public class ClassArchiveSaver {
                                 MutableInt mutableInt5 = mutableInt;
                                 File file3 = file1;
                                 new TextResourceRewriter(
-                                        file3, mutableInt5, mutableInt4, mutableInt3, string3, zipOutputStream1, bl2, enumerableMap1, observableHolder2
+                                        file3, mutableInt5, mutableInt4, mutableInt3, string3, zipOutputStream1, compressed, enumerableMap1, observableHolder2
                                 );
                             } else {
                                 boolean bl5;
@@ -539,7 +530,7 @@ public class ClassArchiveSaver {
 
                                 ObservableHolder observableHolder3 = observableHolder1;
                                 EnumerableMap enumerableMap2 = enumerableMap3;
-                                boolean bl3 = bl5;
+                                boolean compressedValue = bl5;
                                 ZipOutputStream zipOutputStream2 = zipOutputStream3;
                                 String string4 = string2;
                                 MutableInt mutableInt6 = mutableInt2;
@@ -547,16 +538,16 @@ public class ClassArchiveSaver {
                                 MutableInt mutableInt8 = mutableInt;
                                 File file4 = file1;
                                 new PropertiesFileRewriter(
-                                        file4, mutableInt8, mutableInt7, mutableInt6, string4, zipOutputStream2, bl3, enumerableMap2, observableHolder3
+                                        file4, mutableInt8, mutableInt7, mutableInt6, string4, zipOutputStream2, compressedValue, enumerableMap2, observableHolder3
                                 );
                             }
 
-                            if (string1 != null) {
+                            if (expectedFinalSha256 != null) {
                                 BufferedInputStream bufferedInputStream1 = new BufferedInputStream(new ByteArrayInputStream((byte[]) observableHolder1.getValue()));
                                 ScriptEnvironment scriptEnvironment1 = this.scriptEnvironment;
-                                String string5 = string1;
+                                String expectedFinalSha256Value = expectedFinalSha256;
                                 BufferedInputStream bufferedInputStream = bufferedInputStream1;
-                                this.verifyStreamSha256(file1, bufferedInputStream, string5, scriptEnvironment1);
+                                this.verifyStreamSha256(file1, bufferedInputStream, expectedFinalSha256Value, scriptEnvironment1);
                             }
 
                             this.writtenEntries.addValue(zipOutputStream3, inputFileLocation.getName());
@@ -598,8 +589,8 @@ public class ClassArchiveSaver {
                                 );
                     }
 
-                    if (string1 != null) {
-                        this.verifyFileSha256(file1, file2, string1, this.scriptEnvironment);
+                    if (expectedFinalSha256 != null) {
+                        this.verifyFileSha256(file1, file2, expectedFinalSha256, this.scriptEnvironment);
                         bl4 = false;
                     } else {
                         bl4 = false;
@@ -612,7 +603,7 @@ public class ClassArchiveSaver {
                                     "Error reading or writing "
                                             + (ZkmFileUtils.isYamlFileName(inputFileLocation.getName()) ? "YAML" : "PROPERTIES")
                                             + " file '"
-                                            + string
+                                            + qualifiedName
                                             + "' : "
                                             + iOException4
                             );
@@ -676,7 +667,7 @@ public class ClassArchiveSaver {
         StringTokenizer stringTokenizer = new StringTokenizer(string1, "/");
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (boolean bl = stringTokenizer.hasMoreElements(); bl; bl = stringTokenizer.hasMoreElements()) {
+        for (boolean moreElements = stringTokenizer.hasMoreElements(); moreElements; moreElements = stringTokenizer.hasMoreElements()) {
             stringBuilder.append(stringTokenizer.nextToken());
             String string2 = this.saveLocation.getAbsolutePath() + FILE_SEPARATOR + stringBuilder.toString();
             File file1 = new File(string2);
@@ -701,10 +692,10 @@ public class ClassArchiveSaver {
 
     public void copyZipEntry(ZipFile zipFile1, ZipEntry zipEntry1, ZipOutputStream zipOutputStream1, Boolean boolean1) throws ZkmException, IOException {
         try {
-            String string = zipEntry1.getName();
+            String name = zipEntry1.getName();
             InputStream inputStream1 = zipFile1.getInputStream(zipEntry1);
-            new ZipEntryWriter(zipOutputStream1, string, boolean1, inputStream1, (int) zipEntry1.getSize()).writeEntry(this.entryTimestamp);
-            this.writtenEntries.addValue(zipOutputStream1, string);
+            new ZipEntryWriter(zipOutputStream1, name, boolean1, inputStream1, (int) zipEntry1.getSize()).writeEntry(this.entryTimestamp);
+            this.writtenEntries.addValue(zipOutputStream1, name);
         } catch (IOException iOException) {
             this.messageReporter
                     .reportError(
@@ -745,10 +736,10 @@ public class ClassArchiveSaver {
                 try {
                     EnumerableMap enumerableMap = this.packageRenameMap;
                     EnumerableMap enumerableMap1 = this.classRenameMap;
-                    String string1 = sourceArchive1.getFilePath();
+                    String filePath = sourceArchive1.getFilePath();
                     MessageReporter messageReporter1 = this.messageReporter;
-                    String string = string1;
-                    jadFile1.writeTranslatedJad(file2, enumerableMap, enumerableMap1, string, messageReporter1);
+                    String filePathValue = filePath;
+                    jadFile1.writeTranslatedJad(file2, enumerableMap, enumerableMap1, filePathValue, messageReporter1);
                 } catch (ZkmException zkmException) {
                     this.messageReporter.reportError("JAD FILE ERROR:", "JAD file write error : " + zkmException.getMessage());
                 }
@@ -772,100 +763,36 @@ public class ClassArchiveSaver {
 
     
     
-    public final void writeClassFile(ProgramClass programClass1, byte[] ba) throws ZkmException, IOException {
-        DataOutputStream dataOutputStream = null;
-        String string = this.prepareClassFilePath(programClass1);
-        boolean bl = false ;
-
-        label121:
-        {
-            label122:
-            {
-                label123:
-                {
-                    try {
-                        bl = true;
-                        if (this.scriptEnvironment.isVerbose()) {
-                            this.scriptEnvironment.getLogWriter().println("\tClass file '" + programClass1.getLocationName() + "' saved as '" + string + "'.");
-                        }
-
-                        FileOutputStream fileOutputStream = new FileOutputStream(string);
-                        dataOutputStream = new DataOutputStream(new BufferedOutputStream(fileOutputStream, 2048));
-                        if (ba != null) {
-                            dataOutputStream.write(ba);
-                            bl = false;
-                        } else {
-                            programClass1.writeClassFile(dataOutputStream, this.commonSuperTypeResolver, this.classMemberLookup, this.scriptEnvironment);
-                            bl = false;
-                        }
-                        break label121;
-                    } catch (IOException iOException5) {
-                        this.messageReporter.reportError("FILE ERROR:", "Saving " + iOException5.getMessage());
-                        bl = false;
-                    } catch (MethodAnalysisException methodAnalysisException) {
-                        this.messageReporter
-                                .reportError(
-                                        "ERROR:",
-                                        "Method '"
-                                                + methodAnalysisException.getMethodName()
-                                                + "' could not be analyzed (H). Consider excluding it from Flow and Exception Obfuscation."
-                                );
-                        bl = false;
-                        break label123;
-                    } catch (ZkmProcessingException zkmProcessingException) {
-                        this.messageReporter.reportError("ERROR:", zkmProcessingException.getMessage());
-                        bl = false;
-                        break label122;
-                    } finally {
-                        if (bl) {
-                            if (dataOutputStream != null) {
-                                try {
-                                    dataOutputStream.close();
-                                } catch (IOException iOException) {
-                                }
-                            }
-                        }
-                    }
-
-                    if (dataOutputStream != null) {
-                        try {
-                            dataOutputStream.close();
-                        } catch (IOException iOException3) {
-                        }
-
-                        return;
-                    }
-
-                    return;
-                }
-
-                if (dataOutputStream != null) {
-                    try {
-                        dataOutputStream.close();
-                    } catch (IOException iOException2) {
-                    }
-
-                    return;
-                }
-
-                return;
-            }
-
-            if (dataOutputStream != null) {
-                try {
-                    dataOutputStream.close();
-                } catch (IOException iOException1) {
-                }
-
-                return;
-            }
-
-            return;
-        }
-
+    public final void writeClassFile(ProgramClass programClass, byte[] classBytes) throws ZkmException, IOException {
+        DataOutputStream output = null;
+        String outputPath = this.prepareClassFilePath(programClass);
         try {
-            dataOutputStream.close();
-        } catch (IOException iOException4) {
+            if (this.scriptEnvironment.isVerbose()) {
+                this.scriptEnvironment.getLogWriter().println("\tClass file '" + programClass.getLocationName() + "' saved as '" + outputPath + "'.");
+            }
+            FileOutputStream fileOutput = new FileOutputStream(outputPath);
+            output = new DataOutputStream(new BufferedOutputStream(fileOutput, 2048));
+            if (classBytes != null) {
+                output.write(classBytes);
+            } else {
+                programClass.writeClassFile(output, this.commonSuperTypeResolver, this.classMemberLookup, this.scriptEnvironment);
+            }
+        } catch (IOException exception) {
+            this.messageReporter.reportError("FILE ERROR:", "Saving " + exception.getMessage());
+        } catch (MethodAnalysisException exception) {
+            this.messageReporter.reportError(
+                    "ERROR:", "Method '" + exception.getMethodName()
+                            + "' could not be analyzed (H). Consider excluding it from Flow and Exception Obfuscation."
+            );
+        } catch (ZkmProcessingException exception) {
+            this.messageReporter.reportError("ERROR:", exception.getMessage());
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException exception) {
+                }
+            }
         }
     }
 
@@ -900,19 +827,19 @@ public class ClassArchiveSaver {
 
         while (enumeration.hasMoreElements()) {
             ZipEntry zipEntry1 = (ZipEntry) enumeration.nextElement();
-            String string = zipEntry1.getName();
+            String name = zipEntry1.getName();
             if (zipEntry1.isDirectory()) {
-                hashSet1.add(string);
+                hashSet1.add(name);
             } else {
-                int ba = string.lastIndexOf("/");
+                int ba = name.lastIndexOf("/");
                 if (ba > -1) {
-                    String string1 = string.substring(0, ba + 1);
-                    if (string.toLowerCase().endsWith(".class")) {
-                        if (set1 != null && set1.contains(string)) {
-                            hashMap.put(string1, string);
+                    String key = name.substring(0, ba + 1);
+                    if (name.toLowerCase().endsWith(".class")) {
+                        if (set1 != null && set1.contains(name)) {
+                            hashMap.put(key, name);
                         }
                     } else {
-                        hashMap.put(string1, string);
+                        hashMap.put(key, name);
                     }
                 }
             }
@@ -947,42 +874,42 @@ public class ClassArchiveSaver {
     }
 
     public void openArchives() throws ZkmException, IOException {
-        int ba = 0;
+        int sourceArchiveIndex = 0;
         int bc = 0;
 
         for (SourceArchive[] sourceArchives1 = this.sourceArchives; bc < sourceArchives1.length; sourceArchives1 = this.sourceArchives) {
-            if (this.sourceArchives[ba].isTopLevel()) {
-                this.topLevelArchives.add(this.sourceArchives[ba]);
+            if (this.sourceArchives[sourceArchiveIndex].isTopLevel()) {
+                this.topLevelArchives.add(this.sourceArchives[sourceArchiveIndex]);
             }
 
-            if (this.skippedNestedArchives == null || !this.skippedNestedArchives.contains(this.sourceArchives[ba])) {
-                String string = this.sourceArchives[ba].getFilePath();
+            if (this.skippedNestedArchives == null || !this.skippedNestedArchives.contains(this.sourceArchives[sourceArchiveIndex])) {
+                String filePath = this.sourceArchives[sourceArchiveIndex].getFilePath();
 
                 try {
-                    ArchiveZipFile archiveZipFile = new ArchiveZipFile(string);
-                    this.openZipFiles.put(this.sourceArchives[ba], archiveZipFile);
+                    ArchiveZipFile archiveZipFile = new ArchiveZipFile(filePath);
+                    this.openZipFiles.put(this.sourceArchives[sourceArchiveIndex], archiveZipFile);
                 } catch (IOException iOException2) {
-                    if (string.equals(this.sourceArchives[ba].getQualifiedPath())) {
+                    if (filePath.equals(this.sourceArchives[sourceArchiveIndex].getQualifiedPath())) {
                         this.scriptEnvironment
                                 .logSeriousError_v(
-                                        "Couldn't open '" + string + "' as an archive file. : " + iOException2.getMessage() + " : Please check if it is corrupt."
+                                        "Couldn't open '" + filePath + "' as an archive file. : " + iOException2.getMessage() + " : Please check if it is corrupt."
                                 );
                     } else {
                         this.scriptEnvironment
                                 .logSeriousError_v(
                                         "Couldn't open '"
-                                                + string
+                                                + filePath
                                                 + "' as an archive file. : "
                                                 + iOException2.getMessage()
                                                 + " : Temporary copy of "
-                                                + this.sourceArchives[ba].getQualifiedPath()
+                                                + this.sourceArchives[sourceArchiveIndex].getQualifiedPath()
                                                 + " : Please check if the original is corrupt."
                                 );
                     }
                 }
             }
 
-            bc = ++ba;
+            bc = ++sourceArchiveIndex;
         }
 
         HashMap hashMap = ZkmUtils.createHashMap();
@@ -993,10 +920,10 @@ public class ClassArchiveSaver {
             File file1;
             String string1;
             if (sourceArchive1.isTopLevel()) {
-                String string3 = sourceArchive1.getName();
+                String name = sourceArchive1.getName();
                 if (this.hasExplicitSaveTarget(sourceArchive1)) {
                     file1 = (File) this.archiveSaveTargets.get(sourceArchive1);
-                    String string2 = file1.getAbsolutePath();
+                    String absolutePath = file1.getAbsolutePath();
                     string1 = file1.getName();
                     if (this.scriptEnvironment.isVerbose()) {
                         this.scriptEnvironment
@@ -1004,16 +931,16 @@ public class ClassArchiveSaver {
                                 .println("\tArchive file '" + sourceArchive1.getName() + "' saved to '" + file1.getAbsolutePath() + "'.");
                     }
 
-                    this.registerOutputArchivePath(string2, sourceArchive1, hashMap, "A");
+                    this.registerOutputArchivePath(absolutePath, sourceArchive1, hashMap, "A");
                 } else if (this.saveToSingleArchive) {
                     file1 = this.saveLocation;
                     this.saveLocation.getAbsolutePath();
                     string1 = this.saveLocation.getName();
                 } else {
-                    String string4 = this.saveLocation.getAbsolutePath() + FILE_SEPARATOR + string3.substring(string3.lastIndexOf(FILE_SEPARATOR) + 1);
-                    file1 = new File(string4);
+                    String key = this.saveLocation.getAbsolutePath() + FILE_SEPARATOR + name.substring(name.lastIndexOf(FILE_SEPARATOR) + 1);
+                    file1 = new File(key);
                     string1 = file1.getName();
-                    this.registerOutputArchivePath(string4, sourceArchive1, hashMap, "B");
+                    this.registerOutputArchivePath(key, sourceArchive1, hashMap, "B");
                 }
 
                 this.outputArchiveFiles.put(sourceArchive1, file1);
@@ -1028,9 +955,9 @@ public class ClassArchiveSaver {
                     if (this.hasExplicitSaveTarget(sourceArchive2)) {
                         string1 = sourceArchive1.getDisplayPath();
                     } else if (this.saveToSingleArchive) {
-                        String string5 = sourceArchive1.getDisplayPath();
-                        int bb = string5.indexOf("!");
-                        string1 = this.saveLocation.getName() + string5.substring(bb);
+                        String displayPath = sourceArchive1.getDisplayPath();
+                        int beginIndex = displayPath.indexOf("!");
+                        string1 = this.saveLocation.getName() + displayPath.substring(beginIndex);
                     } else {
                         string1 = sourceArchive1.getDisplayPath();
                     }
@@ -1076,7 +1003,7 @@ public class ClassArchiveSaver {
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
             SourceArchive sourceArchive1 = (SourceArchive) entry.getKey();
-            String string = sourceArchive1.getName();
+            String name = sourceArchive1.getName();
             ZipFile zipFile1 = (ZipFile) entry.getValue();
             ZipOutputStream zipOutputStream1 = (ZipOutputStream) this.archiveOutputStreams.get(sourceArchive1);
             if (zipOutputStream1 != null) {
@@ -1095,11 +1022,11 @@ public class ClassArchiveSaver {
 
                 while (enumeration.hasMoreElements()) {
                     ZipEntry zipEntry1 = (ZipEntry) enumeration.nextElement();
-                    String string1 = zipEntry1.getName();
+                    String nameValue = zipEntry1.getName();
                     boolean bl1 = this.compressionMode == 1 || this.compressionMode == 3 && zipEntry1.getMethod() == 8;
                     if (this.isNestedArchive(zipFile1, zipEntry1, this.messageReporter)) {
-                        if (this.filteredOutEntries == null || !this.filteredOutEntries.containsKeys(sourceArchive1, string1)) {
-                            SourceArchive sourceArchive2 = sourceArchive1.findNestedArchive(string1);
+                        if (this.filteredOutEntries == null || !this.filteredOutEntries.containsKeys(sourceArchive1, nameValue)) {
+                            SourceArchive sourceArchive2 = sourceArchive1.findNestedArchive(nameValue);
                             if (this.skippedNestedArchives != null && this.skippedNestedArchives.contains(sourceArchive2)) {
                                 try {
                                     InputStream inputStream1 = null;
@@ -1107,23 +1034,23 @@ public class ClassArchiveSaver {
                                     try {
                                         inputStream1 = zipFile1.getInputStream(zipEntry1);
                                         if (inputStream1 != null) {
-                                            if (!this.checkDuplicateEntry(zipOutputStream1, string1, false)) {
-                                                ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, string1, bl1, inputStream1, (int) zipEntry1.getSize());
+                                            if (!this.checkDuplicateEntry(zipOutputStream1, nameValue, false)) {
+                                                ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, nameValue, bl1, inputStream1, (int) zipEntry1.getSize());
                                                 if (HiddenOptionFlags.PRESERVE_ZIP_ENTRY_TIMES) {
                                                     zipEntryWriter.writeEntry(zipEntry1.getTime());
                                                 } else {
                                                     zipEntryWriter.writeEntry(this.entryTimestamp);
                                                 }
 
-                                                this.writtenEntries.addValue(zipOutputStream1, string1);
+                                                this.writtenEntries.addValue(zipOutputStream1, nameValue);
                                             }
                                         } else {
                                             this.scriptEnvironment
                                                     .logWarning(
                                                             "File Error: Couldn't copy '"
-                                                                    + string1
+                                                                    + nameValue
                                                                     + "' from '"
-                                                                    + string
+                                                                    + name
                                                                     + "' to new archive because the entry appears to be corrupt (A)"
                                                     );
                                         }
@@ -1138,37 +1065,37 @@ public class ClassArchiveSaver {
                                 } catch (IOException iOException5) {
                                     this.messageReporter
                                             .reportError(
-                                                    "FILE ERROR:", "Couldn't copy '" + string1 + "' from '" + string + "' to new archive (A) : " + iOException5.getMessage()
+                                                    "FILE ERROR:", "Couldn't copy '" + nameValue + "' from '" + name + "' to new archive (A) : " + iOException5.getMessage()
                                             );
                                 }
                             }
                         }
-                    } else if ((!string1.endsWith(".class") || this.skippedClassFiles != null && this.skippedClassFiles.containsKeys(sourceArchive1, string1))
+                    } else if ((!nameValue.endsWith(".class") || this.skippedClassFiles != null && this.skippedClassFiles.containsKeys(sourceArchive1, nameValue))
                             && !this.isNestedArchive(zipFile1, zipEntry1, this.messageReporter)) {
-                        String string2 = string1.toUpperCase();
-                        String string3 = string1.toLowerCase();
-                        this.statusHolder.setValue("Saving " + string1);
+                        String string2 = nameValue.toUpperCase();
+                        String string3 = nameValue.toLowerCase();
+                        this.statusHolder.setValue("Saving " + nameValue);
                         if (zipEntry1.isDirectory()) {
                             if (HiddenOptionFlags.COPY_ARCHIVE_DIRECTORIES) {
-                                String string4 = this.resourcePathTranslator.translateResourcePath(string1);
-                                if (string4.length() > 0 && hashSet.add(string4) && (!bl || set1 == null || !set1.contains(string1))) {
-                                    if (this.isAlreadyWritten(zipOutputStream1, string4)) {
+                                String entryName = this.resourcePathTranslator.translateResourcePath(nameValue);
+                                if (entryName.length() > 0 && hashSet.add(entryName) && (!bl || set1 == null || !set1.contains(nameValue))) {
+                                    if (this.isAlreadyWritten(zipOutputStream1, entryName)) {
                                         continue;
                                     }
 
-                                    this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, string1, string4, bl1);
+                                    this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, nameValue, entryName, bl1);
                                 }
                             }
-                        } else if ((this.filteredOutEntries == null || !this.filteredOutEntries.containsKeys(sourceArchive1, string1))
+                        } else if ((this.filteredOutEntries == null || !this.filteredOutEntries.containsKeys(sourceArchive1, nameValue))
                                 && !string2.equals("META-INF/MANIFEST.MF")
-                                && (!string2.startsWith("META-INF/services/".toUpperCase()) || string1.length() <= ServiceProviderFile.SERVICES_PREFIX_LENGTH)) {
-                            if (this.skippedXmlFiles != null && this.skippedXmlFiles.containsKeys(sourceArchive1, string1)) {
-                                if (this.isAlreadyWritten(zipOutputStream1, string1)) {
+                                && (!string2.startsWith("META-INF/services/".toUpperCase()) || nameValue.length() <= ServiceProviderFile.SERVICES_PREFIX_LENGTH)) {
+                            if (this.skippedXmlFiles != null && this.skippedXmlFiles.containsKeys(sourceArchive1, nameValue)) {
+                                if (this.isAlreadyWritten(zipOutputStream1, nameValue)) {
                                     continue;
                                 }
 
                                 Boolean boolean1 = true;
-                                this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, string1, string1, bl1, boolean1);
+                                this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, nameValue, nameValue, bl1, boolean1);
                             } else if (ZkmFileUtils.isXmlFileName(string3)) {
                                 try {
                                     ObservableHolder observableHolder = new ObservableHolder();
@@ -1184,9 +1111,9 @@ public class ClassArchiveSaver {
                                                 .reportError(
                                                         "FILE ERROR:",
                                                         "OutOfMemoryError reading or writing '"
-                                                                + string1
+                                                                + nameValue
                                                                 + "' in '"
-                                                                + string
+                                                                + name
                                                                 + "' : "
                                                                 + zipEntry1.getSize()
                                                                 + " : "
@@ -1195,7 +1122,7 @@ public class ClassArchiveSaver {
                                         throw outOfMemoryError;
                                     }
 
-                                    if (this.isAlreadyWritten(zipOutputStream1, this.resourcePathTranslator.translateResourcePath(string1))) {
+                                    if (this.isAlreadyWritten(zipOutputStream1, this.resourcePathTranslator.translateResourcePath(nameValue))) {
                                         continue;
                                     }
 
@@ -1226,22 +1153,22 @@ public class ClassArchiveSaver {
                                             bl1,
                                             this.removeXmlComments
                                     );
-                                    this.writtenEntries.addValue(zipOutputStream1, string1);
+                                    this.writtenEntries.addValue(zipOutputStream1, nameValue);
                                 } catch (ZkmException zkmException1) {
-                                    this.messageReporter.reportError("FILE ERROR:", "Invalid '" + string1 + "' in '" + string + "' : " + zkmException1.getMessage());
+                                    this.messageReporter.reportError("FILE ERROR:", "Invalid '" + nameValue + "' in '" + name + "' : " + zkmException1.getMessage());
                                 } catch (IOException iOException4) {
-                                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing '" + string1 + "' in '" + string + "' : " + iOException4);
+                                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing '" + nameValue + "' in '" + name + "' : " + iOException4);
                                 }
-                            } else if (this.skippedYamlFiles != null && this.skippedYamlFiles.containsKeys(sourceArchive1, string1)) {
-                                if (this.isAlreadyWritten(zipOutputStream1, string1)) {
+                            } else if (this.skippedYamlFiles != null && this.skippedYamlFiles.containsKeys(sourceArchive1, nameValue)) {
+                                if (this.isAlreadyWritten(zipOutputStream1, nameValue)) {
                                     continue;
                                 }
 
                                 Boolean boolean2 = true;
-                                this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, string1, string1, bl1, boolean2);
+                                this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, nameValue, nameValue, bl1, boolean2);
                             } else if (ZkmFileUtils.isYamlFileName(string3)) {
                                 try {
-                                    if (this.isAlreadyWritten(zipOutputStream1, this.resourcePathTranslator.translateResourcePath(string1))) {
+                                    if (this.isAlreadyWritten(zipOutputStream1, this.resourcePathTranslator.translateResourcePath(nameValue))) {
                                         continue;
                                     }
 
@@ -1269,20 +1196,20 @@ public class ClassArchiveSaver {
                                             bl1,
                                             this.classRenameMap
                                     );
-                                    this.writtenEntries.addValue(zipOutputStream1, string1);
+                                    this.writtenEntries.addValue(zipOutputStream1, nameValue);
                                 } catch (IOException iOException2) {
-                                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing '" + string1 + "' in '" + string + "' : " + iOException2);
+                                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing '" + nameValue + "' in '" + name + "' : " + iOException2);
                                 }
-                            } else if (this.skippedPropertiesFiles != null && this.skippedPropertiesFiles.containsKeys(sourceArchive1, string1)) {
-                                if (this.isAlreadyWritten(zipOutputStream1, string1)) {
+                            } else if (this.skippedPropertiesFiles != null && this.skippedPropertiesFiles.containsKeys(sourceArchive1, nameValue)) {
+                                if (this.isAlreadyWritten(zipOutputStream1, nameValue)) {
                                     continue;
                                 }
 
                                 Boolean boolean3 = true;
-                                this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, string1, string1, bl1, boolean3);
+                                this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, nameValue, nameValue, bl1, boolean3);
                             } else if (ZkmFileUtils.isPropertiesFileName(string3)) {
                                 try {
-                                    if (this.isAlreadyWritten(zipOutputStream1, this.resourcePathTranslator.translateResourcePath(string1))) {
+                                    if (this.isAlreadyWritten(zipOutputStream1, this.resourcePathTranslator.translateResourcePath(nameValue))) {
                                         continue;
                                     }
 
@@ -1315,11 +1242,11 @@ public class ClassArchiveSaver {
                                             this.classRenameMap,
                                             new ObservableHolder()
                                     );
-                                    this.writtenEntries.addValue(zipOutputStream1, string1);
+                                    this.writtenEntries.addValue(zipOutputStream1, nameValue);
                                 } catch (IOException iOException1) {
-                                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing '" + string1 + "' in '" + string + "' : " + iOException1);
+                                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing '" + nameValue + "' in '" + name + "' : " + iOException1);
                                 }
-                            } else if (string1.equalsIgnoreCase("META-INF/INDEX.LIST")) {
+                            } else if (nameValue.equalsIgnoreCase("META-INF/INDEX.LIST")) {
                                 try {
                                     JarIndexListRewriter jarIndexListRewriter = new JarIndexListRewriter(sourceArchive1, zipFile1, zipEntry1);
                                     if (this.isAlreadyWritten(zipOutputStream1, "META-INF/INDEX.LIST")) {
@@ -1330,28 +1257,28 @@ public class ClassArchiveSaver {
                                     this.writtenEntries.addValue(zipOutputStream1, "META-INF/INDEX.LIST");
                                 } catch (ZkmException zkmException) {
                                     this.messageReporter
-                                            .reportError("FILE ERROR:", "Invalid INDEX.LIST file '" + string1 + "' in '" + string + "' : " + zkmException.getMessage());
+                                            .reportError("FILE ERROR:", "Invalid INDEX.LIST file '" + nameValue + "' in '" + name + "' : " + zkmException.getMessage());
                                 } catch (IOException iOException3) {
                                     this.messageReporter
-                                            .reportError("FILE ERROR:", "Error reading or writing INDEX.LIST file '" + string1 + "' in '" + string + "' : " + iOException3);
+                                            .reportError("FILE ERROR:", "Error reading or writing INDEX.LIST file '" + nameValue + "' in '" + name + "' : " + iOException3);
                                 }
                             } else if (!string2.startsWith("META-INF/")
                                     || !string2.endsWith(".SF") && !string2.endsWith(".DSA") && !string2.endsWith(".RSA") && !string2.endsWith(".PGP")) {
-                                String string6;
-                                if (this.skippedClassFiles != null && this.skippedClassFiles.containsKeys(sourceArchive1, string1)) {
-                                    string6 = string1;
+                                String nameValue2;
+                                if (this.skippedClassFiles != null && this.skippedClassFiles.containsKeys(sourceArchive1, nameValue)) {
+                                    nameValue2 = nameValue;
                                 } else {
-                                    string6 = this.resourcePathTranslator.translateResourcePath(string1);
+                                    nameValue2 = this.resourcePathTranslator.translateResourcePath(nameValue);
                                 }
 
-                                if (this.isAlreadyWritten(zipOutputStream1, string6)) {
+                                if (this.isAlreadyWritten(zipOutputStream1, nameValue2)) {
                                     continue;
                                 }
 
-                                this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, string1, string6, bl1);
+                                this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, nameValue, nameValue2, bl1);
                             } else if (string2.endsWith(".SF")) {
                                 this.scriptEnvironment
-                                        .logWarning("File '" + string + "' appears to have been signed. Signature data removed. You must re-sign AFTER obfuscation.");
+                                        .logWarning("File '" + name + "' appears to have been signed. Signature data removed. You must re-sign AFTER obfuscation.");
                             }
                         }
 
@@ -1363,7 +1290,7 @@ public class ClassArchiveSaver {
     }
 
     public void copyRenamedEntry(
-            ZipFile zipFile1, ZipEntry zipEntry1, ZipOutputStream zipOutputStream1, String string, String string1, Boolean boolean1, boolean bl
+            ZipFile zipFile1, ZipEntry zipEntry1, ZipOutputStream zipOutputStream1, String string, String entryName, Boolean boolean1, boolean bl
     ) throws ZkmException, IOException {
         try {
             InputStream inputStream1 = null;
@@ -1371,28 +1298,14 @@ public class ClassArchiveSaver {
             try {
                 inputStream1 = zipFile1.getInputStream(zipEntry1);
                 if (inputStream1 != null) {
-                    label67:
-                    {
-                        ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, string1, boolean1, inputStream1, (int) zipEntry1.getSize());
-                        ZipEntryWriter zipEntryWriter1;
-                        Long long1;
-                        if (HiddenOptionFlags.PRESERVE_ZIP_ENTRY_TIMES) {
-                            if (bl) {
-                                zipEntryWriter.writeEntry(zipEntry1.getTime());
-                                break label67;
-                            }
-
-                            zipEntryWriter1 = zipEntryWriter;
-                            long1 = this.entryTimestamp;
-                        } else {
-                            zipEntryWriter1 = zipEntryWriter;
-                            long1 = this.entryTimestamp;
-                        }
-
-                        zipEntryWriter1.writeEntry(long1);
+                    ZipEntryWriter entryWriter = new ZipEntryWriter(zipOutputStream1, entryName, boolean1, inputStream1, (int) zipEntry1.getSize());
+                    if (HiddenOptionFlags.PRESERVE_ZIP_ENTRY_TIMES && bl) {
+                        entryWriter.writeEntry(zipEntry1.getTime());
+                    } else {
+                        entryWriter.writeEntry(this.entryTimestamp);
                     }
 
-                    this.writtenEntries.addValue(zipOutputStream1, string1);
+                    this.writtenEntries.addValue(zipOutputStream1, entryName);
                 } else {
                     this.scriptEnvironment
                             .logWarning(
@@ -1422,15 +1335,15 @@ public class ClassArchiveSaver {
 
         String[] strings = new String[list1.size()];
 
-        for (int i = 0; i < list1.size(); i++) {
-            strings[i] = ((ProgramClass) list1.get(i)).getDisplayLocationName();
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            strings[elementIndex] = ((ProgramClass) list1.get(elementIndex)).getDisplayLocationName();
         }
 
         stringBuilder.append(ZkmUtils.toQuotedArrayString(strings));
         String[] strings1 = new String[list1.size()];
 
-        for (int i = 0; i < list1.size(); i++) {
-            strings1[i] = ((ProgramClass) list1.get(i)).getDottedClassName();
+        for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+            strings1[elementIndexValue] = ((ProgramClass) list1.get(elementIndexValue)).getDottedClassName();
         }
 
         stringBuilder.append(" will be saved to ");
@@ -1441,11 +1354,11 @@ public class ClassArchiveSaver {
     }
 
     public void collectArchiveEntryPaths(Map map1, ResourcePathTranslator resourcePathTranslator1, SetMultiMap setMultiMap, SetMultiMap setMultiMap1) throws IOException {
-        int ba = 0;
+        int classeIndex = 0;
         int bc = 0;
 
         for (ProgramClass[] programClass2 = this.classes; bc < programClass2.length; programClass2 = this.classes) {
-            ProgramClass programClass1 = this.classes[ba];
+            ProgramClass programClass1 = this.classes[classeIndex];
             Enumeration enumeration = programClass1.enumerateInputLocations();
 
             while (enumeration.hasMoreElements()) {
@@ -1457,7 +1370,7 @@ public class ClassArchiveSaver {
                 }
             }
 
-            bc = ++ba;
+            bc = ++classeIndex;
         }
 
         Iterator iterator = this.openZipFiles.entrySet().iterator();
@@ -1471,15 +1384,15 @@ public class ClassArchiveSaver {
             while (enumeration1.hasMoreElements()) {
                 ZipEntry zipEntry1 = (ZipEntry) enumeration1.nextElement();
                 if (!zipEntry1.isDirectory()) {
-                    String string1 = zipEntry1.getName();
-                    String string2 = string1.toUpperCase();
-                    if (!string1.toLowerCase().endsWith(".class") && !string2.startsWith("META-INF/")) {
-                        String string3 = resourcePathTranslator1.translateResourcePath(string1);
-                        int bb = string3.lastIndexOf("/");
-                        if (bb == -1) {
+                    String name = zipEntry1.getName();
+                    String string2 = name.toUpperCase();
+                    if (!name.toLowerCase().endsWith(".class") && !string2.startsWith("META-INF/")) {
+                        String string3 = resourcePathTranslator1.translateResourcePath(name);
+                        int endIndex = string3.lastIndexOf("/");
+                        if (endIndex == -1) {
                             setMultiMap.addValue(sourceArchive2, string3);
                         } else {
-                            String string4 = string3.substring(0, bb);
+                            String string4 = string3.substring(0, endIndex);
                             setMultiMap1.addValue(sourceArchive2, string4);
                         }
                     }
@@ -1489,24 +1402,24 @@ public class ClassArchiveSaver {
     }
 
     public void backupExistingFile(File file1) throws ZkmException, IOException {
-        String string = file1.getAbsolutePath();
+        String absolutePath = file1.getAbsolutePath();
 
         try {
-            String string1 = string + ".BACKUP";
+            String string1 = absolutePath + ".BACKUP";
             File file2 = new File(string1);
-            boolean bl2;
+            boolean renameTempOutputFile;
             if (file2.exists()) {
                 boolean bl = file2.delete();
                 if (!bl) {
                     throw new Exception("Could not delete '" + file2.getAbsolutePath() + "'");
                 }
 
-                bl2 = HiddenOptionFlags.RENAME_TEMP_OUTPUT_FILE;
+                renameTempOutputFile = HiddenOptionFlags.RENAME_TEMP_OUTPUT_FILE;
             } else {
-                bl2 = HiddenOptionFlags.RENAME_TEMP_OUTPUT_FILE;
+                renameTempOutputFile = HiddenOptionFlags.RENAME_TEMP_OUTPUT_FILE;
             }
 
-            if (bl2) {
+            if (renameTempOutputFile) {
                 boolean bl1 = file1.renameTo(file2);
                 if (!bl1) {
                     throw new Exception("Could not rename '" + file1.getAbsolutePath() + "' to '" + file2.getAbsolutePath() + "'");
@@ -1515,7 +1428,7 @@ public class ClassArchiveSaver {
                 this.scriptEnvironment
                         .logWarning(
                                 "File '"
-                                        + string
+                                        + absolutePath
                                         + "' already exists"
                                         + (this.saveToSingleArchive ? "" : " in '" + this.saveLocation.getAbsolutePath())
                                         + "'. Renaming to '"
@@ -1526,7 +1439,7 @@ public class ClassArchiveSaver {
         } catch (AssertionFailedException assertionFailedException) {
             throw assertionFailedException;
         } catch (Exception exception) {
-            this.messageReporter.reportError("FILE ERROR:", "Couldn't back up and recreate '" + string + "' : " + exception.getMessage());
+            this.messageReporter.reportError("FILE ERROR:", "Couldn't back up and recreate '" + absolutePath + "' : " + exception.getMessage());
         }
     }
 
@@ -1542,7 +1455,7 @@ public class ClassArchiveSaver {
     public void rewriteXmlFiles() throws ZkmException, IOException {
         if (this.xmlFileLocations != null) {
             for (InputFileLocation inputFileLocation : this.xmlFileLocations) {
-                String string = inputFileLocation.getQualifiedName();
+                String qualifiedName = inputFileLocation.getQualifiedName();
                 File file1 = inputFileLocation.getFile();
                 ObservableHolder observableHolder = new ObservableHolder();
                 MutableInt mutableInt = new MutableInt(0);
@@ -1552,7 +1465,7 @@ public class ClassArchiveSaver {
                 try {
                     String string1 = XmlResourceProcessor.readFileContent(file1, observableHolder, mutableInt, mutableInt1, mutableInt2);
                     XmlContentHandler xmlContentHandler = XmlConfigFileHandler.createUpdateHandler(
-                            string,
+                            qualifiedName,
                             string1,
                             this.classRenameMap,
                             this.originalClassNames,
@@ -1567,27 +1480,27 @@ public class ClassArchiveSaver {
                     if (this.saveToSingleArchive) {
                         ZipOutputStream zipOutputStream2 = this.singleArchiveOutput;
                         if (!this.isAlreadyWritten(zipOutputStream2, inputFileLocation.getName())) {
-                            String string4 = (String) observableHolder.getValue();
+                            String value = (String) observableHolder.getValue();
                             boolean bl2;
-                            boolean bl3;
+                            boolean removeXmlCommentsValue;
                             if (this.compressionMode == 1) {
                                 bl2 = true;
-                                bl3 = this.removeXmlComments;
+                                removeXmlCommentsValue = this.removeXmlComments;
                             } else {
                                 bl2 = false;
-                                bl3 = this.removeXmlComments;
+                                removeXmlCommentsValue = this.removeXmlComments;
                             }
 
-                            boolean bl = bl3;
-                            boolean bl1 = bl2;
+                            boolean removeXmlCommentsValue2 = removeXmlCommentsValue;
+                            boolean compressed = bl2;
                             XmlContentHandler xmlContentHandler1 = xmlContentHandler;
                             ZipOutputStream zipOutputStream1 = zipOutputStream2;
-                            String string3 = string4;
+                            String valueValue = value;
                             MutableInt mutableInt3 = mutableInt2;
                             MutableInt mutableInt4 = mutableInt1;
                             MutableInt mutableInt5 = mutableInt;
                             File file3 = file1;
-                            new XmlZipEntryRewriter(file3, mutableInt5, mutableInt4, mutableInt3, string3, zipOutputStream1, xmlContentHandler1, bl1, bl);
+                            new XmlZipEntryRewriter(file3, mutableInt5, mutableInt4, mutableInt3, valueValue, zipOutputStream1, xmlContentHandler1, compressed, removeXmlCommentsValue2);
                             this.writtenEntries.addValue(zipOutputStream2, inputFileLocation.getName());
                         }
                     } else {
@@ -1602,8 +1515,8 @@ public class ClassArchiveSaver {
                                 file1, mutableInt, mutableInt1, mutableInt2, (String) observableHolder.getValue(), file2, xmlContentHandler, this.removeXmlComments
                         );
                         if (inputFileLocation.getExpectedFinalSha256() != null) {
-                            String string2 = inputFileLocation.getExpectedFinalSha256();
-                            this.verifyFileSha256(file1, file2, string2, this.scriptEnvironment);
+                            String expectedFinalSha256 = inputFileLocation.getExpectedFinalSha256();
+                            this.verifyFileSha256(file1, file2, expectedFinalSha256, this.scriptEnvironment);
                         }
 
                         if (this.scriptEnvironment.isVerbose()) {
@@ -1625,9 +1538,9 @@ public class ClassArchiveSaver {
                         }
                     }
                 } catch (ZkmException zkmException) {
-                    this.messageReporter.reportError("FILE ERROR:", "Invalid XML file '" + string + "' : " + zkmException.getMessage());
+                    this.messageReporter.reportError("FILE ERROR:", "Invalid XML file '" + qualifiedName + "' : " + zkmException.getMessage());
                 } catch (IOException iOException) {
-                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing XML file '" + string + "' : " + iOException);
+                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing XML file '" + qualifiedName + "' : " + iOException);
                 }
             }
         }
@@ -1660,8 +1573,8 @@ public class ClassArchiveSaver {
                 zipOutputStream1.close();
                 File file1 = (File) this.outputArchiveFiles.get(sourceArchive1);
                 ZipEntry zipEntry1 = ((ZipFile) this.openZipFiles.get(sourceArchive2)).getEntry(sourceArchive1.getName());
-                boolean bl = this.compressionMode == 1 || this.compressionMode == 3 && zipEntry1.getMethod() == 8;
-                new ZipEntryWriter(zipOutputStream2, sourceArchive1.getName(), bl, file1).writeEntry(this.entryTimestamp);
+                boolean compressed = this.compressionMode == 1 || this.compressionMode == 3 && zipEntry1.getMethod() == 8;
+                new ZipEntryWriter(zipOutputStream2, sourceArchive1.getName(), compressed, file1).writeEntry(this.entryTimestamp);
                 this.writtenEntries.addValue(zipOutputStream1, sourceArchive1.getName());
             } catch (IOException iOException) {
                 this.messageReporter
@@ -1677,12 +1590,12 @@ public class ClassArchiveSaver {
 
         while (iterator.hasNext()) {
             ZipFile zipFile1 = (ZipFile) ((Entry) iterator.next()).getValue();
-            String string = zipFile1.getName();
+            String name = zipFile1.getName();
 
             try {
                 zipFile1.close();
             } catch (IOException iOException1) {
-                this.scriptEnvironment.logWarning("FILE ERROR (1) '" + string + "' : " + iOException1.getMessage());
+                this.scriptEnvironment.logWarning("FILE ERROR (1) '" + name + "' : " + iOException1.getMessage());
             }
         }
 
@@ -1729,39 +1642,39 @@ public class ClassArchiveSaver {
 
     public String getClassEntryName(ProgramClass programClass1) {
         String string = programClass1.isModule() ? "module-info" : programClass1.getClassName();
-        String string1 = ClassFileBase.getPackagePath(string);
-        string1 = ZkmStringUtils.replaceAll(string1, FILE_SEPARATOR, "/");
+        String packagePath = ClassFileBase.getPackagePath(string);
+        packagePath = ZkmStringUtils.replaceAll(packagePath, FILE_SEPARATOR, "/");
         String string2 = ClassFileBase.stripPackage(string);
-        return (string1.length() > 0 ? string1 + "/" : "") + string2 + ".class";
+        return (packagePath.length() > 0 ? packagePath + "/" : "") + string2 + ".class";
     }
 
     public void writeClassEntry(
-            ProgramClass programClass1, byte[] ba, String string, ZipOutputStream zipOutputStream1, File file1, String string1, Boolean boolean1
+            ProgramClass programClass1, byte[] byteArray, String entryName, ZipOutputStream zipOutputStream1, File file1, String string1, Boolean boolean1
     ) throws ZkmException, IOException {
         try {
-            ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, string, boolean1);
+            ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, entryName, boolean1);
             DataOutputStream dataOutputStream = new DataOutputStream(zipEntryWriter.getOutputStream());
 
             try {
                 if (this.scriptEnvironment.isVerbose()) {
-                    String string2 = TempFileManager.getOriginalName(file1.getAbsolutePath());
+                    String originalName = TempFileManager.getOriginalName(file1.getAbsolutePath());
                     this.scriptEnvironment
                             .getLogWriter()
                             .println(
                                     "\tClass file '"
                                             + programClass1.getDisplayLocationName()
                                             + "' saved to '"
-                                            + (string2 == null ? file1.getAbsolutePath() : string2)
+                                            + (originalName == null ? file1.getAbsolutePath() : originalName)
                                             + "' as '"
-                                            + string
+                                            + entryName
                                             + "'."
                             );
                 }
 
                 ZipEntryWriter zipEntryWriter1;
                 Long long1;
-                if (ba != null) {
-                    dataOutputStream.write(ba);
+                if (byteArray != null) {
+                    dataOutputStream.write(byteArray);
                     zipEntryWriter1 = zipEntryWriter;
                     long1 = this.entryTimestamp;
                 } else {
@@ -1772,7 +1685,7 @@ public class ClassArchiveSaver {
                 }
 
                 zipEntryWriter1.writeEntry(long1);
-                this.writtenEntries.addValue(zipOutputStream1, string);
+                this.writtenEntries.addValue(zipOutputStream1, entryName);
             } catch (MethodAnalysisException methodAnalysisException) {
                 this.messageReporter
                         .reportFatalError(
@@ -1793,23 +1706,23 @@ public class ClassArchiveSaver {
                                     + "' from '"
                                     + string1
                                     + "' to new archive (C) : '"
-                                    + string
+                                    + entryName
                                     + "' : "
                                     + iOException.getMessage()
                     );
         }
     }
 
-    public boolean hasExplicitSaveTarget(Object object) {
-        return this.archiveSaveTargets != null && this.archiveSaveTargets.containsKey(object);
+    public boolean hasExplicitSaveTarget(Object key) {
+        return this.archiveSaveTargets != null && this.archiveSaveTargets.containsKey(key);
     }
 
     public void recordEntryPath(String string, SourceArchive sourceArchive1, SetMultiMap setMultiMap, SetMultiMap setMultiMap1) {
-        int ba = string.lastIndexOf("/");
-        if (ba == -1) {
+        int endIndex = string.lastIndexOf("/");
+        if (endIndex == -1) {
             setMultiMap.addValue(sourceArchive1, string);
         } else {
-            String string1 = string.substring(0, ba);
+            String string1 = string.substring(0, endIndex);
             setMultiMap1.addValue(sourceArchive1, string1);
         }
     }
@@ -1847,11 +1760,11 @@ public class ClassArchiveSaver {
                         && archiveManifest != null
                         && (this.filteredOutEntries == null || !this.filteredOutEntries.containsKeys(sourceArchive1, "META-INF/MANIFEST.MF"))
                         && !this.isAlreadyWritten(zipOutputStream1, "META-INF/MANIFEST.MF")) {
-                    boolean bl = this.compressionMode == 1 || this.compressionMode == 3 && archiveManifest.isCompressed();
+                    boolean compressed = this.compressionMode == 1 || this.compressionMode == 3 && archiveManifest.isCompressed();
 
                     try {
                         archiveManifest.writeManifest(
-                                zipOutputStream1, this.entryTimestamp, this.packageRenameMap, this.classRenameMap, this.resourcePathTranslator, bl, this.messageReporter
+                                zipOutputStream1, this.entryTimestamp, this.packageRenameMap, this.classRenameMap, this.resourcePathTranslator, compressed, this.messageReporter
                         );
                         this.writtenEntries.addValue(zipOutputStream1, "META-INF/MANIFEST.MF");
                     } catch (IOException iOException) {
@@ -1865,12 +1778,12 @@ public class ClassArchiveSaver {
         }
     }
 
-    public void writeFileEntry(String string, String string1, ZipOutputStream zipOutputStream1, boolean bl) throws ZkmException, IOException {
-        ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, string1, bl, new File(string));
+    public void writeFileEntry(String string, String entryName, ZipOutputStream zipOutputStream1, boolean compressed) throws ZkmException, IOException {
+        ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, entryName, compressed, new File(string));
 
         try {
             zipEntryWriter.writeEntry(this.entryTimestamp);
-            this.writtenEntries.addValue(zipOutputStream1, string1);
+            this.writtenEntries.addValue(zipOutputStream1, entryName);
         } catch (IOException iOException) {
             this.messageReporter.reportError("FILE ERROR:", "Couldn't save '" + string + "' to new archive (A) : " + iOException.getMessage());
         }
@@ -1882,9 +1795,9 @@ public class ClassArchiveSaver {
             ListMultimap listMultimap = new ListMultimap();
 
             for (ProgramClass programClass1 : this.classes) {
-                String string = programClass1.getPackagePath();
+                String packagePath = programClass1.getPackagePath();
                 if (!programClass1.isFromArchive()) {
-                    setMultiMap.addValue(string.toLowerCase(), string);
+                    setMultiMap.addValue(packagePath.toLowerCase(), packagePath);
                 }
 
                 listMultimap.addValue(programClass1.getClassName().toLowerCase(), programClass1);
@@ -1947,8 +1860,8 @@ public class ClassArchiveSaver {
             while (iterator2.hasNext()) {
                 Entry entry1 = (Entry) iterator2.next();
                 Set set1 = (Set) entry1.getValue();
-                int ba = set1.size();
-                if (ba > 1) {
+                int set1Size = set1.size();
+                if (set1Size > 1) {
                     String string1 = ZkmUtils.toQuotedArrayString(((java.lang.String[]) (set1.toArray(new String[set1.size()]))));
                     if (ZkmFileUtils.caseSensitiveFileSystem) {
                         this.messageReporter
@@ -2133,11 +2046,11 @@ public class ClassArchiveSaver {
 
     public void writeNestedArchives() throws ZkmException, IOException {
         this.statusHolder.setValue("Writing nested archive files");
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
         for (List list1 = this.topLevelArchives; bb < list1.size(); list1 = this.topLevelArchives) {
-            SourceArchive sourceArchive1 = (SourceArchive) this.topLevelArchives.get(ba);
+            SourceArchive sourceArchive1 = (SourceArchive) this.topLevelArchives.get(elementIndex);
             Enumeration enumeration = sourceArchive1.getNestedArchives();
 
             while (enumeration.hasMoreElements()) {
@@ -2147,34 +2060,34 @@ public class ClassArchiveSaver {
                 }
             }
 
-            bb = ++ba;
+            bb = ++elementIndex;
         }
 
         this.statusHolder.setValue(" ");
     }
 
     public void computeClassEntryName(InputFileLocation inputFileLocation, ProgramClass programClass1, Set set1, Map map1, Map map2) {
-        String string = inputFileLocation.getName();
-        string = string.substring(0, string.lastIndexOf(".class"));
-        String string1 = programClass1.isModule() ? "module-info" : programClass1.getClassName();
-        String string2 = (String) ZkmUtils.mapOrSelf(string1, this.originalClassNames);
-        int ba = string.lastIndexOf(string2);
-        String string3;
-        if (ba > 0) {
-            String string4 = string.substring(0, ba);
-            string3 = string4 + string1 + ".class";
-            if (string4.charAt(0) == '/') {
-                string4 = string4.substring(1);
+        String name = inputFileLocation.getName();
+        name = name.substring(0, name.lastIndexOf(".class"));
+        String key = programClass1.isModule() ? "module-info" : programClass1.getClassName();
+        String searchText = (String) ZkmUtils.mapOrSelf(key, this.originalClassNames);
+        int endIndex = name.lastIndexOf(searchText);
+        String value;
+        if (endIndex > 0) {
+            String valueValue = name.substring(0, endIndex);
+            value = valueValue + key + ".class";
+            if (valueValue.charAt(0) == '/') {
+                valueValue = valueValue.substring(1);
             }
 
-            set1.add(string4);
-            map2.put(inputFileLocation, string4);
+            set1.add(valueValue);
+            map2.put(inputFileLocation, valueValue);
         } else {
-            string3 = string1 + ".class";
+            value = key + ".class";
             map2.put(inputFileLocation, "");
         }
 
-        map1.put(inputFileLocation, string3);
+        map1.put(inputFileLocation, value);
     }
 
     public static String computeSha256(File file1, ScriptEnvironment scriptEnvironment1) {
@@ -2212,35 +2125,27 @@ public class ClassArchiveSaver {
         }
     }
 
-    public void registerOutputArchivePath(String string, SourceArchive sourceArchive1, Map map1, String string1) throws ZkmException, IOException {
-        if (!map1.containsKey(string)) {
-            map1.put(string, sourceArchive1);
+    public void registerOutputArchivePath(String key, SourceArchive sourceArchive1, Map map1, String string1) throws ZkmException, IOException {
+        if (!map1.containsKey(key)) {
+            map1.put(key, sourceArchive1);
         } else {
-            SourceArchive sourceArchive2 = (SourceArchive) map1.get(string);
+            SourceArchive sourceArchive2 = (SourceArchive) map1.get(key);
             ZipOutputStream zipOutputStream1 = (ZipOutputStream) this.archiveOutputStreams.get(sourceArchive2);
             File file1 = (File) this.outputArchiveFiles.get(sourceArchive2);
 
-            MessageReporter messageReporter1;
-            label18:
-            {
-                try {
-                    zipOutputStream1.close();
-                    Files.deleteIfExists(file1.toPath());
-                } catch (Throwable throwable) {
-                    ZkmAssert.assertTrue(false, new String[]{throwable.toString()});
-                    messageReporter1 = this.messageReporter;
-                    break label18;
-                }
-
-                messageReporter1 = this.messageReporter;
+            try {
+                zipOutputStream1.close();
+                Files.deleteIfExists(file1.toPath());
+            } catch (Throwable throwable) {
+                ZkmAssert.assertTrue(false, new String[]{throwable.toString()});
             }
 
-            messageReporter1.reportFatalError(
+            this.messageReporter.reportFatalError(
                     "ERROR:",
                     "Duplicate unqualified archive names while attempting to save '"
                             + sourceArchive1.getOriginalPath()
                             + "' to '"
-                            + string
+                            + key
                             + "'. Clash with '"
                             + sourceArchive2.getOriginalPath()
                             + "' ("
@@ -2250,8 +2155,8 @@ public class ClassArchiveSaver {
         }
     }
 
-    public void copyRenamedEntry(ZipFile zipFile1, ZipEntry zipEntry1, ZipOutputStream zipOutputStream1, String string, String string1, boolean bl) throws ZkmException, IOException {
+    public void copyRenamedEntry(ZipFile zipFile1, ZipEntry zipEntry1, ZipOutputStream zipOutputStream1, String string, String entryName, boolean boolean1Argument) throws ZkmException, IOException {
         Boolean boolean1 = false;
-        this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, string, string1, bl, boolean1);
+        this.copyRenamedEntry(zipFile1, zipEntry1, zipOutputStream1, string, entryName, boolean1Argument, boolean1);
     }
 }

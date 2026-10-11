@@ -45,8 +45,8 @@ public class ResolvedConstantDynamic extends ResolvedDynamicRef {
         return TAG;
     }
 
-    public ResolvedConstantDynamic(int ba, AbstractConstantPool abstractConstantPool, int bb, ResolvedNameAndType resolvedNameAndType) {
-        super(ba, abstractConstantPool, bb, resolvedNameAndType);
+    public ResolvedConstantDynamic(int index, AbstractConstantPool abstractConstantPool, int bootstrapMethodIndex, ResolvedNameAndType resolvedNameAndType) {
+        super(index, abstractConstantPool, bootstrapMethodIndex, resolvedNameAndType);
     }
 
     @Override
@@ -67,24 +67,24 @@ public class ResolvedConstantDynamic extends ResolvedDynamicRef {
 
     public void resolveTypeClass(ClassResolver classResolver1) throws ZkmException, IOException {
         super.nameAndType.getName();
-        String string = MethodSignature.getReturnPart(super.nameAndType.getDescriptor());
-        if (string.charAt(0) != '[' && !ConstantPoolEntry.isPrimitiveDescriptor(string)) {
-            String string1 = string.substring(1, string.length() - 1);
+        String returnPart = MethodSignature.getReturnPart(super.nameAndType.getDescriptor());
+        if (returnPart.charAt(0) != '[' && !ConstantPoolEntry.isPrimitiveDescriptor(returnPart)) {
+            String key = returnPart.substring(1, returnPart.length() - 1);
             ConstantPoolEntry[] constantPoolEntrys = this.bootstrapMethod.copyArguments();
             HashSet hashSet = ZkmUtils.createHashSet();
 
-            for (int i = 0; i < constantPoolEntrys.length; i++) {
-                if (constantPoolEntrys[i] instanceof ResolvedMethodType) {
-                    hashSet.add(((ResolvedMethodType) constantPoolEntrys[i]).getDescriptor());
-                } else if (constantPoolEntrys[i] instanceof ResolvedMethodHandleConstant) {
-                    hashSet.add(((ResolvedMethodHandleConstant) constantPoolEntrys[i]).getMemberRef().getDescriptor());
+            for (int constantPoolEntryIndex = 0; constantPoolEntryIndex < constantPoolEntrys.length; constantPoolEntryIndex++) {
+                if (constantPoolEntrys[constantPoolEntryIndex] instanceof ResolvedMethodType) {
+                    hashSet.add(((ResolvedMethodType) constantPoolEntrys[constantPoolEntryIndex]).getDescriptor());
+                } else if (constantPoolEntrys[constantPoolEntryIndex] instanceof ResolvedMethodHandleConstant) {
+                    hashSet.add(((ResolvedMethodHandleConstant) constantPoolEntrys[constantPoolEntryIndex]).getMemberRef().getDescriptor());
                 }
             }
 
             ClassFileBase classFileBase = this.getOwnerClass();
             Integer integer = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : null;
             classResolver1.getVersionedClass(
-                    string1, integer, "looking for class '" + ZkmUtils.slashesToDots(string1) + "' which is referenced in class '" + this.getOwnerFilePath() + "'"
+                    key, integer, "looking for class '" + ZkmUtils.slashesToDots(key) + "' which is referenced in class '" + this.getOwnerFilePath() + "'"
             );
         }
     }

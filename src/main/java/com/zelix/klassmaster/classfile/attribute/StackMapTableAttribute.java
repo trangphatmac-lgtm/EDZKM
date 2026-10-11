@@ -16,18 +16,18 @@ import java.util.Map;
 public class StackMapTableAttribute extends AbstractStackMapAttribute {
     public StackMapTableAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
             PrintWriter printWriter,
             ListMultimap listMultimap2
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        byte[] bb = new byte[this.length];
-        classFileInputStream.read(bb);
-        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(bb, false);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
+        byte[] rawBytesValue = new byte[this.length];
+        classFileInputStream.read(rawBytesValue);
+        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(rawBytesValue, false);
         if (this.length >= 2) {
             this.frameCount = classFileInputStream1.readUnsignedShort();
             HashMap hashMap = ZkmUtils.createHashMap();
@@ -35,17 +35,17 @@ public class StackMapTableAttribute extends AbstractStackMapAttribute {
             MutableInt mutableInt = new MutableInt(-1);
             this.frames = new StackMapTableFrame[this.frameCount];
 
-            for (int i = 0; i < this.frameCount; i++) {
-                this.frames[i] = StackMapTableFrame.readFrame(
+            for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+                this.frames[frameIndex] = StackMapTableFrame.readFrame(
                         this, classFileInputStream1, listMultimap2, listMultimap1, printWriter, mutableInt, hashMap, hashMap1
                 );
-                if (!this.frames[i].isValid()) {
+                if (!this.frames[frameIndex].isValid()) {
                     super.parsed = false;
                 }
             }
 
             if (!super.parsed) {
-                super.rawBytes = bb;
+                super.rawBytes = rawBytesValue;
             }
         } else {
             super.parsed = false;
@@ -64,8 +64,8 @@ public class StackMapTableAttribute extends AbstractStackMapAttribute {
         dataOutputStream.writeShort(this.frameCount);
         new MutableInt(-1);
 
-        for (int i = 0; i < this.frameCount; i++) {
-            ((StackMapTableFrame) this.frames[i]).writeFrame(dataOutputStream);
+        for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+            ((StackMapTableFrame) this.frames[frameIndex]).writeFrame(dataOutputStream);
         }
     }
 
@@ -74,8 +74,8 @@ public class StackMapTableAttribute extends AbstractStackMapAttribute {
         dataOutputStream.writeShort(this.frameCount);
         new MutableInt(-1);
 
-        for (int i = 0; i < this.frameCount; i++) {
-            ((StackMapTableFrame) this.frames[i]).writeRemapped(dataOutputStream, map1);
+        for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+            ((StackMapTableFrame) this.frames[frameIndex]).writeRemapped(dataOutputStream, map1);
         }
     }
 

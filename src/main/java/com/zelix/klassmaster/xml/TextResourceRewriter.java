@@ -43,23 +43,23 @@ public class TextResourceRewriter {
             String string,
             ZipOutputStream zipOutputStream1,
             ResourcePathTranslator resourcePathTranslator1,
-            boolean bl,
+            boolean compressed,
             EnumerableMap enumerableMap
     ) throws ZkmException, IOException {
         InputStream inputStream1 = null;
 
         try {
             inputStream1 = zipFile1.getInputStream(zipEntry1);
-            String string1 = resourcePathTranslator1.translateResourcePath(zipEntry1.getName());
-            ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, string1, bl);
+            String entryName = resourcePathTranslator1.translateResourcePath(zipEntry1.getName());
+            ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, entryName, compressed);
             OutputStream outputStream = zipEntryWriter.getOutputStream();
             int value = mutableInt.getValue();
             mutableInt1.getValue();
-            int bb = mutableInt2.getValue();
+            int valueValue = mutableInt2.getValue();
             zipEntry1.getName();
             ObservableHolder observableHolder = new ObservableHolder();
             EnumerableMap enumerableMap1 = enumerableMap;
-            Integer integer = bb;
+            Integer integer = valueValue;
             this.rewriteClassNames(inputStream1, outputStream, string, value, integer, enumerableMap1, observableHolder);
             zipEntryWriter.writeEntry(long1);
         } finally {
@@ -76,11 +76,11 @@ public class TextResourceRewriter {
         return predicateValue;
     }
 
-    public TextResourceRewriter(final File file, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3, final String s, final ZipOutputStream zipOutputStream, final boolean b, final EnumerableMap enumerableMap, final ObservableHolder observableHolder) throws ZkmException, IOException {
+    public TextResourceRewriter(final File file, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3, final String s, final ZipOutputStream zipOutputStream, final boolean compressed, final EnumerableMap enumerableMap, final ObservableHolder observableHolder) throws ZkmException, IOException {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(file);
-            final ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream, file.getName(), b);
+            final ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream, file.getName(), compressed);
             final FileInputStream fileInputStream2 = fileInputStream;
             final OutputStream outputStream = zipEntryWriter.getOutputStream();
             final int value = mutableInt.getValue();
@@ -91,26 +91,26 @@ public class TextResourceRewriter {
             zipEntryWriter.writeEntry();
             try {
                 fileInputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
         } finally {
             try {
                 if (fileInputStream != null) {
                     fileInputStream.close();
                 }
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         }
     }
 
-    public void rewriteClassNames(final InputStream in, final OutputStream outputStream, final String s, final int n, final int n2, final EnumerableMap enumerableMap, final ObservableHolder observableHolder) throws ZkmException, IOException {
+    public void rewriteClassNames(final InputStream inputStream1Argument, final OutputStream outputStream, final String s, final int n, final int n2, final EnumerableMap enumerableMap, final ObservableHolder observableHolder) throws ZkmException, IOException {
         String s2 = s;
-        ZkmFileUtils.readBytes(in, n);
+        ZkmFileUtils.readBytes(inputStream1Argument, n);
         BufferedReader bufferedReader = null;
         ByteArrayOutputStream out = null;
         PrintWriter printWriter = null;
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(in, s2));
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream1Argument, s2));
             out = new ByteArrayOutputStream();
             if (s2.equals("UTF-16") && n2 == 0) {
                 s2 = "UTF-16LE";
@@ -157,17 +157,17 @@ public class TextResourceRewriter {
             outputStream.flush();
             try {
                 bufferedReader.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
             try {
                 out.close();
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         } finally {
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
             }
             if (printWriter != null) {
@@ -177,7 +177,7 @@ public class TextResourceRewriter {
                 if (out != null) {
                     out.close();
                 }
-            } catch (final IOException ex4) {
+            } catch (final IOException ioExceptionValue3) {
             }
         }
     }
@@ -201,24 +201,24 @@ public class TextResourceRewriter {
             this.rewriteClassNames(fileInputStream2, fileOutputStream2, s, value, value2, enumerableMap, new ObservableHolder());
             try {
                 fileInputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
             try {
                 fileOutputStream.close();
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         } finally {
             try {
                 if (fileInputStream != null) {
                     fileInputStream.close();
                 }
-            } catch (final IOException ex3) {
+            } catch (final IOException ioExceptionValue2) {
             }
             try {
                 if (fileOutputStream != null) {
                     fileOutputStream.close();
                 }
-            } catch (final IOException ex4) {
+            } catch (final IOException ioExceptionValue3) {
             }
         }
     }

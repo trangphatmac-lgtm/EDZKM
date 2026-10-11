@@ -17,8 +17,8 @@ public class MemberNameComparator implements Comparator {
     }
 
     public int compareByName(MemberInfo memberInfo1, MemberInfo memberInfo2) {
-        String string = memberInfo1.getSourceName();
-        String string1 = memberInfo2.getSourceName();
-        return string.compareTo(string1);
+        String sourceName = memberInfo1.getSourceName();
+        String sourceNameValue = memberInfo2.getSourceName();
+        return sourceName.compareTo(sourceNameValue);
     }
 }

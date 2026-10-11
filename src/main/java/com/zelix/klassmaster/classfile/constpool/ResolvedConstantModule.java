@@ -13,12 +13,12 @@ public class ResolvedConstantModule extends ConstantPoolEntry implements Utf8Con
 
     @Override
     public String getAbbreviatedValue() {
-        String string = ZkmUtils.escapeJavaString(this.getValueString());
-        if (string.length() > 200) {
-            string = string.substring(0, 50) + "...<" + (string.length() - 100) + " CHARS>..." + string.substring(string.length() - 50);
+        String abbreviatedValue = ZkmUtils.escapeJavaString(this.getValueString());
+        if (abbreviatedValue.length() > 200) {
+            abbreviatedValue = abbreviatedValue.substring(0, 50) + "...<" + (abbreviatedValue.length() - 100) + " CHARS>..." + abbreviatedValue.substring(abbreviatedValue.length() - 50);
         }
 
-        return string;
+        return abbreviatedValue;
     }
 
     @Override

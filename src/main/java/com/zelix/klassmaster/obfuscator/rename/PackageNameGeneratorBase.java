@@ -31,8 +31,8 @@ public abstract class PackageNameGeneratorBase {
     }
 
     public final boolean isPackageNameAvailable(
-            String string,
-            String string1,
+            String key,
+            String keyArgument,
             boolean bl,
             ListMultimap listMultimap,
             TwoKeyMap twoKeyMap,
@@ -40,21 +40,19 @@ public abstract class PackageNameGeneratorBase {
             ChangeLogMapping changeLogMapping1,
             NameExclusionSet nameExclusionSet
     ) throws IOException {
-        String string2 = string1 + (string1.length() > 0 ? "/" : "") + string;
-        if (listMultimap.containsKey(string2)) {
+        String keyValue = keyArgument + (keyArgument.length() > 0 ? "/" : "") + key;
+        if (listMultimap.containsKey(keyValue)) {
             return false;
-        } else if (changeLogMapping1 != null && changeLogMapping1.isNewPackageName(string2)) {
+        } else if (changeLogMapping1 != null && changeLogMapping1.isNewPackageName(keyValue)) {
             return false;
-        } else if (changeLogMapping1 != null && changeLogMapping1.isNewClassName(string2)) {
+        } else if (changeLogMapping1 != null && changeLogMapping1.isNewClassName(keyValue)) {
             return false;
-        } else if (twoKeyMap.containsKeys(string1, string)) {
+        } else if (twoKeyMap.containsKeys(keyArgument, key)) {
             return false;
-        } else if (set1 != null && set1.contains(string)) {
+        } else if (set1 != null && set1.contains(key)) {
             return false;
         } else {
-            return bl && !Character.isLowerCase(string.charAt(0))
-                    ? false
-                    : !nameExclusionSet.isPackageExcluded(string2) || !this.classPathResolver.hasPackageDirectory(string2);
+            return (!(bl && !Character.isLowerCase(key.charAt(0))) && (!nameExclusionSet.isPackageExcluded(keyValue) || !this.classPathResolver.hasPackageDirectory(keyValue)));
         }
     }
 

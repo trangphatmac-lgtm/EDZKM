@@ -47,15 +47,15 @@ public class ClassRenameClashChecker {
         int keepGenericsInfoMode = classNameGenerator.getKeepGenericsInfoMode();
         this.nameGenerator = classNameGenerator;
         this.checkChangeLogClashes(listMultimap);
-        int bc = this.programClasses.length;
+        int lengthValue = this.programClasses.length;
         this.fileClassLowerCaseNames = classNameGenerator.fileClassLowerCaseNames;
         this.allLowerCaseNames = classNameGenerator.allLowerCaseNames;
 
-        for (int i = 0; i < bc; i++) {
-            this.classesByName.put(this.programClasses[i].getClassName(), this.programClasses[i]);
-            if (this.exclusionSet.isClassExcluded(this.programClasses[i]) || this.programClasses[i].getSimpleName().equals("package-info")) {
-                this.programClasses[i].getClassName();
-                this.fixedClasses.add(this.programClasses[i]);
+        for (int programClasseIndex = 0; programClasseIndex < lengthValue; programClasseIndex++) {
+            this.classesByName.put(this.programClasses[programClasseIndex].getClassName(), this.programClasses[programClasseIndex]);
+            if (this.exclusionSet.isClassExcluded(this.programClasses[programClasseIndex]) || this.programClasses[programClasseIndex].getSimpleName().equals("package-info")) {
+                this.programClasses[programClasseIndex].getClassName();
+                this.fixedClasses.add(this.programClasses[programClasseIndex]);
             }
         }
 
@@ -77,28 +77,28 @@ public class ClassRenameClashChecker {
             ZkmUtils.shuffleList(list1, ZkmUtils.createRandom(2));
         }
 
-        for (int i = 0; i < list1.size(); i++) {
-            ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndex);
             classHierarchyNode1.generateClassNames(
                     classNameGenerator, this.changeLogMapping, this.oldToNewNames, this.newToOldNames, this.fixedClasses, this.pendingNodes
             );
         }
 
-        int bf = this.pendingNodes.size();
+        int pendingNodesSize = this.pendingNodes.size();
 
-        int bg;
+        int pendingNodesSizeValue;
         do {
-            bg = bf;
+            pendingNodesSizeValue = pendingNodesSize;
             Iterator iterator = this.pendingNodes.iterator();
 
             while (iterator.hasNext()) {
                 ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) iterator.next();
                 boolean bl = classHierarchyNode2.tryGenerateClassName(classNameGenerator, this.oldToNewNames, this.newToOldNames, iterator);
                 if (bl) {
-                    bf = this.pendingNodes.size();
+                    pendingNodesSize = this.pendingNodes.size();
                 }
             }
-        } while (bf > 0 && bf != bg);
+        } while (pendingNodesSize > 0 && pendingNodesSize != pendingNodesSizeValue);
 
         Iterator iterator2 = this.pendingNodes.iterator();
 
@@ -110,17 +110,17 @@ public class ClassRenameClashChecker {
         if (HiddenOptionFlags.MARK_RENAMED_LOCALS) {
         }
 
-        int bh = 0;
+        int programClasseIndexValue = 0;
         int bi = 0;
 
         for (ProgramClass[] programClass2 = this.programClasses; bi < programClass2.length; programClass2 = this.programClasses) {
-            String string = this.programClasses[bh].getClassName();
-            String string1 = (String) this.oldToNewNames.get(string);
-            if (string1 != null && !string1.equals(string)) {
-                this.programClasses[bh].renameClass(string1, hashMap);
+            String className = this.programClasses[programClasseIndexValue].getClassName();
+            String classNameValue = (String) this.oldToNewNames.get(className);
+            if (classNameValue != null && !classNameValue.equals(className)) {
+                this.programClasses[programClasseIndexValue].renameClass(classNameValue, hashMap);
             }
 
-            bi = ++bh;
+            bi = ++programClasseIndexValue;
         }
 
         if (this.changeLogMapping != null) {
@@ -137,63 +137,63 @@ public class ClassRenameClashChecker {
     public void checkChangeLogClashes(ListMultimap listMultimap) throws IOException {
         if (this.changeLogMapping != null) {
             ArrayList arrayList = this.changeLogMapping.getOldClassNames();
-            int ba = arrayList.size();
+            int arrayListSize = arrayList.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) arrayList.get(i);
-                if (ClassHierarchyNode.isProgramClassName(string)
-                        && (!this.exclusionSet.isClassNameExcluded(string) || !this.changeLogMapping.isSimpleNameChanged(string))) {
-                    String string1 = this.changeLogMapping.getNewClassName(string);
-                    if (string1 != null) {
-                        ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string1);
+            for (int elementIndex = 0; elementIndex < arrayListSize; elementIndex++) {
+                String newClassNameValue = (String) arrayList.get(elementIndex);
+                if (ClassHierarchyNode.isProgramClassName(newClassNameValue)
+                        && (!this.exclusionSet.isClassNameExcluded(newClassNameValue) || !this.changeLogMapping.isSimpleNameChanged(newClassNameValue))) {
+                    String newClassName = this.changeLogMapping.getNewClassName(newClassNameValue);
+                    if (newClassName != null) {
+                        ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(newClassName);
                         if (classHierarchyNode != null && !classHierarchyNode.isProgramClass()) {
                             this.changeLogMapping
                                     .logWarning(
                                             "\""
-                                                    + ZkmUtils.slashesToDots(string1)
+                                                    + ZkmUtils.slashesToDots(newClassName)
                                                     + "\" is specified as a new class name but it clashes with an existing class that has not been opened."
                                     );
                         }
                     } else {
-                        string1 = string;
+                        newClassName = newClassNameValue;
                     }
 
-                    if (listMultimap != null && listMultimap.containsKey(string1) && this.changeLogMapping.hasClassesOpenedFromFileSystem()) {
-                        List list1 = listMultimap.getValues(string1);
+                    if (listMultimap != null && listMultimap.containsKey(newClassName) && this.changeLogMapping.hasClassesOpenedFromFileSystem()) {
+                        List list1 = listMultimap.getValues(newClassName);
                         String string2 = (String) list1.get(0);
                         this.changeLogMapping
                                 .reportFatalError(
                                         "Class \""
-                                                + ZkmUtils.slashesToDots(string)
+                                                + ZkmUtils.slashesToDots(newClassNameValue)
                                                 + "\" is mapped to \""
-                                                + ZkmUtils.slashesToDots(string1)
+                                                + ZkmUtils.slashesToDots(newClassName)
                                                 + "\" but this will result in a clash with package \""
                                                 + ZkmUtils.slashesToDots(string2)
                                                 + "\" that has been renamed to \""
-                                                + ZkmUtils.slashesToDots(string1)
+                                                + ZkmUtils.slashesToDots(newClassName)
                                                 + "\""
                                 );
                     }
 
-                    String string5 = ClassFileBase.getPackagePath(string);
-                    ArrayList arrayList1 = this.nameGenerator.getPackageClashCandidates(string1, string5);
+                    String packagePath = ClassFileBase.getPackagePath(newClassNameValue);
+                    ArrayList arrayList1 = this.nameGenerator.getPackageClashCandidates(newClassName, packagePath);
 
-                    for (int j = 0; j < arrayList1.size(); j++) {
-                        String string3 = (String) arrayList1.get(j);
-                        if (!string3.equals(string) && ClassHierarchyNode.isProgramClassName(string3) && this.exclusionSet.isClassNameExcluded(string3)) {
-                            String string4 = !this.changeLogMapping.hasClassMapping(string3) ? " new" : "";
+                    for (int elementIndexValue = 0; elementIndexValue < arrayList1.size(); elementIndexValue++) {
+                        String key = (String) arrayList1.get(elementIndexValue);
+                        if (!key.equals(newClassNameValue) && ClassHierarchyNode.isProgramClassName(key) && this.exclusionSet.isClassNameExcluded(key)) {
+                            String string4 = !this.changeLogMapping.hasClassMapping(key) ? " new" : "";
                             this.changeLogMapping
                                     .reportFatalError(
                                             "Class \""
-                                                    + ZkmUtils.slashesToDots(string)
+                                                    + ZkmUtils.slashesToDots(newClassNameValue)
                                                     + "\" is mapped to \""
-                                                    + ZkmUtils.slashesToDots(string1)
+                                                    + ZkmUtils.slashesToDots(newClassName)
                                                     + "\" but this will result in a clash with excluded"
                                                     + string4
                                                     + " class \""
-                                                    + ZkmUtils.slashesToDots(string3)
+                                                    + ZkmUtils.slashesToDots(key)
                                                     + "\" that will be also be renamed to \""
-                                                    + ZkmUtils.slashesToDots(string1)
+                                                    + ZkmUtils.slashesToDots(newClassName)
                                                     + "\""
                                     );
                         }

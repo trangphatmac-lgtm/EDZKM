@@ -18,52 +18,35 @@ public abstract class FileFilterNodeBase extends ZkmScriptSimpleNode implements 
 
     public String normalizePath(String string) {
         String string1 = string.replace('\\', '/');
-        boolean bl;
+        boolean caseSensitiveFileSystemValue;
         if (ZkmFileUtils.FILE_SEPARATOR_CHAR != '\\') {
             string1 = string.replace(ZkmFileUtils.FILE_SEPARATOR_CHAR, '/');
-            bl = ZkmFileUtils.caseSensitiveFileSystem;
+            caseSensitiveFileSystemValue = ZkmFileUtils.caseSensitiveFileSystem;
         } else {
-            bl = ZkmFileUtils.caseSensitiveFileSystem;
+            caseSensitiveFileSystemValue = ZkmFileUtils.caseSensitiveFileSystem;
         }
 
-        if (!bl) {
+        if (!caseSensitiveFileSystemValue) {
             string1 = string1.toUpperCase();
         }
 
         return string1;
     }
 
-    public FileFilterNodeBase(int ba, boolean negated) {
-        super(ba);
+    public FileFilterNodeBase(int nodeTypeId, boolean negated) {
+        super(nodeTypeId);
         this.negated = negated;
     }
 
     @Override
-    public boolean acceptsPath(Object object) {
-        boolean bl1;
-        label21:
-        {
-            String string = (String) object;
-            String string3 = this.normalizePath(string);
-            int ba = lastSeparatorIndex(string3);
-            String string4 = string3.substring(ba + 1);
-            String string5 = string3.substring(0, ba + 1);
-            String string1 = this.directoryPattern;
-            String string2 = string5;
-            if (ZkmStringUtils.matchesWildcard(string2, string1)) {
-                string1 = this.fileNamePattern;
-                string2 = string4;
-                if (ZkmStringUtils.matchesWildcard(string2, string1)) {
-                    bl1 = true;
-                    break label21;
-                }
-            }
-
-            bl1 = false;
-        }
-
-        boolean bl = bl1;
-        return this.negated ? !bl : bl;
+    public boolean acceptsPath(Object path) {
+        String normalizedPath = this.normalizePath((String) path);
+        int separatorIndex = lastSeparatorIndex(normalizedPath);
+        String fileName = normalizedPath.substring(separatorIndex + 1);
+        String directory = normalizedPath.substring(0, separatorIndex + 1);
+        boolean matches = ZkmStringUtils.matchesWildcard(directory, this.directoryPattern)
+                && ZkmStringUtils.matchesWildcard(fileName, this.fileNamePattern);
+        return this.negated ? !matches : matches;
     }
 
     public static int lastSeparatorIndex(String string) {

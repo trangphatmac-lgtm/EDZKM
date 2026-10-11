@@ -29,128 +29,105 @@ public class ParameterListGenerator {
     public final Random random;
 
     public ChangedMethodDescriptor generateForStaticMethod(
-            ClassHierarchyNode classHierarchyNode, MethodInfo methodInfo1, SetMultiMap setMultiMap, Map map1, Map map2, boolean bl, boolean bl1
+            ClassHierarchyNode owningClass, MethodInfo method, SetMultiMap reservedMemberNames, Map reservedMethodSignatures, Map reservedNameTypes, boolean forceExtraParameters, boolean includeReturnTypeInConflicts
     ) throws ZkmException, IOException {
-        return this.generateDescriptor(classHierarchyNode, methodInfo1, setMultiMap, classHierarchyNode.isInterface(), map1, map2, bl, bl1);
+        return this.generateDescriptor(owningClass, method, reservedMemberNames, owningClass.isInterface(), reservedMethodSignatures, reservedNameTypes, forceExtraParameters, includeReturnTypeInConflicts);
     }
 
     public final ChangedMethodDescriptor generateDescriptor(
-            ClassHierarchyNode classHierarchyNode, MethodInfo methodInfo1, SetMultiMap setMultiMap, boolean bl, Map map1, Map map2, boolean bl1, boolean bl2
+            ClassHierarchyNode owningClass, MethodInfo method, SetMultiMap reservedMemberNames, boolean reserveOverrideGroup, Map reservedMethodSignatures, Map reservedNameTypes, boolean forceExtraParameters, boolean includeReturnTypeInConflicts
     ) throws ZkmException, IOException {
-        boolean bl3 = false;
-        boolean bl4 = false;
+        boolean shuffleCandidates = false;
+        boolean shuffleTypeLayouts = false;
         if (this.randomizeLayouts) {
-            int ba = 1;
+            int extraParameterOdds = 1;
             if (HiddenOptionFlags.EXTRA_PARAMETER_ODDS != null) {
                 try {
-                    ba = Integer.parseInt(HiddenOptionFlags.EXTRA_PARAMETER_ODDS);
-                } catch (Exception exception) {
+                    extraParameterOdds = Integer.parseInt(HiddenOptionFlags.EXTRA_PARAMETER_ODDS);
+                } catch (Exception invalidOdds) {
                 }
             }
 
-            if (bl1 || HiddenOptionFlags.ALWAYS_ADD_EXTRA_PARAMETERS || this.random.nextInt(ba) == 0) {
-                bl3 = true;
+            if (forceExtraParameters || HiddenOptionFlags.ALWAYS_ADD_EXTRA_PARAMETERS || this.random.nextInt(extraParameterOdds) == 0) {
+                shuffleCandidates = true;
             }
 
-            int bb;
-            Random random1;
-            bb = 4;
-            label62:
+            int shuffleLayoutOdds = 4;
             if (HiddenOptionFlags.EXTRA_PARAMETER_COUNT != null) {
                 try {
-                    bb = Integer.parseInt(HiddenOptionFlags.EXTRA_PARAMETER_COUNT);
-                } catch (Exception exception1) {
-                    random1 = this.random;
-                    break label62;
+                    shuffleLayoutOdds = Integer.parseInt(HiddenOptionFlags.EXTRA_PARAMETER_COUNT);
+                } catch (Exception invalidLayoutOdds) {
                 }
-
-                random1 = this.random;
-            } else {
-                label77:
-                {
-                    byte bd;
-                    if (!bl1) {
-                        if (!HiddenOptionFlags.ALWAYS_ADD_EXTRA_PARAMETERS) {
-                            random1 = this.random;
-                            break label77;
-                        }
-
-                        bd = 25;
-                    } else {
-                        bd = 25;
-                    }
-
-                    bb = bd;
-                    random1 = this.random;
-                }
+            } else if (forceExtraParameters || HiddenOptionFlags.ALWAYS_ADD_EXTRA_PARAMETERS) {
+                shuffleLayoutOdds = 25;
             }
 
-            if (random1.nextInt(bb) == 0) {
-                bl4 = true;
+            if (this.random.nextInt(shuffleLayoutOdds) == 0) {
+                shuffleTypeLayouts = true;
             }
         }
 
-        char[][] bc;
-        if (bl4) {
-            bc = new char[ExtraParamLayoutGenerator.PARAM_TYPE_LAYOUTS.length][];
-            System.arraycopy(ExtraParamLayoutGenerator.PARAM_TYPE_LAYOUTS, 0, bc, 0, ExtraParamLayoutGenerator.PARAM_TYPE_LAYOUTS.length);
-            ZkmUtils.shuffleArray(bc, ZkmUtils.createRandom(131));
+        char[][] typeLayouts;
+        if (shuffleTypeLayouts) {
+            typeLayouts = new char[ExtraParamLayoutGenerator.PARAM_TYPE_LAYOUTS.length][];
+            System.arraycopy(ExtraParamLayoutGenerator.PARAM_TYPE_LAYOUTS, 0, typeLayouts, 0, ExtraParamLayoutGenerator.PARAM_TYPE_LAYOUTS.length);
+            ZkmUtils.shuffleArray(typeLayouts, ZkmUtils.createRandom(131));
         } else {
-            bc = ExtraParamLayoutGenerator.PARAM_TYPE_LAYOUTS;
+            typeLayouts = ExtraParamLayoutGenerator.PARAM_TYPE_LAYOUTS;
         }
 
-        MethodSignature methodSignature1 = methodInfo1.getSignature();
-        boolean varargs = methodInfo1.isVarargs();
+        MethodSignature originalSignature = method.getSignature();
+        boolean varargs = method.isVarargs();
         if (varargs) {
-            List list1 = MethodSignature.splitParameterDescriptors(methodSignature1.getDescriptor());
-            if (list1.size() == 0) {
+            List parameterDescriptors = MethodSignature.splitParameterDescriptors(originalSignature.getDescriptor());
+            if (parameterDescriptors.size() == 0) {
                 return null;
             }
         }
 
-        ChangedMethodDescriptor changedMethodDescriptor;
-        if (!bl3 && !HiddenOptionFlags.SKIP_PARAMETER_LIST_REUSE) {
-            changedMethodDescriptor = this.findSequentialDescriptor(classHierarchyNode, methodInfo1, methodSignature1, varargs, setMultiMap, bl, map1, map2, bl2, bc);
+        ChangedMethodDescriptor candidateDescriptor;
+        if (!shuffleCandidates && !HiddenOptionFlags.SKIP_PARAMETER_LIST_REUSE) {
+            candidateDescriptor = this.findSequentialDescriptor(owningClass, method, originalSignature, varargs, reservedMemberNames, reserveOverrideGroup, reservedMethodSignatures, reservedNameTypes, includeReturnTypeInConflicts, typeLayouts);
         } else {
-            changedMethodDescriptor = this.findShuffledDescriptor(classHierarchyNode, methodInfo1, methodSignature1, varargs, setMultiMap, bl, map1, map2, bl2, bc);
+            candidateDescriptor = this.findShuffledDescriptor(owningClass, method, originalSignature, varargs, reservedMemberNames, reserveOverrideGroup, reservedMethodSignatures, reservedNameTypes, includeReturnTypeInConflicts, typeLayouts);
         }
 
-        return changedMethodDescriptor;
+        return candidateDescriptor;
     }
 
     public ChangedMethodDescriptor findShuffledDescriptor(
-            ClassHierarchyNode classHierarchyNode,
-            MethodInfo methodInfo1,
-            MethodSignature methodSignature1,
-            boolean bl,
-            SetMultiMap setMultiMap,
-            boolean bl1,
-            Map map1,
-            Map map2,
-            boolean bl2,
-            char[][] ba
+            ClassHierarchyNode owningClass,
+            MethodInfo method,
+            MethodSignature originalSignature,
+            boolean preserveVarargs,
+            SetMultiMap reservedMemberNames,
+            boolean reserveOverrideGroup,
+            Map reservedMethodSignatures,
+            Map reservedNameTypes,
+            boolean includeReturnTypeInConflicts,
+            char[][] typeLayouts
     ) throws ZkmException, IOException {
-        String string = methodSignature1.getName();
-        HashSet hashSet = ZkmUtils.createHashSet();
+        String methodName = originalSignature.getName();
+        HashSet seenDescriptors = ZkmUtils.createHashSet();
 
-        for (int i = 0; i < ba.length; i++) {
-            char[] bc = ba[i];
-            List list1 = listCandidateDescriptors(methodInfo1.hasLambdaArgCount(), methodSignature1, bl, bc);
-            if (list1.size() > 1) {
-                ZkmUtils.shuffleList(list1, this.random);
+        for (int typeLayoutIndexValue = 0; typeLayoutIndexValue < typeLayouts.length; typeLayoutIndexValue++) {
+            char[] parameterTypes = typeLayouts[typeLayoutIndexValue];
+            List candidateDescriptors = listCandidateDescriptors(method.hasLambdaArgCount(), originalSignature, preserveVarargs, parameterTypes);
+            if (candidateDescriptors.size() > 1) {
+                ZkmUtils.shuffleList(candidateDescriptors, this.random);
             }
 
-            Iterator iterator = list1.iterator();
+            Iterator candidateIterator = candidateDescriptors.iterator();
 
-            while (iterator.hasNext()) {
-                ChangedMethodDescriptor changedMethodDescriptor = (ChangedMethodDescriptor) iterator.next();
-                String string1 = changedMethodDescriptor.getDescriptor();
-                if (hashSet.add(string1)) {
-                    MethodSignature methodSignature2 = new MethodSignature(string, string1);
+            while (candidateIterator.hasNext()) {
+                ChangedMethodDescriptor candidateDescriptor = (ChangedMethodDescriptor) candidateIterator.next();
+                String candidateDescriptorText = candidateDescriptor.getDescriptor();
+                if (seenDescriptors.add(candidateDescriptorText)) {
+                    MethodSignature candidateSignature = new MethodSignature(methodName, candidateDescriptorText);
                     if (this.isDescriptorUsable(
-                            classHierarchyNode, methodInfo1, changedMethodDescriptor, methodSignature2, methodSignature1, setMultiMap, map1, map2, bl2, bl1
+                            owningClass, method, candidateDescriptor, candidateSignature, originalSignature, reservedMemberNames, reservedMethodSignatures, reservedNameTypes, includeReturnTypeInConflicts, reserveOverrideGroup
                     )) {
-                        return changedMethodDescriptor;
+                        return candidateDescriptor;
                     }
                 }
             }
@@ -160,34 +137,32 @@ public class ParameterListGenerator {
     }
 
     public final boolean isDescriptorUsable(
-            ClassHierarchyNode classHierarchyNode,
-            MethodInfo methodInfo1,
-            ChangedMethodDescriptor changedMethodDescriptor,
-            MethodSignature methodSignature1,
-            MethodSignature methodSignature2,
-            SetMultiMap setMultiMap,
-            Map map1,
-            Map map2,
-            boolean bl,
-            boolean bl1
+            ClassHierarchyNode owningClass,
+            MethodInfo method,
+            ChangedMethodDescriptor candidateDescriptor,
+            MethodSignature candidateSignature,
+            MethodSignature originalSignature,
+            SetMultiMap reservedMemberNames,
+            Map reservedMethodSignatures,
+            Map reservedNameTypes,
+            boolean includeReturnTypeInConflicts,
+            boolean reserveOverrideGroup
     ) throws ZkmException, IOException {
-        FieldNameTypeSignature fieldNameTypeSignature = methodSignature1.getNameTypeSignature();
-        MemberSignatureBase memberSignatureBase = bl ? methodSignature1 : fieldNameTypeSignature;
-        if (methodSignature1.getDescriptor().equals(methodSignature2.getDescriptor())) {
+        FieldNameTypeSignature candidateNameType = candidateSignature.getNameTypeSignature();
+        MemberSignatureBase conflictKey = includeReturnTypeInConflicts ? candidateSignature : candidateNameType;
+        if (candidateSignature.getDescriptor().equals(originalSignature.getDescriptor())) {
             return false;
         }
 
-        if ((!bl || !map1.containsKey(methodSignature1)) && (bl || !map2.containsKey(methodSignature1.getNameTypeSignature()))) {
-            if (!methodSignature2.isConstructor() && setMultiMap.containsKey(memberSignatureBase)) {
+        if ((!includeReturnTypeInConflicts || !reservedMethodSignatures.containsKey(candidateSignature)) && (includeReturnTypeInConflicts || !reservedNameTypes.containsKey(candidateSignature.getNameTypeSignature()))) {
+            if (!originalSignature.isConstructor() && reservedMemberNames.containsKey(conflictKey)) {
                 return false;
-            } else if (this.overrideAnalyzer.isSignatureReserved(methodSignature1)) {
+            } else if (this.overrideAnalyzer.isSignatureReserved(candidateSignature)) {
                 return false;
-            } else if (this.overrideAnalyzer.isReservedForOther(classHierarchyNode, methodSignature1, methodSignature2)) {
+            } else if (this.overrideAnalyzer.isReservedForOther(owningClass, candidateSignature, originalSignature)) {
                 return false;
             } else {
-                return bl1 && !this.overrideAnalyzer.tryReserveGroupRename(classHierarchyNode, methodSignature1, methodSignature2, true, new ObservableHolder())
-                        ? false
-                        : this.isAddedParameterPlacementValid(methodInfo1, changedMethodDescriptor);
+                return (!(reserveOverrideGroup && !this.overrideAnalyzer.tryReserveGroupRename(owningClass, candidateSignature, originalSignature, true, new ObservableHolder())) && (this.isAddedParameterPlacementValid(method, candidateDescriptor)));
             }
         } else {
             return false;
@@ -195,143 +170,143 @@ public class ParameterListGenerator {
     }
 
     public ChangedMethodDescriptor generateForPrivateMethod(
-            ClassHierarchyNode classHierarchyNode, MethodInfo methodInfo1, SetMultiMap setMultiMap, Map map1, Map map2, boolean bl, boolean bl1
+            ClassHierarchyNode owningClass, MethodInfo method, SetMultiMap reservedMemberNames, Map reservedMethodSignatures, Map reservedNameTypes, boolean forceExtraParameters, boolean includeReturnTypeInConflicts
     ) throws ZkmException, IOException {
-        return this.generateDescriptor(classHierarchyNode, methodInfo1, setMultiMap, classHierarchyNode.isInterface(), map1, map2, bl, bl1);
+        return this.generateDescriptor(owningClass, method, reservedMemberNames, owningClass.isInterface(), reservedMethodSignatures, reservedNameTypes, forceExtraParameters, includeReturnTypeInConflicts);
     }
 
-    public static List listCandidateDescriptors(boolean bl, MethodSignature methodSignature1, boolean bl1, char[] ba) {
-        ArrayList arrayList = new ArrayList();
-        String string = methodSignature1.getName();
-        String string1 = methodSignature1.getDescriptor();
-        String string2 = MethodSignature.getReturnPart(string1);
-        List list1 = MethodSignature.splitParameterDescriptors(string1);
-        ChangedMethodDescriptor changedMethodDescriptor = null;
-        ExtraParamLayoutGenerator extraParamLayoutGenerator = new ExtraParamLayoutGenerator();
-        HashSet hashSet = ZkmUtils.createHashSet();
+    public static List listCandidateDescriptors(boolean preserveLambdaArguments, MethodSignature originalSignature, boolean preserveVarargs, char[] parameterTypes) {
+        ArrayList candidateDescriptors = new ArrayList();
+        String methodName = originalSignature.getName();
+        String originalDescriptor = originalSignature.getDescriptor();
+        String returnDescriptor = MethodSignature.getReturnPart(originalDescriptor);
+        List parameterDescriptors = MethodSignature.splitParameterDescriptors(originalDescriptor);
+        ChangedMethodDescriptor candidateDescriptor = null;
+        ExtraParamLayoutGenerator layoutGenerator = new ExtraParamLayoutGenerator();
+        HashSet seenDescriptors = ZkmUtils.createHashSet();
 
         while (true) {
-            changedMethodDescriptor = extraParamLayoutGenerator.nextLayout(bl, list1, string2, ba, changedMethodDescriptor, bl1);
-            if (changedMethodDescriptor == null) {
-                return arrayList;
+            candidateDescriptor = layoutGenerator.nextLayout(preserveLambdaArguments, parameterDescriptors, returnDescriptor, parameterTypes, candidateDescriptor, preserveVarargs);
+            if (candidateDescriptor == null) {
+                return candidateDescriptors;
             }
 
-            String string3 = changedMethodDescriptor.getDescriptor();
-            if (hashSet.add(string3)) {
-                new MethodSignature(string, string3);
-                arrayList.add(changedMethodDescriptor);
+            String candidateDescriptorText = candidateDescriptor.getDescriptor();
+            if (seenDescriptors.add(candidateDescriptorText)) {
+                new MethodSignature(methodName, candidateDescriptorText);
+                candidateDescriptors.add(candidateDescriptor);
             }
         }
     }
 
-    public ParameterListGenerator(MethodParameterChangeSet methodParameterChangeSet, boolean randomizeLayouts, Random random1) {
-        this.overrideAnalyzer = methodParameterChangeSet.getOverrideAnalyzer();
-        this.changeSet = methodParameterChangeSet;
+    public ParameterListGenerator(MethodParameterChangeSet changeSet, boolean randomizeLayouts, Random random) {
+        this.overrideAnalyzer = changeSet.getOverrideAnalyzer();
+        this.changeSet = changeSet;
         this.randomizeLayouts = randomizeLayouts;
-        this.random = random1;
+        this.random = random;
     }
 
     public ChangedMethodDescriptor generateForVirtualMethod(
-            ClassHierarchyNode classHierarchyNode, MethodInfo methodInfo1, SetMultiMap setMultiMap, boolean bl, Map map1, Map map2, boolean bl1, boolean bl2
+            ClassHierarchyNode owningClass, MethodInfo method, SetMultiMap reservedMemberNames, boolean reserveOverrideGroup, Map reservedMethodSignatures, Map reservedNameTypes, boolean forceExtraParameters, boolean includeReturnTypeInConflicts
     ) throws ZkmException, IOException {
-        MethodSignature methodSignature1 = methodInfo1.getSignature();
-        ObservableHolder observableHolder = null;
-        if (classHierarchyNode.isInterface()) {
-            observableHolder = this.overrideAnalyzer.getInterfaceMethodGroup(classHierarchyNode, methodSignature1);
+        MethodSignature originalSignature = method.getSignature();
+        ObservableHolder interfaceMethodGroup = null;
+        if (owningClass.isInterface()) {
+            interfaceMethodGroup = this.overrideAnalyzer.getInterfaceMethodGroup(owningClass, originalSignature);
         }
 
-        ChangedMethodDescriptor changedMethodDescriptor;
-        if (observableHolder != null) {
-            changedMethodDescriptor = this.overrideAnalyzer.getGroupChangedDescriptor(observableHolder);
-            if (changedMethodDescriptor == null) {
-                AbstractMethodInfo abstractMethodInfo = this.overrideAnalyzer.findRootMethod(methodInfo1);
-                if (abstractMethodInfo != null) {
-                    String string = abstractMethodInfo.getClassName();
-                    ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(string);
-                    if (classHierarchyNode1 == null || classHierarchyNode1.hasNoClassFile()) {
-                        changedMethodDescriptor = null;
-                    } else if (!classHierarchyNode1.isProgramClass()) {
-                        changedMethodDescriptor = this.changeSet.getChangedDescriptor(abstractMethodInfo);
+        ChangedMethodDescriptor candidateDescriptor;
+        if (interfaceMethodGroup != null) {
+            candidateDescriptor = this.overrideAnalyzer.getGroupChangedDescriptor(interfaceMethodGroup);
+            if (candidateDescriptor == null) {
+                AbstractMethodInfo rootMethod = this.overrideAnalyzer.findRootMethod(method);
+                if (rootMethod != null) {
+                    String rootClassName = rootMethod.getClassName();
+                    ClassHierarchyNode rootClass = ClassHierarchyNode.findNode(rootClassName);
+                    if (rootClass == null || rootClass.hasNoClassFile()) {
+                        candidateDescriptor = null;
+                    } else if (!rootClass.isProgramClass()) {
+                        candidateDescriptor = this.changeSet.getChangedDescriptor(rootMethod);
                     } else {
-                        changedMethodDescriptor = this.generateDescriptor(classHierarchyNode, methodInfo1, setMultiMap, bl, map1, map2, bl1, bl2);
+                        candidateDescriptor = this.generateDescriptor(owningClass, method, reservedMemberNames, reserveOverrideGroup, reservedMethodSignatures, reservedNameTypes, forceExtraParameters, includeReturnTypeInConflicts);
                     }
                 } else {
-                    changedMethodDescriptor = this.generateDescriptor(classHierarchyNode, methodInfo1, setMultiMap, bl, map1, map2, bl1, bl2);
+                    candidateDescriptor = this.generateDescriptor(owningClass, method, reservedMemberNames, reserveOverrideGroup, reservedMethodSignatures, reservedNameTypes, forceExtraParameters, includeReturnTypeInConflicts);
                 }
 
-                if (changedMethodDescriptor != null) {
-                    this.overrideAnalyzer.setGroupChangedDescriptor(observableHolder, changedMethodDescriptor);
+                if (candidateDescriptor != null) {
+                    this.overrideAnalyzer.setGroupChangedDescriptor(interfaceMethodGroup, candidateDescriptor);
                 }
             }
         } else {
-            AbstractMethodInfo abstractMethodInfo1 = this.overrideAnalyzer.findRootMethod(methodInfo1);
-            if (abstractMethodInfo1 != null) {
-                ClassHierarchyNode classHierarchyNode2 = ClassHierarchyNode.findNode(abstractMethodInfo1.getClassName());
-                if (classHierarchyNode2 != null && !classHierarchyNode2.hasNoClassFile()) {
-                    changedMethodDescriptor = this.changeSet.getChangedDescriptor(abstractMethodInfo1);
+            AbstractMethodInfo rootMethod = this.overrideAnalyzer.findRootMethod(method);
+            if (rootMethod != null) {
+                ClassHierarchyNode rootClass = ClassHierarchyNode.findNode(rootMethod.getClassName());
+                if (rootClass != null && !rootClass.hasNoClassFile()) {
+                    candidateDescriptor = this.changeSet.getChangedDescriptor(rootMethod);
                 } else {
-                    changedMethodDescriptor = null;
+                    candidateDescriptor = null;
                 }
             } else {
-                changedMethodDescriptor = this.generateDescriptor(classHierarchyNode, methodInfo1, setMultiMap, bl, map1, map2, bl1, bl2);
+                candidateDescriptor = this.generateDescriptor(owningClass, method, reservedMemberNames, reserveOverrideGroup, reservedMethodSignatures, reservedNameTypes, forceExtraParameters, includeReturnTypeInConflicts);
             }
         }
 
-        return changedMethodDescriptor;
+        return candidateDescriptor;
     }
 
     public ChangedMethodDescriptor findSequentialDescriptor(
-            ClassHierarchyNode classHierarchyNode,
-            MethodInfo methodInfo1,
-            MethodSignature methodSignature1,
-            boolean bl,
-            SetMultiMap setMultiMap,
-            boolean bl1,
-            Map map1,
-            Map map2,
-            boolean bl2,
-            char[][] ba
+            ClassHierarchyNode owningClass,
+            MethodInfo method,
+            MethodSignature originalSignature,
+            boolean preserveVarargs,
+            SetMultiMap reservedMemberNames,
+            boolean reserveOverrideGroup,
+            Map reservedMethodSignatures,
+            Map reservedNameTypes,
+            boolean includeReturnTypeInConflicts,
+            char[][] typeLayouts
     ) throws ZkmException, IOException {
-        String string = methodSignature1.getName();
-        String string1 = methodSignature1.getDescriptor();
-        String string2 = MethodSignature.getReturnPart(string1);
-        List list1 = MethodSignature.splitParameterDescriptors(string1);
-        ChangedMethodDescriptor changedMethodDescriptor = null;
-        MutableInt mutableInt = new MutableInt();
-        ExtraParamLayoutGenerator extraParamLayoutGenerator = new ExtraParamLayoutGenerator();
-        HashSet hashSet = ZkmUtils.createHashSet();
+        String methodName = originalSignature.getName();
+        String originalDescriptor = originalSignature.getDescriptor();
+        String returnDescriptor = MethodSignature.getReturnPart(originalDescriptor);
+        List parameterDescriptors = MethodSignature.splitParameterDescriptors(originalDescriptor);
+        ChangedMethodDescriptor candidateDescriptor = null;
+        MutableInt typeLayoutIndex = new MutableInt();
+        ExtraParamLayoutGenerator layoutGenerator = new ExtraParamLayoutGenerator();
+        HashSet seenDescriptors = ZkmUtils.createHashSet();
 
         while (true) {
-            changedMethodDescriptor = extraParamLayoutGenerator.nextLayoutWithTypes(
-                    methodInfo1.hasLambdaArgCount(), list1, string2, mutableInt, changedMethodDescriptor, bl, ba
+            candidateDescriptor = layoutGenerator.nextLayoutWithTypes(
+                    method.hasLambdaArgCount(), parameterDescriptors, returnDescriptor, typeLayoutIndex, candidateDescriptor, preserveVarargs, typeLayouts
             );
-            if (changedMethodDescriptor == null) {
+            if (candidateDescriptor == null) {
                 return null;
             }
 
-            String string3 = changedMethodDescriptor.getDescriptor();
-            if (hashSet.add(string3)) {
-                MethodSignature methodSignature2 = new MethodSignature(string, string3);
+            String candidateDescriptorText = candidateDescriptor.getDescriptor();
+            if (seenDescriptors.add(candidateDescriptorText)) {
+                MethodSignature candidateSignature = new MethodSignature(methodName, candidateDescriptorText);
                 if (this.isDescriptorUsable(
-                        classHierarchyNode, methodInfo1, changedMethodDescriptor, methodSignature2, methodSignature1, setMultiMap, map1, map2, bl2, bl1
+                        owningClass, method, candidateDescriptor, candidateSignature, originalSignature, reservedMemberNames, reservedMethodSignatures, reservedNameTypes, includeReturnTypeInConflicts, reserveOverrideGroup
                 )) {
-                    return changedMethodDescriptor;
+                    return candidateDescriptor;
                 }
             }
         }
     }
 
-    public boolean isAddedParameterPlacementValid(MethodInfo methodInfo1, ChangedMethodDescriptor changedMethodDescriptor) {
-        if (!methodInfo1.hasLambdaArgCount()) {
+    public boolean isAddedParameterPlacementValid(MethodInfo method, ChangedMethodDescriptor candidateDescriptor) {
+        if (!method.hasLambdaArgCount()) {
             return true;
         }
 
-        int lambdaArgCount = methodInfo1.getLambdaArgCount();
+        int lambdaArgCount = method.getLambdaArgCount();
         if (lambdaArgCount > 0) {
-            AddedParameter[] addedParameters1 = changedMethodDescriptor.getAddedParameters();
-            AddedParameter addedParameter = addedParameters1[addedParameters1.length - 1];
-            List list1 = MethodSignature.splitParameterDescriptors(methodInfo1.getDescriptor());
-            if (addedParameter.getIndex() >= list1.size() + addedParameters1.length - lambdaArgCount) {
+            AddedParameter[] addedParameters = candidateDescriptor.getAddedParameters();
+            AddedParameter lastAddedParameter = addedParameters[addedParameters.length - 1];
+            List parameterDescriptors = MethodSignature.splitParameterDescriptors(method.getDescriptor());
+            if (lastAddedParameter.getIndex() >= parameterDescriptors.size() + addedParameters.length - lambdaArgCount) {
                 return false;
             }
         }

@@ -39,18 +39,18 @@ public class PlatformAwareJList extends JList {
     }
 
     public static boolean needsRepaintWorkaround() {
-        String string1;
+        String osNameValue;
         if (javaVendor.indexOf("Sun") == -1) {
             if (javaVendor.indexOf("IBM") == -1) {
                 return false;
             }
 
-            string1 = osName;
+            osNameValue = osName;
         } else {
-            string1 = osName;
+            osNameValue = osName;
         }
 
-        if (string1.indexOf("Windows") != -1) {
+        if (osNameValue.indexOf("Windows") != -1) {
             StringTokenizer stringTokenizer = new StringTokenizer(javaVersion, ".");
 
             for (int i = 0; stringTokenizer.hasMoreTokens(); i++) {

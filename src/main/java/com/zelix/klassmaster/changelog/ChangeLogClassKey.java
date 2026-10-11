@@ -10,22 +10,22 @@ public class ChangeLogClassKey extends ChangeLogMemberRecord implements Comparab
         return this.H.compareTo(changeLogClassKey1.H);
     }
 
-    public ChangeLogClassKey(String string, String string1, int ba) {
-        super(string, string1, ba);
+    public ChangeLogClassKey(String name, String type, int accessFlags) {
+        super(name, type, accessFlags);
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareToKey((ChangeLogClassKey) object);
+    public int compareTo(Object other) {
+        return this.compareToKey((ChangeLogClassKey) other);
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof ChangeLogClassKey)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof ChangeLogClassKey)) {
             return false;
         }
 
-        ChangeLogClassKey changeLogClassKey1 = (ChangeLogClassKey) object;
+        ChangeLogClassKey changeLogClassKey1 = (ChangeLogClassKey) other;
         return this.H.equals(changeLogClassKey1.H)
                 && (this.v == null && changeLogClassKey1.v == null || this.v != null && changeLogClassKey1.v != null && this.v.equals(changeLogClassKey1.v));
     }

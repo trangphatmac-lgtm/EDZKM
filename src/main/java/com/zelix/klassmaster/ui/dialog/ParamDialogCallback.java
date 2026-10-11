@@ -8,8 +8,8 @@ import java.io.IOException;
 public class ParamDialogCallback extends CallbackAdapter {
     public final ParameterListDialog parameterListDialog;
 
-    public void onParameterEdited(String string) throws ZkmException, IOException {
-        this.parameterListDialog.updateEditedParameter(string);
+    public void onParameterEdited(String key) throws ZkmException, IOException {
+        this.parameterListDialog.updateEditedParameter(key);
         this.parameterListDialog.onParametersChanged();
         this.parameterListDialog.toFront();
     }

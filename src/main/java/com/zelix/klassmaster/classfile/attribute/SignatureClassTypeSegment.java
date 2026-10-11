@@ -17,9 +17,9 @@ public class SignatureClassTypeSegment {
         return this.prefix;
     }
 
-    public SignatureClassTypeSegment(String string, String string1, boolean innerClassSuffix) {
-        this.prefix = string;
-        this.className = string1;
+    public SignatureClassTypeSegment(String prefixArgument, String classNameArgument, boolean innerClassSuffix) {
+        this.prefix = prefixArgument;
+        this.className = classNameArgument;
         this.innerClassSuffix = innerClassSuffix;
     }
 
@@ -31,12 +31,12 @@ public class SignatureClassTypeSegment {
         this.treeNode = objectTreeNode;
     }
 
-    public void setClassName(String string) {
-        this.className = string;
+    public void setClassName(String classNameArgument) {
+        this.className = classNameArgument;
     }
 
-    public void setPrefix(String string) {
-        this.prefix = string;
+    public void setPrefix(String prefixArgument) {
+        this.prefix = prefixArgument;
     }
 
     public String getClassName() {
@@ -59,8 +59,8 @@ public class SignatureClassTypeSegment {
         return this.innerSegment != null && !this.innerClassSuffix;
     }
 
-    public SignatureClassTypeSegment(String string) {
-        this.prefix = string;
+    public SignatureClassTypeSegment(String prefixArgument) {
+        this.prefix = prefixArgument;
         this.className = null;
     }
 }

@@ -37,12 +37,12 @@ public class XmlResourceReader {
             int value = mutableInt.getValue();
             mutableInt1.getValue();
             mutableInt2.getValue();
-            String string1 = ZkmFileUtils.describeEntryWithOriginal(zipFile1, zipEntry1);
+            String resourceName = ZkmFileUtils.describeEntryWithOriginal(zipFile1, zipEntry1);
             TwoKeyMap twoKeyMap1 = twoKeyMap;
             Map map4 = map3;
             Map map5 = map2;
             Map map6 = map1;
-            new XmlResourceProcessor(inputStream1, xmlContentHandler, string, value, map6, map5, map4, twoKeyMap1, string1);
+            new XmlResourceProcessor(inputStream1, xmlContentHandler, string, value, map6, map5, map4, twoKeyMap1, resourceName);
             xmlContentHandler.finishAnalysis(map3, twoKeyMap);
         } finally {
             try {
@@ -54,7 +54,7 @@ public class XmlResourceReader {
         }
     }
 
-    public XmlResourceReader(final String s, final String s2, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3, final String s3, final XmlContentHandler xmlContentHandler) throws ZkmException, IOException {
+    public XmlResourceReader(final String resourceName, final String s2, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3, final String s3, final XmlContentHandler xmlContentHandler) throws ZkmException, IOException {
         final HashMap hashMap = ZkmUtils.createHashMap(13);
         final Map map = null;
         final Map map2 = null;
@@ -66,17 +66,17 @@ public class XmlResourceReader {
             final int value = mutableInt.getValue();
             mutableInt2.getValue();
             mutableInt3.getValue();
-            final XmlResourceProcessor xmlResourceProcessor = new XmlResourceProcessor(byteArrayInputStream, xmlContentHandler, s3, value, hashMap, map, map2, twoKeyMap, s);
+            final XmlResourceProcessor xmlResourceProcessor = new XmlResourceProcessor(byteArrayInputStream, xmlContentHandler, s3, value, hashMap, map, map2, twoKeyMap, resourceName);
             try {
                 inputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
         } finally {
             try {
                 if (inputStream != null) {
                     inputStream.close();
                 }
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         }
     }
@@ -93,14 +93,14 @@ public class XmlResourceReader {
             xmlContentHandler.finishAnalysis(map3, twoKeyMap);
             try {
                 inputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
         } finally {
             try {
                 if (inputStream != null) {
                     inputStream.close();
                 }
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         }
     }

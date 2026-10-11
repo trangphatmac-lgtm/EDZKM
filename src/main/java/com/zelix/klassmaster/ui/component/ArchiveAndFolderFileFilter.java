@@ -14,6 +14,6 @@ public class ArchiveAndFolderFileFilter extends ZkmFileFilter {
 
     @Override
     public boolean accept(File file1) {
-        return file1.isDirectory() ? true : ZkmFileUtils.isKnownArchiveName(file1.getName());
+        return ((file1.isDirectory()) || (ZkmFileUtils.isKnownArchiveName(file1.getName())));
     }
 }

@@ -16,11 +16,11 @@ public class ASTClassBlock extends ProGuardMappingSimpleNode {
         super.translate(proGuardMappingNode, proGuardMappingTranslator);
         int ba = this.jjtGetNumChildren();
         ASTClassNameChange aSTClassNameChange = (ASTClassNameChange) this.jjtGetChild(0);
-        String string = aSTClassNameChange.getOldName();
+        String oldName = aSTClassNameChange.getOldName();
         proGuardMappingTranslator.addClassMapping(aSTClassNameChange.getOldName(), aSTClassNameChange.getNewName());
 
-        for (int i = 1; i < ba; i++) {
-            ((ProGuardMemberChangeApplier) this.jjtGetChild(i)).applyMemberChange(string, proGuardMappingTranslator);
+        for (int childrenElementIndex = 1; childrenElementIndex < ba; childrenElementIndex++) {
+            ((ProGuardMemberChangeApplier) this.jjtGetChild(childrenElementIndex)).applyMemberChange(oldName, proGuardMappingTranslator);
         }
     }
 }

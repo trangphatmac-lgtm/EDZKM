@@ -58,31 +58,31 @@ public class SplitLayout implements LayoutManager2 {
         if (this.orientation == 0) {
             int ba = Math.max(0, Math.round(dimension.width * this.splitRatio - this.dividerThickness));
             int bb = dimension.width - this.dividerThickness - ba;
-            int bc = dimension.height;
+            int heightValue = dimension.height;
             int bd = ba;
-            this.firstComponent.setBounds(0, 0, bd, bc);
-            int be = dimension.height;
+            this.firstComponent.setBounds(0, 0, bd, heightValue);
+            int heightValue2 = dimension.height;
             int dividerThickness = this.dividerThickness;
-            this.divider.setBounds(ba, 0, dividerThickness, be);
+            this.divider.setBounds(ba, 0, dividerThickness, heightValue2);
             int bt = ba + this.dividerThickness;
-            int bg = dimension.height;
+            int heightValue3 = dimension.height;
             int bh = bb;
-            this.secondComponent.setBounds(bt, 0, bh, bg);
+            this.secondComponent.setBounds(bt, 0, bh, heightValue3);
         } else {
             int bq = Math.max(0, Math.round(dimension.height * this.splitRatio - this.dividerThickness));
             int br = dimension.height - this.dividerThickness - bq;
             int bi = bq;
-            int bj = dimension.width;
-            this.firstComponent.setBounds(0, 0, bj, bi);
-            int bk = this.dividerThickness;
-            int bl = dimension.width;
+            int widthValue = dimension.width;
+            this.firstComponent.setBounds(0, 0, widthValue, bi);
+            int dividerThicknessValue = this.dividerThickness;
+            int widthValue2 = dimension.width;
             int bm = bq;
-            this.divider.setBounds(0, bm, bl, bk);
+            this.divider.setBounds(0, bm, widthValue2, dividerThicknessValue);
             int bs = bq + this.dividerThickness;
             int bn = br;
-            int bo = dimension.width;
+            int widthValue3 = dimension.width;
             int bp = bs;
-            this.secondComponent.setBounds(0, bp, bo, bn);
+            this.secondComponent.setBounds(0, bp, widthValue3, bn);
         }
     }
 

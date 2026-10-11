@@ -175,14 +175,14 @@ public class BannerPnl extends BevelBorderPanel {
     }
 
     public void loadLicenseeLines(KlassMaster klassMaster) {
-        String string = klassMaster.getLicenseToken();
-        if ("58#\\u0001\\u00031*\\u0001<\\u000erm".equals(string)) {
-            int ba = 0;
-            int bb = ba;
+        String licenseToken = klassMaster.getLicenseToken();
+        if ("58#\\u0001\\u00031*\\u0001<\\u000erm".equals(licenseToken)) {
+            int licenseeLineIndex = 0;
+            int licenseeLineIndexValue = licenseeLineIndex;
 
-            for (byte bc = 8; bb < bc; bc = 8) {
-                this.licenseeLines[ba] = klassMaster.getRawLicenseField(ba).trim();
-                bb = ++ba;
+            for (byte bc = 8; licenseeLineIndexValue < bc; bc = 8) {
+                this.licenseeLines[licenseeLineIndex] = klassMaster.getRawLicenseField(licenseeLineIndex).trim();
+                licenseeLineIndexValue = ++licenseeLineIndex;
             }
         }
     }

@@ -18,105 +18,105 @@ public class ChangedMethodDescriptor {
     private final AddedParameter[] addedParameters;
 
     public int countByteParams() {
-        int ba = 0;
-        AddedParameter[] addedParameters1 = this.addedParameters;
-        int bb = addedParameters1.length;
+        int byteParameterCount = 0;
+        AddedParameter[] parameters = this.addedParameters;
+        int addedParameterCount = parameters.length;
 
-        for (int i = 0; i < bb; i++) {
-            if (addedParameters1[i].getTypeChar() == 'B') {
-                ba++;
+        for (int parameterIndexValue = 0; parameterIndexValue < addedParameterCount; parameterIndexValue++) {
+            if (parameters[parameterIndexValue].getTypeChar() == 'B') {
+                byteParameterCount++;
             }
         }
 
-        return ba;
+        return byteParameterCount;
     }
 
     public AddedParameter[] getAddedParameters() {
         return this.addedParameters.clone();
     }
 
-    public int getKeyBitCount(int ba) {
-        char typeChar = this.addedParameters[ba].getTypeChar();
-        byte bb;
+    public int getKeyBitCount(int parameterIndex) {
+        char typeChar = this.addedParameters[parameterIndex].getTypeChar();
+        byte bitCount;
         if (typeChar == 'B') {
-            bb = 8;
+            bitCount = 8;
         } else {
-            byte bg;
+            byte shortBitCount;
             if (typeChar != 'S') {
                 if (typeChar != 'C') {
                     if (typeChar == 'J') {
-                        return 64 - (ba == 0 ? this.addedParameters[1].getBitWidth() : this.addedParameters[0].getBitWidth());
+                        return 64 - (parameterIndex == 0 ? this.addedParameters[1].getBitWidth() : this.addedParameters[0].getBitWidth());
                     }
 
                     if (this.addedParameters.length == 2) {
                         return 32;
                     }
 
-                    if (ba == 0) {
+                    if (parameterIndex == 0) {
                         return 32;
                     }
 
-                    int bd = this.countByteParams();
-                    int be = this.countIntParams();
-                    int bf = this.indexOfIntParam();
-                    if (ba == bf) {
+                    int byteParameterCount = this.countByteParams();
+                    int intParameterCount = this.countIntParams();
+                    int firstIntParameterIndex = this.indexOfIntParam();
+                    if (parameterIndex == firstIntParameterIndex) {
                         return 32;
                     }
 
-                    if (be == 3) {
+                    if (intParameterCount == 3) {
                         return 16;
                     }
 
-                    if (bd == 1) {
-                        bb = 24;
+                    if (byteParameterCount == 1) {
+                        bitCount = 24;
                     } else {
-                        bb = 16;
+                        bitCount = 16;
                     }
 
-                    return bb;
+                    return bitCount;
                 }
 
-                bg = 16;
+                shortBitCount = 16;
             } else {
-                bg = 16;
+                shortBitCount = 16;
             }
 
-            bb = bg;
+            bitCount = shortBitCount;
         }
 
-        return bb;
+        return bitCount;
     }
 
-    public ChangedMethodDescriptor(String string, AddedParameter[] addedParameters1) {
-        String string1 = MethodSignature.getReturnPart(string);
-        List list1 = MethodSignature.splitParameterDescriptors(string);
-        int ba = list1.size() + addedParameters1.length;
-        int bb = addedParameters1.length;
-        int bc = 0;
-        Iterator iterator = list1.iterator();
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append('(');
+    public ChangedMethodDescriptor(String originalDescriptor, AddedParameter[] addedParameters) {
+        String returnDescriptor = MethodSignature.getReturnPart(originalDescriptor);
+        List parameterDescriptors = MethodSignature.splitParameterDescriptors(originalDescriptor);
+        int totalParameterCount = parameterDescriptors.size() + addedParameters.length;
+        int addedParameterCount = addedParameters.length;
+        int addedParameterIndex = 0;
+        Iterator originalParameters = parameterDescriptors.iterator();
+        StringBuilder descriptorBuilder = new StringBuilder();
+        descriptorBuilder.append('(');
 
-        for (int i = 0; i < ba; i++) {
-            while (bc < bb && addedParameters1[bc].getIndex() == i) {
-                stringBuilder.append(addedParameters1[bc].getTypeChar());
-                bc++;
+        for (int i = 0; i < totalParameterCount; i++) {
+            while (addedParameterIndex < addedParameterCount && addedParameters[addedParameterIndex].getIndex() == i) {
+                descriptorBuilder.append(addedParameters[addedParameterIndex].getTypeChar());
+                addedParameterIndex++;
                 i++;
             }
 
-            if (iterator.hasNext()) {
-                String string2 = (String) iterator.next();
-                stringBuilder.append(string2);
+            if (originalParameters.hasNext()) {
+                String parameterDescriptor = (String) originalParameters.next();
+                descriptorBuilder.append(parameterDescriptor);
             }
         }
 
-        stringBuilder.append(')');
-        stringBuilder.append(string1);
-        this.newDescriptor = stringBuilder.toString();
-        this.addedParameters = addedParameters1;
+        descriptorBuilder.append(')');
+        descriptorBuilder.append(returnDescriptor);
+        this.newDescriptor = descriptorBuilder.toString();
+        this.addedParameters = addedParameters;
     }
 
-    public void registerLocalSlot(MethodBytecode methodBytecode1, int ba, LocalVariableSlot localVariableSlot1) {
+    public void registerLocalSlot(MethodBytecode methodBytecode, int addedParameterIndex, LocalVariableSlot localSlot) {
         if (this.localSlotsByMethod == null) {
             if (HiddenOptionFlags.USE_PARALLEL) {
                 this.localSlotsByMethod = new ConcurrentHashMap(13);
@@ -125,91 +125,91 @@ public class ChangedMethodDescriptor {
             }
         }
 
-        IndexedLocalSlot[] indexedLocalSlots = (IndexedLocalSlot[]) this.localSlotsByMethod.get(methodBytecode1);
-        if (indexedLocalSlots == null) {
-            indexedLocalSlots = new IndexedLocalSlot[this.addedParameters.length];
-            this.localSlotsByMethod.put(methodBytecode1, indexedLocalSlots);
+        IndexedLocalSlot[] registeredSlots = (IndexedLocalSlot[]) this.localSlotsByMethod.get(methodBytecode);
+        if (registeredSlots == null) {
+            registeredSlots = new IndexedLocalSlot[this.addedParameters.length];
+            this.localSlotsByMethod.put(methodBytecode, registeredSlots);
         }
 
-        indexedLocalSlots[ba] = new IndexedLocalSlot(localVariableSlot1, ba);
+        registeredSlots[addedParameterIndex] = new IndexedLocalSlot(localSlot, addedParameterIndex);
     }
 
-    public int getBitOffset(int ba) {
-        int bb = 0;
-        int bc = this.getKeyBitCount(0);
-        if (ba == 1) {
-            bb = bc;
-        } else if (ba == 2) {
-            int bd = this.getKeyBitCount(1);
-            bb = bc + bd;
+    public int getBitOffset(int parameterIndex) {
+        int bitOffset = 0;
+        int firstParameterWidth = this.getKeyBitCount(0);
+        if (parameterIndex == 1) {
+            bitOffset = firstParameterWidth;
+        } else if (parameterIndex == 2) {
+            int secondParameterWidth = this.getKeyBitCount(1);
+            bitOffset = firstParameterWidth + secondParameterWidth;
         }
 
-        return bb;
+        return bitOffset;
     }
 
-    public ChangedMethodDescriptor(List list1, String string, char[] ba, int[] bb) {
-        this.addedParameters = new AddedParameter[ba.length];
+    public ChangedMethodDescriptor(List parameterDescriptors, String returnDescriptor, char[] addedParameterTypes, int[] addedParameterIndices) {
+        this.addedParameters = new AddedParameter[addedParameterTypes.length];
 
-        for (int i = 0; i < ba.length; i++) {
-            this.addedParameters[i] = new AddedParameter(bb[i], ba[i]);
+        for (int i = 0; i < addedParameterTypes.length; i++) {
+            this.addedParameters[i] = new AddedParameter(addedParameterIndices[i], addedParameterTypes[i]);
         }
 
-        int bg = ba.length;
-        int bd = list1.size() + ba.length;
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append('(');
-        int be = 0;
-        Iterator iterator = list1.iterator();
+        int addedParameterCount = addedParameterTypes.length;
+        int totalParameterCount = parameterDescriptors.size() + addedParameterTypes.length;
+        StringBuilder descriptorBuilder = new StringBuilder();
+        descriptorBuilder.append('(');
+        int addedParameterIndex = 0;
+        Iterator originalParameters = parameterDescriptors.iterator();
 
-        for (int i = 0; i < bd; i++) {
-            while (be < bg && bb[be] == i) {
-                stringBuilder.append(ba[be]);
-                be++;
+        for (int i = 0; i < totalParameterCount; i++) {
+            while (addedParameterIndex < addedParameterCount && addedParameterIndices[addedParameterIndex] == i) {
+                descriptorBuilder.append(addedParameterTypes[addedParameterIndex]);
+                addedParameterIndex++;
                 i++;
             }
 
-            if (iterator.hasNext()) {
-                String string1 = (String) iterator.next();
-                stringBuilder.append(string1);
+            if (originalParameters.hasNext()) {
+                String parameterDescriptor = (String) originalParameters.next();
+                descriptorBuilder.append(parameterDescriptor);
             }
         }
 
-        stringBuilder.append(')');
-        stringBuilder.append(string);
-        this.newDescriptor = stringBuilder.toString();
+        descriptorBuilder.append(')');
+        descriptorBuilder.append(returnDescriptor);
+        this.newDescriptor = descriptorBuilder.toString();
     }
 
-    public static int[] computeLocalIndices(ChangedMethodDescriptor changedMethodDescriptor, boolean bl) {
-        List list1 = ConstantPoolEntry.getParameterTypes(changedMethodDescriptor.newDescriptor);
-        int ba = list1.size();
-        int bb = changedMethodDescriptor.addedParameters.length;
-        int[] bc = new int[bb];
-        int bd = bl ? 0 : 1;
-        int be = 0;
-        int index = changedMethodDescriptor.addedParameters[0].getIndex();
+    public static int[] computeLocalIndices(ChangedMethodDescriptor descriptor, boolean staticMethod) {
+        List parameterTypes = ConstantPoolEntry.getParameterTypes(descriptor.newDescriptor);
+        int parameterCount = parameterTypes.size();
+        int addedParameterCount = descriptor.addedParameters.length;
+        int[] localIndices = new int[addedParameterCount];
+        int localSlotIndex = staticMethod ? 0 : 1;
+        int addedParameterIndex = 0;
+        int nextAddedParameterIndex = descriptor.addedParameters[0].getIndex();
 
-        for (int i = 0; i < ba; i++) {
-            if (i == index) {
-                bc[be] = bd;
-                if (++be < bb) {
-                    index = changedMethodDescriptor.addedParameters[be].getIndex();
+        for (int elementIndex = 0; elementIndex < parameterCount; elementIndex++) {
+            if (elementIndex == nextAddedParameterIndex) {
+                localIndices[addedParameterIndex] = localSlotIndex;
+                if (++addedParameterIndex < addedParameterCount) {
+                    nextAddedParameterIndex = descriptor.addedParameters[addedParameterIndex].getIndex();
                 } else {
-                    index = -1;
+                    nextAddedParameterIndex = -1;
                 }
             }
 
-            String string = (String) list1.get(i);
-            bd++;
-            if (string.equals("J") || string.equals("D")) {
-                bd++;
+            String parameterType = (String) parameterTypes.get(elementIndex);
+            localSlotIndex++;
+            if (parameterType.equals("J") || parameterType.equals("D")) {
+                localSlotIndex++;
             }
         }
 
-        return bc;
+        return localIndices;
     }
 
-    public char getTypeCharAt(int ba) {
-        return this.addedParameters[ba].getTypeChar();
+    public char getTypeCharAt(int parameterIndex) {
+        return this.addedParameters[parameterIndex].getTypeChar();
     }
 
     public boolean hasMultipleParams() {
@@ -221,35 +221,35 @@ public class ChangedMethodDescriptor {
     }
 
     public int indexOfIntParam() {
-        int ba = 0;
-        AddedParameter[] addedParameters1 = this.addedParameters;
-        int bb = addedParameters1.length;
+        int parameterIndex = 0;
+        AddedParameter[] parameters = this.addedParameters;
+        int addedParameterCount = parameters.length;
 
-        for (int i = 0; i < bb; i++) {
-            if (addedParameters1[i].getTypeChar() == 'I') {
-                return ba;
+        for (int parameterIndexValue = 0; parameterIndexValue < addedParameterCount; parameterIndexValue++) {
+            if (parameters[parameterIndexValue].getTypeChar() == 'I') {
+                return parameterIndex;
             }
 
-            ba++;
+            parameterIndex++;
         }
 
         return -1;
     }
 
-    public IndexedLocalSlot[] getLocalSlots(Object object) {
-        return (IndexedLocalSlot[]) this.localSlotsByMethod.get(object);
+    public IndexedLocalSlot[] getLocalSlots(Object method) {
+        return (IndexedLocalSlot[]) this.localSlotsByMethod.get(method);
     }
 
-    public int getUnusedBitCount(int ba) {
-        return 64 - this.getKeyBitCount(ba);
+    public int getUnusedBitCount(int parameterIndex) {
+        return 64 - this.getKeyBitCount(parameterIndex);
     }
 
     public AddedParameter getLastParam() {
         return this.addedParameters[this.addedParameters.length - 1];
     }
 
-    public int getParamIndex(int ba) {
-        return this.addedParameters[ba].getIndex();
+    public int getParamIndex(int parameterIndex) {
+        return this.addedParameters[parameterIndex].getIndex();
     }
 
     public int getParamCount() {
@@ -260,23 +260,23 @@ public class ChangedMethodDescriptor {
         return this.addedParameters.length == 0;
     }
 
-    public boolean isLongParam(int ba) {
-        return this.addedParameters[ba].getTypeChar() == 'J';
+    public boolean isLongParam(int parameterIndex) {
+        return this.addedParameters[parameterIndex].getTypeChar() == 'J';
     }
 
     public int[] getParamIndices() {
-        int ba = this.addedParameters.length;
-        int[] bb = new int[ba];
+        int addedParameterCount = this.addedParameters.length;
+        int[] parameterIndices = new int[addedParameterCount];
 
-        for (int i = 0; i < ba; i++) {
-            bb[i] = this.addedParameters[i].getIndex();
+        for (int i = 0; i < addedParameterCount; i++) {
+            parameterIndices[i] = this.addedParameters[i].getIndex();
         }
 
-        return bb;
+        return parameterIndices;
     }
 
-    public int getShiftCount(int ba) {
-        return 64 - this.getKeyBitCount(ba);
+    public int getShiftCount(int parameterIndex) {
+        return 64 - this.getKeyBitCount(parameterIndex);
     }
 
     public AddedParameter getFirstParam() {
@@ -287,74 +287,74 @@ public class ChangedMethodDescriptor {
         return this.addedParameters.length;
     }
 
-    public int getKeyBitOffset(int ba) {
-        int bb;
-        if (ba == 0) {
-            bb = 0;
+    public int getKeyBitOffset(int parameterIndex) {
+        int bitOffset;
+        if (parameterIndex == 0) {
+            bitOffset = 0;
         } else {
-            int bc = this.getKeyBitCount(0);
-            if (ba == 1) {
-                bb = bc;
+            int firstParameterWidth = this.getKeyBitCount(0);
+            if (parameterIndex == 1) {
+                bitOffset = firstParameterWidth;
             } else {
-                int bd = this.getKeyBitCount(1);
-                bb = bc + bd;
+                int secondParameterWidth = this.getKeyBitCount(1);
+                bitOffset = firstParameterWidth + secondParameterWidth;
             }
         }
 
-        return bb;
+        return bitOffset;
     }
 
     public int countIntParams() {
-        int ba = 0;
-        AddedParameter[] addedParameters1 = this.addedParameters;
-        int bb = addedParameters1.length;
+        int intParameterCount = 0;
+        AddedParameter[] parameters = this.addedParameters;
+        int addedParameterCount = parameters.length;
 
-        for (int i = 0; i < bb; i++) {
-            if (addedParameters1[i].getTypeChar() == 'I') {
-                ba++;
+        for (int parameterIndexValue = 0; parameterIndexValue < addedParameterCount; parameterIndexValue++) {
+            if (parameters[parameterIndexValue].getTypeChar() == 'I') {
+                intParameterCount++;
             }
         }
 
-        return ba;
+        return intParameterCount;
     }
 
-    public static String buildParameterDescriptor(List list1, AddedParameter[] addedParameters1) {
-        int ba = list1.size() + addedParameters1.length;
-        int bb = addedParameters1.length;
-        StringBuilder stringBuilder = new StringBuilder();
-        int bc = 0;
-        int bd = 0;
-        AddedParameter addedParameter;
-        StringBuilder stringBuilder1;
-        char bf;
-        if (addedParameters1.length == 0) {
-            addedParameter = null;
-            stringBuilder1 = stringBuilder;
-            bf = '(';
+    public static String buildParameterDescriptor(List parameterDescriptors, AddedParameter[] addedParameters) {
+        int totalParameterCount = parameterDescriptors.size() + addedParameters.length;
+        int addedParameterCount = addedParameters.length;
+        StringBuilder descriptorBuilder = new StringBuilder();
+        int originalParameterIndex = 0;
+        int addedParameterIndex = 0;
+        AddedParameter nextAddedParameter;
+        StringBuilder descriptorBuilderAlias;
+        char openingParenthesis;
+        if (addedParameters.length == 0) {
+            nextAddedParameter = null;
+            descriptorBuilderAlias = descriptorBuilder;
+            openingParenthesis = '(';
         } else {
-            addedParameter = addedParameters1[0];
-            stringBuilder1 = stringBuilder;
-            bf = '(';
+            nextAddedParameter = addedParameters[0];
+            descriptorBuilderAlias = descriptorBuilder;
+            openingParenthesis = '(';
         }
 
-        stringBuilder1.append(bf);
+        descriptorBuilderAlias.append(openingParenthesis);
 
-        for (int i = 0; i < ba; i++) {
-            if (addedParameter != null && i == addedParameter.getIndex()) {
-                stringBuilder.append(addedParameter.getTypeChar());
-                if (++bd < bb) {
-                    addedParameter = addedParameters1[bd];
+        for (int i = 0; i < totalParameterCount; i++) {
+            if (nextAddedParameter != null && i == nextAddedParameter.getIndex()) {
+                descriptorBuilder.append(nextAddedParameter.getTypeChar());
+                if (++addedParameterIndex < addedParameterCount) {
+                    nextAddedParameter = addedParameters[addedParameterIndex];
                 } else {
-                    addedParameter = null;
+                    nextAddedParameter = null;
                 }
             } else {
-                String string = (String) list1.get(bc);
-                stringBuilder.append(string);
-                bc++;
+                String parameterDescriptor = (String) parameterDescriptors.get(originalParameterIndex);
+                descriptorBuilder.append(parameterDescriptor);
+                originalParameterIndex++;
             }
         }
 
-        stringBuilder.append(')');
-        return stringBuilder.toString();
+        descriptorBuilder.append(')');
+        return descriptorBuilder.toString();
     }
 }

@@ -25,10 +25,10 @@ public class ASTInterfaceClause extends ProGuardValueNode implements NegatableCl
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object1;
         super.translate(proGuardConfigNode, proGuardConfigTranslator);
         ASTLbraceClause aSTLbraceClause = (ASTLbraceClause) this.jjtGetParent();
-        String string = this.getValue();
-        if (string.equals("interface") || string.equals("enum")) {
-            aSTLbraceClause.addModifier((this.negated ? "!" : "") + string);
-        } else if (string.equals("@interface")) {
+        String value = this.getValue();
+        if (value.equals("interface") || value.equals("enum")) {
+            aSTLbraceClause.addModifier((this.negated ? "!" : "") + value);
+        } else if (value.equals("@interface")) {
             aSTLbraceClause.addModifier((this.negated ? "!" : "") + "annotation");
         } else if (this.negated) {
             proGuardConfigTranslator.logWarning("'!" + this.getValue() + "' is not directly supported");

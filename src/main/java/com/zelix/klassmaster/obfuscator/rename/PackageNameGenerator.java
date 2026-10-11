@@ -24,7 +24,7 @@ public class PackageNameGenerator extends PackageNameGeneratorBase {
 
     @Override
     public String generatePackageName(
-            String string,
+            String key,
             boolean bl,
             boolean bl1,
             ListMultimap listMultimap,
@@ -33,35 +33,35 @@ public class PackageNameGenerator extends PackageNameGeneratorBase {
             ChangeLogMapping changeLogMapping1,
             NameExclusionSet nameExclusionSet
     ) throws IOException {
-        UniqueNameGenerator uniqueNameGenerator = (UniqueNameGenerator) this.generatorsByParent.get(string);
+        UniqueNameGenerator uniqueNameGenerator = (UniqueNameGenerator) this.generatorsByParent.get(key);
         if (uniqueNameGenerator == null) {
             uniqueNameGenerator = new UniqueNameGenerator(
                     this.firstChars, this.subsequentChars, this.archiveFirstChars, this.archiveSubsequentChars, this.nameFileNames, this.isRandomizeNames()
             );
-            this.generatorsByParent.put(string, uniqueNameGenerator);
+            this.generatorsByParent.put(key, uniqueNameGenerator);
         }
 
         boolean bl2 = bl1 && (this.namePrefix == null || this.namePrefix.length() == 0 || Character.isLetter(this.namePrefix.charAt(0)));
 
-        String string1;
+        String keyValue;
         do {
-            string1 = this.nextName(uniqueNameGenerator, bl2 ? false : bl);
-            if (bl2 && !Character.isLowerCase(string1.charAt(0))) {
-                StringBuilder stringBuilder = new StringBuilder(string1);
-                char ba = Character.toLowerCase(string1.charAt(0));
+            keyValue = this.nextName(uniqueNameGenerator, (!(bl2) && (bl)));
+            if (bl2 && !Character.isLowerCase(keyValue.charAt(0))) {
+                StringBuilder stringBuilder = new StringBuilder(keyValue);
+                char ba = Character.toLowerCase(keyValue.charAt(0));
                 stringBuilder.setCharAt(0, ba);
-                string1 = stringBuilder.toString();
+                keyValue = stringBuilder.toString();
             }
-        } while (!this.isPackageNameAvailable(string1, string, bl2, listMultimap, twoKeyMap, set1, changeLogMapping1, nameExclusionSet));
+        } while (!this.isPackageNameAvailable(keyValue, key, bl2, listMultimap, twoKeyMap, set1, changeLogMapping1, nameExclusionSet));
 
-        return string1;
+        return keyValue;
     }
 
     public PackageNameGenerator(
-            ClassPathResolver classPathResolver1, boolean bl, boolean bl1, boolean bl2, String string, MixedCaseNamesMode mixedCaseNamesMode1, List list1
+            ClassPathResolver classPathResolver1, boolean bl, boolean bl1, boolean randomizeNames, String namePrefixArgument, MixedCaseNamesMode mixedCaseNamesMode1, List list1
     ) {
-        super(classPathResolver1, mixedCaseNamesMode1, bl2);
-        this.namePrefix = string;
+        super(classPathResolver1, mixedCaseNamesMode1, randomizeNames);
+        this.namePrefix = namePrefixArgument;
         this.nameFileNames = list1;
         switch (mixedCaseNamesMode1.getValue()) {
             case 0:

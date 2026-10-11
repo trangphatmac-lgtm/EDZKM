@@ -29,8 +29,8 @@ public class LibraryMethod extends AbstractMethodInfo {
     public int codeAttributeIndex;
     public static int noAttributeIndex = -1;
 
-    public LibraryMethod(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, boolean bl, int ba) {
-        super(classFileBase, constantUtf8, constantUtf81, attributes1, ba);
+    public LibraryMethod(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, boolean placeholderArgument, int creationKind) {
+        super(classFileBase, constantUtf8, constantUtf81, attributes1, creationKind);
         this.codeAttributeIndex = noAttributeIndex;
 
         for (int i = 0; i < attributes1.length; i++) {
@@ -44,7 +44,7 @@ public class LibraryMethod extends AbstractMethodInfo {
         }
 
         this.parameterTypes = ConstantPoolEntry.getParameterTypes(this.descriptor);
-        super.placeholder = bl;
+        super.placeholder = placeholderArgument;
     }
 
     public LibraryMethod(
@@ -178,7 +178,7 @@ public class LibraryMethod extends AbstractMethodInfo {
         MethodSignature methodSignature2 = (MethodSignature) map1.get(methodSignature1);
         PairValueMap pairValueMap1;
         LibraryMethod libraryMethod1;
-        String string;
+        String sourceName;
         if (methodSignature2 != null) {
             if (!methodSignature2.getName().equals(this.getJvmName())) {
                 this.setName(methodSignature2.getName());
@@ -188,13 +188,13 @@ public class LibraryMethod extends AbstractMethodInfo {
 
             pairValueMap1 = pairValueMap;
             libraryMethod1 = this;
-            string = this.getSourceName();
+            sourceName = this.getSourceName();
         } else {
             pairValueMap1 = pairValueMap;
             libraryMethod1 = this;
-            string = this.getSourceName();
+            sourceName = this.getSourceName();
         }
 
-        pairValueMap1.putPair(libraryMethod1, string, this.getSourceName());
+        pairValueMap1.putPair(libraryMethod1, sourceName, this.getSourceName());
     }
 }

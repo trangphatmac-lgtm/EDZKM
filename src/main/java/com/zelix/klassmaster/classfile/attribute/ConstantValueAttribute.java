@@ -85,17 +85,17 @@ public class ConstantValueAttribute extends Attribute implements StringConstantR
 
     public ConstantValueAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndexArgument,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
             ListMultimap listMultimap2,
             ListMultimap listMultimap3
     ) throws ClassFileFormatException, IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        int bb = classFileInputStream.readUnsignedShort();
-        this.constantValue = this.getConstantPoolEntry(bb);
+        super(classFileComponent, constantPoolIndexArgument, attributeName, classFileInputStream, listMultimap);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        this.constantValue = this.getConstantPoolEntry(constantPoolIndex);
         ConstantPoolEntry constantPoolEntry;
         if (this.constantValue instanceof ResolvedStringConstant) {
             listMultimap1.addValue((ResolvedStringConstant) this.constantValue, this);

@@ -12,8 +12,8 @@ public class ParsedStackTrace {
     public String text;
     public List frameLines;
 
-    public ParsedStackTrace(String string) throws StackTraceTranslateException {
-        this.text = string;
+    public ParsedStackTrace(String textArgument) throws StackTraceTranslateException {
+        this.text = textArgument;
         BufferedReader bufferedReader = new BufferedReader(new StringReader(this.text));
         this.frameLines = new ArrayList();
 

@@ -38,7 +38,7 @@ public class ResolvedMethodHandleConstant extends MethodHandleConstantBase imple
     }
 
     public void collectReferencedClasses(Set set1, Set set2, Set set3, Set set4) {
-        String string = this.memberRef.getReferencedClassName();
+        String referencedClassName = this.memberRef.getReferencedClassName();
         ClassFileBase classFileBase = null;
         Set set5;
         if (this.isStaticKind()) {
@@ -47,25 +47,25 @@ public class ResolvedMethodHandleConstant extends MethodHandleConstantBase imple
             set5 = set1;
         }
 
-        int[] ba;
-        if (!string.startsWith("[")) {
-            classFileBase = ClassHierarchyNode.findClassFile(string);
+        int[] refKindSwitchTable;
+        if (!referencedClassName.startsWith("[")) {
+            classFileBase = ClassHierarchyNode.findClassFile(referencedClassName);
             if (classFileBase != null) {
                 if (classFileBase.isMultiRelease()) {
                     set5.addAll(classFileBase.getAllVersions());
-                    ba = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
+                    refKindSwitchTable = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
                 } else {
                     set5.add(classFileBase);
-                    ba = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
+                    refKindSwitchTable = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
                 }
             } else {
-                ba = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
+                refKindSwitchTable = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
             }
         } else {
-            ba = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
+            refKindSwitchTable = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
         }
 
-        switch (ba[this.refKind.ordinal()]) {
+        switch (refKindSwitchTable[this.refKind.ordinal()]) {
             case 1:
             case 2:
             case 3:
@@ -178,41 +178,41 @@ public class ResolvedMethodHandleConstant extends MethodHandleConstantBase imple
     }
 
     public ResolvedMethodHandleConstant(
-            int ba,
+            int index,
             AbstractConstantPool abstractConstantPool,
             MethodHandleRefKind methodHandleRefKind,
             ResolvedMemberRef resolvedMemberRef,
             ListMultimap listMultimap
     ) {
-        super(ba, abstractConstantPool);
+        super(index, abstractConstantPool);
         this.refKind = methodHandleRefKind;
         this.memberRef = resolvedMemberRef;
         listMultimap.addValue(resolvedMemberRef, this);
     }
 
     public void collectReferencedProgramClasses(Set set1, Set set2, Set set3, Set set4) {
-        String string = this.memberRef.getReferencedClassName();
+        String referencedClassName = this.memberRef.getReferencedClassName();
         ProgramClass programClass1 = null;
-        int[] ba;
-        if (!string.startsWith("[")) {
-            programClass1 = ClassHierarchyNode.findProgramClass(string);
+        int[] refKindSwitchTable;
+        if (!referencedClassName.startsWith("[")) {
+            programClass1 = ClassHierarchyNode.findProgramClass(referencedClassName);
             if (programClass1 != null) {
                 programClass1 = this.selectVersionedProgramClass(programClass1);
                 if (this.isStaticKind()) {
                     set2.add(programClass1);
-                    ba = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
+                    refKindSwitchTable = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
                 } else {
                     set1.add(programClass1);
-                    ba = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
+                    refKindSwitchTable = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
                 }
             } else {
-                ba = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
+                refKindSwitchTable = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
             }
         } else {
-            ba = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
+            refKindSwitchTable = MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE;
         }
 
-        switch (ba[this.refKind.ordinal()]) {
+        switch (refKindSwitchTable[this.refKind.ordinal()]) {
             case 1:
             case 2:
             case 3:
@@ -285,7 +285,7 @@ public class ResolvedMethodHandleConstant extends MethodHandleConstantBase imple
     }
 
     public boolean isMethodKind() {
-        boolean bl = false;
+        boolean methodKind = false;
         switch (MethodHandleKindSwitchMap.REF_KIND_SWITCH_TABLE[this.refKind.ordinal()]) {
             case 1:
             case 2:
@@ -297,13 +297,13 @@ public class ResolvedMethodHandleConstant extends MethodHandleConstantBase imple
             case 6:
             case 7:
             case 8:
-                bl = true;
+                methodKind = true;
                 break;
             case 9:
-                bl = true;
+                methodKind = true;
         }
 
-        return bl;
+        return methodKind;
     }
 
     static {

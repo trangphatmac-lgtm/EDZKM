@@ -6,13 +6,13 @@ public class TruncatedStringDisplay {
     public final String text;
     private static long defaultMaxLength;
 
-    public static void setStaticIntArray(int[] ba) {
-        staticIntArray = ba;
+    public static void setStaticIntArray(int[] staticIntArrayArgument) {
+        staticIntArray = staticIntArrayArgument;
     }
 
-    public TruncatedStringDisplay(String string) {
+    public TruncatedStringDisplay(String textArgument) {
         this.maxLength = (int) defaultMaxLength;
-        this.text = string;
+        this.text = textArgument;
     }
 
     public static int[] getStaticIntArray() {

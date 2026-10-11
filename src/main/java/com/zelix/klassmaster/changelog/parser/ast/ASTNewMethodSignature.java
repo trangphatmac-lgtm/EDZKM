@@ -17,10 +17,10 @@ public class ASTNewMethodSignature extends ChangeLogMethodSignatureNode {
     public void interpret(ChangeLogNode changeLogNode, int bd, int be, int ba, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int bb = this.jjtGetNumChildren();
 
-        for (int i = 0; i < bb; i++) {
+        for (int childrenElementIndex = 0; childrenElementIndex < bb; childrenElementIndex++) {
             ChangeLogNode changeLogNode1 = this;
             if (ba >= 0) {
-                changeLogNode1 = this.jjtGetChild(i);
+                changeLogNode1 = this.jjtGetChild(childrenElementIndex);
             }
 
             changeLogNode1.interpret(this, 30872, 34067, 41973, abstractChangeLog);

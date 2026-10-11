@@ -30,8 +30,8 @@ public class DefaultFieldNameGenerator extends FieldNameAssigner {
     public String assignFieldName(
             ClassHierarchyNode classHierarchyNode,
             FieldInfo fieldInfo,
-            String string,
-            String string1,
+            String key,
+            String keyArgument,
             Map map1,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
@@ -43,75 +43,75 @@ public class DefaultFieldNameGenerator extends FieldNameAssigner {
             TwoKeyMap twoKeyMap
     ) {
         if (super.keepInnerClassInfoMode == 1
-                || ((!string.startsWith("this$") || !bl) && !string.startsWith("this+") || !NumericStringUtil.isInteger(string.substring("this$".length())))
-                && (!string.startsWith("val$") || !bl)
-                && !string.startsWith("val+")) {
+                || ((!key.startsWith("this$") || !bl) && !key.startsWith("this+") || !NumericStringUtil.isInteger(key.substring("this$".length())))
+                && (!key.startsWith("val$") || !bl)
+                && !key.startsWith("val+")) {
             ProgramClass programClass1 = classHierarchyNode.getProgramClass();
             if (this.reuseNames) {
-                List list1 = listMultimap.getValues(string1);
+                List list1 = listMultimap.getValues(keyArgument);
                 if (list1 != null) {
-                    for (int i = 0; i < list1.size(); i++) {
-                        String string3 = (String) list1.get(i);
+                    for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                        String string3 = (String) list1.get(elementIndex);
                         if (string3 != this.consumedMarker) {
-                            String string2 = string3;
+                            String keyValue = string3;
                             List list2;
-                            int bb;
-                            String string5;
-                            if (!string2.equals(string)) {
-                                if (this.isNameAvailable(string, string2, fieldInfo, map2, map1, setMultiMap, twoKeyMap, programClass1, map3, hashMap)) {
-                                    map2.put(string2, fieldInfo);
-                                    list1.set(i, this.consumedMarker);
-                                    return string2;
+                            int elementIndexValue;
+                            String consumedMarkerValue;
+                            if (!keyValue.equals(key)) {
+                                if (this.isNameAvailable(key, keyValue, fieldInfo, map2, map1, setMultiMap, twoKeyMap, programClass1, map3, hashMap)) {
+                                    map2.put(keyValue, fieldInfo);
+                                    list1.set(elementIndex, this.consumedMarker);
+                                    return keyValue;
                                 }
 
                                 list2 = list1;
-                                bb = i;
-                                string5 = this.consumedMarker;
+                                elementIndexValue = elementIndex;
+                                consumedMarkerValue = this.consumedMarker;
                             } else {
                                 list2 = list1;
-                                bb = i;
-                                string5 = this.consumedMarker;
+                                elementIndexValue = elementIndex;
+                                consumedMarkerValue = this.consumedMarker;
                             }
 
-                            list2.set(bb, string5);
+                            list2.set(elementIndexValue, consumedMarkerValue);
                         }
                     }
                 }
             }
 
-            boolean bl1 = HiddenOptionFlags.MARK_RENAMED_LOCALS;
+            boolean markRenamedLocals = HiddenOptionFlags.MARK_RENAMED_LOCALS;
 
-            String string4;
+            String keyValue2;
             do {
-                string4 = this.nextNameForClass(classHierarchyNode);
-                if (bl1) {
-                    string4 = string + '_' + string4;
+                keyValue2 = this.nextNameForClass(classHierarchyNode);
+                if (markRenamedLocals) {
+                    keyValue2 = key + '_' + keyValue2;
                 }
-            } while (!this.isNameAvailable(string, string4, fieldInfo, map2, map1, setMultiMap, twoKeyMap, programClass1, map3, hashMap));
+            } while (!this.isNameAvailable(key, keyValue2, fieldInfo, map2, map1, setMultiMap, twoKeyMap, programClass1, map3, hashMap));
 
-            map1.put(string4, fieldInfo);
-            map2.put(string4, fieldInfo);
-            listMultimap1.addValue(string1, string4);
-            return string4;
+            map1.put(keyValue2, fieldInfo);
+            map2.put(keyValue2, fieldInfo);
+            listMultimap1.addValue(keyArgument, keyValue2);
+            return keyValue2;
         } else {
-            map1.put(string, fieldInfo);
-            map2.put(string, fieldInfo);
+            map1.put(key, fieldInfo);
+            map2.put(key, fieldInfo);
             return null;
         }
     }
 
-    public DefaultFieldNameGenerator(int ba, boolean asciiNames, boolean letterStartNames, boolean bl2, String string, boolean reuseNames, List list1) {
-        super(ba, bl2);
+    public DefaultFieldNameGenerator(int keepInnerClassInfoModeArgument, boolean asciiNames, boolean letterStartNames, boolean randomizeNamesArgument, String namePrefixArgument, boolean reuseNames, List list1) {
+        super(keepInnerClassInfoModeArgument, randomizeNamesArgument);
         this.letterStartNames = letterStartNames;
         this.asciiNames = asciiNames;
-        this.namePrefix = string;
+        this.namePrefix = namePrefixArgument;
         this.reuseNames = reuseNames;
         this.nameFileNames = list1;
     }
 
     public boolean isNameAvailable(
             String string,
-            String string1,
+            String key,
             FieldInfo fieldInfo,
             Map map1,
             Map map2,
@@ -121,15 +121,15 @@ public class DefaultFieldNameGenerator extends FieldNameAssigner {
             Map map3,
             HashMap hashMap
     ) {
-        if (string.equals(string1)) {
+        if (string.equals(key)) {
             return false;
         }
 
-        if (map1.containsKey(string1)) {
+        if (map1.containsKey(key)) {
             return false;
         }
 
-        if (setMultiMap.containsValue(programClass1, new FieldSignature(string1, fieldInfo.getDescriptor()))) {
+        if (setMultiMap.containsValue(programClass1, new FieldSignature(key, fieldInfo.getDescriptor()))) {
             return false;
         }
 
@@ -139,7 +139,7 @@ public class DefaultFieldNameGenerator extends FieldNameAssigner {
 
             while (iterator.hasNext()) {
                 FieldInfo fieldInfo1 = (FieldInfo) iterator.next();
-                if (this.hasAssignedName(string1, fieldInfo1, map3, hashMap)) {
+                if (this.hasAssignedName(key, fieldInfo1, map3, hashMap)) {
                     return false;
                 }
             }
@@ -149,13 +149,13 @@ public class DefaultFieldNameGenerator extends FieldNameAssigner {
         if (enumeration != null) {
             while (enumeration.hasMoreElements()) {
                 AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) enumeration.nextElement();
-                if (this.hasAssignedName(string1, abstractFieldInfo, map3, hashMap)) {
+                if (this.hasAssignedName(key, abstractFieldInfo, map3, hashMap)) {
                     return false;
                 }
             }
         }
 
-        return !map2.containsKey(string1) || this.reuseNames;
+        return !map2.containsKey(key) || this.reuseNames;
     }
 
     public boolean hasAssignedName(String string, AbstractFieldInfo abstractFieldInfo, Map map1, HashMap hashMap) {

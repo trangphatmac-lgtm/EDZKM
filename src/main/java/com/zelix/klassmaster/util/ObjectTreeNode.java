@@ -18,16 +18,16 @@ public class ObjectTreeNode {
         return objectTreeNode.removeChild(objectTreeNode1);
     }
 
-    public ObjectTreeNode(GenericTree genericTree, Object object) {
-        this(genericTree, object, null);
+    public ObjectTreeNode(GenericTree genericTree, Object valueArgument) {
+        this(genericTree, valueArgument, null);
     }
 
-    public static ObjectTreeNode addChildTo(ObjectTreeNode objectTreeNode, Object object) {
-        return objectTreeNode.addChild(object);
+    public static ObjectTreeNode addChildTo(ObjectTreeNode objectTreeNode, Object valueArgument) {
+        return objectTreeNode.addChild(valueArgument);
     }
 
-    private ObjectTreeNode addChild(Object object) {
-        ObjectTreeNode objectTreeNode1 = new ObjectTreeNode(this.tree, object, this);
+    private ObjectTreeNode addChild(Object valueArgument) {
+        ObjectTreeNode objectTreeNode1 = new ObjectTreeNode(this.tree, valueArgument, this);
         this.children.add(objectTreeNode1);
         return objectTreeNode1;
     }
@@ -40,10 +40,10 @@ public class ObjectTreeNode {
         return this.children.remove(object);
     }
 
-    private ObjectTreeNode(GenericTree genericTree, Object object, ObjectTreeNode objectTreeNode1) {
+    private ObjectTreeNode(GenericTree genericTree, Object valueArgument, ObjectTreeNode objectTreeNode1) {
         this.tree = genericTree;
         this.children = new ArrayList();
-        this.value = object;
+        this.value = valueArgument;
         this.parent = objectTreeNode1;
     }
 

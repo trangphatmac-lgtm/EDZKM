@@ -28,8 +28,8 @@ public class LineNumberEntry extends ClassFileComponent implements LabelTargetHo
 
     public LineNumberEntry(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        listMultimap.addValue(integerCache.valueOf(ba), this);
+        int integerValue = classFileInputStream.readUnsignedShort();
+        listMultimap.addValue(integerCache.valueOf(integerValue), this);
         this.lineNumber = classFileInputStream.readUnsignedShort();
     }
 
@@ -39,8 +39,8 @@ public class LineNumberEntry extends ClassFileComponent implements LabelTargetHo
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByOffset((LineNumberEntry) object);
+    public int compareTo(Object other) {
+        return this.compareByOffset((LineNumberEntry) other);
     }
 
     public int getLineNumber() {

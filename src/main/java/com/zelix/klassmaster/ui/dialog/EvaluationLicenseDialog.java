@@ -54,9 +54,9 @@ public class EvaluationLicenseDialog extends EscapeClosingDialogBase implements 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
+            Object source = actionEvent.getSource();
             this.closeDialog();
-            if (object == this.okBtn) {
+            if (source == this.okBtn) {
                 this.dialogCallback.onDialogResult(this.ownerFrame);
             } else {
                 this.dialogCallback.onDialogCancelled();
@@ -98,18 +98,18 @@ public class EvaluationLicenseDialog extends EscapeClosingDialogBase implements 
         }
 
         ConstraintLayout constraintLayout2;
-        String[] strings;
+        String[] layoutSpecValue;
         if (!this.bannerPanel.isPrimaryImageLoaded()) {
             this.cancelBtn.setBackground(BannerPnl.FALLBACK_BACKGROUND);
             this.cancelBtn.setForeground(Color.black);
             constraintLayout2 = constraintLayout1;
-            strings = layoutSpec;
+            layoutSpecValue = layoutSpec;
         } else {
             constraintLayout2 = constraintLayout1;
-            strings = layoutSpec;
+            layoutSpecValue = layoutSpec;
         }
 
-        constraintLayout2.setConstraints(strings);
+        constraintLayout2.setConstraints(layoutSpecValue);
         SwingUtils.packOnEdt(this);
         this.setResizable(false);
         EvaluationDialogKeyListener evaluationDialogKeyListener = new EvaluationDialogKeyListener(this);

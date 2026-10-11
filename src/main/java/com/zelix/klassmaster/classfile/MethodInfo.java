@@ -88,9 +88,9 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     public LabelInstruction initializerEndLabel;
     public AnnotationValueMap zkmAnnotationValues;
 
-    public void setMaxLocals(int ba) throws ZkmProcessingException {
+    public void setMaxLocals(int maxLocalsArgument) throws ZkmProcessingException {
         if (this.codeAttributeIndex_int != -1) {
-            ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).setMaxLocals(ba);
+            ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).setMaxLocals(maxLocalsArgument);
         }
     }
 
@@ -116,17 +116,17 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
         return this.codeAttributeIndex_int != -1 ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).getMaxLocals() : 0;
     }
 
-    public void insertInstructionsAtStart(List list1, int ba, String string) throws ZkmProcessingException {
-        this.insertInstructions(list1, 0, ba, 0, string, (List) null);
+    public void insertInstructionsAtStart(List list1, int maxStack, String string) throws ZkmProcessingException {
+        this.insertInstructions(list1, 0, maxStack, 0, string, (List) null);
     }
 
     @Override
     public final void trimAttributes(TrimProcessor trimProcessor1, TrimOptions trimOptions1, ScriptEnvironment scriptEnvironment1, PrintWriter printWriter) throws ZkmException, IOException {
         super.trimAttributes(trimProcessor1, trimOptions1, scriptEnvironment1, printWriter);
         if (trimOptions1.e && this.exceptionsAttributeIndex != -1) {
-            for (int i = 0; i < this.attributeCount; i++) {
-                if (this.attributes[i] instanceof TypeAnnotationsAttribute) {
-                    ((TypeAnnotationsAttribute) this.attributes[i]).removeThrowsAnnotations();
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                if (this.attributes[attributeIndex] instanceof TypeAnnotationsAttribute) {
+                    ((TypeAnnotationsAttribute) this.attributes[attributeIndex]).removeThrowsAnnotations();
                 }
             }
 
@@ -179,25 +179,25 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
 
     @Override
     public final void updateAttributesAfterFieldRename() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyFieldRenames();
-            } else if (this.attributes[i] instanceof CodeAttributeBody) {
-                ((CodeAttributeBody) this.attributes[i]).updateAttributesAfterFieldRename();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyFieldRenames();
+            } else if (this.attributes[attributeIndex] instanceof CodeAttributeBody) {
+                ((CodeAttributeBody) this.attributes[attributeIndex]).updateAttributesAfterFieldRename();
             }
         }
     }
 
     public void obfuscateParameterNames() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof MethodParametersAttribute) {
-                ((MethodParametersAttribute) this.attributes[i]).obfuscateNames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof MethodParametersAttribute) {
+                ((MethodParametersAttribute) this.attributes[attributeIndex]).obfuscateNames();
             }
         }
     }
 
     public boolean hasLineNumber(int ba) {
-        return this.codeAttributeIndex_int != -1 ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasLineNumber(ba) : false;
+        return ((this.codeAttributeIndex_int != -1) && (((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasLineNumber(ba)));
     }
 
     public void changeParameterList(
@@ -207,10 +207,10 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
             MethodOverrideAnalyzer methodOverrideAnalyzer,
             SetMultiMap setMultiMap,
             ClassHierarchyNode classHierarchyNode,
-            boolean bl,
+            boolean reserveOverrideGroup,
             Map map1,
             Map map2,
-            boolean bl1,
+            boolean includeReturnTypeInConflicts,
             Map map3
     ) throws ZkmException, IOException {
         this.getSignature();
@@ -224,10 +224,10 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
                 AddedParameter[] addedParameters1 = changeLogMapping1.getAddedParameters(abstractMethodInfo);
                 changedMethodDescriptor = new ChangedMethodDescriptor(this.getDescriptor(), addedParameters1);
                 if (!this.isConstructor()) {
-                    String string = changedMethodDescriptor.getDescriptor();
-                    MemberSignatureBase memberSignatureBase = bl1
-                            ? new MethodSignature(this.methodName, string)
-                            : new FieldNameTypeSignature(this.methodName, string);
+                    String descriptorValue = changedMethodDescriptor.getDescriptor();
+                    MemberSignatureBase memberSignatureBase = includeReturnTypeInConflicts
+                            ? new MethodSignature(this.methodName, descriptorValue)
+                            : new FieldNameTypeSignature(this.methodName, descriptorValue);
                     Set set1 = setMultiMap.getValues(memberSignatureBase);
                     if (set1 != null && !set1.isEmpty()) {
                         Iterator iterator = set1.iterator();
@@ -313,23 +313,23 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
             if (!this.isStatic()) {
                 if (!this.isAbstract() && this.isStrictlyPrivate()) {
                     changedMethodDescriptor = parameterListGenerator.generateForPrivateMethod(
-                            classHierarchyNode, this, setMultiMap, map1, map2, this.isNameChanged(), bl1
+                            classHierarchyNode, this, setMultiMap, map1, map2, this.isNameChanged(), includeReturnTypeInConflicts
                     );
                 } else {
                     changedMethodDescriptor = parameterListGenerator.generateForVirtualMethod(
-                            classHierarchyNode, this, setMultiMap, bl, map1, map2, this.isNameChanged(), bl1
+                            classHierarchyNode, this, setMultiMap, reserveOverrideGroup, map1, map2, this.isNameChanged(), includeReturnTypeInConflicts
                     );
                 }
             } else if (!map3.containsKey(this) && (!this.isPublic() || !this.isStatic() || !this.getSignature().equals(MethodSignature.MAIN_METHOD))) {
                 changedMethodDescriptor = parameterListGenerator.generateForStaticMethod(
-                        classHierarchyNode, this, setMultiMap, map1, map2, this.isNameChanged(), bl1
+                        classHierarchyNode, this, setMultiMap, map1, map2, this.isNameChanged(), includeReturnTypeInConflicts
                 );
             }
         }
 
         MethodSignature methodSignature1 = methodParameterChangeSet.recordChangedDescriptor(this, changedMethodDescriptor);
         if (changedMethodDescriptor != null && !changedMethodDescriptor.getDescriptor().equals(this.getDescriptor())) {
-            setMultiMap.addValue(bl1 ? methodSignature1 : methodSignature1.getNameTypeSignature(), this);
+            setMultiMap.addValue(includeReturnTypeInConflicts ? methodSignature1 : methodSignature1.getNameTypeSignature(), this);
             map1.put(methodSignature1, this);
             map2.put(methodSignature1.getNameTypeSignature(), this);
             this.setDescriptor(changedMethodDescriptor.getDescriptor());
@@ -344,14 +344,14 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     public int getParameterIndexForSlot(int ba) {
         int bb = 0;
         List list1 = ConstantPoolEntry.getParameterTypes(this.descriptor);
-        int bc = list1.size();
+        int list1Size = list1.size();
 
-        for (int i = 0; i < bc; i++) {
+        for (int parameterIndexForSlot = 0; parameterIndexForSlot < list1Size; parameterIndexForSlot++) {
             if (bb == ba) {
-                return i;
+                return parameterIndexForSlot;
             }
 
-            String string = (String) list1.get(i);
+            String string = (String) list1.get(parameterIndexForSlot);
             if (!string.equals("D") && !string.equals("J")) {
                 bb++;
             } else {
@@ -415,13 +415,13 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     }
 
     public boolean hasLocalVariableTable() {
-        return this.codeAttributeIndex_int != -1 ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasLocalVariableTable() : false;
+        return ((this.codeAttributeIndex_int != -1) && (((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasLocalVariableTable()));
     }
 
     public void pruneTypeAnnotationTargets(HashSet hashSet, SetMultiMap setMultiMap) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof TypeAnnotationsAttribute) {
-                ((TypeAnnotationsAttribute) this.attributes[i]).removeAnnotationsAtLabels(hashSet, setMultiMap);
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof TypeAnnotationsAttribute) {
+                ((TypeAnnotationsAttribute) this.attributes[attributeIndex]).removeAnnotationsAtLabels(hashSet, setMultiMap);
             }
         }
     }
@@ -473,20 +473,20 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     }
 
     public int getCallStackOffset() {
-        int ba = 0;
+        int callStackOffset = 0;
         if (!this.isStatic()) {
-            ba++;
+            callStackOffset++;
         }
 
         if (!ConstantPoolEntry.getReturnDescriptor(this.descriptor).equals("V")) {
-            ba += -1;
+            callStackOffset += -1;
         }
 
-        return ba;
+        return callStackOffset;
     }
 
-    public MethodInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, int ba) {
-        super(classFileBase, constantUtf8, constantUtf81, attributes1, ba);
+    public MethodInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, int creationKind) {
+        super(classFileBase, constantUtf8, constantUtf81, attributes1, creationKind);
 
         for (int i = 0; i < attributes1.length; i++) {
             if (attributes1[i] instanceof CodeAttributeBody) {
@@ -518,7 +518,7 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     }
 
     public boolean hasIntegerConstants() {
-        return this.codeAttributeIndex_int != -1 ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasIntegerConstants() : false;
+        return ((this.codeAttributeIndex_int != -1) && (((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasIntegerConstants()));
     }
 
     public ConstantPoolEntry getFirstLoadedConstant() {
@@ -671,17 +671,17 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     @Override
     public void handleObservedChange(ObservableModel observableModel1, Object object, Object object1, Object object2) throws ZkmException, IOException {
         if (object instanceof MutableInt && ((MutableInt) object).getValue() == 0 && object1 instanceof ProgramClass) {
-            String string = ((ProgramClass) object1).getClassSimpleName();
-            this.setName(string);
+            String classSimpleName = ((ProgramClass) object1).getClassSimpleName();
+            this.setName(classSimpleName);
         }
     }
 
     public void removeMethodParametersAttribute() {
         ArrayList arrayList = new ArrayList(this.attributes.length);
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (!(this.attributes[i] instanceof MethodParametersAttribute)) {
-                arrayList.add(this.attributes[i]);
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (!(this.attributes[attributeIndex] instanceof MethodParametersAttribute)) {
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
@@ -727,14 +727,14 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
             boolean bl2,
             Random random1
     ) throws ZkmException, IOException {
-        int bb = ba;
+        int integer = ba;
         if (this.codeAttributeIndex_int != -1) {
             if (this.zkmAnnotationValues != null && this.zkmAnnotationValues.hasValue("obfuscateFlow")) {
-                String string = this.zkmAnnotationValues.getValue("obfuscateFlow");
-                int bc = ObfuscateOptions.parseFlowLevel(string);
-                if (bb != bc) {
-                    String string1 = ObfuscateOptions.getFlowLevelName(bb);
-                    bb = bc;
+                String value = this.zkmAnnotationValues.getValue("obfuscateFlow");
+                int integerValue = ObfuscateOptions.parseFlowLevel(value);
+                if (integer != integerValue) {
+                    String flowLevelName = ObfuscateOptions.getFlowLevelName(integer);
+                    integer = integerValue;
                     if (scriptEnvironment1.isVerbose()) {
                         scriptEnvironment1.getLogWriter()
                                 .println(
@@ -745,18 +745,18 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
                                                 + "' in class '"
                                                 + AbstractExclusionSpec.formatClass(this.getOwnerProgramClass(), classHierarchyQuery, true)
                                                 + "' : '"
-                                                + string1
+                                                + flowLevelName
                                                 + "' changed to '"
-                                                + string
+                                                + value
                                                 + "'"
                                 );
                     }
                 }
             }
 
-            if (bb != 0) {
+            if (integer != 0) {
                 return ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int])
-                        .obfuscateFlow(listMultimap, commonSuperTypeResolver1, scriptEnvironment1, classHierarchyQuery, bb, bl, bl1, map1, random1);
+                        .obfuscateFlow(listMultimap, commonSuperTypeResolver1, scriptEnvironment1, classHierarchyQuery, integer, bl, bl1, map1, random1);
             }
         }
 
@@ -832,20 +832,20 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
         if (ba == 1) {
             ArrayList arrayList = new ArrayList(this.attributes.length);
 
-            for (int i = 0; i < this.attributes.length; i++) {
-                if (!(this.attributes[i] instanceof SignatureAttribute) && !(this.attributes[i] instanceof BridgeAttribute)) {
-                    if (this.attributes[i] instanceof TypeAnnotationsAttribute) {
-                        TypeAnnotationsAttribute typeAnnotationsAttribute = (TypeAnnotationsAttribute) this.attributes[i];
+            for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+                if (!(this.attributes[attributeIndex] instanceof SignatureAttribute) && !(this.attributes[attributeIndex] instanceof BridgeAttribute)) {
+                    if (this.attributes[attributeIndex] instanceof TypeAnnotationsAttribute) {
+                        TypeAnnotationsAttribute typeAnnotationsAttribute = (TypeAnnotationsAttribute) this.attributes[attributeIndex];
                         typeAnnotationsAttribute.removeSignatureDependentAnnotations();
                         if (!typeAnnotationsAttribute.isEmpty()) {
-                            arrayList.add(this.attributes[i]);
+                            arrayList.add(this.attributes[attributeIndex]);
                         }
                     } else {
-                        if (this.attributes[i] instanceof CodeAttributeBody) {
-                            ((CodeAttributeBody) this.attributes[i]).removeLocalVariableTypeTable();
+                        if (this.attributes[attributeIndex] instanceof CodeAttributeBody) {
+                            ((CodeAttributeBody) this.attributes[attributeIndex]).removeLocalVariableTypeTable();
                         }
 
-                        arrayList.add(this.attributes[i]);
+                        arrayList.add(this.attributes[attributeIndex]);
                     }
                 }
             }
@@ -967,9 +967,9 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
         ExceptionsAttribute exceptionsAttribute = (ExceptionsAttribute) this.attributes[this.exceptionsAttributeIndex];
         stringBuilder.append(" throws ");
         if (exceptionsAttribute.getExceptionCount() > 0) {
-            for (int i = 0; i < exceptionsAttribute.getExceptionCount(); i++) {
-                stringBuilder.append(exceptionsAttribute.getExceptionClass(i).getDottedClassName());
-                if (i < exceptionsAttribute.getExceptionCount() - 1) {
+            for (int exceptionClasseIndex = 0; exceptionClasseIndex < exceptionsAttribute.getExceptionCount(); exceptionClasseIndex++) {
+                stringBuilder.append(exceptionsAttribute.getExceptionClass(exceptionClasseIndex).getDottedClassName());
+                if (exceptionClasseIndex < exceptionsAttribute.getExceptionCount() - 1) {
                     stringBuilder.append(", ");
                 }
             }
@@ -979,7 +979,7 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     }
 
     public boolean hasConditionalBranches() {
-        return this.codeAttributeIndex_int != -1 ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasConditionalBranches() : false;
+        return ((this.codeAttributeIndex_int != -1) && (((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasConditionalBranches()));
     }
 
     public ListMultimap analyzeReflectionCalls(
@@ -1102,7 +1102,7 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     }
 
     public boolean hasStringConstants() {
-        return this.codeAttributeIndex_int != -1 ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasStringConstants() : false;
+        return ((this.codeAttributeIndex_int != -1) && (((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasStringConstants()));
     }
 
     public void rebuildStackMap(
@@ -1116,9 +1116,9 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     public boolean collectTypeAnnotationTargets(SetMultiMap setMultiMap) {
         boolean bl = false;
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof TypeAnnotationsAttribute) {
-                ((TypeAnnotationsAttribute) this.attributes[i]).registerLabelTargets(setMultiMap);
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof TypeAnnotationsAttribute) {
+                ((TypeAnnotationsAttribute) this.attributes[attributeIndex]).registerLabelTargets(setMultiMap);
                 bl = true;
             }
         }
@@ -1127,19 +1127,19 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     }
 
     public final void updateAttributesAfterMethodRename(ScriptEnvironment scriptEnvironment1, boolean bl) {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyMethodRenames();
-            } else if (this.attributes[i] instanceof CodeAttributeBody) {
-                ((CodeAttributeBody) this.attributes[i]).updateAttributesAfterMethodRename();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyMethodRenames();
+            } else if (this.attributes[attributeIndex] instanceof CodeAttributeBody) {
+                ((CodeAttributeBody) this.attributes[attributeIndex]).updateAttributesAfterMethodRename();
             }
         }
 
         if (bl && (this.hasChangedParameters() || this.isNameChanged())) {
             ArrayList arrayList = new ArrayList();
 
-            for (int i = 0; i < this.attributes.length; i++) {
-                if (this.attributes[i] instanceof SignatureAttribute) {
+            for (int attributeIndexValue = 0; attributeIndexValue < this.attributes.length; attributeIndexValue++) {
+                if (this.attributes[attributeIndexValue] instanceof SignatureAttribute) {
                     if (scriptEnvironment1.isVerbose()) {
                         scriptEnvironment1.logMessage(
                                 "Generic signature information removed from method '"
@@ -1150,7 +1150,7 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
                         );
                     }
                 } else {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndexValue]);
                 }
             }
 
@@ -1181,7 +1181,7 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     }
 
     public boolean hasLongConstants() {
-        return this.codeAttributeIndex_int != -1 ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasLongConstants() : false;
+        return ((this.codeAttributeIndex_int != -1) && (((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).hasLongConstants()));
     }
 
     public void collectEncryptableStrings(MultiMapTable multiMapTable, Set set1) {
@@ -1209,18 +1209,18 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     public final void resolveAttributeReferences(
             ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
-            } else if (this.attributes[i] instanceof CodeAttributeBody) {
-                ((CodeAttributeBody) this.attributes[i]).resolveAttributeReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+            } else if (this.attributes[attributeIndex] instanceof CodeAttributeBody) {
+                ((CodeAttributeBody) this.attributes[attributeIndex]).resolveAttributeReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
             }
         }
     }
 
     public void trimMethodParametersAttribute(boolean bl, boolean bl1) {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof MethodParametersAttribute) {
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof MethodParametersAttribute) {
                 if (bl && !this.isPublic() && !this.isProtected()) {
                     this.removeMethodParametersAttribute();
                 } else if (bl1 && this.isRenamed()) {
@@ -1230,9 +1230,9 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
         }
     }
 
-    public int[] insertInstructions(List list1, int ba, int bb, int bc, String string, List list2) throws ZkmProcessingException {
+    public int[] insertInstructions(List list1, int ba, int maxStack, int bc, String string, List list2) throws ZkmProcessingException {
         return this.codeAttributeIndex_int != -1
-                ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).insertInstructions(list1, ba, bb, bc, string, list2)
+                ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).insertInstructions(list1, ba, maxStack, bc, string, list2)
                 : null;
     }
 
@@ -1250,7 +1250,7 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
             Map map1,
             ListMultimap listMultimap,
             ClassHierarchyNode classHierarchyNode,
-            String string,
+            String classNameArgument,
             boolean bl,
             int ba,
             Map map2,
@@ -1263,23 +1263,23 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
             Map map5
     ) throws ZkmException, IOException {
         if (!this.isConstructor() && !this.isStaticInitializer()) {
-            String string1 = null;
+            String name = null;
             ProgramClass programClass1 = classHierarchyNode.getProgramClass();
             MethodSignature methodSignature1 = this.getSignature();
             if (!nameExclusionSet.isMethodExcluded(this)) {
                 AbstractMethodInfo abstractMethodInfo = methodOverrideAnalyzer.findRootMethod(this);
-                String string2;
+                String className;
                 if (abstractMethodInfo != null) {
-                    string2 = abstractMethodInfo.getClassName();
+                    className = abstractMethodInfo.getClassName();
                 } else {
-                    string2 = string;
+                    className = classNameArgument;
                 }
 
                 boolean bl2 = false;
-                if (changeLogMapping1 != null && changeLogMapping1.hasMethodMapping(string2, methodSignature1)) {
+                if (changeLogMapping1 != null && changeLogMapping1.hasMethodMapping(className, methodSignature1)) {
                     bl2 = true;
-                    string1 = changeLogMapping1.lookupNewMethodName(string2, methodSignature1);
-                    if (string1 != null) {
+                    name = changeLogMapping1.lookupNewMethodName(className, methodSignature1);
+                    if (name != null) {
                         if (changeLogMapping1.isParameterObfuscatedMethod(
                                 abstractMethodInfo != null && abstractMethodInfo.isProgramMember() ? (MethodInfo) abstractMethodInfo : this
                         )) {
@@ -1300,10 +1300,10 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
                         MemberSignatureBase memberSignatureBase;
                         AbstractMethodInfo abstractMethodInfo1;
                         if (bl1) {
-                            memberSignatureBase = new MethodSignature(string1, this.getDescriptor());
+                            memberSignatureBase = new MethodSignature(name, this.getDescriptor());
                             abstractMethodInfo1 = (AbstractMethodInfo) map1.get(memberSignatureBase);
                         } else {
-                            memberSignatureBase = new FieldNameTypeSignature(string1, this.getDescriptor());
+                            memberSignatureBase = new FieldNameTypeSignature(name, this.getDescriptor());
                             abstractMethodInfo1 = (AbstractMethodInfo) map3.get(memberSignatureBase);
                         }
 
@@ -1311,33 +1311,33 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
                             ClassFileBase classFileBase = programClass1.findInheritedMethodReferrer(abstractMethodInfo1);
                             if (classFileBase != null) {
                                 bl2 = false;
-                                String string4 = methodRenamer1.getOriginalMemberName(abstractMethodInfo1.getClassName(), memberSignatureBase);
+                                String originalMemberName = methodRenamer1.getOriginalMemberName(abstractMethodInfo1.getClassName(), memberSignatureBase);
                                 String string5 = AbstractExclusionSpec.formatClassWithModifiers(programClass1, nameExclusionSet);
                                 String string6 = AbstractExclusionSpec.formatClassWithModifiers(classFileBase, nameExclusionSet);
                                 String string7 = AbstractExclusionSpec.formatClassWithModifiers(abstractMethodInfo1.getOwningClass(), nameExclusionSet);
-                                String string8;
+                                String classNameValue;
                                 if (abstractMethodInfo != null) {
-                                    string8 = abstractMethodInfo.getOwningClass().getClassName();
+                                    classNameValue = abstractMethodInfo.getOwningClass().getClassName();
                                 } else {
-                                    string8 = this.getClassName();
+                                    classNameValue = this.getClassName();
                                 }
 
-                                changeLogMapping1.removeMethodMapping(string8, methodSignature1);
+                                changeLogMapping1.removeMethodMapping(classNameValue, methodSignature1);
                                 changeLogMapping1.logWarning(
                                         "Method '"
                                                 + this.buildDeclaration(false)
                                                 + "' in class '"
                                                 + string5
                                                 + "' could not be renamed to '"
-                                                + string1
+                                                + name
                                                 + "' because symbolic references to method '"
                                                 + string7
                                                 + "."
-                                                + string4
+                                                + originalMemberName
                                                 + "' appear as '"
                                                 + string6
                                                 + "."
-                                                + string1
+                                                + name
                                                 + "'. You may need to distribute this application as a whole. (B)"
                                 );
                             }
@@ -1353,52 +1353,36 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
                         map2.put(this.getSignature(), this);
                         map4.put(this.getNameTypeSignature(), this);
                         DisableableMap disableableMap2;
-                        String string10;
+                        String sourceName;
                         if (bl) {
                             disableableMap.put(this.getSourceName(), this);
                             disableableMap2 = disableableMap1;
-                            string10 = this.getSourceName();
+                            sourceName = this.getSourceName();
                         } else {
                             disableableMap2 = disableableMap1;
-                            string10 = this.getSourceName();
+                            sourceName = this.getSourceName();
                         }
 
-                        disableableMap2.put(string10, this);
+                        disableableMap2.put(sourceName, this);
                     } else {
-                        boolean bl3 = methodNameGeneratorBase.hasParameterExclusion(this);
+                        boolean parameterExclusion = methodNameGeneratorBase.hasParameterExclusion(this);
                         if (!this.isStatic()) {
                             if (!this.isAbstract() && this.isStrictlyPrivate()) {
-                                string1 = methodNameGeneratorBase.assignNewNameForNode(
-                                        classHierarchyNode, this, map1, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, bl3
+                                name = methodNameGeneratorBase.assignNewNameForNode(
+                                        classHierarchyNode, this, map1, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, parameterExclusion
                                 );
                             } else {
-                                string1 = methodNameGeneratorBase.resolveNewMethodName(
-                                        classHierarchyNode, this, map1, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, bl3
+                                name = methodNameGeneratorBase.resolveNewMethodName(
+                                        classHierarchyNode, this, map1, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, parameterExclusion
                                 );
                             }
                         } else {
-                            label102:
-                            if (!map5.containsKey(this)) {
-                                boolean bl4;
-                                if (this.isPublic()) {
-                                    if (this.isStatic()) {
-                                        if (this.getSignature().equals(MethodSignature.MAIN_METHOD)) {
-                                            break label102;
-                                        }
-
-                                        bl4 = HiddenOptionFlags.ALLOW_RENAME_MAIN;
-                                    } else {
-                                        bl4 = HiddenOptionFlags.ALLOW_RENAME_MAIN;
-                                    }
-                                } else {
-                                    bl4 = HiddenOptionFlags.ALLOW_RENAME_MAIN;
-                                }
-
-                                if (!bl4) {
-                                    string1 = methodNameGeneratorBase.assignMethodName(
-                                            classHierarchyNode, this, map1, listMultimap, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, bl3
-                                    );
-                                }
+                            if (!map5.containsKey(this)
+                                    && !(this.isPublic() && this.isStatic() && this.getSignature().equals(MethodSignature.MAIN_METHOD))
+                                    && !HiddenOptionFlags.ALLOW_RENAME_MAIN) {
+                                name = methodNameGeneratorBase.assignMethodName(
+                                        classHierarchyNode, this, map1, listMultimap, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, parameterExclusion
+                                );
                             }
                         }
                     }
@@ -1406,8 +1390,8 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
             }
 
             ObservableHolder observableHolder = new ObservableHolder();
-            MethodSignature methodSignature2 = methodRenamer1.recordMethodName(this, string1, observableHolder);
-            if (string1 != null && !string1.equals(this.getJvmName())) {
+            MethodSignature methodSignature2 = methodRenamer1.recordMethodName(this, name, observableHolder);
+            if (name != null && !name.equals(this.getJvmName())) {
                 map1.put(methodSignature2, this);
                 map2.put(methodSignature2, this);
                 map3.put(methodSignature2.getNameTypeSignature(), this);
@@ -1425,24 +1409,24 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
                     map4.put(methodSignature3.getNameTypeSignature(), this);
                 }
 
-                this.setName(string1);
+                this.setName(name);
             } else {
                 map1.put(methodSignature1, this);
                 map2.put(methodSignature1, this);
                 map3.put(methodSignature1.getNameTypeSignature(), this);
                 map4.put(methodSignature1.getNameTypeSignature(), this);
                 DisableableMap disableableMap3;
-                String string9;
+                String sourceNameValue;
                 if (bl) {
                     disableableMap.put(methodSignature2.getName(), this);
                     disableableMap3 = disableableMap1;
-                    string9 = this.getSourceName();
+                    sourceNameValue = this.getSourceName();
                 } else {
                     disableableMap3 = disableableMap1;
-                    string9 = this.getSourceName();
+                    sourceNameValue = this.getSourceName();
                 }
 
-                disableableMap3.put(string9, this);
+                disableableMap3.put(sourceNameValue, this);
             }
         }
     }
@@ -1454,12 +1438,12 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
     }
 
     public boolean storesToField(FieldInfo fieldInfo) {
-        return this.codeAttributeIndex_int != -1 ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).storesToField(fieldInfo) : false;
+        return ((this.codeAttributeIndex_int != -1) && (((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).storesToField(fieldInfo)));
     }
 
     public boolean hasMethodParametersAttribute() {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof MethodParametersAttribute) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof MethodParametersAttribute) {
                 return true;
             }
         }
@@ -1467,9 +1451,9 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
         return false;
     }
 
-    public void applyCodeInsertion(CodeInsertion codeInsertion, int ba, int bb) throws ZkmProcessingException {
+    public void applyCodeInsertion(CodeInsertion codeInsertion, int maxStack, int maxLocalsArgument) throws ZkmProcessingException {
         if (this.codeAttributeIndex_int != -1) {
-            ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).applyCodeInsertion(codeInsertion, ba, bb);
+            ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int]).applyCodeInsertion(codeInsertion, maxStack, maxLocalsArgument);
         }
     }
 
@@ -1524,8 +1508,8 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
         stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
         int maxLocals = this.getMaxLocals();
 
-        for (int i = this.getArgumentSlotCount(); i < maxLocals; i++) {
-            stringBuffer.append("      " + "int local" + i + ";");
+        for (int argumentSlotCount = this.getArgumentSlotCount(); argumentSlotCount < maxLocals; argumentSlotCount++) {
+            stringBuffer.append("      " + "int local" + argumentSlotCount + ";");
             stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
         }
 
@@ -1570,10 +1554,10 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
         ArrayList arrayList = null;
         if (this.codeAttributeIndex_int != -1) {
             if (this.zkmAnnotationValues != null && this.zkmAnnotationValues.hasValue("exceptionObfuscation")) {
-                String string = this.zkmAnnotationValues.getValue("exceptionObfuscation");
-                int ba = ObfuscateOptions.parseExceptionLevel(string);
+                String value = this.zkmAnnotationValues.getValue("exceptionObfuscation");
+                int ba = ObfuscateOptions.parseExceptionLevel(value);
                 if (ba != (bl2 ? 2 : 1)) {
-                    String string1 = ObfuscateOptions.getExceptionLevelName(bl2 ? 2 : 1);
+                    String exceptionLevelName = ObfuscateOptions.getExceptionLevelName(bl2 ? 2 : 1);
                     if (scriptEnvironment1.isVerbose()) {
                         scriptEnvironment1.getLogWriter()
                                 .println(
@@ -1582,9 +1566,9 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
                                                 + "' in class '"
                                                 + AbstractExclusionSpec.formatClass(this.getOwnerProgramClass(), classHierarchyQuery, true)
                                                 + "' : '"
-                                                + string1
+                                                + exceptionLevelName
                                                 + "' changed to '"
-                                                + string
+                                                + value
                                                 + "'"
                                 );
                     }
@@ -1640,7 +1624,7 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
 
     public boolean applyAutoReflectionHandling(
             List list1,
-            String string,
+            String valueArgument,
             List list2,
             boolean bl,
             boolean bl1,
@@ -1650,10 +1634,8 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
             boolean bl3,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        return this.codeAttributeIndex_int != -1
-                ? ((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int])
-                .applyAutoReflectionHandling(list1, string, list2, bl, bl1, bl2, commonSuperTypeResolver1, classMemberLookup1, bl3, scriptEnvironment1)
-                : false;
+        return ((this.codeAttributeIndex_int != -1) && (((CodeAttributeBody) this.attributes[this.codeAttributeIndex_int])
+                .applyAutoReflectionHandling(list1, valueArgument, list2, bl, bl1, bl2, commonSuperTypeResolver1, classMemberLookup1, bl3, scriptEnvironment1)));
     }
 
     @Override
@@ -1665,15 +1647,15 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
 
     public ArrayList getDescriptorProgramClasses() {
         ArrayList arrayList = new ArrayList();
-        String string = this.getDescriptor();
-        List list1 = ConstantPoolEntry.getParameterTypes(string);
-        String string1 = ConstantPoolEntry.getReturnDescriptor(string);
-        list1.add(string1);
+        String descriptorValue = this.getDescriptor();
+        List list1 = ConstantPoolEntry.getParameterTypes(descriptorValue);
+        String returnDescriptor = ConstantPoolEntry.getReturnDescriptor(descriptorValue);
+        list1.add(returnDescriptor);
 
-        for (int i = 0; i < list1.size(); i++) {
-            String string2 = ClassFileBase.extractClassName((String) list1.get(i));
-            if (string2 != null) {
-                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string2);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            String key = ClassFileBase.extractClassName((String) list1.get(elementIndex));
+            if (key != null) {
+                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
                 if (programClass1 != null) {
                     arrayList.add(programClass1);
                 }
@@ -1694,12 +1676,12 @@ public class MethodInfo extends AbstractMethodInfo implements NodeVisitor, Metho
 
     @Override
     public final void collectAttributeReferences(Set set1) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[attributeIndex];
                 referencingAttribute.collectReferencedClasses(set1);
-            } else if (this.attributes[i] instanceof CodeAttributeBody) {
-                CodeAttributeBody codeAttributeBody = (CodeAttributeBody) this.attributes[i];
+            } else if (this.attributes[attributeIndex] instanceof CodeAttributeBody) {
+                CodeAttributeBody codeAttributeBody = (CodeAttributeBody) this.attributes[attributeIndex];
                 codeAttributeBody.collectAttributeReferences(set1);
             }
         }

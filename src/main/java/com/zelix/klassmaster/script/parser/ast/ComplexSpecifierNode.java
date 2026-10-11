@@ -10,8 +10,8 @@ import java.io.IOException;
 public abstract class ComplexSpecifierNode extends ZkmScriptSimpleNode {
     public abstract boolean isLiteralName();
 
-    public ComplexSpecifierNode(int ba) {
-        super(ba);
+    public ComplexSpecifierNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     @Override

@@ -26,16 +26,16 @@ public class ASTComplexFieldSpecifier extends NameMatchingSpecifierNode {
     @Override
     public boolean isLiteralName() {
         QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) this.jjtGetChild(0);
-        return qualifiedNameMatcher instanceof ASTFieldName ? ((ASTFieldName) qualifiedNameMatcher).isExactName() : false;
+        return ((qualifiedNameMatcher instanceof ASTFieldName) && (((ASTFieldName) qualifiedNameMatcher).isExactName()));
     }
 
     public double estimateMatchFraction(AccessFlagsSpec accessFlagsSpec1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) {
         double ba = 1.0;
         QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) this.jjtGetChild(0);
         if (qualifiedNameMatcher instanceof ASTFieldName) {
-            String string = qualifiedNameMatcher.getSpecText();
-            if (string != null && !ASTRenameFilterParameter.isAnyWildcard(string)) {
-                if (!ASTRenameFilterParameter.containsWildcard(string)) {
+            String specText = qualifiedNameMatcher.getSpecText();
+            if (specText != null && !ASTRenameFilterParameter.isAnyWildcard(specText)) {
+                if (!ASTRenameFilterParameter.containsWildcard(specText)) {
                     ba *= 0.1;
                 } else {
                     ba *= 0.5;

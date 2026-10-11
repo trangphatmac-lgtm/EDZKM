@@ -14,13 +14,13 @@ public class ProcessOutputPump extends Thread {
     public String linePrefix;
     public boolean isErrorStream;
 
-    public ProcessOutputPump(InputStream inputStream1, PrintWriter printWriter, int ba, boolean isErrorStream) {
+    public ProcessOutputPump(InputStream inputStream1, PrintWriter printWriter, int endIndex, boolean isErrorStream) {
         this.inputStream = inputStream1;
         this.logWriter = printWriter;
         if (isErrorStream) {
-            this.linePrefix = ZkmStringUtils.pad("ERROR: ", 82, ba, 32);
+            this.linePrefix = ZkmStringUtils.pad("ERROR: ", 82, endIndex, 32);
         } else {
-            this.linePrefix = ZkmStringUtils.pad("", 76, ba, 32);
+            this.linePrefix = ZkmStringUtils.pad("", 76, endIndex, 32);
         }
 
         this.isErrorStream = isErrorStream;

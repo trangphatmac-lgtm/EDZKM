@@ -1,15 +1,16 @@
 package com.zelix.klassmaster.changelog;
 
 public class ChangeLogMemberKey extends ChangeLogMemberRecord implements Comparable {
+    /** parameterTypes; the field name is retained for serialized settings compatibility. */
     public final String n;
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof ChangeLogMemberKey)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof ChangeLogMemberKey)) {
             return false;
         }
 
-        ChangeLogMemberKey changeLogMemberKey1 = (ChangeLogMemberKey) object;
+        ChangeLogMemberKey changeLogMemberKey1 = (ChangeLogMemberKey) other;
         return this.H.equals(changeLogMemberKey1.H)
                 && this.n.equals(changeLogMemberKey1.n)
                 && (this.v == null && changeLogMemberKey1.v == null || this.v != null && changeLogMemberKey1.v != null && this.v.equals(changeLogMemberKey1.v));
@@ -30,9 +31,9 @@ public class ChangeLogMemberKey extends ChangeLogMemberRecord implements Compara
         return this.v == null ? this.H.hashCode() ^ this.n.hashCode() : this.H.hashCode() ^ this.n.hashCode() ^ this.v.hashCode();
     }
 
-    public ChangeLogMemberKey(String string, String string1, String string2, int ba) {
-        super(string, string2, ba);
-        this.n = string1;
+    public ChangeLogMemberKey(String name, String parameterTypes, String type, int accessFlags) {
+        super(name, type, accessFlags);
+        this.n = parameterTypes;
     }
 
     public String getParameterTypes() {
@@ -40,7 +41,7 @@ public class ChangeLogMemberKey extends ChangeLogMemberRecord implements Compara
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareToKey((ChangeLogMemberKey) object);
+    public int compareTo(Object other) {
+        return this.compareToKey((ChangeLogMemberKey) other);
     }
 }

@@ -22,10 +22,10 @@ public class ChangeLogASTQualifiedType extends ChangeLogSimpleNode {
     public void interpret(ChangeLogNode changeLogNode, int bd, int ba, int be, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int bb = this.jjtGetNumChildren();
 
-        for (int i = 0; i < bb; i++) {
+        for (int childrenElementIndex = 0; childrenElementIndex < bb; childrenElementIndex++) {
             ChangeLogNode changeLogNode1 = this;
             if (ba >= 0) {
-                changeLogNode1 = this.jjtGetChild(i);
+                changeLogNode1 = this.jjtGetChild(childrenElementIndex);
             }
 
             changeLogNode1.interpret(this, 30872, 34067, 41973, abstractChangeLog);
@@ -37,12 +37,12 @@ public class ChangeLogASTQualifiedType extends ChangeLogSimpleNode {
 
     public String buildTypeName() {
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = this.nameParts.size();
-        if (ba != 0) {
-            for (int i = 0; i < ba; i++) {
-                String string = (String) this.nameParts.elementAt(i);
+        int namePartsSize = this.nameParts.size();
+        if (namePartsSize != 0) {
+            for (int elementIndex = 0; elementIndex < namePartsSize; elementIndex++) {
+                String string = (String) this.nameParts.elementAt(elementIndex);
                 stringBuilder.append(string);
-                if (i < this.nameParts.size() - 1) {
+                if (elementIndex < this.nameParts.size() - 1) {
                     stringBuilder.append(".");
                 }
             }

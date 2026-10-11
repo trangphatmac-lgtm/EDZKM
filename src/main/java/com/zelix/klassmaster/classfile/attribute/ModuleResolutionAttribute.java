@@ -24,8 +24,8 @@ public class ModuleResolutionAttribute
 
 
 
-    public ModuleResolutionAttribute(ClassFileComponent classFileComponent, int n, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, n, string, classFileInputStream, listMultimap);
+    public ModuleResolutionAttribute(ClassFileComponent classFileComponent, int constantPoolIndex, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         this.rawBytes = new byte[this.length];
         classFileInputStream.read(this.rawBytes);
         ClassFileInputStream classFileInputStream2 = ClassFileInputStream.fromBytes(this.rawBytes, false);

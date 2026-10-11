@@ -36,14 +36,14 @@ public class MultiLineLabelCanvas extends Canvas {
             this.wrapLines();
         }
 
-        int ba;
+        int textHeight;
         if (this.lines == null) {
-            ba = 0;
+            textHeight = 0;
         } else {
-            ba = this.lines.size() * (this.ascent + this.descent + lineSpacing);
+            textHeight = this.lines.size() * (this.ascent + this.descent + lineSpacing);
         }
 
-        return ba;
+        return textHeight;
     }
 
     @Override
@@ -58,51 +58,38 @@ public class MultiLineLabelCanvas extends Canvas {
 
     public void wrapLines() {
         this.lines = new Vector();
-        StringTokenizer stringTokenizer = new StringTokenizer(this.text, WORD_DELIMITERS, true);
-        StringBuffer stringBuffer = new StringBuffer();
-        int ba = 0;
-        int bb = stringTokenizer.countTokens();
+        StringTokenizer tokens = new StringTokenizer(this.text, WORD_DELIMITERS, true);
+        StringBuffer lineText = new StringBuffer();
+        int lineWidth = 0;
+        int tokenCount = tokens.countTokens();
 
-        for (int i = 0; i < bb; i++) {
-            label31:
-            {
-                String string = stringTokenizer.nextToken();
-                Vector vector;
-                if (!string.equals("\n")) {
-                    if (!string.equals("\r")) {
-                        int bd = this.fontMetrics.stringWidth(string);
-                        ba += bd;
-                        if (ba <= this.wrapWidth) {
-                            stringBuffer.append(string);
-                        } else {
-                            this.lines.addElement(stringBuffer.toString());
-                            stringBuffer = new StringBuffer();
-                            if (!string.equals(" ")) {
-                                stringBuffer.append(string);
-                                ba = bd;
-                            } else {
-                                ba = 0;
-                            }
-                        }
-                        break label31;
-                    }
-
-                    vector = this.lines;
-                } else {
-                    vector = this.lines;
-                }
-
-                vector.addElement(stringBuffer.toString());
-                stringBuffer = new StringBuffer();
-                ba = 0;
-            }
-
-            if (i == bb - 1) {
-                this.lines.addElement(stringBuffer.toString());
-                this.linesWrapped = true;
+        for (int tokenIndex = 0; tokenIndex < tokenCount; tokenIndex++) {
+            String tokenText = tokens.nextToken();
+            if (tokenText.equals("\n") || tokenText.equals("\r")) {
+                this.lines.addElement(lineText.toString());
+                lineText = new StringBuffer();
+                lineWidth = 0;
             } else {
-                this.linesWrapped = true;
+                int tokenWidth = this.fontMetrics.stringWidth(tokenText);
+                lineWidth += tokenWidth;
+                if (lineWidth <= this.wrapWidth) {
+                    lineText.append(tokenText);
+                } else {
+                    this.lines.addElement(lineText.toString());
+                    lineText = new StringBuffer();
+                    if (!tokenText.equals(" ")) {
+                        lineText.append(tokenText);
+                        lineWidth = tokenWidth;
+                    } else {
+                        lineWidth = 0;
+                    }
+                }
             }
+
+            if (tokenIndex == tokenCount - 1) {
+                this.lines.addElement(lineText.toString());
+            }
+            this.linesWrapped = true;
         }
     }
 
@@ -131,19 +118,19 @@ public class MultiLineLabelCanvas extends Canvas {
         }
 
         Dimension dimension = this.getSize();
-        int bc = dimension.height;
-        int bd = dimension.width;
-        graphics.clearRect(0, 0, bd, bc);
+        int heightValue = dimension.height;
+        int widthValue = dimension.width;
+        graphics.clearRect(0, 0, widthValue, heightValue);
         int ascent = this.ascent;
-        int bb = 0;
+        int elementIndex = 0;
         int bf = 0;
 
         for (Vector vector = this.lines; bf < vector.size(); vector = this.lines) {
-            String string = (String) this.lines.elementAt(bb);
-            int be = ascent;
-            graphics.drawString(string, 0, be);
+            String string = (String) this.lines.elementAt(elementIndex);
+            int ascentValue = ascent;
+            graphics.drawString(string, 0, ascentValue);
             ascent += this.ascent + this.descent + lineSpacing;
-            bf = ++bb;
+            bf = ++elementIndex;
         }
     }
 }

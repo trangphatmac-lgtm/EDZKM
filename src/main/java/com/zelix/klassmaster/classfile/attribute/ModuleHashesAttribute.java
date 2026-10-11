@@ -34,12 +34,12 @@ public class ModuleHashesAttribute
         this.nameConstant.registerUsage(usedConstantsCollector, this, this.getParent());
         if (this.valid) {
             this.algorithm.registerUsage(usedConstantsCollector, this, this.getParent());
-            int n2 = 0;
+            int hashEntryIndex = 0;
             int n3 = 0;
             ModuleHashEntry[] moduleHashEntryArray = this.hashEntries;
             while (n3 < moduleHashEntryArray.length) {
-                this.hashEntries[n2].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '\u978d');
-                n3 = ++n2;
+                this.hashEntries[hashEntryIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '\u978d');
+                n3 = ++hashEntryIndex;
                 moduleHashEntryArray = this.hashEntries;
             }
         }
@@ -66,12 +66,12 @@ public class ModuleHashesAttribute
                 moduleHashEntryArray = this.hashEntries;
             }
             dataOutputStream2.writeShort(moduleHashEntryArray.length);
-            int n = 0;
+            int hashEntryIndex = 0;
             int n2 = 0;
             ModuleHashEntry[] moduleHashEntryArray2 = this.hashEntries;
             while (n2 < moduleHashEntryArray2.length) {
-                this.hashEntries[n].writeRemapped(dataOutputStream, map);
-                n2 = ++n;
+                this.hashEntries[hashEntryIndex].writeRemapped(dataOutputStream, map);
+                n2 = ++hashEntryIndex;
                 moduleHashEntryArray2 = this.hashEntries;
             }
             return;
@@ -89,12 +89,12 @@ public class ModuleHashesAttribute
         if (this.valid) {
             dataOutputStream.writeShort(this.algorithm.getIndex());
             dataOutputStream.writeShort(this.hashEntries.length);
-            int n = 0;
+            int hashEntryIndex = 0;
             int n2 = 0;
             ModuleHashEntry[] moduleHashEntryArray = this.hashEntries;
             while (n2 < moduleHashEntryArray.length) {
-                this.hashEntries[n].writeTo(dataOutputStream);
-                n2 = ++n;
+                this.hashEntries[hashEntryIndex].writeTo(dataOutputStream);
+                n2 = ++hashEntryIndex;
                 moduleHashEntryArray = this.hashEntries;
             }
             return;
@@ -118,30 +118,30 @@ public class ModuleHashesAttribute
 
 
 
-    public ModuleHashesAttribute(ClassFileComponent classFileComponent, int n, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws ClassFileFormatException, IOException {
-        super(classFileComponent, n, string, classFileInputStream, listMultimap);
+    public ModuleHashesAttribute(ClassFileComponent classFileComponent, int constantPoolIndexArgument, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws ClassFileFormatException, IOException {
+        super(classFileComponent, constantPoolIndexArgument, attributeName, classFileInputStream, listMultimap);
         this.rawBytes = new byte[this.length];
         classFileInputStream.read(this.rawBytes);
         ClassFileInputStream classFileInputStream2 = ClassFileInputStream.fromBytes(this.rawBytes, false);
         Throwable throwable = null;
         try {
-            int n2 = classFileInputStream2.readUnsignedShort();
-            ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(n2);
+            int constantPoolIndex = classFileInputStream2.readUnsignedShort();
+            ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
             if (constantPoolEntry == null) {
                 this.valid = false;
-                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + n2 + " : File is probably corrupt (V)");
+                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + constantPoolIndex + " : File is probably corrupt (V)");
             }
             if (!(constantPoolEntry instanceof ConstantUtf8)) {
                 this.valid = false;
-                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : " + n2 + " : '" + constantPoolEntry.getClass().getName() + "' : File is probably corrupt (W)");
+                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : " + constantPoolIndex + " : '" + constantPoolEntry.getClass().getName() + "' : File is probably corrupt (W)");
             }
             this.algorithm = (ConstantUtf8) constantPoolEntry;
             listMultimap.addValue(this.algorithm, this);
             int n3 = classFileInputStream2.readUnsignedShort();
             this.hashEntries = new ModuleHashEntry[n3];
-            for (int i = 0; i < n3; ++i) {
+            for (int hashEntryIndex = 0; hashEntryIndex < n3; ++hashEntryIndex) {
                 try {
-                    this.hashEntries[i] = new ModuleHashEntry(this, classFileInputStream2);
+                    this.hashEntries[hashEntryIndex] = new ModuleHashEntry(this, classFileInputStream2);
                     continue;
                 } catch (ZkmRuntimeException zkmRuntimeException) {
                     throw zkmRuntimeException;

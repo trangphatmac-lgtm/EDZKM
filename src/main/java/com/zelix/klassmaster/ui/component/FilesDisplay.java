@@ -23,12 +23,12 @@ public class FilesDisplay extends JTextField implements ActionListener, Property
     public int fileSelectionMode;
     public boolean multiSelection;
 
-    public FilesDisplay(File file1, boolean bl, int fileSelectionMode, boolean multiSelection) {
+    public FilesDisplay(File file1, boolean editable, int fileSelectionMode, boolean multiSelection) {
         this.currentDirectory = file1;
         this.textDocument = new PlainDocument();
         this.setDocument(this.textDocument);
         this.textDocument.addDocumentListener(this);
-        this.setEditable(bl);
+        this.setEditable(editable);
         this.fileSelectionMode = fileSelectionMode;
         this.multiSelection = multiSelection;
         this.addActionListener(this);
@@ -39,10 +39,10 @@ public class FilesDisplay extends JTextField implements ActionListener, Property
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getPropertyName().equals("selectionChanged")) {
             File[] files = this.selectedFiles;
-            Object[] objects = (Object[]) propertyChangeEvent.getNewValue();
-            int ba = objects.length;
-            File[] files1 = new File[ba];
-            System.arraycopy(objects, 0, files1, 0, ba);
+            Object[] newValue = (Object[]) propertyChangeEvent.getNewValue();
+            int lengthValue = newValue.length;
+            File[] files1 = new File[lengthValue];
+            System.arraycopy(newValue, 0, files1, 0, lengthValue);
             this.setSelectedFiles(files1);
             this.textEdited = false;
             this.firePropertyChange("selectionChanged", files, files1);
@@ -94,29 +94,29 @@ public class FilesDisplay extends JTextField implements ActionListener, Property
     public void setSelectedFiles(File[] files) {
         if (files != null && files.length != 0) {
             this.selectedFiles = files;
-            int ba = files.length;
+            int lengthValue = files.length;
             ArrayList arrayList = new ArrayList();
             StringBuffer stringBuffer = new StringBuffer();
 
-            for (int i = 0; i < ba; i++) {
-                File file1 = files[i];
+            for (int fileIndex = 0; fileIndex < lengthValue; fileIndex++) {
+                File file1 = files[fileIndex];
                 StringBuffer stringBuffer1;
-                String string;
-                if (ba > 1) {
+                String name;
+                if (lengthValue > 1) {
                     stringBuffer.append(quote);
                     stringBuffer1 = stringBuffer;
-                    string = file1.getName();
+                    name = file1.getName();
                 } else {
                     stringBuffer1 = stringBuffer;
-                    string = file1.getName();
+                    name = file1.getName();
                 }
 
-                stringBuffer1.append(string);
-                if (ba > 1) {
+                stringBuffer1.append(name);
+                if (lengthValue > 1) {
                     stringBuffer.append(quote);
                 }
 
-                if (i < ba - 1) {
+                if (fileIndex < lengthValue - 1) {
                     stringBuffer.append(" ");
                 }
 

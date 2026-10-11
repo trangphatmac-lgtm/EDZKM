@@ -18,25 +18,25 @@ public class FileListCellRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList jList, Object object, int ba, boolean bl, boolean bl1) {
         super.getListCellRendererComponent(jList, object, ba, bl, bl1);
-        String string = object.toString();
-        String string1 = string;
-        if (string1.equals(".")) {
-            string1 = this.fileList.workingDirPath;
-        } else if (string1.equals("..")) {
-            string1 = this.fileList.workingDir.getParent();
-            if (string1 == null) {
-                string1 = this.fileList.workingDirPath;
+        String text = object.toString();
+        String textValue = text;
+        if (textValue.equals(".")) {
+            textValue = this.fileList.workingDirPath;
+        } else if (textValue.equals("..")) {
+            textValue = this.fileList.workingDir.getParent();
+            if (textValue == null) {
+                textValue = this.fileList.workingDirPath;
             }
         }
 
-        File file1 = new File(string1);
+        File file1 = new File(textValue);
         Icon icon1 = this.iconProvider.getFileIcon(file1);
         if (icon1 != null) {
             this.setIcon(icon1);
         }
 
-        if (string.equals(".") || string.equals("..")) {
-            this.setText(string);
+        if (text.equals(".") || text.equals("..")) {
+            this.setText(text);
         } else if (this.fileList.showFullPaths) {
             this.setText(file1.getAbsolutePath());
         } else {

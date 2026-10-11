@@ -18,16 +18,16 @@ public abstract class ZkmScriptSimpleNode implements ZkmScriptNode {
     }
 
     @Override
-    public void jjtAddChild(ZkmScriptNode zkmScriptNode, int ba) {
+    public void jjtAddChild(ZkmScriptNode zkmScriptNode, int childrenElementIndex) {
         if (this.children == null) {
-            this.children = new ZkmScriptNode[ba + 1];
-        } else if (ba >= this.children.length) {
-            ZkmScriptNode[] zkmScriptNodes = new ZkmScriptNode[ba + 1];
+            this.children = new ZkmScriptNode[childrenElementIndex + 1];
+        } else if (childrenElementIndex >= this.children.length) {
+            ZkmScriptNode[] zkmScriptNodes = new ZkmScriptNode[childrenElementIndex + 1];
             System.arraycopy(this.children, 0, zkmScriptNodes, 0, this.children.length);
             this.children = zkmScriptNodes;
         }
 
-        this.children[ba] = zkmScriptNode;
+        this.children[childrenElementIndex] = zkmScriptNode;
     }
 
     @Override
@@ -66,7 +66,7 @@ public abstract class ZkmScriptSimpleNode implements ZkmScriptNode {
     public void jjtClose() {
     }
 
-    public static void setFlowControlKey(int ba) {
+    public static void setFlowControlKey(int flowControlKeyArgument) {
         flowControlKey = 110;
     }
 
@@ -94,8 +94,8 @@ public abstract class ZkmScriptSimpleNode implements ZkmScriptNode {
     }
 
     @Override
-    public ZkmScriptNode jjtGetChild(int ba) {
-        return this.children[ba];
+    public ZkmScriptNode jjtGetChild(int childrenElementIndex) {
+        return this.children[childrenElementIndex];
     }
 
     static {

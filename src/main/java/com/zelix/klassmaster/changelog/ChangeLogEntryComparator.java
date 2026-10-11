@@ -11,12 +11,12 @@ public class ChangeLogEntryComparator implements Comparator {
     }
 
     public int compareEntries(LabeledTuple labeledTuple, LabeledTuple labeledTuple1) {
-        String string = labeledTuple.getLabel();
-        String string1 = labeledTuple1.getLabel();
-        String string2 = string.substring(string.indexOf(" ") + 1);
-        String string3 = string1.substring(string1.indexOf(" ") + 1);
+        String label = labeledTuple.getLabel();
+        String labelValue = labeledTuple1.getLabel();
+        String string2 = label.substring(label.indexOf(" ") + 1);
+        String string3 = labelValue.substring(labelValue.indexOf(" ") + 1);
         int ba = string2.compareTo(string3);
-        return ba == 0 ? string.compareTo(string1) : ba;
+        return ba == 0 ? label.compareTo(labelValue) : ba;
     }
 
     public ChangeLogEntryComparator(ChangeLogWriter changeLogWriter1) {

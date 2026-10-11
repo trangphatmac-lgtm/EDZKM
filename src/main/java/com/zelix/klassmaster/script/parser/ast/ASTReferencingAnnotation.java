@@ -11,8 +11,8 @@ public class ASTReferencingAnnotation extends ZkmScriptSimpleNode implements Typ
     public String annotationTypeName;
 
     @Override
-    public void setTypeText(Object object) {
-        this.annotationTypeName = (String) object;
+    public void setTypeText(Object typeText) {
+        this.annotationTypeName = (String) typeText;
     }
 
     public ASTReferencingAnnotation() {

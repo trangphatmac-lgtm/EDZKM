@@ -42,9 +42,9 @@ public class ServiceProviderFile {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getValue();
-            if (string != null) {
-                hashSet.add(string);
+            String value = (String) entry.getValue();
+            if (value != null) {
+                hashSet.add(value);
             }
         }
 
@@ -52,22 +52,22 @@ public class ServiceProviderFile {
 
         while (iterator.hasNext()) {
             Entry entry1 = (Entry) iterator.next();
-            String string2 = (String) entry1.getKey();
-            String string1 = (String) entry1.getValue();
-            if (string1 != null) {
-                if (hashSet.add(string1)) {
-                    this.lines.put(string2, string1);
+            String key = (String) entry1.getKey();
+            String valueValue = (String) entry1.getValue();
+            if (valueValue != null) {
+                if (hashSet.add(valueValue)) {
+                    this.lines.put(key, valueValue);
                 }
-            } else if (!this.lines.containsKey(string2)) {
-                this.lines.put(string2, null);
+            } else if (!this.lines.containsKey(key)) {
+                this.lines.put(key, null);
             }
         }
     }
 
     
     
-    public void writeTranslated(ZipOutputStream zipOutputStream1, Long long1, EnumerableMap enumerableMap, boolean bl) throws IOException {
-        ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, this.getTranslatedEntryName(enumerableMap), bl);
+    public void writeTranslated(ZipOutputStream zipOutputStream1, Long long1, EnumerableMap enumerableMap, boolean compressedArgument) throws IOException {
+        ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, this.getTranslatedEntryName(enumerableMap), compressedArgument);
         PrintWriter printWriter = null;
         boolean bl1 = false ;
 
@@ -78,17 +78,17 @@ public class ServiceProviderFile {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
-                String string1 = (String) entry.getValue();
-                if (string1 != null) {
-                    String string2 = string1.replace('.', '/');
-                    String string3 = (String) ZkmUtils.mapOrSelf(string2, enumerableMap);
-                    if (!string2.equals(string3)) {
-                        string = ZkmStringUtils.replaceAll(string, string1, string3.replace('/', '.'));
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
+                if (value != null) {
+                    String keyValue = value.replace('.', '/');
+                    String string3 = (String) ZkmUtils.mapOrSelf(keyValue, enumerableMap);
+                    if (!keyValue.equals(string3)) {
+                        key = ZkmStringUtils.replaceAll(key, value, string3.replace('/', '.'));
                     }
                 }
 
-                printWriter.println(string);
+                printWriter.println(key);
             }
 
             printWriter.flush();
@@ -120,24 +120,24 @@ public class ServiceProviderFile {
             inputStream1 = zipFile1.getInputStream(zipEntry1);
             bufferedReader = ZkmFileUtils.createBomAwareReader(inputStream1, "UTF-8", (ObservableHolder) null);
 
-            String string;
-            while ((string = bufferedReader.readLine()) != null) {
-                String string1 = string;
-                int ba = string.indexOf("#");
+            String key;
+            while ((key = bufferedReader.readLine()) != null) {
+                String second = key;
+                int ba = key.indexOf("#");
                 if (ba != -1) {
                     if (ba > 0) {
-                        string1 = string.substring(0, ba - 1);
+                        second = key.substring(0, ba - 1);
                     } else {
-                        string1 = "";
+                        second = "";
                     }
                 }
 
-                string1 = string1.trim();
-                if (string1.length() > 0) {
-                    this.providerClassNames.add(string1);
-                    this.lines.put(string, string1);
+                second = second.trim();
+                if (second.length() > 0) {
+                    this.providerClassNames.add(second);
+                    this.lines.put(key, second);
                 } else {
-                    this.lines.put(string, null);
+                    this.lines.put(key, null);
                 }
             }
         } finally {
@@ -169,22 +169,22 @@ public class ServiceProviderFile {
     }
 
     public void collectReferencedClasses(String string, Map map1) {
-        String string1 = "'META-INF/services/" + this.serviceName + "' in '" + string + "'";
+        String value = "'META-INF/services/" + this.serviceName + "' in '" + string + "'";
         ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(ZkmUtils.dotsToSlashes(this.serviceName));
         if (programClass1 != null) {
-            map1.put(programClass1, string1);
+            map1.put(programClass1, value);
         }
 
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
         for (ArrayList arrayList = this.providerClassNames; bb < arrayList.size(); arrayList = this.providerClassNames) {
-            ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(ZkmUtils.dotsToSlashes((String) this.providerClassNames.get(ba)));
+            ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(ZkmUtils.dotsToSlashes((String) this.providerClassNames.get(elementIndex)));
             if (programClass2 != null) {
-                map1.put(programClass2, string1);
+                map1.put(programClass2, value);
             }
 
-            bb = ++ba;
+            bb = ++elementIndex;
         }
     }
 }

@@ -21,32 +21,32 @@ public class FullStackMapFrame extends StackMapTableFrame {
 
     @Override
     public int getFrameSize() {
-        int ba = 1;
-        int bb = this.locals.length;
-        int bc = this.stackItems.length;
-        ba += 2;
-        ba += 2;
+        int frameSize = 1;
+        int lengthValue = this.locals.length;
+        int lengthValue2 = this.stackItems.length;
+        frameSize += 2;
+        frameSize += 2;
 
-        for (int i = 0; i < bb; i++) {
-            ba += this.locals[i].getByteSize();
+        for (int localIndex = 0; localIndex < lengthValue; localIndex++) {
+            frameSize += this.locals[localIndex].getByteSize();
         }
 
-        ba += 2;
+        frameSize += 2;
 
-        for (int i = 0; i < bc; i++) {
-            ba += this.stackItems[i].getByteSize();
+        for (int stackItemIndex = 0; stackItemIndex < lengthValue2; stackItemIndex++) {
+            frameSize += this.stackItems[stackItemIndex].getByteSize();
         }
 
-        return ba;
+        return frameSize;
     }
 
     @Override
     public void collectUsedConstants(char ba, int be, UsedConstantsCollector usedConstantsCollector, char bf) {
-        int bb = this.locals.length;
-        int bc = this.stackItems.length;
+        int lengthValue = this.locals.length;
+        int lengthValue2 = this.stackItems.length;
 
         int bd;
-        for (bd = 0; bd < bb; bd++) {
+        for (bd = 0; bd < lengthValue; bd++) {
             VerificationTypeInfo verificationTypeInfo1 = this.locals[bd];
             UsedConstantsCollector usedConstantsCollector1 = usedConstantsCollector;
             verificationTypeInfo1.collectUsedConstants('\u0000', 1103830477, usedConstantsCollector1, '鞍');
@@ -56,7 +56,7 @@ public class FullStackMapFrame extends StackMapTableFrame {
             bd = 0;
         }
 
-        while (bd < bc) {
+        while (bd < lengthValue2) {
             VerificationTypeInfo verificationTypeInfo = this.stackItems[bd];
             UsedConstantsCollector usedConstantsCollector2 = usedConstantsCollector;
             verificationTypeInfo.collectUsedConstants('\u0000', 1103830477, usedConstantsCollector2, '鞍');
@@ -66,20 +66,20 @@ public class FullStackMapFrame extends StackMapTableFrame {
 
     @Override
     public void writeRemapped(DataOutputStream dataOutputStream, Map map1) throws IOException {
-        int ba = this.locals.length;
-        int bb = this.stackItems.length;
+        int lengthValue = this.locals.length;
+        int lengthValue2 = this.stackItems.length;
         dataOutputStream.writeByte(255);
         dataOutputStream.writeShort(this.offsetDelta);
-        dataOutputStream.writeShort(ba);
+        dataOutputStream.writeShort(lengthValue);
 
-        for (int i = 0; i < ba; i++) {
-            this.locals[i].writeRemapped(dataOutputStream, map1);
+        for (int localIndex = 0; localIndex < lengthValue; localIndex++) {
+            this.locals[localIndex].writeRemapped(dataOutputStream, map1);
         }
 
-        dataOutputStream.writeShort(bb);
+        dataOutputStream.writeShort(lengthValue2);
 
-        for (int i = 0; i < bb; i++) {
-            this.stackItems[i].writeRemapped(dataOutputStream, map1);
+        for (int stackItemIndex = 0; stackItemIndex < lengthValue2; stackItemIndex++) {
+            this.stackItems[stackItemIndex].writeRemapped(dataOutputStream, map1);
         }
     }
 
@@ -114,11 +114,11 @@ public class FullStackMapFrame extends StackMapTableFrame {
         int ba = classFileInputStream.readUnsignedShort();
         this.locals = new VerificationTypeInfo[ba];
 
-        for (int i = 0; i < ba; i++) {
-            this.locals[i] = VerificationTypeInfo.readTypeInfo(
+        for (int localIndex = 0; localIndex < ba; localIndex++) {
+            this.locals[localIndex] = VerificationTypeInfo.readTypeInfo(
                     (StackMapTableAttribute) classFileComponent, classFileInputStream, listMultimap, listMultimap1, printWriter, map1, map2, integerCache1
             );
-            if (!this.locals[i].isValid()) {
+            if (!this.locals[localIndex].isValid()) {
                 this.valid = false;
             }
         }
@@ -126,11 +126,11 @@ public class FullStackMapFrame extends StackMapTableFrame {
         int bd = classFileInputStream.readUnsignedShort();
         this.stackItems = new VerificationTypeInfo[bd];
 
-        for (int i = 0; i < bd; i++) {
-            this.stackItems[i] = VerificationTypeInfo.readTypeInfo(
+        for (int stackItemIndex = 0; stackItemIndex < bd; stackItemIndex++) {
+            this.stackItems[stackItemIndex] = VerificationTypeInfo.readTypeInfo(
                     (StackMapTableAttribute) classFileComponent, classFileInputStream, listMultimap, listMultimap1, printWriter, map1, map2, integerCache1
             );
-            if (!this.stackItems[i].isValid()) {
+            if (!this.stackItems[stackItemIndex].isValid()) {
                 this.valid = false;
             }
         }

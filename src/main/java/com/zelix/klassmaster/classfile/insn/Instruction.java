@@ -49,98 +49,76 @@ public abstract class Instruction implements InstructionMarker {
         return false;
     }
 
-    public static void setFlowObfKeys(int[] ba) {
-        flowObfKeys = ba;
+    public static void setFlowObfKeys(int[] flowObfKeysArgument) {
+        flowObfKeys = flowObfKeysArgument;
     }
 
-    public static int appendIntConstant(int ba, List list1, ConstantPool constantPool1, List list2) {
-        int bb = 0;
-        int bh;
-        if (ba >= -32768) {
-            if (ba <= 32767) {
-                Instruction instruction1 = createIntPush(ba);
-                list1.add(instruction1);
-                return instruction1.getLength();
-            }
-
-            bh = 131070;
-        } else {
-            bh = 131070;
+    public static int appendIntConstant(int value, List instructions, ConstantPool constantPool, List constantPoolChanges) {
+        int byteLength = 0;
+        if (value >= -32768 && value <= 32767) {
+            Instruction push = createIntPush(value);
+            instructions.add(push);
+            return push.getLength();
         }
 
-        int bg = bh;
-        int bc = ba % bg;
-        int bd = ba / bg;
-        boolean bl = true;
-        int be;
-        int bf;
-        if (Math.abs(bc) > 65535) {
-            if (bd == 0) {
-                be = bg * (bc > 0 ? 1 : -1);
-            } else if (bd > 0) {
-                be = bg * (bd + 1);
+        int chunkSize = 131070;
+        int remainder = value % chunkSize;
+        int quotient = value / chunkSize;
+        boolean addRemainder = true;
+        int pooledValue;
+        int pushedValue;
+        if (Math.abs(remainder) > 65535) {
+            if (quotient == 0) {
+                pooledValue = chunkSize * (remainder > 0 ? 1 : -1);
+            } else if (quotient > 0) {
+                pooledValue = chunkSize * (quotient + 1);
             } else {
-                be = bg * (bd - 1);
+                pooledValue = chunkSize * (quotient - 1);
             }
 
-            bl = false;
-            bf = bc > 0 ? bg - bc : (bg + bc) * -1;
+            addRemainder = false;
+            pushedValue = remainder > 0 ? chunkSize - remainder : (chunkSize + remainder) * -1;
         } else {
-            be = bg * bd;
-            bf = bc;
+            pooledValue = chunkSize * quotient;
+            pushedValue = remainder;
         }
 
-        ArrayList arrayList = new ArrayList();
-        if (be != 0) {
-            ConstantRefInstruction constantRefInstruction = new ConstantRefInstruction(19, constantPool1.getOrAddIntegerConstant_s_0(be, list2));
-            arrayList.add(constantRefInstruction);
-            bb += constantRefInstruction.getLength();
+        ArrayList generatedInstructions = new ArrayList();
+        if (pooledValue != 0) {
+            ConstantRefInstruction loadConstant = new ConstantRefInstruction(19, constantPool.getOrAddIntegerConstant_s_0(pooledValue, constantPoolChanges));
+            generatedInstructions.add(loadConstant);
+            byteLength += loadConstant.getLength();
         }
 
-        label61:
-        {
-            if (bf >= -32768) {
-                if (bf <= 32767) {
-                    Instruction instruction2 = createIntPush(bf);
-                    bb += instruction2.getLength();
-                    arrayList.add(instruction2);
-                    break label61;
-                }
-
-                bh = Math.abs(bf);
-            } else {
-                bh = Math.abs(bf);
-            }
-
-            Instruction instruction3 = createIntPush((short) (bh & 65535));
-            arrayList.add(instruction3);
-            bb += instruction3.getLength();
-            arrayList.add(SimpleInstruction.forOpcode(146));
-            bb++;
-            if (bf < 0) {
-                arrayList.add(SimpleInstruction.forOpcode(116));
-                bb++;
-            }
-        }
-
-        if (be != 0) {
-            if (bl) {
-                arrayList.add(SimpleInstruction.forOpcode(96));
-                bb++;
-            } else {
-                arrayList.add(SimpleInstruction.forOpcode(100));
-                bb++;
-            }
-        }
-
-        list1.addAll(arrayList);
-        if (bl) {
-            bh = be + bf;
+        if (pushedValue >= -32768 && pushedValue <= 32767) {
+            Instruction pushRemainder = createIntPush(pushedValue);
+            byteLength += pushRemainder.getLength();
+            generatedInstructions.add(pushRemainder);
         } else {
-            bh = be - bf;
+            int magnitude = Math.abs(pushedValue);
+            Instruction pushMagnitude = createIntPush((short) (magnitude & 65535));
+            generatedInstructions.add(pushMagnitude);
+            byteLength += pushMagnitude.getLength();
+            generatedInstructions.add(SimpleInstruction.forOpcode(146));
+            byteLength++;
+            if (pushedValue < 0) {
+                generatedInstructions.add(SimpleInstruction.forOpcode(116));
+                byteLength++;
+            }
         }
 
-        return bb;
+        if (pooledValue != 0) {
+            if (addRemainder) {
+                generatedInstructions.add(SimpleInstruction.forOpcode(96));
+                byteLength++;
+            } else {
+                generatedInstructions.add(SimpleInstruction.forOpcode(100));
+                byteLength++;
+            }
+        }
+
+        instructions.addAll(generatedInstructions);
+        return byteLength;
     }
 
     public boolean isStore() {
@@ -179,8 +157,8 @@ public abstract class Instruction implements InstructionMarker {
         this.opcode = opcode;
     }
 
-    public static int appendLongConstant(long ba, List list1, ConstantPool constantPool1, List list2) {
-        Instruction instruction1 = createLongConstantLoad(ba, constantPool1, list2);
+    public static int appendLongConstant(long valueArgument, List list1, ConstantPool constantPool1, List list2) {
+        Instruction instruction1 = createLongConstantLoad(valueArgument, constantPool1, list2);
         list1.add(instruction1);
         return instruction1.getLength();
     }
@@ -189,8 +167,8 @@ public abstract class Instruction implements InstructionMarker {
         return this.isStoreTo(ba) || this.isLoadFrom(ba);
     }
 
-    public static Instruction createIntIncrement(int ba, int bb, LocalVariableProvider localVariableProvider, int bc) {
-        return new LocalVariableInstruction(ba, LocalVariableAccessKind.INT_INC, localVariableProvider, bb, bc);
+    public static Instruction createIntIncrement(int ba, int incrementArgument, LocalVariableProvider localVariableProvider, int bc) {
+        return new LocalVariableInstruction(ba, LocalVariableAccessKind.INT_INC, localVariableProvider, incrementArgument, bc);
     }
 
     public boolean isRet() {
@@ -268,10 +246,10 @@ public abstract class Instruction implements InstructionMarker {
     }
 
     public static String formatDescription(String string, String string1) {
-        int ba = string.indexOf(37);
-        if (ba != -1) {
+        int endIndex = string.indexOf(37);
+        if (endIndex != -1) {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(string.substring(0, ba));
+            stringBuilder.append(string.substring(0, endIndex));
             if (string1.length() > 200) {
                 stringBuilder.append(string1.substring(0, 50));
                 stringBuilder.append("...<");
@@ -282,7 +260,7 @@ public abstract class Instruction implements InstructionMarker {
                 stringBuilder.append(string1);
             }
 
-            stringBuilder.append(string.substring(ba + 1));
+            stringBuilder.append(string.substring(endIndex + 1));
             return stringBuilder.toString();
         } else {
             return string;
@@ -558,12 +536,12 @@ public abstract class Instruction implements InstructionMarker {
         return instruction1;
     }
 
-    public void setOffset(int ba) {
+    public void setOffset(int offset) {
     }
 
     public static Instruction readInstruction(
             ClassFileInputStream classFileInputStream,
-            int ba,
+            int bytecodeOffset,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
             ListMultimap listMultimap2,
@@ -574,8 +552,8 @@ public abstract class Instruction implements InstructionMarker {
             ConstantPoolProvider constantPoolProvider,
             LocalVariableProvider localVariableProvider
     ) throws UnknownOpcodeException, IOException {
-        int bb = classFileInputStream.read();
-        switch (bb) {
+        int opcodeValue = classFileInputStream.read();
+        switch (opcodeValue) {
             case 0:
             case 1:
             case 2:
@@ -681,7 +659,7 @@ public abstract class Instruction implements InstructionMarker {
             case 177:
             case 190:
             case 191:
-                return SimpleInstruction.forOpcode(bb);
+                return SimpleInstruction.forOpcode(opcodeValue);
             case 16:
                 return new BipushInstruction(classFileInputStream);
             case 17:
@@ -701,7 +679,7 @@ public abstract class Instruction implements InstructionMarker {
             case 192:
             case 193:
                 return new ConstantRefInstruction(
-                        bb, classFileInputStream, constantPoolProvider, listMultimap1, listMultimap2, listMultimap3, listMultimap4, listMultimap5
+                        opcodeValue, classFileInputStream, constantPoolProvider, listMultimap1, listMultimap2, listMultimap3, listMultimap4, listMultimap5
                 );
             case 21:
             case 22:
@@ -756,7 +734,7 @@ public abstract class Instruction implements InstructionMarker {
             case 132:
             case 169:
             case 196:
-                return LocalVariableInstruction.readLocalVariableInstruction(bb, classFileInputStream, localVariableProvider);
+                return LocalVariableInstruction.readLocalVariableInstruction(opcodeValue, classFileInputStream, localVariableProvider);
             case 153:
             case 154:
             case 155:
@@ -773,15 +751,15 @@ public abstract class Instruction implements InstructionMarker {
             case 166:
             case 198:
             case 199:
-                return new BranchInstruction(bb, classFileInputStream, ba, listMultimap);
+                return new BranchInstruction(opcodeValue, classFileInputStream, bytecodeOffset, listMultimap);
             case 167:
-                return new GotoInstruction(classFileInputStream, ba, listMultimap);
+                return new GotoInstruction(classFileInputStream, bytecodeOffset, listMultimap);
             case 168:
-                return new JsrInstruction(classFileInputStream, ba, listMultimap);
+                return new JsrInstruction(classFileInputStream, bytecodeOffset, listMultimap);
             case 170:
-                return new TableSwitchInstruction(classFileInputStream, ba, listMultimap);
+                return new TableSwitchInstruction(classFileInputStream, bytecodeOffset, listMultimap);
             case 171:
-                return new LookupSwitchInstruction(classFileInputStream, ba, listMultimap);
+                return new LookupSwitchInstruction(classFileInputStream, bytecodeOffset, listMultimap);
             case 185:
                 return new InvokeInterfaceInstruction(
                         classFileInputStream, constantPoolProvider, listMultimap1, listMultimap2, listMultimap3, listMultimap4, listMultimap5
@@ -792,7 +770,7 @@ public abstract class Instruction implements InstructionMarker {
                 );
             case 187:
                 return new TypeInstruction(
-                        classFileInputStream, constantPoolProvider, ba, listMultimap1, listMultimap2, listMultimap3, listMultimap4, listMultimap5
+                        classFileInputStream, constantPoolProvider, bytecodeOffset, listMultimap1, listMultimap2, listMultimap3, listMultimap4, listMultimap5
                 );
             case 188:
                 return new NewArrayInstruction(classFileInputStream);
@@ -806,9 +784,9 @@ public abstract class Instruction implements InstructionMarker {
                 );
             case 200:
             case 201:
-                return new WideJumpInstruction(bb, classFileInputStream, ba, listMultimap);
+                return new WideJumpInstruction(opcodeValue, classFileInputStream, bytecodeOffset, listMultimap);
             default:
-                throw new UnknownOpcodeException("Error: unknown opcode=" + bb + " (A)");
+                throw new UnknownOpcodeException("Error: unknown opcode=" + opcodeValue + " (A)");
         }
     }
 
@@ -817,21 +795,21 @@ public abstract class Instruction implements InstructionMarker {
     }
 
     public final String getDescriptionComment() {
-        String string = opcodeDescriptions[this.getOpcode()];
-        return string != null && string.length() > 0 ? "//" + string : "";
+        String opcodeDescription = opcodeDescriptions[this.getOpcode()];
+        return opcodeDescription != null && opcodeDescription.length() > 0 ? "//" + opcodeDescription : "";
     }
 
-    public static String getDescriptionComment(int ba) {
-        String string = opcodeDescriptions[ba];
-        return string != null && string.length() > 0 ? "//" + string : "";
+    public static String getDescriptionComment(int opcodeDescriptionIndex) {
+        String opcodeDescription = opcodeDescriptions[opcodeDescriptionIndex];
+        return opcodeDescription != null && opcodeDescription.length() > 0 ? "//" + opcodeDescription : "";
     }
 
     public int getOpcode() {
         return this.opcode;
     }
 
-    public static Instruction createIntConstantPush(int ba, ConstantPool constantPool1, List list1) {
-        return ba >= -32768 && ba <= 32767 ? createIntPush(ba) : new ConstantRefInstruction(19, constantPool1.getOrAddIntegerConstant_s_0(ba, list1));
+    public static Instruction createIntConstantPush(int valueArgument, ConstantPool constantPool1, List list1) {
+        return valueArgument >= -32768 && valueArgument <= 32767 ? createIntPush(valueArgument) : new ConstantRefInstruction(19, constantPool1.getOrAddIntegerConstant_s_0(valueArgument, list1));
     }
 
     public abstract boolean canFallThrough();
@@ -1265,14 +1243,14 @@ public abstract class Instruction implements InstructionMarker {
         return false;
     }
 
-    public static Instruction createLongConstantLoad(long ba, ConstantPool constantPool1, List list1) {
-        return new ConstantRefInstruction(20, constantPool1.getOrAddLongConstant(ba, list1));
+    public static Instruction createLongConstantLoad(long valueArgument, ConstantPool constantPool1, List list1) {
+        return new ConstantRefInstruction(20, constantPool1.getOrAddLongConstant(valueArgument, list1));
     }
 
     public abstract boolean pushesWithoutPopping();
 
-    public static Instruction createStringConstantLoad(String string, ConstantPool constantPool1, List list1) {
-        ResolvedStringConstant resolvedStringConstant = constantPool1.addStringConstant(string, list1, false);
+    public static Instruction createStringConstantLoad(String valueArgument, ConstantPool constantPool1, List list1) {
+        ResolvedStringConstant resolvedStringConstant = constantPool1.addStringConstant(valueArgument, list1, false);
         return new ConstantRefInstruction(19, resolvedStringConstant);
     }
 

@@ -24,30 +24,30 @@ public class TwoKeySetMultiMap {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            Object object = entry.getKey();
+            Object key = entry.getKey();
 
             for (Object object1 : ((SetMultiMap) entry.getValue()).keySet()) {
-                setMultiMap.addValue(object, object1);
+                setMultiMap.addValue(key, object1);
             }
         }
 
         return setMultiMap;
     }
 
-    public Set getValues(Object object, Object object1) {
-        SetMultiMap setMultiMap = (SetMultiMap) this.map.get(object);
-        return setMultiMap == null ? null : setMultiMap.getValues(object1);
+    public Set getValues(Object key, Object keyArgument) {
+        SetMultiMap setMultiMap = (SetMultiMap) this.map.get(key);
+        return setMultiMap == null ? null : setMultiMap.getValues(keyArgument);
     }
 
-    public boolean addValue(Object object, Object object1, Object object2) {
-        SetMultiMap setMultiMap = (SetMultiMap) this.map.get(object);
+    public boolean addValue(Object key, Object keyArgument, Object object2) {
+        SetMultiMap setMultiMap = (SetMultiMap) this.map.get(key);
         if (setMultiMap == null) {
             setMultiMap = new SetMultiMap(this.innerCapacity, this.valueSetCapacity);
-            boolean bl = setMultiMap.addValue(object1, object2);
-            this.map.put(object, setMultiMap);
+            boolean bl = setMultiMap.addValue(keyArgument, object2);
+            this.map.put(key, setMultiMap);
             return bl;
         } else {
-            return setMultiMap.addValue(object1, object2);
+            return setMultiMap.addValue(keyArgument, object2);
         }
     }
 
@@ -77,8 +77,8 @@ public class TwoKeySetMultiMap {
         return new NestedMultimapView(nestedMultiMap);
     }
 
-    public SetMultiMap getSetMultiMap(Object object) {
-        return (SetMultiMap) this.map.get(object);
+    public SetMultiMap getSetMultiMap(Object key) {
+        return (SetMultiMap) this.map.get(key);
     }
 
     public TwoKeySetMultiMap() {

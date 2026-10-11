@@ -16,9 +16,9 @@ public class TrimOptionsWizardDialog extends DeleteAttributesDialog {
     public JButton skipBtn;
 
     @Override
-    public void buildDialog(String string, String string1, String string2) {
+    public void buildDialog(String title, String string1, String toolTipText) {
         Container container1 = this.getContentPane();
-        ConstraintLayout constraintLayout1 = this.createContentLayout(string, string1, string2, container1);
+        ConstraintLayout constraintLayout1 = this.createContentLayout(title, string1, toolTipText, container1);
         SkippableStepButtonListener skippableStepButtonListener = new SkippableStepButtonListener(this);
         super.previousBtn.addActionListener(skippableStepButtonListener);
         super.okBtn.addActionListener(skippableStepButtonListener);
@@ -41,8 +41,8 @@ public class TrimOptionsWizardDialog extends DeleteAttributesDialog {
         this.finishLayoutAndShow(constraintLayout1);
     }
 
-    public TrimOptionsWizardDialog(String string, String string1, JFrame jFrame, TrimOptions trimOptions1, DialogCallback dialogCallback1) {
-        super(string, "Next", string1, jFrame, trimOptions1, dialogCallback1);
+    public TrimOptionsWizardDialog(String title, String toolTipText, JFrame jFrame, TrimOptions trimOptions1, DialogCallback dialogCallback1) {
+        super(title, "Next", toolTipText, jFrame, trimOptions1, dialogCallback1);
     }
 
     @Override
@@ -51,11 +51,11 @@ public class TrimOptionsWizardDialog extends DeleteAttributesDialog {
     }
 
     @Override
-    public void createButtons(String string, String string1) {
+    public void createButtons(String string, String toolTipText) {
         super.previousBtn = new JButton("Previous");
         super.previousBtn.setToolTipText(GuiResources.getTooltipText("PREVIOUS_SCREEN"));
         super.okBtn = new JButton(string);
-        super.okBtn.setToolTipText(string1);
+        super.okBtn.setToolTipText(toolTipText);
         this.skipBtn = new JButton("Skip");
         this.skipBtn.setToolTipText(GuiResources.getTooltipText("SKIP_TO_NEXT"));
         super.cancelBtn = new JButton("Cancel");

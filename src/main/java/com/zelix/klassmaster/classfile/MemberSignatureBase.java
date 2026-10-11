@@ -42,11 +42,11 @@ public abstract class MemberSignatureBase {
     public final String formatSignature() {
         List list1 = ConstantPoolEntry.getParameterJavaTypes(this.parameterDescriptor);
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = list1.size();
+        int list1Size = list1.size();
 
-        for (int i = 0; i < ba; i++) {
-            stringBuilder.append((String) list1.get(i));
-            if (i < ba - 1) {
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            stringBuilder.append((String) list1.get(elementIndex));
+            if (elementIndex < list1Size - 1) {
                 stringBuilder.append(", ");
             }
         }

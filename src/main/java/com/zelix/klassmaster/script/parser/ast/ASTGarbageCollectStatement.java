@@ -29,18 +29,11 @@ public class ASTGarbageCollectStatement extends SummarizingStatementNode {
             printWriter.println("\tSleeping for " + this.sleepMillis + " milliseconds");
         }
 
-        long bd;
-        label21:
-        {
-            try {
-                Thread.sleep(this.sleepMillis);
-            } catch (InterruptedException interruptedException) {
-                bd = runtime1.totalMemory();
-                break label21;
-            }
-
-            bd = runtime1.totalMemory();
+        try {
+            Thread.sleep(this.sleepMillis);
+        } catch (InterruptedException exception) {
         }
+        long bd = runtime1.totalMemory();
 
         int bb = (int) (bd - runtime1.freeMemory()) / 1024;
         long bc = runtime1.maxMemory();
@@ -65,10 +58,10 @@ public class ASTGarbageCollectStatement extends SummarizingStatementNode {
         if (ba == 1) {
             ASTIntegerLiteral aSTIntegerLiteral = (ASTIntegerLiteral) this.jjtGetChild(0);
             aSTIntegerLiteral.execute(this, scriptEnvironment1);
-            String string = aSTIntegerLiteral.getValue();
+            String value = aSTIntegerLiteral.getValue();
 
             try {
-                this.sleepMillis = Integer.parseInt(string);
+                this.sleepMillis = Integer.parseInt(value);
             } catch (NumberFormatException numberFormatException) {
                 this.sleepMillis = 500;
                 if (this.sleepMillis < 0) {

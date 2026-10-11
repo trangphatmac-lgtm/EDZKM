@@ -16,10 +16,10 @@ public class ASTAndMemberSpecifier extends ZkmScriptSimpleNode implements Member
 
     @Override
     public boolean hasMatchingMember(ClassFileBase classFileBase, ClassHierarchyQuery classHierarchyQuery) throws ZkmException, IOException {
-        int ba = this.children.length;
+        int lengthValue = this.children.length;
 
-        for (int i = 0; i < ba; i++) {
-            if (!((MemberSpecifierMatcher) this.children[i]).hasMatchingMember(classFileBase, classHierarchyQuery)) {
+        for (int childrenElementIndex = 0; childrenElementIndex < lengthValue; childrenElementIndex++) {
+            if (!((MemberSpecifierMatcher) this.children[childrenElementIndex]).hasMatchingMember(classFileBase, classHierarchyQuery)) {
                 return false;
             }
         }
@@ -33,98 +33,31 @@ public class ASTAndMemberSpecifier extends ZkmScriptSimpleNode implements Member
 
     @Override
     public String getSpecText() {
-        java.lang.StringBuffer stringBuffer2 = null;
-        java.lang.StringBuffer stringBuffer1 = null;
-        int ba;
-        StringBuffer stringBuffer;
-        int bb;
-        int bd;
-        label70:
-        {
-            label69:
-            {
-                label73:
-                {
-                    bd = ZkmScriptSimpleNode.getFlowPredicate();
-                    stringBuffer = new StringBuffer();
-                    ba = bd;
-                    bb = this.children.length;
-                    bd = (this.negated ? 1 : 0);
-                    if (ba == 0) {
-                        if (this.negated) {
-                            stringBuffer1 = stringBuffer;
-                            byte be = 40;
-                            break label73;
-                        }
-
-                        bd = bb;
-                    }
-
-                    if (ba != 0) {
-                        break label70;
-                    }
-
-                    if (bd <= 1) {
-                        break label69;
-                    }
-
-                    stringBuffer1 = stringBuffer;
-                    byte bi = 40;
-                }
-
-                stringBuffer1.append('(');
+        int flowPredicate = ZkmScriptSimpleNode.getFlowPredicate();
+        StringBuffer result = new StringBuffer();
+        int childCount = this.children.length;
+        if (flowPredicate != 0) {
+            int childIndex = this.negated ? 1 : 0;
+            if (childIndex < childCount) {
+                // Preserve the original checked cast even when this path does not render the child.
+                DescribableSpec child = (DescribableSpec) this.children[childIndex];
             }
-
-            bd = 0;
+            return (this.negated ? "!" : "") + result.toString();
         }
-
-        int bc = bd;
-
-        while (true) {
-            if (bc < bb) {
-                DescribableSpec describableSpec = (DescribableSpec) this.children[bc];
-                if (ba == 0) {
-                    if (ba != 0) {
-                        stringBuffer2 = stringBuffer;
-                        byte bh = 41;
-                        break;
-                    }
-
-                    stringBuffer.append(describableSpec.getSpecText());
-                    if (bc < bb - 1) {
-                        stringBuffer.append(AND_SEPARATOR);
-                    }
-
-                    bc++;
-                }
-
-                if (ba == 0) {
-                    continue;
-                }
-            }
-
-            bd = (this.negated ? 1 : 0);
-            if (ba == 0) {
-                if (this.negated) {
-                    stringBuffer2 = stringBuffer;
-                    byte bg = 41;
-                    break;
-                }
-
-                bd = bb;
-            }
-
-            if (bd <= 1) {
-                return (this.negated ? "!" : "") + stringBuffer.toString();
-            }
-
-            stringBuffer2 = stringBuffer;
-            byte bf = 41;
-            break;
+        if (this.negated || childCount > 1) {
+            result.append('(');
         }
-
-        stringBuffer2.append(')');
-        return (this.negated ? "!" : "") + stringBuffer.toString();
+        for (int childIndex = 0; childIndex < childCount; childIndex++) {
+            DescribableSpec child = (DescribableSpec) this.children[childIndex];
+            result.append(child.getSpecText());
+            if (childIndex < childCount - 1) {
+                result.append(AND_SEPARATOR);
+            }
+        }
+        if (this.negated || childCount > 1) {
+            result.append(')');
+        }
+        return (this.negated ? "!" : "") + result.toString();
     }
 
     @Override
@@ -132,8 +65,8 @@ public class ASTAndMemberSpecifier extends ZkmScriptSimpleNode implements Member
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
     }
 }

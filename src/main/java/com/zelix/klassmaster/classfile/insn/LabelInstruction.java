@@ -31,8 +31,8 @@ public class LabelInstruction extends Instruction {
         return true;
     }
 
-    public LabelInstruction(int ba, int bb) {
-        this(ba, false, bb);
+    public LabelInstruction(int offsetArgument, int bb) {
+        this(offsetArgument, false, bb);
     }
 
     @Override
@@ -156,8 +156,8 @@ public class LabelInstruction extends Instruction {
         return this.hasUsageBits(32768);
     }
 
-    public LabelInstruction(int ba, boolean bl, int bb) {
-        this(ba, bl, false, bb);
+    public LabelInstruction(int offsetArgument, boolean bl, int bb) {
+        this(offsetArgument, bl, false, bb);
     }
 
     @Override

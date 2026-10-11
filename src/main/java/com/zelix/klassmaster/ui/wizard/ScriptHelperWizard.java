@@ -98,9 +98,9 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
     }
 
     @Override
-    public void showSaveDialog(String string) {
+    public void showSaveDialog(String initialDirectory) {
         SaveAllStepCallback saveAllStepCallback = new SaveAllStepCallback(this);
-        new SaveAllStatementDialog(super.mainWindow, GuiResources.getTooltipText("OK_PROCEED"), string, saveAllStepCallback);
+        new SaveAllStatementDialog(super.mainWindow, GuiResources.getTooltipText("OK_PROCEED"), initialDirectory, saveAllStepCallback);
     }
 
     public void onSaveAllResult(File file1, Integer integer) throws ZkmException, IOException {
@@ -108,15 +108,15 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
             super.saveDirectory = file1.getAbsolutePath();
         }
 
-        int ba = integer;
-        if (ba == 1) {
+        int integerValue = integer;
+        if (integerValue == 1) {
             if (super.saveDirectory != null) {
                 super.userPreferences.setLastSavePath(super.saveDirectory);
             }
 
             super.userPreferences.savePreferences();
             this.showScriptDialog(this.buildEquivalentScript("ZKM Script Helper", super.openedLocations));
-        } else if (ba == 2) {
+        } else if (integerValue == 2) {
             if (super.obfuscateOptions.aj == 1) {
                 this.showReferenceInclusionsDialog();
             } else {
@@ -337,9 +337,9 @@ public class ScriptHelperWizard extends AbstractHelperWizard {
             super.classesChanged = true;
         }
 
-        String string = (String) observableHolder.getValue();
-        if (string != null) {
-            super.userPreferences.setOpenClassesDirectory(string);
+        String value = (String) observableHolder.getValue();
+        if (value != null) {
+            super.userPreferences.setOpenClassesDirectory(value);
         }
 
         if (ba == 1) {

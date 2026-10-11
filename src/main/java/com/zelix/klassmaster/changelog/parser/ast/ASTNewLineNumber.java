@@ -13,10 +13,10 @@ public class ASTNewLineNumber extends ChangeLogSimpleNode {
         int bd = (int) ((((long) ba << 32 | (long) bb << 48 >>> 32 | (long) bc << 48 >>> 48) ^ 29099041019815L) >>> 48);
         long be = (((long) ba << 32 | (long) bb << 48 >>> 32 | (long) bc << 48 >>> 48) ^ 29099041019815L) << 16 >>> 16;
         ASTLineNumberChange aSTLineNumberChange = (ASTLineNumberChange) changeLogNode;
-        String string1 = ((ChangeLogValueNode) this.jjtGetChild(0)).getValue();
+        String value = ((ChangeLogValueNode) this.jjtGetChild(0)).getValue();
         short bf = (short) bd;
-        String string = string1;
-        aSTLineNumberChange.addOldLineNumber(string);
+        String valueValue = value;
+        aSTLineNumberChange.addOldLineNumber(valueValue);
     }
 
     public ASTNewLineNumber() {

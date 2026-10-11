@@ -18,22 +18,25 @@ import java.util.Comparator;
 import java.util.Vector;
 
 public class SerialVersionUidCalculator implements Serializable {
-    public static final String l = System.getProperty("SERIAL_VER_ALGORITHM", "1.5");
-    public static final Comparator U = new FieldNameComparator();
-    public static final Comparator g = new MethodSignatureComparator();
+    // Preserve the serialized identity from before the public comparator fields were renamed.
+    private static final long serialVersionUID = -1860100888229714965L;
+
+    public static final String SERIAL_VERSION_ALGORITHM = System.getProperty("SERIAL_VER_ALGORITHM", "1.5");
+    public static final Comparator FIELD_NAME_COMPARATOR = new FieldNameComparator();
+    public static final Comparator METHOD_SIGNATURE_COMPARATOR = new MethodSignatureComparator();
 
     public static long computeSerialVersionUid(ProgramClass programClass1, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
-        String string = programClass1.getClassName();
-        if (!classMemberLookup1.isSubclass(string, "java/lang/Enum")
-                && !classMemberLookup1.isSubclass(string, "java/lang/reflect/Proxy")
-                && !string.equals("java/lang/Enum")
+        String className = programClass1.getClassName();
+        if (!classMemberLookup1.isSubclass(className, "java/lang/Enum")
+                && !classMemberLookup1.isSubclass(className, "java/lang/reflect/Proxy")
+                && !className.equals("java/lang/Enum")
                 && (
-                classMemberLookup1.implementsInterface(string, "java/io/Serializable")
-                        || classMemberLookup1.implementsInterface(string, "java/io/Externalizable")
-                        || string.equals("java/io/Externalizable")
-                        || string.equals("java/io/Serializable")
+                classMemberLookup1.implementsInterface(className, "java/io/Serializable")
+                        || classMemberLookup1.implementsInterface(className, "java/io/Externalizable")
+                        || className.equals("java/io/Externalizable")
+                        || className.equals("java/io/Serializable")
         )) {
-            FieldInfo fieldInfo = classMemberLookup1.findField(string, "serialVersionUID", "J");
+            FieldInfo fieldInfo = classMemberLookup1.findField(className, "serialVersionUID", "J");
             if (fieldInfo != null) {
                 ConstantValueAttribute constantValueAttribute = fieldInfo.getConstantValueAttribute();
                 if (constantValueAttribute != null) {
@@ -50,15 +53,15 @@ public class SerialVersionUidCalculator implements Serializable {
                 DataOutputStream dataOutputStream = new DataOutputStream(digestOutputStream);
                 dataOutputStream.writeUTF(programClass1.getDottedClassName());
                 int innerClassAccessFlags = programClass1.getInnerClassAccessFlags();
-                String string2;
+                String serialVersionAlgorithm;
                 if (innerClassAccessFlags == -1) {
                     innerClassAccessFlags = programClass1.getAccessFlags();
-                    string2 = l;
+                    serialVersionAlgorithm = SERIAL_VERSION_ALGORITHM;
                 } else {
-                    string2 = l;
+                    serialVersionAlgorithm = SERIAL_VERSION_ALGORITHM;
                 }
 
-                if (!string2.equals("1.4")) {
+                if (!serialVersionAlgorithm.equals("1.4")) {
                     innerClassAccessFlags &= 1553;
                 }
 
@@ -74,23 +77,23 @@ public class SerialVersionUidCalculator implements Serializable {
                     dataOutputStream.writeInt(innerClassAccessFlags);
                 }
 
-                String[] strings = programClass1.getInterfaceNames();
-                Arrays.sort(strings);
+                String[] interfaceNames = programClass1.getInterfaceNames();
+                Arrays.sort(interfaceNames);
 
-                for (int i = 0; i < strings.length; i++) {
-                    String string1 = strings[i].replace('/', '.');
+                for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+                    String string1 = interfaceNames[interfaceNameIndex].replace('/', '.');
                     dataOutputStream.writeUTF(string1);
                 }
 
                 ArrayEnumeration arrayEnumeration = programClass1.enumerateFields();
-                arrayEnumeration.sortElements(U);
+                arrayEnumeration.sortElements(FIELD_NAME_COMPARATOR);
 
-                for (boolean bl = arrayEnumeration.hasMoreElements(); bl; bl = arrayEnumeration.hasMoreElements()) {
+                for (boolean moreElements = arrayEnumeration.hasMoreElements(); moreElements; moreElements = arrayEnumeration.hasMoreElements()) {
                     FieldInfo fieldInfo1 = (FieldInfo) arrayEnumeration.nextElement();
                     if (!fieldInfo1.isStrictlyPrivate() || !fieldInfo1.isStatic() && !fieldInfo1.isTransient()) {
                         dataOutputStream.writeUTF(fieldInfo1.getSourceName());
                         int accessFlags = fieldInfo1.getAccessFlags();
-                        if (!l.equals("1.4")) {
+                        if (!SERIAL_VERSION_ALGORITHM.equals("1.4")) {
                             accessFlags &= 223;
                             dataOutputStream.writeInt(accessFlags);
                         } else {
@@ -108,11 +111,11 @@ public class SerialVersionUidCalculator implements Serializable {
                 }
 
                 ArrayEnumeration arrayEnumeration1 = programClass1.enumerateMethods();
-                arrayEnumeration1.sortElements(g);
+                arrayEnumeration1.sortElements(METHOD_SIGNATURE_COMPARATOR);
                 Vector vector1 = new Vector();
                 Vector vector = new Vector();
 
-                for (boolean bl1 = arrayEnumeration1.hasMoreElements(); bl1; bl1 = arrayEnumeration1.hasMoreElements()) {
+                for (boolean moreElementsValue = arrayEnumeration1.hasMoreElements(); moreElementsValue; moreElementsValue = arrayEnumeration1.hasMoreElements()) {
                     MethodInfo methodInfo1 = (MethodInfo) arrayEnumeration1.nextElement();
                     if (!methodInfo1.isStrictlyPrivate()) {
                         if (methodInfo1.isConstructor()) {
@@ -123,48 +126,48 @@ public class SerialVersionUidCalculator implements Serializable {
                     }
                 }
 
-                for (int i = 0; i < vector1.size(); i++) {
-                    MethodInfo methodInfo2 = (MethodInfo) vector1.elementAt(i);
+                for (int elementIndex = 0; elementIndex < vector1.size(); elementIndex++) {
+                    MethodInfo methodInfo2 = (MethodInfo) vector1.elementAt(elementIndex);
                     dataOutputStream.writeUTF(methodInfo2.getJvmName());
-                    int be = methodInfo2.getAccessFlags();
-                    if (!l.equals("1.4")) {
-                        be &= 3391;
-                        dataOutputStream.writeInt(be);
+                    int accessFlagsValue = methodInfo2.getAccessFlags();
+                    if (!SERIAL_VERSION_ALGORITHM.equals("1.4")) {
+                        accessFlagsValue &= 3391;
+                        dataOutputStream.writeInt(accessFlagsValue);
                     } else {
-                        dataOutputStream.writeInt(be);
+                        dataOutputStream.writeInt(accessFlagsValue);
                     }
 
                     dataOutputStream.writeUTF(methodInfo2.getDescriptor().replace('/', '.'));
                 }
 
-                for (int i = 0; i < vector.size(); i++) {
-                    MethodInfo methodInfo3 = (MethodInfo) vector.elementAt(i);
+                for (int elementIndexValue = 0; elementIndexValue < vector.size(); elementIndexValue++) {
+                    MethodInfo methodInfo3 = (MethodInfo) vector.elementAt(elementIndexValue);
                     dataOutputStream.writeUTF(methodInfo3.getJvmName());
-                    int bk = methodInfo3.getAccessFlags();
-                    if (!l.equals("1.4")) {
-                        bk &= 3391;
-                        dataOutputStream.writeInt(bk);
+                    int accessFlagsValue2 = methodInfo3.getAccessFlags();
+                    if (!SERIAL_VERSION_ALGORITHM.equals("1.4")) {
+                        accessFlagsValue2 &= 3391;
+                        dataOutputStream.writeInt(accessFlagsValue2);
                     } else {
-                        dataOutputStream.writeInt(bk);
+                        dataOutputStream.writeInt(accessFlagsValue2);
                     }
 
                     dataOutputStream.writeUTF(methodInfo3.getDescriptor().replace('/', '.'));
                 }
 
                 dataOutputStream.flush();
-                byte[] bi = messageDigest1.digest();
-                int bj = 0;
+                byte[] byteArray = messageDigest1.digest();
+                int byteArrayElementIndex = 0;
                 int bm = 0;
                 byte bn = 8;
 
                 while (true) {
-                    int bf = bi.length;
-                    if (bm >= Math.min(8, bf)) {
+                    int lengthValue = byteArray.length;
+                    if (bm >= Math.min(8, lengthValue)) {
                         break;
                     }
 
-                    ba += (long) (bi[bj] & 0xFF) << bj * 8;
-                    bm = ++bj;
+                    ba += (long) (byteArray[byteArrayElementIndex] & 0xFF) << byteArrayElementIndex * 8;
+                    bm = ++byteArrayElementIndex;
                     bn = 8;
                 }
             } catch (IOException iOException) {

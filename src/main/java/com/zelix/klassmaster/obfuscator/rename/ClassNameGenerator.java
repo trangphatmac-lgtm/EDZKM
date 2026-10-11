@@ -70,57 +70,57 @@ public abstract class ClassNameGenerator {
     public final ListMultimap newToOldPackages;
 
     public String getPackageOnlyRename(ClassHierarchyNode classHierarchyNode) {
-        String string = classHierarchyNode.getClassName();
-        int ba = string.lastIndexOf(47);
+        String className = classHierarchyNode.getClassName();
+        int ba = className.lastIndexOf(47);
         if (ba != -1) {
-            String string1 = this.getRenamedPackagePrefix(string);
-            String string2 = string.substring(ba + 1);
-            String string3 = string1 + string2;
-            return string3.equals(string) ? null : string3;
+            String renamedPackagePrefix = this.getRenamedPackagePrefix(className);
+            String string2 = className.substring(ba + 1);
+            String string3 = renamedPackagePrefix + string2;
+            return string3.equals(className) ? null : string3;
         } else {
             return null;
         }
     }
 
-    public final boolean checkNameAvailable(String string, String string1, boolean bl, boolean bl1, boolean bl2, MutableInt mutableInt) throws IOException {
-        if (this.changeLogMapping == null || !this.changeLogMapping.isNewClassName(string1) && !this.changeLogMapping.isLookupClass(string1)) {
-            if (this.fixedClassNames.contains(string1)) {
+    public final boolean checkNameAvailable(String string, String key, boolean bl, boolean bl1, boolean bl2, MutableInt mutableInt) throws IOException {
+        if (this.changeLogMapping == null || !this.changeLogMapping.isNewClassName(key) && !this.changeLogMapping.isLookupClass(key)) {
+            if (this.fixedClassNames.contains(key)) {
                 mutableInt.setValue(2);
                 return false;
             }
 
-            if (this.assignedNames.contains(string1)) {
+            if (this.assignedNames.contains(key)) {
                 mutableInt.setValue(3);
                 return false;
             }
 
-            if (this.packageNodes.get(string1) != null) {
+            if (this.packageNodes.get(key) != null) {
                 mutableInt.setValue(4);
                 return false;
             }
 
-            if (!bl && string.equals(string1)) {
+            if (!bl && string.equals(key)) {
                 mutableInt.setValue(5);
                 return false;
             }
 
-            boolean bl3;
-            if (string1.length() == 1) {
-                if (ConstantPoolEntry.isPrimitiveDescriptor(string1)) {
+            boolean alwaysCheckReservedClassNames;
+            if (key.length() == 1) {
+                if (ConstantPoolEntry.isPrimitiveDescriptor(key)) {
                     mutableInt.setValue(6);
                     return false;
                 }
 
-                bl3 = HiddenOptionFlags.ALWAYS_CHECK_RESERVED_CLASS_NAMES;
+                alwaysCheckReservedClassNames = HiddenOptionFlags.ALWAYS_CHECK_RESERVED_CLASS_NAMES;
             } else {
-                bl3 = HiddenOptionFlags.ALWAYS_CHECK_RESERVED_CLASS_NAMES;
+                alwaysCheckReservedClassNames = HiddenOptionFlags.ALWAYS_CHECK_RESERVED_CLASS_NAMES;
             }
 
             Set set1;
-            if (!bl3 && bl1) {
+            if (!alwaysCheckReservedClassNames && bl1) {
                 set1 = this.fileClassLowerCaseNames;
             } else {
-                if (RESERVED_DEVICE_NAME_SET.contains(ClassFileBase.stripPackage(string1).toUpperCase())) {
+                if (RESERVED_DEVICE_NAME_SET.contains(ClassFileBase.stripPackage(key).toUpperCase())) {
                     mutableInt.setValue(7);
                     return false;
                 }
@@ -128,13 +128,13 @@ public abstract class ClassNameGenerator {
                 set1 = this.fileClassLowerCaseNames;
             }
 
-            if (set1.contains(string1.toLowerCase())) {
+            if (set1.contains(key.toLowerCase())) {
                 mutableInt.setValue(8);
                 return false;
-            } else if (!bl1 && this.allLowerCaseNames.contains(string1.toLowerCase())) {
+            } else if (!bl1 && this.allLowerCaseNames.contains(key.toLowerCase())) {
                 mutableInt.setValue(9);
                 return false;
-            } else if (bl2 && !Character.isUpperCase(ClassFileBase.stripPackage(string1).charAt(0))) {
+            } else if (bl2 && !Character.isUpperCase(ClassFileBase.stripPackage(key).charAt(0))) {
                 mutableInt.setValue(10);
                 return false;
             } else {
@@ -182,22 +182,22 @@ public abstract class ClassNameGenerator {
         return ba == -1 ? string : string.substring(ba + 1);
     }
 
-    public ArrayList getPackageClashCandidates(String string, String string1) {
+    public ArrayList getPackageClashCandidates(String string, String key) {
         ArrayList arrayList = new ArrayList();
         if (string != null && this.newToOldPackages != null) {
-            String string2;
-            if (string1.length() > 0) {
-                string2 = (String) this.packageRenameMap.get(string1);
+            String keyValue;
+            if (key.length() > 0) {
+                keyValue = (String) this.packageRenameMap.get(key);
             } else {
-                string2 = string1;
+                keyValue = key;
             }
 
             int ba = string.lastIndexOf(47);
             String string3 = string.substring(ba + 1);
-            List list1 = this.newToOldPackages.getValues(string2);
+            List list1 = this.newToOldPackages.getValues(keyValue);
             if (list1 != null) {
-                for (int i = 0; i < list1.size(); i++) {
-                    String string4 = (String) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    String string4 = (String) list1.get(elementIndex);
                     arrayList.add(string4 + "/" + string3);
                 }
             } else {
@@ -211,20 +211,20 @@ public abstract class ClassNameGenerator {
     public String getInnerClassSeparator(long ba, String string) {
         long bb = ba;
         bb = 66405443639848L ^ bb;
-        String string3 = ZkmProcessingException.getBuildTag();
-        int bc = string.lastIndexOf("$");
-        String string1 = string3;
-        String string2;
-        if (bc > -1) {
-            string2 = string.substring(bc, bc + 1);
+        String buildTag = ZkmProcessingException.getBuildTag();
+        int beginIndex = string.lastIndexOf("$");
+        String innerClassSeparator = buildTag;
+        String innerClassSeparatorValue;
+        if (beginIndex > -1) {
+            innerClassSeparatorValue = string.substring(beginIndex, beginIndex + 1);
             if (6204837985703228051L <= bb) {
-                return string1;
+                return innerClassSeparator;
             }
         } else {
-            string2 = "";
+            innerClassSeparatorValue = "";
         }
 
-        return string2;
+        return innerClassSeparatorValue;
     }
 
     public abstract String generateNewName(ClassHierarchyNode classHierarchyNode, String string, HashMap hashMap, String string1, Triple triple, boolean bl) throws IOException;
@@ -237,38 +237,38 @@ public abstract class ClassNameGenerator {
         return this.keepInnerClassInfoMode;
     }
 
-    public final boolean isNameAvailable(String string, String string1, boolean bl, boolean bl1) throws IOException {
-        return this.checkNameAvailable(string, string1, false, bl, bl1, new MutableInt(0));
+    public final boolean isNameAvailable(String string, String key, boolean bl, boolean bl1) throws IOException {
+        return this.checkNameAvailable(string, key, false, bl, bl1, new MutableInt(0));
     }
 
     public String getRenamedPackagePrefix(String string) {
-        String string1 = "";
-        int ba = string.lastIndexOf(47);
-        if (ba != -1) {
-            string1 = string.substring(0, ba);
-            string1 = (String) this.packageRenameMap.get(string1);
-            if (string1.length() > 0) {
-                string1 = string1 + "/";
+        String renamedPackagePrefix = "";
+        int endIndex = string.lastIndexOf(47);
+        if (endIndex != -1) {
+            renamedPackagePrefix = string.substring(0, endIndex);
+            renamedPackagePrefix = (String) this.packageRenameMap.get(renamedPackagePrefix);
+            if (renamedPackagePrefix.length() > 0) {
+                renamedPackagePrefix = renamedPackagePrefix + "/";
             }
         }
 
-        return string1;
+        return renamedPackagePrefix;
     }
 
-    public final boolean isNameAvailableOrSame(String string, String string1, boolean bl, MutableInt mutableInt) throws IOException {
-        return this.checkNameAvailable(string, string1, true, bl, false, mutableInt);
+    public final boolean isNameAvailableOrSame(String string, String key, boolean bl, MutableInt mutableInt) throws IOException {
+        return this.checkNameAvailable(string, key, true, bl, false, mutableInt);
     }
 
     public final String createNewClassName(ClassHierarchyNode classHierarchyNode, HashMap hashMap) throws ZkmProcessingException, IOException {
         Triple triple = null;
         String string = "";
-        String string1 = classHierarchyNode.getClassName();
+        String className = classHierarchyNode.getClassName();
         ProgramClass programClass1 = classHierarchyNode.getProgramClass();
         if (this.keepInnerClassInfoMode == 0 && classHierarchyNode.hasEnclosingNode() && classHierarchyNode.hasOuterClassNode()) {
             ClassHierarchyNode classHierarchyNode1 = classHierarchyNode.getOuterClassNode();
-            String string9 = classHierarchyNode1.getClassName();
-            if (this.classesByName.get(string9) == null) {
-                throw new ZkmProcessingException("Missing outer class : " + ZkmUtils.slashesToDots(string9) + "' for '" + ZkmUtils.slashesToDots(string1) + "'");
+            String classNameValue = classHierarchyNode1.getClassName();
+            if (this.classesByName.get(classNameValue) == null) {
+                throw new ZkmProcessingException("Missing outer class : " + ZkmUtils.slashesToDots(classNameValue) + "' for '" + ZkmUtils.slashesToDots(className) + "'");
             }
 
             if (hashMap != null) {
@@ -283,119 +283,119 @@ public abstract class ClassNameGenerator {
                 }
             }
 
-            String string10;
+            String classNameValue3;
             Object object;
-            if ((object = this.classRenameMap.get(string9)) == null) {
+            if ((object = this.classRenameMap.get(classNameValue)) == null) {
                 if (!this.fixedClasses.contains(classHierarchyNode1.getProgramClass())) {
                     return null;
                 }
 
-                string10 = string9;
+                classNameValue3 = classNameValue;
             } else {
-                string10 = (String) object;
+                classNameValue3 = (String) object;
             }
 
-            String string11 = programClass1.getInnerSimpleName();
-            if (string11 != null) {
-                int bb = string9.length();
-                int bc = string1.length();
-                int ba = string11.length();
-                if (bc - ba > bb) {
-                    String string7 = string1.substring(bb, bc - ba);
-                    string = string10 + string7;
-                    string1 = string11;
+            String innerSimpleName = programClass1.getInnerSimpleName();
+            if (innerSimpleName != null) {
+                int beginIndex = classNameValue.length();
+                int classNameLength = className.length();
+                int innerSimpleNameLength = innerSimpleName.length();
+                if (classNameLength - innerSimpleNameLength > beginIndex) {
+                    String string7 = className.substring(beginIndex, classNameLength - innerSimpleNameLength);
+                    string = classNameValue3 + string7;
+                    className = innerSimpleName;
                 } else {
-                    String string14 = this.getInnerClassSeparator(29969281254997L, string1);
-                    string = string10 + string14;
-                    string1 = string1.substring(string9.length() + 1);
+                    String innerClassSeparator = this.getInnerClassSeparator(29969281254997L, className);
+                    string = classNameValue3 + innerClassSeparator;
+                    className = className.substring(classNameValue.length() + 1);
                 }
             } else {
-                String string13 = this.getInnerClassSeparator(29969281254997L, string1);
-                string = string10 + string13;
-                string1 = string1.substring(string9.length() + 1);
+                String innerClassSeparatorValue = this.getInnerClassSeparator(29969281254997L, className);
+                string = classNameValue3 + innerClassSeparatorValue;
+                className = className.substring(classNameValue.length() + 1);
             }
         } else {
             triple = this.exclusionSet.getClassLink(classHierarchyNode.getProgramClass());
             if (triple != null) {
-                String string2 = (String) triple.getSecond();
-                String string3 = (String) triple.getThird();
+                String second = (String) triple.getSecond();
+                String third = (String) triple.getThird();
                 ProgramClass programClass2 = (ProgramClass) triple.getFirst();
                 if (programClass2 != null) {
-                    String string4 = programClass2.getClassName();
+                    String classNameValue2 = programClass2.getClassName();
                     String string5;
-                    if ((string5 = (String) this.classRenameMap.get(string4)) == null) {
+                    if ((string5 = (String) this.classRenameMap.get(classNameValue2)) == null) {
                         if (!this.fixedClasses.contains(programClass2)) {
                             return null;
                         }
 
-                        String string12 = this.getRenamedPackagePrefix(classHierarchyNode.getProgramClass().getClassName())
-                                + string2
-                                + getSimpleName(string4)
-                                + string3;
+                        String key = this.getRenamedPackagePrefix(classHierarchyNode.getProgramClass().getClassName())
+                                + second
+                                + getSimpleName(classNameValue2)
+                                + third;
                         MutableInt mutableInt1 = new MutableInt(0);
-                        if (!this.isNameAvailableOrSame(string1, string12, programClass1.isFromArchive(), mutableInt1)) {
+                        if (!this.isNameAvailableOrSame(className, key, programClass1.isFromArchive(), mutableInt1)) {
                             throw new ZkmProcessingException(
                                     "Error renaming "
                                             + classHierarchyNode.getProgramClass().getDisplayLocationName()
                                             + ". Check <link> search paths. Code="
                                             + mutableInt1.getValue()
                                             + " : "
-                                            + string2
+                                            + second
                                             + " : "
-                                            + string12
+                                            + key
                                             + " : "
-                                            + string3
+                                            + third
                                             + " : "
-                                            + string1
+                                            + className
                                             + " (1)"
                             );
                         }
 
-                        this.assignedNames.add(string12);
+                        this.assignedNames.add(key);
                         Set set2;
                         if (!programClass1.isFromArchive()) {
-                            this.fileClassLowerCaseNames.add(string12.toLowerCase());
+                            this.fileClassLowerCaseNames.add(key.toLowerCase());
                             set2 = this.allLowerCaseNames;
                         } else {
                             set2 = this.allLowerCaseNames;
                         }
 
-                        set2.add(string12.toLowerCase());
-                        return string12;
+                        set2.add(key.toLowerCase());
+                        return key;
                     }
 
-                    String string6 = this.getRenamedPackagePrefix(classHierarchyNode.getProgramClass().getClassName()) + string2 + getSimpleName(string5) + string3;
+                    String keyValue = this.getRenamedPackagePrefix(classHierarchyNode.getProgramClass().getClassName()) + second + getSimpleName(string5) + third;
                     MutableInt mutableInt = new MutableInt(0);
-                    if (!this.isNameAvailableOrSame(string1, string6, programClass1.isFromArchive(), mutableInt)) {
+                    if (!this.isNameAvailableOrSame(className, keyValue, programClass1.isFromArchive(), mutableInt)) {
                         throw new ZkmProcessingException(
                                 "Error renaming "
                                         + classHierarchyNode.getProgramClass().getDisplayLocationName()
                                         + ". Check <link> search paths. Code="
                                         + mutableInt.getValue()
                                         + " : "
-                                        + string2
+                                        + second
                                         + " : "
-                                        + string6
+                                        + keyValue
                                         + " : "
-                                        + string3
+                                        + third
                                         + " : "
-                                        + string1
+                                        + className
                                         + " (2)"
                         );
                     }
 
-                    this.assignedNames.add(string6);
+                    this.assignedNames.add(keyValue);
                     if (!programClass1.isFromArchive()) {
-                        this.fileClassLowerCaseNames.add(string6.toLowerCase());
-                        this.allLowerCaseNames.add(string6.toLowerCase());
+                        this.fileClassLowerCaseNames.add(keyValue.toLowerCase());
+                        this.allLowerCaseNames.add(keyValue.toLowerCase());
                     }
 
-                    return string6;
+                    return keyValue;
                 }
             }
         }
 
-        String string8 = this.generateNewName(classHierarchyNode, string, hashMap, string1, triple, programClass1.isFromArchive());
+        String string8 = this.generateNewName(classHierarchyNode, string, hashMap, className, triple, programClass1.isFromArchive());
         this.assignedNames.add(string8);
         Set set1;
         if (!programClass1.isFromArchive()) {

@@ -33,13 +33,13 @@ public class ASTComplexPackageSpecifier extends NameMatchingSpecifierNode implem
     public String getSpecText() {
         int flowControlKey = ZkmScriptSimpleNode.getFlowControlKey();
         StringBuilder stringBuilder = new StringBuilder();
-        String string = ((QualifiedNameMatcher) this.jjtGetChild(0)).getSpecText();
+        String specText = ((QualifiedNameMatcher) this.jjtGetChild(0)).getSpecText();
         if (flowControlKey != 0) {
-            stringBuilder = stringBuilder.append(string);
-            string = this.includesSubpackages ? "." : "";
+            stringBuilder = stringBuilder.append(specText);
+            specText = this.includesSubpackages ? "." : "";
         }
 
-        return stringBuilder.append(string).append(this.excludesPackageName ? "^" : "").toString();
+        return stringBuilder.append(specText).append(this.excludesPackageName ? "^" : "").toString();
     }
 
     public ASTComplexPackageSpecifier() {
@@ -70,7 +70,7 @@ public class ASTComplexPackageSpecifier extends NameMatchingSpecifierNode implem
     @Override
     public boolean isLiteralName() {
         QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) this.jjtGetChild(0);
-        return !this.includesSubpackages && qualifiedNameMatcher instanceof ASTPackageName ? ((ASTPackageName) qualifiedNameMatcher).isLiteralName() : false;
+        return ((!this.includesSubpackages && qualifiedNameMatcher instanceof ASTPackageName) && (((ASTPackageName) qualifiedNameMatcher).isLiteralName()));
     }
 
     public final void setExcludesPackageName() {

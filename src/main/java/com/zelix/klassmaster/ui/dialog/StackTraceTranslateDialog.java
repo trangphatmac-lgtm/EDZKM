@@ -163,8 +163,8 @@ public class StackTraceTranslateDialog extends OwnedFrameDialogBase implements A
         this.closeFrame();
     }
 
-    public void showTranslationResult(String string) {
-        this.resultsArea.setText(string);
+    public void showTranslationResult(String text) {
+        this.resultsArea.setText(text);
         this.resultsArea.setCaretPosition(0);
         this.showDefaultCursor();
         this.statusLabel.setText(" ");
@@ -349,22 +349,22 @@ public class StackTraceTranslateDialog extends OwnedFrameDialogBase implements A
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.logBrowseBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.logBrowseBtn) {
                 this.browseChangeLogs();
-            } else if (object == this.bytecodePathBrowseBtn) {
+            } else if (source == this.bytecodePathBrowseBtn) {
                 this.browseBytecodeClasspath();
-            } else if (object == this.traceAreaPasteBtn) {
+            } else if (source == this.traceAreaPasteBtn) {
                 this.pasteStackTrace();
-            } else if (object == this.resultsAreaCopyBtn) {
+            } else if (source == this.resultsAreaCopyBtn) {
                 this.copyResults();
-            } else if (object == this.translateBtn) {
+            } else if (source == this.translateBtn) {
                 this.startTranslation();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
-            } else if ((object == this.logFileNameFld || object == this.traceArea) && this.translateBtn.isEnabled()) {
+            } else if ((source == this.logFileNameFld || source == this.traceArea) && this.translateBtn.isEnabled()) {
                 this.startTranslation();
             }
         } catch (Throwable throwable) {
@@ -434,10 +434,10 @@ public class StackTraceTranslateDialog extends OwnedFrameDialogBase implements A
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
-            Object object = mouseEvent.getSource();
-            if (object == this.logFileNameFld) {
+            Object source = mouseEvent.getSource();
+            if (source == this.logFileNameFld) {
                 this.browseChangeLogs();
-            } else if (object == this.bytecodePathFld) {
+            } else if (source == this.bytecodePathFld) {
                 this.browseBytecodeClasspath();
             }
         }
@@ -459,9 +459,9 @@ public class StackTraceTranslateDialog extends OwnedFrameDialogBase implements A
 
     public void initPreferences(UserPreferences userPreferences1) throws ZkmException, IOException {
         this.userPreferences = userPreferences1;
-        String string = userPreferences1.getBytecodeClasspath();
-        if (string != null && string.trim().length() > 0) {
-            this.bytecodeClasspath = new ZkmClasspath(string.trim());
+        String bytecodeClasspathValue = userPreferences1.getBytecodeClasspath();
+        if (bytecodeClasspathValue != null && bytecodeClasspathValue.trim().length() > 0) {
+            this.bytecodeClasspath = new ZkmClasspath(bytecodeClasspathValue.trim());
             ZkmClasspath zkmClasspath = this.bytecodeClasspath;
             ClasspathClassLoader classpathClassLoader2 = new ClasspathClassLoader(this.bytecodeClasspath, ZkmFileUtils.caseSensitiveFileSystem);
             zkmClasspath.setClassLoader(classpathClassLoader2);

@@ -71,11 +71,11 @@ public class SourceFileAttribute extends Attribute implements Utf8ConstantReplac
     }
 
     public SourceFileAttribute(
-            ClassFileComponent classFileComponent, int ba, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap
+            ClassFileComponent classFileComponent, int constantPoolIndexArgument, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap
     ) throws ClassFileFormatException, IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+        super(classFileComponent, constantPoolIndexArgument, attributeName, classFileInputStream, listMultimap);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         this.setSourceFileConstant(constantPoolEntry);
         listMultimap.addValue(this.sourceFileName, this);
     }

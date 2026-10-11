@@ -62,7 +62,7 @@ public abstract class TrimExclusionsDialogBase extends ExclusionWizardDialogBase
     }
 
     public TrimExclusionsDialogBase(
-            String string,
+            String title,
             ZkmMainWindow zkmMainWindow,
             List list1,
             TrimExcludeSettings trimExcludeSettings1,
@@ -72,7 +72,7 @@ public abstract class TrimExclusionsDialogBase extends ExclusionWizardDialogBase
             DialogCallback dialogCallback1
     ) throws ZkmException, IOException {
         super(zkmMainWindow, list1, trimExcludeSettings1, scriptEnvironment1, dialogCallback1, 2);
-        this.initComponents(string);
+        this.initComponents(title);
         this.classRepository = classRepository1;
         this.trimOptions = trimOptions1;
         SwingUtils.requestFocusOnEdt(super.okBtn);
@@ -175,8 +175,8 @@ public abstract class TrimExclusionsDialogBase extends ExclusionWizardDialogBase
     @Override
     public final String getMainClassParameter(ClassListEntry classListEntry) {
         if (classListEntry != null) {
-            String string = classListEntry.getClassName();
-            return this.buildMainClassParameter(string, classListEntry.isApplication());
+            String className = classListEntry.getClassName();
+            return this.buildMainClassParameter(className, classListEntry.isApplication());
         } else {
             return null;
         }

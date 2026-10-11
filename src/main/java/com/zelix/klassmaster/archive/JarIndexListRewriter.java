@@ -78,9 +78,9 @@ public class JarIndexListRewriter {
                 throw new ZkmException("Invalid INDEX.LIST (2)");
             }
 
-            boolean bl = false;
+            boolean endOfStream = false;
 
-            while (!bl) {
+            while (!endOfStream) {
                 JarIndexSection jarIndexSection = new JarIndexSection(bufferedReader);
                 if (!jarIndexSection.hasNoEntries()) {
                     ArrayList arrayList;
@@ -94,7 +94,7 @@ public class JarIndexListRewriter {
                     arrayList.add(jarIndexSection);
                 }
 
-                bl = jarIndexSection.isEndOfStream();
+                endOfStream = jarIndexSection.isEndOfStream();
             }
         } finally {
             if (bufferedReader != null) {

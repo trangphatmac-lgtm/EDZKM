@@ -140,22 +140,22 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         }
 
         Random random1 = ZkmUtils.createRandom(31);
-        int bd = -1;
+        int keySeparatorCharIndex = -1;
 
-        while (++bd <= ReflectionLookupTemplate.KEY_SEPARATOR_CHARS.length) {
-            String string2 = String.valueOf(ReflectionLookupTemplate.KEY_SEPARATOR_CHARS[bd]);
-            Map map2 = this.buildClassLookupEntries(string2, map1);
-            Map map3 = this.buildFieldLookupEntries(string2, twoKeyMap);
-            Map map4 = this.buildMethodLookupEntries(string2, twoKeyMap1);
+        while (++keySeparatorCharIndex <= ReflectionLookupTemplate.KEY_SEPARATOR_CHARS.length) {
+            String value = String.valueOf(ReflectionLookupTemplate.KEY_SEPARATOR_CHARS[keySeparatorCharIndex]);
+            Map map2 = this.buildClassLookupEntries(value, map1);
+            Map map3 = this.buildFieldLookupEntries(value, twoKeyMap);
+            Map map4 = this.buildMethodLookupEntries(value, twoKeyMap1);
             boolean bl1 = false;
             ArrayList arrayList1 = new ArrayList();
             HashSet hashSet = ZkmUtils.createHashSet();
-            String string4 = programClass1.getClassName();
+            String className = programClass1.getClassName();
             String string5 = bl ? "(Ljava/util/concurrent/ConcurrentHashMap;Ljava/lang/String;)V" : "(Ljava/util/Hashtable;Ljava/lang/String;)V";
             ArrayList arrayList = arrayList1;
-            String string1 = string5;
+            String valueValue = string5;
             ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddMethodRef(
-                    string4, "a", string1, arrayList, classMemberLookup1, classResolver1
+                    className, "a", valueValue, arrayList, classMemberLookup1, classResolver1
             );
             HashSet hashSet1 = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(ba));
             hashSet1.addAll(map2.entrySet());
@@ -169,19 +169,16 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             ZkmUtils.shuffleList(arrayList4, random1);
             ArrayList arrayList5 = new ArrayList();
 
-            label97:
-            {
-                try {
-                    this.encodeLookupChunks(arrayList4, arrayList5, hashSet, messageDigest1);
-                } catch (DigestCollisionException digestCollisionException) {
-                    bl1 = true;
-                    break label97;
-                }
+            try {
+                this.encodeLookupChunks(arrayList4, arrayList5, hashSet, messageDigest1);
+            } catch (DigestCollisionException digestCollisionException) {
+                bl1 = true;
+            }
 
+            if (!bl1) {
                 this.addChunkLoadInstructions(arrayList2, arrayList5, resolvedMethodRefConstant, constantPool1, arrayList1);
                 if (set1 != null) {
                     Iterator iterator = set1.iterator();
-
                     while (iterator.hasNext()) {
                         String string3 = (String) iterator.next();
                         if (!hashSet.add(digestToBase36(string3, messageDigest1))) {
@@ -192,9 +189,9 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             }
 
             if (!bl1) {
-                programClass1.replaceStringConstant(String.valueOf('~'), string2);
-                int be = arrayList2.size();
-                if (be <= arrayList3.size() * 5950 && (HiddenOptionFlags.REFERENCE_OBFUSCATION_METHOD_KEYS || arrayList1.size() <= 65000)) {
+                programClass1.replaceStringConstant(String.valueOf('~'), value);
+                int arrayList2Size = arrayList2.size();
+                if (arrayList2Size <= arrayList3.size() * 5950 && (HiddenOptionFlags.REFERENCE_OBFUSCATION_METHOD_KEYS || arrayList1.size() <= 65000)) {
                     if (methodKeyInjector != null) {
                         ClassFileBase[] classFileBases = new ClassFileBase[]{programClass1};
                         InheritedMemberAnalyzer inheritedMemberAnalyzer = new InheritedMemberAnalyzer(classFileBases, classResolver1);
@@ -216,12 +213,12 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                         arrayList4 = new ArrayList(17850);
                         LocalVariableList localVariableList1 = methodInfo3.getLocalVariableList();
                         arrayList4.add(Instruction.createObjectLoad(0, localVariableList1, 9));
-                        int bc = be - bf;
+                        int bc = arrayList2Size - bf;
                         int bh = Math.min(5950, bc);
                         int bi = bf + bh;
 
-                        for (int i = bf; i < bi; i++) {
-                            for (Instruction instruction1 : (Instruction[]) arrayList2.get(i)) {
+                        for (int elementIndex = bf; elementIndex < bi; elementIndex++) {
+                            for (Instruction instruction1 : (Instruction[]) arrayList2.get(elementIndex)) {
                                 arrayList4.add(instruction1);
                                 bg++;
                             }
@@ -237,7 +234,7 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
                 scriptEnvironment1.logSeriousError_v(
                         "Auto Reflection Handling : Too many class, method and/or field name lookup mappings. : "
-                                + be
+                                + arrayList2Size
                                 + " : "
                                 + arrayList1.size()
                                 + " : Consider using ZKM Script 'accessedByReflection' statement to specify only those classes, fields and methods which are actually accessed by Reflection and for which the Reflection access has not been resolved by "
@@ -261,14 +258,14 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             boolean bl2,
             String string,
             MemberScope memberScope,
-            String string1,
+            String key,
             TwoKeyMap twoKeyMap,
             TwoKeyMap twoKeyMap1,
             Map map1,
             ScriptEnvironment scriptEnvironment1
     ) throws IOException {
-        Map map2 = twoKeyMap.getInnerMap(string1);
-        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string1);
+        Map map2 = twoKeyMap.getInnerMap(key);
+        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
         if (map2 != null) {
             Iterator iterator = map2.entrySet().iterator();
 
@@ -294,8 +291,8 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                             || bl && fieldInfo.isProtected()
                             || bl1 && fieldInfo.isPackagePrivate() && programClass1.getPackagePath().equals(object)
                             || bl2 && fieldInfo.isStrictlyPrivate()) {
-                        twoKeyMap1.putValue(string1, fieldSignature, fieldSignature1);
-                        this.checkFieldMappingHashStrength(string1, fieldSignature, fieldSignature1, map1, scriptEnvironment1);
+                        twoKeyMap1.putValue(key, fieldSignature, fieldSignature1);
+                        this.checkFieldMappingHashStrength(key, fieldSignature, fieldSignature1, map1, scriptEnvironment1);
                     }
                 }
             }
@@ -307,15 +304,15 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         Enumeration enumeration = twoKeyMap.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string1 = (String) enumeration.nextElement();
-            Iterator iterator = twoKeyMap.getInnerMap(string1).entrySet().iterator();
+            String key = (String) enumeration.nextElement();
+            Iterator iterator = twoKeyMap.getInnerMap(key).entrySet().iterator();
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
                 FieldSignature fieldSignature = (FieldSignature) entry.getKey();
                 FieldSignature fieldSignature1 = (FieldSignature) entry.getValue();
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(string1);
+                stringBuilder.append(key);
                 stringBuilder.append(string);
                 stringBuilder.append(fieldSignature.getName());
                 hashMap.put(stringBuilder.toString(), fieldSignature1.getName());
@@ -337,30 +334,30 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         Map map2 = map1;
         TwoKeyMap twoKeyMap3 = twoKeyMap1;
         TwoKeyMap twoKeyMap2 = twoKeyMap;
-        String string3 = string;
+        String key = string;
         MemberScope memberScope = MemberScope.BOTH;
         String string2 = string1;
         Boolean boolean1 = false;
-        this.addFieldMappingsWithSupertypes(false, false, (String) null, boolean1, string2, memberScope, string3, twoKeyMap2, twoKeyMap3, map2, scriptEnvironment1);
+        this.addFieldMappingsWithSupertypes(false, false, (String) null, boolean1, string2, memberScope, key, twoKeyMap2, twoKeyMap3, map2, scriptEnvironment1);
         ClassMemberLookup classMemberLookup2 = classMemberLookup1;
         Map map3 = map1;
         TwoKeyMap twoKeyMap5 = twoKeyMap1;
         TwoKeyMap twoKeyMap4 = twoKeyMap;
-        String string5 = string;
+        String keyValue = string;
         MemberScope memberScope1 = MemberScope.BOTH;
         String string4 = string1;
         Boolean boolean2 = false;
         this.addFieldMappingsWithSubclasses(
-                false, false, (String) null, boolean2, string4, memberScope1, string5, twoKeyMap4, twoKeyMap5, map3, classMemberLookup2, scriptEnvironment1
+                false, false, (String) null, boolean2, string4, memberScope1, keyValue, twoKeyMap4, twoKeyMap5, map3, classMemberLookup2, scriptEnvironment1
         );
     }
 
     public void checkClassMappingHashStrength(String string, String string1, ScriptEnvironment scriptEnvironment1) throws IOException {
         String string2 = ClassFileBase.stripPackage(string);
         String string3 = ClassFileBase.stripPackage(string1);
-        String string4 = ClassFileBase.getPackagePath(string);
-        String string5 = ClassFileBase.getPackagePath(string1);
-        if (string4.equals(string5)) {
+        String packagePath = ClassFileBase.getPackagePath(string);
+        String packagePathValue = ClassFileBase.getPackagePath(string1);
+        if (packagePath.equals(packagePathValue)) {
             if (string2.length() < MIN_SAFE_GUESS_LENGTH) {
                 scriptEnvironment1.logWarning(
                         "Auto Reflection Handling : AutoReflection hash is "
@@ -375,8 +372,8 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                 );
             }
         } else {
-            StringTokenizer stringTokenizer = new StringTokenizer(string4, "/");
-            StringTokenizer stringTokenizer1 = new StringTokenizer(string5, "/");
+            StringTokenizer stringTokenizer = new StringTokenizer(packagePath, "/");
+            StringTokenizer stringTokenizer1 = new StringTokenizer(packagePathValue, "/");
             int ba = 0;
             int bb = 0;
             String string6 = "";
@@ -457,16 +454,16 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         Iterator iterator = hashSet.iterator();
 
         for (int i = 0; i < bb; i++) {
-            String string = this.generateUniqueDecoyKey(random1, hashSet1);
-            String string1 = (String) iterator.next();
-            hashMap.put(string, string1);
+            String key = this.generateUniqueDecoyKey(random1, hashSet1);
+            String value = (String) iterator.next();
+            hashMap.put(key, value);
         }
 
         IndexedNameGenerator indexedNameGenerator = new IndexedNameGenerator();
 
         for (int i = 0; i < bc; i++) {
-            String string2 = this.generateUniqueDecoyKey(random1, hashSet1);
-            hashMap.put(string2, indexedNameGenerator.getNonKeywordName(random1.nextInt(200)));
+            String keyValue = this.generateUniqueDecoyKey(random1, hashSet1);
+            hashMap.put(keyValue, indexedNameGenerator.getNonKeywordName(random1.nextInt(200)));
         }
 
         set1.addAll(hashMap.entrySet());
@@ -474,22 +471,22 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
     public String encryptMappedName(String string, String string1, MessageDigest messageDigest1) throws UnsupportedEncodingException {
         messageDigest1.reset();
-        byte[] ba = (string + messageDigest1.getAlgorithm()).getBytes("UTF-8");
-        messageDigest1.update(ba);
-        byte[] bb = messageDigest1.digest();
-        char[] bc = string1.toCharArray();
-        StringBuffer stringBuffer = new StringBuffer(bc.length);
+        byte[] bytes = (string + messageDigest1.getAlgorithm()).getBytes("UTF-8");
+        messageDigest1.update(bytes);
+        byte[] byteArray = messageDigest1.digest();
+        char[] characterArray = string1.toCharArray();
+        StringBuffer stringBuffer = new StringBuffer(characterArray.length);
 
-        for (int i = 0; i < bc.length; i++) {
-            char be = bc[i];
-            byte bf;
-            if (i < bb.length - 1) {
-                bf = bb[i];
+        for (int i = 0; i < characterArray.length; i++) {
+            char characterArrayElement = characterArray[i];
+            byte byteArrayElement;
+            if (i < byteArray.length - 1) {
+                byteArrayElement = byteArray[i];
             } else {
-                bf = bb[i % bb.length];
+                byteArrayElement = byteArray[i % byteArray.length];
             }
 
-            stringBuffer.append((char) (be ^ (char) bf));
+            stringBuffer.append((char) (characterArrayElement ^ (char) byteArrayElement));
         }
 
         return stringBuffer.toString();
@@ -521,26 +518,26 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
     }
 
     public void checkFieldMappingHashStrength(
-            String string, FieldSignature fieldSignature, FieldSignature fieldSignature1, Map map1, ScriptEnvironment scriptEnvironment1
+            String key, FieldSignature fieldSignature, FieldSignature fieldSignature1, Map map1, ScriptEnvironment scriptEnvironment1
     ) throws IOException {
-        String string1 = fieldSignature.getName();
-        int ba = string1.length();
-        String string2 = null;
+        String nameValue = fieldSignature.getName();
+        int nameLength = nameValue.length();
+        String prefixValue2 = null;
 
-        for (String string3 : COMMON_FIELD_NAME_PREFIXES) {
-            if (string1.startsWith(string3)) {
-                string2 = string3;
+        for (String prefixValue : COMMON_FIELD_NAME_PREFIXES) {
+            if (nameValue.startsWith(prefixValue)) {
+                prefixValue2 = prefixValue;
                 break;
             }
         }
 
-        if (string2 != null) {
-            int bb = ba - string2.length();
+        if (prefixValue2 != null) {
+            int bb = nameLength - prefixValue2.length();
             if (bb < MIN_SAFE_GUESS_LENGTH) {
-                String string5 = (String) ZkmUtils.mapOrSelf(string, map1);
+                String string5 = (String) ZkmUtils.mapOrSelf(key, map1);
                 scriptEnvironment1.logWarning(
                         "Auto Reflection Handling : AutoReflection hash is "
-                                + (ba < 8 ? "very " : "")
+                                + (nameLength < 8 ? "very " : "")
                                 + "vulnerable to brute force attack : Field mapping '"
                                 + fieldSignature.formatDeclaration(map1)
                                 + "'=>'"
@@ -548,17 +545,17 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 + "' in class '"
                                 + ZkmUtils.slashesToDots(string5)
                                 + "'. Given that the prefix '"
-                                + string2
+                                + prefixValue2
                                 + "' is common, only "
                                 + bb
                                 + " characters have to be guessed in field name. If field is not actually accessed via Reflection then use ZKM Script 'accessedByReflection' statement to specify only those classes, methods and fields that are accessed by Reflection. (A)"
                 );
             }
-        } else if (ba < MIN_SAFE_GUESS_LENGTH) {
-            String string4 = (String) ZkmUtils.mapOrSelf(string, map1);
+        } else if (nameLength < MIN_SAFE_GUESS_LENGTH) {
+            String string4 = (String) ZkmUtils.mapOrSelf(key, map1);
             scriptEnvironment1.logWarning(
                     "Auto Reflection Handling : AutoReflection hash is "
-                            + (ba < 8 ? "very " : "")
+                            + (nameLength < 8 ? "very " : "")
                             + "vulnerable to brute force attack : Field mapping '"
                             + fieldSignature.formatDeclaration(map1)
                             + "'=>'"
@@ -566,7 +563,7 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                             + "' in class '"
                             + ZkmUtils.slashesToDots(string4)
                             + "'. Only "
-                            + ba
+                            + nameLength
                             + " characters have to be guessed in field name. If field is not actually accessed via Reflection then use ZKM Script 'accessedByReflection' statement to specify only those classes, methods and fields that are accessed by Reflection. (B)"
             );
         }
@@ -579,23 +576,23 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
     }
 
     public void checkMethodMappingHashStrength(
-            String string, MethodSignature methodSignature1, MethodSignature methodSignature2, Map map1, ScriptEnvironment scriptEnvironment1
+            String key, MethodSignature methodSignature1, MethodSignature methodSignature2, Map map1, ScriptEnvironment scriptEnvironment1
     ) throws IOException {
-        String string1 = methodSignature1.getName();
-        int ba = string1.length();
-        String string2 = null;
+        String nameValue = methodSignature1.getName();
+        int nameLength = nameValue.length();
+        String prefixValue2 = null;
 
-        for (String string3 : COMMON_METHOD_NAME_PREFIXES) {
-            if (string1.startsWith(string3)) {
-                string2 = string3;
+        for (String prefixValue : COMMON_METHOD_NAME_PREFIXES) {
+            if (nameValue.startsWith(prefixValue)) {
+                prefixValue2 = prefixValue;
                 break;
             }
         }
 
-        if (string2 != null) {
-            int bb = ba - string2.length();
+        if (prefixValue2 != null) {
+            int bb = nameLength - prefixValue2.length();
             if (bb < MIN_SAFE_GUESS_LENGTH) {
-                String string5 = (String) ZkmUtils.mapOrSelf(string, map1);
+                String string5 = (String) ZkmUtils.mapOrSelf(key, map1);
                 scriptEnvironment1.logWarning(
                         "Auto Reflection Handling : AutoReflection hash is "
                                 + (bb < 8 ? "very " : "")
@@ -606,17 +603,17 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 + "' in class '"
                                 + ZkmUtils.slashesToDots(string5)
                                 + "'. Given that the prefix '"
-                                + string2
+                                + prefixValue2
                                 + "' is common, only "
                                 + bb
                                 + " characters have to be guessed in method name. If method is not actually accessed via Reflection then use ZKM Script 'accessedByReflection' statement to specify only those classes, methods and fields that are accessed by Reflection. (A)"
                 );
             }
-        } else if (ba < MIN_SAFE_GUESS_LENGTH) {
-            String string4 = (String) ZkmUtils.mapOrSelf(string, map1);
+        } else if (nameLength < MIN_SAFE_GUESS_LENGTH) {
+            String string4 = (String) ZkmUtils.mapOrSelf(key, map1);
             scriptEnvironment1.logWarning(
                     "Auto Reflection Handling : AutoReflection hash is "
-                            + (ba < 8 ? "very " : "")
+                            + (nameLength < 8 ? "very " : "")
                             + "vulnerable to brute force attack : Method mapping '"
                             + methodSignature1.getNameWithParameters(map1)
                             + "'=>'"
@@ -624,34 +621,34 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                             + "' in class '"
                             + ZkmUtils.slashesToDots(string4)
                             + "'. Only "
-                            + ba
+                            + nameLength
                             + " characters have to be guessed in method name. If method is not actually accessed via Reflection then use ZKM Script 'accessedByReflection' statement to specify only those classes, methods and fields that are accessed by Reflection. (B)"
             );
         }
     }
 
     static {
-        int ba = 11;
+        int minSafeGuessLength = 11;
         if (HiddenOptionFlags.AUTO_REFLECTION_MIN_HASH_LENGTH != null) {
             try {
-                int bb = Integer.parseInt(HiddenOptionFlags.AUTO_REFLECTION_MIN_HASH_LENGTH);
-                if (bb >= 8) {
-                    ba = bb;
+                int minSafeGuessLengthValue = Integer.parseInt(HiddenOptionFlags.AUTO_REFLECTION_MIN_HASH_LENGTH);
+                if (minSafeGuessLengthValue >= 8) {
+                    minSafeGuessLength = minSafeGuessLengthValue;
                 }
             } catch (NumberFormatException numberFormatException1) {
             }
         }
 
-        MIN_SAFE_GUESS_LENGTH = ba;
-        int bc = 100;
+        MIN_SAFE_GUESS_LENGTH = minSafeGuessLength;
+        int minLookupEntryCount = 100;
         if (HiddenOptionFlags.AUTO_REFLECTION_MAX_CANDIDATES != null) {
             try {
-                bc = Integer.parseInt(HiddenOptionFlags.AUTO_REFLECTION_MAX_CANDIDATES);
+                minLookupEntryCount = Integer.parseInt(HiddenOptionFlags.AUTO_REFLECTION_MAX_CANDIDATES);
             } catch (NumberFormatException numberFormatException) {
             }
         }
 
-        MIN_LOOKUP_ENTRY_COUNT = bc;
+        MIN_LOOKUP_ENTRY_COUNT = minLookupEntryCount;
     }
 
     public void printIncludedMappings(EnumerableMap enumerableMap, Map map1, TwoKeyMap twoKeyMap, TwoKeyMap twoKeyMap1, PrintWriter printWriter) throws IOException {
@@ -665,9 +662,9 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         iterator = twoKeyMap.keySet().iterator();
 
         while (iterator.hasNext()) {
-            String string2 = (String) iterator.next();
-            String string1 = (String) ZkmUtils.mapOrSelf(string2, enumerableMap);
-            Map map2 = twoKeyMap.getInnerMap(string2);
+            String key = (String) iterator.next();
+            String string1 = (String) ZkmUtils.mapOrSelf(key, enumerableMap);
+            Map map2 = twoKeyMap.getInnerMap(key);
             Iterator iterator1 = map2.entrySet().iterator();
 
             while (iterator1.hasNext()) {
@@ -687,9 +684,9 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         iterator = twoKeyMap1.keySet().iterator();
 
         while (iterator.hasNext()) {
-            String string3 = (String) iterator.next();
-            String string4 = (String) ZkmUtils.mapOrSelf(string3, enumerableMap);
-            Map map3 = twoKeyMap1.getInnerMap(string3);
+            String keyValue = (String) iterator.next();
+            String string4 = (String) ZkmUtils.mapOrSelf(keyValue, enumerableMap);
+            Map map3 = twoKeyMap1.getInnerMap(keyValue);
             Iterator iterator2 = map3.entrySet().iterator();
 
             while (iterator2.hasNext()) {
@@ -743,7 +740,7 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             while (iterator1.hasNext()) {
                 ReflectionCallSite reflectionCallSite = (ReflectionCallSite) iterator1.next();
                 ReflectionTargetScope reflectionTargetScope = reflectionCallSite.getApiMethod().getTargetScope();
-                String string2 = reflectionCallSite.getMemberName();
+                String memberName = reflectionCallSite.getMemberName();
                 switch (ReflectionKindSwitchMap.TARGET_SCOPE_SWITCH[reflectionTargetScope.ordinal()]) {
                     case 1:
                         if (bl2) {
@@ -758,11 +755,11 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
                             while (iterator3.hasNext()) {
                                 Entry entry2 = (Entry) iterator3.next();
-                                String string12 = (String) entry2.getKey();
-                                String string19 = (String) entry2.getValue();
-                                if (!string12.equals(string19)) {
-                                    map1.put(string12, string19);
-                                    this.checkClassMappingHashStrength(string12, string19, scriptEnvironment1);
+                                String key = (String) entry2.getKey();
+                                String value = (String) entry2.getValue();
+                                if (!key.equals(value)) {
+                                    map1.put(key, value);
+                                    this.checkClassMappingHashStrength(key, value, scriptEnvironment1);
                                 }
                             }
                         }
@@ -780,22 +777,22 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 Iterator iterator7 = list4.iterator();
 
                                 while (iterator7.hasNext()) {
-                                    String string11 = (String) iterator7.next();
-                                    String string18 = (String) ZkmUtils.mapOrSelf(string11, enumerableMap);
+                                    String keyValue2 = (String) iterator7.next();
+                                    String string18 = (String) ZkmUtils.mapOrSelf(keyValue2, enumerableMap);
                                     ScriptEnvironment scriptEnvironment3 = scriptEnvironment1;
                                     ClassMemberLookup classMemberLookup2 = classMemberLookup1;
                                     HashMap hashMap3 = hashMap2;
                                     TwoKeyMap twoKeyMap6 = twoKeyMap1;
                                     TwoKeyMap twoKeyMap7 = twoKeyMap5;
-                                    String string6 = string2;
+                                    String memberNameValue = memberName;
                                     String string7 = string18;
-                                    this.addMethodMappingsForHierarchy(string7, string6, twoKeyMap7, twoKeyMap6, hashMap3, classMemberLookup2, scriptEnvironment3);
+                                    this.addMethodMappingsForHierarchy(string7, memberNameValue, twoKeyMap7, twoKeyMap6, hashMap3, classMemberLookup2, scriptEnvironment3);
                                 }
                                 break;
                             }
 
-                            this.addAllMethodMappings(twoKeyMap5, twoKeyMap1, true, string2, MemberScope.BOTH, hashMap2, scriptEnvironment1);
-                            bl6 = string2 == null;
+                            this.addAllMethodMappings(twoKeyMap5, twoKeyMap1, true, memberName, MemberScope.BOTH, hashMap2, scriptEnvironment1);
+                            bl6 = memberName == null;
                         }
                         break;
                     case 3:
@@ -811,15 +808,15 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 Iterator iterator6 = list3.iterator();
 
                                 while (iterator6.hasNext()) {
-                                    String string10 = (String) iterator6.next();
-                                    String string17 = (String) ZkmUtils.mapOrSelf(string10, enumerableMap);
-                                    this.addFieldMappingsForHierarchy(string17, string2, twoKeyMap4, twoKeyMap, hashMap2, classMemberLookup1, scriptEnvironment1);
+                                    String keyValue3 = (String) iterator6.next();
+                                    String string17 = (String) ZkmUtils.mapOrSelf(keyValue3, enumerableMap);
+                                    this.addFieldMappingsForHierarchy(string17, memberName, twoKeyMap4, twoKeyMap, hashMap2, classMemberLookup1, scriptEnvironment1);
                                 }
                                 break;
                             }
 
-                            this.addAllFieldMappings(twoKeyMap4, twoKeyMap, true, string2, MemberScope.BOTH, hashMap2, scriptEnvironment1);
-                            bl9 = string2 == null;
+                            this.addAllFieldMappings(twoKeyMap4, twoKeyMap, true, memberName, MemberScope.BOTH, hashMap2, scriptEnvironment1);
+                            bl9 = memberName == null;
                         }
                         break;
                     case 4:
@@ -835,16 +832,16 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 Iterator iterator5 = list2.iterator();
 
                                 while (iterator5.hasNext()) {
-                                    String string9 = (String) iterator5.next();
-                                    String string16 = (String) ZkmUtils.mapOrSelf(string9, enumerableMap);
+                                    String keyValue4 = (String) iterator5.next();
+                                    String keyValue8 = (String) ZkmUtils.mapOrSelf(keyValue4, enumerableMap);
                                     this.addMethodMappingsWithSubclasses(
                                             true,
                                             true,
-                                            ClassFileBase.getPackagePath(string16),
+                                            ClassFileBase.getPackagePath(keyValue8),
                                             true,
-                                            string2,
+                                            memberName,
                                             MemberScope.BOTH,
-                                            string16,
+                                            keyValue8,
                                             twoKeyMap5,
                                             twoKeyMap1,
                                             hashMap2,
@@ -855,10 +852,10 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 break;
                             }
 
-                            this.addAllMethodMappings(twoKeyMap5, twoKeyMap1, false, string2, MemberScope.BOTH, hashMap2, scriptEnvironment1);
-                            bl4 = string2 == null;
-                            bl5 = string2 == null;
-                            bl6 = string2 == null;
+                            this.addAllMethodMappings(twoKeyMap5, twoKeyMap1, false, memberName, MemberScope.BOTH, hashMap2, scriptEnvironment1);
+                            bl4 = memberName == null;
+                            bl5 = memberName == null;
+                            bl6 = memberName == null;
                         }
                         break;
                     case 5:
@@ -875,16 +872,16 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 Iterator iterator4 = list1.iterator();
 
                                 while (iterator4.hasNext()) {
-                                    String string8 = (String) iterator4.next();
-                                    String string15 = (String) ZkmUtils.mapOrSelf(string8, enumerableMap);
+                                    String keyValue5 = (String) iterator4.next();
+                                    String keyValue9 = (String) ZkmUtils.mapOrSelf(keyValue5, enumerableMap);
                                     this.addFieldMappingsWithSubclasses(
                                             true,
                                             true,
-                                            ClassFileBase.getPackagePath(string15),
+                                            ClassFileBase.getPackagePath(keyValue9),
                                             true,
-                                            string2,
+                                            memberName,
                                             MemberScope.BOTH,
-                                            string15,
+                                            keyValue9,
                                             twoKeyMap4,
                                             twoKeyMap,
                                             hashMap2,
@@ -895,10 +892,10 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 break;
                             }
 
-                            this.addAllFieldMappings(twoKeyMap4, twoKeyMap, false, string2, MemberScope.BOTH, hashMap2, scriptEnvironment1);
-                            bl7 = string2 == null;
-                            bl8 = string2 == null;
-                            bl9 = string2 == null;
+                            this.addAllFieldMappings(twoKeyMap4, twoKeyMap, false, memberName, MemberScope.BOTH, hashMap2, scriptEnvironment1);
+                            bl7 = memberName == null;
+                            bl8 = memberName == null;
+                            bl9 = memberName == null;
                         }
                         break;
                     case 7:
@@ -921,27 +918,27 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                             Iterator iterator9 = list6.iterator();
 
                             while (iterator9.hasNext()) {
-                                String string14 = (String) iterator9.next();
-                                String string20 = (String) ZkmUtils.mapOrSelf(string14, enumerableMap);
-                                String string21 = ClassFileBase.getPackagePath(string20);
+                                String keyValue6 = (String) iterator9.next();
+                                String keyValue10 = (String) ZkmUtils.mapOrSelf(keyValue6, enumerableMap);
+                                String packagePath = ClassFileBase.getPackagePath(keyValue10);
                                 ScriptEnvironment scriptEnvironment2 = scriptEnvironment1;
                                 HashMap hashMap = hashMap2;
                                 TwoKeyMap twoKeyMap2 = twoKeyMap1;
                                 TwoKeyMap twoKeyMap3 = twoKeyMap5;
-                                String string = string20;
+                                String keyValue11 = keyValue10;
                                 MemberScope memberScope = memberScope2;
-                                String string1 = string2;
+                                String memberNameValue2 = memberName;
                                 this.addMethodMappingsWithSupertypes(
-                                        true, true, string21, true, string1, memberScope, string, twoKeyMap3, twoKeyMap2, hashMap, scriptEnvironment2
+                                        true, true, packagePath, true, memberNameValue2, memberScope, keyValue11, twoKeyMap3, twoKeyMap2, hashMap, scriptEnvironment2
                                 );
                                 this.addMethodMappingsWithSubclasses(
                                         true,
                                         true,
-                                        ClassFileBase.getPackagePath(string20),
+                                        ClassFileBase.getPackagePath(keyValue10),
                                         true,
-                                        string2,
+                                        memberName,
                                         memberScope2,
-                                        string20,
+                                        keyValue10,
                                         twoKeyMap5,
                                         twoKeyMap1,
                                         hashMap2,
@@ -950,11 +947,11 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 );
                             }
                         } else {
-                            this.addAllMethodMappings(twoKeyMap5, twoKeyMap1, false, string2, memberScope2, hashMap2, scriptEnvironment1);
+                            this.addAllMethodMappings(twoKeyMap5, twoKeyMap1, false, memberName, memberScope2, hashMap2, scriptEnvironment1);
                             if (memberScope2 == MemberScope.INSTANCE) {
-                                bl4 = string2 == null;
+                                bl4 = memberName == null;
                             } else {
-                                bl5 = string2 == null;
+                                bl5 = memberName == null;
                             }
                         }
                         break;
@@ -978,16 +975,16 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                             Iterator iterator8 = list5.iterator();
 
                             while (iterator8.hasNext()) {
-                                String string13 = (String) iterator8.next();
-                                String string5 = (String) ZkmUtils.mapOrSelf(string13, enumerableMap);
+                                String keyValue7 = (String) iterator8.next();
+                                String keyValue12 = (String) ZkmUtils.mapOrSelf(keyValue7, enumerableMap);
                                 this.addFieldMappingsWithSupertypes(
                                         true,
                                         true,
-                                        ClassFileBase.getPackagePath(string5),
+                                        ClassFileBase.getPackagePath(keyValue12),
                                         true,
-                                        string2,
+                                        memberName,
                                         memberScope1,
-                                        string5,
+                                        keyValue12,
                                         twoKeyMap4,
                                         twoKeyMap,
                                         hashMap2,
@@ -996,11 +993,11 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 this.addFieldMappingsWithSubclasses(
                                         true,
                                         true,
-                                        ClassFileBase.getPackagePath(string5),
+                                        ClassFileBase.getPackagePath(keyValue12),
                                         true,
-                                        string2,
+                                        memberName,
                                         memberScope1,
-                                        string5,
+                                        keyValue12,
                                         twoKeyMap4,
                                         twoKeyMap,
                                         hashMap2,
@@ -1009,11 +1006,11 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                 );
                             }
                         } else {
-                            this.addAllFieldMappings(twoKeyMap4, twoKeyMap, true, string2, memberScope1, hashMap2, scriptEnvironment1);
+                            this.addAllFieldMappings(twoKeyMap4, twoKeyMap, true, memberName, memberScope1, hashMap2, scriptEnvironment1);
                             if (memberScope1 == MemberScope.INSTANCE) {
-                                bl7 = string2 == null;
+                                bl7 = memberName == null;
                             } else {
-                                bl8 = string2 == null;
+                                bl8 = memberName == null;
                             }
                         }
                         break;
@@ -1027,11 +1024,11 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
                                 while (iterator2.hasNext()) {
                                     Entry entry1 = (Entry) iterator2.next();
-                                    String string3 = (String) entry1.getKey();
-                                    String string4 = (String) entry1.getValue();
-                                    if (!string3.equals(string4) && classMemberLookup1.isSubclass(string4, "java/util/ListResourceBundle")) {
-                                        map1.put(string3, string4);
-                                        this.checkClassMappingHashStrength(string3, string4, scriptEnvironment1);
+                                    String keyValue = (String) entry1.getKey();
+                                    String valueValue = (String) entry1.getValue();
+                                    if (!keyValue.equals(valueValue) && classMemberLookup1.isSubclass(valueValue, "java/util/ListResourceBundle")) {
+                                        map1.put(keyValue, valueValue);
+                                        this.checkClassMappingHashStrength(keyValue, valueValue, scriptEnvironment1);
                                     }
                                 }
                             }
@@ -1057,10 +1054,10 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         return hashMap;
     }
 
-    public AutoReflectionHandler(ReflectionAccessMatcher reflectionAccessMatcher, List list1, ClassMemberLookup classMemberLookup1, String string, boolean randomizeNames) {
+    public AutoReflectionHandler(ReflectionAccessMatcher reflectionAccessMatcher, List list1, ClassMemberLookup classMemberLookup1, String digestAlgorithmArgument, boolean randomizeNames) {
         this.accessMatcher = reflectionAccessMatcher;
         this.classMemberLookup = classMemberLookup1;
-        this.digestAlgorithm = string;
+        this.digestAlgorithm = digestAlgorithmArgument;
         this.randomizeNames = randomizeNames;
         this.candidateNames = list1;
         ZkmAssert.assertTrue(true, new String[]{"MAX_RADIX is too small : 36 < 36"});
@@ -1070,14 +1067,14 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         Iterator iterator = list2.iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            Instruction[] instructions1 = this.createChunkLoadInstructions(string, resolvedMethodRefConstant, constantPool1, list3);
+            String value = (String) iterator.next();
+            Instruction[] instructions1 = this.createChunkLoadInstructions(value, resolvedMethodRefConstant, constantPool1, list3);
             list1.add(instructions1);
         }
     }
 
     public void encodeLookupChunks(List list1, List list2, Set set1, MessageDigest messageDigest1) throws DigestCollisionException, UnsupportedEncodingException {
-        int ba = list1.size();
+        int list1Size = list1.size();
         int bb = 0;
         int bc = 0;
         StringBuilder stringBuilder = new StringBuilder();
@@ -1085,30 +1082,30 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         for (Iterator iterator = list1.iterator(); iterator.hasNext(); bb++) {
             Entry entry = (Entry) iterator.next();
             StringBuilder stringBuilder1 = new StringBuilder();
-            String string = (String) entry.getKey();
-            String string1 = (String) entry.getValue();
-            String string2 = digestToBase36(string, messageDigest1);
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            String string2 = digestToBase36(key, messageDigest1);
             if (!set1.add(string2)) {
                 throw new DigestCollisionException();
             }
 
-            String string3 = this.encryptMappedName(string, string1, messageDigest1);
+            String string3 = this.encryptMappedName(key, value, messageDigest1);
             stringBuilder1.append((char) string3.length());
             stringBuilder1.append(string3);
             stringBuilder1.append((char) string2.length());
             stringBuilder1.append(string2);
-            int bd = ZkmUtils.getModifiedUtf8Length(stringBuilder1.toString());
-            if (bd > 16384) {
-                ZkmAssert.assertTrue(false, new String[]{string3.length() + " : " + bd, string3.substring(0, 100)});
+            int modifiedUtf8Length = ZkmUtils.getModifiedUtf8Length(stringBuilder1.toString());
+            if (modifiedUtf8Length > 16384) {
+                ZkmAssert.assertTrue(false, new String[]{string3.length() + " : " + modifiedUtf8Length, string3.substring(0, 100)});
             }
 
-            if (bc + bd > 16384 || list2.size() == 0 && ba > 3 && bb == ba - 2) {
+            if (bc + modifiedUtf8Length > 16384 || list2.size() == 0 && list1Size > 3 && bb == list1Size - 2) {
                 list2.add(stringBuilder.toString());
                 bc = 0;
                 stringBuilder.setLength(0);
             }
 
-            bc += bd;
+            bc += modifiedUtf8Length;
             stringBuilder.append(stringBuilder1);
         }
 
@@ -1117,8 +1114,8 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         }
     }
 
-    public Instruction[] createChunkLoadInstructions(String string, ResolvedMethodRefConstant resolvedMethodRefConstant, ConstantPool constantPool1, List list1) {
-        ResolvedStringConstant resolvedStringConstant = constantPool1.addStringConstant(string, list1);
+    public Instruction[] createChunkLoadInstructions(String value, ResolvedMethodRefConstant resolvedMethodRefConstant, ConstantPool constantPool1, List list1) {
+        ResolvedStringConstant resolvedStringConstant = constantPool1.addStringConstant(value, list1);
         return new Instruction[]{
                 SimpleInstruction.forOpcode(89), new ConstantRefInstruction(19, resolvedStringConstant), new ConstantRefInstruction(184, resolvedMethodRefConstant)
         };
@@ -1131,21 +1128,21 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             boolean bl2,
             String string1,
             MemberScope memberScope,
-            String string2,
+            String key,
             TwoKeyMap twoKeyMap,
             TwoKeyMap twoKeyMap1,
             Map map1,
             ClassMemberLookup classMemberLookup1,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        this.addAccessibleMethodMappings(bl, bl1, string, bl2, string1, memberScope, string2, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
+        this.addAccessibleMethodMappings(bl, bl1, string, bl2, string1, memberScope, key, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
         Iterator iterator = map1.keySet().iterator();
 
         while (iterator.hasNext()) {
-            String string3 = (String) iterator.next();
-            if (classMemberLookup1.isSubclass(string3, string2)) {
+            String keyValue = (String) iterator.next();
+            if (classMemberLookup1.isSubclass(keyValue, key)) {
                 this.addAccessibleMethodMappings(
-                        bl, bl1, ClassFileBase.getPackagePath(string3), bl2, string1, memberScope, string3, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1
+                        bl, bl1, ClassFileBase.getPackagePath(keyValue), bl2, string1, memberScope, keyValue, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1
                 );
             }
         }
@@ -1157,9 +1154,9 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         Enumeration enumeration = twoKeyMap.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string1 = (String) enumeration.nextElement();
-            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string1);
-            Map map2 = twoKeyMap.getInnerMap(string1);
+            String key = (String) enumeration.nextElement();
+            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
+            Map map2 = twoKeyMap.getInnerMap(key);
             if (map2 != null) {
                 Iterator iterator = map2.entrySet().iterator();
 
@@ -1176,8 +1173,8 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                     || memberScope == MemberScope.INSTANCE && !fieldInfo.isStatic()
                                     || memberScope == MemberScope.STATIC && fieldInfo.isStatic()
                     )) {
-                        twoKeyMap1.putValue(string1, fieldSignature, fieldSignature1);
-                        this.checkFieldMappingHashStrength(string1, fieldSignature, fieldSignature1, map1, scriptEnvironment1);
+                        twoKeyMap1.putValue(key, fieldSignature, fieldSignature1);
+                        this.checkFieldMappingHashStrength(key, fieldSignature, fieldSignature1, map1, scriptEnvironment1);
                     }
                 }
             }
@@ -1207,25 +1204,25 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         HashSet hashSet1 = ZkmUtils.createHashSet();
         HashSet hashSet2 = ZkmUtils.createHashSet();
         set2 = LookupClassFactory.partitionClassesByModule(set2, hashSet1, hashSet2, hashSet);
-        int ba = hashSet2.size();
+        int hashSet2Size = hashSet2.size();
         HashSet hashSet3 = ZkmUtils.createHashSet();
         Object object = null;
         HashSet hashSet4 = ZkmUtils.createHashSet();
         if (changeLogMapping1 != null) {
-            String string2 = changeLogMapping1.getAutoReflectionClass();
-            if (string2 != null) {
-                String string3 = LookupClassFactory.validateChangeLogLookupName(
-                        "AutoReflectionClass:", string2, "autoReflectionPackage", string, "Auto Reflection Handling", hashSet, changeLogMapping1, enumerableMap2
+            String autoReflectionClass = changeLogMapping1.getAutoReflectionClass();
+            if (autoReflectionClass != null) {
+                String value = LookupClassFactory.validateChangeLogLookupName(
+                        "AutoReflectionClass:", autoReflectionClass, "autoReflectionPackage", string, "Auto Reflection Handling", hashSet, changeLogMapping1, enumerableMap2
                 );
-                if (string3 != null) {
-                    observableHolder.setValue(string3);
-                    hashSet3.add(string3);
-                    hashSet4.add(ZkmUtils.dotsToSlashes(string3));
+                if (value != null) {
+                    observableHolder.setValue(value);
+                    hashSet3.add(value);
+                    hashSet4.add(ZkmUtils.dotsToSlashes(value));
                     Iterator iterator = hashSet1.iterator();
 
                     while (iterator.hasNext()) {
                         ProgramClass programClass1 = (ProgramClass) iterator.next();
-                        map2.put(programClass1, string3);
+                        map2.put(programClass1, value);
                     }
                 }
             }
@@ -1234,12 +1231,12 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
             while (iterator2.hasNext()) {
                 SourceArchive sourceArchive1 = (SourceArchive) iterator2.next();
-                String string9 = sourceArchive1.getModuleName();
-                String string4 = changeLogMapping1.getModuleAutoReflectionClass(string9);
-                if (string4 != null) {
-                    String string5 = LookupClassFactory.validateChangeLogLookupName(
+                String moduleName = sourceArchive1.getModuleName();
+                String moduleAutoReflectionClass = changeLogMapping1.getModuleAutoReflectionClass(moduleName);
+                if (moduleAutoReflectionClass != null) {
+                    String valueValue = LookupClassFactory.validateChangeLogLookupName(
                             "AutoReflectionClass:",
-                            string4,
+                            moduleAutoReflectionClass,
                             "autoReflectionPackage",
                             string,
                             "Auto Reflection Handling",
@@ -1247,29 +1244,29 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                             changeLogMapping1,
                             enumerableMap2
                     );
-                    if (string5 != null) {
-                        map1.put(sourceArchive1, string5);
-                        hashSet3.add(string5);
-                        hashSet4.add(ZkmUtils.dotsToSlashes(string5));
+                    if (valueValue != null) {
+                        map1.put(sourceArchive1, valueValue);
+                        hashSet3.add(valueValue);
+                        hashSet4.add(ZkmUtils.dotsToSlashes(valueValue));
                         Iterator iterator1 = readOnlyMultiMapView.getValues(sourceArchive1).iterator();
 
                         while (iterator1.hasNext()) {
                             ProgramClass programClass2 = (ProgramClass) iterator1.next();
-                            map2.put(programClass2, string5);
+                            map2.put(programClass2, valueValue);
                         }
                     }
                 }
             }
 
-            if ((ba == 0 || !observableHolder.isValueNull()) && readOnlyMultiMapView.getKeyCount() == map1.size()) {
+            if ((hashSet2Size == 0 || !observableHolder.isValueNull()) && readOnlyMultiMapView.getKeyCount() == map1.size()) {
                 LookupClassFactory.assignClassesToLookupNames(observableHolder, map1, hashSet2, map2, readOnlyMultiMapView);
                 return hashSet3;
             }
 
-            if (ba > 0) {
-                String string8 = changeLogMapping1.getReferenceObfuscationClass();
-                if (string8 != null) {
-                    hashSet4.add(ZkmUtils.dotsToSlashes(string8));
+            if (hashSet2Size > 0) {
+                String referenceObfuscationClass = changeLogMapping1.getReferenceObfuscationClass();
+                if (referenceObfuscationClass != null) {
+                    hashSet4.add(ZkmUtils.dotsToSlashes(referenceObfuscationClass));
                 }
             }
 
@@ -1277,10 +1274,10 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
             while (iterator2.hasNext()) {
                 SourceArchive sourceArchive2 = (SourceArchive) iterator2.next();
-                String string10 = sourceArchive2.getModuleName();
-                String string11 = changeLogMapping1.getModuleReferenceObfuscationClass(string10);
-                if (string11 != null) {
-                    hashSet4.add(ZkmUtils.dotsToSlashes(string11));
+                String moduleNameValue = sourceArchive2.getModuleName();
+                String moduleReferenceObfuscationClass = changeLogMapping1.getModuleReferenceObfuscationClass(moduleNameValue);
+                if (moduleReferenceObfuscationClass != null) {
+                    hashSet4.add(ZkmUtils.dotsToSlashes(moduleReferenceObfuscationClass));
                 }
             }
         }
@@ -1336,14 +1333,14 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             boolean bl2,
             String string,
             MemberScope memberScope,
-            String string1,
+            String key,
             TwoKeyMap twoKeyMap,
             TwoKeyMap twoKeyMap1,
             Map map1,
             ScriptEnvironment scriptEnvironment1
     ) throws IOException {
-        Map map2 = twoKeyMap.getInnerMap(string1);
-        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string1);
+        Map map2 = twoKeyMap.getInnerMap(key);
+        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
         if (map2 != null) {
             Iterator iterator = map2.entrySet().iterator();
 
@@ -1369,8 +1366,8 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                             || bl && methodInfo1.isProtected()
                             || bl1 && methodInfo1.isPackagePrivate() && programClass1.getPackagePath().equals(object)
                             || bl2 && methodInfo1.isStrictlyPrivate()) {
-                        twoKeyMap1.putValue(string1, methodSignature1, methodSignature2);
-                        this.checkMethodMappingHashStrength(string1, methodSignature1, methodSignature2, map1, scriptEnvironment1);
+                        twoKeyMap1.putValue(key, methodSignature1, methodSignature2);
+                        this.checkMethodMappingHashStrength(key, methodSignature1, methodSignature2, map1, scriptEnvironment1);
                     }
                 }
             }
@@ -1379,55 +1376,32 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
     @Override
     public ProgramClass createSyntheticClass(String string, int ba, int bb, int bc, Object object) throws ZkmException {
-        int bd = ba;
+        int majorVersion = ba;
         if (HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_INDEX != null && HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_LENGTH != null) {
             try {
-                bd = Integer.parseInt(HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_INDEX);
+                majorVersion = Integer.parseInt(HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_INDEX);
             } catch (NumberFormatException numberFormatException1) {
             }
         }
 
-        int be;
-        label54:
-        {
-            be = bc;
-            String string2 = HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_INDEX;
-            if (bb >= 0) {
-                if (HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_INDEX == null) {
-                    break label54;
-                }
-
-                string2 = HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_LENGTH;
-            }
-
-            if (string2 != null) {
-                try {
-                    be = Integer.parseInt(HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_LENGTH);
-                } catch (NumberFormatException numberFormatException) {
-                }
+        int be = bc;
+        String overrideLength = HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_INDEX;
+        if (bb >= 0 && HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_INDEX != null) {
+            overrideLength = HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_LENGTH;
+        }
+        if (overrideLength != null) {
+            try {
+                be = Integer.parseInt(HiddenOptionFlags.AUTO_REFLECTION_OVERRIDE_LENGTH);
+            } catch (NumberFormatException numberFormatException) {
             }
         }
 
         try {
-            byte[] bf;
-            label47:
-            {
-                byte[] bg;
-                if (bd >= 49) {
-                    bf = ReflectionLookupTemplate.JAVA5_LOOKUP_CLASS_BYTES;
-                    if (bb > 0) {
-                        break label47;
-                    }
+            byte[] byteArray = majorVersion >= 49 && bb > 0
+                    ? ReflectionLookupTemplate.JAVA5_LOOKUP_CLASS_BYTES
+                    : ReflectionLookupTemplate.LEGACY_LOOKUP_CLASS_BYTES;
 
-                    bg = ReflectionLookupTemplate.LEGACY_LOOKUP_CLASS_BYTES;
-                } else {
-                    bg = ReflectionLookupTemplate.LEGACY_LOOKUP_CLASS_BYTES;
-                }
-
-                bf = bg;
-            }
-
-            ClassFileInputStream classFileInputStream = ClassFileInputStream.fromBytes(bf, false);
+            ClassFileInputStream classFileInputStream = ClassFileInputStream.fromBytes(byteArray, false);
             InputFileLocation inputFileLocation = InputFileLocation.createNamedPlaceholder("AutoReflection." + string);
             ObservableHolder observableHolder = new ObservableHolder();
             ListenerRegistry listenerRegistry1 = new ListenerRegistry();
@@ -1457,9 +1431,9 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             }
 
             HashMap hashMap = ZkmUtils.createHashMap(bi);
-            String string1 = string3;
-            programClass2.renameClass(string1, hashMap);
-            programClass1.setMajorVersion(bd);
+            String className = string3;
+            programClass2.renameClass(className, hashMap);
+            programClass1.setMajorVersion(majorVersion);
             Object[] objects1 = new Object[]{null, 118477269378260L};
             objects1[0] = be;
             programClass1.setMinorVersion((Integer) objects1[0]);
@@ -1477,9 +1451,9 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         Enumeration enumeration = twoKeyMap.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string1 = (String) enumeration.nextElement();
-            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string1);
-            Map map2 = twoKeyMap.getInnerMap(string1);
+            String key = (String) enumeration.nextElement();
+            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
+            Map map2 = twoKeyMap.getInnerMap(key);
             if (map2 != null) {
                 Iterator iterator = map2.entrySet().iterator();
 
@@ -1496,8 +1470,8 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                                     || memberScope == MemberScope.INSTANCE && !methodInfo1.isStatic()
                                     || memberScope == MemberScope.STATIC && methodInfo1.isStatic()
                     )) {
-                        twoKeyMap1.putValue(string1, methodSignature1, methodSignature2);
-                        this.checkMethodMappingHashStrength(string1, methodSignature1, methodSignature2, map1, scriptEnvironment1);
+                        twoKeyMap1.putValue(key, methodSignature1, methodSignature2);
+                        this.checkMethodMappingHashStrength(key, methodSignature1, methodSignature2, map1, scriptEnvironment1);
                     }
                 }
             }
@@ -1509,15 +1483,15 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         Enumeration enumeration = twoKeyMap.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string1 = (String) enumeration.nextElement();
-            Iterator iterator = twoKeyMap.getInnerMap(string1).entrySet().iterator();
+            String key = (String) enumeration.nextElement();
+            Iterator iterator = twoKeyMap.getInnerMap(key).entrySet().iterator();
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
                 MethodSignature methodSignature1 = (MethodSignature) entry.getKey();
                 MethodSignature methodSignature2 = (MethodSignature) entry.getValue();
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(string1);
+                stringBuilder.append(key);
                 stringBuilder.append(string);
                 stringBuilder.append(methodSignature1.getName());
                 stringBuilder.append(string);
@@ -1547,21 +1521,21 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             boolean bl2,
             String string1,
             MemberScope memberScope,
-            String string2,
+            String key,
             TwoKeyMap twoKeyMap,
             TwoKeyMap twoKeyMap1,
             Map map1,
             ClassMemberLookup classMemberLookup1,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        this.addAccessibleFieldMappings(bl, bl1, string, bl2, string1, memberScope, string2, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
+        this.addAccessibleFieldMappings(bl, bl1, string, bl2, string1, memberScope, key, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
         Iterator iterator = map1.keySet().iterator();
 
         while (iterator.hasNext()) {
-            String string3 = (String) iterator.next();
-            if (classMemberLookup1.isSubclass(string3, string2)) {
+            String keyValue = (String) iterator.next();
+            if (classMemberLookup1.isSubclass(keyValue, key)) {
                 this.addAccessibleFieldMappings(
-                        bl, bl1, ClassFileBase.getPackagePath(string3), bl2, string1, memberScope, string3, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1
+                        bl, bl1, ClassFileBase.getPackagePath(keyValue), bl2, string1, memberScope, keyValue, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1
                 );
             }
         }
@@ -1574,25 +1548,25 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             boolean bl2,
             String string1,
             MemberScope memberScope,
-            String string2,
+            String key,
             TwoKeyMap twoKeyMap,
             TwoKeyMap twoKeyMap1,
             Map map1,
             ScriptEnvironment scriptEnvironment1
     ) throws IOException {
-        this.addAccessibleMethodMappings(bl, bl1, string, bl2, string1, memberScope, string2, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
-        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string2);
+        this.addAccessibleMethodMappings(bl, bl1, string, bl2, string1, memberScope, key, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
+        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
         if (programClass1 != null) {
-            String string3 = programClass1.getSuperclassName();
-            ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string3);
+            String superclassName = programClass1.getSuperclassName();
+            ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(superclassName);
             if (programClass2 != null && programClass2.isProgramClass()) {
-                this.addMethodMappingsWithSupertypes(bl, bl1, string, false, string1, memberScope, string3, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
+                this.addMethodMappingsWithSupertypes(bl, bl1, string, false, string1, memberScope, superclassName, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
             }
 
-            for (String string4 : programClass1.getInterfaceNames()) {
-                ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(string4);
+            for (String keyValue : programClass1.getInterfaceNames()) {
+                ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(keyValue);
                 if (programClass3 != null && programClass3.isProgramClass()) {
-                    this.addMethodMappingsWithSupertypes(bl, bl1, string, false, string1, memberScope, string4, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
+                    this.addMethodMappingsWithSupertypes(bl, bl1, string, false, string1, memberScope, keyValue, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
                 }
             }
         }
@@ -1605,25 +1579,25 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
             boolean bl2,
             String string1,
             MemberScope memberScope,
-            String string2,
+            String key,
             TwoKeyMap twoKeyMap,
             TwoKeyMap twoKeyMap1,
             Map map1,
             ScriptEnvironment scriptEnvironment1
     ) throws IOException {
-        this.addAccessibleFieldMappings(bl, bl1, string, bl2, string1, memberScope, string2, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
-        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string2);
+        this.addAccessibleFieldMappings(bl, bl1, string, bl2, string1, memberScope, key, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
+        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
         if (programClass1 != null) {
-            String string3 = programClass1.getSuperclassName();
-            ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string3);
+            String superclassName = programClass1.getSuperclassName();
+            ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(superclassName);
             if (programClass2 != null && programClass2.isProgramClass()) {
-                this.addFieldMappingsWithSupertypes(bl, bl1, string, false, string1, memberScope, string3, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
+                this.addFieldMappingsWithSupertypes(bl, bl1, string, false, string1, memberScope, superclassName, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
             }
 
-            for (String string4 : programClass1.getInterfaceNames()) {
-                ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(string4);
+            for (String keyValue : programClass1.getInterfaceNames()) {
+                ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(keyValue);
                 if (programClass3 != null && programClass3.isProgramClass()) {
-                    this.addFieldMappingsWithSupertypes(bl, bl1, string, false, string1, memberScope, string4, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
+                    this.addFieldMappingsWithSupertypes(bl, bl1, string, false, string1, memberScope, keyValue, twoKeyMap, twoKeyMap1, map1, scriptEnvironment1);
                 }
             }
         }
@@ -1641,23 +1615,23 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
         Map map2 = map1;
         TwoKeyMap twoKeyMap3 = twoKeyMap1;
         TwoKeyMap twoKeyMap2 = twoKeyMap;
-        String string3 = string;
+        String key = string;
         MemberScope memberScope = MemberScope.BOTH;
         String string2 = string1;
         Boolean boolean1 = false;
         this.addMethodMappingsWithSupertypes(
-                false, false, (String) null, boolean1, string2, memberScope, string3, twoKeyMap2, twoKeyMap3, map2, scriptEnvironment1
+                false, false, (String) null, boolean1, string2, memberScope, key, twoKeyMap2, twoKeyMap3, map2, scriptEnvironment1
         );
         ClassMemberLookup classMemberLookup2 = classMemberLookup1;
         Map map3 = map1;
         TwoKeyMap twoKeyMap5 = twoKeyMap1;
         TwoKeyMap twoKeyMap4 = twoKeyMap;
-        String string5 = string;
+        String keyValue = string;
         MemberScope memberScope1 = MemberScope.BOTH;
         String string4 = string1;
         Boolean boolean2 = false;
         this.addMethodMappingsWithSubclasses(
-                false, false, (String) null, boolean2, string4, memberScope1, string5, twoKeyMap4, twoKeyMap5, map3, classMemberLookup2, scriptEnvironment1
+                false, false, (String) null, boolean2, string4, memberScope1, keyValue, twoKeyMap4, twoKeyMap5, map3, classMemberLookup2, scriptEnvironment1
         );
     }
 
@@ -1674,11 +1648,11 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getKey();
-            String string1 = (String) entry.getValue();
-            if (this.accessMatcher == null || this.accessMatcher.isClassNameExcluded(string1)) {
-                map1.put(string, string1);
-                map2.put(string1, string);
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            if (this.accessMatcher == null || this.accessMatcher.isClassNameExcluded(value)) {
+                map1.put(key, value);
+                map2.put(value, key);
             }
         }
 
@@ -1686,7 +1660,7 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
         while (enumeration.hasMoreElements()) {
             ClassFileBase classFileBase = (ClassFileBase) enumeration.nextElement();
-            String string2 = classFileBase.getClassName();
+            String className = classFileBase.getClassName();
             EnumerableMap enumerableMap1 = readOnlyMultiMap.getInnerMap(classFileBase);
             Iterator iterator1 = enumerableMap1.entrySet().iterator();
 
@@ -1694,11 +1668,11 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                 Entry entry1 = (Entry) iterator1.next();
                 FieldSignature fieldSignature = (FieldSignature) entry1.getKey();
                 FieldSignature fieldSignature1 = (FieldSignature) entry1.getValue();
-                FieldInfo fieldInfo = this.classMemberLookup.findField(ZkmUtils.dotsToSlashes(string2), fieldSignature1.getName(), fieldSignature1.getDescriptor());
-                Object[] objects = new Object[]{string2, fieldSignature, fieldSignature1};
+                FieldInfo fieldInfo = this.classMemberLookup.findField(ZkmUtils.dotsToSlashes(className), fieldSignature1.getName(), fieldSignature1.getDescriptor());
+                Object[] objects = new Object[]{className, fieldSignature, fieldSignature1};
                 ZkmAssert.assertNotNullArgs(fieldInfo, objects);
                 if (this.accessMatcher == null || this.accessMatcher.isFieldExcluded(fieldInfo)) {
-                    twoKeyMap.putValue(string2, fieldSignature, fieldSignature1);
+                    twoKeyMap.putValue(className, fieldSignature, fieldSignature1);
                 }
             }
         }
@@ -1707,7 +1681,7 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
 
         while (enumeration1.hasMoreElements()) {
             ClassFileBase classFileBase1 = (ClassFileBase) enumeration1.nextElement();
-            String string3 = classFileBase1.getClassName();
+            String classNameValue = classFileBase1.getClassName();
             if (classFileBase1.isProgramClass()) {
                 EnumerableMap enumerableMap2 = readOnlyMultiMap1.getInnerMap(classFileBase1);
                 Iterator iterator2 = enumerableMap2.entrySet().iterator();
@@ -1717,10 +1691,10 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                     MethodSignature methodSignature1 = (MethodSignature) entry2.getKey();
                     MethodSignature methodSignature2 = (MethodSignature) entry2.getValue();
                     MethodInfo methodInfo1 = this.classMemberLookup.findDeclaredMethod((ProgramClass) classFileBase1, methodSignature2);
-                    Object[] objects1 = new Object[]{classFileBase1, string3, methodSignature1, methodSignature2};
+                    Object[] objects1 = new Object[]{classFileBase1, classNameValue, methodSignature1, methodSignature2};
                     ZkmAssert.assertNotNullArgs(methodInfo1, objects1);
                     if (this.accessMatcher == null || this.accessMatcher.isMethodExcluded(methodInfo1)) {
-                        twoKeyMap1.putValue(string3, methodSignature1, methodSignature2);
+                        twoKeyMap1.putValue(classNameValue, methodSignature1, methodSignature2);
                     }
                 }
             }
@@ -1728,10 +1702,10 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
     }
 
     public String generateUniqueDecoyKey(Random random1, Set set1) {
-        char[] bc = ReflectionLookupTemplate.DECOY_KEY_PAD_CHARS;
+        char[] decoyKeyPadChars = ReflectionLookupTemplate.DECOY_KEY_PAD_CHARS;
 
         while (true) {
-            char ba = bc[random1.nextInt(ReflectionLookupTemplate.DECOY_KEY_PAD_CHARS.length)];
+            char decoyKeyPadChar = decoyKeyPadChars[random1.nextInt(ReflectionLookupTemplate.DECOY_KEY_PAD_CHARS.length)];
             String string1 = Long.toString(random1.nextLong(), 36);
             byte bd;
             byte be;
@@ -1743,15 +1717,15 @@ public class AutoReflectionHandler implements SyntheticClassFactory {
                 be = 17;
             }
 
-            String string = ZkmStringUtils.pad(string1, bd, Math.max(be, string1.length() + 1), ba);
-            char[] bb = string.toCharArray();
-            ZkmUtils.shuffleChars(bb);
-            string = new String(bb);
+            String string = ZkmStringUtils.pad(string1, bd, Math.max(be, string1.length() + 1), decoyKeyPadChar);
+            char[] characterArray = string.toCharArray();
+            ZkmUtils.shuffleChars(characterArray);
+            string = new String(characterArray);
             if (set1.add(string)) {
                 return string;
             }
 
-            bc = ReflectionLookupTemplate.DECOY_KEY_PAD_CHARS;
+            decoyKeyPadChars = ReflectionLookupTemplate.DECOY_KEY_PAD_CHARS;
         }
     }
 }

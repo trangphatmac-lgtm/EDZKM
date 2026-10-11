@@ -17,8 +17,8 @@ public class ASTBasicMethodSignature extends MethodSpecifierChildNode {
         ZkmScriptNode zkmScriptNode = (ZkmScriptNode) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         ASTMemberSpecifier aSTMemberSpecifier = (ASTMemberSpecifier) zkmScriptNode;

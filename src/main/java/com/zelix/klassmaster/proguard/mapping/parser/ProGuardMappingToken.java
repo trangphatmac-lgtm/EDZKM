@@ -13,7 +13,7 @@ public class ProGuardMappingToken implements Serializable {
     public int b;
     public String L;
     public int C;
-    private static final String c = " NULL >";
+    private static final String NULL_IMAGE_SUFFIX = " NULL >";
 
     public static ProGuardMappingToken newToken(int ba, String string) {
         switch (ba) {
@@ -27,7 +27,7 @@ public class ProGuardMappingToken implements Serializable {
 
     @Override
     public String toString() {
-        return this.L == null ? "<" + ZkmAssert.getSimpleClassName(this) + c : this.L;
+        return this.L == null ? "<" + ZkmAssert.getSimpleClassName(this) + NULL_IMAGE_SUFFIX : this.L;
     }
 
     public ProGuardMappingToken(int ba, String string) {

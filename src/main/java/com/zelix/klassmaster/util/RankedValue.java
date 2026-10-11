@@ -24,13 +24,13 @@ public class RankedValue implements Comparable {
         return this.rank;
     }
 
-    public RankedValue(int rank, Object object) {
+    public RankedValue(int rank, Object valueArgument) {
         this.rank = rank;
-        this.value = object;
+        this.value = valueArgument;
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByRank((RankedValue) object);
+    public int compareTo(Object other) {
+        return this.compareByRank((RankedValue) other);
     }
 }

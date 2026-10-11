@@ -22,8 +22,8 @@ public class ResolvedClassConstant extends ClassConstantBase implements Constant
     }
 
     @Override
-    public void setClassName(String string) {
-        this.nameUtf8.setValue(string);
+    public void setClassName(String className) {
+        this.nameUtf8.setValue(className);
     }
 
     public String getTypeDescriptor() {
@@ -31,8 +31,8 @@ public class ResolvedClassConstant extends ClassConstantBase implements Constant
     }
 
     public ClassFileBase lookupClass() {
-        String string = ClassFileBase.descriptorToClassName(this.getClassName());
-        return string != null ? ClassHierarchyNode.findClassFile(string) : null;
+        String key = ClassFileBase.descriptorToClassName(this.getClassName());
+        return key != null ? ClassHierarchyNode.findClassFile(key) : null;
     }
 
     @Override
@@ -65,12 +65,12 @@ public class ResolvedClassConstant extends ClassConstantBase implements Constant
 
     @Override
     public String getClassName() {
-        String string = this.nameUtf8.getValue();
-        if (string.indexOf(46) != -1) {
-            string = string.replace('.', '/');
+        String value = this.nameUtf8.getValue();
+        if (value.indexOf(46) != -1) {
+            value = value.replace('.', '/');
         }
 
-        return string;
+        return value;
     }
 
     private static String toTypeDescriptor(String string) {
@@ -141,14 +141,14 @@ public class ResolvedClassConstant extends ClassConstantBase implements Constant
 
     public void remapName(HashMap hashMap) {
         if (this.constantPool.getThisClassConstant() != this) {
-            String string = this.nameUtf8.getValue();
-            String string1 = (String) hashMap.get(string);
-            if (string1 != null && !string1.equals(string)) {
-                this.nameUtf8.setValue(string1);
+            String value = this.nameUtf8.getValue();
+            String valueValue = (String) hashMap.get(value);
+            if (valueValue != null && !valueValue.equals(value)) {
+                this.nameUtf8.setValue(valueValue);
             } else {
-                string1 = ConstantPoolEntry.remapDescriptorClassNames(string, hashMap);
-                if (!string.equals(string1)) {
-                    this.nameUtf8.setValue(string1);
+                valueValue = ConstantPoolEntry.remapDescriptorClassNames(value, hashMap);
+                if (!value.equals(valueValue)) {
+                    this.nameUtf8.setValue(valueValue);
                 }
             }
         }
@@ -159,8 +159,8 @@ public class ResolvedClassConstant extends ClassConstantBase implements Constant
     }
 
     public ProgramClass findProgramClass() {
-        String string = ClassFileBase.descriptorToClassName(this.getClassName());
-        return string != null ? ClassHierarchyNode.findProgramClass(string) : null;
+        String key = ClassFileBase.descriptorToClassName(this.getClassName());
+        return key != null ? ClassHierarchyNode.findProgramClass(key) : null;
     }
 
     @Override

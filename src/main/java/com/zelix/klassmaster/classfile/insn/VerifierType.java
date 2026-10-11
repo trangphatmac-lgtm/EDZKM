@@ -37,12 +37,12 @@ public class VerifierType {
         return true;
     }
 
-    public VerifierType(String string) {
-        this.descriptor = string;
+    public VerifierType(String descriptorArgument) {
+        this.descriptor = descriptorArgument;
     }
 
-    public static VerifierType forDescriptor(String string) {
-        return forDescriptor(string, true);
+    public static VerifierType forDescriptor(String key) {
+        return forDescriptor(key, true);
     }
 
     public static VerifierType[] createArray(int ba) {
@@ -71,12 +71,12 @@ public class VerifierType {
         return stringBuffer.toString();
     }
 
-    public boolean descriptorStartsWith(String string) {
-        return this.descriptor.startsWith(string);
+    public boolean descriptorStartsWith(String prefix) {
+        return this.descriptor.startsWith(prefix);
     }
 
-    public static VerifierType forDescriptor(String string, boolean bl) {
-        return resolveType(string, bl, null);
+    public static VerifierType forDescriptor(String key, boolean bl) {
+        return resolveType(key, bl, null);
     }
 
     public int getSlotSize() {
@@ -182,25 +182,25 @@ public class VerifierType {
         return this.descriptor.endsWith(";");
     }
 
-    public static VerifierType resolveType(String string, boolean bl, TypeInstruction typeInstruction) {
+    public static VerifierType resolveType(String key, boolean bl, TypeInstruction typeInstruction) {
         VerifierType verifierType = null;
-        if (string.length() <= 2 || string.equals("RETURN_ADDRESS")) {
-            verifierType = (VerifierType) predefinedTypes.get(string);
+        if (key.length() <= 2 || key.equals("RETURN_ADDRESS")) {
+            verifierType = (VerifierType) predefinedTypes.get(key);
         }
 
         if (verifierType == null) {
             if (typeInstruction == null) {
                 if (bl) {
-                    verifierType = (VerifierType) typeCache.get(string);
+                    verifierType = (VerifierType) typeCache.get(key);
                     if (verifierType == null) {
-                        verifierType = new VerifierType(string);
-                        typeCache.put(string, verifierType);
+                        verifierType = new VerifierType(key);
+                        typeCache.put(key, verifierType);
                     }
                 } else {
-                    verifierType = new UninitializedThisValueType(string);
+                    verifierType = new UninitializedThisValueType(key);
                 }
             } else {
-                verifierType = new UninitializedType(string, typeInstruction);
+                verifierType = new UninitializedType(key, typeInstruction);
             }
         }
 
@@ -212,36 +212,20 @@ public class VerifierType {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        boolean bl1 = object instanceof VerifierType;
-        if (!strictMergeDisabled) {
-            if (bl1) {
-                VerifierType verifierType1 = (VerifierType) object;
-                if (!strictMergeDisabled) {
-                    if (!verifierType1.descriptor.equals(this.descriptor)) {
-                        return false;
-                    }
-
-                    verifierType1 = (VerifierType) object;
-                }
-
-                bl1 = verifierType1.isInitialized();
-                if (strictMergeDisabled) {
-                    return bl1;
-                }
-
-                if (bl1 == this.isInitialized()) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            bl1 = false;
+        boolean isVerifierType = other instanceof VerifierType;
+        if (strictMergeDisabled) {
+            return isVerifierType;
         }
-
-        return bl1;
+        if (!isVerifierType) {
+            return false;
+        }
+        VerifierType otherType = (VerifierType) other;
+        if (!otherType.descriptor.equals(this.descriptor)) {
+            return false;
+        }
+        return otherType.isInitialized() == this.isInitialized();
     }
 
     public static boolean isWideDescriptor(String string) {

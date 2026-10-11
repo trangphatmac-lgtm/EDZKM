@@ -21,11 +21,11 @@ public class ModuleOpensEntry extends ClassFileComponent {
 
     public ModuleOpensEntry(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream) throws ClassFileFormatException, IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(ba);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry == null) {
             throw new ClassFileFormatException(
-                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + ba + " : File is probably corrupt (Z)"
+                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + constantPoolIndex + " : File is probably corrupt (Z)"
             );
         }
 
@@ -33,7 +33,7 @@ public class ModuleOpensEntry extends ClassFileComponent {
             throw new ClassFileFormatException(
                     classFileComponent.getOwningClass().getLocationName()
                             + " : Invalid attribute : "
-                            + ba
+                            + constantPoolIndex
                             + " : '"
                             + constantPoolEntry.getClass().getName()
                             + "' : File is probably corrupt (AA)"
@@ -45,14 +45,14 @@ public class ModuleOpensEntry extends ClassFileComponent {
         int bb = classFileInputStream.readUnsignedShort();
         this.opensTo = new ResolvedConstantModule[bb];
 
-        for (int i = 0; i < bb; i++) {
-            int bd = classFileInputStream.readUnsignedShort();
-            constantPoolEntry = classFileComponent.getConstantPoolEntry(bd);
+        for (int opensToElementIndex = 0; opensToElementIndex < bb; opensToElementIndex++) {
+            int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+            constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndexValue);
             if (constantPoolEntry == null) {
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Illegal constant pool index in attribute : "
-                                + bd
+                                + constantPoolIndexValue
                                 + " : File is probably corrupt (AB)"
                 );
             }
@@ -61,14 +61,14 @@ public class ModuleOpensEntry extends ClassFileComponent {
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Invalid attribute : "
-                                + bd
+                                + constantPoolIndexValue
                                 + " : '"
                                 + constantPoolEntry.getClass().getName()
                                 + "' : File is probably corrupt (AC)"
                 );
             }
 
-            this.opensTo[i] = (ResolvedConstantModule) constantPoolEntry;
+            this.opensTo[opensToElementIndex] = (ResolvedConstantModule) constantPoolEntry;
         }
 
         if (!ZkmUtils.allUnique(this.opensTo)) {
@@ -76,16 +76,16 @@ public class ModuleOpensEntry extends ClassFileComponent {
             stringBuilder.append("Invalid 'Module' attribute in class '");
             stringBuilder.append(this.getLocationName());
             stringBuilder.append("' : Duplicate 'open to' module names : ");
-            int be = 0;
+            int opensToElementIndexValue = 0;
             int bf = 0;
 
             for (ResolvedConstantModule[] resolvedConstantModules = this.opensTo; bf < resolvedConstantModules.length; resolvedConstantModules = this.opensTo) {
-                stringBuilder.append(this.opensTo[be].getValueString());
-                if (be < this.opensTo.length - 1) {
+                stringBuilder.append(this.opensTo[opensToElementIndexValue].getValueString());
+                if (opensToElementIndexValue < this.opensTo.length - 1) {
                     stringBuilder.append(", ");
                 }
 
-                bf = ++be;
+                bf = ++opensToElementIndexValue;
             }
 
             ZkmAssert.assertTrue(false, new String[]{stringBuilder.toString()});
@@ -96,10 +96,10 @@ public class ModuleOpensEntry extends ClassFileComponent {
     public void collectUsedConstants(char bc, int bd, UsedConstantsCollector usedConstantsCollector, char be) {
         this.openedPackage.registerUsage(usedConstantsCollector, this, this.getParent());
         ResolvedConstantModule[] resolvedConstantModules = this.opensTo;
-        int ba = resolvedConstantModules.length;
+        int lengthValue = resolvedConstantModules.length;
 
-        for (int i = 0; i < ba; i++) {
-            resolvedConstantModules[i].registerUsage(usedConstantsCollector, this, this.getParent());
+        for (int resolvedConstantModuleIndex = 0; resolvedConstantModuleIndex < lengthValue; resolvedConstantModuleIndex++) {
+            resolvedConstantModules[resolvedConstantModuleIndex].registerUsage(usedConstantsCollector, this, this.getParent());
         }
     }
 

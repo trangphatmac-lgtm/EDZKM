@@ -21,13 +21,13 @@ public class NameGeneratorDigit {
         this.nextDigit = nameGeneratorDigit1;
     }
 
-    public NameGeneratorDigit(char[] ba) {
-        this(ba, "");
+    public NameGeneratorDigit(char[] charsArgument) {
+        this(charsArgument, "");
     }
 
-    public NameGeneratorDigit(char[] chars, String string) {
+    public NameGeneratorDigit(char[] chars, String digitIdArgument) {
         this.chars = chars;
-        this.digitId = string;
+        this.digitId = digitIdArgument;
     }
 
     public StringBuilder appendTo(StringBuilder stringBuilder) {
@@ -42,7 +42,7 @@ public class NameGeneratorDigit {
     public boolean increment() {
         this.index = ++this.index % this.chars.length;
         if (this.index == 0) {
-            return this.carryDigit != null ? this.carryDigit.increment() : true;
+            return (!(this.carryDigit != null) || (this.carryDigit.increment()));
         } else {
             return false;
         }

@@ -63,29 +63,29 @@ public class ASTMemberSpecifier
     }
 
     @Override
-    public void setFieldType(String string) {
-        this.fieldType = string;
+    public void setFieldType(String fieldTypeArgument) {
+        this.fieldType = fieldTypeArgument;
     }
 
-    public void addModifier(String string) {
-        String string1 = this.getSummarizingStatement().getStatementName();
+    public void addModifier(String accessLevelArgument) {
+        String statementName = this.getSummarizingStatement().getStatementName();
         int statementLine = this.getSummarizingStatement().getStatementLine();
-        if (string.equals("public") || string.equals("protected") || string.equals("private") || string.equals("package")) {
+        if (accessLevelArgument.equals("public") || accessLevelArgument.equals("protected") || accessLevelArgument.equals("private") || accessLevelArgument.equals("package")) {
             if (this.accessLevel == null) {
-                this.accessLevel = string;
-            } else if (!this.accessLevel.equals(string)) {
+                this.accessLevel = accessLevelArgument;
+            } else if (!this.accessLevel.equals(accessLevelArgument)) {
                 this.scriptEnvironment
                         .logWarning(
                                 "\""
-                                        + string
+                                        + accessLevelArgument
                                         + "\" appears after \""
                                         + this.accessLevel
                                         + "\" in \""
-                                        + string1
+                                        + statementName
                                         + "\" statement at line "
                                         + statementLine
                                         + ". \""
-                                        + string
+                                        + accessLevelArgument
                                         + "\" ignored.",
                                 true
                         );
@@ -93,8 +93,8 @@ public class ASTMemberSpecifier
             }
         }
 
-        if (this.modifiers.put(string, string) != null) {
-            this.scriptEnvironment.logWarning("\"" + string + "\" appears more than once in \"" + string1 + "\" statement at line " + statementLine + ".", true);
+        if (this.modifiers.put(accessLevelArgument, accessLevelArgument) != null) {
+            this.scriptEnvironment.logWarning("\"" + accessLevelArgument + "\" appears more than once in \"" + statementName + "\" statement at line " + statementLine + ".", true);
         }
     }
 
@@ -145,12 +145,12 @@ public class ASTMemberSpecifier
                     ObservableHolder observableHolder = new ObservableHolder();
                     boolean bl = ASTRenameFilterParameter.matchesThrowsClause(classHierarchyQuery, abstractMethodInfo, this.thrownExceptionNames, observableHolder);
                     if (!observableHolder.isValueNull()) {
-                        String string = (String) observableHolder.getValue();
+                        String value = (String) observableHolder.getValue();
                         SummarizingStatementNode summarizingStatementNode = this.getSummarizingStatement();
-                        string = ZkmStringUtils.replaceAll(string, "<0>", this.getSpecText());
-                        string = ZkmStringUtils.replaceAll(string, "<1>", summarizingStatementNode.getStatementName());
-                        string = ZkmStringUtils.replaceAll(string, "<2>", String.valueOf(summarizingStatementNode.getStatementLine()));
-                        this.scriptEnvironment.logWarning(string);
+                        value = ZkmStringUtils.replaceAll(value, "<0>", this.getSpecText());
+                        value = ZkmStringUtils.replaceAll(value, "<1>", summarizingStatementNode.getStatementName());
+                        value = ZkmStringUtils.replaceAll(value, "<2>", String.valueOf(summarizingStatementNode.getStatementLine()));
+                        this.scriptEnvironment.logWarning(value);
                     }
 
                     if (bl) {
@@ -181,8 +181,8 @@ public class ASTMemberSpecifier
         this.scriptEnvironment = (ScriptEnvironment) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, this.scriptEnvironment);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, this.scriptEnvironment);
         }
 
         this.buildAccessFlagsSpec();

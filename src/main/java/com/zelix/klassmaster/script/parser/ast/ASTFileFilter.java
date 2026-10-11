@@ -16,26 +16,23 @@ public class ASTFileFilter extends ZkmScriptSimpleNode implements ArchivePathFil
     public LinkedList orClauses = new LinkedList();
 
     @Override
-    public boolean acceptsPath(Object object) {
-        String string = (String) object;
-        boolean bl = false;
-        Iterator iterator = this.orClauses.iterator();
-
-        label21:
-        while (iterator.hasNext()) {
-            Iterator iterator1 = ((List) iterator.next()).iterator();
-
-            while (iterator1.hasNext()) {
-                if (!((FileFilterNodeBase) iterator1.next()).acceptsPath(string)) {
-                    continue label21;
+    public boolean acceptsPath(Object path) {
+        String pathText = (String) path;
+        Iterator clauses = this.orClauses.iterator();
+        while (clauses.hasNext()) {
+            Iterator terms = ((List) clauses.next()).iterator();
+            boolean matchesClause = true;
+            while (terms.hasNext()) {
+                if (!((FileFilterNodeBase) terms.next()).acceptsPath(pathText)) {
+                    matchesClause = false;
+                    break;
                 }
             }
-
-            bl = true;
-            break;
+            if (matchesClause) {
+                return true;
+            }
         }
-
-        return bl;
+        return false;
     }
 
     @Override
@@ -43,8 +40,8 @@ public class ASTFileFilter extends ZkmScriptSimpleNode implements ArchivePathFil
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
     }
 

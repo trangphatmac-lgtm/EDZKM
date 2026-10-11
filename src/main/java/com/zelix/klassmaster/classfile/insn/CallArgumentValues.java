@@ -23,8 +23,8 @@ public class CallArgumentValues {
         return this.argumentValueSets.size();
     }
 
-    public Set getArgumentValues(int ba) {
-        return (Set) this.argumentValueSets.get(ba);
+    public Set getArgumentValues(int elementIndex) {
+        return (Set) this.argumentValueSets.get(elementIndex);
     }
 
     public void setValid() {
@@ -101,8 +101,8 @@ public class CallArgumentValues {
                                 } else {
                                     ArrayList arrayList = new ArrayList();
 
-                                    for (int i = bl ? 1 : 0; i < list1.size(); i++) {
-                                        HashSet hashSet1 = (HashSet) list1.get(i);
+                                    for (int elementIndex = bl ? 1 : 0; elementIndex < list1.size(); elementIndex++) {
+                                        HashSet hashSet1 = (HashSet) list1.get(elementIndex);
                                         if (!this.containsArrayValue(hashSet1)) {
                                             arrayList.add(hashSet1);
                                         } else {
@@ -124,11 +124,11 @@ public class CallArgumentValues {
                                                     return;
                                                 }
 
-                                                for (int j = 0; j < tracedArrayValue.getLength(); j++) {
-                                                    if (hashSets[j] == null) {
-                                                        hashSets[j] = tracedArrayValue.getElementValues(j);
+                                                for (int hashSetIndex = 0; hashSetIndex < tracedArrayValue.getLength(); hashSetIndex++) {
+                                                    if (hashSets[hashSetIndex] == null) {
+                                                        hashSets[hashSetIndex] = tracedArrayValue.getElementValues(hashSetIndex);
                                                     } else {
-                                                        hashSets[j].addAll(tracedArrayValue.getElementValues(j));
+                                                        hashSets[hashSetIndex].addAll(tracedArrayValue.getElementValues(hashSetIndex));
                                                     }
                                                 }
 
@@ -141,8 +141,8 @@ public class CallArgumentValues {
 
                                     TracedArrayValue tracedArrayValue3 = new TracedArrayValue(arrayList.size());
 
-                                    for (int i = 0; i < arrayList.size(); i++) {
-                                        tracedArrayValue3.setElementValues(i, (HashSet) arrayList.get(i));
+                                    for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+                                        tracedArrayValue3.setElementValues(elementIndexValue, (HashSet) arrayList.get(elementIndexValue));
                                     }
 
                                     hashSet.remove(trackedValue);
@@ -194,12 +194,12 @@ public class CallArgumentValues {
             return null;
         }
 
-        int ba = 0;
+        int integerValue = 0;
 
-        for (Iterator iterator = this.reflectionMethod.getParamDetails().iterator(); iterator.hasNext(); ba++) {
+        for (Iterator iterator = this.reflectionMethod.getParamDetails().iterator(); iterator.hasNext(); integerValue++) {
             ReflectionParamDetail reflectionParamDetail = (ReflectionParamDetail) iterator.next();
             if (reflectionParamDetail.isFieldNameParam() || reflectionParamDetail.isMethodNameParam()) {
-                return this.getSingleStringArgument(ba);
+                return this.getSingleStringArgument(integerValue);
             }
         }
 

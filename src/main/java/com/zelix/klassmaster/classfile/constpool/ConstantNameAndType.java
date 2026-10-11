@@ -46,14 +46,14 @@ public class ConstantNameAndType extends ConstantPoolEntry implements Resolvable
                 throw new ClassFileFormatException(string3);
             }
 
-            String string1 = ((ConstantUtf8) constantPoolEntry1).getValue();
-            if (ConstantPoolEntry.descriptorToJavaType(string1, true) == null) {
+            String value = ((ConstantUtf8) constantPoolEntry1).getValue();
+            if (ConstantPoolEntry.descriptorToJavaType(value, true) == null) {
                 String string4 = this.constantPool.getClassLocation()
                         + " : "
                         + "Invalid type descriptor"
                         + " : "
                         + "'"
-                        + string1
+                        + value
                         + "'"
                         + " : "
                         + ConstantPoolEntry.getTagName(this.getTag())
@@ -88,8 +88,8 @@ public class ConstantNameAndType extends ConstantPoolEntry implements Resolvable
         dataOutputStream.writeShort(this.descriptorIndex);
     }
 
-    public ConstantNameAndType(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantNameAndType(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, abstractConstantPool);
         this.nameIndex = classFileInputStream.readUnsignedShort();
         this.descriptorIndex = classFileInputStream.readUnsignedShort();
     }

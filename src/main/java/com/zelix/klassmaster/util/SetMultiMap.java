@@ -18,28 +18,28 @@ public class SetMultiMap implements SetValuedMap {
     public int valueSetCapacity;
     public final boolean concurrent;
 
-    public SetMultiMap(boolean bl) {
-        this(75, 16, bl);
+    public SetMultiMap(boolean concurrentArgument) {
+        this(75, 16, concurrentArgument);
     }
 
     @Override
-    public Set getValues(Object object) {
-        return (Set) this.map.get(object);
+    public Set getValues(Object key) {
+        return (Set) this.map.get(key);
     }
 
     @Override
-    public Set removeKey(Object object) {
-        return (Set) this.map.remove(object);
+    public Set removeKey(Object key) {
+        return (Set) this.map.remove(key);
     }
 
     @Override
-    public boolean containsValue(Object object, Object object1) {
-        Set set1 = (Set) this.map.get(object);
-        return set1 == null ? false : set1.contains(object1);
+    public boolean containsValue(Object key, Object object1) {
+        Set set1 = (Set) this.map.get(key);
+        return (!(set1 == null) && (set1.contains(object1)));
     }
 
-    public SetMultiMap(int ba, boolean bl) {
-        this(ba, 16, bl);
+    public SetMultiMap(int ba, boolean concurrentArgument) {
+        this(ba, 16, concurrentArgument);
     }
 
     public Set createValueSet(int ba) {
@@ -51,7 +51,7 @@ public class SetMultiMap implements SetValuedMap {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            Object object = entry.getKey();
+            Object key = entry.getKey();
             Set set2 = (Set) entry.getValue();
             Set set3 = this.createValueSet(ZkmUtils.getPrimeCapacity(set2.size()));
 
@@ -62,21 +62,21 @@ public class SetMultiMap implements SetValuedMap {
             }
 
             if (!set3.isEmpty()) {
-                map1.put(object, set3);
+                map1.put(key, set3);
             }
         }
     }
 
     public SetMultiMap deepCopy() {
-        int ba = this.map.size();
-        SetMultiMap setMultiMap1 = new SetMultiMap(ba * 2 + 1, this.concurrent);
+        int mapSize = this.map.size();
+        SetMultiMap setMultiMap1 = new SetMultiMap(mapSize * 2 + 1, this.concurrent);
         Iterator iterator = this.map.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
             Set set1 = (Set) entry.getValue();
-            int bb = ZkmUtils.getPrimeCapacity(set1.size());
-            Set set2 = this.concurrent ? Collections.newSetFromMap(new ConcurrentHashMap(bb)) : ZkmUtils.createHashSet(bb);
+            int primeCapacity = ZkmUtils.getPrimeCapacity(set1.size());
+            Set set2 = this.concurrent ? Collections.newSetFromMap(new ConcurrentHashMap(primeCapacity)) : ZkmUtils.createHashSet(primeCapacity);
             set2.addAll(set1);
             setMultiMap1.putValueSet(entry.getKey(), set2);
         }
@@ -114,8 +114,8 @@ public class SetMultiMap implements SetValuedMap {
         this(75, 16);
     }
 
-    public Set putValueSet(Object object, Object object1) {
-        return (Set) this.map.put(object, object1);
+    public Set putValueSet(Object key, Object value) {
+        return (Set) this.map.put(key, value);
     }
 
     public SetMultiMap(int ba, int bb) {
@@ -123,28 +123,28 @@ public class SetMultiMap implements SetValuedMap {
     }
 
     @Override
-    public List getValueList(Object object) {
-        return (Set) this.map.get(object) != null ? new ArrayList((Collection) this.map.get(object)) : null;
+    public List getValueList(Object key) {
+        return (Set) this.map.get(key) != null ? new ArrayList((Collection) this.map.get(key)) : null;
     }
 
     @Override
-    public boolean removeValue(Object object, Object object1) {
+    public boolean removeValue(Object key, Object object1) {
         boolean bl = false;
-        Set set1 = (Set) this.map.get(object);
+        Set set1 = (Set) this.map.get(key);
         if (set1 != null) {
             bl = set1.remove(object1);
             if (set1.size() == 0) {
-                this.map.remove(object);
+                this.map.remove(key);
             }
         }
 
         return bl;
     }
 
-    public void addValues(Object object, Collection collection1) {
+    public void addValues(Object key, Collection collection1) {
         if (collection1 != null) {
             for (Object object1 : collection1) {
-                this.addValue(object, object1);
+                this.addValue(key, object1);
             }
         }
     }
@@ -160,8 +160,8 @@ public class SetMultiMap implements SetValuedMap {
     }
 
     @Override
-    public boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
     public SetMultiMap(Map map1) {
@@ -205,13 +205,13 @@ public class SetMultiMap implements SetValuedMap {
     }
 
     @Override
-    public boolean addValue(Object object, Object object1) {
-        Set set1 = (Set) this.map.get(object);
+    public boolean addValue(Object key, Object object1) {
+        Set set1 = (Set) this.map.get(key);
         boolean bl;
         if (set1 == null) {
             set1 = this.createValueSet(this.valueSetCapacity);
             set1.add(object1);
-            this.map.put(object, set1);
+            this.map.put(key, set1);
             bl = true;
         } else {
             bl = set1.add(object1);
@@ -221,8 +221,8 @@ public class SetMultiMap implements SetValuedMap {
     }
 
     public final ListMultimap toListMultimap() {
-        int ba = this.map.size();
-        ListMultimap listMultimap = new ListMultimap(ba * 2 + 1, this.concurrent);
+        int mapSize = this.map.size();
+        ListMultimap listMultimap = new ListMultimap(mapSize * 2 + 1, this.concurrent);
         if (this.concurrent) {
             synchronized (this.map) {
                 Iterator iterator = this.map.entrySet().iterator();

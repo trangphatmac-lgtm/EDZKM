@@ -91,9 +91,9 @@ public class ClassOpenWarningsDialog extends TextViewerDialog {
         super.okBtn.addActionListener(warningsDialogActionListener);
         this.helpPane.addHyperlinkListener(new HelpHyperlinkListener(this));
         super.constraintLayout.setConstraints(layoutSpec);
-        int ba = dimension.width;
-        int bc = Math.min(600, ba);
-        int bb = dimension.height;
-        this.setSize(bc, Math.min(450, bb));
+        int widthValue = dimension.width;
+        int bc = Math.min(600, widthValue);
+        int heightValue = dimension.height;
+        this.setSize(bc, Math.min(450, heightValue));
     }
 }

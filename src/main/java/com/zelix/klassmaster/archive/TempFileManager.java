@@ -35,8 +35,8 @@ public class TempFileManager {
         return createTempFile((String) null);
     }
 
-    public static String getOriginalName(Object object) {
-        return (String) tempFileOriginalNames.get(object);
+    public static String getOriginalName(Object key) {
+        return (String) tempFileOriginalNames.get(key);
     }
 
     public static String findTempFilePath(Object object) {
@@ -62,14 +62,14 @@ public class TempFileManager {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string1 = (String) entry.getKey();
-                String string2 = (String) entry.getValue();
-                int ba = string.indexOf(string1);
-                if (ba > -1) {
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
+                int endIndex = string.indexOf(key);
+                if (endIndex > -1) {
                     StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.append(string.substring(0, ba));
-                    stringBuilder.append(string2);
-                    stringBuilder.append(string.substring(ba + string1.length()));
+                    stringBuilder.append(string.substring(0, endIndex));
+                    stringBuilder.append(value);
+                    stringBuilder.append(string.substring(endIndex + key.length()));
                     return stringBuilder.toString();
                 }
             }
@@ -81,16 +81,16 @@ public class TempFileManager {
     }
 
     public static boolean isZkmTempFile(File file1) {
-        String string = file1.getName();
-        String string1 = file1.getParent();
-        return string.startsWith("ZKM") && string.endsWith(".tmp") && string1 != null && new File(string1).equals(new File(tempDirPath));
+        String name = file1.getName();
+        String parent = file1.getParent();
+        return name.startsWith("ZKM") && name.endsWith(".tmp") && parent != null && new File(parent).equals(new File(tempDirPath));
     }
 
-    public static File createTempFile(String string) throws IOException {
+    public static File createTempFile(String value) throws IOException {
         File file1 = File.createTempFile("ZKM", ".tmp", tempDir);
         file1.deleteOnExit();
-        if (string != null) {
-            tempFileOriginalNames.put(file1.getAbsolutePath(), string);
+        if (value != null) {
+            tempFileOriginalNames.put(file1.getAbsolutePath(), value);
         }
 
         return file1;

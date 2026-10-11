@@ -35,21 +35,21 @@ public class PairMultiMap {
         return this.multimap.keySet();
     }
 
-    public PairMultiMap(boolean bl) {
-        this.multimap = new ListMultimap(bl);
+    public PairMultiMap(boolean concurrent) {
+        this.multimap = new ListMultimap(concurrent);
     }
 
-    public void addPair(Object object, Object object1, Object object2) {
-        ObjectPair objectPair = new ObjectPair(object1, object2);
-        this.multimap.addValue(object, objectPair);
+    public void addPair(Object key, Object first, Object second) {
+        ObjectPair objectPair = new ObjectPair(first, second);
+        this.multimap.addValue(key, objectPair);
     }
 
     public boolean isEmpty() {
         return this.multimap.isEmpty();
     }
 
-    public List getPairs(Object object) {
-        return this.multimap.getValues(object);
+    public List getPairs(Object key) {
+        return this.multimap.getValues(key);
     }
 
     public Set entrySet() {

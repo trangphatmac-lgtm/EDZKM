@@ -19,12 +19,12 @@ public class ASTMethodReturnType extends ChangeLogSimpleNode implements TypeName
     public void interpret(ChangeLogNode changeLogNode, int bd, int ba, int be, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int bb = this.jjtGetNumChildren();
         ChangeLogSimpleNode.getOpaqueStrings();
-        int bc = 0;
+        int childrenElementIndex = 0;
 
-        while (bc < bb) {
+        while (childrenElementIndex < bb) {
             if (ba > 0) {
-                this.jjtGetChild(bc).interpret(this, 30872, 34067, 41973, abstractChangeLog);
-                bc++;
+                this.jjtGetChild(childrenElementIndex).interpret(this, 30872, 34067, 41973, abstractChangeLog);
+                childrenElementIndex++;
             }
         }
 
@@ -32,7 +32,7 @@ public class ASTMethodReturnType extends ChangeLogSimpleNode implements TypeName
     }
 
     @Override
-    public void setTypeName(Object object) {
-        this.returnType = (String) object;
+    public void setTypeName(Object typeName) {
+        this.returnType = (String) typeName;
     }
 }

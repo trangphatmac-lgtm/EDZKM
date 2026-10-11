@@ -62,7 +62,7 @@ public class ConstantDynamic extends DynamicConstantBase {
         return this.resolveConstantDynamic(listMultimap);
     }
 
-    public ConstantDynamic(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, classFileInputStream, abstractConstantPool);
+    public ConstantDynamic(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, classFileInputStream, abstractConstantPool);
     }
 }

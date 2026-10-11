@@ -15,22 +15,22 @@ public class MultiMapTable {
         this.map.clear();
     }
 
-    public PairMultiMap getPairMultiMap(Object object) {
-        return (PairMultiMap) this.map.get(object);
+    public PairMultiMap getPairMultiMap(Object key) {
+        return (PairMultiMap) this.map.get(key);
     }
 
     public Set entrySet() {
         return this.map.entrySet();
     }
 
-    public void addEntry(Object object, Object object1, Object object2, Object object3) {
-        PairMultiMap pairMultiMap = (PairMultiMap) this.map.get(object);
+    public void addEntry(Object key, Object keyArgument, Object first, Object second) {
+        PairMultiMap pairMultiMap = (PairMultiMap) this.map.get(key);
         if (pairMultiMap == null) {
             pairMultiMap = new PairMultiMap();
-            this.map.put(object, pairMultiMap);
+            this.map.put(key, pairMultiMap);
         }
 
-        pairMultiMap.addPair(object1, object2, object3);
+        pairMultiMap.addPair(keyArgument, first, second);
     }
 
     public Enumeration keys() {

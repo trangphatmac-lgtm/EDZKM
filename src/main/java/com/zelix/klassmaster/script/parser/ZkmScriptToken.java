@@ -28,18 +28,18 @@ public class ZkmScriptToken {
     @Override
     public final String toString() {
         int flowPredicate = ZkmScriptSimpleNode.getFlowPredicate();
-        String string;
+        String imageValue;
         if (flowPredicate == 0) {
             if (this.image == null) {
                 return "<" + ZkmAssert.getSimpleClassName(this) + " NULL >";
             }
 
-            string = this.image;
+            imageValue = this.image;
         } else {
-            string = this.image;
+            imageValue = this.image;
         }
 
-        return string;
+        return imageValue;
     }
 
     public void setParameterKind(int parameterKind) {

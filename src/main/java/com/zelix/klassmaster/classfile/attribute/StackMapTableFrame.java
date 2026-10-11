@@ -54,31 +54,31 @@ public abstract class StackMapTableFrame extends StackMapFrame {
             Map map2
     ) throws IOException {
         StackMapTableFrame stackMapTableFrame = null;
-        int ba = classFileInputStream.readUnsignedByte();
-        if (ba == 255) {
+        int frameTypeValue = classFileInputStream.readUnsignedByte();
+        if (frameTypeValue == 255) {
             stackMapTableFrame = new FullStackMapFrame(
                     stackMapTableAttribute, classFileInputStream, listMultimap, listMultimap1, printWriter, mutableInt, map1, map2
             );
-        } else if (ba == 251) {
+        } else if (frameTypeValue == 251) {
             stackMapTableFrame = new SameFrameExtended(stackMapTableAttribute, classFileInputStream, listMultimap, mutableInt);
-        } else if (ba >= 0 && ba <= 63) {
-            stackMapTableFrame = new SameFrame(ba, stackMapTableAttribute, listMultimap, mutableInt);
-        } else if (ba >= 64 && ba <= 127) {
+        } else if (frameTypeValue >= 0 && frameTypeValue <= 63) {
+            stackMapTableFrame = new SameFrame(frameTypeValue, stackMapTableAttribute, listMultimap, mutableInt);
+        } else if (frameTypeValue >= 64 && frameTypeValue <= 127) {
             stackMapTableFrame = new SameLocalsOneStackItemFrame(
-                    ba, stackMapTableAttribute, classFileInputStream, listMultimap, listMultimap1, printWriter, mutableInt, map1, map2
+                    frameTypeValue, stackMapTableAttribute, classFileInputStream, listMultimap, listMultimap1, printWriter, mutableInt, map1, map2
             );
-        } else if (ba == 247) {
+        } else if (frameTypeValue == 247) {
             stackMapTableFrame = new SameLocals1StackItemExtendedFrame(
                     stackMapTableAttribute, classFileInputStream, listMultimap, listMultimap1, printWriter, mutableInt, map1, map2
             );
-        } else if (ba >= 248 && ba <= 250) {
-            stackMapTableFrame = new ChopFrame(ba, stackMapTableAttribute, classFileInputStream, listMultimap, mutableInt);
-        } else if (ba >= 252 && ba <= 254) {
+        } else if (frameTypeValue >= 248 && frameTypeValue <= 250) {
+            stackMapTableFrame = new ChopFrame(frameTypeValue, stackMapTableAttribute, classFileInputStream, listMultimap, mutableInt);
+        } else if (frameTypeValue >= 252 && frameTypeValue <= 254) {
             stackMapTableFrame = new AppendFrame(
-                    ba, stackMapTableAttribute, classFileInputStream, listMultimap, listMultimap1, printWriter, mutableInt, map1, map2
+                    frameTypeValue, stackMapTableAttribute, classFileInputStream, listMultimap, listMultimap1, printWriter, mutableInt, map1, map2
             );
         } else {
-            ZkmAssert.assertTrue(false, new String[]{"Invalid StackMapTable frame type '" + ba + "' in '" + stackMapTableAttribute.getMethodDescription() + "'"});
+            ZkmAssert.assertTrue(false, new String[]{"Invalid StackMapTable frame type '" + frameTypeValue + "' in '" + stackMapTableAttribute.getMethodDescription() + "'"});
         }
 
         return stackMapTableFrame;
@@ -109,112 +109,94 @@ public abstract class StackMapTableFrame extends StackMapFrame {
     public static StackMapTableFrame createFrame(
             StackMapTableAttribute stackMapTableAttribute,
             LabelInstruction labelInstruction,
-            VerifierType[] verifierTypes,
-            VerifierType[] verifierTypes1,
+            VerifierType[] stackVerifierTypes,
+            VerifierType[] localVerifierTypes,
             ConstantPool constantPool1,
             Set set1,
             List list1,
-            MutableInt mutableInt,
-            ObservableHolder observableHolder,
-            ObservableHolder observableHolder1,
+            MutableInt previousFrameOffset,
+            ObservableHolder stackTypesHolder,
+            ObservableHolder localTypesHolder,
             Map map1,
             Map map2
     ) throws ZkmException, IOException {
         int offset = labelInstruction.getOffset();
-        int value = mutableInt.getValue();
-        int bb;
+        int value = previousFrameOffset.getValue();
+        int offsetDelta;
         if (value == -1) {
-            bb = offset;
+            offsetDelta = offset;
         } else {
-            bb = offset - value - 1;
+            offsetDelta = offset - value - 1;
         }
 
-        mutableInt.setValue(offset);
-        VerificationTypeInfo[] verificationTypeInfos = (VerificationTypeInfo[]) observableHolder1.getValue();
-        VerificationTypeInfo[] verificationTypeInfos1 = VerificationTypeInfo.convertVerifierTypes(
-                stackMapTableAttribute, verifierTypes1, constantPool1, set1, list1, true, map1, map2
+        previousFrameOffset.setValue(offset);
+        VerificationTypeInfo[] previousLocals = (VerificationTypeInfo[]) localTypesHolder.getValue();
+        VerificationTypeInfo[] currentLocals = VerificationTypeInfo.convertVerifierTypes(
+                stackMapTableAttribute, localVerifierTypes, constantPool1, set1, list1, true, map1, map2
         );
-        VerificationTypeInfo[] verificationTypeInfos2 = VerificationTypeInfo.convertVerifierTypes(
-                stackMapTableAttribute, verifierTypes, constantPool1, set1, list1, false, map1, map2
+        VerificationTypeInfo[] stackTypes = VerificationTypeInfo.convertVerifierTypes(
+                stackMapTableAttribute, stackVerifierTypes, constantPool1, set1, list1, false, map1, map2
         );
-        boolean bl = areTypesEqual(verificationTypeInfos, verificationTypeInfos1);
+        boolean localsUnchanged = areTypesEqual(previousLocals, currentLocals);
         StackMapTableFrame stackMapTableFrame = null;
-        int bd = -1;
+        int selectedFrameType = -1;
         if (HiddenOptionFlags.FORCE_FULL_STACK_MAP_FRAMES) {
-            bd = 255;
-            stackMapTableFrame = new FullStackMapFrame(stackMapTableAttribute, bb, labelInstruction, verificationTypeInfos2, verificationTypeInfos1);
+            selectedFrameType = 255;
+            stackMapTableFrame = new FullStackMapFrame(stackMapTableAttribute, offsetDelta, labelInstruction, stackTypes, currentLocals);
         } else {
-            label95:
-            if (bl && verificationTypeInfos2.length == 0) {
-                short bj;
-                if (bb >= 0) {
-                    if (bb <= 63) {
-                        bd = bb;
-                        stackMapTableFrame = new SameFrame(stackMapTableAttribute, bd, labelInstruction);
-                        break label95;
-                    }
-
-                    bj = 251;
+            if (localsUnchanged && stackTypes.length == 0) {
+                if (offsetDelta >= 0 && offsetDelta <= 63) {
+                    selectedFrameType = offsetDelta;
+                    stackMapTableFrame = new SameFrame(stackMapTableAttribute, selectedFrameType, labelInstruction);
                 } else {
-                    bj = 251;
+                    selectedFrameType = 251;
+                    stackMapTableFrame = new SameFrameExtended(stackMapTableAttribute, labelInstruction, offsetDelta);
                 }
-
-                bd = bj;
-                stackMapTableFrame = new SameFrameExtended(stackMapTableAttribute, labelInstruction, bb);
             } else {
-                label86:
-                if (bl && verificationTypeInfos2.length == 1) {
-                    short bk;
-                    if (bb >= 0) {
-                        if (bb <= 63) {
-                            bd = bb + 64;
-                            stackMapTableFrame = new SameLocalsOneStackItemFrame(stackMapTableAttribute, bd, labelInstruction, verificationTypeInfos2[0]);
-                            break label86;
-                        }
-
-                        bk = 247;
+                if (localsUnchanged && stackTypes.length == 1) {
+                    if (offsetDelta >= 0 && offsetDelta <= 63) {
+                        selectedFrameType = offsetDelta + 64;
+                        stackMapTableFrame = new SameLocalsOneStackItemFrame(stackMapTableAttribute, selectedFrameType, labelInstruction, stackTypes[0]);
                     } else {
-                        bk = 247;
+                        selectedFrameType = 247;
+                        stackMapTableFrame = new SameLocals1StackItemExtendedFrame(stackMapTableAttribute, offsetDelta, labelInstruction, stackTypes[0]);
                     }
+                } else if (stackTypes.length == 0) {
+                    int removedLocalCount = previousLocals.length - currentLocals.length;
+                    if (removedLocalCount >= 1 && removedLocalCount <= 3) {
+                        boolean remainingLocalsUnchanged = true;
 
-                    bd = bk;
-                    stackMapTableFrame = new SameLocals1StackItemExtendedFrame(stackMapTableAttribute, bb, labelInstruction, verificationTypeInfos2[0]);
-                } else if (verificationTypeInfos2.length == 0) {
-                    int be = verificationTypeInfos.length - verificationTypeInfos1.length;
-                    if (be >= 1 && be <= 3) {
-                        boolean bl1 = true;
-
-                        for (int i = 0; i < verificationTypeInfos1.length; i++) {
-                            if (!verificationTypeInfos[i].isSameType(verificationTypeInfos1[i])) {
-                                bl1 = false;
+                        for (int i = 0; i < currentLocals.length; i++) {
+                            if (!previousLocals[i].isSameType(currentLocals[i])) {
+                                remainingLocalsUnchanged = false;
                                 break;
                             }
                         }
 
-                        if (bl1) {
-                            bd = 251 - be;
-                            stackMapTableFrame = new ChopFrame(stackMapTableAttribute, bd, bb, labelInstruction);
+                        if (remainingLocalsUnchanged) {
+                            selectedFrameType = 251 - removedLocalCount;
+                            stackMapTableFrame = new ChopFrame(stackMapTableAttribute, selectedFrameType, offsetDelta, labelInstruction);
                         }
                     }
 
-                    if (bd == -1) {
-                        int bh = verificationTypeInfos1.length - verificationTypeInfos.length;
-                        if (bh >= 1 && bh <= 3) {
-                            boolean bl2 = true;
+                    if (selectedFrameType == -1) {
+                        int appendedLocalCount = currentLocals.length - previousLocals.length;
+                        if (appendedLocalCount >= 1 && appendedLocalCount <= 3) {
+                            boolean previousLocalsUnchanged = true;
 
-                            for (int i = 0; i < verificationTypeInfos.length; i++) {
-                                if (!verificationTypeInfos[i].isSameType(verificationTypeInfos1[i])) {
-                                    bl2 = false;
+                            for (int i = 0; i < previousLocals.length; i++) {
+                                if (!previousLocals[i].isSameType(currentLocals[i])) {
+                                    previousLocalsUnchanged = false;
                                     break;
                                 }
                             }
 
-                            if (bl2) {
-                                bd = 251 + bh;
-                                int bi = bh;
-                                VerificationTypeInfo[] verificationTypeInfos3 = new VerificationTypeInfo[bi];
-                                System.arraycopy(verificationTypeInfos1, verificationTypeInfos1.length - bi, verificationTypeInfos3, 0, bi);
-                                stackMapTableFrame = new AppendFrame(stackMapTableAttribute, bd, bb, labelInstruction, verificationTypeInfos3);
+                            if (previousLocalsUnchanged) {
+                                selectedFrameType = 251 + appendedLocalCount;
+                                int appendedTypeCount = appendedLocalCount;
+                                VerificationTypeInfo[] appendedLocals = new VerificationTypeInfo[appendedTypeCount];
+                                System.arraycopy(currentLocals, currentLocals.length - appendedTypeCount, appendedLocals, 0, appendedTypeCount);
+                                stackMapTableFrame = new AppendFrame(stackMapTableAttribute, selectedFrameType, offsetDelta, labelInstruction, appendedLocals);
                             }
                         }
                     }
@@ -222,12 +204,12 @@ public abstract class StackMapTableFrame extends StackMapFrame {
             }
         }
 
-        if (bd == -1) {
-            stackMapTableFrame = new FullStackMapFrame(stackMapTableAttribute, bb, labelInstruction, verificationTypeInfos2, verificationTypeInfos1);
+        if (selectedFrameType == -1) {
+            stackMapTableFrame = new FullStackMapFrame(stackMapTableAttribute, offsetDelta, labelInstruction, stackTypes, currentLocals);
         }
 
-        observableHolder1.setValue(verificationTypeInfos1);
-        observableHolder.setValue(verificationTypeInfos2);
+        localTypesHolder.setValue(currentLocals);
+        stackTypesHolder.setValue(stackTypes);
         return stackMapTableFrame;
     }
 

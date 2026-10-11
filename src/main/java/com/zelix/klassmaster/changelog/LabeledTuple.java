@@ -6,11 +6,11 @@ public class LabeledTuple implements Comparable {
     public Object second;
     public Object third;
 
-    public LabeledTuple(String string, Object object, Object object1, Object object2) {
-        this.label = string;
-        this.first = object;
-        this.second = object1;
-        this.third = object2;
+    public LabeledTuple(String labelArgument, Object firstArgument, Object secondArgument, Object thirdArgument) {
+        this.label = labelArgument;
+        this.first = firstArgument;
+        this.second = secondArgument;
+        this.third = thirdArgument;
     }
 
     public Object getFirst() {
@@ -25,17 +25,17 @@ public class LabeledTuple implements Comparable {
         return this.label;
     }
 
-    public LabeledTuple(String string, Object object) {
-        this(string, object, null, null);
+    public LabeledTuple(String labelArgument, Object firstArgument) {
+        this(labelArgument, firstArgument, null, null);
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareLabels((LabeledTuple) object);
+    public int compareTo(Object other) {
+        return this.compareLabels((LabeledTuple) other);
     }
 
-    public LabeledTuple(String string, Object object, Object object1) {
-        this(string, object, object1, null);
+    public LabeledTuple(String labelArgument, Object firstArgument, Object secondArgument) {
+        this(labelArgument, firstArgument, secondArgument, null);
     }
 
     public Object getSecond() {

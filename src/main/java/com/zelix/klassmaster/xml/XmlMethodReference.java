@@ -33,22 +33,22 @@ public class XmlMethodReference {
         return this.methodNameHolder;
     }
 
-    public XmlMethodReference(long ba, String string, ObservableHolder observableHolder, String string1, SyntheticAccessMarker syntheticAccessMarker) {
-        this(string, observableHolder, string1);
+    public XmlMethodReference(long ba, String beanNameArgument, ObservableHolder observableHolder, String referenceDescriptionArgument, SyntheticAccessMarker syntheticAccessMarker) {
+        this(beanNameArgument, observableHolder, referenceDescriptionArgument);
     }
 
-    public XmlMethodReference(String string, String string1) {
-        this.beanName = string;
-        this.referenceDescription = string1;
+    public XmlMethodReference(String beanNameArgument, String referenceDescriptionArgument) {
+        this.beanName = beanNameArgument;
+        this.referenceDescription = referenceDescriptionArgument;
     }
 
     public String getBeanName() {
         return this.beanName;
     }
 
-    private XmlMethodReference(String string, ObservableHolder observableHolder, String string1) {
-        this.beanName = string;
-        this.referenceDescription = string1;
+    private XmlMethodReference(String beanNameArgument, ObservableHolder observableHolder, String referenceDescriptionArgument) {
+        this.beanName = beanNameArgument;
+        this.referenceDescription = referenceDescriptionArgument;
         this.methodNameHolder = observableHolder;
     }
 }

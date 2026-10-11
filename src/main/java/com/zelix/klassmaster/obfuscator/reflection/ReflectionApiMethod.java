@@ -98,20 +98,20 @@ public class ReflectionApiMethod {
         return this.receiverIsTargetClass;
     }
 
-    public void addParamDetail(int ba, ReflectionParamType reflectionParamType, boolean bl) {
+    public void addParamDetail(int positionArgument, ReflectionParamType reflectionParamType, boolean bl) {
         Boolean boolean3 = false;
         Boolean boolean2 = false;
         Boolean boolean1 = bl;
-        this.addParamDetail(ba, reflectionParamType, boolean1, boolean2, boolean3);
+        this.addParamDetail(positionArgument, reflectionParamType, boolean1, boolean2, boolean3);
     }
 
-    public void addParamDetail(int ba, ReflectionParamType reflectionParamType, Boolean boolean1, Boolean boolean2, Boolean boolean3) {
+    public void addParamDetail(int positionArgument, ReflectionParamType reflectionParamType, Boolean boolean1, Boolean boolean2, Boolean boolean3) {
         List list1;
         if (this.paramDetails.size() > 0) {
             ReflectionParamDetail reflectionParamDetail = (ReflectionParamDetail) this.paramDetails.get(this.paramDetails.size() - 1);
-            if (reflectionParamDetail.getPosition() >= ba) {
+            if (reflectionParamDetail.getPosition() >= positionArgument) {
                 throw new IllegalArgumentException(
-                        "Parameter details must be added in ascending position order. " + reflectionParamDetail.getPosition() + " > " + ba
+                        "Parameter details must be added in ascending position order. " + reflectionParamDetail.getPosition() + " > " + positionArgument
                 );
             }
 
@@ -120,7 +120,7 @@ public class ReflectionApiMethod {
             list1 = this.paramDetails;
         }
 
-        list1.add(new ReflectionParamDetail(ba, reflectionParamType, boolean1, boolean2, boolean3, null));
+        list1.add(new ReflectionParamDetail(positionArgument, reflectionParamType, boolean1, boolean2, boolean3, null));
     }
 
     public boolean hasLookupTemplate() {
@@ -128,9 +128,9 @@ public class ReflectionApiMethod {
     }
 
     public static int getFieldTypeParamIndex(ReflectionApiMethod reflectionApiMethod) {
-        for (int i = 0; i < reflectionApiMethod.getParamDetailCount(); i++) {
-            if (reflectionApiMethod.getParamDetail(i).isFieldTypeParam()) {
-                return i;
+        for (int fieldTypeParamIndex = 0; fieldTypeParamIndex < reflectionApiMethod.getParamDetailCount(); fieldTypeParamIndex++) {
+            if (reflectionApiMethod.getParamDetail(fieldTypeParamIndex).isFieldTypeParam()) {
+                return fieldTypeParamIndex;
             }
         }
 
@@ -142,10 +142,10 @@ public class ReflectionApiMethod {
     }
 
     public static int getMemberNameParamIndex(ReflectionApiMethod reflectionApiMethod) {
-        for (int i = 0; i < reflectionApiMethod.getParamDetailCount(); i++) {
-            ReflectionParamDetail reflectionParamDetail = reflectionApiMethod.getParamDetail(i);
+        for (int memberNameParamIndex = 0; memberNameParamIndex < reflectionApiMethod.getParamDetailCount(); memberNameParamIndex++) {
+            ReflectionParamDetail reflectionParamDetail = reflectionApiMethod.getParamDetail(memberNameParamIndex);
             if (reflectionParamDetail.isFieldNameParam() || reflectionParamDetail.isMethodNameParam()) {
-                return i;
+                return memberNameParamIndex;
             }
         }
 
@@ -166,7 +166,7 @@ public class ReflectionApiMethod {
             ReflectionTargetKind reflectionTargetKind,
             boolean receiverIsTargetClass,
             boolean reportable,
-            String string,
+            String methodSignatureArgument,
             ReflectionLookupTemplate reflectionLookupTemplate,
             ReflectionTargetScope reflectionTargetScope
     ) {
@@ -177,7 +177,7 @@ public class ReflectionApiMethod {
         this.reportable = reportable;
         this.lookupTemplate = reflectionLookupTemplate;
         this.targetScope = reflectionTargetScope;
-        this.methodSignature = string;
+        this.methodSignature = methodSignatureArgument;
     }
 
     public static int getTargetClassArgIndex(ReflectionApiMethod reflectionApiMethod) {
@@ -185,9 +185,9 @@ public class ReflectionApiMethod {
             return reflectionApiMethod.getParamDetailCount();
         }
 
-        for (int i = 0; i < reflectionApiMethod.getParamDetailCount(); i++) {
-            if (reflectionApiMethod.getParamDetail(i).isTargetClassParam()) {
-                return i;
+        for (int targetClassArgIndex = 0; targetClassArgIndex < reflectionApiMethod.getParamDetailCount(); targetClassArgIndex++) {
+            if (reflectionApiMethod.getParamDetail(targetClassArgIndex).isTargetClassParam()) {
+                return targetClassArgIndex;
             }
         }
 
@@ -202,27 +202,27 @@ public class ReflectionApiMethod {
         }
     }
 
-    public ReflectionApiMethod(int ba, InvocationKind invocationKind1, ReflectionTargetKind reflectionTargetKind, String string) {
-        this(ba, invocationKind1, reflectionTargetKind, false, true, string);
+    public ReflectionApiMethod(int parameterCountArgument, InvocationKind invocationKind1, ReflectionTargetKind reflectionTargetKind, String methodSignatureArgument) {
+        this(parameterCountArgument, invocationKind1, reflectionTargetKind, false, true, methodSignatureArgument);
     }
 
-    public void addParamDetail(int ba, ReflectionParamType reflectionParamType) {
+    public void addParamDetail(int positionArgument, ReflectionParamType reflectionParamType) {
         Boolean boolean3 = false;
         Boolean boolean2 = true;
         Boolean boolean1 = false;
-        this.addParamDetail(ba, reflectionParamType, boolean1, boolean2, boolean3);
+        this.addParamDetail(positionArgument, reflectionParamType, boolean1, boolean2, boolean3);
     }
 
     public ReflectionApiMethod(
-            int ba,
+            int parameterCountArgument,
             InvocationKind invocationKind1,
             ReflectionTargetKind reflectionTargetKind,
-            boolean bl,
-            String string,
+            boolean receiverIsTargetClassArgument,
+            String methodSignatureArgument,
             ReflectionLookupTemplate reflectionLookupTemplate,
             ReflectionTargetScope reflectionTargetScope
     ) {
-        this(ba, invocationKind1, reflectionTargetKind, bl, true, string, reflectionLookupTemplate, reflectionTargetScope);
+        this(parameterCountArgument, invocationKind1, reflectionTargetKind, receiverIsTargetClassArgument, true, methodSignatureArgument, reflectionLookupTemplate, reflectionTargetScope);
     }
 
     public static boolean isPrimitiveFieldUpdater(ReflectionApiMethod reflectionApiMethod) {
@@ -253,16 +253,16 @@ public class ReflectionApiMethod {
         return this.targetKind == ReflectionTargetKind.METHOD_TYPE;
     }
 
-    public ReflectionApiMethod(int ba, InvocationKind invocationKind1, ReflectionTargetKind reflectionTargetKind, boolean bl, boolean bl1, String string) {
-        this(ba, invocationKind1, reflectionTargetKind, bl, bl1, string, null, ReflectionTargetScope.NONE);
+    public ReflectionApiMethod(int parameterCountArgument, InvocationKind invocationKind1, ReflectionTargetKind reflectionTargetKind, boolean receiverIsTargetClassArgument, boolean reportableArgument, String methodSignatureArgument) {
+        this(parameterCountArgument, invocationKind1, reflectionTargetKind, receiverIsTargetClassArgument, reportableArgument, methodSignatureArgument, null, ReflectionTargetScope.NONE);
     }
 
     public boolean isObjectNameLookup() {
         return this.targetKind == ReflectionTargetKind.OBJECT_NAME_TYPE;
     }
 
-    public ReflectionParamDetail getParamDetail(int ba) {
-        return (ReflectionParamDetail) this.paramDetails.get(ba);
+    public ReflectionParamDetail getParamDetail(int elementIndex) {
+        return (ReflectionParamDetail) this.paramDetails.get(elementIndex);
     }
 
     public boolean isAllConstructorsLookup() {

@@ -21,18 +21,18 @@ public class UpFolderButton extends JButton implements PropertyChangeListener, F
     public UpFolderButton() {
         Icon icon1 = FileIconProvider.getUpFolderIcon();
         UpFolderButton upFolderButton2;
-        String string;
+        String toolTipText;
         if (icon1 != null) {
             this.setIcon(icon1);
             upFolderButton2 = this;
-            string = "Up one level";
+            toolTipText = "Up one level";
         } else {
             this.setText(fallbackText);
             upFolderButton2 = this;
-            string = "Up one level";
+            toolTipText = "Up one level";
         }
 
-        upFolderButton2.setToolTipText(string);
+        upFolderButton2.setToolTipText(toolTipText);
     }
 
     @Override

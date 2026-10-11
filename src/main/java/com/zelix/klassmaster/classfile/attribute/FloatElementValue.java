@@ -66,15 +66,15 @@ public class FloatElementValue extends AnnotationElementValue {
         return null;
     }
 
-    public FloatElementValue(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream) throws IOException {
-        super(classFileComponent, ba);
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+    public FloatElementValue(ClassFileComponent classFileComponent, int tagArgument, ClassFileInputStream classFileInputStream) throws IOException {
+        super(classFileComponent, tagArgument);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry != null && constantPoolEntry instanceof ConstantFloat) {
             this.floatConstant = (ConstantFloat) constantPoolEntry;
         } else {
             this.setValid();
-            this.setErrorMessage("Invalid component float constant index : " + bb + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
+            this.setErrorMessage("Invalid component float constant index : " + constantPoolIndex + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
         }
     }
 

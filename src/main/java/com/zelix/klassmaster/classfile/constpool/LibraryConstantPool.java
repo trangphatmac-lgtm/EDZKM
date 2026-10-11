@@ -23,10 +23,10 @@ public class LibraryConstantPool extends AbstractConstantPool {
     @Override
     public synchronized int appendEntries(List list1) {
         int ba = super.appendEntries(list1);
-        int bb = list1.size();
+        int list1Size = list1.size();
 
-        for (int i = 0; i < bb; i++) {
-            this.registerEntry((ConstantPoolEntry) list1.get(i));
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            this.registerEntry((ConstantPoolEntry) list1.get(elementIndex));
         }
 
         return ba;
@@ -56,10 +56,10 @@ public class LibraryConstantPool extends AbstractConstantPool {
         super.interfaceMethodRefs = new ArrayList(Math.max(5, (int) (ba * 0.15)));
         this.fieldRefs = new ArrayList(Math.max(5, (int) (ba * 0.15)));
         this.entries[0] = ConstantNullEntry.getSharedInstance(this);
-        int bb = 1;
+        int index = 1;
 
-        while (bb < ba) {
-            ConstantPoolEntry constantPoolEntry = ConstantPoolEntry.readLibraryEntry(bb, classFileInputStream, this);
+        while (index < ba) {
+            ConstantPoolEntry constantPoolEntry = ConstantPoolEntry.readLibraryEntry(index, classFileInputStream, this);
             if (constantPoolEntry.isUnresolved()) {
                 if (constantPoolEntry instanceof ConstantClass) {
                     arrayList.add(constantPoolEntry);
@@ -70,9 +70,9 @@ public class LibraryConstantPool extends AbstractConstantPool {
                 }
             }
 
-            this.entries[bb++] = constantPoolEntry;
+            this.entries[index++] = constantPoolEntry;
             if (constantPoolEntry.getSlotCount() == 2) {
-                this.entries[bb++] = ConstantNullEntry.getSharedInstance(this);
+                this.entries[index++] = ConstantNullEntry.getSharedInstance(this);
             }
         }
 
@@ -85,9 +85,9 @@ public class LibraryConstantPool extends AbstractConstantPool {
     public void applyPackageRenames(Object object) {
         HashMap hashMap = (HashMap) object;
 
-        for (int i = 1; i < this.entries.length; i++) {
-            if (this.entries[i] instanceof ResolvedPackageConstant) {
-                ((ResolvedPackageConstant) this.entries[i]).remapName(hashMap);
+        for (int entryIndex = 1; entryIndex < this.entries.length; entryIndex++) {
+            if (this.entries[entryIndex] instanceof ResolvedPackageConstant) {
+                ((ResolvedPackageConstant) this.entries[entryIndex]).remapName(hashMap);
             }
         }
     }
@@ -166,23 +166,23 @@ public class LibraryConstantPool extends AbstractConstantPool {
     public void resolveMemberRefTargets(
             ClassMemberLookup classMemberLookup1, ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1
     ) throws ZkmException, IOException {
-        for (int i = 1; i < this.entries.length; i++) {
-            if (this.entries[i] instanceof ResolvedMemberRef) {
-                ((ResolvedMemberRef) this.entries[i]).resolveMember(classMemberLookup1, classResolver1, ignoreMissingReferencesSpec1);
+        for (int entryIndex = 1; entryIndex < this.entries.length; entryIndex++) {
+            if (this.entries[entryIndex] instanceof ResolvedMemberRef) {
+                ((ResolvedMemberRef) this.entries[entryIndex]).resolveMember(classMemberLookup1, classResolver1, ignoreMissingReferencesSpec1);
             }
         }
     }
 
     @Override
     public void renameThisClass(Object object) {
-        String string = (String) object;
-        String string1 = this.getClassName();
+        String className = (String) object;
+        String classNameValue = this.getClassName();
 
         for (ConstantPoolEntry constantPoolEntry : this.entries) {
             if (constantPoolEntry instanceof ResolvedClassConstant) {
                 ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) constantPoolEntry;
-                if (resolvedClassConstant.getClassName().equals(string1)) {
-                    resolvedClassConstant.setClassName(string);
+                if (resolvedClassConstant.getClassName().equals(classNameValue)) {
+                    resolvedClassConstant.setClassName(className);
                 }
             }
         }
@@ -197,14 +197,14 @@ public class LibraryConstantPool extends AbstractConstantPool {
     public final void applyClassRenames(Object object, Object object1) throws ZkmException, IOException {
         HashMap hashMap = (HashMap) object;
 
-        for (int i = 1; i < this.entries.length; i++) {
-            if (!(this.entries[i] instanceof ConstantNullEntry)) {
-                if (this.entries[i] instanceof ResolvedClassConstant) {
-                    ((ResolvedClassConstant) this.entries[i]).remapName(hashMap);
-                } else if (this.entries[i] instanceof ResolvedNameAndType) {
-                    ((ResolvedNameAndType) this.entries[i]).remapDescriptor(hashMap);
-                } else if (this.entries[i] instanceof ResolvedMethodType) {
-                    ((ResolvedMethodType) this.entries[i]).remapDescriptor(hashMap);
+        for (int entryIndex = 1; entryIndex < this.entries.length; entryIndex++) {
+            if (!(this.entries[entryIndex] instanceof ConstantNullEntry)) {
+                if (this.entries[entryIndex] instanceof ResolvedClassConstant) {
+                    ((ResolvedClassConstant) this.entries[entryIndex]).remapName(hashMap);
+                } else if (this.entries[entryIndex] instanceof ResolvedNameAndType) {
+                    ((ResolvedNameAndType) this.entries[entryIndex]).remapDescriptor(hashMap);
+                } else if (this.entries[entryIndex] instanceof ResolvedMethodType) {
+                    ((ResolvedMethodType) this.entries[entryIndex]).remapDescriptor(hashMap);
                 }
             }
         }

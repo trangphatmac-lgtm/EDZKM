@@ -16,13 +16,13 @@ public class IdentityHashSet implements Set {
     }
 
     @Override
-    public boolean remove(Object object) {
-        return this.map.remove(object) != null;
+    public boolean remove(Object key) {
+        return this.map.remove(key) != null;
     }
 
     @Override
-    public boolean contains(Object object) {
-        return this.map.containsKey(object);
+    public boolean contains(Object key) {
+        return this.map.containsKey(key);
     }
 
     @Override
@@ -37,8 +37,8 @@ public class IdentityHashSet implements Set {
 
     @Override
     public boolean containsAll(Collection collection1) {
-        for (Object object : collection1) {
-            if (!this.map.containsKey(object)) {
+        for (Object key : collection1) {
+            if (!this.map.containsKey(key)) {
                 return false;
             }
         }

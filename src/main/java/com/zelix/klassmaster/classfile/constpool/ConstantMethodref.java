@@ -15,8 +15,8 @@ public class ConstantMethodref extends ConstantMemberRef implements ResolvableCo
         return new ResolvedMethodRefConstant(constantMemberRef, resolvedClassConstant, resolvedNameAndType, listMultimap);
     }
 
-    public ConstantMethodref(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, classFileInputStream, abstractConstantPool);
+    public ConstantMethodref(int index, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(index, classFileInputStream, abstractConstantPool);
     }
 
     @Override

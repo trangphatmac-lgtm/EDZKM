@@ -14,8 +14,8 @@ public class LocalVariableSlot implements LocalVariableIndex {
         this.wideSecondHalf = true;
     }
 
-    public LocalVariableSlot(int ba) {
-        this(ba, 0);
+    public LocalVariableSlot(int indexArgument) {
+        this(indexArgument, 0);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class LocalVariableSlot implements LocalVariableIndex {
         return this.index > 255;
     }
 
-    public LocalVariableSlot(int ba, boolean bl, boolean bl1) {
-        this(ba, bl, bl1, 0);
+    public LocalVariableSlot(int indexArgument, boolean wideFirstHalfArgument, boolean wideSecondHalfArgument) {
+        this(indexArgument, wideFirstHalfArgument, wideSecondHalfArgument, 0);
     }
 
     public void clearWideSecondHalf() {
@@ -51,9 +51,9 @@ public class LocalVariableSlot implements LocalVariableIndex {
 
     @Override
     public int replaceIndex(int index) {
-        int bb = this.index;
+        int indexValue = this.index;
         this.index = index;
-        return bb;
+        return indexValue;
     }
 
     @Override

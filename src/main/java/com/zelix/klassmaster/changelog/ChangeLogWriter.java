@@ -114,10 +114,10 @@ public class ChangeLogWriter implements LineSeparatorConstant {
     }
 
     public void writeMethods(
-            PrintWriter printWriter, ClassFileBase classFileBase, String string, String string1, HashMap hashMap, TwoKeyMap twoKeyMap, Map map1, Map map2, Map map3
+            PrintWriter printWriter, ClassFileBase classFileBase, String string, String key, HashMap hashMap, TwoKeyMap twoKeyMap, Map map1, Map map2, Map map3
     ) {
         printWriter.println("\tMethodsOf: " + string);
-        java.util.Map hashMap1 = twoKeyMap.getInnerMap(string1);
+        java.util.Map hashMap1 = twoKeyMap.getInnerMap(key);
         int methodCount = classFileBase.getMethodCount();
         if (methodCount > 0) {
             if (hashMap1 == null) {
@@ -129,9 +129,9 @@ public class ChangeLogWriter implements LineSeparatorConstant {
             AbstractMethodInfo[] abstractMethodInfos = classFileBase.getDeclaredMethods();
             HashMap hashMap2 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(abstractMethodInfos.length));
 
-            for (int i = 0; i < abstractMethodInfos.length; i++) {
-                AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[i];
-                MethodSignature methodSignature1 = (MethodSignature) twoKeyMap.getValue(string1, abstractMethodInfo.getSignature());
+            for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < abstractMethodInfos.length; abstractMethodInfoIndex++) {
+                AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[abstractMethodInfoIndex];
+                MethodSignature methodSignature1 = (MethodSignature) twoKeyMap.getValue(key, abstractMethodInfo.getSignature());
                 if (methodSignature1 != null) {
                     hashMap2.put(methodSignature1, abstractMethodInfo);
                 } else if (abstractMethodInfo.isProgramMember()) {
@@ -157,24 +157,24 @@ public class ChangeLogWriter implements LineSeparatorConstant {
                     boolean1 = Boolean.TRUE;
                 }
 
-                String string2 = methodSignature3.formatDeclaration(hashMap);
-                arrayList.add(new LabeledTuple(string2, methodSignature3, methodSignature2, boolean1));
+                String labelValue = methodSignature3.formatDeclaration(hashMap);
+                arrayList.add(new LabeledTuple(labelValue, methodSignature3, methodSignature2, boolean1));
             }
 
             ChangeLogEntryComparator changeLogEntryComparator = new ChangeLogEntryComparator(this);
             Collections.sort(arrayList, changeLogEntryComparator);
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                LabeledTuple labeledTuple = (LabeledTuple) arrayList.get(i);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                LabeledTuple labeledTuple = (LabeledTuple) arrayList.get(elementIndex);
                 MethodSignature methodSignature4 = (MethodSignature) labeledTuple.getFirst();
                 MethodSignature methodSignature5 = (MethodSignature) labeledTuple.getSecond();
                 AbstractMethodInfo abstractMethodInfo2 = (AbstractMethodInfo) hashMap2.get(methodSignature4);
-                String string3 = labeledTuple.getLabel();
+                String label = labeledTuple.getLabel();
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("\t\t");
                 stringBuilder.append(abstractMethodInfo2.getModifierString());
-                stringBuilder.append(string3);
-                boolean bl;
+                stringBuilder.append(label);
+                boolean changeLogParameterDetails;
                 if ((Boolean) labeledTuple.getThird()) {
                     if (abstractMethodInfo2.hasChangedParameters() && abstractMethodInfo2.isNameChanged() && map1 != null && map1.containsKey(abstractMethodInfo2)) {
                         stringBuilder.append("\t=>\t");
@@ -197,20 +197,20 @@ public class ChangeLogWriter implements LineSeparatorConstant {
                                 new MethodSignature(abstractMethodInfo2.getJvmName(), changedMethodDescriptor1.getDescriptor());
                             }
 
-                            stringBuilder.append(AbstractChangeLog.encodeParameterChangeData(changedMethodDescriptor1, long1, string1));
-                            bl = HiddenOptionFlags.CHANGE_LOG_PARAMETER_DETAILS;
+                            stringBuilder.append(AbstractChangeLog.encodeParameterChangeData(changedMethodDescriptor1, long1, key));
+                            changeLogParameterDetails = HiddenOptionFlags.CHANGE_LOG_PARAMETER_DETAILS;
                         } else {
-                            bl = HiddenOptionFlags.CHANGE_LOG_PARAMETER_DETAILS;
+                            changeLogParameterDetails = HiddenOptionFlags.CHANGE_LOG_PARAMETER_DETAILS;
                         }
                     } else {
-                        bl = HiddenOptionFlags.CHANGE_LOG_PARAMETER_DETAILS;
+                        changeLogParameterDetails = HiddenOptionFlags.CHANGE_LOG_PARAMETER_DETAILS;
                     }
                 } else {
                     stringBuilder.append("\tSignatureNotChanged:");
-                    bl = HiddenOptionFlags.CHANGE_LOG_PARAMETER_DETAILS;
+                    changeLogParameterDetails = HiddenOptionFlags.CHANGE_LOG_PARAMETER_DETAILS;
                 }
 
-                if (bl && map2 != null) {
+                if (changeLogParameterDetails && map2 != null) {
                     MethodParamChangeNode methodParamChangeNode = (MethodParamChangeNode) map2.get(abstractMethodInfo2);
                     if (methodParamChangeNode != null) {
                         stringBuilder.append(' ');
@@ -222,7 +222,7 @@ public class ChangeLogWriter implements LineSeparatorConstant {
                                         methodParamChangeNode.getSecondaryKey(),
                                         methodParamChangeNode.getRandomKey(),
                                         methodParamChangeNode.getFirstNodeXorMask(),
-                                        string1
+                                        key
                                 )
                         );
                     }
@@ -294,12 +294,12 @@ public class ChangeLogWriter implements LineSeparatorConstant {
                 } else {
                     StringBuilder stringBuilder = new StringBuilder();
 
-                    for (int i = 0; i < changeLogInputFiles.length; i++) {
-                        if (i > 0) {
+                    for (int changeLogInputFileIndex = 0; changeLogInputFileIndex < changeLogInputFiles.length; changeLogInputFileIndex++) {
+                        if (changeLogInputFileIndex > 0) {
                             stringBuilder.append(", ");
                         }
 
-                        stringBuilder.append(new File(changeLogInputFiles[i].getFileName()).getAbsolutePath());
+                        stringBuilder.append(new File(changeLogInputFiles[changeLogInputFileIndex].getFileName()).getAbsolutePath());
                     }
 
                     printWriter.println("//\"" + stringBuilder.toString() + "\" were used as input change logs." + LineSeparatorConstant.LINE_SEPARATOR);
@@ -314,28 +314,28 @@ public class ChangeLogWriter implements LineSeparatorConstant {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string2 = (String) entry.getKey();
-                String string3 = (String) entry.getValue();
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
                 Boolean boolean1;
-                if (string2.equals(string3)) {
+                if (key.equals(value)) {
                     boolean1 = Boolean.FALSE;
                 } else {
                     boolean1 = Boolean.TRUE;
                 }
 
-                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string3);
-                labeledTuples[bb++] = new LabeledTuple(string2, string3, classFileBase, boolean1);
+                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(value);
+                labeledTuples[bb++] = new LabeledTuple(key, value, classFileBase, boolean1);
             }
 
             Arrays.sort(labeledTuples);
 
-            for (int i = 0; i < labeledTuples.length; i++) {
-                String string6 = labeledTuples[i].getLabel();
-                String string7 = (String) labeledTuples[i].getFirst();
-                ClassFileBase classFileBase1 = (ClassFileBase) labeledTuples[i].getSecond();
-                Boolean boolean2 = (Boolean) labeledTuples[i].getThird();
-                String string8 = string6.replace('/', '.');
-                String string4 = string7.replace('/', '.');
+            for (int labeledTupleIndex = 0; labeledTupleIndex < labeledTuples.length; labeledTupleIndex++) {
+                String label = labeledTuples[labeledTupleIndex].getLabel();
+                String first = (String) labeledTuples[labeledTupleIndex].getFirst();
+                ClassFileBase classFileBase1 = (ClassFileBase) labeledTuples[labeledTupleIndex].getSecond();
+                Boolean boolean2 = (Boolean) labeledTuples[labeledTupleIndex].getThird();
+                String string8 = label.replace('/', '.');
+                String string4 = first.replace('/', '.');
                 if (boolean2) {
                     printWriter.print(
                             LineSeparatorConstant.LINE_SEPARATOR
@@ -357,18 +357,18 @@ public class ChangeLogWriter implements LineSeparatorConstant {
                     );
                 }
 
-                String string5 = (String) hashMap3.get(string7);
-                if (string5 == null && classFileBase1 instanceof ProgramClass) {
-                    string5 = ((ProgramClass) classFileBase1).getSourceFileName();
+                String sourceFileName = (String) hashMap3.get(first);
+                if (sourceFileName == null && classFileBase1 instanceof ProgramClass) {
+                    sourceFileName = ((ProgramClass) classFileBase1).getSourceFileName();
                 }
 
-                if (string5 != null) {
-                    printWriter.print("\tSource: \"" + ZkmStringUtils.replaceAll(string5, "\"", "\"") + '"' + LineSeparatorConstant.LINE_SEPARATOR);
+                if (sourceFileName != null) {
+                    printWriter.print("\tSource: \"" + ZkmStringUtils.replaceAll(sourceFileName, "\"", "\"") + '"' + LineSeparatorConstant.LINE_SEPARATOR);
                 }
 
-                this.writeFields(printWriter, hashMap2, twoKeyMap, classFileBase1, string8, string7, changeLogMapping1);
-                this.writeMethods(printWriter, classFileBase1, string8, string7, hashMap2, twoKeyMap1, map3, map4, map5);
-                this.writeLineNumbers(printWriter, string8, string7, nestedMultiMap);
+                this.writeFields(printWriter, hashMap2, twoKeyMap, classFileBase1, string8, first, changeLogMapping1);
+                this.writeMethods(printWriter, classFileBase1, string8, first, hashMap2, twoKeyMap1, map3, map4, map5);
+                this.writeLineNumbers(printWriter, string8, first, nestedMultiMap);
             }
 
             this.writeLookupClassEntries("AutoReflectionClass:", printWriter, programClass1, map1);
@@ -385,18 +385,18 @@ public class ChangeLogWriter implements LineSeparatorConstant {
             TwoKeyMap twoKeyMap,
             ClassFileBase classFileBase,
             String string,
-            String string1,
+            String key,
             ChangeLogMapping changeLogMapping1
     ) throws IOException {
         printWriter.println("\tFieldsOf: " + string);
-        Map map1 = twoKeyMap.getInnerMap(string1);
+        Map map1 = twoKeyMap.getInnerMap(key);
         if (map1 != null && map1.size() > 0) {
             AbstractFieldInfo[] abstractFieldInfos = classFileBase.getFields();
             HashMap hashMap1 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(abstractFieldInfos.length));
 
-            for (int i = 0; i < abstractFieldInfos.length; i++) {
-                AbstractFieldInfo abstractFieldInfo = abstractFieldInfos[i];
-                FieldSignature fieldSignature = (FieldSignature) twoKeyMap.getValue(string1, abstractFieldInfo.getSignature());
+            for (int abstractFieldInfoIndex = 0; abstractFieldInfoIndex < abstractFieldInfos.length; abstractFieldInfoIndex++) {
+                AbstractFieldInfo abstractFieldInfo = abstractFieldInfos[abstractFieldInfoIndex];
+                FieldSignature fieldSignature = (FieldSignature) twoKeyMap.getValue(key, abstractFieldInfo.getSignature());
                 if (fieldSignature != null) {
                     hashMap1.put(fieldSignature, abstractFieldInfo);
                 } else {
@@ -444,37 +444,37 @@ public class ChangeLogWriter implements LineSeparatorConstant {
             Arrays.sort(labeledTuples);
             int bc = 0;
 
-            for (int i = 0; i < labeledTuples.length; i++) {
-                FieldSignature fieldSignature3 = (FieldSignature) labeledTuples[i].getFirst();
-                FieldSignature fieldSignature4 = (FieldSignature) labeledTuples[i].getSecond();
+            for (int labeledTupleIndex = 0; labeledTupleIndex < labeledTuples.length; labeledTupleIndex++) {
+                FieldSignature fieldSignature3 = (FieldSignature) labeledTuples[labeledTupleIndex].getFirst();
+                FieldSignature fieldSignature4 = (FieldSignature) labeledTuples[labeledTupleIndex].getSecond();
                 AbstractFieldInfo abstractFieldInfo1 = (AbstractFieldInfo) hashMap1.get(fieldSignature3);
-                String string4;
+                String modifierString;
                 if (abstractFieldInfo1 == null) {
-                    string4 = "public static ";
+                    modifierString = "public static ";
                 } else {
-                    string4 = abstractFieldInfo1.getModifierString();
+                    modifierString = abstractFieldInfo1.getModifierString();
                 }
 
-                String string2 = fieldSignature3.getName();
-                String string3 = fieldSignature4.getName();
-                if ((Boolean) labeledTuples[i].getThird()) {
+                String name = fieldSignature3.getName();
+                String nameValue = fieldSignature4.getName();
+                if ((Boolean) labeledTuples[labeledTupleIndex].getThird()) {
                     printWriter.println(
                             "\t\t"
-                                    + string4
+                                    + modifierString
                                     + MethodSignature.descriptorToJavaType(fieldSignature3.getDescriptor(), hashMap)
                                     + " "
-                                    + string2
+                                    + name
                                     + "\t=>\t"
-                                    + string3
+                                    + nameValue
                                     + (abstractFieldInfo1.isManufactured() ? " Manufactured:" : "")
                     );
                 } else {
                     printWriter.println(
                             "\t\t"
-                                    + string4
+                                    + modifierString
                                     + MethodSignature.descriptorToJavaType(fieldSignature4.getDescriptor(), hashMap)
                                     + " "
-                                    + string3
+                                    + nameValue
                                     + "\tNameNotChanged"
                                     + (abstractFieldInfo1.isManufactured() ? " Manufactured:" : "")
                     );
@@ -487,7 +487,7 @@ public class ChangeLogWriter implements LineSeparatorConstant {
 
     public void writeFlowObfuscationData(PrintWriter printWriter, HashMap hashMap, FlowObfuscationManager flowObfuscationManager, LabeledTuple[] labeledTuples) throws IOException {
         if (flowObfuscationManager != null) {
-            int ba = 0;
+            int integerValue = 0;
             HashMap hashMap1 = ZkmUtils.createHashMap();
             TwoKeyMap twoKeyMap = new TwoKeyMap();
             HashMap hashMap2 = ZkmUtils.createHashMap();
@@ -497,15 +497,15 @@ public class ChangeLogWriter implements LineSeparatorConstant {
                 printWriter.println();
                 printWriter.println();
 
-                for (Iterator iterator = list1.iterator(); iterator.hasNext(); ba++) {
+                for (Iterator iterator = list1.iterator(); iterator.hasNext(); integerValue++) {
                     OpaquePredicateField opaquePredicateField = (OpaquePredicateField) iterator.next();
-                    String string = opaquePredicateField.getOwnerClassName();
-                    String string14 = (String) ZkmUtils.mapOrSelf(string, hashMap);
-                    String string2 = ZkmUtils.slashesToDots(string);
+                    String ownerClassName = opaquePredicateField.getOwnerClassName();
+                    String string14 = (String) ZkmUtils.mapOrSelf(ownerClassName, hashMap);
+                    String string2 = ZkmUtils.slashesToDots(ownerClassName);
                     String string3 = AbstractChangeLog.encodeOpaquePredicateData(opaquePredicateField, flowObfuscationManager.getRandom());
                     printWriter.println("TraceBackClass: " + string2 + "\t" + "Data: " + string3);
-                    hashMap1.put(opaquePredicateField, this.integerCache.valueOf(ba));
-                    hashMap2.put("[L" + string + ';', this.integerCache.valueOf(ba));
+                    hashMap1.put(opaquePredicateField, this.integerCache.valueOf(integerValue));
+                    hashMap2.put("[L" + ownerClassName + ';', this.integerCache.valueOf(integerValue));
                 }
             }
 
@@ -532,62 +532,62 @@ public class ChangeLogWriter implements LineSeparatorConstant {
 
             while (iterator1.hasNext()) {
                 ObjectPair objectPair = (ObjectPair) iterator1.next();
-                String string9 = (String) objectPair.getFirst();
+                String first = (String) objectPair.getFirst();
                 OpaquePredicateField opaquePredicateField4 = (OpaquePredicateField) objectPair.getSecond();
-                String string4 = opaquePredicateField4.getOwnerClassName();
-                String string13 = (String) ZkmUtils.mapOrSelf(string4, hashMap);
-                String string5 = ZkmUtils.slashesToDots(string4);
+                String ownerClassNameValue = opaquePredicateField4.getOwnerClassName();
+                String string13 = (String) ZkmUtils.mapOrSelf(ownerClassNameValue, hashMap);
+                String string5 = ZkmUtils.slashesToDots(ownerClassNameValue);
                 hashMap2.get(opaquePredicateField4.getFieldType());
                 String string6 = AbstractChangeLog.encodeOpaquePredicateData(opaquePredicateField4, flowObfuscationManager.getRandom());
                 TwoKeyMap twoKeyMap1;
-                String string15;
+                String firstValue;
                 OpaquePredicateField opaquePredicateField6;
                 IntegerCache integerCache1;
-                if (string9.length() > 0) {
-                    String string7 = ZkmUtils.slashesToDots(string9);
+                if (first.length() > 0) {
+                    String string7 = ZkmUtils.slashesToDots(first);
                     printWriter.println("ForwardClass: " + string5 + " " + "Package: " + string7 + "\t" + "Data: " + string6);
                     twoKeyMap1 = twoKeyMap;
-                    string15 = string9;
+                    firstValue = first;
                     long bd = 59172929949573L;
                     opaquePredicateField6 = opaquePredicateField4;
                     integerCache1 = this.integerCache;
                 } else {
                     printWriter.println("ForwardClass: " + string5 + "\t" + "Data: " + string6);
                     twoKeyMap1 = twoKeyMap;
-                    string15 = string9;
+                    firstValue = first;
                     long bc = 59172929949573L;
                     opaquePredicateField6 = opaquePredicateField4;
                     integerCache1 = this.integerCache;
                 }
 
-                Integer integer1 = integerCache1.valueOf(ba++);
+                Integer integer1 = integerCache1.valueOf(integerValue++);
                 OpaquePredicateField opaquePredicateField3 = opaquePredicateField6;
-                twoKeyMap1.putValue(string15, opaquePredicateField3, integer1);
+                twoKeyMap1.putValue(firstValue, opaquePredicateField3, integer1);
             }
 
-            for (int i = 0; i < labeledTuples.length; i++) {
-                LabeledTuple labeledTuple = labeledTuples[i];
-                String string10 = labeledTuple.getLabel();
-                String string11 = ClassFileBase.getPackagePath(string10);
+            for (int labeledTupleIndex = 0; labeledTupleIndex < labeledTuples.length; labeledTupleIndex++) {
+                LabeledTuple labeledTuple = labeledTuples[labeledTupleIndex];
+                String label = labeledTuple.getLabel();
+                String packagePath = ClassFileBase.getPackagePath(label);
                 ClassFileBase classFileBase = (ClassFileBase) labeledTuple.getSecond();
                 FlowFieldPair flowFieldPair = flowObfuscationManager.getFieldPair(classFileBase);
                 if (flowFieldPair != null) {
                     OpaquePredicateField opaquePredicateField5 = flowFieldPair.getGroupField();
                     if (opaquePredicateField5 != null) {
                         OpaquePredicateField opaquePredicateField2 = flowFieldPair.getPackageField();
-                        ZkmAssert.assertNotNull(opaquePredicateField2, "'" + string10 + "' (1)");
-                        String string12 = (String) ZkmUtils.mapOrSelf(string10, hashMap);
+                        ZkmAssert.assertNotNull(opaquePredicateField2, "'" + label + "' (1)");
+                        String string12 = (String) ZkmUtils.mapOrSelf(label, hashMap);
                         Integer integer2 = (Integer) hashMap1.get(opaquePredicateField5);
                         ZkmAssert.assertNotNull(
-                                integer2, "'" + string10 + "' '" + opaquePredicateField5.getOwnerClassName() + "' '" + opaquePredicateField5.getFieldName() + "' (2)"
+                                integer2, "'" + label + "' '" + opaquePredicateField5.getOwnerClassName() + "' '" + opaquePredicateField5.getFieldName() + "' (2)"
                         );
-                        Integer integer = (Integer) twoKeyMap.getValue(string11, opaquePredicateField2);
+                        Integer integer = (Integer) twoKeyMap.getValue(packagePath, opaquePredicateField2);
                         ZkmAssert.assertNotNull(
                                 integer,
                                 "'"
-                                        + string10
+                                        + label
                                         + "' '"
-                                        + string11
+                                        + packagePath
                                         + "' '"
                                         + opaquePredicateField2.getOwnerClassName()
                                         + "' '"
@@ -602,7 +602,7 @@ public class ChangeLogWriter implements LineSeparatorConstant {
                                 flowObfuscationManager.isSecondaryCallerClass(classFileBase),
                                 flowObfuscationManager.getRandom()
                         );
-                        printWriter.println("MemberClass: " + ZkmUtils.slashesToDots(string10) + "\t" + "Data: " + string8);
+                        printWriter.println("MemberClass: " + ZkmUtils.slashesToDots(label) + "\t" + "Data: " + string8);
                     }
                 }
             }
@@ -611,25 +611,25 @@ public class ChangeLogWriter implements LineSeparatorConstant {
 
     public static void writePackages(PrintWriter printWriter, HashMap hashMap) {
         printWriter.println();
-        int ba = hashMap.size();
-        LabeledTuple[] labeledTuples = new LabeledTuple[ba];
+        int hashMapSize = hashMap.size();
+        LabeledTuple[] labeledTuples = new LabeledTuple[hashMapSize];
         int bb = 0;
         Iterator iterator = hashMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getKey();
-            labeledTuples[bb++] = new LabeledTuple(string, entry.getValue(), null);
+            String key = (String) entry.getKey();
+            labeledTuples[bb++] = new LabeledTuple(key, entry.getValue(), null);
         }
 
         Arrays.sort(labeledTuples);
 
-        for (int i = 0; i < ba; i++) {
-            String string1 = (String) labeledTuples[i].getFirst();
+        for (int labeledTupleIndex = 0; labeledTupleIndex < hashMapSize; labeledTupleIndex++) {
+            String first = (String) labeledTuples[labeledTupleIndex].getFirst();
             printWriter.println(
                     "Package: "
-                            + labeledTuples[i].getLabel().replace('/', '.')
-                            + (labeledTuples[i].getLabel().equals(string1) ? "\tNameNotChanged" : "\t=>\t" + string1.replace('/', '.'))
+                            + labeledTuples[labeledTupleIndex].getLabel().replace('/', '.')
+                            + (labeledTuples[labeledTupleIndex].getLabel().equals(first) ? "\tNameNotChanged" : "\t=>\t" + first.replace('/', '.'))
             );
         }
     }
@@ -670,11 +670,11 @@ public class ChangeLogWriter implements LineSeparatorConstant {
         }
     }
 
-    public void writeLineNumbers(PrintWriter printWriter, String string, String string1, NestedMultiMap nestedMultiMap) {
+    public void writeLineNumbers(PrintWriter printWriter, String string, String key, NestedMultiMap nestedMultiMap) {
         ChangeLogSimpleNode.getOpaqueStrings();
         if (nestedMultiMap != null && nestedMultiMap.getKeyCount() > 0) {
             printWriter.println("\tLineNumbersOf: " + string);
-            ListMultimap listMultimap = nestedMultiMap.getMultimap(string1);
+            ListMultimap listMultimap = nestedMultiMap.getMultimap(key);
             if (listMultimap != null) {
                 Enumeration enumeration = listMultimap.keys();
                 RankedValue[] rankedValues = new RankedValue[listMultimap.getKeyCount()];
@@ -688,29 +688,29 @@ public class ChangeLogWriter implements LineSeparatorConstant {
 
                 Arrays.sort(rankedValues);
 
-                for (int i = 0; i < rankedValues.length; i++) {
-                    int rank = rankedValues[i].getRank();
-                    List list2 = (List) rankedValues[i].getValue();
-                    int bb = list2.size() - 1;
-                    if (bb > 0) {
+                for (int rankedValueIndex = 0; rankedValueIndex < rankedValues.length; rankedValueIndex++) {
+                    int rank = rankedValues[rankedValueIndex].getRank();
+                    List list2 = (List) rankedValues[rankedValueIndex].getValue();
+                    int elementIndex = list2.size() - 1;
+                    if (elementIndex > 0) {
                         Collections.sort(list2);
                     }
 
                     StringBuffer stringBuffer = new StringBuffer();
                     stringBuffer.append("\t\t" + rank + "\t=>\t");
 
-                    for (int j = 0; j < bb; j++) {
-                        stringBuffer.append(((Integer) list2.get(j)).intValue());
-                        if (j < bb - 1) {
+                    for (int elementIndexValue = 0; elementIndexValue < elementIndex; elementIndexValue++) {
+                        stringBuffer.append(((Integer) list2.get(elementIndexValue)).intValue());
+                        if (elementIndexValue < elementIndex - 1) {
                             stringBuffer.append(", ");
                         }
                     }
 
-                    if (bb > 0) {
+                    if (elementIndex > 0) {
                         stringBuffer.append(" and ");
                     }
 
-                    stringBuffer.append(((Integer) list2.get(bb)).intValue());
+                    stringBuffer.append(((Integer) list2.get(elementIndex)).intValue());
                     printWriter.println(stringBuffer.toString());
                 }
             }

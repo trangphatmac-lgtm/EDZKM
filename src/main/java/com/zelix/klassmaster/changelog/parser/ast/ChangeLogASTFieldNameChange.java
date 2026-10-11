@@ -15,13 +15,13 @@ public class ChangeLogASTFieldNameChange extends ChangeLogModifierNode {
     public void interpret(ChangeLogNode changeLogNode, int bd, int be, int ba, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         if (abstractChangeLog.acceptsFieldChanges()) {
             int bb = this.jjtGetNumChildren();
-            int bc = 0;
+            int childrenElementIndex = 0;
 
-            while (bc < bb) {
-                ChangeLogNode changeLogNode1 = this.jjtGetChild(bc);
+            while (childrenElementIndex < bb) {
+                ChangeLogNode changeLogNode1 = this.jjtGetChild(childrenElementIndex);
                 if (ba > 0) {
                     changeLogNode1.interpret(this, 30872, 34067, 41973, abstractChangeLog);
-                    bc++;
+                    childrenElementIndex++;
                 }
             }
 
@@ -33,19 +33,19 @@ public class ChangeLogASTFieldNameChange extends ChangeLogModifierNode {
         }
     }
 
-    public void setFieldType(String string) {
-        this.fieldType = string;
+    public void setFieldType(String fieldTypeArgument) {
+        this.fieldType = fieldTypeArgument;
     }
 
-    public void setOldFieldName(String string) {
-        this.oldFieldName = string;
+    public void setOldFieldName(String oldFieldNameArgument) {
+        this.oldFieldName = oldFieldNameArgument;
     }
 
     public ChangeLogASTFieldNameChange() {
         super(14);
     }
 
-    public void setNewFieldName(String string) {
-        this.newFieldName = string;
+    public void setNewFieldName(String newFieldNameArgument) {
+        this.newFieldName = newFieldNameArgument;
     }
 }

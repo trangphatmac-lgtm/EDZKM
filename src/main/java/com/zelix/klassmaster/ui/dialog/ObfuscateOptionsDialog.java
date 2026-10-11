@@ -174,11 +174,11 @@ public class ObfuscateOptionsDialog extends ObfuscateOptionsDialogBase {
     @Override
     public boolean validateInputs() throws ZkmException, IOException {
         if (this.collapsePackagesChk.isSelected()) {
-            String string = this.defaultCollapsePackageTxt.getText();
+            String text = this.defaultCollapsePackageTxt.getText();
             ObservableHolder observableHolder = new ObservableHolder();
-            String string1 = RootPackageNode.normalizePackageName(string, observableHolder);
+            String string1 = RootPackageNode.normalizePackageName(text, observableHolder);
             if (!observableHolder.isValueNull()) {
-                new MessageBoxDialog(this, "Error", "Invalid default package name '" + string + "' : \"" + (String) observableHolder.getValue() + "\"");
+                new MessageBoxDialog(this, "Error", "Invalid default package name '" + text + "' : \"" + (String) observableHolder.getValue() + "\"");
                 SwingUtils.requestFocusOnEdt(this.defaultCollapsePackageTxt);
                 return false;
             }
@@ -196,15 +196,15 @@ public class ObfuscateOptionsDialog extends ObfuscateOptionsDialogBase {
     }
 
     public ObfuscateOptionsDialog(
-            String string,
-            String string1,
+            String title,
+            String toolTipText,
             ZkmMainWindow zkmMainWindow,
             ObfuscateOptions obfuscateOptions1,
             ExclusionWizardSettings exclusionWizardSettings,
             ScriptEnvironment scriptEnvironment1,
             DialogCallback dialogCallback1
     ) {
-        super(string, string1, zkmMainWindow, obfuscateOptions1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1);
+        super(title, toolTipText, zkmMainWindow, obfuscateOptions1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1);
     }
 
     @Override

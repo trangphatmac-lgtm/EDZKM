@@ -25,9 +25,9 @@ public abstract class AbstractStackMapAttribute extends Attribute {
     public abstract void writeFramesRemapped(DataOutputStream dataOutputStream, Map map1) throws IOException;
 
     public AbstractStackMapAttribute(
-            ClassFileComponent classFileComponent, int ba, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap
+            ClassFileComponent classFileComponent, int constantPoolIndex, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
     }
 
     @Override
@@ -43,16 +43,16 @@ public abstract class AbstractStackMapAttribute extends Attribute {
     @Override
     public void collectUsedConstants(char bc, int ba, UsedConstantsCollector usedConstantsCollector, char bd) {
         usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
-        int bb = 0;
+        int frameIndex = 0;
 
         while (true) {
-            if (bb < this.frameCount) {
-                this.frames[bb].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+            if (frameIndex < this.frameCount) {
+                this.frames[frameIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
             } else if (ba >= 0) {
                 return;
             }
 
-            bb++;
+            frameIndex++;
         }
     }
 
@@ -77,12 +77,12 @@ public abstract class AbstractStackMapAttribute extends Attribute {
         if (this.parsed && hashSet.size() > 0) {
             ArrayList arrayList = new ArrayList(this.frameCount);
 
-            for (int i = 0; i < this.frameCount; i++) {
-                LabelInstruction labelInstruction = this.frames[i].getLabel();
+            for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+                LabelInstruction labelInstruction = this.frames[frameIndex].getLabel();
                 if (!hashSet.contains(labelInstruction)) {
-                    arrayList.add(this.frames[i]);
+                    arrayList.add(this.frames[frameIndex]);
                 } else {
-                    setMultiMap.removeValue(labelInstruction, this.frames[i]);
+                    setMultiMap.removeValue(labelInstruction, this.frames[frameIndex]);
                     labelInstruction.clearUsageFlag(InstructionUsageClearFlag.CLEAR_USAGE_STACK_MAP);
                 }
             }
@@ -97,21 +97,21 @@ public abstract class AbstractStackMapAttribute extends Attribute {
     }
 
     public final void collectLabelReferences(SetMultiMap setMultiMap) {
-        for (int i = 0; i < this.frameCount; i++) {
-            this.frames[i].registerLabelTargets(setMultiMap);
+        for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+            this.frames[frameIndex].registerLabelTargets(setMultiMap);
         }
     }
 
     @Override
     public final int getLength() {
-        int ba = 2;
+        int lengthValue = 2;
 
-        for (int i = 0; i < this.frameCount; i++) {
-            ba += this.frames[i].getFrameSize();
+        for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+            lengthValue += this.frames[frameIndex].getFrameSize();
         }
 
-        this.length = ba;
-        return ba;
+        this.length = lengthValue;
+        return lengthValue;
     }
 
     public int getFrameCount() {

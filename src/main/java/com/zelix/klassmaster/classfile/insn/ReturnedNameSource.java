@@ -42,8 +42,8 @@ public class ReturnedNameSource {
         return this.failureReason != null;
     }
 
-    public ReturnedNameSource(String string, MethodBytecode methodBytecode1) {
-        this.failureReason = string;
+    public ReturnedNameSource(String failureReasonArgument, MethodBytecode methodBytecode1) {
+        this.failureReason = failureReasonArgument;
         this.methodBytecode = methodBytecode1;
     }
 

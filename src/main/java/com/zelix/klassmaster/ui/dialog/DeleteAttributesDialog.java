@@ -64,9 +64,9 @@ public class DeleteAttributesDialog extends EscapeClosableFrame implements Helpe
         this.trimOptions.c = this.deleteUnknownAttributesChk.isSelected();
     }
 
-    public void buildDialog(String string, String string1, String string2) {
+    public void buildDialog(String title, String string1, String toolTipText) {
         Container container1 = this.getContentPane();
-        ConstraintLayout constraintLayout1 = this.createContentLayout(string, string1, string2, container1);
+        ConstraintLayout constraintLayout1 = this.createContentLayout(title, string1, toolTipText, container1);
         TrimOptionsActionListener trimOptionsActionListener = new TrimOptionsActionListener(this);
         this.previousBtn.addActionListener(trimOptionsActionListener);
         this.okBtn.addActionListener(trimOptionsActionListener);
@@ -122,11 +122,11 @@ public class DeleteAttributesDialog extends EscapeClosableFrame implements Helpe
         constraintLayout1.setConstraints(LAYOUT_SPEC);
     }
 
-    public ConstraintLayout createContentLayout(String string, String string1, String string2, Container container1) {
-        this.setTitle(string);
+    public ConstraintLayout createContentLayout(String title, String string1, String toolTipText, Container container1) {
+        this.setTitle(title);
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
-        this.createButtons(string1, string2);
+        this.createButtons(string1, toolTipText);
         TrimOptionsWindowCloser trimOptionsWindowCloser = new TrimOptionsWindowCloser(this);
         this.addWindowListener(trimOptionsWindowCloser);
         return constraintLayout1;
@@ -145,12 +145,12 @@ public class DeleteAttributesDialog extends EscapeClosableFrame implements Helpe
         GuiResources.showHelpTopic("032");
     }
 
-    public DeleteAttributesDialog(String string, String string1, String string2, JFrame jFrame, TrimOptions trimOptions1, DialogCallback dialogCallback1) {
+    public DeleteAttributesDialog(String title, String string1, String toolTipText, JFrame jFrame, TrimOptions trimOptions1, DialogCallback dialogCallback1) {
         this.trimOptions = trimOptions1;
         this.ownerFrame = jFrame;
         this.dialogCallback = dialogCallback1;
         this.setFont(KlassMaster.getDefaultFont());
-        this.buildDialog(string, string1, string2);
+        this.buildDialog(title, string1, toolTipText);
         SwingUtils.requestFocusOnEdt(this.okBtn);
     }
 
@@ -190,11 +190,11 @@ public class DeleteAttributesDialog extends EscapeClosableFrame implements Helpe
         }
     }
 
-    public void createButtons(String string, String string1) {
+    public void createButtons(String string, String toolTipText) {
         this.previousBtn = new JButton("Previous");
         this.previousBtn.setToolTipText(GuiResources.getTooltipText("PREVIOUS_SCREEN"));
         this.okBtn = new JButton(string);
-        this.okBtn.setToolTipText(string1);
+        this.okBtn.setToolTipText(toolTipText);
         this.cancelBtn = new JButton("Cancel");
         this.cancelBtn.setToolTipText(GuiResources.getTooltipText("CANCEL_DIALOG"));
         this.helpBtn = new JButton("Help");

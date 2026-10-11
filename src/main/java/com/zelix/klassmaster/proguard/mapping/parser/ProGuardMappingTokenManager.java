@@ -47,12 +47,12 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
         }
     }
 
-    public static final boolean jjCanMove_0(int ba, int bb, int bc, long bd, long be) {
+    public static final boolean jjCanMove_0(int ba, int jjbitVec0ElementIndex, int jjbitVec2ElementIndex, long bd, long be) {
         switch (ba) {
             case 0:
-                return (jjbitVec2[bc] & be) != 0L;
+                return (jjbitVec2[jjbitVec2ElementIndex] & be) != 0L;
             default:
-                return (jjbitVec0[bb] & bd) != 0L;
+                return (jjbitVec0[jjbitVec0ElementIndex] & bd) != 0L;
         }
     }
 
@@ -176,17 +176,17 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
         }
     }
 
-    public static int jjStartNfaWithStates_0(int ba, int bb, int bc) {
-        jjmatchedKind = bb;
-        jjmatchedPos = ba;
+    public static int jjStartNfaWithStates_0(int jjmatchedPosArgument, int jjmatchedKindArgument, int jjstateSetElement) {
+        jjmatchedKind = jjmatchedKindArgument;
+        jjmatchedPos = jjmatchedPosArgument;
 
         try {
             curChar = ProGuardMappingSimpleCharStream.readChar();
         } catch (IOException iOException) {
-            return ba + 1;
+            return jjmatchedPosArgument + 1;
         }
 
-        return jjMoveNfa_0(bc, ba + 1);
+        return jjMoveNfa_0(jjstateSetElement, jjmatchedPosArgument + 1);
     }
 
     public static int jjMoveStringLiteralDfa1_2() {
@@ -314,10 +314,10 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
         }
     }
 
-    public static void jjCheckNAdd(int ba) {
-        if (jjrounds[ba] != jjround) {
-            jjstateSet[jjnewStateCnt++] = ba;
-            jjrounds[ba] = jjround;
+    public static void jjCheckNAdd(int jjstateSetElement) {
+        if (jjrounds[jjstateSetElement] != jjround) {
+            jjstateSet[jjnewStateCnt++] = jjstateSetElement;
+            jjrounds[jjstateSetElement] = jjround;
         }
     }
 
@@ -358,12 +358,12 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
     }
 
     public static int jjAddStates() {
-        int ba = 0;
-        int bb = 0;
+        int jjmatchedPosValue = 0;
+        int jjnewStateCntValue = 0;
         jjnewStateCnt = 3;
-        int bc = 1;
+        int jjnewStateCntValue2 = 1;
         jjstateSet[0] = 0;
-        int bd = Integer.MAX_VALUE;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++jjround == Integer.MAX_VALUE) {
@@ -372,31 +372,31 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
 
             if (curChar < '@') {
                 long be = 1L << curChar;
-                int[] bg = jjstateSet;
+                int[] jjstateSetValue = jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (bg[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                         case 0:
-                            char bh;
+                            char curCharValue;
                             if ((13312L & be) != 0L) {
-                                if (bd > 7) {
-                                    bd = 7;
-                                    bh = curChar;
+                                if (jjmatchedKindValue > 7) {
+                                    jjmatchedKindValue = 7;
+                                    curCharValue = curChar;
                                 } else {
-                                    bh = curChar;
+                                    curCharValue = curChar;
                                 }
                             } else {
-                                bh = curChar;
+                                curCharValue = curChar;
                             }
 
-                            if (bh == '\r') {
+                            if (curCharValue == '\r') {
                                 jjstateSet[jjnewStateCnt++] = 1;
                             }
                             break;
                         case 1:
-                            if (curChar == '\n' && bd > 7) {
-                                bd = 7;
+                            if (curChar == '\n' && jjmatchedKindValue > 7) {
+                                jjmatchedKindValue = 7;
                             }
                             break;
                         case 2:
@@ -405,59 +405,59 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                             }
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bg = jjstateSet;
+                    jjstateSetValue = jjstateSet;
                 }
             } else if (curChar < 128) {
-                int[] bf = jjstateSet;
+                int[] jjstateSetValue2 = jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (bf[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bf = jjstateSet;
+                    jjstateSetValue2 = jjstateSet;
                 }
             } else {
-                int[] bj = jjstateSet;
+                int[] jjstateSetValue3 = jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (bj[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue3[jjnewStateCntValue2]) {
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bj = jjstateSet;
+                    jjstateSetValue3 = jjstateSet;
                 }
             }
 
-            if (bd != Integer.MAX_VALUE) {
-                jjmatchedKind = bd;
-                jjmatchedPos = ba;
-                bd = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                jjmatchedKind = jjmatchedKindValue;
+                jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            ba++;
-            int bi = bc = jjnewStateCnt;
-            jjnewStateCnt = bb;
-            if (bi == (bb = 3 - bb)) {
-                return ba;
+            jjmatchedPosValue++;
+            int bi = jjnewStateCntValue2 = jjnewStateCnt;
+            jjnewStateCnt = jjnewStateCntValue;
+            if (bi == (jjnewStateCntValue = 3 - jjnewStateCntValue)) {
+                return jjmatchedPosValue;
             }
 
             try {
                 curChar = ProGuardMappingSimpleCharStream.readChar();
             } catch (IOException iOException) {
-                return ba;
+                return jjmatchedPosValue;
             }
         }
     }
@@ -473,16 +473,16 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
 
     public static void ReInitRounds() {
         jjround = -2147483647;
-        int ba = 6;
+        int jjroundIndex = 6;
 
         while (true) {
-            int bb = ba;
-            ba += -1;
-            if (bb <= 0) {
+            int jjroundIndexValue = jjroundIndex;
+            jjroundIndex += -1;
+            if (jjroundIndexValue <= 0) {
                 return;
             }
 
-            jjrounds[ba] = Integer.MIN_VALUE;
+            jjrounds[jjroundIndex] = Integer.MIN_VALUE;
         }
     }
 
@@ -561,10 +561,10 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
         ReInitRounds();
     }
 
-    public static int jjStopAtPos(int ba, int bb) {
-        jjmatchedKind = bb;
-        jjmatchedPos = ba;
-        return ba + 1;
+    public static int jjStopAtPos(int jjmatchedPosArgument, int jjmatchedKindArgument) {
+        jjmatchedKind = jjmatchedKindArgument;
+        jjmatchedPos = jjmatchedPosArgument;
+        return jjmatchedPosArgument + 1;
     }
 
     public static int jjMoveStringLiteralDfa2_0(long ba, long bb) {
@@ -630,13 +630,13 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
         return jjMoveNfa_0(jjStopStringLiteralDfa_0(ba, bb), ba + 1);
     }
 
-    public static int jjMoveNfa_0(int ba, int bb) {
-        int bc = bb;
-        int bi = 0;
+    public static int jjMoveNfa_0(int jjstateSetElement, int bb) {
+        int jjmatchedPosValue = bb;
+        int jjnewStateCntValue = 0;
         jjnewStateCnt = 6;
-        int bj = 1;
-        jjstateSet[0] = ba;
-        int bk = Integer.MAX_VALUE;
+        int jjnewStateCntValue2 = 1;
+        jjstateSet[0] = jjstateSetElement;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++jjround == Integer.MAX_VALUE) {
@@ -645,19 +645,19 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
 
             if (curChar < '@') {
                 long bu = 1L << curChar;
-                int[] bw = jjstateSet;
+                int[] jjstateSetValue = jjstateSet;
 
                 while (true) {
-                    bj += -1;
-                    switch (bw[bj]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                         case 0:
                             if (curChar == '*') {
                                 jjstateSet[jjnewStateCnt++] = 1;
                             }
                             break;
                         case 1:
-                            if ((-140737488355329L & bu) != 0L && bk > 5) {
-                                bk = 5;
+                            if ((-140737488355329L & bu) != 0L && jjmatchedKindValue > 5) {
+                                jjmatchedKindValue = 5;
                             }
                             break;
                         case 2:
@@ -667,8 +667,8 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                             break;
                         case 3:
                             if ((287957766255919615L & bu) != 0L) {
-                                if (bk > 30) {
-                                    bk = 30;
+                                if (jjmatchedKindValue > 30) {
+                                    jjmatchedKindValue = 30;
                                 }
 
                                 jjCheckNAdd(5);
@@ -677,8 +677,8 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                             }
 
                             if ((287948901175001088L & bu) != 0L) {
-                                if (bk > 29) {
-                                    bk = 29;
+                                if (jjmatchedKindValue > 29) {
+                                    jjmatchedKindValue = 29;
                                 }
 
                                 jjCheckNAdd(4);
@@ -686,8 +686,8 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                             break;
                         case 4:
                             if ((287948901175001088L & bu) != 0L) {
-                                if (bk > 29) {
-                                    bk = 29;
+                                if (jjmatchedKindValue > 29) {
+                                    jjmatchedKindValue = 29;
                                 }
 
                                 jjCheckNAdd(4);
@@ -695,30 +695,30 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                             break;
                         case 5:
                             if ((287957766255919615L & bu) != 0L) {
-                                if (bk > 30) {
-                                    bk = 30;
+                                if (jjmatchedKindValue > 30) {
+                                    jjmatchedKindValue = 30;
                                 }
 
                                 jjCheckNAdd(5);
                             }
                     }
 
-                    if (bj == bi) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bw = jjstateSet;
+                    jjstateSetValue = jjstateSet;
                 }
             } else if (curChar < 128) {
                 long bt = 1L << (curChar & '?');
-                int[] bv = jjstateSet;
+                int[] jjstateSetValue2 = jjstateSet;
 
                 while (true) {
-                    bj += -1;
-                    switch (bv[bj]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                         case 1:
-                            if (bk > 5) {
-                                bk = 5;
+                            if (jjmatchedKindValue > 5) {
+                                jjmatchedKindValue = 5;
                             }
                         case 2:
                         case 4:
@@ -727,19 +727,19 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                         case 3:
                         case 5:
                             if ((-8646911290859585538L & bt) != 0L) {
-                                if (bk > 30) {
-                                    bk = 30;
+                                if (jjmatchedKindValue > 30) {
+                                    jjmatchedKindValue = 30;
                                 }
 
                                 jjCheckNAdd(5);
                             }
                     }
 
-                    if (bj == bi) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bv = jjstateSet;
+                    jjstateSetValue2 = jjstateSet;
                 }
             } else {
                 int bl = curChar >> '\b';
@@ -747,17 +747,17 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                 long bn = 1L << (bl & 63);
                 int bo = (curChar & 255) >> 6;
                 long bp = 1L << (curChar & '?');
-                int[] by = jjstateSet;
+                int[] jjstateSetValue3 = jjstateSet;
 
                 while (true) {
-                    bj += -1;
-                    switch (by[bj]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue3[jjnewStateCntValue2]) {
                         case 1:
                             long bq = bp;
-                            int br = bo;
+                            int jjbitVec2ElementIndex = bo;
                             int bs = bl;
-                            if (jjCanMove_1(bs, br, bq) && bk > 5) {
-                                bk = 5;
+                            if (jjCanMove_1(bs, jjbitVec2ElementIndex, bq) && jjmatchedKindValue > 5) {
+                                jjmatchedKindValue = 5;
                             }
                         case 2:
                         case 4:
@@ -767,51 +767,51 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                         case 5:
                             long bd = bp;
                             long be = bn;
-                            int bf = bo;
-                            int bg = bm;
+                            int jjbitVec2ElementIndexValue = bo;
+                            int jjbitVec0ElementIndex = bm;
                             int bh = bl;
-                            if (jjCanMove_0(bh, bg, bf, be, bd)) {
-                                if (bk > 30) {
-                                    bk = 30;
+                            if (jjCanMove_0(bh, jjbitVec0ElementIndex, jjbitVec2ElementIndexValue, be, bd)) {
+                                if (jjmatchedKindValue > 30) {
+                                    jjmatchedKindValue = 30;
                                 }
 
                                 jjCheckNAdd(5);
                             }
                     }
 
-                    if (bj == bi) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    by = jjstateSet;
+                    jjstateSetValue3 = jjstateSet;
                 }
             }
 
-            if (bk != Integer.MAX_VALUE) {
-                jjmatchedKind = bk;
-                jjmatchedPos = bc;
-                bk = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                jjmatchedKind = jjmatchedKindValue;
+                jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            bc++;
-            int bx = bj = jjnewStateCnt;
-            jjnewStateCnt = bi;
-            if (bx == (bi = 6 - bi)) {
-                return bc;
+            jjmatchedPosValue++;
+            int bx = jjnewStateCntValue2 = jjnewStateCnt;
+            jjnewStateCnt = jjnewStateCntValue;
+            if (bx == (jjnewStateCntValue = 6 - jjnewStateCntValue)) {
+                return jjmatchedPosValue;
             }
 
             try {
                 curChar = ProGuardMappingSimpleCharStream.readChar();
             } catch (IOException iOException) {
-                return bc;
+                return jjmatchedPosValue;
             }
         }
     }
 
-    public static final boolean jjCanMove_1(int ba, int bb, long bc) {
+    public static final boolean jjCanMove_1(int ba, int jjbitVec2ElementIndex, long bc) {
         switch (ba) {
             case 0:
-                return (jjbitVec2[bb] & bc) != 0L;
+                return (jjbitVec2[jjbitVec2ElementIndex] & bc) != 0L;
             default:
                 return false;
         }
@@ -851,8 +851,8 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
     }
 
     public static ProGuardMappingToken jjFillToken() {
-        String string1 = jjstrLiteralImages[jjmatchedKind];
-        String string = string1 == null ? ProGuardMappingSimpleCharStream.GetImage() : string1;
+        String jjstrLiteralImage = jjstrLiteralImages[jjmatchedKind];
+        String string = jjstrLiteralImage == null ? ProGuardMappingSimpleCharStream.GetImage() : jjstrLiteralImage;
         int column = ProGuardMappingSimpleCharStream.getColumn();
         int line = ProGuardMappingSimpleCharStream.getLine();
         int endColumn = ProGuardMappingSimpleCharStream.getEndColumn();
@@ -869,7 +869,7 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
         ProGuardMappingToken proGuardMappingToken = null;
         int ba = 0;
 
-        label136:
+        tokenScan:
         while (true) {
             try {
                 curChar = ProGuardMappingSimpleCharStream.BeginToken();
@@ -883,19 +883,19 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
             image = jjimage;
             image.setLength(0);
             jjimageLen = 0;
-            int bi = curLexState;
+            int curLexStateValue = curLexState;
 
             while (true) {
-                switch (bi) {
+                switch (curLexStateValue) {
                     case 0:
                         try {
                             ProGuardMappingSimpleCharStream.backup(0);
 
-                            for (char bg = curChar; bg <= ' ' && (4294971904L & 1L << curChar) != 0L; bg = curChar) {
+                            for (char curCharValue = curChar; curCharValue <= ' ' && (4294971904L & 1L << curChar) != 0L; curCharValue = curChar) {
                                 curChar = ProGuardMappingSimpleCharStream.BeginToken();
                             }
                         } catch (IOException iOException3) {
-                            continue label136;
+                            continue tokenScan;
                         }
 
                         jjmatchedKind = Integer.MAX_VALUE;
@@ -933,18 +933,18 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                 }
 
                 if (jjmatchedKind == Integer.MAX_VALUE) {
-                    break label136;
+                    break tokenScan;
                 }
 
-                long[] bh;
+                long[] jjtoTokenValue;
                 if (jjmatchedPos + 1 < ba) {
                     ProGuardMappingSimpleCharStream.backup(ba - jjmatchedPos - 1);
-                    bh = jjtoToken;
+                    jjtoTokenValue = jjtoToken;
                 } else {
-                    bh = jjtoToken;
+                    jjtoTokenValue = jjtoToken;
                 }
 
-                if ((bh[jjmatchedKind >> 6] & 1L << (jjmatchedKind & 63)) != 0L) {
+                if ((jjtoTokenValue[jjmatchedKind >> 6] & 1L << (jjmatchedKind & 63)) != 0L) {
                     ProGuardMappingToken proGuardMappingToken3 = jjFillToken();
                     proGuardMappingToken3.r = proGuardMappingToken;
                     if (jjnewLexState[jjmatchedKind] != -1) {
@@ -986,10 +986,10 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                 try {
                     curChar = ProGuardMappingSimpleCharStream.readChar();
                 } catch (IOException iOException2) {
-                    break label136;
+                    break tokenScan;
                 }
 
-                bi = curLexState;
+                curLexStateValue = curLexState;
             }
         }
 
@@ -1017,12 +1017,12 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
             string = ba <= 1 ? "" : ProGuardMappingSimpleCharStream.GetImage();
         }
 
-        char bd = curChar;
+        char curCharValue2 = curChar;
         String string1 = string;
-        int be = endLine;
-        int bf = endColumn;
+        int endLineValue = endLine;
+        int endColumnValue = endColumn;
         boolean bl1 = bl;
-        throw new ProGuardMappingTokenMgrError(bl1, bf, be, string1, bd);
+        throw new ProGuardMappingTokenMgrError(bl1, endColumnValue, endLineValue, string1, curCharValue2);
     }
 
     public static int jjMoveStringLiteralDfa1_0(long ba) {
@@ -1098,13 +1098,13 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
         }
     }
 
-    public static int jjMoveNfa_4(int ba, int bb) {
-        int bc = bb;
-        int bd = 0;
+    public static int jjMoveNfa_4(int jjstateSetElement, int bb) {
+        int jjmatchedPosValue = bb;
+        int jjnewStateCntValue = 0;
         jjnewStateCnt = 3;
-        int be = 1;
-        jjstateSet[0] = ba;
-        int bf = Integer.MAX_VALUE;
+        int jjnewStateCntValue2 = 1;
+        jjstateSet[0] = jjstateSetElement;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++jjround == Integer.MAX_VALUE) {
@@ -1113,15 +1113,15 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
 
             if (curChar < '@') {
                 long bl = 1L << curChar;
-                int[] bn = jjstateSet;
+                int[] jjstateSetValue = jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (bn[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                         case 0:
                             if ((-17179882497L & bl) != 0L) {
-                                if (bf > 28) {
-                                    bf = 28;
+                                if (jjmatchedKindValue > 28) {
+                                    jjmatchedKindValue = 28;
                                 }
                             } else if (curChar == '"') {
                                 jjstateSet[jjnewStateCnt++] = 2;
@@ -1133,75 +1133,75 @@ public class ProGuardMappingTokenManager implements ProGuardMappingConstants {
                             }
                             break;
                         case 2:
-                            if (curChar == '"' && bf > 28) {
-                                bf = 28;
+                            if (curChar == '"' && jjmatchedKindValue > 28) {
+                                jjmatchedKindValue = 28;
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bn = jjstateSet;
+                    jjstateSetValue = jjstateSet;
                 }
             } else if (curChar < 128) {
-                int[] bm = jjstateSet;
+                int[] jjstateSetValue2 = jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (bm[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                         case 0:
-                            bf = 28;
+                            jjmatchedKindValue = 28;
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bm = jjstateSet;
+                    jjstateSetValue2 = jjstateSet;
                 }
             } else {
                 int bg = curChar >> '\b';
-                int bh = bg >> 6;
+                int jjbitVec0ElementIndex = bg >> 6;
                 long bi = 1L << (bg & 63);
-                int bj = (curChar & 255) >> 6;
+                int jjbitVec2ElementIndex = (curChar & 255) >> 6;
                 long bk = 1L << (curChar & '?');
-                int[] bp = jjstateSet;
+                int[] jjstateSetValue3 = jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (bp[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue3[jjnewStateCntValue2]) {
                         case 0:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk) && bf > 28) {
-                                bf = 28;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk) && jjmatchedKindValue > 28) {
+                                jjmatchedKindValue = 28;
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bp = jjstateSet;
+                    jjstateSetValue3 = jjstateSet;
                 }
             }
 
-            if (bf != Integer.MAX_VALUE) {
-                jjmatchedKind = bf;
-                jjmatchedPos = bc;
-                bf = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                jjmatchedKind = jjmatchedKindValue;
+                jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            bc++;
-            int bo = be = jjnewStateCnt;
-            jjnewStateCnt = bd;
-            if (bo == (bd = 3 - bd)) {
-                return bc;
+            jjmatchedPosValue++;
+            int bo = jjnewStateCntValue2 = jjnewStateCnt;
+            jjnewStateCnt = jjnewStateCntValue;
+            if (bo == (jjnewStateCntValue = 3 - jjnewStateCntValue)) {
+                return jjmatchedPosValue;
             }
 
             try {
                 curChar = ProGuardMappingSimpleCharStream.readChar();
             } catch (IOException iOException) {
-                return bc;
+                return jjmatchedPosValue;
             }
         }
     }

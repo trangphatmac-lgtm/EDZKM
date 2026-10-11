@@ -9,68 +9,60 @@ public class ProGuardMappingTreeState {
     public boolean nodeCreated;
     public List nodes = new ArrayList();
     public List marks = new ArrayList();
-    public int sp = 0;
-    public int mk = 0;
+    public int stackPointer = 0;
+    public int scopeMark = 0;
 
     public void reset() {
         this.nodes.clear();
         this.marks.clear();
-        this.sp = 0;
-        this.mk = 0;
+        this.stackPointer = 0;
+        this.scopeMark = 0;
     }
 
     public ProGuardMappingNode popNode() {
-        List list1;
-        if (--this.sp < this.mk) {
-            this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
-            list1 = this.nodes;
-        } else {
-            list1 = this.nodes;
+        if (--this.stackPointer < this.scopeMark) {
+            this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
         }
 
-        return (ProGuardMappingNode) list1.remove(this.nodes.size() - 1);
+        return (ProGuardMappingNode) this.nodes.remove(this.nodes.size() - 1);
     }
 
     public int nodeArity() {
-        return this.sp - this.mk;
+        return this.stackPointer - this.scopeMark;
     }
 
     public void openNodeScope(ProGuardMappingNode proGuardMappingNode) {
-        this.marks.add(this.mk);
-        this.mk = this.sp;
+        this.marks.add(this.scopeMark);
+        this.scopeMark = this.stackPointer;
         proGuardMappingNode.jjtOpen();
     }
 
     public void pushNode(Object object) {
         this.nodes.add(object);
-        this.sp++;
+        this.stackPointer++;
     }
 
     public void clearNodeScope() {
-        for (int i = this.sp; i > this.mk; i = this.sp) {
+        for (int stackPointerValue = this.stackPointer; stackPointerValue > this.scopeMark; stackPointerValue = this.stackPointer) {
             this.popNode();
         }
 
-        this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
+        this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
     }
 
-    public void closeNodeScope(ProGuardMappingNode proGuardMappingNode) {
-        int ba = this.nodeArity();
-        this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
+    public void closeNodeScope(ProGuardMappingNode parentNode) {
+        int remainingChildren = this.nodeArity();
+        this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
 
-        while (true) {
-            int bb = ba;
-            ba += -1;
-            if (bb <= 0) {
-                proGuardMappingNode.jjtClose();
-                this.pushNode(proGuardMappingNode);
-                this.nodeCreated = true;
-                return;
-            }
-
-            ProGuardMappingNode proGuardMappingNode1 = this.popNode();
-            proGuardMappingNode1.jjtSetParent(proGuardMappingNode);
-            proGuardMappingNode.jjtAddChild(proGuardMappingNode1, ba);
+        while (remainingChildren > 0) {
+            remainingChildren--;
+            ProGuardMappingNode childNode = this.popNode();
+            childNode.jjtSetParent(parentNode);
+            parentNode.jjtAddChild(childNode, remainingChildren);
         }
+
+        parentNode.jjtClose();
+        this.pushNode(parentNode);
+        this.nodeCreated = true;
     }
 }

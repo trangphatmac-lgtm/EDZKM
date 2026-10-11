@@ -26,15 +26,15 @@ public abstract class LiteralParamStatementNode extends SummarizingStatementNode
         int warningCount = scriptEnvironment1.getWarningCount();
         int errorCount = scriptEnvironment1.getErrorCount();
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptNode zkmScriptNode = this.jjtGetChild(childrenElementIndex);
             if (zkmScriptNode instanceof ZkmScriptASTStringLiteral) {
                 ZkmScriptASTStringLiteral zkmScriptASTStringLiteral = (ZkmScriptASTStringLiteral) zkmScriptNode;
-                String string = zkmScriptASTStringLiteral.getValue();
-                if (this.literalValues.contains(string)) {
+                String value = zkmScriptASTStringLiteral.getValue();
+                if (this.literalValues.contains(value)) {
                     scriptEnvironment1.logWarning(
                             "\""
-                                    + string
+                                    + value
                                     + "\" appears more than once in \""
                                     + this.getStatementName()
                                     + "\" statement at line "
@@ -42,15 +42,15 @@ public abstract class LiteralParamStatementNode extends SummarizingStatementNode
                                     + ". First occurrence will be used."
                     );
                 } else {
-                    this.literalValues.add(string);
+                    this.literalValues.add(value);
                 }
             } else if (zkmScriptNode instanceof SingleValueParameterNode) {
                 SingleValueParameterNode singleValueParameterNode1 = (SingleValueParameterNode) zkmScriptNode;
                 ZkmScriptNode zkmScriptNode1 = singleValueParameterNode1.jjtGetChild(0);
                 zkmScriptNode1.execute(this, scriptEnvironment1);
                 SingleValueParameterNode singleValueParameterNode = (SingleValueParameterNode) zkmScriptNode1;
-                String string1 = ((java.lang.String) (this.namedValues.put(singleValueParameterNode.getParameterName(), singleValueParameterNode.getValue(0))));
-                if (string1 != null) {
+                String valueValue = ((java.lang.String) (this.namedValues.put(singleValueParameterNode.getParameterName(), singleValueParameterNode.getValue(0))));
+                if (valueValue != null) {
                     scriptEnvironment1.logWarning(
                             "\""
                                     + singleValueParameterNode.getParameterName()
@@ -60,11 +60,11 @@ public abstract class LiteralParamStatementNode extends SummarizingStatementNode
                                     + this.getStatementLine()
                                     + ".  First occurrence will be used."
                     );
-                    this.namedValues.put(singleValueParameterNode.getParameterName(), string1);
+                    this.namedValues.put(singleValueParameterNode.getParameterName(), valueValue);
                 }
             } else {
                 scriptEnvironment1.logFatalError(
-                        this.getClass().getName() + " had " + zkmScriptNode.getClass().getName() + " as child " + i + " at line " + this.getStatementLine() + "."
+                        this.getClass().getName() + " had " + zkmScriptNode.getClass().getName() + " as child " + childrenElementIndex + " at line " + this.getStatementLine() + "."
                 );
             }
         }

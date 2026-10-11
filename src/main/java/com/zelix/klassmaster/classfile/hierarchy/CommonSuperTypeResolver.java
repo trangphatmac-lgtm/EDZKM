@@ -25,8 +25,8 @@ public class CommonSuperTypeResolver {
     }
 
     public boolean isInterfaceType(VerifierType verifierType, String string) throws ZkmException, IOException {
-        String string1 = stripClassDescriptor(verifierType.getDescriptor());
-        return string1.charAt(0) == '[' ? false : this.classResolver.getVersionedClass(string1, this.getThreadVersion(), string).isInterface();
+        String key = stripClassDescriptor(verifierType.getDescriptor());
+        return (!(key.charAt(0) == '[') && (this.classResolver.getVersionedClass(key, this.getThreadVersion(), string).isInterface()));
     }
 
     public void clearCache() {
@@ -38,100 +38,100 @@ public class CommonSuperTypeResolver {
     }
 
     public String getCommonArraySuperType(String string, String string1, String string2) throws ZkmException, IOException {
-        int ba = string.lastIndexOf("[") + 1;
-        int bb = string1.lastIndexOf("[") + 1;
-        String string3 = string.substring(ba);
-        String string4 = string1.substring(bb);
-        if (ba != bb) {
-            String string6;
-            if (ba < bb) {
-                string6 = string3;
+        int beginIndex = string.lastIndexOf("[") + 1;
+        int beginIndexValue = string1.lastIndexOf("[") + 1;
+        String key = string.substring(beginIndex);
+        String keyValue = string1.substring(beginIndexValue);
+        if (beginIndex != beginIndexValue) {
+            String keyValue2;
+            if (beginIndex < beginIndexValue) {
+                keyValue2 = key;
             } else {
-                string6 = string4;
+                keyValue2 = keyValue;
             }
 
-            return string6.startsWith("L") && string6.endsWith(";")
-                    ? ZkmStringUtils.pad("", 76, Math.min(ba, bb), 91) + "Ljava/lang/Object;"
-                    : ZkmStringUtils.pad("", 76, Math.min(ba, bb) - 1, 91) + "Ljava/lang/Object;";
-        } else if (string3.length() == 1 && string4.length() == 1) {
-            if (string3.equals(string4)) {
+            return keyValue2.startsWith("L") && keyValue2.endsWith(";")
+                    ? ZkmStringUtils.pad("", 76, Math.min(beginIndex, beginIndexValue), 91) + "Ljava/lang/Object;"
+                    : ZkmStringUtils.pad("", 76, Math.min(beginIndex, beginIndexValue) - 1, 91) + "Ljava/lang/Object;";
+        } else if (key.length() == 1 && keyValue.length() == 1) {
+            if (key.equals(keyValue)) {
                 return string;
             } else {
-                return ba == 1 ? "Ljava/lang/Object;" : ZkmStringUtils.pad("", 76, ba - 1, 91) + "Ljava/lang/Object;";
+                return beginIndex == 1 ? "Ljava/lang/Object;" : ZkmStringUtils.pad("", 76, beginIndex - 1, 91) + "Ljava/lang/Object;";
             }
         } else {
-            String string7;
-            if (string3.length() != 1) {
-                if (string4.length() != 1) {
-                    String string5 = this.getCommonSuperType(string3, string4, string2);
-                    return ZkmStringUtils.pad(string5, 82, string5.length() + ba, 91);
+            String commonArraySuperType;
+            if (key.length() != 1) {
+                if (keyValue.length() != 1) {
+                    String commonSuperType = this.getCommonSuperType(key, keyValue, string2);
+                    return ZkmStringUtils.pad(commonSuperType, 82, commonSuperType.length() + beginIndex, 91);
                 }
 
-                string7 = "Ljava/lang/Object;";
+                commonArraySuperType = "Ljava/lang/Object;";
             } else {
-                string7 = "Ljava/lang/Object;";
+                commonArraySuperType = "Ljava/lang/Object;";
             }
 
-            return string7;
+            return commonArraySuperType;
         }
     }
 
     public boolean isArrayAssignableTo(String string, String string1, String string2) throws ZkmException, IOException {
-        int ba = string.lastIndexOf("[") + 1;
-        int bb = string1.lastIndexOf("[") + 1;
-        String string3 = string.substring(ba);
-        String string4 = string1.substring(bb);
-        if (ba < bb) {
+        int beginIndex = string.lastIndexOf("[") + 1;
+        int beginIndexValue = string1.lastIndexOf("[") + 1;
+        String keyValue3 = string.substring(beginIndex);
+        String keyArgumentValue = string1.substring(beginIndexValue);
+        if (beginIndex < beginIndexValue) {
             return false;
-        } else if (ba > bb) {
-            return string4.equals("Ljava/lang/Object;");
-        } else if (string3.length() == 1 && string4.length() == 1) {
-            return string3.equals(string4);
+        } else if (beginIndex > beginIndexValue) {
+            return keyArgumentValue.equals("Ljava/lang/Object;");
+        } else if (keyValue3.length() == 1 && keyArgumentValue.length() == 1) {
+            return keyValue3.equals(keyArgumentValue);
         } else {
-            return string3.length() != 1 && string4.length() != 1 ? this.isAssignableTo(string3, string4, string2) : false;
+            return ((keyValue3.length() != 1 && keyArgumentValue.length() != 1) && (this.isAssignableTo(keyValue3, keyArgumentValue, string2)));
         }
     }
 
-    public boolean isAssignableTo(String string, String string1, String string2) throws ZkmException, IOException {
-        if (string.equals(string1)) {
+    public boolean isAssignableTo(String key, String keyArgument, String string2) throws ZkmException, IOException {
+        if (key.equals(keyArgument)) {
             return true;
         }
 
-        string = stripClassDescriptor(string);
-        string1 = stripClassDescriptor(string1);
+        key = stripClassDescriptor(key);
+        keyArgument = stripClassDescriptor(keyArgument);
         Integer integer = this.getThreadVersion();
-        if (string.charAt(0) == '[') {
-            if (string1.charAt(0) == '[') {
-                return this.isArrayAssignableTo(string, string1, string2);
+        if (key.charAt(0) == '[') {
+            if (keyArgument.charAt(0) == '[') {
+                return this.isArrayAssignableTo(key, keyArgument, string2);
             }
 
-            ClassFileBase classFileBase2 = this.classResolver.getVersionedClass(string1, integer, string2);
-            return classFileBase2.isInterface() ? string1.equals("java/lang/Cloneable") : string1.equals("java/lang/Object");
+            ClassFileBase classFileBase2 = this.classResolver.getVersionedClass(keyArgument, integer, string2);
+            return classFileBase2.isInterface() ? keyArgument.equals("java/lang/Cloneable") : keyArgument.equals("java/lang/Object");
         } else {
-            if (string1.charAt(0) == '[') {
+            if (keyArgument.charAt(0) == '[') {
                 return false;
             }
 
-            ClassFileBase classFileBase = this.classResolver.getVersionedClass(string, integer, string2);
-            ClassFileBase classFileBase1 = this.classResolver.getVersionedClass(string1, integer, string2);
+            ClassFileBase classFileBase = this.classResolver.getVersionedClass(key, integer, string2);
+            ClassFileBase classFileBase1 = this.classResolver.getVersionedClass(keyArgument, integer, string2);
             if (classFileBase.isInterface()) {
-                return classFileBase1.isInterface() ? this.isSameOrImplements(string, string1) : string1.equals("java/lang/Object");
+                return classFileBase1.isInterface() ? this.isSameOrImplements(key, keyArgument) : keyArgument.equals("java/lang/Object");
             }
 
             if (classFileBase1.isInterface()) {
                 if (HiddenOptionFlags.LENIENT_INTERFACE_SUPERTYPE) {
-                    return !this.isSameOrImplements(string, string1) ? string.equals("java/lang/Object") : true;
+                    return (!(!this.isSameOrImplements(key, keyArgument)) || (key.equals("java/lang/Object")));
                 } else {
-                    return this.isSameOrImplements(string, string1);
+                    return this.isSameOrImplements(key, keyArgument);
                 }
             } else {
-                return this.isSameOrSubclass(string, string1);
+                return this.isSameOrSubclass(key, keyArgument);
             }
         }
     }
 
-    public void setThreadVersion(Object object) {
-        this.versionByThread.put(ZkmUtils.getCurrentThreadId(), object);
+    public void setThreadVersion(Object threadVersion) {
+        this.versionByThread.put(ZkmUtils.getCurrentThreadId(), threadVersion);
     }
 
     public static String stripClassDescriptor(String string) {
@@ -144,101 +144,101 @@ public class CommonSuperTypeResolver {
     }
 
     public boolean isSameOrImplements(String string, String string1) throws ZkmException, IOException {
-        return string.equals(string1) ? true : this.hierarchyQuery.implementsInterface(string, string1);
+        return ((string.equals(string1)) || (this.hierarchyQuery.implementsInterface(string, string1)));
     }
 
     public Integer getThreadVersion() {
         return (Integer) this.versionByThread.get(ZkmUtils.getCurrentThreadId());
     }
 
-    public String getCommonSuperType(String string, String string1, String string2) throws ZkmException, IOException {
+    public String getCommonSuperType(String key, String keyArgument, String string2) throws ZkmException, IOException {
         Integer integer = this.getThreadVersion();
-        if (string.equals(string1)) {
-            return string;
+        if (key.equals(keyArgument)) {
+            return key;
         }
 
-        String string3 = (String) this.commonSuperTypeCache.getValue(string, string1);
-        if (string3 != null) {
-            return string3;
+        String value = (String) this.commonSuperTypeCache.getValue(key, keyArgument);
+        if (value != null) {
+            return value;
         }
 
-        String string4 = stripClassDescriptor(string);
-        String string5 = stripClassDescriptor(string1);
+        String keyValue = stripClassDescriptor(key);
+        String keyValue2 = stripClassDescriptor(keyArgument);
         TwoKeyMap twoKeyMap;
-        if (string4.charAt(0) == '[') {
-            if (string5.charAt(0) == '[') {
-                string3 = this.getCommonArraySuperType(string4, string5, string2);
+        if (keyValue.charAt(0) == '[') {
+            if (keyValue2.charAt(0) == '[') {
+                value = this.getCommonArraySuperType(keyValue, keyValue2, string2);
                 twoKeyMap = this.commonSuperTypeCache;
             } else {
-                ClassFileBase classFileBase1 = this.classResolver.getVersionedClass(string5, integer, string2);
+                ClassFileBase classFileBase1 = this.classResolver.getVersionedClass(keyValue2, integer, string2);
                 if (classFileBase1.isInterface()) {
-                    if (string5.equals("java/lang/Cloneable")) {
-                        string3 = "Ljava/lang/Cloneable;";
+                    if (keyValue2.equals("java/lang/Cloneable")) {
+                        value = "Ljava/lang/Cloneable;";
                         twoKeyMap = this.commonSuperTypeCache;
                     } else {
-                        string3 = "Ljava/lang/Object;";
+                        value = "Ljava/lang/Object;";
                         twoKeyMap = this.commonSuperTypeCache;
                     }
                 } else {
-                    string3 = "Ljava/lang/Object;";
+                    value = "Ljava/lang/Object;";
                     twoKeyMap = this.commonSuperTypeCache;
                 }
             }
-        } else if (string5.charAt(0) == '[') {
-            ClassFileBase classFileBase = this.classResolver.getVersionedClass(string4, integer, string2);
+        } else if (keyValue2.charAt(0) == '[') {
+            ClassFileBase classFileBase = this.classResolver.getVersionedClass(keyValue, integer, string2);
             if (classFileBase.isInterface()) {
-                if (string4.equals("java/lang/Cloneable")) {
-                    string3 = "Ljava/lang/Cloneable;";
+                if (keyValue.equals("java/lang/Cloneable")) {
+                    value = "Ljava/lang/Cloneable;";
                     twoKeyMap = this.commonSuperTypeCache;
                 } else {
-                    string3 = "Ljava/lang/Object;";
+                    value = "Ljava/lang/Object;";
                     twoKeyMap = this.commonSuperTypeCache;
                 }
             } else {
-                string3 = "Ljava/lang/Object;";
+                value = "Ljava/lang/Object;";
                 twoKeyMap = this.commonSuperTypeCache;
             }
         } else {
-            ClassFileBase classFileBase2 = this.classResolver.getVersionedClass(string4, integer, string2);
-            ClassFileBase classFileBase3 = this.classResolver.getVersionedClass(string5, integer, string2);
+            ClassFileBase classFileBase2 = this.classResolver.getVersionedClass(keyValue, integer, string2);
+            ClassFileBase classFileBase3 = this.classResolver.getVersionedClass(keyValue2, integer, string2);
             if (!classFileBase2.isInterface() && !classFileBase3.isInterface()) {
                 ArrayList arrayList = classFileBase2.getSuperclassChain(this.classResolver, integer);
                 ArrayList arrayList1 = classFileBase3.getSuperclassChain(this.classResolver, integer);
-                int ba = arrayList.size();
-                if (arrayList1.contains(string4)) {
-                    string3 = toClassDescriptor(string4);
+                int arrayListSize = arrayList.size();
+                if (arrayList1.contains(keyValue)) {
+                    value = toClassDescriptor(keyValue);
                     twoKeyMap = this.commonSuperTypeCache;
-                } else if (arrayList.contains(string5)) {
-                    string3 = toClassDescriptor(string5);
+                } else if (arrayList.contains(keyValue2)) {
+                    value = toClassDescriptor(keyValue2);
                     twoKeyMap = this.commonSuperTypeCache;
                 } else {
-                    for (int i = 0; i < ba; i++) {
-                        String string6 = (String) arrayList.get(i);
+                    for (int elementIndex = 0; elementIndex < arrayListSize; elementIndex++) {
+                        String string6 = (String) arrayList.get(elementIndex);
                         if (arrayList1.indexOf(string6) != -1) {
-                            string3 = toClassDescriptor(string6);
-                            if (string3.equals("Ljava/lang/Object;")) {
-                                string3 = this.findCommonInterface(string4, classFileBase2, string5, classFileBase3);
+                            value = toClassDescriptor(string6);
+                            if (value.equals("Ljava/lang/Object;")) {
+                                value = this.findCommonInterface(keyValue, classFileBase2, keyValue2, classFileBase3);
                             }
                             break;
                         }
                     }
 
-                    if (string3 == null) {
-                        string3 = "Ljava/lang/Object;";
+                    if (value == null) {
+                        value = "Ljava/lang/Object;";
                         twoKeyMap = this.commonSuperTypeCache;
                     } else {
                         twoKeyMap = this.commonSuperTypeCache;
                     }
                 }
             } else {
-                string3 = this.findCommonInterface(string4, classFileBase2, string5, classFileBase3);
+                value = this.findCommonInterface(keyValue, classFileBase2, keyValue2, classFileBase3);
                 twoKeyMap = this.commonSuperTypeCache;
             }
         }
 
-        twoKeyMap.putValue(string, string1, string3);
-        this.commonSuperTypeCache.putValue(string1, string, string3);
-        return string3;
+        twoKeyMap.putValue(key, keyArgument, value);
+        this.commonSuperTypeCache.putValue(keyArgument, key, value);
+        return value;
     }
 
     public ClassResolver getClassResolver() {
@@ -262,7 +262,7 @@ public class CommonSuperTypeResolver {
         String string2 = null;
         SyncIndexedSet syncIndexedSet = classFileBase.collectAllInterfaces(this.classResolver, integer);
         SyncIndexedSet syncIndexedSet1 = classFileBase1.collectAllInterfaces(this.classResolver, integer);
-        int ba = syncIndexedSet.size();
+        int syncIndexedSetSize = syncIndexedSet.size();
         if (classFileBase.isInterface() && syncIndexedSet1.contains(string)) {
             string2 = toClassDescriptor(string);
         }
@@ -272,10 +272,10 @@ public class CommonSuperTypeResolver {
         }
 
         if (string2 == null) {
-            for (int i = 0; i < ba; i++) {
-                String string3 = (String) syncIndexedSet.getElementAt(i);
-                if (syncIndexedSet1.indexOfElement(string3) != -1) {
-                    string2 = toClassDescriptor(string3);
+            for (int elementIndex = 0; elementIndex < syncIndexedSetSize; elementIndex++) {
+                String elementAt = (String) syncIndexedSet.getElementAt(elementIndex);
+                if (syncIndexedSet1.indexOfElement(elementAt) != -1) {
+                    string2 = toClassDescriptor(elementAt);
                     break;
                 }
             }
@@ -288,18 +288,18 @@ public class CommonSuperTypeResolver {
         return string2;
     }
 
-    public boolean isDescriptorAssignable(String string, String string1) throws ZkmException, IOException {
-        if (string.equals(string1)) {
+    public boolean isDescriptorAssignable(String keyArgument2, String keyArgumentArgument) throws ZkmException, IOException {
+        if (keyArgument2.equals(keyArgumentArgument)) {
             return true;
         }
 
-        if (string.length() > 1 && string1.length() > 1) {
-            return this.isAssignableTo(string, string1, null);
+        if (keyArgument2.length() > 1 && keyArgumentArgument.length() > 1) {
+            return this.isAssignableTo(keyArgument2, keyArgumentArgument, null);
         }
 
-        if (string.length() == 1 && string1.length() == 1) {
-            char ba = string.charAt(0);
-            char bb = string1.charAt(0);
+        if (keyArgument2.length() == 1 && keyArgumentArgument.length() == 1) {
+            char ba = keyArgument2.charAt(0);
+            char bb = keyArgumentArgument.charAt(0);
             switch (ba) {
                 case 'B':
                     return bb == 'B' || bb == 'C' || bb == 'I' || bb == 'J';
@@ -348,6 +348,6 @@ public class CommonSuperTypeResolver {
     }
 
     public boolean isSameOrSubclass(String string, String string1) throws ZkmException, IOException {
-        return string.equals(string1) ? true : this.hierarchyQuery.isSubclass(string, string1);
+        return ((string.equals(string1)) || (this.hierarchyQuery.isSubclass(string, string1)));
     }
 }

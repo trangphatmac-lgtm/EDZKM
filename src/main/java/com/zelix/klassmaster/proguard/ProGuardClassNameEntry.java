@@ -9,8 +9,8 @@ public class ProGuardClassNameEntry {
         return this.className;
     }
 
-    public ProGuardClassNameEntry(String string, boolean negated, boolean inList) {
-        this.className = string;
+    public ProGuardClassNameEntry(String classNameArgument, boolean negated, boolean inList) {
+        this.className = classNameArgument;
         this.negated = negated;
         this.inList = inList;
     }

@@ -91,18 +91,18 @@ public class DisableableListItem extends ListItemWrapper {
         }
     }
 
-    public DisableableListItem(Object object, boolean disabled) {
-        super(object);
+    public DisableableListItem(Object itemArgument, boolean disabled) {
+        super(itemArgument);
         this.disabled = disabled;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         int controlValue = EscapeClosableFrame.getControlValue();
-        boolean bl = object instanceof DisableableListItem;
+        boolean bl = other instanceof DisableableListItem;
         if (controlValue != 0) {
             if (bl) {
-                return super.item.equals(((DisableableListItem) object).item);
+                return super.item.equals(((DisableableListItem) other).item);
             }
 
             bl = false;

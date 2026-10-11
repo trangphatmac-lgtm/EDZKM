@@ -64,7 +64,7 @@ public class NameExclusionsDialog extends PackageExclusionWizardDialog {
     }
 
     public NameExclusionsDialog(
-            String string,
+            String title,
             ZkmMainWindow zkmMainWindow,
             ExclusionWizardSettings exclusionWizardSettings,
             RootPackageNode rootPackageNode1,
@@ -72,6 +72,6 @@ public class NameExclusionsDialog extends PackageExclusionWizardDialog {
             ScriptEnvironment scriptEnvironment1,
             DialogCallback dialogCallback1
     ) throws ZkmException, IOException {
-        super(string, zkmMainWindow, exclusionWizardSettings, rootPackageNode1, list1, scriptEnvironment1, dialogCallback1);
+        super(title, zkmMainWindow, exclusionWizardSettings, rootPackageNode1, list1, scriptEnvironment1, dialogCallback1);
     }
 }

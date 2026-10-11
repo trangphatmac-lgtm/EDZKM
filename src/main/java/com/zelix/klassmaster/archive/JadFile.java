@@ -35,44 +35,44 @@ public class JadFile {
     public String jadFileName;
     public String expectedFinalSha256;
 
-    public void requireAttribute(String string) throws ZkmException {
-        if (!this.attributes.containsKey(string)) {
-            throw new ZkmException("JAD file '" + this.jadFilePath + "' does not contain a " + string + " attribute.");
+    public void requireAttribute(String key) throws ZkmException {
+        if (!this.attributes.containsKey(key)) {
+            throw new ZkmException("JAD file '" + this.jadFilePath + "' does not contain a " + key + " attribute.");
         }
     }
 
 
     static {
-        g(new int[4]);
+        setFlowControlTable(new int[4]);
         sectionTerminator = "&";
     }
 
 
     public String parseAttributeLine(String string) throws ZkmException {
-        int ba = string.indexOf(":");
-        if (ba > 0 && ba != string.length() - 1) {
-            String string1 = string.substring(0, ba).trim();
+        int endIndex = string.indexOf(":");
+        if (endIndex > 0 && endIndex != string.length() - 1) {
+            String key = string.substring(0, endIndex).trim();
             OrderedIndexedMap orderedIndexedMap;
-            if (string1.equalsIgnoreCase("MIDlet-Name")) {
-                string1 = "MIDlet-Name";
+            if (key.equalsIgnoreCase("MIDlet-Name")) {
+                key = "MIDlet-Name";
                 orderedIndexedMap = this.attributes;
-            } else if (string1.equalsIgnoreCase("MIDlet-Jar-URL")) {
-                string1 = "MIDlet-Jar-URL";
+            } else if (key.equalsIgnoreCase("MIDlet-Jar-URL")) {
+                key = "MIDlet-Jar-URL";
                 orderedIndexedMap = this.attributes;
-            } else if (string1.equalsIgnoreCase("MIDlet-Jar-Size")) {
-                string1 = "MIDlet-Jar-Size";
+            } else if (key.equalsIgnoreCase("MIDlet-Jar-Size")) {
+                key = "MIDlet-Jar-Size";
                 orderedIndexedMap = this.attributes;
             } else {
                 orderedIndexedMap = this.attributes;
             }
 
-            if (orderedIndexedMap.containsKey(string1)) {
-                throw new ZkmException("Two '" + string1 + "' headers in the JAD: '" + string + "'");
+            if (orderedIndexedMap.containsKey(key)) {
+                throw new ZkmException("Two '" + key + "' headers in the JAD: '" + string + "'");
             }
 
-            String string2 = string.substring(ba + 1).trim();
-            this.attributes.put(string1, string2);
-            return string1;
+            String second = string.substring(endIndex + 1).trim();
+            this.attributes.put(key, second);
+            return key;
         } else {
             throw new ZkmException("Invalid JAD attribute '" + string + "'");
         }
@@ -92,16 +92,16 @@ public class JadFile {
         BufferedReader bufferedReader = null;
 
         try {
-            String string = HiddenOptionFlags.JAD_ENCODING;
-            String string2;
-            if (string == null) {
-                string = "UTF-8";
-                string2 = this.jadFilePath;
+            String jadEncoding = HiddenOptionFlags.JAD_ENCODING;
+            String jadFilePathValue;
+            if (jadEncoding == null) {
+                jadEncoding = "UTF-8";
+                jadFilePathValue = this.jadFilePath;
             } else {
-                string2 = this.jadFilePath;
+                jadFilePathValue = this.jadFilePath;
             }
 
-            bufferedReader = ZkmFileUtils.openReaderForPath(string2, string);
+            bufferedReader = ZkmFileUtils.openReaderForPath(jadFilePathValue, jadEncoding);
 
             String string1;
             while ((string1 = bufferedReader.readLine()) != null) {
@@ -130,8 +130,8 @@ public class JadFile {
         return this.jadFilePath;
     }
 
-    public String getAttribute(Object object) {
-        return (String) this.attributes.get(object);
+    public String getAttribute(Object key) {
+        return (String) this.attributes.get(key);
     }
 
     
@@ -158,25 +158,25 @@ public class JadFile {
 
         try {
             bl1 = true;
-            String string4 = HiddenOptionFlags.JAD_ENCODING;
-            if (string4 == null) {
-                string4 = "UTF-8";
+            String jadEncoding = HiddenOptionFlags.JAD_ENCODING;
+            if (jadEncoding == null) {
+                jadEncoding = "UTF-8";
             }
 
-            printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file1), string4)));
+            printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file1), jadEncoding)));
             Enumeration enumeration = this.attributes.keyEnumeration();
 
             while (enumeration.hasMoreElements()) {
-                String string1 = (String) enumeration.nextElement();
-                String string2 = this.getAttribute(string1);
-                if (string1.equals("MIDlet-Icon")) {
-                    printWriter.println(string1 + ":" + " " + ResourcePathTranslator.renameResourceParentPath(string2, enumerableMap));
-                } else if (string1.startsWith("MIDlet-") && NumericStringUtil.isInteger(string1.substring("MIDlet-".length()))) {
-                    printWriter.println(ManifestHandler.translateMidletValue(string1, string2, enumerableMap, enumerableMap1));
+                String key = (String) enumeration.nextElement();
+                String attributeValue = this.getAttribute(key);
+                if (key.equals("MIDlet-Icon")) {
+                    printWriter.println(key + ":" + " " + ResourcePathTranslator.renameResourceParentPath(attributeValue, enumerableMap));
+                } else if (key.startsWith("MIDlet-") && NumericStringUtil.isInteger(key.substring("MIDlet-".length()))) {
+                    printWriter.println(ManifestHandler.translateMidletValue(key, attributeValue, enumerableMap, enumerableMap1));
                 } else {
                     BooleanFlag booleanFlag = new BooleanFlag(false);
                     String string3 = AbstractManifestProcessor.translateClassListValue(
-                            string1, string2, enumerableMap, enumerableMap1, booleanFlag, string, bl, messageReporter1
+                            key, attributeValue, enumerableMap, enumerableMap1, booleanFlag, string, bl, messageReporter1
                     );
                     if (!booleanFlag.getValue() || HiddenOptionFlags.KEEP_UNCHANGED_MANIFEST_ENTRIES) {
                         printWriter.println(string3);
@@ -199,8 +199,8 @@ public class JadFile {
         printWriter.close();
     }
 
-    public static void g(int[] ba) {
-        flowControlTable = ba;
+    public static void setFlowControlTable(int[] flowControlTableArgument) {
+        flowControlTable = flowControlTableArgument;
     }
 
     public long getJarSize() throws JadFileException {
@@ -223,33 +223,33 @@ public class JadFile {
     }
 
     public String getJarFileName() throws ZkmException {
-        String string = (String) this.attributes.get("MIDlet-Jar-URL");
-        if (string != null) {
-            int ba = string.lastIndexOf("/");
-            String string1;
+        String jarFileNameValue = (String) this.attributes.get("MIDlet-Jar-URL");
+        if (jarFileNameValue != null) {
+            int ba = jarFileNameValue.lastIndexOf("/");
+            String jarFileName;
             if (ba > -1) {
-                if (ba >= string.length()) {
-                    throw new ZkmException("JAD file '" + this.jadFilePath + "' has an invalid " + "MIDlet-Jar-URL" + " value of '" + string + "'");
+                if (ba >= jarFileNameValue.length()) {
+                    throw new ZkmException("JAD file '" + this.jadFilePath + "' has an invalid " + "MIDlet-Jar-URL" + " value of '" + jarFileNameValue + "'");
                 }
 
-                string1 = string.substring(ba + 1);
+                jarFileName = jarFileNameValue.substring(ba + 1);
             } else {
-                string1 = string;
+                jarFileName = jarFileNameValue;
             }
 
-            int bb = string1.indexOf("?");
-            if (bb > -1) {
-                string1 = string1.substring(0, bb);
+            int endIndex = jarFileName.indexOf("?");
+            if (endIndex > -1) {
+                jarFileName = jarFileName.substring(0, endIndex);
             }
 
-            return string1;
+            return jarFileName;
         } else {
             throw new ZkmException("JAD file '" + this.jadFilePath + "' has no " + "MIDlet-Jar-URL" + " attribute");
         }
     }
 
-    public void setJarSize(long ba) {
-        String string = (String) this.attributes.put("MIDlet-Jar-Size", String.valueOf(ba));
+    public void setJarSize(long jarSize) {
+        String string = (String) this.attributes.put("MIDlet-Jar-Size", String.valueOf(jarSize));
     }
 
     public void collectMidletClasses(String string, Map map1) {
@@ -257,10 +257,10 @@ public class JadFile {
         Enumeration enumeration = this.attributes.keyEnumeration();
 
         while (enumeration.hasMoreElements()) {
-            String string3 = (String) enumeration.nextElement();
-            if (string3.startsWith("MIDlet-") && NumericStringUtil.isInteger(string3.substring("MIDlet-".length()))) {
-                String string7 = this.getAttribute(string3);
-                StringTokenizer stringTokenizer1 = new StringTokenizer(string7, ",", true);
+            String key = (String) enumeration.nextElement();
+            if (key.startsWith("MIDlet-") && NumericStringUtil.isInteger(key.substring("MIDlet-".length()))) {
+                String attributeValue = this.getAttribute(key);
+                StringTokenizer stringTokenizer1 = new StringTokenizer(attributeValue, ",", true);
                 int bb = 0;
 
                 while (stringTokenizer1.hasMoreTokens()) {
@@ -273,21 +273,21 @@ public class JadFile {
                             case 1:
                                 break;
                             case 2:
-                                String string9 = ZkmUtils.dotsToSlashes(string8);
-                                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string9);
+                                String keyValue = ZkmUtils.dotsToSlashes(string8);
+                                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(keyValue);
                                 if (programClass2 != null) {
-                                    map1.put(programClass2, string3 + string2);
+                                    map1.put(programClass2, key + string2);
                                 }
                                 break;
                             default:
-                                String[] strings = new String[]{"'" + string3 + "' has invalid value '" + string7 + "' : " + bb};
+                                String[] strings = new String[]{"'" + key + "' has invalid value '" + attributeValue + "' : " + bb};
                                 ZkmAssert.assertTrue(false, strings);
                         }
                     }
                 }
-            } else if (!string3.equals("MIDlet-Icon")) {
-                String string4 = this.getAttribute(string3);
-                StringTokenizer stringTokenizer = new StringTokenizer(string4, " ,", true);
+            } else if (!key.equals("MIDlet-Icon")) {
+                String attributeValue2 = this.getAttribute(key);
+                StringTokenizer stringTokenizer = new StringTokenizer(attributeValue2, " ,", true);
 
                 while (stringTokenizer.hasMoreTokens()) {
                     String string5 = stringTokenizer.nextToken();
@@ -296,10 +296,10 @@ public class JadFile {
                         if (ba > 0 && ba < string5.length() - 1) {
                             String string1 = ".";
                             if (AbstractManifestProcessor.isDottedIdentifier(string5, string1)) {
-                                String string6 = ZkmUtils.dotsToSlashes(string5);
-                                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string6);
+                                String keyValue2 = ZkmUtils.dotsToSlashes(string5);
+                                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(keyValue2);
                                 if (programClass1 != null) {
-                                    map1.put(programClass1, string3 + string2);
+                                    map1.put(programClass1, key + string2);
                                 }
                             }
                         }

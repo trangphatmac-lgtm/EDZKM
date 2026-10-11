@@ -20,12 +20,12 @@ public class ArrayTypeReference implements NamedTypeRef {
                 : ClassFileBase.toTypeDescriptor(this.elementClass.getClassName(), this.dimensions).replace('/', '.');
     }
 
-    public ArrayTypeReference(String string, Integer integer, ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
-        this.arrayDescriptor = string;
-        this.dimensions = string.lastIndexOf("[") + 1;
-        String string1 = ClassFileBase.extractClassName(this.arrayDescriptor);
-        if (string1 != null) {
-            this.elementClass = classResolver1.getVersionedClass(string1, integer, LOOKUP_REASON, ignoreMissingReferencesSpec1);
+    public ArrayTypeReference(String arrayDescriptorArgument, Integer integer, ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
+        this.arrayDescriptor = arrayDescriptorArgument;
+        this.dimensions = arrayDescriptorArgument.lastIndexOf("[") + 1;
+        String key = ClassFileBase.extractClassName(this.arrayDescriptor);
+        if (key != null) {
+            this.elementClass = classResolver1.getVersionedClass(key, integer, LOOKUP_REASON, ignoreMissingReferencesSpec1);
         }
     }
 

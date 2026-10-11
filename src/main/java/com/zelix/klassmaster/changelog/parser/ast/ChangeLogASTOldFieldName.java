@@ -12,8 +12,8 @@ public class ChangeLogASTOldFieldName extends ChangeLogSimpleNode implements Cha
     public String oldFieldName;
 
     @Override
-    public void setParsedName(Object object) {
-        this.oldFieldName = (String) object;
+    public void setParsedName(Object parsedName) {
+        this.oldFieldName = (String) parsedName;
     }
 
     public ChangeLogASTOldFieldName() {

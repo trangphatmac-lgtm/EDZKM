@@ -44,8 +44,8 @@ public abstract class PackageTreeNodeBase implements Comparable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.comparePathIgnoreCase((PackageTreeNodeBase) object);
+    public int compareTo(Object other) {
+        return this.comparePathIgnoreCase((PackageTreeNodeBase) other);
     }
 
     public abstract void indexInto(Object object);
@@ -57,25 +57,25 @@ public abstract class PackageTreeNodeBase implements Comparable {
     public final void addPackagePath(int ba, String[] strings, Map map1) {
         int bb = ba;
         if (bb < strings.length) {
-            String string = strings[bb];
+            String simpleName = strings[bb];
             Iterator iterator = this.children.iterator();
 
             while (iterator.hasNext()) {
                 PackageTreeNode packageTreeNode = (PackageTreeNode) iterator.next();
-                if (string.equals(packageTreeNode.getSimpleName())) {
+                if (simpleName.equals(packageTreeNode.getSimpleName())) {
                     packageTreeNode.addPackagePath(++bb, strings, map1);
                     return;
                 }
             }
 
-            String string1 = this.getPackagePath();
-            String string2 = (string1.length() > 0 ? string1 + "/" : "") + string;
+            String packagePath = this.getPackagePath();
+            String key = (packagePath.length() > 0 ? packagePath + "/" : "") + simpleName;
             boolean bl = false;
-            if (map1 != null && map1.containsKey(string2)) {
-                bl = (Boolean) map1.get(string2);
+            if (map1 != null && map1.containsKey(key)) {
+                bl = (Boolean) map1.get(key);
             }
 
-            PackageTreeNode packageTreeNode1 = new PackageTreeNode(this, string, bl);
+            PackageTreeNode packageTreeNode1 = new PackageTreeNode(this, simpleName, bl);
             this.children.add(packageTreeNode1);
             packageTreeNode1.addPackagePath(++bb, strings, map1);
         }

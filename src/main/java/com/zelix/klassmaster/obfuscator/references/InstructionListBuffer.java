@@ -16,8 +16,8 @@ public class InstructionListBuffer {
         return this.instructions;
     }
 
-    public InstructionListBuffer(int ba, String string) {
+    public InstructionListBuffer(int ba, String descriptor) {
         this.instructions = new ArrayList(ba);
-        this.localVariables = new LocalVariableList(true, string, 5);
+        this.localVariables = new LocalVariableList(true, descriptor, 5);
     }
 }

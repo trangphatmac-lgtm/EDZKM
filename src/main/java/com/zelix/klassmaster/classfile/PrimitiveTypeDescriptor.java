@@ -25,8 +25,8 @@ public class PrimitiveTypeDescriptor implements NamedTypeRef {
     }
 
 
-    public static PrimitiveTypeDescriptor forDescriptor(Object object) {
-        return (PrimitiveTypeDescriptor) BY_DESCRIPTOR.get(object);
+    public static PrimitiveTypeDescriptor forDescriptor(Object key) {
+        return (PrimitiveTypeDescriptor) BY_DESCRIPTOR.get(key);
     }
 
     @Override
@@ -42,8 +42,8 @@ public class PrimitiveTypeDescriptor implements NamedTypeRef {
         return ConstantPoolEntry.getWrapperClassName(this.descriptor);
     }
 
-    private PrimitiveTypeDescriptor(String string) {
-        this.descriptor = string;
+    private PrimitiveTypeDescriptor(String descriptorArgument) {
+        this.descriptor = descriptorArgument;
     }
 
     public static String getTypeFieldDescriptor() {

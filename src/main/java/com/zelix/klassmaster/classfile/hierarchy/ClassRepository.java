@@ -221,12 +221,12 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     public final ClasspathClassLoader selfClassLoader;
 
     @Override
-    public final boolean implementsInterface(String string, String string1) throws ZkmException, IOException {
+    public final boolean implementsInterface(String key, String keyArgument) throws ZkmException, IOException {
         try {
-            boolean bl = string1.indexOf(42) != -1;
-            return this.implementsInterface(string, string1, bl);
+            boolean bl = keyArgument.indexOf(42) != -1;
+            return this.implementsInterface(key, keyArgument, bl);
         } catch (StackOverflowError stackOverflowError) {
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, "reporting corrupt inheritance heirarchy");
+            ClassFileBase classFileBase = this.classResolver.getClassFile(key, "reporting corrupt inheritance heirarchy");
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt hierarchy (B)", stackOverflowError
             );
@@ -234,22 +234,22 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final boolean implementsInterfaceByOriginalName(String string, String string1) throws ZkmException, IOException {
+    public final boolean implementsInterfaceByOriginalName(String keyArgument, String key) throws ZkmException, IOException {
         try {
-            boolean bl = string1.indexOf(42) != -1;
-            return this.implementsInterfaceOriginal(string, string1, bl);
+            boolean bl = key.indexOf(42) != -1;
+            return this.implementsInterfaceOriginal(keyArgument, key, bl);
         } catch (StackOverflowError stackOverflowError) {
             ClassFileBase classFileBase = this.classResolver
-                    .getClassFile((String) ZkmUtils.mapOrSelf(string1, this.originalToCurrentName), "reporting corrupt inheritance heirarchy");
+                    .getClassFile((String) ZkmUtils.mapOrSelf(key, this.originalToCurrentName), "reporting corrupt inheritance heirarchy");
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt hierarchy (D)", stackOverflowError
             );
         }
     }
 
-    public List getReflectedMethods(Object object) {
+    public List getReflectedMethods(Object key) {
         ArrayList arrayList = new ArrayList();
-        List list1 = this.reflectionTargetsByCaller.getValues(object);
+        List list1 = this.reflectionTargetsByCaller.getValues(key);
         if (list1 != null) {
             Iterator iterator = list1.iterator();
 
@@ -274,105 +274,94 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         this.methodDeclaringClasses = new NestedMultiMap(Math.max(15, this.programClasses.length * 5), HiddenOptionFlags.USE_PARALLEL);
         this.methodsByClass = new TwoKeyMap(Math.max(15, this.programClasses.length), 5, HiddenOptionFlags.USE_PARALLEL);
         this.methodsByClassAndNameType = new NestedMultiMap(Math.max(15, this.programClasses.length), 5, 2, HiddenOptionFlags.USE_PARALLEL);
-        int ba = 0;
+        int programClasseIndex = 0;
         int bb = 0;
 
         for (ProgramClass[] programClass1 = this.programClasses; bb < programClass1.length; programClass1 = this.programClasses) {
-            this.programClasses[ba].registerMethods(this);
-            bb = ++ba;
+            this.programClasses[programClasseIndex].registerMethods(this);
+            bb = ++programClasseIndex;
         }
     }
 
-    public Enumeration getOriginalInterfaceNames(String string, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public Enumeration getOriginalInterfaceNames(String key, ObservableHolder observableHolder) throws ZkmException, IOException {
         ClassFileBase classFileBase;
-        String[] strings;
-        label27:
-        {
-            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode((String) ZkmUtils.mapOrSelf(string, this.originalToCurrentName));
-            ClasspathClassLoader classpathClassLoader1;
-            if (classHierarchyNode != null) {
-                if (!classHierarchyNode.hasNoClassFile()) {
-                    classFileBase = classHierarchyNode.getClassFile();
-                    strings = classHierarchyNode.getInterfaceNames();
-                    break label27;
-                }
-
-                classpathClassLoader1 = this.classpathLoader;
-            } else {
-                classpathClassLoader1 = this.classpathLoader;
-            }
-
-            classFileBase = classpathClassLoader1.getClassFile(string);
-            strings = classFileBase.getInterfaceNames();
+        String[] interfaceNames;
+        ClassHierarchyNode hierarchyNode = ClassHierarchyNode.findNode((String) ZkmUtils.mapOrSelf(key, this.originalToCurrentName));
+        if (hierarchyNode != null && !hierarchyNode.hasNoClassFile()) {
+            classFileBase = hierarchyNode.getClassFile();
+            interfaceNames = hierarchyNode.getInterfaceNames();
+        } else {
+            classFileBase = this.classpathLoader.getClassFile(key);
+            interfaceNames = classFileBase.getInterfaceNames();
         }
 
-        int ba = strings.length;
+        int lengthValue = interfaceNames.length;
 
-        for (int i = 0; i < ba; i++) {
-            String string1 = strings[i];
-            String string2 = (String) ZkmUtils.mapOrSelf(string1, this.currentToOriginalName);
+        for (int interfaceNameIndex = 0; interfaceNameIndex < lengthValue; interfaceNameIndex++) {
+            String interfaceName = interfaceNames[interfaceNameIndex];
+            String interfaceNameValue = (String) ZkmUtils.mapOrSelf(interfaceName, this.currentToOriginalName);
             TwoKeyMap twoKeyMap;
-            if (!string1.equals(string2)) {
-                strings[i] = string2;
+            if (!interfaceName.equals(interfaceNameValue)) {
+                interfaceNames[interfaceNameIndex] = interfaceNameValue;
                 twoKeyMap = this.preRenameInterfaceCache;
             } else {
                 twoKeyMap = this.preRenameInterfaceCache;
             }
 
-            twoKeyMap.putValue(string2, string, CACHED_TRUE);
+            twoKeyMap.putValue(interfaceNameValue, key, CACHED_TRUE);
         }
 
         observableHolder.setValue(classFileBase);
-        return new ArrayEnumeration(strings);
+        return new ArrayEnumeration(interfaceNames);
     }
 
-    public Set getOriginalAnnotations(boolean bl, String string, String string1, Integer integer) throws ZkmException, IOException {
+    public Set getOriginalAnnotations(boolean bl, String keyArgument, String key, Integer integer) throws ZkmException, IOException {
         try {
-            if (this.preRenameAnnotationCache.containsKey(string1)) {
-                return new LinkedHashSet(this.preRenameAnnotationCache.getValues(string1));
+            if (this.preRenameAnnotationCache.containsKey(key)) {
+                return new LinkedHashSet(this.preRenameAnnotationCache.getValues(key));
             }
 
             LinkedHashSet linkedHashSet = new LinkedHashSet(13);
-            String string3 = "analyzing the annotations of class '" + ZkmUtils.slashesToDots(string1) + "'";
-            this.collectOriginalAnnotations(bl, string, integer, linkedHashSet, false, string3);
-            this.preRenameAnnotationCache.putValueSet(string1, linkedHashSet);
+            String string3 = "analyzing the annotations of class '" + ZkmUtils.slashesToDots(key) + "'";
+            this.collectOriginalAnnotations(bl, keyArgument, integer, linkedHashSet, false, string3);
+            this.preRenameAnnotationCache.putValueSet(key, linkedHashSet);
             return linkedHashSet;
         } catch (StackOverflowError stackOverflowError) {
             String string2 = "reporting corrupt inheritance hierarchy";
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, string2);
+            ClassFileBase classFileBase = this.classResolver.getClassFile(keyArgument, string2);
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt hierarchy (C)", stackOverflowError
             );
         }
     }
 
-    public final ClassHierarchyNode getHierarchyNode(int ba) {
-        return this.classHierarchy.getNodeAt(ba);
+    public final ClassHierarchyNode getHierarchyNode(int elementIndex) {
+        return this.classHierarchy.getNodeAt(elementIndex);
     }
 
     public Iterator iterateResourceFileNames() {
         return Collections.unmodifiableSet(this.resourceFileNames).iterator();
     }
 
-    public Set collectAnnotations(boolean bl, String string, Integer integer, Set set1, boolean bl1, String string1) throws ZkmException, IOException {
-        ClassFileBase classFileBase = this.classResolver.getVersionedClass(string, integer, string1);
+    public Set collectAnnotations(boolean bl, String key, Integer integer, Set set1, boolean bl1, String string1) throws ZkmException, IOException {
+        ClassFileBase classFileBase = this.classResolver.getVersionedClass(key, integer, string1);
         Enumeration enumeration = classFileBase.enumerateAnnotationTypes();
 
         while (enumeration.hasMoreElements()) {
-            String string2 = (String) enumeration.nextElement();
+            String keyValue = (String) enumeration.nextElement();
             if (bl1) {
-                if (this.classResolver.getClassFile(string2, string1).hasAnnotation("java/lang/annotation/Inherited")) {
-                    set1.add(string2);
+                if (this.classResolver.getClassFile(keyValue, string1).hasAnnotation("java/lang/annotation/Inherited")) {
+                    set1.add(keyValue);
                 }
             } else {
-                set1.add(string2);
+                set1.add(keyValue);
             }
         }
 
         if (bl) {
-            String string3 = classFileBase.getSuperclassName();
-            if (string3 != null) {
-                this.collectAnnotations(bl, string3, integer, set1, true, string1);
+            String superclassNameValue = classFileBase.getSuperclassName();
+            if (superclassNameValue != null) {
+                this.collectAnnotations(bl, superclassNameValue, integer, set1, true, string1);
             }
         }
 
@@ -421,9 +410,9 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getKey();
+            String key = (String) entry.getKey();
             List list2 = (List) entry.getValue();
-            ModuleInfoClass moduleInfoClass = (ModuleInfoClass) map1.get(string);
+            ModuleInfoClass moduleInfoClass = (ModuleInfoClass) map1.get(key);
             ProgramClass programClass1 = (ProgramClass) ((ObjectPair) list2.get(0)).getFirst();
             if (moduleInfoClass == null) {
                 if (twoKeyMap == null) {
@@ -474,14 +463,14 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             ObjectPair objectPair = (ObjectPair) iterator1.next();
                             ModuleInfoClass moduleInfoClass1 = (ModuleInfoClass) objectPair.getFirst();
                             if (moduleInfoClass1.getInputLocation().getSourceArchive().equals(sourceArchive2)) {
-                                int bb = (Integer) objectPair.getSecond();
-                                moduleInfoClass.addVersionedVariant(moduleInfoClass1, bb);
+                                int second = (Integer) objectPair.getSecond();
+                                moduleInfoClass.addVersionedVariant(moduleInfoClass1, second);
                                 if (this.verbose) {
                                     if (pairMultiMap1 == null) {
                                         pairMultiMap1 = new PairMultiMap();
                                     }
 
-                                    pairMultiMap1.addPair(moduleInfoClass, moduleInfoClass1, bb);
+                                    pairMultiMap1.addPair(moduleInfoClass, moduleInfoClass1, second);
                                 }
                             } else {
                                 printWriter.println(
@@ -520,7 +509,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
             while (iterator.hasNext()) {
                 Entry entry1 = (Entry) iterator.next();
-                String string1 = (String) entry1.getKey();
+                String keyValue = (String) entry1.getKey();
                 java.util.Map treeMap = (Map) entry1.getValue();
                 treeMap = new TreeMap(treeMap);
                 ModuleInfoClass moduleInfoClass3 = null;
@@ -529,7 +518,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
                 while (iterator5.hasNext()) {
                     Entry entry2 = (Entry) iterator5.next();
-                    int bc = (Integer) entry2.getKey();
+                    int keyValue2 = (Integer) entry2.getKey();
                     ModuleInfoClass moduleInfoClass6 = (ModuleInfoClass) entry2.getValue();
                     if (moduleInfoClass3 == null) {
                         moduleInfoClass3 = moduleInfoClass6;
@@ -539,13 +528,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                     } else {
                         SourceArchive sourceArchive3 = moduleInfoClass6.getInputLocation().getSourceArchive();
                         if (sourceArchive3 == sourceArchive1) {
-                            moduleInfoClass3.addVersionedVariant(moduleInfoClass6, bc);
+                            moduleInfoClass3.addVersionedVariant(moduleInfoClass6, keyValue2);
                             if (this.verbose) {
                                 if (pairMultiMap1 == null) {
                                     pairMultiMap1 = new PairMultiMap();
                                 }
 
-                                pairMultiMap1.addPair(moduleInfoClass3, moduleInfoClass6, bc);
+                                pairMultiMap1.addPair(moduleInfoClass3, moduleInfoClass6, keyValue2);
                             }
                         } else {
                             printWriter.println(
@@ -600,9 +589,9 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getKey();
-            String string1 = (String) entry.getValue();
-            this.renameFieldPrefix(string, string1);
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            this.renameFieldPrefix(key, value);
         }
     }
 
@@ -616,7 +605,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         if (methodInfo1 != null) {
             ConstantPoolEntry constantPoolEntry = methodInfo1.getFirstLoadedConstant();
             if (constantPoolEntry instanceof ResolvedClassConstant) {
-                String string = ((ResolvedClassConstant) constantPoolEntry).getClassName();
+                String className = ((ResolvedClassConstant) constantPoolEntry).getClassName();
                 MethodSignature methodSignature2 = new MethodSignature("getName", "()Ljava/lang/String;");
                 MethodInfo methodInfo2 = programClass1.findMethodBySignature(methodSignature2);
                 if (methodInfo2 != null) {
@@ -629,29 +618,29 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             constantPoolEntry = methodInfo3.getFirstLoadedConstant();
                             if (constantPoolEntry instanceof ResolvedStringConstant) {
                                 ResolvedStringConstant resolvedStringConstant1 = (ResolvedStringConstant) constantPoolEntry;
-                                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string);
+                                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(className);
                                 if (programClass2 != null) {
-                                    String string1 = resolvedStringConstant1.getValueString();
-                                    if (string1.indexOf(40) > 0) {
-                                        MethodSignature methodSignature4 = new MethodSignature(string1);
+                                    String valueString = resolvedStringConstant1.getValueString();
+                                    if (valueString.indexOf(40) > 0) {
+                                        MethodSignature methodSignature4 = new MethodSignature(valueString);
                                         MethodInfo methodInfo4 = programClass2.findMethodBySignature(methodSignature4);
                                         if (methodInfo4 != null) {
-                                            if (string1.startsWith(resolvedStringConstant.getValueString())) {
+                                            if (valueString.startsWith(resolvedStringConstant.getValueString())) {
                                                 StringConstantNameRef stringConstantNameRef = new StringConstantNameRef(resolvedStringConstant);
                                                 this.methodNameStringRefs.putValue(methodInfo4, stringConstantNameRef, stringConstantNameRef);
                                             } else {
-                                                String string3 = methodSignature4.getName();
-                                                String string2 = null;
-                                                if (string3.startsWith("get")) {
-                                                    string2 = "get";
-                                                } else if (string3.startsWith("set")) {
-                                                    string2 = "set";
-                                                } else if (string3.startsWith("is")) {
-                                                    string2 = "is";
+                                                String nameValue = methodSignature4.getName();
+                                                String accessorPrefix = null;
+                                                if (nameValue.startsWith("get")) {
+                                                    accessorPrefix = "get";
+                                                } else if (nameValue.startsWith("set")) {
+                                                    accessorPrefix = "set";
+                                                } else if (nameValue.startsWith("is")) {
+                                                    accessorPrefix = "is";
                                                 }
 
-                                                if (string2 != null && MethodSignature.toPropertyName(string3, string2).equals(resolvedStringConstant.getValueString())) {
-                                                    StringConstantNameRef stringConstantNameRef1 = new StringConstantNameRef(resolvedStringConstant, string2);
+                                                if (accessorPrefix != null && MethodSignature.toPropertyName(nameValue, accessorPrefix).equals(resolvedStringConstant.getValueString())) {
+                                                    StringConstantNameRef stringConstantNameRef1 = new StringConstantNameRef(resolvedStringConstant, accessorPrefix);
                                                     this.methodNameStringRefs.putValue(methodInfo4, stringConstantNameRef1, stringConstantNameRef1);
                                                 }
                                             }
@@ -676,9 +665,9 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getKey();
+            String key = (String) entry.getKey();
             List list2 = (List) entry.getValue();
-            ProgramClass programClass1 = (ProgramClass) map1.get(string);
+            ProgramClass programClass1 = (ProgramClass) map1.get(key);
             ProgramClass programClass2 = (ProgramClass) ((ObjectPair) list2.get(0)).getFirst();
             if (programClass1 == null) {
                 if (twoKeyMap == null) {
@@ -727,14 +716,14 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             ObjectPair objectPair = (ObjectPair) iterator1.next();
                             ProgramClass programClass3 = (ProgramClass) objectPair.getFirst();
                             if (programClass3.getInputLocation().getSourceArchive().equals(sourceArchive2)) {
-                                int bb = (Integer) objectPair.getSecond();
-                                programClass1.addVersionedVariant(programClass3, bb);
+                                int second = (Integer) objectPair.getSecond();
+                                programClass1.addVersionedVariant(programClass3, second);
                                 if (this.verbose) {
                                     if (pairMultiMap1 == null) {
                                         pairMultiMap1 = new PairMultiMap();
                                     }
 
-                                    pairMultiMap1.addPair(programClass1, programClass3, bb);
+                                    pairMultiMap1.addPair(programClass1, programClass3, second);
                                 }
                             } else {
                                 printWriter.println(
@@ -773,7 +762,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
             while (iterator.hasNext()) {
                 Entry entry1 = (Entry) iterator.next();
-                String string1 = (String) entry1.getKey();
+                String keyValue = (String) entry1.getKey();
                 java.util.Map treeMap = (Map) entry1.getValue();
                 treeMap = new TreeMap(treeMap);
                 ProgramClass programClass5 = null;
@@ -782,7 +771,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
                 while (iterator5.hasNext()) {
                     Entry entry2 = (Entry) iterator5.next();
-                    int bc = (Integer) entry2.getKey();
+                    int keyValue2 = (Integer) entry2.getKey();
                     ProgramClass programClass8 = (ProgramClass) entry2.getValue();
                     if (programClass5 == null) {
                         programClass5 = programClass8;
@@ -792,13 +781,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                     } else {
                         SourceArchive sourceArchive3 = programClass8.getInputLocation().getSourceArchive();
                         if (sourceArchive3 == sourceArchive1) {
-                            programClass5.addVersionedVariant(programClass8, bc);
+                            programClass5.addVersionedVariant(programClass8, keyValue2);
                             if (this.verbose) {
                                 if (pairMultiMap1 == null) {
                                     pairMultiMap1 = new PairMultiMap();
                                 }
 
-                                pairMultiMap1.addPair(programClass5, programClass8, bc);
+                                pairMultiMap1.addPair(programClass5, programClass8, keyValue2);
                             }
                         } else {
                             printWriter.println(
@@ -836,8 +825,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public void applyFieldRenamesToVersions(ClassFileBase[] classFileBases, TwoKeyMap twoKeyMap) throws ZkmException, IOException {
-        for (int i = 0; i < classFileBases.length; i++) {
-            ClassFileBase classFileBase = classFileBases[i];
+        for (int classFileBaseIndex = 0; classFileBaseIndex < classFileBases.length; classFileBaseIndex++) {
+            ClassFileBase classFileBase = classFileBases[classFileBaseIndex];
             if (classFileBase.hasVersionedVariants()) {
                 classFileBase.applyFieldRenames(twoKeyMap);
             }
@@ -884,12 +873,12 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final boolean extendsAnnotatedClass(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+    public final boolean extendsAnnotatedClass(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
         try {
             boolean bl = string1.indexOf(42) != -1;
-            return this.extendsAnnotatedClass(string, string1, bl, aSTComplexAnnotationSpecifier);
+            return this.extendsAnnotatedClass(key, string1, bl, aSTComplexAnnotationSpecifier);
         } catch (StackOverflowError stackOverflowError) {
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, "reporting corrupt inheritance hierarchy");
+            ClassFileBase classFileBase = this.classResolver.getClassFile(key, "reporting corrupt inheritance hierarchy");
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt inheritance hierarchy (B)",
                     stackOverflowError
@@ -898,12 +887,12 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final boolean extendsAnnotatedClassByOriginalName(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+    public final boolean extendsAnnotatedClassByOriginalName(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
         try {
             boolean bl = string1.indexOf(42) != -1;
-            return this.extendsAnnotatedClassOriginal(string, string1, bl, aSTComplexAnnotationSpecifier);
+            return this.extendsAnnotatedClassOriginal(key, string1, bl, aSTComplexAnnotationSpecifier);
         } catch (StackOverflowError stackOverflowError) {
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, "reporting corrupt inheritance hierarchy");
+            ClassFileBase classFileBase = this.classResolver.getClassFile(key, "reporting corrupt inheritance hierarchy");
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt inheritance hierarchy (E)",
                     stackOverflowError
@@ -925,27 +914,27 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         return this.integerConstantsEncrypted;
     }
 
-    public Set collectOriginalAnnotations(boolean bl, String string, Integer integer, Set set1, boolean bl1, String string1) throws ZkmException, IOException {
-        ClassFileBase classFileBase = this.classResolver.getVersionedClass(string, integer, string1);
+    public Set collectOriginalAnnotations(boolean bl, String keyArgument, Integer integer, Set set1, boolean bl1, String string1) throws ZkmException, IOException {
+        ClassFileBase classFileBase = this.classResolver.getVersionedClass(keyArgument, integer, string1);
         Enumeration enumeration = classFileBase.enumerateAnnotationTypes();
 
         while (enumeration.hasMoreElements()) {
-            String string2 = (String) enumeration.nextElement();
+            String key = (String) enumeration.nextElement();
             if (bl1) {
-                ClassFileBase classFileBase1 = this.classResolver.getClassFile(string2, string1);
+                ClassFileBase classFileBase1 = this.classResolver.getClassFile(key, string1);
                 if (classFileBase1.hasAnnotation("java/lang/annotation/Inherited")) {
                     set1.add(classFileBase1.getOriginalClassName());
                 }
             } else {
-                set1.add(ZkmUtils.mapOrSelf(string2, this.currentToOriginalName));
+                set1.add(ZkmUtils.mapOrSelf(key, this.currentToOriginalName));
             }
         }
 
         if (bl) {
-            String string3 = classFileBase.getSuperclassName();
-            String string4 = (String) ZkmUtils.mapOrSelf(string3, this.currentToOriginalName);
-            if (string3 != null) {
-                this.collectOriginalAnnotations(bl, string3, integer, set1, true, string1);
+            String superclassNameValue = classFileBase.getSuperclassName();
+            String string4 = (String) ZkmUtils.mapOrSelf(superclassNameValue, this.currentToOriginalName);
+            if (superclassNameValue != null) {
+                this.collectOriginalAnnotations(bl, superclassNameValue, integer, set1, true, string1);
             }
         }
 
@@ -953,51 +942,40 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final FieldInfo findDeclaredField(Object object, Object object1) {
-        return (FieldInfo) this.fieldsBySignature.getValue(object1, object);
+    public final FieldInfo findDeclaredField(Object key, Object keyArgument) {
+        return (FieldInfo) this.fieldsBySignature.getValue(keyArgument, key);
     }
 
     @Override
-    public String getOriginalClassName(Object object) {
-        return (String) ZkmUtils.mapOrSelf(object, this.currentToOriginalName);
+    public String getOriginalClassName(Object key) {
+        return (String) ZkmUtils.mapOrSelf(key, this.currentToOriginalName);
     }
 
     public Map getResourceReferencedClasses() {
         return this.resourceReferencedClasses;
     }
 
-    public String getSuperclassName(String string) throws ZkmException, IOException {
+    public String getSuperclassName(String key) throws ZkmException, IOException {
         String string1;
         ClassFileBase classFileBase;
-        label23:
-        {
-            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
-            ClasspathClassLoader classpathClassLoader1;
-            if (classHierarchyNode != null) {
-                if (!classHierarchyNode.hasNoClassFile()) {
-                    classFileBase = classHierarchyNode.getClassFile();
-                    ClassHierarchyNode classHierarchyNode1 = classHierarchyNode.getSuperclassNode();
-                    string1 = classHierarchyNode1.getClassName();
-                    break label23;
-                }
-
-                classpathClassLoader1 = this.classpathLoader;
-            } else {
-                classpathClassLoader1 = this.classpathLoader;
-            }
-
-            classFileBase = classpathClassLoader1.getClassFile(string);
+        ClassHierarchyNode hierarchyNode = ClassHierarchyNode.findNode(key);
+        if (hierarchyNode != null && !hierarchyNode.hasNoClassFile()) {
+            classFileBase = hierarchyNode.getClassFile();
+            ClassHierarchyNode superclassNode = hierarchyNode.getSuperclassNode();
+            string1 = superclassNode.getClassName();
+        } else {
+            classFileBase = this.classpathLoader.getClassFile(key);
             string1 = classFileBase.getSuperclassName();
         }
 
-        String string2;
+        String hierarchyGapMessage;
         if (HiddenOptionFlags.TEST_HIERARCHY
                 && !classFileBase.isGenerated()
-                && (string2 = ClassHierarchyNode.getHierarchyGapMessage(classFileBase, this.classResolver.getClassFile(string1), 1)) != null) {
-            throw new ZkmRuntimeException(string2);
+                && (hierarchyGapMessage = ClassHierarchyNode.getHierarchyGapMessage(classFileBase, this.classResolver.getClassFile(string1), 1)) != null) {
+            throw new ZkmRuntimeException(hierarchyGapMessage);
         }
 
-        this.superclassCache.putValue(string1, string, CACHED_TRUE);
+        this.superclassCache.putValue(string1, key, CACHED_TRUE);
         return string1;
     }
 
@@ -1053,8 +1031,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public boolean isObjectMethodSignature(Object object) {
-        return this.objectMethods.containsKey(object);
+    public boolean isObjectMethodSignature(Object key) {
+        return this.objectMethods.containsKey(key);
     }
 
     public synchronized int openClasses(
@@ -1201,8 +1179,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
             while (iterator1.hasNext()) {
                 SourceArchive sourceArchive1 = (SourceArchive) iterator1.next();
-                String string1 = sourceArchive1.getFilePath();
-                stringBuilder1.append(string1);
+                String filePath = sourceArchive1.getFilePath();
+                stringBuilder1.append(filePath);
                 stringBuilder.append(sourceArchive1.getQualifiedPath());
                 if (iterator1.hasNext()) {
                     stringBuilder1.append(SystemEnvironmentConstants.PATH_SEPARATOR_CHAR);
@@ -1297,20 +1275,20 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
         classRepository2.recordClassDigests(klassMaster, 2, 0);
         this.statusHolder.setValue("Analyzing classes");
-        int be = list2.size();
+        int list2Size = list2.size();
         Collections.sort(list2);
-        this.programClasses = new ProgramClass[be];
+        this.programClasses = new ProgramClass[list2Size];
 
-        for (int i = 0; i < be; i += 1) {
-            this.programClasses[i] = (ProgramClass) list2.get(i);
-            String string6 = this.programClasses[i].getClassName();
+        for (int elementIndex = 0; elementIndex < list2Size; elementIndex += 1) {
+            this.programClasses[elementIndex] = (ProgramClass) list2.get(elementIndex);
+            String className = this.programClasses[elementIndex].getClassName();
             ZkmAssert.assertTrue(
-                    string6.equals("java/lang/Object") || this.programClasses[i].getSuperclassName() != null,
-                    new String[]{"Class '" + string6 + "' appears to be corrupt (C) : '" + this.programClasses[i].getDisplayLocationName() + "'"}
+                    className.equals("java/lang/Object") || this.programClasses[elementIndex].getSuperclassName() != null,
+                    new String[]{"Class '" + className + "' appears to be corrupt (C) : '" + this.programClasses[elementIndex].getDisplayLocationName() + "'"}
             );
-            if (string6.equals("java/lang/Object")
-                    || string6.equals("java/lang/invoke/MethodHandle")
-                    || this.programClasses[i].getSuperclassName().equals("java/lang/invoke/MethodHandle")) {
+            if (className.equals("java/lang/Object")
+                    || className.equals("java/lang/invoke/MethodHandle")
+                    || this.programClasses[elementIndex].getSuperclassName().equals("java/lang/invoke/MethodHandle")) {
                 if (operationStatusCallback != null) {
                     operationStatusCallback.setStatus((String) null);
                 }
@@ -1318,19 +1296,19 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 messageReporter1.reportFatalError(
                         "FATAL ERROR:",
                         "Cannot open "
-                                + (string6.equals("java/lang/Object") ? "java/lang/Object" : "java/lang/invoke/MethodHandle or its subclasses")
+                                + (className.equals("java/lang/Object") ? "java/lang/Object" : "java/lang/invoke/MethodHandle or its subclasses")
                                 + " in this version : '"
-                                + this.programClasses[i].getLocationName()
+                                + this.programClasses[elementIndex].getLocationName()
                                 + "'"
                 );
             }
         }
 
         ProgramClass[] programClass2 = this.programClasses;
-        int bh = programClass2.length;
+        int lengthValue = programClass2.length;
 
-        for (int i = 0; i < bh; i += 1) {
-            ProgramClass programClass1 = programClass2[i];
+        for (int programClass2ElementIndex = 0; programClass2ElementIndex < lengthValue; programClass2ElementIndex += 1) {
+            ProgramClass programClass1 = programClass2[programClass2ElementIndex];
             if (programClass1.hasZkmAnnotationValues() || programClass1.hasZkmMethodAnnotations()) {
                 programClass1.removeZkmAnnotations(scriptEnvironment1);
             }
@@ -1340,33 +1318,33 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         if (this.moduleInfoClasses.length > 0) {
             this.archivesByModuleName = new ListMultimap(this.moduleInfoClasses.length, HiddenOptionFlags.DETERMINISTIC_OUTPUT);
             this.moduleNameByArchive = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(this.sourceArchives.length));
-            int bg = 0;
-            int bt = 0;
+            int elementIndexValue = 0;
+            int elementIndexValue3 = 0;
 
-            for (ModuleInfoClass[] moduleInfoClass1 = this.moduleInfoClasses; bt < moduleInfoClass1.length; moduleInfoClass1 = this.moduleInfoClasses) {
-                ModuleInfoClass moduleInfoClass = (ModuleInfoClass) vector.get(bg);
-                this.moduleInfoClasses[bg] = moduleInfoClass;
-                String string7 = moduleInfoClass.getModuleName();
+            for (ModuleInfoClass[] moduleInfoClass1 = this.moduleInfoClasses; elementIndexValue3 < moduleInfoClass1.length; moduleInfoClass1 = this.moduleInfoClasses) {
+                ModuleInfoClass moduleInfoClass = (ModuleInfoClass) vector.get(elementIndexValue);
+                this.moduleInfoClasses[elementIndexValue] = moduleInfoClass;
+                String moduleName = moduleInfoClass.getModuleName();
                 Enumeration enumeration = moduleInfoClass.enumerateInputLocations();
 
                 while (enumeration.hasMoreElements()) {
                     InputFileLocation inputFileLocation1 = (InputFileLocation) enumeration.nextElement();
                     if (inputFileLocation1.isArchiveEntry()) {
                         SourceArchive sourceArchive2 = inputFileLocation1.getSourceArchive();
-                        this.archivesByModuleName.addValue(string7, sourceArchive2);
-                        this.moduleNameByArchive.put(sourceArchive2, string7);
+                        this.archivesByModuleName.addValue(moduleName, sourceArchive2);
+                        this.moduleNameByArchive.put(sourceArchive2, moduleName);
                     }
                 }
 
-                bg += 1;
-                bt = bg;
+                elementIndexValue += 1;
+                elementIndexValue3 = elementIndexValue;
             }
 
             SourceArchive[] sourceArchives2 = this.sourceArchives;
-            bh = sourceArchives2.length;
+            lengthValue = sourceArchives2.length;
 
-            for (int i = 0; i < bh; i += 1) {
-                SourceArchive sourceArchive6 = sourceArchives2[i];
+            for (int sourceArchives2ElementIndex = 0; sourceArchives2ElementIndex < lengthValue; sourceArchives2ElementIndex += 1) {
+                SourceArchive sourceArchive6 = sourceArchives2[sourceArchives2ElementIndex];
                 if (this.moduleNameByArchive.containsKey(sourceArchive6)) {
                     sourceArchive6.setModuleName((String) this.moduleNameByArchive.get(sourceArchive6));
                 }
@@ -1375,10 +1353,10 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
         ArrayList arrayList = new ArrayList(this.programClasses.length + 10);
         ProgramClass[] programClass3 = this.programClasses;
-        int bj = programClass3.length;
+        int lengthValue2 = programClass3.length;
 
-        for (int i = 0; i < bj; i += 1) {
-            ProgramClass programClass6 = programClass3[i];
+        for (int programClass3ElementIndex = 0; programClass3ElementIndex < lengthValue2; programClass3ElementIndex += 1) {
+            ProgramClass programClass6 = programClass3[programClass3ElementIndex];
             arrayList.add(programClass6);
             if (programClass6.hasVersionedVariants()) {
                 Iterator iterator8 = programClass6.getVersionedVariants().iterator();
@@ -1396,10 +1374,10 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         this.parameterChangedClasses = new IndexedValueRelation(programClass4, 4, false);
         this.classesByArchive = new ListMultimap(this.sourceArchives.length);
         ProgramClass[] programClass5 = this.programClasses;
-        int bm = programClass5.length;
+        int lengthValue3 = programClass5.length;
 
-        for (int i = 0; i < bm; i += 1) {
-            ProgramClass programClass7 = programClass5[i];
+        for (int programClass5ElementIndex = 0; programClass5ElementIndex < lengthValue3; programClass5ElementIndex += 1) {
+            ProgramClass programClass7 = programClass5[programClass5ElementIndex];
             Enumeration enumeration1 = programClass7.enumerateInputLocations();
 
             while (enumeration1.hasMoreElements()) {
@@ -1496,53 +1474,53 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
         for (SourceArchive[] sourceArchives3 = this.sourceArchives; bu < sourceArchives3.length; sourceArchives3 = this.sourceArchives) {
             if (this.skippedArchives == null || !this.skippedArchives.contains(this.sourceArchives[bo])) {
-                String string8 = this.sourceArchives[bo].getFileName();
+                String fileName = this.sourceArchives[bo].getFileName();
                 ListMultimap listMultimap1;
-                String string11;
+                String fileNameValue;
                 SourceArchive[] sourceArchives4;
                 if (!ZkmFileUtils.caseSensitiveFileSystem) {
-                    string8 = string8.toLowerCase();
+                    fileName = fileName.toLowerCase();
                     listMultimap1 = listMultimap;
-                    string11 = string8;
+                    fileNameValue = fileName;
                     sourceArchives4 = this.sourceArchives;
                 } else {
                     listMultimap1 = listMultimap;
-                    string11 = string8;
+                    fileNameValue = fileName;
                     sourceArchives4 = this.sourceArchives;
                 }
 
-                listMultimap1.addValue(string11, sourceArchives4[bo]);
+                listMultimap1.addValue(fileNameValue, sourceArchives4[bo]);
             }
 
             bo += 1;
             bu = bo;
         }
 
-        for (int i = 0; i < inputFileLocations1.length; i += 1) {
+        for (int inputFileLocations1ElementIndex = 0; inputFileLocations1ElementIndex < inputFileLocations1.length; inputFileLocations1ElementIndex += 1) {
             try {
-                JadFile jadFile1 = new JadFile(inputFileLocations1[i]);
-                long br = -1L;
+                JadFile jadFile1 = new JadFile(inputFileLocations1[inputFileLocations1ElementIndex]);
+                long jarSize = -1L;
 
                 try {
-                    br = jadFile1.getJarSize();
+                    jarSize = jadFile1.getJarSize();
                 } catch (JadFileException jadFileException) {
-                    messageReporter1.reportProblem("WARNING:", "Jad file '" + inputFileLocations1[i].getQualifiedName() + "' : " + jadFileException.getMessage());
+                    messageReporter1.reportProblem("WARNING:", "Jad file '" + inputFileLocations1[inputFileLocations1ElementIndex].getQualifiedName() + "' : " + jadFileException.getMessage());
                 }
 
-                String string2 = jadFile1.getJarFileName();
+                String jarFileName = jadFile1.getJarFileName();
                 if (!ZkmFileUtils.caseSensitiveFileSystem) {
-                    string2 = string2.toLowerCase();
+                    jarFileName = jarFileName.toLowerCase();
                 }
 
-                List list1 = listMultimap.getValues(string2);
+                List list1 = listMultimap.getValues(jarFileName);
                 SourceArchive sourceArchive4 = null;
                 if (list1 != null) {
                     if (list1.size() == 1) {
                         sourceArchive4 = (SourceArchive) list1.get(0);
                     } else {
-                        for (int j = 0; j < list1.size(); j += 1) {
-                            SourceArchive sourceArchive5 = (SourceArchive) list1.get(j);
-                            if (sourceArchive5.getFileSize() == br) {
+                        for (int elementIndexValue2 = 0; elementIndexValue2 < list1.size(); elementIndexValue2 += 1) {
+                            SourceArchive sourceArchive5 = (SourceArchive) list1.get(elementIndexValue2);
+                            if (sourceArchive5.getFileSize() == jarSize) {
                                 sourceArchive4 = sourceArchive5;
                                 break;
                             }
@@ -1559,9 +1537,9 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             "JAD file '"
                                     + jadFile1.getJadFilePath()
                                     + "' has no associated JAR file '"
-                                    + string2
+                                    + jarFileName
                                     + "'"
-                                    + (br > -1L && list1 != null && list1.size() > 0 ? " with length " + br : "")
+                                    + (jarSize > -1L && list1 != null && list1.size() > 0 ? " with length " + jarSize : "")
                                     + ". Cannot automatically update JAR size in JAD file."
                     );
                     hashMap = this.jadFileArchives;
@@ -1569,16 +1547,16 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
                 hashMap.put(jadFile1, sourceArchive4);
             } catch (ZkmException zkmException) {
-                messageReporter1.reportError("ERROR:", "Jad file '" + inputFileLocations1[i].getQualifiedName() + "' : " + zkmException.getMessage());
+                messageReporter1.reportError("ERROR:", "Jad file '" + inputFileLocations1[inputFileLocations1ElementIndex].getQualifiedName() + "' : " + zkmException.getMessage());
             }
         }
 
         this.xmlFileLocations = inputFileLocations2;
         InputFileLocation[] inputFileLocations5 = this.xmlFileLocations;
-        int bq = inputFileLocations5.length;
+        int lengthValue4 = inputFileLocations5.length;
 
-        for (int i = 0; i < bq; i += 1) {
-            InputFileLocation inputFileLocation3 = inputFileLocations5[i];
+        for (int inputFileLocations5ElementIndex = 0; inputFileLocations5ElementIndex < lengthValue4; inputFileLocations5ElementIndex += 1) {
+            InputFileLocation inputFileLocation3 = inputFileLocations5[inputFileLocations5ElementIndex];
             this.resourceFileIndex.addFile(inputFileLocation3.getFile());
         }
 
@@ -1645,23 +1623,23 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         Iterator iterator = this.resourceFileNames.iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            String string1 = ResourcePathTranslator.renameResourceParentPath(string, enumerableMap);
+            String value = (String) iterator.next();
+            String key = ResourcePathTranslator.renameResourceParentPath(value, enumerableMap);
             String string2 = null;
-            if (!string1.equals(string)) {
+            if (!key.equals(value)) {
                 iterator.remove();
-                string2 = ((java.lang.String) (hashMap1.put(string1, string)));
+                string2 = ((java.lang.String) (hashMap1.put(key, value)));
             }
 
-            if (string2 != null || string1.equals(string) && hashMap1.containsKey(string1)) {
+            if (string2 != null || key.equals(value) && hashMap1.containsKey(key)) {
                 messageReporter1.reportFatalError(
                         "File path clash",
                         "Files '"
-                                + (string2 == null ? (String) hashMap1.get(string1) : string2)
+                                + (string2 == null ? (String) hashMap1.get(key) : string2)
                                 + "' and '"
-                                + string
+                                + value
                                 + "' both mapped to '"
-                                + string1
+                                + key
                                 + "' after package name changes. Did you specify inconsistent input change logs?"
                 );
             }
@@ -1677,7 +1655,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
     @Override
     public final void registerField(ProgramClass programClass1, FieldInfo fieldInfo) {
-        String string = fieldInfo.getSourceName();
+        String sourceName = fieldInfo.getSourceName();
         FieldInfo fieldInfo1 = (FieldInfo) this.fieldsBySignature.putValue(fieldInfo.getSignature(), programClass1, fieldInfo);
         String[] strings = new String[]{
                 fieldInfo1 == null
@@ -1685,14 +1663,14 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                         : "Duplicate field (1) '" + programClass1.getLocationName() + "' '" + fieldInfo.toDisplayString() + "' : '" + fieldInfo1.toDisplayString() + "'"
         };
         ZkmAssert.assertTrue(fieldInfo1 == null, strings);
-        FieldInfo fieldInfo2 = (FieldInfo) this.fieldsByName.putValue(string, programClass1, fieldInfo, fieldInfo);
+        FieldInfo fieldInfo2 = (FieldInfo) this.fieldsByName.putValue(sourceName, programClass1, fieldInfo, fieldInfo);
         strings = new String[]{
                 fieldInfo2 == null
                         ? ""
                         : "Duplicate field (2) '" + programClass1.getLocationName() + "' '" + fieldInfo.toDisplayString() + "' : '" + fieldInfo2.toDisplayString() + "'"
         };
         ZkmAssert.assertTrue(fieldInfo2 == null, strings);
-        FieldInfo fieldInfo3 = (FieldInfo) this.fieldsByClassNameDesc.putValue(programClass1.getClassName(), string, fieldInfo.getDescriptor(), fieldInfo);
+        FieldInfo fieldInfo3 = (FieldInfo) this.fieldsByClassNameDesc.putValue(programClass1.getClassName(), sourceName, fieldInfo.getDescriptor(), fieldInfo);
         strings = new String[]{
                 fieldInfo3 == null
                         ? ""
@@ -1702,8 +1680,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public void resetClassReferences(ClassFileBase[] classFileBases, ScriptEnvironment scriptEnvironment1, boolean bl) throws ZkmException, IOException {
-        for (int i = 0; i < classFileBases.length; i++) {
-            ClassFileBase classFileBase = classFileBases[i];
+        for (int classFileBaseIndex = 0; classFileBaseIndex < classFileBases.length; classFileBaseIndex++) {
+            ClassFileBase classFileBase = classFileBases[classFileBaseIndex];
             boolean bl1 = bl;
             ClassRepository classRepository2 = this;
             ScriptEnvironment scriptEnvironment2 = scriptEnvironment1;
@@ -1723,13 +1701,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final boolean implementsAnnotatedInterfaceByOriginalName(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+    public final boolean implementsAnnotatedInterfaceByOriginalName(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
         try {
             boolean bl = string1.indexOf(42) != -1;
-            return this.implementsAnnotatedInterfaceOriginal(string, string1, bl, aSTComplexAnnotationSpecifier);
+            return this.implementsAnnotatedInterfaceOriginal(key, string1, bl, aSTComplexAnnotationSpecifier);
         } catch (StackOverflowError stackOverflowError) {
             String string2 = "reporting corrupt inheritance heirarchy";
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, string2);
+            ClassFileBase classFileBase = this.classResolver.getClassFile(key, string2);
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt hierarchy (D)", stackOverflowError
             );
@@ -1740,8 +1718,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         SnapshotEnumeration snapshotEnumeration = new SnapshotEnumeration(twoKeyMap.keys());
 
         while (snapshotEnumeration.hasMoreElements()) {
-            Object object = snapshotEnumeration.nextElement();
-            Map map1 = twoKeyMap.getInnerMap(object);
+            Object key = snapshotEnumeration.nextElement();
+            Map map1 = twoKeyMap.getInnerMap(key);
             CollectionSnapshotEnumeration collectionSnapshotEnumeration = new CollectionSnapshotEnumeration(map1.keySet());
 
             while (collectionSnapshotEnumeration.hasMoreElements()) {
@@ -1749,7 +1727,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 if (trackedValue instanceof StringConstantNameRef) {
                     ResolvedStringConstant resolvedStringConstant = ((StringConstantNameRef) trackedValue).getStringConstant();
                     if (set1.contains(resolvedStringConstant)) {
-                        twoKeyMap.removeValue(object, trackedValue);
+                        twoKeyMap.removeValue(key, trackedValue);
                     }
                 }
             }
@@ -1765,35 +1743,35 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public boolean isModuleInfoFile(InputFileLocation inputFileLocation) {
-        String string = inputFileLocation.getName();
+        String nameValue = inputFileLocation.getName();
         String string1;
         if (inputFileLocation.isPlainFile()) {
-            string1 = string.substring(string.lastIndexOf(ZkmFileUtils.FILE_SEPARATOR) + 1);
+            string1 = nameValue.substring(nameValue.lastIndexOf(ZkmFileUtils.FILE_SEPARATOR) + 1);
             if (!ZkmFileUtils.caseSensitiveFileSystem) {
                 string1 = string1.toLowerCase();
             }
         } else {
-            string1 = string.substring(string.lastIndexOf("/") + 1);
+            string1 = nameValue.substring(nameValue.lastIndexOf("/") + 1);
         }
 
         return string1.equals("module-info.class");
     }
 
-    public boolean extendsAnnotatedClass(String string, String string1, boolean bl, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    public boolean extendsAnnotatedClass(String key, String string1, boolean bl, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
-        } else if (string.equals(string1)) {
+        } else if (key.equals(string1)) {
             return false;
         } else {
-            String string2 = this.getSuperclassName(string);
-            if (!bl && string2.equals(string1)) {
-                return aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(string2, null, false));
+            String superclassNameValue = this.getSuperclassName(key);
+            if (!bl && superclassNameValue.equals(string1)) {
+                return aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(superclassNameValue, null, false));
             } else if (bl
-                    && ZkmStringUtils.matchesWildcard(string2, string1)
-                    && aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(string2, null, false))) {
+                    && ZkmStringUtils.matchesWildcard(superclassNameValue, string1)
+                    && aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(superclassNameValue, null, false))) {
                 return true;
             } else {
-                return string2.equals("java/lang/Object") ? false : this.extendsAnnotatedClass(string2, string1, bl, aSTComplexAnnotationSpecifier);
+                return (!(superclassNameValue.equals("java/lang/Object")) && (this.extendsAnnotatedClass(superclassNameValue, string1, bl, aSTComplexAnnotationSpecifier)));
             }
         }
     }
@@ -1812,7 +1790,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
     public final synchronized void obfuscate(
             ChangeLogInputFile[] changeLogInputFiles,
-            boolean bl,
+            boolean changeLogTakesPrecedence,
             PrintWriter printWriter,
             String string,
             String string1,
@@ -1840,13 +1818,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             List list22,
             List list23,
             boolean bl1,
-            String string2,
+            String lookupClassNamePrefix,
             boolean bl2,
             boolean bl3,
-            boolean bl4,
+            boolean useFullDescriptor,
             boolean bl5,
             boolean bl6,
-            boolean bl7,
+            boolean deriveGroupingsFromChangeLog,
             int ba,
             int bb,
             int bc,
@@ -1870,7 +1848,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             boolean bl11,
             boolean bl12,
             MixedCaseNamesMode mixedCaseNamesMode1,
-            boolean bl13,
+            boolean avoidSimpleNameClash,
             boolean bl14,
             int bo,
             String string7,
@@ -1885,13 +1863,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
         try {
-            String string12 = this.application.getEncodedExpiryTime();
-            checkEvaluationExpiry(string12, this.application.getEncodedEvaluationPeriod(), this.application.getEncodedGracePeriod(), this);
-            if (!string12.equals(KlassMaster.validatedExpiryCode)) {
+            String encodedExpiryTime = this.application.getEncodedExpiryTime();
+            checkEvaluationExpiry(encodedExpiryTime, this.application.getEncodedEvaluationPeriod(), this.application.getEncodedGracePeriod(), this);
+            if (!encodedExpiryTime.equals(KlassMaster.validatedExpiryCode)) {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
                 TimeZone timeZone = TimeZone.getDefault();
                 simpleDateFormat.setTimeZone(timeZone);
-                long bp = ObfuscatedLongDecoder.decodeLong(string12);
+                long bp = ObfuscatedLongDecoder.decodeLong(encodedExpiryTime);
                 Date date = new Date(bp);
                 String string13 = simpleDateFormat.format(date);
                 String string14 = string13 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (17)" : "");
@@ -1920,7 +1898,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 this.rootPackageNode,
                 this.statusHolder,
                 changeLogInputFiles,
-                bl,
+                changeLogTakesPrecedence,
                 printWriter,
                 string,
                 string1,
@@ -1948,13 +1926,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 list22,
                 list23,
                 bl1,
-                string2,
+                lookupClassNamePrefix,
                 bl2,
                 bl3,
-                bl4,
+                useFullDescriptor,
                 bl5,
                 bl6,
-                bl7,
+                deriveGroupingsFromChangeLog,
                 ba,
                 bb,
                 bc,
@@ -1984,7 +1962,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 bl11,
                 bl12,
                 mixedCaseNamesMode1,
-                bl13,
+                avoidSimpleNameClash,
                 bl14,
                 bo,
                 string7,
@@ -2006,13 +1984,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public final void reindexRenamedField(ProgramClass programClass1, FieldInfo fieldInfo, String string) {
-        String string1 = fieldInfo.getSourceName();
-        String string2 = fieldInfo.getDescriptor();
-        String string3 = programClass1.getClassName();
+        String sourceName = fieldInfo.getSourceName();
+        String descriptor = fieldInfo.getDescriptor();
+        String className = programClass1.getClassName();
         FieldInfo fieldInfo1 = (FieldInfo) this.fieldsByName.removeValue(string, programClass1, fieldInfo);
-        fieldInfo1 = (FieldInfo) this.fieldsByName.putValue(string1, programClass1, fieldInfo, fieldInfo);
-        fieldInfo1 = (FieldInfo) this.fieldsByClassNameDesc.removeValue(string3, string, string2);
-        fieldInfo1 = (FieldInfo) this.fieldsByClassNameDesc.putValue(string3, string1, string2, fieldInfo);
+        fieldInfo1 = (FieldInfo) this.fieldsByName.putValue(sourceName, programClass1, fieldInfo, fieldInfo);
+        fieldInfo1 = (FieldInfo) this.fieldsByClassNameDesc.removeValue(className, string, descriptor);
+        fieldInfo1 = (FieldInfo) this.fieldsByClassNameDesc.putValue(className, sourceName, descriptor, fieldInfo);
         fieldInfo1 = (FieldInfo) this.fieldsBySignature.removeValue(new FieldSignature(string, fieldInfo.getDescriptor()), programClass1);
         fieldInfo1 = (FieldInfo) this.fieldsBySignature.putValue(fieldInfo.getSignature(), programClass1, fieldInfo);
     }
@@ -2023,32 +2001,32 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final boolean isSubclassByOriginalName(String string, String string1) throws ZkmException, IOException {
+    public final boolean isSubclassByOriginalName(String key, String keyArgument) throws ZkmException, IOException {
         try {
-            boolean bl = string1.indexOf(42) != -1;
-            return this.isSubclassOfOriginal(string, string1, bl);
+            boolean bl = keyArgument.indexOf(42) != -1;
+            return this.isSubclassOfOriginal(key, keyArgument, bl);
         } catch (StackOverflowError stackOverflowError) {
             ClassFileBase classFileBase = this.classResolver
-                    .getClassFile((String) ZkmUtils.mapOrSelf(string, this.originalToCurrentName), "reporting corrupt inheritance hierarchy");
+                    .getClassFile((String) ZkmUtils.mapOrSelf(key, this.originalToCurrentName), "reporting corrupt inheritance hierarchy");
             throw new CorruptHierarchyException(
-                    stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt inheritance hierarchy (C) '" + string + "'",
+                    stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt inheritance hierarchy (C) '" + key + "'",
                     stackOverflowError
             );
         }
     }
 
     @Override
-    public final FieldInfo findField(String string, String string1, String string2) {
-        String string3 = string2;
+    public final FieldInfo findField(String key, String keyArgument, String string2) {
+        String keyValue = string2;
         ThreeKeyConcurrentMap threeKeyConcurrentMap;
-        if (!ConstantPoolEntry.isFieldDescriptor(string3)) {
-            string3 = ConstantPoolEntry.toDescriptor(string3);
+        if (!ConstantPoolEntry.isFieldDescriptor(keyValue)) {
+            keyValue = ConstantPoolEntry.toDescriptor(keyValue);
             threeKeyConcurrentMap = this.fieldsByClassNameDesc;
         } else {
             threeKeyConcurrentMap = this.fieldsByClassNameDesc;
         }
 
-        return (FieldInfo) threeKeyConcurrentMap.getValue(string, string1, string3);
+        return (FieldInfo) threeKeyConcurrentMap.getValue(key, keyArgument, keyValue);
     }
 
     public final Enumeration enumerateHierarchyNodes() {
@@ -2059,34 +2037,34 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         return new ReadOnlyMultiMap(this.fieldSignatureChanges);
     }
 
-    public synchronized void renameFieldPrefix(String string, String string1) throws ZkmException, IOException {
-        String string2 = FieldInfo.toIndefiniteArticleName(string);
-        String string3 = FieldInfo.toIndefiniteArticleName(string1);
+    public synchronized void renameFieldPrefix(String className, String classNameArgument) throws ZkmException, IOException {
+        String prefix = FieldInfo.toIndefiniteArticleName(className);
+        String string3 = FieldInfo.toIndefiniteArticleName(classNameArgument);
         Enumeration enumeration = this.fieldsByName.keys();
         HashMap hashMap = ZkmUtils.createHashMap();
         TwoKeyMap twoKeyMap = new TwoKeyMap();
 
         while (enumeration.hasMoreElements()) {
-            String string4 = (String) enumeration.nextElement();
-            if (string4.startsWith(string2)) {
-                Enumeration enumeration1 = this.fieldsByName.getTwoKeyMap(string4).keys();
+            String key = (String) enumeration.nextElement();
+            if (key.startsWith(prefix)) {
+                Enumeration enumeration1 = this.fieldsByName.getTwoKeyMap(key).keys();
 
                 while (enumeration1.hasMoreElements()) {
                     ProgramClass programClass1 = (ProgramClass) enumeration1.nextElement();
                     if (!hashMap.containsKey(programClass1)) {
-                        programClass1.renameFieldsWithPrefix(string2, string3, twoKeyMap, this);
+                        programClass1.renameFieldsWithPrefix(prefix, string3, twoKeyMap, this);
                         hashMap.put(programClass1, programClass1);
                     }
                 }
             }
         }
 
-        int ba = 0;
-        int bb = ba;
+        int programClasseIndex = 0;
+        int programClasseIndexValue = programClasseIndex;
 
-        for (ProgramClass[] programClass2 = this.programClasses; bb < programClass2.length; programClass2 = this.programClasses) {
-            this.programClasses[ba].updateFieldReferences((ScriptEnvironment) null, this);
-            bb = ++ba;
+        for (ProgramClass[] programClass2 = this.programClasses; programClasseIndexValue < programClass2.length; programClass2 = this.programClasses) {
+            this.programClasses[programClasseIndex].updateFieldReferences((ScriptEnvironment) null, this);
+            programClasseIndexValue = ++programClasseIndex;
         }
     }
 
@@ -2134,49 +2112,36 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                         existingSerializedClassesHandler,
                         fixedClassesExclusionSet1
                 );
-                int ba = 0;
-                int bg = 0;
+                int lengthValue3 = 0;
+                int lengthValue2 = 0;
 
-                for (ProgramClass[] programClass12 = this.programClasses; bg < programClass12.length; programClass12 = this.programClasses) {
-                    ProgramClass programClass1 = this.programClasses[ba];
+                for (ProgramClass[] programClass12 = this.programClasses; lengthValue2 < programClass12.length; programClass12 = this.programClasses) {
+                    ProgramClass programClass1 = this.programClasses[lengthValue3];
                     if (fixedClassesExclusionSet1 == null || !fixedClassesExclusionSet1.isClassExcluded(programClass1)) {
                         programClass1.trimAttributes(trimProcessor1, trimOptions1, scriptEnvironment1, printWriter);
                     }
 
-                    ba += 1;
-                    bg = ba;
+                    lengthValue3 += 1;
+                    lengthValue2 = lengthValue3;
                 }
 
                 trimProcessor1.performTrim();
                 Thread.yield();
                 if (!trimProcessor1.hasNoExcludedClasses()) {
-                    label466:
-                    {
-                        ObservableHolder observableHolder;
-                        if (trimProcessor1.hasNoIncludedClasses()) {
-                            if (trimProcessor1.hasNoIncludedFields()) {
-                                if (trimProcessor1.hasNoIncludedMethods()) {
-                                    messageReporter1.reportInfo("TRIM MESSAGE:", "No classes, fields or methods were trimmed.");
-                                    this.statusHolder.setValue("Trimming unused attributes");
-                                    break label466;
-                                }
-
-                                observableHolder = this.statusHolder;
-                            } else {
-                                observableHolder = this.statusHolder;
-                            }
-                        } else {
-                            observableHolder = this.statusHolder;
-                        }
-
-                        observableHolder.setValue("Trimming unused classes, fields and methods");
+                    if (trimProcessor1.hasNoIncludedClasses()
+                            && trimProcessor1.hasNoIncludedFields()
+                            && trimProcessor1.hasNoIncludedMethods()) {
+                        messageReporter1.reportInfo("TRIM MESSAGE:", "No classes, fields or methods were trimmed.");
+                        this.statusHolder.setValue("Trimming unused attributes");
+                    } else {
+                        this.statusHolder.setValue("Trimming unused classes, fields and methods");
                     }
 
                     ArrayList arrayList = trimProcessor1.getKeptClassesWithTrimmedFields();
 
-                    for (int i = 0; i < arrayList.size(); i += 1) {
-                        ProgramClass programClass2 = (ProgramClass) arrayList.get(i);
-                        String string = programClass2.getClassName();
+                    for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex += 1) {
+                        ProgramClass programClass2 = (ProgramClass) arrayList.get(elementIndex);
+                        String className = programClass2.getClassName();
                         EnumerableMap enumerableMap = trimProcessor1.getTrimmedFieldsOfClass(programClass2);
                         programClass2.removeFields(enumerableMap);
                         if (!programClass2.isVersionedVariant()) {
@@ -2184,7 +2149,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
                             while (enumeration.hasMoreElements()) {
                                 FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
-                                FieldInfo fieldInfo2 = (FieldInfo) this.fieldsByClassNameDesc.removeValue(string, fieldInfo.getSourceName(), fieldInfo.getDescriptor());
+                                FieldInfo fieldInfo2 = (FieldInfo) this.fieldsByClassNameDesc.removeValue(className, fieldInfo.getSourceName(), fieldInfo.getDescriptor());
                                 this.fieldSignatureChanges.removeValue(programClass2, fieldInfo.getOriginalSignature());
                             }
                         }
@@ -2192,8 +2157,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
                     ArrayList arrayList1 = trimProcessor1.getKeptClassesWithTrimmedMethods();
 
-                    for (int i = 0; i < arrayList1.size(); i += 1) {
-                        ProgramClass programClass4 = (ProgramClass) arrayList1.get(i);
+                    for (int elementIndexValue = 0; elementIndexValue < arrayList1.size(); elementIndexValue += 1) {
+                        ProgramClass programClass4 = (ProgramClass) arrayList1.get(elementIndexValue);
                         EnumerableMap enumerableMap1 = trimProcessor1.getTrimmedMethodsOfClass(programClass4);
                         programClass4.removeMethods(enumerableMap1);
                         if (!programClass4.isVersionedVariant()) {
@@ -2276,31 +2241,31 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                     this.classHierarchy.trimNestAttributes(trimProcessor1);
                     this.classHierarchy.trimPermittedSubclasses(trimProcessor1);
                     ArrayList arrayList2 = new ArrayList(this.programClasses.length);
-                    int bf = 0;
-                    bg = 0;
+                    int lengthValue4 = 0;
+                    lengthValue2 = 0;
 
-                    for (ProgramClass[] programClass10 = this.programClasses; bg < programClass10.length; programClass10 = this.programClasses) {
-                        ProgramClass programClass7 = this.programClasses[bf];
+                    for (ProgramClass[] programClass10 = this.programClasses; lengthValue2 < programClass10.length; programClass10 = this.programClasses) {
+                        ProgramClass programClass7 = this.programClasses[lengthValue4];
                         if (trimProcessor1.isClassOrOuterExcluded(programClass7)) {
                             arrayList2.add(programClass7);
                         } else {
-                            String string3 = programClass7.getClassName();
-                            String string4 = (String) this.currentToOriginalName.remove(string3);
-                            if (string4 != null) {
-                                String string5 = (String) this.originalToCurrentName.remove(string4);
+                            String classNameValue = programClass7.getClassName();
+                            String key = (String) this.currentToOriginalName.remove(classNameValue);
+                            if (key != null) {
+                                String string5 = (String) this.originalToCurrentName.remove(key);
                             }
 
                             if (this.fieldSignatureChanges != null) {
-                                this.fieldSignatureChanges.removeInnerMap(string3);
+                                this.fieldSignatureChanges.removeInnerMap(classNameValue);
                             }
 
                             if (this.methodSignatureChanges != null) {
-                                this.methodSignatureChanges.removeInnerMap(string3);
+                                this.methodSignatureChanges.removeInnerMap(classNameValue);
                             }
                         }
 
-                        bf += 1;
-                        bg = bf;
+                        lengthValue4 += 1;
+                        lengthValue2 = lengthValue4;
                     }
 
                     Iterator iterator3 = this.bootstrapMethodHandleTargets.iterator();
@@ -2328,10 +2293,10 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                     this.rootPackageNode.buildFromClasses(this.programClasses);
                     ArrayList arrayList3 = new ArrayList(this.programClasses.length);
                     ProgramClass[] programClass8 = this.programClasses;
-                    int bb = programClass8.length;
+                    int lengthValue = programClass8.length;
 
-                    for (int i = 0; i < bb; i += 1) {
-                        ProgramClass programClass3 = programClass8[i];
+                    for (int programClass8ElementIndex = 0; programClass8ElementIndex < lengthValue; programClass8ElementIndex += 1) {
+                        ProgramClass programClass3 = programClass8[programClass8ElementIndex];
                         if (!programClass3.isGenerated()) {
                             arrayList3.add(programClass3);
                             if (programClass3.hasVersionedVariants()) {
@@ -2349,11 +2314,11 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                     this.autoReflectionHandledClasses.retainValues(programClass8);
                     this.referenceObfuscatedClasses.retainValues(programClass8);
                     this.parameterChangedClasses.retainValues(programClass8);
-                    bb = 0;
-                    bg = 0;
+                    lengthValue = 0;
+                    lengthValue2 = 0;
 
-                    for (ProgramClass[] programClass11 = this.programClasses; bg < programClass11.length; programClass11 = this.programClasses) {
-                        ProgramClass programClass9 = this.programClasses[bb];
+                    for (ProgramClass[] programClass11 = this.programClasses; lengthValue2 < programClass11.length; programClass11 = this.programClasses) {
+                        ProgramClass programClass9 = this.programClasses[lengthValue];
                         programClass9.trimUnusedReferences(trimProcessor1);
                         if (programClass9.hasVersionedVariants()) {
                             Iterator iterator6 = programClass9.getVersionedVariants().iterator();
@@ -2364,8 +2329,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             }
                         }
 
-                        bb += 1;
-                        bg = bb;
+                        lengthValue += 1;
+                        lengthValue2 = lengthValue;
                     }
 
                     trimProcessor1.reportTrimmedMembers(printWriter, this, false);
@@ -2402,70 +2367,53 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         }
     }
 
-    public static ClassFileBase loadClassFile(ClasspathClassLoader classpathClassLoader1, String string, boolean bl) throws ZkmException, IOException {
+    public static ClassFileBase loadClassFile(ClasspathClassLoader classpathClassLoader1, String key, boolean bl) throws ZkmException, IOException {
         ClasspathClassFile classpathClassFile = null;
         if (!bl) {
-            classpathClassFile = classpathClassLoader1.readUncachedClassFile(string);
+            classpathClassFile = classpathClassLoader1.readUncachedClassFile(key);
         }
 
         if (classpathClassFile == null) {
-            classpathClassFile = classpathClassLoader1.tryLoadClassFile(string, !bl);
+            classpathClassFile = classpathClassLoader1.tryLoadClassFile(key, !bl);
         }
 
         return classpathClassFile;
     }
 
-    private boolean isSubclassOf(String string, String string1, boolean bl) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    private boolean isSubclassOf(String key, String keyArgument, boolean bl) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
         }
 
-        if (string1.equals("java/lang/Object")) {
+        if (keyArgument.equals("java/lang/Object")) {
             return true;
         }
 
-        if (string.equals(string1)) {
+        if (key.equals(keyArgument)) {
             return false;
         }
 
-        Boolean boolean1 = (Boolean) this.superclassCache.getValue(string1, string);
+        Boolean boolean1 = (Boolean) this.superclassCache.getValue(keyArgument, key);
         if (boolean1 != null) {
             return boolean1;
         }
 
-        label47:
-        {
-            String string2 = this.getSuperclassName(string);
-            String string3;
-            String string4;
-            if (!bl) {
-                if (string2.equals(string1)) {
-                    break label47;
-                }
-
-                string3 = string2;
-                string4 = "java/lang/Object";
-            } else {
-                if (ZkmStringUtils.matchesWildcard(string2, string1)) {
-                    break label47;
-                }
-
-                string3 = string2;
-                string4 = "java/lang/Object";
-            }
-
-            if (string3.equals(string4)) {
-                this.superclassCache.putValue(string1, string, CACHED_FALSE);
-                return false;
-            }
-
-            boolean bl1 = this.isSubclassOf(string2, string1, bl);
-            this.superclassCache.putValue(string1, string, bl1 ? CACHED_TRUE : CACHED_FALSE);
-            return bl1;
+        String superclassName = this.getSuperclassName(key);
+        boolean matchesSuperclass = bl
+                ? ZkmStringUtils.matchesWildcard(superclassName, keyArgument)
+                : superclassName.equals(keyArgument);
+        if (matchesSuperclass) {
+            this.superclassCache.putValue(keyArgument, key, CACHED_TRUE);
+            return true;
+        }
+        if (superclassName.equals("java/lang/Object")) {
+            this.superclassCache.putValue(keyArgument, key, CACHED_FALSE);
+            return false;
         }
 
-        this.superclassCache.putValue(string1, string, CACHED_TRUE);
-        return true;
+        boolean matchesAncestor = this.isSubclassOf(superclassName, keyArgument, bl);
+        this.superclassCache.putValue(keyArgument, key, matchesAncestor ? CACHED_TRUE : CACHED_FALSE);
+        return matchesAncestor;
     }
 
     @Override
@@ -2498,21 +2446,21 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             do {
                 try {
                     if (this.isModuleInfoFile(inputFileLocation)) {
-                        boolean bl1 = false;
+                        boolean versionedEntryPath = false;
                         if (inputFileLocation.isArchiveEntry()) {
-                            bl1 = ArchiveManifest.isVersionedEntryPath(inputFileLocation.getName(), mutableInt1);
+                            versionedEntryPath = ArchiveManifest.isVersionedEntryPath(inputFileLocation.getName(), mutableInt1);
                         }
 
                         ModuleInfoClass moduleInfoClass = new ModuleInfoClass(
                                 classFileInputStream, inputFileLocation, this.statusHolder, listenerRegistry1, printWriter, threeKeyMultiMap
                         );
-                        String string = moduleInfoClass.getModuleName();
-                        if (bl1) {
-                            pairMultiMap1.addPair(string, moduleInfoClass, integerCache.valueOf(mutableInt1.getValue()));
+                        String moduleName = moduleInfoClass.getModuleName();
+                        if (versionedEntryPath) {
+                            pairMultiMap1.addPair(moduleName, moduleInfoClass, integerCache.valueOf(mutableInt1.getValue()));
                         } else {
-                            ModuleInfoClass moduleInfoClass1 = ((com.zelix.klassmaster.classfile.ModuleInfoClass) (map2.put(string, moduleInfoClass)));
+                            ModuleInfoClass moduleInfoClass1 = ((com.zelix.klassmaster.classfile.ModuleInfoClass) (map2.put(moduleName, moduleInfoClass)));
                             if (moduleInfoClass1 != null) {
-                                map2.put(string, moduleInfoClass1);
+                                map2.put(moduleName, moduleInfoClass1);
                                 InputFileLocation inputFileLocation1 = moduleInfoClass1.getInputLocation();
                                 if (inputFileLocation.isPlainFile() && inputFileLocation1.isPlainFile()) {
                                     throw new ClassFileFormatException(
@@ -2549,26 +2497,26 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             );
                         }
                     } else {
-                        boolean bl2 = false;
+                        boolean versionedEntryPathValue = false;
                         if (inputFileLocation.isArchiveEntry()) {
-                            bl2 = ArchiveManifest.isVersionedEntryPath(inputFileLocation.getName(), mutableInt1);
+                            versionedEntryPathValue = ArchiveManifest.isVersionedEntryPath(inputFileLocation.getName(), mutableInt1);
                         }
 
                         ProgramClass programClass1 = new ProgramClass(
                                 classFileInputStream, inputFileLocation, this.statusHolder, listenerRegistry1, printWriter, threeKeyMultiMap
                         );
-                        String string1 = programClass1.getClassName();
-                        if (bl2) {
-                            pairMultiMap.addPair(string1, programClass1, integerCache.valueOf(mutableInt1.getValue()));
+                        String className = programClass1.getClassName();
+                        if (versionedEntryPathValue) {
+                            pairMultiMap.addPair(className, programClass1, integerCache.valueOf(mutableInt1.getValue()));
                         } else {
-                            ProgramClass programClass2 = ((com.zelix.klassmaster.classfile.ProgramClass) (map1.put(string1, programClass1)));
+                            ProgramClass programClass2 = ((com.zelix.klassmaster.classfile.ProgramClass) (map1.put(className, programClass1)));
                             if (programClass2 != null) {
-                                map1.put(string1, programClass2);
+                                map1.put(className, programClass2);
                                 InputFileLocation inputFileLocation2 = programClass2.getInputLocation();
                                 if (inputFileLocation.isPlainFile() && inputFileLocation2.isPlainFile()) {
                                     throw new ClassFileFormatException(
                                             "Class "
-                                                    + ZkmUtils.slashesToDots(string1)
+                                                    + ZkmUtils.slashesToDots(className)
                                                     + " found more than once. File "
                                                     + inputFileLocation2.getName()
                                                     + " used. File "
@@ -2581,7 +2529,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                                 if (!Arrays.equals(programClass1.getClassDigest(), programClass2.getClassDigest())) {
                                     throw new ClassFileFormatException(
                                             "Multiple versions of class "
-                                                    + ZkmUtils.slashesToDots(string1)
+                                                    + ZkmUtils.slashesToDots(className)
                                                     + " detected. File "
                                                     + inputFileLocation2.getQualifiedName()
                                                     + " used. File "
@@ -2639,12 +2587,12 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final boolean isSubclass(String string, String string1) throws ZkmException, IOException {
+    public final boolean isSubclass(String key, String keyArgument) throws ZkmException, IOException {
         try {
-            boolean bl = string1.indexOf(42) != -1;
-            return this.isSubclassOf(string, string1, bl);
+            boolean bl = keyArgument.indexOf(42) != -1;
+            return this.isSubclassOf(key, keyArgument, bl);
         } catch (StackOverflowError stackOverflowError) {
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, "reporting corrupt inheritance hierarchy");
+            ClassFileBase classFileBase = this.classResolver.getClassFile(key, "reporting corrupt inheritance hierarchy");
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt inheritance hierarchy (A)",
                     stackOverflowError
@@ -2652,19 +2600,19 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         }
     }
 
-    public final synchronized void renameField(FieldInfo fieldInfo, String string) throws ZkmException, IOException {
+    public final synchronized void renameField(FieldInfo fieldInfo, String nameArgument) throws ZkmException, IOException {
         ProgramClass programClass1 = fieldInfo.getProgramClass();
-        if (this.fieldsByClassNameDesc.containsKeys(programClass1.getClassName(), string, fieldInfo.getDescriptor())) {
+        if (this.fieldsByClassNameDesc.containsKeys(programClass1.getClassName(), nameArgument, fieldInfo.getDescriptor())) {
             throw new DuplicateFieldException();
         }
 
-        fieldInfo.setName(string);
-        int ba = 0;
+        fieldInfo.setName(nameArgument);
+        int programClasseIndex = 0;
         int bb = 0;
 
         for (ProgramClass[] programClass2 = this.programClasses; bb < programClass2.length; programClass2 = this.programClasses) {
-            this.programClasses[ba].updateFieldReferences((ScriptEnvironment) null, this);
-            bb = ++ba;
+            this.programClasses[programClasseIndex].updateFieldReferences((ScriptEnvironment) null, this);
+            bb = ++programClasseIndex;
         }
 
         this.indexFields();
@@ -2677,114 +2625,114 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     public void checkSharedNameString(
             Map map1,
             ResolvedStringConstant resolvedStringConstant,
-            Object object,
-            String string,
+            Object firstArgument,
+            String secondArgument,
             ClassFileComponent classFileComponent,
             HashMap hashMap,
             ScriptEnvironment scriptEnvironment1
     ) throws IOException {
         Triple triple = (Triple) map1.get(resolvedStringConstant);
         if (triple != null) {
-            String string1 = (String) triple.getFirst();
-            String string2 = (String) triple.getSecond();
+            String first = (String) triple.getFirst();
+            String second = (String) triple.getSecond();
             ClassFileComponent classFileComponent1 = (ClassFileComponent) triple.getThird();
-            if (!string2.equals(string)) {
-                String string3 = this.getComponentKindName(classFileComponent1);
-                String string4 = this.getComponentKindName(classFileComponent);
+            if (!second.equals(secondArgument)) {
+                String componentKindName = this.getComponentKindName(classFileComponent1);
+                String componentKindNameValue = this.getComponentKindName(classFileComponent);
                 String string5 = ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(resolvedStringConstant.getOwnerClassName(), hashMap));
                 String string6 = (String) ZkmUtils.mapOrSelf(classFileComponent1.getClassName(), hashMap);
                 String string7 = (String) ZkmUtils.mapOrSelf(classFileComponent.getClassName(), hashMap);
                 String string8 = ZkmUtils.slashesToDots(string6);
                 String string9 = ZkmUtils.slashesToDots(string7);
-                String string10 = classFileComponent1.getLocationName();
-                String string11 = classFileComponent.getLocationName();
+                String locationName = classFileComponent1.getLocationName();
+                String locationNameValue = classFileComponent.getLocationName();
                 StringBuilder stringBuilder = new StringBuilder();
                 if (string8.equals(string9)) {
-                    if (string3.equals(string4)) {
+                    if (componentKindName.equals(componentKindNameValue)) {
                         stringBuilder.append(
                                 "The one String '"
-                                        + string1
+                                        + first
                                         + "' in class '"
                                         + string5
                                         + "' is used to access two different "
-                                        + string3
+                                        + componentKindName
                                         + "s which will be given different names. The "
-                                        + string3
+                                        + componentKindName
                                         + " name '"
-                                        + string1
+                                        + first
                                         + "' must be excluded from obfuscation in the class '"
                                         + string8
                                         + "' in file '"
-                                        + string10
+                                        + locationName
                                         + "'. (a)"
                         );
                     } else {
                         stringBuilder.append(
                                 "The one String '"
-                                        + string1
+                                        + first
                                         + "' in class '"
                                         + string5
                                         + "' is used to access a "
-                                        + string3
+                                        + componentKindName
                                         + " and a "
-                                        + string4
+                                        + componentKindNameValue
                                         + " which will be given different names. The "
-                                        + string3
+                                        + componentKindName
                                         + " and "
-                                        + string4
+                                        + componentKindNameValue
                                         + " names '"
-                                        + string1
+                                        + first
                                         + "' must be excluded from obfuscation in class '"
                                         + string8
                                         + "' in file '"
-                                        + string10
+                                        + locationName
                                         + "'. (b)"
                         );
                     }
-                } else if (string3.equals(string4)) {
+                } else if (componentKindName.equals(componentKindNameValue)) {
                     stringBuilder.append(
                             "The one String '"
-                                    + string1
+                                    + first
                                     + "' in class '"
                                     + string5
                                     + "' is used to access two different "
-                                    + string3
+                                    + componentKindName
                                     + "s which will be given different names. The "
-                                    + string3
+                                    + componentKindName
                                     + " name '"
-                                    + string1
+                                    + first
                                     + "' must be excluded from obfuscation in the classes '"
                                     + string8
                                     + "' and '"
                                     + string9
                                     + "' in files '"
-                                    + string10
+                                    + locationName
                                     + "' and '"
-                                    + string11
+                                    + locationNameValue
                                     + "'. (c)"
                     );
                 } else {
                     stringBuilder.append(
                             "The one String '"
-                                    + string1
+                                    + first
                                     + "' in class '"
                                     + string5
                                     + "' is used to access a "
-                                    + string3
+                                    + componentKindName
                                     + " and a "
-                                    + string4
+                                    + componentKindNameValue
                                     + " which will be given different names. The "
-                                    + string3
+                                    + componentKindName
                                     + " name in class '"
                                     + string8
                                     + "' and "
-                                    + string4
+                                    + componentKindNameValue
                                     + " name in class '"
                                     + string9
                                     + "' must be excluded from obfuscation.  Files names are '"
-                                    + string10
+                                    + locationName
                                     + "' and '"
-                                    + string11
+                                    + locationNameValue
                                     + "'. (d)"
                     );
                 }
@@ -2792,15 +2740,15 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 scriptEnvironment1.logSeriousError_v(stringBuilder.toString());
             }
 
-            map1.put(resolvedStringConstant, new Triple(string1, string, classFileComponent));
+            map1.put(resolvedStringConstant, new Triple(first, secondArgument, classFileComponent));
         } else {
-            map1.put(resolvedStringConstant, new Triple(object, string, classFileComponent));
+            map1.put(resolvedStringConstant, new Triple(firstArgument, secondArgument, classFileComponent));
         }
     }
 
     @Override
-    public final boolean hasFieldNamed(String string, String string1) {
-        return this.fieldsByClassNameDesc.containsKeyPair(string, string1);
+    public final boolean hasFieldNamed(String key, String keyArgument) {
+        return this.fieldsByClassNameDesc.containsKeyPair(key, keyArgument);
     }
 
     public void updateNameStringConstants(HashMap hashMap, HashMap hashMap1, HashMap hashMap2, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
@@ -2821,32 +2769,32 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                         ResolvedStringConstant resolvedStringConstant = ((StringConstantNameRef) trackedValue).getStringConstant();
                         twoKeyMap.putValue(classFileBase, resolvedStringConstant, resolvedStringConstant.getEditableValue());
                         Integer integer = (Integer) entry.getValue();
-                        String string;
+                        String dottedClassName;
                         ClassRepository classRepository2;
                         HashMap hashMap4;
                         ResolvedStringConstant resolvedStringConstant5;
-                        String string12;
+                        String valueString;
                         if (integer == 0) {
-                            string = classFileBase.getDottedClassName();
+                            dottedClassName = classFileBase.getDottedClassName();
                             classRepository2 = this;
                             hashMap4 = hashMap3;
                             resolvedStringConstant5 = resolvedStringConstant;
-                            string12 = resolvedStringConstant.getValueString();
+                            valueString = resolvedStringConstant.getValueString();
                         } else {
                             StringBuffer stringBuffer = new StringBuffer();
                             stringBuffer.append(ZkmStringUtils.pad("", 76, integer, 91));
                             stringBuffer.append("L");
                             stringBuffer.append(classFileBase.getDottedClassName());
                             stringBuffer.append(";");
-                            string = stringBuffer.toString();
+                            dottedClassName = stringBuffer.toString();
                             classRepository2 = this;
                             hashMap4 = hashMap3;
                             resolvedStringConstant5 = resolvedStringConstant;
-                            string12 = resolvedStringConstant.getValueString();
+                            valueString = resolvedStringConstant.getValueString();
                         }
 
-                        classRepository2.checkSharedNameString(hashMap4, resolvedStringConstant5, string12, string, classFileBase, hashMap, scriptEnvironment1);
-                        resolvedStringConstant.setValueFromString(string);
+                        classRepository2.checkSharedNameString(hashMap4, resolvedStringConstant5, valueString, dottedClassName, classFileBase, hashMap, scriptEnvironment1);
+                        resolvedStringConstant.setValueFromString(dottedClassName);
                     }
                 }
             }
@@ -2856,28 +2804,28 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         Enumeration enumeration = this.resourceNameStringRefs.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string3 = (String) enumeration.nextElement();
-            boolean bl = string3.indexOf(47) == -1;
-            String string5 = ZkmUtils.dotsToSlashes(string3);
-            String string6 = (String) hashMap1.get(string5);
+            String keyValue2 = (String) enumeration.nextElement();
+            boolean bl = keyValue2.indexOf(47) == -1;
+            String key = ZkmUtils.dotsToSlashes(keyValue2);
+            String keyValue3 = (String) hashMap1.get(key);
             ClassFileBase classFileBase1 = null;
-            if (string6 != null) {
-                classFileBase1 = ClassHierarchyNode.findClassFile(string6);
+            if (keyValue3 != null) {
+                classFileBase1 = ClassHierarchyNode.findClassFile(keyValue3);
             }
 
-            String string7 = ClassFileBase.getPackagePath(string5);
-            if (string7.length() > 0) {
-                List list1 = this.resourceNameStringRefs.getValues(string3);
+            String packagePath = ClassFileBase.getPackagePath(key);
+            if (packagePath.length() > 0) {
+                List list1 = this.resourceNameStringRefs.getValues(keyValue2);
 
-                for (int i = 0; i < list1.size(); i++) {
-                    TrackedValue trackedValue1 = (TrackedValue) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    TrackedValue trackedValue1 = (TrackedValue) list1.get(elementIndex);
                     if (trackedValue1 instanceof StringConstantNameRef) {
                         ResolvedStringConstant resolvedStringConstant1 = ((StringConstantNameRef) trackedValue1).getStringConstant();
-                        String string1 = ResourcePathTranslator.renameResourceParentPath(string5, enumerableMap);
+                        String valueFromString = ResourcePathTranslator.renameResourceParentPath(key, enumerableMap);
                         if (classFileBase1 != null
                                 && classFileBase1.isProgramClass()
                                 && twoKeyMap.containsKeys((ProgramClass) classFileBase1, resolvedStringConstant1)
-                                && !classFileBase1.getClassName().equals(ZkmUtils.dotsToSlashes(string1))) {
+                                && !classFileBase1.getClassName().equals(ZkmUtils.dotsToSlashes(valueFromString))) {
                             scriptEnvironment1.logSeriousError_v(
                                     "The one String '"
                                             + (String) twoKeyMap.getValue((ProgramClass) classFileBase1, resolvedStringConstant1)
@@ -2887,12 +2835,12 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             );
                         }
 
-                        if (!string1.equals(string5)) {
+                        if (!valueFromString.equals(key)) {
                             if (bl) {
-                                string1 = ZkmUtils.slashesToDots(string1);
+                                valueFromString = ZkmUtils.slashesToDots(valueFromString);
                             }
 
-                            resolvedStringConstant1.setValueFromString(string1);
+                            resolvedStringConstant1.setValueFromString(valueFromString);
                         }
                     }
                 }
@@ -2902,18 +2850,18 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         Enumeration enumeration1 = this.packageNameStringRefs.keys();
 
         while (enumeration1.hasMoreElements()) {
-            String string4 = (String) enumeration1.nextElement();
-            if (hashMap2.containsKey(string4)) {
-                Map map2 = this.packageNameStringRefs.getInnerMap(string4);
+            String keyValue = (String) enumeration1.nextElement();
+            if (hashMap2.containsKey(keyValue)) {
+                Map map2 = this.packageNameStringRefs.getInnerMap(keyValue);
                 Iterator iterator2 = map2.keySet().iterator();
 
                 while (iterator2.hasNext()) {
                     TrackedValue trackedValue2 = (TrackedValue) iterator2.next();
                     if (trackedValue2 instanceof StringConstantNameRef) {
                         ResolvedStringConstant resolvedStringConstant2 = ((StringConstantNameRef) trackedValue2).getStringConstant();
-                        String string8 = (String) hashMap2.get(string4);
-                        String string9 = ZkmUtils.slashesToDots(string8);
-                        resolvedStringConstant2.setValueFromString(string9);
+                        String string8 = (String) hashMap2.get(keyValue);
+                        String valueFromStringValue = ZkmUtils.slashesToDots(string8);
+                        resolvedStringConstant2.setValueFromString(valueFromStringValue);
                     }
                 }
             }
@@ -2973,11 +2921,11 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             resolvedStringConstant4.setValueFromString(abstractMethodInfo.getNameAndDescriptor());
                         }
                     } else if (stringConstantNameRef.hasAccessorPrefix()) {
-                        String string10 = stringConstantNameRef.getAccessorPrefix();
-                        String string11 = abstractMethodInfo.getJvmName();
-                        if (string11.startsWith(string10) && string11.length() > string10.length()) {
-                            String string2 = MethodSignature.toPropertyName(abstractMethodInfo.getJvmName(), string10);
-                            resolvedStringConstant4.setValueFromString(string2);
+                        String accessorPrefix = stringConstantNameRef.getAccessorPrefix();
+                        String jvmName = abstractMethodInfo.getJvmName();
+                        if (jvmName.startsWith(accessorPrefix) && jvmName.length() > accessorPrefix.length()) {
+                            String valueFromStringValue2 = MethodSignature.toPropertyName(abstractMethodInfo.getJvmName(), accessorPrefix);
+                            resolvedStringConstant4.setValueFromString(valueFromStringValue2);
                         } else {
                             scriptEnvironment1.logWarning(
                                     "Could not update property '"
@@ -3033,13 +2981,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     ) throws ZkmException, IOException {
         HashSet hashSet = ZkmUtils.createHashSet();
         HashMap hashMap = ZkmUtils.createHashMap();
-        int ba = 0;
+        int programClasseIndex = 0;
         int bc = 0;
 
         for (ProgramClass[] programClass3 = this.programClasses; bc < programClass3.length; programClass3 = this.programClasses) {
-            this.programClasses[ba].findReflectionApiCalls(hashSet, hashMap, this, messageReporter1);
-            if (this.programClasses[ba].hasVersionedVariants()) {
-                Iterator iterator = this.programClasses[ba].getVersionedVariants().iterator();
+            this.programClasses[programClasseIndex].findReflectionApiCalls(hashSet, hashMap, this, messageReporter1);
+            if (this.programClasses[programClasseIndex].hasVersionedVariants()) {
+                Iterator iterator = this.programClasses[programClasseIndex].getVersionedVariants().iterator();
 
                 while (iterator.hasNext()) {
                     ClassFileBase classFileBase = (ClassFileBase) iterator.next();
@@ -3047,7 +2995,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 }
             }
 
-            bc = ++ba;
+            bc = ++programClasseIndex;
         }
 
         Map map1 = Collections.unmodifiableMap(hashMap);
@@ -3059,11 +3007,11 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         String string = ZkmStringUtils.pad("", 76, 4, 32);
         CommonSuperTypeResolver commonSuperTypeResolver1 = new CommonSuperTypeResolver(this, this.classResolver);
         ArrayList arrayList = new ArrayList();
-        int bb = 0;
+        int programClasseIndexValue = 0;
         bc = 0;
 
         for (ProgramClass[] programClass2 = this.programClasses; bc < programClass2.length; programClass2 = this.programClasses) {
-            ProgramClass programClass1 = this.programClasses[bb];
+            ProgramClass programClass1 = this.programClasses[programClasseIndexValue];
             programClass1.reportReflectionApiCalls(
                     hashSet,
                     map1,
@@ -3143,7 +3091,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 }
             }
 
-            bc = ++bb;
+            bc = ++programClasseIndexValue;
         }
 
         Iterator iterator2 = arrayList.iterator();
@@ -3154,18 +3102,18 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         }
     }
 
-    public List getSuperclasses(String string) throws ZkmException, IOException {
+    public List getSuperclasses(String key) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList();
-        String string1 = "Searching for superclasses of '" + string + "'";
-        ClassFileBase classFileBase = this.classResolver.getClassFile(string, string1);
-        String string2 = classFileBase.getSuperclassName();
+        String string1 = "Searching for superclasses of '" + key + "'";
+        ClassFileBase classFileBase = this.classResolver.getClassFile(key, string1);
+        String superclassNameValue = classFileBase.getSuperclassName();
 
         try {
             do {
-                ClassFileBase classFileBase1 = this.classResolver.getClassFile(string2, string1);
+                ClassFileBase classFileBase1 = this.classResolver.getClassFile(superclassNameValue, string1);
                 arrayList.add(classFileBase1);
-                string2 = classFileBase1.getSuperclassName();
-            } while (string2 != null);
+                superclassNameValue = classFileBase1.getSuperclassName();
+            } while (superclassNameValue != null);
 
             return arrayList;
         } catch (StackOverflowError stackOverflowError) {
@@ -3182,15 +3130,15 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             SnapshotEnumeration snapshotEnumeration = new SnapshotEnumeration(this.resourceNameStringRefs.keys());
 
             while (snapshotEnumeration.hasMoreElements()) {
-                String string = (String) snapshotEnumeration.nextElement();
-                List list1 = this.resourceNameStringRefs.getValues(string);
+                String key = (String) snapshotEnumeration.nextElement();
+                List list1 = this.resourceNameStringRefs.getValues(key);
 
-                for (int i = 0; i < list1.size(); i++) {
-                    TrackedValue trackedValue = (TrackedValue) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    TrackedValue trackedValue = (TrackedValue) list1.get(elementIndex);
                     if (trackedValue instanceof StringConstantNameRef) {
                         ResolvedStringConstant resolvedStringConstant = ((StringConstantNameRef) trackedValue).getStringConstant();
                         if (set1.contains(resolvedStringConstant)) {
-                            this.resourceNameStringRefs.removeValue(string, trackedValue);
+                            this.resourceNameStringRefs.removeValue(key, trackedValue);
                         }
                     }
                 }
@@ -3203,13 +3151,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final boolean implementsAnnotatedInterface(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+    public final boolean implementsAnnotatedInterface(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
         try {
             boolean bl = string1.indexOf(42) != -1;
-            return this.implementsAnnotatedInterface(string, string1, bl, aSTComplexAnnotationSpecifier);
+            return this.implementsAnnotatedInterface(key, string1, bl, aSTComplexAnnotationSpecifier);
         } catch (StackOverflowError stackOverflowError) {
             String string2 = "reporting corrupt inheritance heirarchy";
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, string2);
+            ClassFileBase classFileBase = this.classResolver.getClassFile(key, string2);
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt hierarchy (B)", stackOverflowError
             );
@@ -3217,8 +3165,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public String lookupNewClassName(Object object) {
-        return (String) this.currentToOriginalName.get(object);
+    public String lookupNewClassName(Object key) {
+        return (String) this.currentToOriginalName.get(key);
     }
 
     @Override
@@ -3256,8 +3204,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
                 byte[] classDigest = classFileBase.getClassDigest();
                 set1.add(ZkmUtils.toHexString(classDigest));
-                String string1 = classFileBase.getSuperclassName();
-                classFileBase = loadClassFile(classpathClassLoader1, string1, bl);
+                String superclassNameValue = classFileBase.getSuperclassName();
+                classFileBase = loadClassFile(classpathClassLoader1, superclassNameValue, bl);
             }
         }
     }
@@ -3278,14 +3226,14 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final synchronized Enumeration enumerateFieldsNamed(String string) {
-        TwoKeyMap twoKeyMap = this.fieldsByName.getTwoKeyMap(string);
+    public final synchronized Enumeration enumerateFieldsNamed(String key) {
+        TwoKeyMap twoKeyMap = this.fieldsByName.getTwoKeyMap(key);
         return twoKeyMap != null ? twoKeyMap.keys() : null;
     }
 
     @Override
-    public final synchronized Enumeration enumerateMethodSignaturesNamed(String string) {
-        ListMultimap listMultimap = this.methodDeclaringClasses.getMultimap(string);
+    public final synchronized Enumeration enumerateMethodSignaturesNamed(String key) {
+        ListMultimap listMultimap = this.methodDeclaringClasses.getMultimap(key);
         return listMultimap != null ? listMultimap.allValues() : null;
     }
 
@@ -3315,8 +3263,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             ClassFileBase[] classFileBases, ClassFileBase[] classFileBases1, int ba, int bb, HashMap hashMap, HashMap hashMap1, MessageReporter messageReporter1
     ) throws ZkmException, IOException {
         if (classFileBases != null) {
-            for (int i = 0; i < classFileBases.length; i++) {
-                ClassFileBase classFileBase = classFileBases[i];
+            for (int classFileBaseIndex = 0; classFileBaseIndex < classFileBases.length; classFileBaseIndex++) {
+                ClassFileBase classFileBase = classFileBases[classFileBaseIndex];
                 classFileBase.remapClassNames(ba, bb, hashMap, this.classNameStringConstants, this.resourceFileNames, hashMap1, messageReporter1);
                 if (classFileBase.hasVersionedVariants()) {
                     Iterator iterator = classFileBase.getVersionedVariants().iterator();
@@ -3330,8 +3278,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         }
 
         if (classFileBases1 != null) {
-            for (int i = 0; i < classFileBases1.length; i++) {
-                classFileBases1[i].remapClassNames(ba, bb, hashMap, this.classNameStringConstants, this.resourceFileNames, hashMap1, messageReporter1);
+            for (int classFileBases1ElementIndex = 0; classFileBases1ElementIndex < classFileBases1.length; classFileBases1ElementIndex++) {
+                classFileBases1[classFileBases1ElementIndex].remapClassNames(ba, bb, hashMap, this.classNameStringConstants, this.resourceFileNames, hashMap1, messageReporter1);
             }
         }
     }
@@ -3339,11 +3287,11 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     
     
     public void indexArchiveResourceFiles() throws ZkmProcessingException {
-        int ba = 0;
+        int sourceArchiveIndex = 0;
         int bb = 0;
 
         for (SourceArchive[] sourceArchives1 = this.sourceArchives; bb < sourceArchives1.length; sourceArchives1 = this.sourceArchives) {
-            SourceArchive sourceArchive1 = this.sourceArchives[ba];
+            SourceArchive sourceArchive1 = this.sourceArchives[sourceArchiveIndex];
             if (this.skippedArchives == null || !this.skippedArchives.contains(sourceArchive1)) {
                 ArchiveZipFile archiveZipFile = null;
                 boolean bl = false ;
@@ -3356,11 +3304,11 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                     while (enumeration.hasMoreElements()) {
                         ZipEntry zipEntry1 = (ZipEntry) enumeration.nextElement();
                         if (!zipEntry1.isDirectory()) {
-                            String string = zipEntry1.getName();
-                            if (!string.endsWith(".class")) {
-                                this.resourceFileNames.add(string);
-                                if (ZkmFileUtils.isXmlFileName(string)) {
-                                    this.resourceFileIndex.addArchiveEntry(string, sourceArchive1);
+                            String nameValue = zipEntry1.getName();
+                            if (!nameValue.endsWith(".class")) {
+                                this.resourceFileNames.add(nameValue);
+                                if (ZkmFileUtils.isXmlFileName(nameValue)) {
+                                    this.resourceFileIndex.addArchiveEntry(nameValue, sourceArchive1);
                                 }
                             }
                         }
@@ -3395,7 +3343,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 }
             }
 
-            bb = ++ba;
+            bb = ++sourceArchiveIndex;
         }
 
         List list1 = ZkmFileUtils.getExtraXmlFilePatterns();
@@ -3490,10 +3438,10 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
     public void analyzeMethodStacks(CommonSuperTypeResolver commonSuperTypeResolver1, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
         ProgramClass[] programClass1 = this.programClasses;
-        int ba = programClass1.length;
+        int lengthValue = programClass1.length;
 
-        for (int i = 0; i < ba; i++) {
-            programClass1[i].analyzeMethodFlows(commonSuperTypeResolver1, this, scriptEnvironment1);
+        for (int programClass1ElementIndex = 0; programClass1ElementIndex < lengthValue; programClass1ElementIndex++) {
+            programClass1[programClass1ElementIndex].analyzeMethodFlows(commonSuperTypeResolver1, this, scriptEnvironment1);
         }
     }
 
@@ -3511,10 +3459,10 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         }
 
         try {
-            for (int i = 0; i < list1.size(); i++) {
-                String string = (String) list1.get(i);
-                String string1 = (String) list2.get(i);
-                if (!commonSuperTypeResolver1.isDescriptorAssignable(string, string1)) {
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String keyValue4 = (String) list1.get(elementIndex);
+                String keyArgumentValue = (String) list2.get(elementIndex);
+                if (!commonSuperTypeResolver1.isDescriptorAssignable(keyValue4, keyArgumentValue)) {
                     return false;
                 }
             }
@@ -3525,66 +3473,66 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         }
     }
 
-    public boolean implementsInterfaceOriginal(String string, String string1, boolean bl) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    public boolean implementsInterfaceOriginal(String key, String keyArgument, boolean bl) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
         }
 
-        Boolean boolean1 = (Boolean) this.preRenameInterfaceCache.getValue(string1, string);
+        Boolean boolean1 = (Boolean) this.preRenameInterfaceCache.getValue(keyArgument, key);
         if (boolean1 != null) {
             return boolean1;
         }
 
         ObservableHolder observableHolder = new ObservableHolder();
-        Enumeration enumeration = this.getOriginalInterfaceNames(string, observableHolder);
+        Enumeration enumeration = this.getOriginalInterfaceNames(key, observableHolder);
 
         TwoKeyMap twoKeyMap;
         while (true) {
             if (!enumeration.hasMoreElements()) {
-                String string4 = this.getOriginalSuperclassName(string);
-                boolean bl2 = this.implementsInterfaceOriginal(string4, string1, bl);
-                this.preRenameInterfaceCache.putValue(string1, string, bl2 ? CACHED_TRUE : CACHED_FALSE);
+                String originalSuperclassName = this.getOriginalSuperclassName(key);
+                boolean bl2 = this.implementsInterfaceOriginal(originalSuperclassName, keyArgument, bl);
+                this.preRenameInterfaceCache.putValue(keyArgument, key, bl2 ? CACHED_TRUE : CACHED_FALSE);
                 return bl2;
             }
 
-            String string2 = (String) enumeration.nextElement();
-            String string3;
+            String keyValue = (String) enumeration.nextElement();
+            String hierarchyGapMessage;
             if (HiddenOptionFlags.TEST_HIERARCHY
                     && (
-                    string3 = ClassHierarchyNode.getHierarchyGapMessage(
+                    hierarchyGapMessage = ClassHierarchyNode.getHierarchyGapMessage(
                             (ClassFileBase) observableHolder.getValue(),
-                            this.classResolver.getClassFile((String) ZkmUtils.mapOrSelf(string2, this.originalToCurrentName)),
+                            this.classResolver.getClassFile((String) ZkmUtils.mapOrSelf(keyValue, this.originalToCurrentName)),
                             2
                     )
             )
                     != null) {
-                throw new ZkmRuntimeException(string3);
+                throw new ZkmRuntimeException(hierarchyGapMessage);
             }
 
             if (!bl) {
-                if (string2.equals(string1)) {
+                if (keyValue.equals(keyArgument)) {
                     twoKeyMap = this.preRenameInterfaceCache;
                     break;
                 }
-            } else if (ZkmStringUtils.matchesWildcard(string2, string1)) {
+            } else if (ZkmStringUtils.matchesWildcard(keyValue, keyArgument)) {
                 twoKeyMap = this.preRenameInterfaceCache;
                 break;
             }
 
-            boolean bl1 = this.implementsInterfaceOriginal(string2, string1, bl);
+            boolean bl1 = this.implementsInterfaceOriginal(keyValue, keyArgument, bl);
             if (bl1) {
-                this.preRenameInterfaceCache.putValue(string1, string, CACHED_TRUE);
+                this.preRenameInterfaceCache.putValue(keyArgument, key, CACHED_TRUE);
                 return true;
             }
         }
 
-        twoKeyMap.putValue(string1, string, CACHED_TRUE);
+        twoKeyMap.putValue(keyArgument, key, CACHED_TRUE);
         return true;
     }
 
     public void refreshClassReferences(ClassFileBase[] classFileBases, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
-        for (int i = 0; i < classFileBases.length; i++) {
-            ClassFileBase classFileBase = classFileBases[i];
+        for (int classFileBaseIndex = 0; classFileBaseIndex < classFileBases.length; classFileBaseIndex++) {
+            ClassFileBase classFileBase = classFileBases[classFileBaseIndex];
             classFileBase.updateFieldReferences(scriptEnvironment1, this);
             if (classFileBase.hasVersionedVariants()) {
                 Iterator iterator = classFileBase.getVersionedVariants().iterator();
@@ -3603,27 +3551,27 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public final int getTotalClassCount() {
-        int ba = 0;
+        int lengthValue = 0;
         if (this.programClasses != null) {
-            ba = this.programClasses.length;
+            lengthValue = this.programClasses.length;
         }
 
         if (this.moduleInfoClasses != null) {
-            ba += this.moduleInfoClasses.length;
+            lengthValue += this.moduleInfoClasses.length;
         }
 
-        return ba;
+        return lengthValue;
     }
 
     public HashMap findJ2meClasses() throws ZkmException, IOException {
         HashMap hashMap = ZkmUtils.createHashMap();
-        int ba = this.programClasses.length;
+        int lengthValue = this.programClasses.length;
         HashMap hashMap1 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(this.sourceArchives.length));
-        int bb = 0;
+        int sourceArchiveIndex = 0;
         int be = 0;
 
         for (SourceArchive[] sourceArchives1 = this.sourceArchives; be < sourceArchives1.length; sourceArchives1 = this.sourceArchives) {
-            SourceArchive sourceArchive1 = this.sourceArchives[bb];
+            SourceArchive sourceArchive1 = this.sourceArchives[sourceArchiveIndex];
             if (this.skippedArchives == null || !this.skippedArchives.contains(sourceArchive1)) {
                 try {
                     if (sourceArchive1.isCldc10()) {
@@ -3636,15 +3584,15 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 }
             }
 
-            be = ++bb;
+            be = ++sourceArchiveIndex;
         }
 
         boolean bl = false;
 
-        for (int i = 0; i < ba; i++) {
+        for (int programClasseIndex = 0; programClasseIndex < lengthValue; programClasseIndex++) {
             try {
-                if (this.isSubclass(this.programClasses[i].getClassName(), "javax/microedition/midlet/MIDlet")) {
-                    Enumeration enumeration = this.programClasses[i].enumerateInputLocations();
+                if (this.isSubclass(this.programClasses[programClasseIndex].getClassName(), "javax/microedition/midlet/MIDlet")) {
+                    Enumeration enumeration = this.programClasses[programClasseIndex].enumerateInputLocations();
 
                     while (enumeration.hasMoreElements()) {
                         InputFileLocation inputFileLocation = (InputFileLocation) enumeration.nextElement();
@@ -3663,11 +3611,11 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             }
         }
 
-        for (int i = 0; i < ba; i++) {
+        for (int programClasseIndexValue = 0; programClasseIndexValue < lengthValue; programClasseIndexValue++) {
             boolean bl1 = false;
             boolean bl2 = true;
             boolean bl3 = false;
-            Enumeration enumeration1 = this.programClasses[i].enumerateInputLocations();
+            Enumeration enumeration1 = this.programClasses[programClasseIndexValue].enumerateInputLocations();
 
             while (enumeration1.hasMoreElements()) {
                 SourceArchive sourceArchive3 = ((InputFileLocation) enumeration1.nextElement()).getSourceArchive();
@@ -3690,48 +3638,48 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             }
 
             if (bl1) {
-                hashMap.put(this.programClasses[i], bl2 ? Boolean.TRUE : Boolean.FALSE);
+                hashMap.put(this.programClasses[programClasseIndexValue], bl2 ? Boolean.TRUE : Boolean.FALSE);
             }
         }
 
         return hashMap;
     }
 
-    public boolean implementsAnnotatedInterface(String string, String string1, boolean bl, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    public boolean implementsAnnotatedInterface(String key, String string1, boolean bl, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
         }
 
         ObservableHolder observableHolder = new ObservableHolder();
-        Enumeration enumeration = this.getInterfaceNames(string, observableHolder);
+        Enumeration enumeration = this.getInterfaceNames(key, observableHolder);
 
         while (enumeration.hasMoreElements()) {
-            String string2 = (String) enumeration.nextElement();
-            String string3;
+            String keyValue = (String) enumeration.nextElement();
+            String hierarchyGapMessage;
             if (HiddenOptionFlags.TEST_HIERARCHY
-                    && (string3 = ClassHierarchyNode.getHierarchyGapMessage((ClassFileBase) observableHolder.getValue(), this.classResolver.getClassFile(string2), 2))
+                    && (hierarchyGapMessage = ClassHierarchyNode.getHierarchyGapMessage((ClassFileBase) observableHolder.getValue(), this.classResolver.getClassFile(keyValue), 2))
                     != null) {
-                throw new ZkmRuntimeException(string3);
+                throw new ZkmRuntimeException(hierarchyGapMessage);
             }
 
-            if (!bl && string2.equals(string1)) {
-                return aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(string2, null, false));
+            if (!bl && keyValue.equals(string1)) {
+                return aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(keyValue, null, false));
             }
 
             if (bl
-                    && ZkmStringUtils.matchesWildcard(string2, string1)
-                    && aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(string2, null, false))) {
+                    && ZkmStringUtils.matchesWildcard(keyValue, string1)
+                    && aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(keyValue, null, false))) {
                 return true;
             }
 
-            boolean bl1 = this.implementsAnnotatedInterface(string2, string1, bl, aSTComplexAnnotationSpecifier);
+            boolean bl1 = this.implementsAnnotatedInterface(keyValue, string1, bl, aSTComplexAnnotationSpecifier);
             if (bl1) {
                 return true;
             }
         }
 
-        String string4 = this.getSuperclassName(string);
-        return this.implementsAnnotatedInterface(string4, string1, bl, aSTComplexAnnotationSpecifier);
+        String superclassNameValue = this.getSuperclassName(key);
+        return this.implementsAnnotatedInterface(superclassNameValue, string1, bl, aSTComplexAnnotationSpecifier);
     }
 
     @Override
@@ -3759,9 +3707,9 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         this.methodsByClassAndNameType.addValue(programClass1, methodSignature1.getNameTypeSignature(), methodInfo1);
     }
 
-    public List getReflectedClasses(Object object) {
+    public List getReflectedClasses(Object key) {
         ArrayList arrayList = new ArrayList();
-        List list1 = this.reflectionTargetsByCaller.getValues(object);
+        List list1 = this.reflectionTargetsByCaller.getValues(key);
         if (list1 != null) {
             Iterator iterator = list1.iterator();
 
@@ -3780,13 +3728,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     public Set getClassAnnotations(String string, Integer integer, boolean bl) throws ZkmException, IOException {
         Boolean boolean1 = bl;
         Integer integer1 = integer;
-        String string1 = string;
-        return this.getClassAnnotations(true, string1, integer1, boolean1);
+        String key = string;
+        return this.getClassAnnotations(true, key, integer1, boolean1);
     }
 
     @Override
-    public final FieldInfo[] findFieldsByName(String string, String string1) {
-        Map map1 = this.fieldsByClassNameDesc.getInnerMap(string, string1);
+    public final FieldInfo[] findFieldsByName(String key, String keyArgument) {
+        Map map1 = this.fieldsByClassNameDesc.getInnerMap(key, keyArgument);
         if (map1 == null) {
             return null;
         }
@@ -3802,35 +3750,24 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         return fieldInfos;
     }
 
-    public Enumeration getInterfaceNames(String string, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public Enumeration getInterfaceNames(String key, ObservableHolder observableHolder) throws ZkmException, IOException {
         ClassFileBase classFileBase;
-        String[] strings;
-        label24:
-        {
-            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
-            ClasspathClassLoader classpathClassLoader1;
-            if (classHierarchyNode != null) {
-                if (!classHierarchyNode.hasNoClassFile()) {
-                    classFileBase = classHierarchyNode.getClassFile();
-                    strings = classHierarchyNode.getInterfaceNames();
-                    break label24;
-                }
-
-                classpathClassLoader1 = this.classpathLoader;
-            } else {
-                classpathClassLoader1 = this.classpathLoader;
-            }
-
-            classFileBase = classpathClassLoader1.getClassFile(string);
-            strings = classFileBase.getInterfaceNames();
+        String[] interfaceNames;
+        ClassHierarchyNode hierarchyNode = ClassHierarchyNode.findNode(key);
+        if (hierarchyNode != null && !hierarchyNode.hasNoClassFile()) {
+            classFileBase = hierarchyNode.getClassFile();
+            interfaceNames = hierarchyNode.getInterfaceNames();
+        } else {
+            classFileBase = this.classpathLoader.getClassFile(key);
+            interfaceNames = classFileBase.getInterfaceNames();
         }
 
-        for (String string1 : strings) {
-            this.interfaceCache.putValue(string1, string, CACHED_TRUE);
+        for (String keyValue : interfaceNames) {
+            this.interfaceCache.putValue(keyValue, key, CACHED_TRUE);
         }
 
         observableHolder.setValue(classFileBase);
-        return new ArrayEnumeration(strings);
+        return new ArrayEnumeration(interfaceNames);
     }
 
     public void setPropertiesSaveFiles(HashMap hashMap) {
@@ -3915,8 +3852,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             this.resolveMultiReleaseModules(list1, abstractMap1, pairMultiMap1, printWriter, printWriter2);
         }
 
-        for (int i = 0; i < inputFileLocations.length; i++) {
-            inputFileLocations[i].releaseResources();
+        for (int inputFileLocationIndex = 0; inputFileLocationIndex < inputFileLocations.length; inputFileLocationIndex++) {
+            inputFileLocations[inputFileLocationIndex].releaseResources();
         }
 
         this.analyzeUnknownAttributes(threeKeyMultiMap);
@@ -3924,8 +3861,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public void applyMethodRenamesToVersions(ClassFileBase[] classFileBases, TwoKeyMap twoKeyMap) throws ZkmException, IOException {
-        for (int i = 0; i < classFileBases.length; i++) {
-            ClassFileBase classFileBase = classFileBases[i];
+        for (int classFileBaseIndex = 0; classFileBaseIndex < classFileBases.length; classFileBaseIndex++) {
+            ClassFileBase classFileBase = classFileBases[classFileBaseIndex];
             if (classFileBase.hasVersionedVariants()) {
                 classFileBase.applyMethodRenames(twoKeyMap);
             }
@@ -3937,8 +3874,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public final FieldInfo[] findFieldsBySignature(Object object) {
-        Map map1 = this.fieldsBySignature.getInnerMap(object);
+    public final FieldInfo[] findFieldsBySignature(Object key) {
+        Map map1 = this.fieldsBySignature.getInnerMap(key);
         if (map1 == null) {
             return null;
         }
@@ -3959,20 +3896,20 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         return this.programClasses == null || this.programClasses.length == 0 && (this.moduleInfoClasses == null || this.moduleInfoClasses.length == 0);
     }
 
-    public Set getAnnotations(boolean bl, String string, Integer integer) throws ZkmException, IOException {
+    public Set getAnnotations(boolean bl, String key, Integer integer) throws ZkmException, IOException {
         try {
-            if (this.annotationCache.containsKey(string)) {
-                return new LinkedHashSet(this.annotationCache.getValues(string));
+            if (this.annotationCache.containsKey(key)) {
+                return new LinkedHashSet(this.annotationCache.getValues(key));
             }
 
             LinkedHashSet linkedHashSet = new LinkedHashSet(13);
-            String string2 = "analyzing the annotations of class '" + ZkmUtils.slashesToDots(string) + "'";
-            this.collectAnnotations(bl, string, integer, linkedHashSet, false, string2);
-            this.annotationCache.putValueSet(string, linkedHashSet);
+            String string2 = "analyzing the annotations of class '" + ZkmUtils.slashesToDots(key) + "'";
+            this.collectAnnotations(bl, key, integer, linkedHashSet, false, string2);
+            this.annotationCache.putValueSet(key, linkedHashSet);
             return linkedHashSet;
         } catch (StackOverflowError stackOverflowError) {
             String string1 = "reporting corrupt inheritance hierarchy";
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, string1);
+            ClassFileBase classFileBase = this.classResolver.getClassFile(key, string1);
             throw new CorruptHierarchyException(
                     stackOverflowError.getMessage() + " : Class " + classFileBase.getDisplayLocationName() + " has corrupt hierarchy (C)", stackOverflowError
             );
@@ -3980,48 +3917,37 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public void recordClassDigests(Object object, int ba, int bb) throws ZkmException, IOException {
-        String string = object.getClass().getName();
+        String nameValue = object.getClass().getName();
         Set set1 = this.classDigests;
         ClasspathClassLoader classpathClassLoader1 = this.selfClassLoader;
         Boolean boolean1 = false;
-        collectClassDigests(string, ba, bb, set1, classpathClassLoader1, (List) null, boolean1);
+        collectClassDigests(nameValue, ba, bb, set1, classpathClassLoader1, (List) null, boolean1);
     }
 
-    public String getOriginalSuperclassName(String string) throws ZkmException, IOException {
+    public String getOriginalSuperclassName(String key) throws ZkmException, IOException {
         String string1;
         ClassFileBase classFileBase;
-        label27:
-        {
-            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode((String) ZkmUtils.mapOrSelf(string, this.originalToCurrentName));
-            ClasspathClassLoader classpathClassLoader1;
-            if (classHierarchyNode != null) {
-                if (!classHierarchyNode.hasNoClassFile()) {
-                    classFileBase = classHierarchyNode.getClassFile();
-                    ClassHierarchyNode classHierarchyNode1 = classHierarchyNode.getSuperclassNode();
-                    string1 = classHierarchyNode1.getOriginalClassName();
-                    break label27;
-                }
-
-                classpathClassLoader1 = this.classpathLoader;
-            } else {
-                classpathClassLoader1 = this.classpathLoader;
-            }
-
-            classFileBase = classpathClassLoader1.getClassFile(string);
+        ClassHierarchyNode hierarchyNode = ClassHierarchyNode.findNode((String) ZkmUtils.mapOrSelf(key, this.originalToCurrentName));
+        if (hierarchyNode != null && !hierarchyNode.hasNoClassFile()) {
+            classFileBase = hierarchyNode.getClassFile();
+            ClassHierarchyNode superclassNode = hierarchyNode.getSuperclassNode();
+            string1 = superclassNode.getOriginalClassName();
+        } else {
+            classFileBase = this.classpathLoader.getClassFile(key);
             string1 = classFileBase.getSuperclassName();
         }
 
         TwoKeyMap twoKeyMap;
         if (HiddenOptionFlags.TEST_HIERARCHY) {
             if (!classFileBase.isGenerated()) {
-                String string2;
+                String hierarchyGapMessage;
                 if ((
-                        string2 = ClassHierarchyNode.getHierarchyGapMessage(
+                        hierarchyGapMessage = ClassHierarchyNode.getHierarchyGapMessage(
                                 classFileBase, this.classResolver.getClassFile((String) ZkmUtils.mapOrSelf(string1, this.originalToCurrentName)), 1
                         )
                 )
                         != null) {
-                    throw new ZkmRuntimeException(string2);
+                    throw new ZkmRuntimeException(hierarchyGapMessage);
                 }
 
                 twoKeyMap = this.preRenameSuperclassCache;
@@ -4032,14 +3958,14 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
             twoKeyMap = this.preRenameSuperclassCache;
         }
 
-        twoKeyMap.putValue(string1, string, CACHED_TRUE);
+        twoKeyMap.putValue(string1, key, CACHED_TRUE);
         return string1;
     }
 
     public final synchronized void saveAll(
-            int ba,
-            boolean bl,
-            boolean bl1,
+            int compressionMode,
+            boolean deleteEmptyDirectories,
+            boolean removeXmlComments,
             String string,
             File file1,
             MessageReporter messageReporter1,
@@ -4082,9 +4008,9 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 this.getMethodSignatureChanges(),
                 this,
                 file1,
-                ba,
-                bl,
-                bl1,
+                compressionMode,
+                deleteEmptyDirectories,
+                removeXmlComments,
                 string,
                 messageReporter1,
                 scriptEnvironment1,
@@ -4097,47 +4023,47 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         dialogCallback1.onDialogCancelled();
     }
 
-    public boolean implementsAnnotatedInterfaceOriginal(String string, String string1, boolean bl, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    public boolean implementsAnnotatedInterfaceOriginal(String keyArgument, String string1, boolean bl, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        if (keyArgument.equals("java/lang/Object")) {
             return false;
         }
 
         ObservableHolder observableHolder = new ObservableHolder();
-        Enumeration enumeration = this.getOriginalInterfaceNames(string, observableHolder);
+        Enumeration enumeration = this.getOriginalInterfaceNames(keyArgument, observableHolder);
 
         while (enumeration.hasMoreElements()) {
-            String string2 = (String) enumeration.nextElement();
-            String string3;
+            String key = (String) enumeration.nextElement();
+            String hierarchyGapMessage;
             if (HiddenOptionFlags.TEST_HIERARCHY
                     && (
-                    string3 = ClassHierarchyNode.getHierarchyGapMessage(
+                    hierarchyGapMessage = ClassHierarchyNode.getHierarchyGapMessage(
                             (ClassFileBase) observableHolder.getValue(),
-                            this.classResolver.getClassFile((String) ZkmUtils.mapOrSelf(string2, this.originalToCurrentName)),
+                            this.classResolver.getClassFile((String) ZkmUtils.mapOrSelf(key, this.originalToCurrentName)),
                             2
                     )
             )
                     != null) {
-                throw new ZkmRuntimeException(string3);
+                throw new ZkmRuntimeException(hierarchyGapMessage);
             }
 
-            if (!bl && string2.equals(string1)) {
-                return aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(string2, null, true));
+            if (!bl && key.equals(string1)) {
+                return aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(key, null, true));
             }
 
             if (bl
-                    && ZkmStringUtils.matchesWildcard(string2, string1)
-                    && aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(string2, null, true))) {
+                    && ZkmStringUtils.matchesWildcard(key, string1)
+                    && aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(key, null, true))) {
                 return true;
             }
 
-            boolean bl1 = this.implementsAnnotatedInterfaceOriginal(string2, string1, bl, aSTComplexAnnotationSpecifier);
+            boolean bl1 = this.implementsAnnotatedInterfaceOriginal(key, string1, bl, aSTComplexAnnotationSpecifier);
             if (bl1) {
                 return true;
             }
         }
 
-        String string4 = this.getOriginalSuperclassName(string);
-        return this.implementsAnnotatedInterfaceOriginal(string4, string1, bl, aSTComplexAnnotationSpecifier);
+        String originalSuperclassName = this.getOriginalSuperclassName(keyArgument);
+        return this.implementsAnnotatedInterfaceOriginal(originalSuperclassName, string1, bl, aSTComplexAnnotationSpecifier);
     }
 
     @Override
@@ -4158,21 +4084,21 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         return this.reflectionCallSites;
     }
 
-    public boolean extendsAnnotatedClassOriginal(String string, String string1, boolean bl, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    public boolean extendsAnnotatedClassOriginal(String key, String string1, boolean bl, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
-        } else if (string.equals(string1)) {
+        } else if (key.equals(string1)) {
             return false;
         } else {
-            String string2 = this.getOriginalSuperclassName(string);
-            if (!bl && string2.equals(string1)) {
-                return aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(string2, null, true));
+            String originalSuperclassName = this.getOriginalSuperclassName(key);
+            if (!bl && originalSuperclassName.equals(string1)) {
+                return aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(originalSuperclassName, null, true));
             } else if (bl
-                    && ZkmStringUtils.matchesWildcard(string2, string1)
-                    && aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(string2, null, true))) {
+                    && ZkmStringUtils.matchesWildcard(originalSuperclassName, string1)
+                    && aSTComplexAnnotationSpecifier.matchesAnyAnnotation(this.getClassAnnotations(originalSuperclassName, null, true))) {
                 return true;
             } else {
-                return string2.equals("java/lang/Object") ? false : this.extendsAnnotatedClassOriginal(string2, string1, bl, aSTComplexAnnotationSpecifier);
+                return (!(originalSuperclassName.equals("java/lang/Object")) && (this.extendsAnnotatedClassOriginal(originalSuperclassName, string1, bl, aSTComplexAnnotationSpecifier)));
             }
         }
     }
@@ -4188,14 +4114,14 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     @Override
-    public Set getClassAnnotations(Object object, String string, Integer integer, boolean bl) throws ZkmException, IOException {
+    public Set getClassAnnotations(Object object, String key, Integer integer, boolean bl) throws ZkmException, IOException {
         boolean bl1 = (Boolean) object;
         Set set1;
         if (bl && HiddenOptionFlags.MATCH_ORIGINAL_NAMES && this.hasOriginalNameCaches()) {
-            String string1 = (String) ZkmUtils.mapOrSelf(string, this.currentToOriginalName);
-            set1 = this.getOriginalAnnotations(bl1, string, string1, integer);
+            String keyValue = (String) ZkmUtils.mapOrSelf(key, this.currentToOriginalName);
+            set1 = this.getOriginalAnnotations(bl1, key, keyValue, integer);
         } else {
-            set1 = this.getAnnotations(bl1, string, integer);
+            set1 = this.getAnnotations(bl1, key, integer);
         }
 
         return set1;
@@ -4204,49 +4130,49 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     public Set getInputRootDirectories() throws ZkmClassNotFoundException {
         HashSet hashSet = ZkmUtils.createHashSet();
         if (this.sourceArchives != null) {
-            int ba = 0;
+            int sourceArchiveIndex = 0;
             int be = 0;
 
             for (SourceArchive[] sourceArchives1 = this.sourceArchives; be < sourceArchives1.length; sourceArchives1 = this.sourceArchives) {
-                if (this.skippedArchives == null || !this.skippedArchives.contains(this.sourceArchives[ba])) {
-                    String string = this.sourceArchives[ba].getName();
-                    File file1 = new File(string);
+                if (this.skippedArchives == null || !this.skippedArchives.contains(this.sourceArchives[sourceArchiveIndex])) {
+                    String nameValue = this.sourceArchives[sourceArchiveIndex].getName();
+                    File file1 = new File(nameValue);
                     File file2 = file1.getParentFile();
                     if (file2 != null) {
                         hashSet.add(file2);
                     }
                 }
 
-                be = ++ba;
+                be = ++sourceArchiveIndex;
             }
         }
 
-        int bc = 0;
+        int programClasseIndex = 0;
         int bd = 0;
 
         for (ProgramClass[] programClass2 = this.programClasses; bd < programClass2.length; programClass2 = this.programClasses) {
-            ProgramClass programClass1 = this.programClasses[bc];
+            ProgramClass programClass1 = this.programClasses[programClasseIndex];
             if (!programClass1.isGenerated()) {
-                Enumeration enumeration = this.programClasses[bc].enumerateInputLocations();
+                Enumeration enumeration = this.programClasses[programClasseIndex].enumerateInputLocations();
 
                 while (enumeration.hasMoreElements()) {
                     InputFileLocation inputFileLocation = (InputFileLocation) enumeration.nextElement();
                     if (inputFileLocation.isPlainFile()) {
                         File file3 = inputFileLocation.getFile().getParentFile();
                         if (file3 != null) {
-                            String string1 = file3.getAbsolutePath();
-                            if (string1.endsWith(File.separator) && string1.length() > 1) {
-                                string1 = string1.substring(0, string1.length() - 1);
+                            String absolutePath = file3.getAbsolutePath();
+                            if (absolutePath.endsWith(File.separator) && absolutePath.length() > 1) {
+                                absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
                             }
 
-                            String string2 = programClass1.getPackagePath();
-                            if (string2.length() == 0) {
+                            String packagePath = programClass1.getPackagePath();
+                            if (packagePath.length() == 0) {
                                 hashSet.add(file3);
                             } else {
-                                string2 = string2.replace('/', File.separatorChar);
-                                int bb = string1.indexOf(string2);
-                                if (bb > -1) {
-                                    String string3 = string1.substring(0, bb);
+                                packagePath = packagePath.replace('/', File.separatorChar);
+                                int endIndex = absolutePath.indexOf(packagePath);
+                                if (endIndex > -1) {
+                                    String string3 = absolutePath.substring(0, endIndex);
                                     hashSet.add(new File(string3));
                                 }
                             }
@@ -4255,7 +4181,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 }
             }
 
-            bd = ++bc;
+            bd = ++programClasseIndex;
         }
 
         return hashSet;
@@ -4269,43 +4195,43 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         return this.cumulativeNameMapping.getMappingCopy();
     }
 
-    private boolean implementsInterface(String string, String string1, boolean bl) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    private boolean implementsInterface(String key, String keyArgument, boolean bl) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
         }
 
-        Boolean boolean1 = (Boolean) this.interfaceCache.getValue(string1, string);
+        Boolean boolean1 = (Boolean) this.interfaceCache.getValue(keyArgument, key);
         if (boolean1 != null) {
             return boolean1;
         }
 
         ObservableHolder observableHolder = new ObservableHolder();
-        Enumeration enumeration = this.getInterfaceNames(string, observableHolder);
+        Enumeration enumeration = this.getInterfaceNames(key, observableHolder);
 
         while (enumeration.hasMoreElements()) {
-            String string2 = (String) enumeration.nextElement();
-            String string3;
+            String keyValue = (String) enumeration.nextElement();
+            String hierarchyGapMessage;
             if (HiddenOptionFlags.TEST_HIERARCHY
-                    && (string3 = ClassHierarchyNode.getHierarchyGapMessage((ClassFileBase) observableHolder.getValue(), this.classResolver.getClassFile(string2), 2))
+                    && (hierarchyGapMessage = ClassHierarchyNode.getHierarchyGapMessage((ClassFileBase) observableHolder.getValue(), this.classResolver.getClassFile(keyValue), 2))
                     != null) {
-                throw new ZkmRuntimeException(string3);
+                throw new ZkmRuntimeException(hierarchyGapMessage);
             }
 
-            if (!bl ? string2.equals(string1) : ZkmStringUtils.matchesWildcard(string2, string1)) {
-                this.interfaceCache.putValue(string1, string, CACHED_TRUE);
+            if (!bl ? keyValue.equals(keyArgument) : ZkmStringUtils.matchesWildcard(keyValue, keyArgument)) {
+                this.interfaceCache.putValue(keyArgument, key, CACHED_TRUE);
                 return true;
             }
 
-            boolean bl1 = this.implementsInterface(string2, string1, bl);
+            boolean bl1 = this.implementsInterface(keyValue, keyArgument, bl);
             if (bl1) {
-                this.interfaceCache.putValue(string1, string, CACHED_TRUE);
+                this.interfaceCache.putValue(keyArgument, key, CACHED_TRUE);
                 return true;
             }
         }
 
-        String string4 = this.getSuperclassName(string);
-        boolean bl2 = this.implementsInterface(string4, string1, bl);
-        this.interfaceCache.putValue(string1, string, bl2 ? CACHED_TRUE : CACHED_FALSE);
+        String superclassNameValue = this.getSuperclassName(key);
+        boolean bl2 = this.implementsInterface(superclassNameValue, keyArgument, bl);
+        this.interfaceCache.putValue(keyArgument, key, bl2 ? CACHED_TRUE : CACHED_FALSE);
         return bl2;
     }
 
@@ -4356,11 +4282,11 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public ClassRepository(
-            ObservableHolder observableHolder, ZkmClasspath zkmClasspath, boolean verbose, boolean editionFlag, boolean bl2, boolean scriptModeFlag, KlassMaster klassMaster
+            ObservableHolder observableHolder, ZkmClasspath zkmClasspath, boolean verbose, boolean editionFlag, boolean caseSensitive, boolean scriptModeFlag, KlassMaster klassMaster
     ) throws ZkmException, IOException {
         this.statusHolder = observableHolder;
         this.classpath = zkmClasspath;
-        this.classpathLoader = new ClasspathClassLoader(this.classpath, bl2);
+        this.classpathLoader = new ClasspathClassLoader(this.classpath, caseSensitive);
         this.classResolver = new ClassResolver(this.classpathLoader);
         this.classpath.addObserver(this);
         this.verbose = verbose;
@@ -4368,7 +4294,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         this.scriptModeFlag = scriptModeFlag;
         this.application = klassMaster;
         ZkmClasspath zkmClasspath1 = new ZkmClasspath(ChangeObservable.JAVA_CLASS_PATH);
-        this.selfClassLoader = new ClasspathClassLoader(zkmClasspath1, bl2);
+        this.selfClassLoader = new ClasspathClassLoader(zkmClasspath1, caseSensitive);
         zkmClasspath1.locateRuntimeClasses(new ObservableHolder(), new ObservableHolder());
         TempFileManager.deleteStaleTempFiles();
     }
@@ -4379,9 +4305,9 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         this.methodSignatureChanges = new TwoKeyMap();
 
         for (ClassFileBase classFileBase : classFileBases) {
-            String string = classFileBase.getOriginalClassName();
-            String string1 = classFileBase.getClassName();
-            this.originalToCurrentName.put(string, string1);
+            String originalClassName = classFileBase.getOriginalClassName();
+            String className = classFileBase.getClassName();
+            this.originalToCurrentName.put(originalClassName, className);
 
             for (AbstractFieldInfo abstractFieldInfo : classFileBase.getFields()) {
                 this.fieldSignatureChanges.putValue(classFileBase, abstractFieldInfo.getOriginalSignature(), abstractFieldInfo.getSignature());
@@ -4397,19 +4323,19 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
     public final synchronized List findSubclasses() throws ZkmException, IOException {
         ArrayList arrayList = null;
-        int ba = 0;
+        int programClasseIndex = 0;
         int bb = 0;
 
         for (ProgramClass[] programClass1 = this.programClasses; bb < programClass1.length; programClass1 = this.programClasses) {
-            if (this.isSubclass(this.programClasses[ba].getClassName(), "java/applet/Applet")) {
+            if (this.isSubclass(this.programClasses[programClasseIndex].getClassName(), "java/applet/Applet")) {
                 if (arrayList == null) {
                     arrayList = new ArrayList();
                 }
 
-                arrayList.add(this.programClasses[ba]);
+                arrayList.add(this.programClasses[programClasseIndex]);
             }
 
-            bb = ++ba;
+            bb = ++programClasseIndex;
         }
 
         return arrayList;
@@ -4430,11 +4356,11 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public void resolveReferences(Set set1, Set set2, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
-        int ba = 0;
+        int programClasseIndex = 0;
         int bb = 0;
 
         for (ProgramClass[] programClass4 = this.programClasses; bb < programClass4.length; programClass4 = this.programClasses) {
-            ProgramClass programClass1 = this.programClasses[ba];
+            ProgramClass programClass1 = this.programClasses[programClasseIndex];
             programClass1.resolveReferences(set1, this, this.classResolver, ignoreMissingReferencesSpec1, scriptEnvironment1);
             if (programClass1.hasVersionedVariants()) {
                 Iterator iterator = programClass1.getVersionedVariants().iterator();
@@ -4445,14 +4371,14 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 }
             }
 
-            bb = ++ba;
+            bb = ++programClasseIndex;
         }
 
-        ba = 0;
+        programClasseIndex = 0;
         bb = 0;
 
         for (ProgramClass[] programClass3 = this.programClasses; bb < programClass3.length; programClass3 = this.programClasses) {
-            ProgramClass programClass2 = this.programClasses[ba];
+            ProgramClass programClass2 = this.programClasses[programClasseIndex];
             programClass2.collectBootstrapMethodHandleTargets(set2);
             if (programClass2.hasVersionedVariants()) {
                 Iterator iterator1 = programClass2.getVersionedVariants().iterator();
@@ -4463,7 +4389,7 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                 }
             }
 
-            bb = ++ba;
+            bb = ++programClasseIndex;
         }
     }
 
@@ -4479,12 +4405,12 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         this.fieldsByName = new ThreeKeyConcurrentMap(Math.max(15, this.programClasses.length * 5));
         this.fieldsBySignature = new TwoKeyMap(Math.max(15, this.programClasses.length * 5));
         this.fieldsByClassNameDesc = new ThreeKeyConcurrentMap(this.programClasses.length, 5);
-        int ba = 0;
+        int programClasseIndex = 0;
         int bb = 0;
 
         for (ProgramClass[] programClass1 = this.programClasses; bb < programClass1.length; programClass1 = this.programClasses) {
-            this.programClasses[ba].registerFields(this);
-            bb = ++ba;
+            this.programClasses[programClasseIndex].registerFields(this);
+            bb = ++programClasseIndex;
         }
     }
 
@@ -4494,17 +4420,17 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
     
     
-    public static String checkEvaluationExpiry(String string, String string1, String string2, Object object) throws ZkmException, IOException {
+    public static String checkEvaluationExpiry(String validatedExpiryCodeArgument, String string1, String string2, Object object) throws ZkmException, IOException {
         if (isPermanentLicense()) {
-            KlassMaster.validatedExpiryCode = string;
+            KlassMaster.validatedExpiryCode = validatedExpiryCodeArgument;
             return "unlimited";
         }
         try {
-            String string3 = object.getClass().getName();
+            String nameValue = object.getClass().getName();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
             TimeZone timeZone = TimeZone.getDefault();
             simpleDateFormat.setTimeZone(timeZone);
-            long ba = ObfuscatedLongDecoder.decodeLong(string);
+            long ba = ObfuscatedLongDecoder.decodeLong(validatedExpiryCodeArgument);
             long bb = ObfuscatedLongDecoder.decodeLong(string1);
             long bc = ObfuscatedLongDecoder.decodeLong(string2);
             Date date = new Date(ba);
@@ -4527,17 +4453,17 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
             long be = bd + bc;
             ClassPathResolver classPathResolver1 = new ClassPathResolver(ChangeObservable.JAVA_CLASS_PATH);
-            Object[] objects = classPathResolver1.getEntries();
+            Object[] entriesValue = classPathResolver1.getEntries();
 
-            for (int i = 0; i < objects.length; i++) {
-                if (objects[i] instanceof File) {
-                    long bh = ((File) objects[i]).lastModified();
+            for (int entriesValueElementIndex = 0; entriesValueElementIndex < entriesValue.length; entriesValueElementIndex++) {
+                if (entriesValue[entriesValueElementIndex] instanceof File) {
+                    long bh = ((File) entriesValue[entriesValueElementIndex]).lastModified();
                     if (bh > be) {
                         String string8 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (12)" : "");
                         throw new EvaluationExpiredException(string8);
                     }
                 } else {
-                    File file1 = new File(((ZipFile) objects[i]).getName());
+                    File file1 = new File(((ZipFile) entriesValue[entriesValueElementIndex]).getName());
                     if (file1.exists()) {
                         if (file1.lastModified() > be) {
                             String string9 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (13)" : "");
@@ -4546,67 +4472,29 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
 
                         if (file1.getName().endsWith("ZKM.jar")) {
                             ArchiveZipFile archiveZipFile = null;
-                            boolean bl = false ;
-
-                            label201:
-                            {
-                                try {
-                                    bl = true;
-                                    archiveZipFile = new ArchiveZipFile(file1);
-                                    ZipEntry zipEntry1 = archiveZipFile.getEntry(string3.replace('.', '/') + ".class");
-                                    if (zipEntry1 != null) {
-                                        long time = zipEntry1.getTime();
-                                        if (time > be) {
-                                            String string10 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (14)" : "");
-                                            throw new EvaluationExpiredException(string10);
-                                        }
-
-                                        if (time != -1L) {
-                                            if (bd > time + bb) {
-                                                String string11 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (15)" : "");
-                                                throw new EvaluationExpiredException(string11);
-                                            }
-
-                                            bl = false;
-                                        } else {
-                                            bl = false;
-                                        }
-                                    } else {
-                                        bl = false;
-                                    }
-                                    break label201;
-                                } catch (IOException iOException3) {
-                                    bl = false;
-                                } finally {
-                                    if (bl) {
-                                        if (archiveZipFile != null) {
-                                            try {
-                                                com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                                archiveZipFile.close();
-                                            } catch (IOException iOException) {
-                                            }
-                                        }
-                                    }
-                                }
-
-                                try {
-                                    if (archiveZipFile != null) {
-                                        try {
-                                            com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                            archiveZipFile.close();
-                                        } catch (IOException iOException1) {
-                                        }
-                                    }
-                                    continue;
-                                } catch (NumberFormatException numberFormatException) {
-                                    throw numberFormatException;
-                                }
-                            }
-
                             try {
-                                com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                archiveZipFile.close();
-                            } catch (IOException iOException2) {
+                                archiveZipFile = new ArchiveZipFile(file1);
+                                ZipEntry zipEntry1 = archiveZipFile.getEntry(nameValue.replace('.', '/') + ".class");
+                                if (zipEntry1 != null) {
+                                    long time = zipEntry1.getTime();
+                                    if (time > be) {
+                                        String string10 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (14)" : "");
+                                        throw new EvaluationExpiredException(string10);
+                                    }
+                                    if (time != -1L && bd > time + bb) {
+                                        String string11 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (15)" : "");
+                                        throw new EvaluationExpiredException(string11);
+                                    }
+                                }
+                            } catch (IOException ignored) {
+                            } finally {
+                                if (archiveZipFile != null) {
+                                    try {
+                                        com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
+                                        archiveZipFile.close();
+                                    } catch (IOException ignored) {
+                                    }
+                                }
                             }
                         }
                     }
@@ -4637,55 +4525,45 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         this.methodNamesObfuscated = true;
     }
 
-    public boolean isSubclassOfOriginal(String string, String string1, boolean bl) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    public boolean isSubclassOfOriginal(String key, String keyArgument, boolean bl) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
         }
 
-        if (string1.equals("java/lang/Object")) {
+        if (keyArgument.equals("java/lang/Object")) {
             return true;
         }
 
-        if (string.equals(string1)) {
+        if (key.equals(keyArgument)) {
             return false;
         }
 
-        Boolean boolean1 = (Boolean) this.preRenameSuperclassCache.getValue(string1, string);
+        Boolean boolean1 = (Boolean) this.preRenameSuperclassCache.getValue(keyArgument, key);
         if (boolean1 != null) {
             return boolean1;
         }
 
-        TwoKeyMap twoKeyMap;
-        label46:
-        {
-            String string2 = this.getOriginalSuperclassName(string);
-            if (!bl) {
-                if (string2.equals(string1)) {
-                    twoKeyMap = this.preRenameSuperclassCache;
-                    break label46;
-                }
-            } else if (ZkmStringUtils.matchesWildcard(string2, string1)) {
-                twoKeyMap = this.preRenameSuperclassCache;
-                break label46;
-            }
-
-            if (string2.equals("java/lang/Object")) {
-                this.preRenameSuperclassCache.putValue(string1, string, CACHED_FALSE);
-                return false;
-            }
-
-            boolean bl1 = this.isSubclassOfOriginal(string2, string1, bl);
-            this.preRenameSuperclassCache.putValue(string1, string, bl1 ? CACHED_TRUE : CACHED_FALSE);
-            return bl1;
+        String superclassName = this.getOriginalSuperclassName(key);
+        boolean matchesSuperclass = bl
+                ? ZkmStringUtils.matchesWildcard(superclassName, keyArgument)
+                : superclassName.equals(keyArgument);
+        if (matchesSuperclass) {
+            this.preRenameSuperclassCache.putValue(keyArgument, key, CACHED_TRUE);
+            return true;
+        }
+        if (superclassName.equals("java/lang/Object")) {
+            this.preRenameSuperclassCache.putValue(keyArgument, key, CACHED_FALSE);
+            return false;
         }
 
-        twoKeyMap.putValue(string1, string, CACHED_TRUE);
-        return true;
+        boolean matchesAncestor = this.isSubclassOfOriginal(superclassName, keyArgument, bl);
+        this.preRenameSuperclassCache.putValue(keyArgument, key, matchesAncestor ? CACHED_TRUE : CACHED_FALSE);
+        return matchesAncestor;
     }
 
     @Override
-    public final MethodInfo findDeclaredMethod(Object object, Object object1) {
-        return (MethodInfo) this.methodsByClass.getValue(object, object1);
+    public final MethodInfo findDeclaredMethod(Object key, Object keyArgument) {
+        return (MethodInfo) this.methodsByClass.getValue(key, keyArgument);
     }
 
     public ReadOnlyMultiMap getMethodSignatureChanges() {
@@ -4732,13 +4610,13 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
         Enumeration enumeration = threeKeyMultiMap.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            NestedMultiMap nestedMultiMap = threeKeyMultiMap.getNestedMultiMap(string);
+            String key = (String) enumeration.nextElement();
+            NestedMultiMap nestedMultiMap = threeKeyMultiMap.getNestedMultiMap(key);
             Enumeration enumeration1 = nestedMultiMap.keys();
 
             while (enumeration1.hasMoreElements()) {
-                String string1 = (String) enumeration1.nextElement();
-                ListMultimap listMultimap = nestedMultiMap.getMultimap(string1);
+                String keyValue = (String) enumeration1.nextElement();
+                ListMultimap listMultimap = nestedMultiMap.getMultimap(keyValue);
                 boolean bl = true;
                 boolean bl1 = false;
                 ArrayList arrayList = null;
@@ -4752,8 +4630,8 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                     if (arrayList == null) {
                         arrayList = new ArrayList(list1.size());
 
-                        for (int i = 0; i < list1.size(); i++) {
-                            Object object = list1.get(i);
+                        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                            Object object = list1.get(elementIndex);
                             arrayList.add(object.getClass().getName());
                         }
                     } else {
@@ -4762,12 +4640,12 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                             break;
                         }
 
-                        for (int i = 0; i < list1.size(); i++) {
-                            String string2 = (String) arrayList.get(i);
-                            if (!list1.get(i).getClass().getName().equals(string2)) {
+                        for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+                            String string2 = (String) arrayList.get(elementIndexValue);
+                            if (!list1.get(elementIndexValue).getClass().getName().equals(string2)) {
                                 bl1 = true;
                                 if (!string2.equals("java.lang.Object")) {
-                                    arrayList.set(i, "java.lang.Object");
+                                    arrayList.set(elementIndexValue, "java.lang.Object");
                                 }
                             }
                         }
@@ -4783,17 +4661,17 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
                         unknownAttribute1.setCommonAcrossClasses(false);
                     }
                 } else {
-                    boolean bl2 = hashSet.size() > 7;
+                    boolean commonAcrossClasses = hashSet.size() > 7;
                     Enumeration enumeration3 = listMultimap.keys();
 
                     while (enumeration3.hasMoreElements()) {
                         UnknownAttribute unknownAttribute2 = (UnknownAttribute) enumeration3.nextElement();
-                        unknownAttribute2.setCommonAcrossClasses(bl2);
+                        unknownAttribute2.setCommonAcrossClasses(commonAcrossClasses);
                         if (bl1) {
-                            for (int i = 0; i < arrayList.size(); i++) {
-                                String string3 = (String) arrayList.get(i);
+                            for (int elementIndexValue2 = 0; elementIndexValue2 < arrayList.size(); elementIndexValue2++) {
+                                String string3 = (String) arrayList.get(elementIndexValue2);
                                 if (string3.equals("java.lang.Object")) {
-                                    unknownAttribute2.clearReferenceAt(i);
+                                    unknownAttribute2.clearReferenceAt(elementIndexValue2);
                                 }
                             }
                         }
@@ -4804,10 +4682,10 @@ public class ClassRepository extends ChangeObservable implements NodeVisitor, Cl
     }
 
     public void collectBytecodeReferences(NestedMultiMap nestedMultiMap, NestedMultiMap nestedMultiMap1, NestedMultiMap nestedMultiMap2) {
-        int ba = this.programClasses.length;
+        int lengthValue = this.programClasses.length;
 
-        for (int i = 0; i < ba; i++) {
-            this.programClasses[i].indexMemberReferences(nestedMultiMap, nestedMultiMap1, nestedMultiMap2, integerCache);
+        for (int programClasseIndex = 0; programClasseIndex < lengthValue; programClasseIndex++) {
+            this.programClasses[programClasseIndex].indexMemberReferences(nestedMultiMap, nestedMultiMap1, nestedMultiMap2, integerCache);
         }
     }
 }

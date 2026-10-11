@@ -10,8 +10,8 @@ import java.util.List;
 public class StackTraceCallPath {
     public List frameCandidates = new ArrayList();
 
-    public void addMethodFrame(ResolvedStackTraceLine resolvedStackTraceLine, MethodInfo methodInfo1, boolean bl) {
-        FrameMethodCandidate frameMethodCandidate = new FrameMethodCandidate(resolvedStackTraceLine, methodInfo1, bl);
+    public void addMethodFrame(ResolvedStackTraceLine resolvedStackTraceLine, MethodInfo methodInfo1, boolean callTraceBreak) {
+        FrameMethodCandidate frameMethodCandidate = new FrameMethodCandidate(resolvedStackTraceLine, methodInfo1, callTraceBreak);
         this.frameCandidates.add(frameMethodCandidate);
     }
 

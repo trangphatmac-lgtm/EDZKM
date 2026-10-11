@@ -39,16 +39,16 @@ public class ZkmScriptTokenMgrError extends Error implements ZkmScriptConstants 
             }
             case 4: {
                 str = "string literal";
-                String s2;
+                String str2Value;
                 if (n4 != 10) {
                     if (n4 != 13) {
                         break;
                     }
-                    s2 = "String not terminated at the end of the line.";
+                    str2Value = "String not terminated at the end of the line.";
                 } else {
-                    s2 = "String not terminated at the end of the line.";
+                    str2Value = "String not terminated at the end of the line.";
                 }
-                str2 = s2;
+                str2 = str2Value;
                 break;
             }
             default: {
@@ -60,57 +60,57 @@ public class ZkmScriptTokenMgrError extends Error implements ZkmScriptConstants 
     }
 
     public static final String addEscapes(final String s) {
-        final StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < s.length(); ++i) {
-            switch (s.charAt(i)) {
+        final StringBuffer stringBuffer = new StringBuffer();
+        for (int characterIndex = 0; characterIndex < s.length(); ++characterIndex) {
+            switch (s.charAt(characterIndex)) {
                 case '\0': {
                     break;
                 }
                 case '\b': {
-                    sb.append("\\b");
+                    stringBuffer.append("\\b");
                     break;
                 }
                 case '\t': {
-                    sb.append("\\t");
+                    stringBuffer.append("\\t");
                     break;
                 }
                 case '\n': {
-                    sb.append("\\n");
+                    stringBuffer.append("\\n");
                     break;
                 }
                 case '\f': {
-                    sb.append("\\f");
+                    stringBuffer.append("\\f");
                     break;
                 }
                 case '\r': {
-                    sb.append("\\r");
+                    stringBuffer.append("\\r");
                     break;
                 }
                 case '\"': {
-                    sb.append("\\\"");
+                    stringBuffer.append("\\\"");
                     break;
                 }
                 case '\'': {
-                    sb.append("\\'");
+                    stringBuffer.append("\\'");
                     break;
                 }
                 case '\\': {
-                    sb.append("\\\\");
+                    stringBuffer.append("\\\\");
                     break;
                 }
                 default: {
                     final char char1;
-                    if ((char1 = s.charAt(i)) < ' ' || char1 > '~') {
+                    if ((char1 = s.charAt(characterIndex)) < ' ' || char1 > '~') {
                         final String string = "0000" + Integer.toString(char1, 16);
-                        sb.append("\\u" + string.substring(string.length() - 4, string.length()));
+                        stringBuffer.append("\\u" + string.substring(string.length() - 4, string.length()));
                         break;
                     }
-                    sb.append(char1);
+                    stringBuffer.append(char1);
                     break;
                 }
             }
         }
-        return sb.toString();
+        return stringBuffer.toString();
     }
 
     @Override

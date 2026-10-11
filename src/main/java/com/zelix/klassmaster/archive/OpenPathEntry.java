@@ -18,8 +18,8 @@ public class OpenPathEntry {
         return this.path;
     }
 
-    public OpenPathEntry(String string, ArchivePathFilter archivePathFilter, String string1, String string2) {
-        this.path = string;
+    public OpenPathEntry(String pathArgument, ArchivePathFilter archivePathFilter, String string1, String string2) {
+        this.path = pathArgument;
         this.filter = archivePathFilter;
         this.expectedInitialSha256 = string1 != null ? string1.toLowerCase() : null;
         this.expectedFinalSha256 = string2 != null ? string2.toLowerCase() : null;

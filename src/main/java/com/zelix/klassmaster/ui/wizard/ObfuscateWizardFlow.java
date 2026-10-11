@@ -50,9 +50,9 @@ public class ObfuscateWizardFlow extends ExclusionOptionsController {
     }
 
     @Override
-    public void showOptionsDialog(String string, ZkmMainWindow zkmMainWindow, ObfuscateOptions obfuscateOptions1, DialogCallback dialogCallback1) {
+    public void showOptionsDialog(String title, ZkmMainWindow zkmMainWindow, ObfuscateOptions obfuscateOptions1, DialogCallback dialogCallback1) {
         new ObfuscateOptionsDialog(
-                string,
+                title,
                 GuiResources.getTooltipText("PERFORM_OBFUSCATE"),
                 zkmMainWindow,
                 obfuscateOptions1,

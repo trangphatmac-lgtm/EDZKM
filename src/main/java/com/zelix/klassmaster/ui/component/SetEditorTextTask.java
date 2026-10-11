@@ -6,9 +6,9 @@ public class SetEditorTextTask implements Runnable {
     public final JEditorPane editorPane;
     public final String text;
 
-    public SetEditorTextTask(JEditorPane jEditorPane, String string) {
+    public SetEditorTextTask(JEditorPane jEditorPane, String textArgument) {
         this.editorPane = jEditorPane;
-        this.text = string;
+        this.text = textArgument;
     }
 
     @Override

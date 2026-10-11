@@ -21,7 +21,7 @@ public class RootKeyNode implements EncryptionKeyChain {
         if (this == encryptionKeyChain) {
             return true;
         } else {
-            return encryptionKeyChain instanceof RootKeyNode ? System.identityHashCode(this) - System.identityHashCode(encryptionKeyChain) <= 0 : false;
+            return ((encryptionKeyChain instanceof RootKeyNode) && (System.identityHashCode(this) - System.identityHashCode(encryptionKeyChain) <= 0));
         }
     }
 
@@ -80,9 +80,9 @@ public class RootKeyNode implements EncryptionKeyChain {
         BooleanFlag booleanFlag = new BooleanFlag(false);
 
         for (int i = 0; !booleanFlag.getValue(); i++) {
-            long bc = this.generateRandomKey();
-            LongKeyNode longKeyNode = (LongKeyNode) parameterKeyGenerator.getOrCreateNode(bc, booleanFlag);
-            list1.add(bc);
+            long value = this.generateRandomKey();
+            LongKeyNode longKeyNode = (LongKeyNode) parameterKeyGenerator.getOrCreateNode(value, booleanFlag);
+            list1.add(value);
             EncryptionKeyChain encryptionKeyChain;
             PairMultiMap pairMultiMap;
             if (!bl && random1.nextInt(ba / 2) == 0) {
@@ -91,9 +91,9 @@ public class RootKeyNode implements EncryptionKeyChain {
                 list1.add(this);
                 pairMultiMap = this.keyPairMap;
             } else {
-                long bd = this.generateRandomKey();
-                encryptionKeyChain = parameterKeyGenerator.getOrCreateNode(bd, booleanFlag);
-                list1.add(bd);
+                long valueValue = this.generateRandomKey();
+                encryptionKeyChain = parameterKeyGenerator.getOrCreateNode(valueValue, booleanFlag);
+                list1.add(valueValue);
                 pairMultiMap = this.keyPairMap;
             }
 

@@ -14,7 +14,7 @@ public abstract class OpaquePredicateBase {
         };
     }
 
-    public static void setPredicateFlag(boolean bl) {
+    public static void setPredicateFlag(boolean predicateFlagArgument) {
         predicateFlag = true;
     }
 

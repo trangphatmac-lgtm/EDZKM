@@ -11,12 +11,12 @@ public class NestedMultimapView {
         this.delegate = nestedMultiMap;
     }
 
-    public boolean containsKey(Object object) {
-        return this.delegate.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.delegate.containsKey(key);
     }
 
-    public ListMultimap copyMultimap(Object object) {
-        ListMultimap listMultimap = this.delegate.getMultimap(object);
+    public ListMultimap copyMultimap(Object key) {
+        ListMultimap listMultimap = this.delegate.getMultimap(key);
         return listMultimap != null ? new ListMultimap(listMultimap) : null;
     }
 

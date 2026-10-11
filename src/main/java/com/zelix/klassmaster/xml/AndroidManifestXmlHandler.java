@@ -23,115 +23,85 @@ public class AndroidManifestXmlHandler extends GenericXmlFileHandler {
         Map map3 = (Map) object;
         TwoKeyMap twoKeyMap = (TwoKeyMap) object2;
         Map map2 = (Map) object1;
-        String string = xmlElementNode.getTagName();
-        if (string.equalsIgnoreCase("manifest")) {
+        String tagNameValue = xmlElementNode.getTagName();
+        if (tagNameValue.equalsIgnoreCase("manifest")) {
             ObservableHolder observableHolder = xmlElementNode.getAttributeValue("package");
             if (observableHolder != null) {
-                String string1 = (String) observableHolder.getValue();
-                if (string1 != null && string1.length() > 0) {
-                    this.manifestPackage = string1;
+                String manifestPackageValue = (String) observableHolder.getValue();
+                if (manifestPackageValue != null && manifestPackageValue.length() > 0) {
+                    this.manifestPackage = manifestPackageValue;
                 }
             }
-        } else if (!string.equalsIgnoreCase("activity")
-                && !string.equalsIgnoreCase("provider")
-                && !string.equalsIgnoreCase("service")
-                && !string.equalsIgnoreCase("receiver")) {
+        } else if (!tagNameValue.equalsIgnoreCase("activity")
+                && !tagNameValue.equalsIgnoreCase("provider")
+                && !tagNameValue.equalsIgnoreCase("service")
+                && !tagNameValue.equalsIgnoreCase("receiver")) {
             super.analyzeElement(xmlElementNode, map1, map3, map2, twoKeyMap);
         } else {
-            String string3 = "reference in '" + super.resourceName + "' by '" + string + "' tag";
+            String value = "reference in '" + super.resourceName + "' by '" + tagNameValue + "' tag";
             ObservableHolder observableHolder1 = xmlElementNode.getAttributeValue("android:name");
             if (observableHolder1 != null) {
-                String string2 = (String) observableHolder1.getValue();
-                ProgramClass programClass1 = this.findProgramClass(string2);
+                String valueValue = (String) observableHolder1.getValue();
+                ProgramClass programClass1 = this.findProgramClass(valueValue);
                 if (programClass1 == null && this.manifestPackage != null) {
-                    programClass1 = this.findProgramClass(this.qualifyClassName(string2));
+                    programClass1 = this.findProgramClass(this.qualifyClassName(valueValue));
                 }
 
                 if (programClass1 != null) {
-                    map1.put(programClass1, string3);
+                    map1.put(programClass1, value);
                 }
             }
         }
     }
 
     @Override
-    public void rewriteElement(Object object, Object object1) throws ZkmException, IOException {
-        XmlElementNode xmlElementNode;
-        label56:
-        {
-            xmlElementNode = (XmlElementNode) object;
-            boolean predicateFlag = XmlConfigFileHandler.getPredicateFlag();
-            String string = xmlElementNode.getTagName();
-            boolean bl = predicateFlag;
-            if (string.equalsIgnoreCase("manifest")) {
-                ObservableHolder observableHolder = xmlElementNode.getAttributeValue("package");
-                if (observableHolder != null) {
-                    String string1 = (String) observableHolder.getValue();
-                    if (string1 != null && string1.length() > 0) {
-                        this.manifestPackage = string1;
-                        observableHolder.setValue(this.renameDirectoryPath(string1));
-                    }
-                }
+    public void rewriteElement(Object element, Object output) throws ZkmException, IOException {
+        XmlElementNode node = (XmlElementNode) element;
+        rewriteManifestReferences(node);
+        ((List) output).add(node);
+    }
 
-                if (!bl) {
-                    break label56;
+    private void rewriteManifestReferences(XmlElementNode node) throws ZkmException, IOException {
+        boolean continueAfterManifest = XmlConfigFileHandler.getPredicateFlag();
+        String tagName = node.getTagName();
+        if (tagName.equalsIgnoreCase("manifest")) {
+            ObservableHolder packageAttribute = node.getAttributeValue("package");
+            if (packageAttribute != null) {
+                String packageName = (String) packageAttribute.getValue();
+                if (packageName != null && packageName.length() > 0) {
+                    this.manifestPackage = packageName;
+                    packageAttribute.setValue(this.renameDirectoryPath(packageName));
                 }
             }
-
-            XmlElementNode xmlElementNode1;
-            String string5;
-            if (!string.equalsIgnoreCase("activity")) {
-                if (!string.equalsIgnoreCase("provider")) {
-                    if (!string.equalsIgnoreCase("service")) {
-                        if (!string.equalsIgnoreCase("receiver")) {
-                            Enumeration enumeration = xmlElementNode.getAttributeNames();
-
-                            while (true) {
-                                if (!enumeration.hasMoreElements()) {
-                                    break label56;
-                                }
-
-                                String string3 = (String) enumeration.nextElement();
-                                ObservableHolder observableHolder1 = xmlElementNode.getAttributeValue(string3);
-                                observableHolder1.setValue(this.updateReferenceValue((String) observableHolder1.getValue(), string3, false));
-                            }
-                        }
-
-                        xmlElementNode1 = xmlElementNode;
-                        long bd = 24856730383790L;
-                        string5 = "android:name";
-                    } else {
-                        xmlElementNode1 = xmlElementNode;
-                        long ba = 24856730383790L;
-                        string5 = "android:name";
-                    }
-                } else {
-                    xmlElementNode1 = xmlElementNode;
-                    long bb = 24856730383790L;
-                    string5 = "android:name";
-                }
-            } else {
-                xmlElementNode1 = xmlElementNode;
-                long bc = 24856730383790L;
-                string5 = "android:name";
-            }
-
-            String string2 = string5;
-            ObservableHolder observableHolder2 = xmlElementNode1.getAttributeValue(string2);
-            if (observableHolder2 != null) {
-                String string4 = (String) observableHolder2.getValue();
-                ProgramClass programClass1 = this.findProgramClass(string4);
-                if (programClass1 == null && this.manifestPackage != null) {
-                    programClass1 = this.findProgramClass(this.qualifyClassName(string4));
-                }
-
-                if (programClass1 != null) {
-                    observableHolder2.setValue(programClass1.getDottedClassName());
-                }
+            if (!continueAfterManifest) {
+                return;
             }
         }
 
-        ((List) object1).add(xmlElementNode);
+        if (!tagName.equalsIgnoreCase("activity")
+                && !tagName.equalsIgnoreCase("provider")
+                && !tagName.equalsIgnoreCase("service")
+                && !tagName.equalsIgnoreCase("receiver")) {
+            Enumeration attributeNames = node.getAttributeNames();
+            while (attributeNames.hasMoreElements()) {
+                String attributeName = (String) attributeNames.nextElement();
+                ObservableHolder attribute = node.getAttributeValue(attributeName);
+                attribute.setValue(this.updateReferenceValue((String) attribute.getValue(), attributeName, false));
+            }
+            return;
+        }
+
+        ObservableHolder classNameAttribute = node.getAttributeValue("android:name");
+        if (classNameAttribute != null) {
+            String className = (String) classNameAttribute.getValue();
+            ProgramClass componentClass = this.findProgramClass(className);
+            if (componentClass == null && this.manifestPackage != null) {
+                componentClass = this.findProgramClass(this.qualifyClassName(className));
+            }
+            if (componentClass != null) {
+                classNameAttribute.setValue(componentClass.getDottedClassName());
+            }
+        }
     }
 
     public String qualifyClassName(String string) {

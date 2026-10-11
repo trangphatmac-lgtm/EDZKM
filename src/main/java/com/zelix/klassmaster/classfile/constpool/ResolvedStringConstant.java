@@ -28,12 +28,12 @@ public class ResolvedStringConstant extends NumericConstantEntry implements Utf8
 
     @Override
     public String getAbbreviatedValue() {
-        String string = ZkmUtils.escapeJavaString(this.getValueString());
-        if (string.length() > 200) {
-            string = string.substring(0, 50) + "...<" + (string.length() - 100) + " CHARS>..." + string.substring(string.length() - 50);
+        String abbreviatedValue = ZkmUtils.escapeJavaString(this.getValueString());
+        if (abbreviatedValue.length() > 200) {
+            abbreviatedValue = abbreviatedValue.substring(0, 50) + "...<" + (abbreviatedValue.length() - 100) + " CHARS>..." + abbreviatedValue.substring(abbreviatedValue.length() - 50);
         }
 
-        return string;
+        return abbreviatedValue;
     }
 
     @Override
@@ -56,14 +56,14 @@ public class ResolvedStringConstant extends NumericConstantEntry implements Utf8
     }
 
     public ResolvedStringConstant(
-            int ba,
+            int indexArgument,
             AbstractConstantPool abstractConstantPool,
             ConstantUtf8 constantUtf8,
             ResolvedStringConstant resolvedStringConstant1,
             ListMultimap listMultimap,
             boolean fromClassFile
     ) {
-        super(ba, abstractConstantPool);
+        super(indexArgument, abstractConstantPool);
         this.valueUtf8 = constantUtf8;
         if (listMultimap != null) {
             listMultimap.addValue(constantUtf8, this);
@@ -85,8 +85,8 @@ public class ResolvedStringConstant extends NumericConstantEntry implements Utf8
         return usedConstantsCollector.markUsed(this, object, object1);
     }
 
-    public ResolvedStringConstant(AbstractConstantPool abstractConstantPool, ConstantUtf8 constantUtf8, boolean bl) {
-        this(0, abstractConstantPool, constantUtf8, null, null, bl);
+    public ResolvedStringConstant(AbstractConstantPool abstractConstantPool, ConstantUtf8 constantUtf8, boolean fromClassFileArgument) {
+        this(0, abstractConstantPool, constantUtf8, null, null, fromClassFileArgument);
     }
 
     public boolean isFromClassFile() {
@@ -122,8 +122,8 @@ public class ResolvedStringConstant extends NumericConstantEntry implements Utf8
     }
 
     @Override
-    public void setValueFromString(String string) throws ZkmException, IOException {
-        this.valueUtf8.setValue(string);
+    public void setValueFromString(String valueFromString) throws ZkmException, IOException {
+        this.valueUtf8.setValue(valueFromString);
         this.notifyObservers();
     }
 

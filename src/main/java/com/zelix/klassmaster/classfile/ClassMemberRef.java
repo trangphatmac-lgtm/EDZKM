@@ -38,12 +38,12 @@ public class ClassMemberRef {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        boolean bl = object instanceof ClassMemberRef;
+        boolean bl = other instanceof ClassMemberRef;
         if (visitableNodes1 != null) {
             if (bl) {
-                ClassMemberRef classMemberRef1 = (ClassMemberRef) object;
+                ClassMemberRef classMemberRef1 = (ClassMemberRef) other;
                 ClassMemberRef classMemberRef2 = this;
                 if (visitableNodes1 != null) {
                     if (this.member != classMemberRef1.member) {

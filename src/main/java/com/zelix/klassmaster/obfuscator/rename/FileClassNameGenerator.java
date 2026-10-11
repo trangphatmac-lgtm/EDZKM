@@ -27,17 +27,17 @@ public class FileClassNameGenerator extends ClassNameGenerator {
             ClassRenameClashChecker classRenameClashChecker,
             boolean bl,
             boolean bl1,
-            String string,
-            int ba,
-            int bb,
-            boolean bl2,
+            String namePrefixArgument,
+            int keepInnerClassInfoMode,
+            int keepGenericsInfoMode,
+            boolean randomizeNamesArgument,
             MixedCaseNamesMode mixedCaseNamesMode1,
             HashMap hashMap,
             ListMultimap listMultimap,
             Map map1,
             List list1
     ) {
-        super(classRenameClashChecker, hashMap, listMultimap, map1, ba, bb, bl2);
+        super(classRenameClashChecker, hashMap, listMultimap, map1, keepInnerClassInfoMode, keepGenericsInfoMode, randomizeNamesArgument);
         switch (mixedCaseNamesMode1.getValue()) {
             case 0:
                 if (!bl) {
@@ -94,7 +94,7 @@ public class FileClassNameGenerator extends ClassNameGenerator {
                 }
         }
 
-        this.namePrefix = string;
+        this.namePrefix = namePrefixArgument;
         this.nameFileNames = list1;
         if (classRenameClashChecker.isRandomizeOrder()) {
             ZkmUtils.shuffleChars(this.subsequentChars);
@@ -102,97 +102,97 @@ public class FileClassNameGenerator extends ClassNameGenerator {
         }
     }
 
-    public UniqueNameGenerator createNameGenerator(char[] ba, char[] bb, char[] bc, char[] bd, List list1) {
-        return new UniqueNameGenerator(ba, bb, bc, bd, list1, super.randomizeNames);
+    public UniqueNameGenerator createNameGenerator(char[] destinationArray, char[] subsequentCharsArgument, char[] destinationArrayArgument, char[] subsequentCharsArgument2, List list1) {
+        return new UniqueNameGenerator(destinationArray, subsequentCharsArgument, destinationArrayArgument, subsequentCharsArgument2, list1, super.randomizeNames);
     }
 
     @Override
     public String generateNewName(ClassHierarchyNode classHierarchyNode, String string, HashMap hashMap, String string1, Triple triple, boolean bl) throws IOException {
-        String string2;
-        String string3;
+        String second;
+        String third;
         if (triple != null) {
-            string2 = (String) triple.getSecond();
-            string3 = (String) triple.getThird();
+            second = (String) triple.getSecond();
+            third = (String) triple.getThird();
             if (triple.getFirst() == null) {
-                string2 = string2 + "zzzz";
+                second = second + "zzzz";
             }
         } else {
-            string2 = "";
-            string3 = "";
+            second = "";
+            third = "";
         }
 
         boolean referencedFromXml = classHierarchyNode.getProgramClass().isReferencedFromXml();
         boolean bl2 = bl;
         HashMap hashMap1 = hashMap;
-        String string4 = string3;
-        String string5 = string2;
+        String thirdValue = third;
+        String secondValue = second;
         String string6 = string1;
-        String string7 = string;
-        return this.buildUniqueClassName(string7, string6, string5, string4, hashMap1, bl2, referencedFromXml);
+        String key = string;
+        return this.buildUniqueClassName(key, string6, secondValue, thirdValue, hashMap1, bl2, referencedFromXml);
     }
 
     @Override
     public String generateFallbackName(ClassHierarchyNode classHierarchyNode, boolean bl) throws IOException {
         ProgramClass programClass1 = classHierarchyNode.getProgramClass();
         Triple triple = super.exclusionSet.getClassLink(programClass1);
-        String string;
-        String string1;
+        String second;
+        String third;
         FileClassNameGenerator fileClassNameGenerator1;
         String string6;
-        String string7;
+        String className;
         if (triple != null) {
-            string = (String) triple.getSecond();
-            string1 = (String) triple.getThird();
+            second = (String) triple.getSecond();
+            third = (String) triple.getThird();
             fileClassNameGenerator1 = this;
             string6 = "";
-            string7 = classHierarchyNode.getClassName();
+            className = classHierarchyNode.getClassName();
         } else {
-            string = "";
-            string1 = "";
+            second = "";
+            third = "";
             fileClassNameGenerator1 = this;
             string6 = "";
-            string7 = classHierarchyNode.getClassName();
+            className = classHierarchyNode.getClassName();
         }
 
         Boolean boolean2 = programClass1.isReferencedFromXml();
         Boolean boolean1 = bl;
         HashMap hashMap1 = (HashMap) null;
-        boolean bl3 = boolean1;
-        boolean bl1 = boolean2;
-        boolean bl2 = bl3;
+        boolean boolean1Value = boolean1;
+        boolean boolean2Value = boolean2;
+        boolean boolean1Value2 = boolean1Value;
         HashMap hashMap = hashMap1;
-        String string2 = string1;
-        String string3 = string;
-        String string4 = string7;
-        String string5 = string6;
-        return fileClassNameGenerator1.buildUniqueClassName(string5, string4, string3, string2, hashMap, bl2, bl1);
+        String thirdValue = third;
+        String secondValue = second;
+        String classNameValue = className;
+        String key = string6;
+        return fileClassNameGenerator1.buildUniqueClassName(key, classNameValue, secondValue, thirdValue, hashMap, boolean1Value2, boolean2Value);
     }
 
-    public String nextNameInScope(String string, String string1, HashMap hashMap, boolean bl) {
-        if (string1.equals("")) {
-            UniqueNameGenerator uniqueNameGenerator1 = (UniqueNameGenerator) this.generatorsByPackage.get(string);
+    public String nextNameInScope(String key, String keyArgument, HashMap hashMap, boolean bl) {
+        if (keyArgument.equals("")) {
+            UniqueNameGenerator uniqueNameGenerator1 = (UniqueNameGenerator) this.generatorsByPackage.get(key);
             if (uniqueNameGenerator1 == null) {
                 uniqueNameGenerator1 = this.createNameGenerator(
                         this.firstChars, this.subsequentChars, this.archiveFirstChars, this.archiveSubsequentChars, this.nameFileNames
                 );
-                this.generatorsByPackage.put(string, uniqueNameGenerator1);
+                this.generatorsByPackage.put(key, uniqueNameGenerator1);
             }
 
             return uniqueNameGenerator1.nextUniqueName(this.namePrefix, bl);
         } else {
-            UniqueNameGenerator uniqueNameGenerator = (UniqueNameGenerator) this.generatorsByOuterPrefix.get(string1);
+            UniqueNameGenerator uniqueNameGenerator = (UniqueNameGenerator) this.generatorsByOuterPrefix.get(keyArgument);
             if (uniqueNameGenerator == null) {
                 uniqueNameGenerator = this.createNameGenerator(
                         this.firstChars, this.subsequentChars, this.archiveFirstChars, this.archiveSubsequentChars, this.nameFileNames
                 );
-                this.generatorsByOuterPrefix.put(string1, uniqueNameGenerator);
+                this.generatorsByOuterPrefix.put(keyArgument, uniqueNameGenerator);
             }
 
             UniqueNameGenerator uniqueNameGenerator2 = uniqueNameGenerator;
-            String string3 = this.namePrefix;
+            String namePrefixValue = this.namePrefix;
 
             while (true) {
-                String string2 = uniqueNameGenerator2.nextUniqueName(string3, bl);
+                String string2 = uniqueNameGenerator2.nextUniqueName(namePrefixValue, bl);
                 if (string2 != null && HiddenOptionFlags.MARK_GENERATED_CLASS_NAMES) {
                     string2 = string2 + "__";
                 }
@@ -203,23 +203,23 @@ public class FileClassNameGenerator extends ClassNameGenerator {
                     }
 
                     uniqueNameGenerator2 = uniqueNameGenerator;
-                    string3 = this.namePrefix;
+                    namePrefixValue = this.namePrefix;
                 } else {
                     uniqueNameGenerator2 = uniqueNameGenerator;
-                    string3 = this.namePrefix;
+                    namePrefixValue = this.namePrefix;
                 }
             }
         }
     }
 
-    public String buildUniqueClassName(String string, String string1, String string2, String string3, HashMap hashMap, boolean bl, boolean bl1) throws IOException {
-        String string5 = "";
-        if (string.equals("")) {
-            string5 = this.getRenamedPackagePrefix(string1);
+    public String buildUniqueClassName(String key, String string1, String string2, String string3, HashMap hashMap, boolean bl, boolean bl1) throws IOException {
+        String renamedPackagePrefix = "";
+        if (key.equals("")) {
+            renamedPackagePrefix = this.getRenamedPackagePrefix(string1);
         }
 
         boolean bl2 = bl1
-                && string.length() == 0
+                && key.length() == 0
                 && string2.length() == 0
                 && (
                 this.namePrefix == null
@@ -227,9 +227,9 @@ public class FileClassNameGenerator extends ClassNameGenerator {
                         || !Character.isUpperCase(this.namePrefix.charAt(0)) && Character.isLetter(this.namePrefix.charAt(0))
         );
 
-        String string4;
+        String keyValue;
         do {
-            String string6 = this.nextNameInScope(string5, string, hashMap, bl2 ? true : bl);
+            String string6 = this.nextNameInScope(renamedPackagePrefix, key, hashMap, ((bl2) || (bl)));
             if (bl2 && !Character.isUpperCase(string6.charAt(0)) && Character.isLetter(string6.charAt(0))) {
                 StringBuilder stringBuilder = new StringBuilder(string6);
                 char ba = Character.toUpperCase(string6.charAt(0));
@@ -237,9 +237,9 @@ public class FileClassNameGenerator extends ClassNameGenerator {
                 string6 = stringBuilder.toString();
             }
 
-            string4 = string5 + string + string2 + string6 + string3;
-        } while (!this.isNameAvailable(string1, string4, bl, bl2));
+            keyValue = renamedPackagePrefix + key + string2 + string6 + string3;
+        } while (!this.isNameAvailable(string1, keyValue, bl, bl2));
 
-        return string4;
+        return keyValue;
     }
 }

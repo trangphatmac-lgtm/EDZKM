@@ -7,9 +7,9 @@ public class PendingNestedArchive {
     public String entryName;
     public File extractedFile;
 
-    public PendingNestedArchive(SourceArchive sourceArchive1, String string, File file1) {
+    public PendingNestedArchive(SourceArchive sourceArchive1, String entryNameArgument, File file1) {
         this.parentArchive = sourceArchive1;
-        this.entryName = string;
+        this.entryName = entryNameArgument;
         this.extractedFile = file1;
     }
 }

@@ -34,10 +34,10 @@ public abstract class FixedClassMatchHandler extends ExclusionSetBase {
         return bl;
     }
 
-    public boolean markClassExcluded(ProgramClass programClass1, Object object) {
+    public boolean markClassExcluded(ProgramClass programClass1, Object value) {
         Object object1 = super.includedClasses.remove(programClass1);
         if (object1 != null) {
-            super.excludedClasses.put(programClass1, object);
+            super.excludedClasses.put(programClass1, value);
         }
 
         return object1 != null;

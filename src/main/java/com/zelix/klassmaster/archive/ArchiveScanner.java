@@ -36,12 +36,12 @@ public class ArchiveScanner {
         String string3 = string9.substring(0, ba + 1);
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < list1.size(); i++) {
-            String string4 = ((String) list1.get(i)).trim();
-            if (string4.length() > 0) {
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            String value = ((String) list1.get(elementIndex)).trim();
+            if (value.length() > 0) {
                 stringBuilder.setLength(0);
                 stringBuilder.append("*");
-                stringBuilder.append(string4);
+                stringBuilder.append(value);
                 String string5 = stringBuilder.toString();
                 if (!ZkmFileUtils.caseSensitiveFileSystem) {
                     string5 = string5.toUpperCase();
@@ -51,7 +51,7 @@ public class ArchiveScanner {
                 String string6 = string5.substring(bc + 1);
                 String string7 = string5.substring(0, bc + 1);
                 if (ZkmStringUtils.matchesWildcard(string3, string7) && ZkmStringUtils.matchesWildcard(string2, string6)) {
-                    observableHolder.setValue(string4);
+                    observableHolder.setValue(value);
                     if (list2 != null && isUnskippedPath(string3, string2, string7, string6, list2, observableHolder1)) {
                         return false;
                     }
@@ -67,15 +67,15 @@ public class ArchiveScanner {
     public static boolean isUnskippedPath(String string, String string1, String string2, String string3, List list1, ObservableHolder observableHolder) throws ZkmException, IOException {
         observableHolder.setValue(null);
         int ba = ZkmStringUtils.countChar(string2, '!');
-        String string6 = getExtension(string3);
+        String extension = getExtension(string3);
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < list1.size(); i++) {
-            String string7 = ((String) list1.get(i)).trim();
-            if (string7.length() > 0 && ZkmStringUtils.countChar(string7, '!') == ba) {
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            String value = ((String) list1.get(elementIndex)).trim();
+            if (value.length() > 0 && ZkmStringUtils.countChar(value, '!') == ba) {
                 stringBuilder.setLength(0);
                 stringBuilder.append("*");
-                stringBuilder.append(string7);
+                stringBuilder.append(value);
                 String string8 = stringBuilder.toString();
                 if (!ZkmFileUtils.caseSensitiveFileSystem) {
                     string8 = string8.toUpperCase();
@@ -84,14 +84,14 @@ public class ArchiveScanner {
                 int bc = lastSeparatorIndex(string8);
                 String string9 = string8.substring(bc + 1);
                 String string10 = string8.substring(0, bc + 1);
-                String string11 = getExtension(string9);
-                if (!string11.equals(string6)) {
-                    String string4 = string6;
-                    String string5 = string11;
-                    if (!ZkmStringUtils.matchesWildcard(string5, string4)) {
-                        string4 = string11;
-                        string5 = string6;
-                        if (!ZkmStringUtils.matchesWildcard(string5, string4)) {
+                String extensionValue = getExtension(string9);
+                if (!extensionValue.equals(extension)) {
+                    String extensionValue2 = extension;
+                    String extensionValue3 = extensionValue;
+                    if (!ZkmStringUtils.matchesWildcard(extensionValue3, extensionValue2)) {
+                        extensionValue2 = extensionValue;
+                        extensionValue3 = extension;
+                        if (!ZkmStringUtils.matchesWildcard(extensionValue3, extensionValue2)) {
                             continue;
                         }
                     }
@@ -103,7 +103,7 @@ public class ArchiveScanner {
                     string12 = string9;
                     string13 = string1;
                     if (ZkmStringUtils.matchesWildcard(string13, string12)) {
-                        observableHolder.setValue(string7);
+                        observableHolder.setValue(value);
                         return true;
                     }
                 }
@@ -186,20 +186,20 @@ public class ArchiveScanner {
 
                 ObservableHolder observableHolder = new ObservableHolder();
                 ObservableHolder observableHolder3 = new ObservableHolder();
-                boolean bl1 = isSkippedPath(string1, list1, list2, observableHolder, observableHolder3);
+                boolean skippedPath = isSkippedPath(string1, list1, list2, observableHolder, observableHolder3);
                 if (!observableHolder.isValueNull()) {
-                    String string2 = (String) observableHolder.getValue();
-                    messageReporter1.reportInfo("INFO:", "Skipping nested archive '" + string1 + "' because of parameter -\"" + string2 + "\"");
-                    set2.add(string2);
+                    String value = (String) observableHolder.getValue();
+                    messageReporter1.reportInfo("INFO:", "Skipping nested archive '" + string1 + "' because of parameter -\"" + value + "\"");
+                    set2.add(value);
                 }
 
                 if (!observableHolder3.isValueNull()) {
-                    String string6 = (String) observableHolder3.getValue();
-                    messageReporter1.reportInfo("INFO:", "Unskipping nested archive '" + string1 + "' because of parameter +\"" + string6 + "\"");
-                    set3.add(string6);
+                    String valueValue = (String) observableHolder3.getValue();
+                    messageReporter1.reportInfo("INFO:", "Unskipping nested archive '" + string1 + "' because of parameter +\"" + valueValue + "\"");
+                    set3.add(valueValue);
                 }
 
-                if (bl1) {
+                if (skippedPath) {
                     set4.add(sourceArchive2);
                     return;
                 }
@@ -213,23 +213,23 @@ public class ArchiveScanner {
             while (enumeration.hasMoreElements()) {
                 ZipEntry zipEntry1 = (ZipEntry) enumeration.nextElement();
                 if (!zipEntry1.isDirectory()) {
-                    String string3 = zipEntry1.getName();
-                    String string4 = (sourceArchive1 != null ? string1 : string) + "!" + string3;
+                    String name = zipEntry1.getName();
+                    String string4 = (sourceArchive1 != null ? string1 : string) + "!" + name;
                     if (matchesFilter(string4, archivePathFilter)) {
-                        if (string3.endsWith(".class")) {
+                        if (name.endsWith(".class")) {
                             ObservableHolder observableHolder5 = new ObservableHolder();
                             ObservableHolder observableHolder7 = new ObservableHolder();
                             boolean bl6 = !list1.isEmpty() && isSkippedPath(string4, list1, list2, observableHolder5, observableHolder7);
                             if (!observableHolder5.isValueNull()) {
-                                String string10 = (String) observableHolder5.getValue();
-                                set2.add(string10);
-                                messageReporter1.reportInfo("INFO:", "Skipping class file '" + string4 + "' because of parameter -\"" + string10 + "\"");
+                                String valueValue2 = (String) observableHolder5.getValue();
+                                set2.add(valueValue2);
+                                messageReporter1.reportInfo("INFO:", "Skipping class file '" + string4 + "' because of parameter -\"" + valueValue2 + "\"");
                             }
 
                             if (!observableHolder7.isValueNull()) {
-                                String string11 = (String) observableHolder7.getValue();
-                                messageReporter1.reportInfo("INFO:", "Unskipping class file '" + string4 + "' because of parameter +\"" + string11 + "\"");
-                                set3.add(string11);
+                                String valueValue3 = (String) observableHolder7.getValue();
+                                messageReporter1.reportInfo("INFO:", "Unskipping class file '" + string4 + "' because of parameter +\"" + valueValue3 + "\"");
+                                set3.add(valueValue3);
                             }
 
                             if (bl6) {
@@ -266,16 +266,16 @@ public class ArchiveScanner {
                                 set1.add(inputFileLocation);
                                 bl3 = true;
                             }
-                        } else if (ZkmFileUtils.isXmlFileName(string3)) {
+                        } else if (ZkmFileUtils.isXmlFileName(name)) {
                             ObservableHolder observableHolder4 = new ObservableHolder();
                             ObservableHolder observableHolder6 = new ObservableHolder();
                             boolean bl5 = !list1.isEmpty() && isSkippedPath(string4, list1, list2, observableHolder4, observableHolder6);
                             if (!observableHolder4.isValueNull()) {
-                                String string8 = (String) observableHolder4.getValue();
+                                String valueValue4 = (String) observableHolder4.getValue();
                                 MessageReporter messageReporter3;
                                 String string13;
                                 if (set2 != null) {
-                                    set2.add(string8);
+                                    set2.add(valueValue4);
                                     messageReporter3 = messageReporter1;
                                     string13 = "INFO:";
                                 } else {
@@ -283,37 +283,37 @@ public class ArchiveScanner {
                                     string13 = "INFO:";
                                 }
 
-                                messageReporter3.reportInfo(string13, "Skipping file '" + string4 + "' because of parameter -\"" + string8 + "\"");
+                                messageReporter3.reportInfo(string13, "Skipping file '" + string4 + "' because of parameter -\"" + valueValue4 + "\"");
                             }
 
                             if (!observableHolder6.isValueNull()) {
-                                String string9 = (String) observableHolder6.getValue();
-                                messageReporter1.reportInfo("INFO:", "Unskipping file '" + string4 + "' because of parameter +\"" + string9 + "\"");
-                                set3.add(string9);
+                                String valueValue5 = (String) observableHolder6.getValue();
+                                messageReporter1.reportInfo("INFO:", "Unskipping file '" + string4 + "' because of parameter +\"" + valueValue5 + "\"");
+                                set3.add(valueValue5);
                             }
 
                             if (bl5) {
                                 set6.add(new InputFileLocation(archiveZipFile, zipEntry1, sourceArchive2));
                             }
-                        } else if (!ZkmFileUtils.isYamlFileName(string3) && !ZkmFileUtils.isPropertiesFileName(string3)) {
-                            boolean bl4 = false;
+                        } else if (!ZkmFileUtils.isYamlFileName(name) && !ZkmFileUtils.isPropertiesFileName(name)) {
+                            boolean nestedArchiveEntry = false;
 
                             try {
-                                bl4 = ZkmFileUtils.isNestedArchiveEntry(archiveZipFile, zipEntry1);
+                                nestedArchiveEntry = ZkmFileUtils.isNestedArchiveEntry(archiveZipFile, zipEntry1);
                             } catch (IOException iOException1) {
                                 messageReporter1.reportError("FILE ERROR:", "File Error : " + iOException1);
                             }
 
-                            if (bl4) {
+                            if (nestedArchiveEntry) {
                                 File file2 = ZkmFileUtils.extractEntryToTempFile(archiveZipFile, zipEntry1);
                                 if (bl) {
-                                    vector.addElement(new PendingNestedArchive(sourceArchive2, string3, file2));
+                                    vector.addElement(new PendingNestedArchive(sourceArchive2, name, file2));
                                 } else {
-                                    SourceArchive sourceArchive3 = new SourceArchive(file2.getAbsolutePath(), file2.length(), string3, sourceArchive2);
-                                    map1.put(sourceArchive2.getNestedEntryPath(string3), sourceArchive3);
+                                    SourceArchive sourceArchive3 = new SourceArchive(file2.getAbsolutePath(), file2.length(), name, sourceArchive2);
+                                    map1.put(sourceArchive2.getNestedEntryPath(name), sourceArchive3);
                                     set4.add(sourceArchive3);
                                 }
-                            } else if (string3.equalsIgnoreCase("META-INF/MANIFEST.MF")) {
+                            } else if (name.equalsIgnoreCase("META-INF/MANIFEST.MF")) {
                                 if (zipEntry2 == null) {
                                     zipEntry2 = zipEntry1;
                                 } else {
@@ -327,11 +327,11 @@ public class ArchiveScanner {
                             ObservableHolder observableHolder2 = new ObservableHolder();
                             boolean bl2 = !list1.isEmpty() && isSkippedPath(string4, list1, list2, observableHolder1, observableHolder2);
                             if (!observableHolder1.isValueNull()) {
-                                String string5 = (String) observableHolder1.getValue();
+                                String valueValue6 = (String) observableHolder1.getValue();
                                 MessageReporter messageReporter2;
                                 String string12;
                                 if (set2 != null) {
-                                    set2.add(string5);
+                                    set2.add(valueValue6);
                                     messageReporter2 = messageReporter1;
                                     string12 = "INFO:";
                                 } else {
@@ -339,17 +339,17 @@ public class ArchiveScanner {
                                     string12 = "INFO:";
                                 }
 
-                                messageReporter2.reportInfo(string12, "Skipping file '" + string4 + "' because of parameter -\"" + string5 + "\"");
+                                messageReporter2.reportInfo(string12, "Skipping file '" + string4 + "' because of parameter -\"" + valueValue6 + "\"");
                             }
 
                             if (!observableHolder2.isValueNull()) {
-                                String string7 = (String) observableHolder2.getValue();
-                                messageReporter1.reportInfo("INFO:", "Unskipping file '" + string4 + "' because of parameter +\"" + string7 + "\"");
-                                set3.add(string7);
+                                String valueValue7 = (String) observableHolder2.getValue();
+                                messageReporter1.reportInfo("INFO:", "Unskipping file '" + string4 + "' because of parameter +\"" + valueValue7 + "\"");
+                                set3.add(valueValue7);
                             }
 
                             if (bl2) {
-                                if (ZkmFileUtils.isYamlFileName(string3)) {
+                                if (ZkmFileUtils.isYamlFileName(name)) {
                                     set7.add(new InputFileLocation(archiveZipFile, zipEntry1, sourceArchive2));
                                 } else {
                                     set8.add(new InputFileLocation(archiveZipFile, zipEntry1, sourceArchive2));
@@ -395,22 +395,22 @@ public class ArchiveScanner {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append("\"" + string1 + "\" couldn't be opened or written : ");
             StringBuffer stringBuffer3;
-            String string14;
+            String message;
             if (!string1.equals(string)) {
                 stringBuffer.append("\"" + string + "\" : ");
                 stringBuffer3 = stringBuffer;
-                string14 = iOException3.getMessage();
+                message = iOException3.getMessage();
             } else {
                 stringBuffer3 = stringBuffer;
-                string14 = iOException3.getMessage();
+                message = iOException3.getMessage();
             }
 
-            stringBuffer3.append(string14);
+            stringBuffer3.append(message);
             messageReporter1.reportFatalError("FILE ERROR:", stringBuffer.toString());
         }
 
-        for (int i = 0; i < vector.size(); i++) {
-            PendingNestedArchive pendingNestedArchive = (PendingNestedArchive) vector.elementAt(i);
+        for (int elementIndex = 0; elementIndex < vector.size(); elementIndex++) {
+            PendingNestedArchive pendingNestedArchive = (PendingNestedArchive) vector.elementAt(elementIndex);
             scanArchive(
                     pendingNestedArchive.extractedFile,
                     set1,
@@ -446,7 +446,7 @@ public class ArchiveScanner {
     }
 
     public static boolean matchesFilter(String string, ArchivePathFilter archivePathFilter) {
-        return archivePathFilter == ArchivePathFilter.ACCEPT_ALL ? true : archivePathFilter.acceptsPath(string);
+        return ((archivePathFilter == ArchivePathFilter.ACCEPT_ALL) || (archivePathFilter.acceptsPath(string)));
     }
 
     private ArchiveScanner() {

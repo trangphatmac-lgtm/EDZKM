@@ -26,8 +26,8 @@ public class TaglibXmlUpdater extends XmlConfigFileHandler {
                 && !string1.equals("variable-class")) {
             list1.add(this.updateReferenceValue(string, string1, true));
         } else {
-            String string2 = this.getRenamedClassName(string);
-            list1.add(string2);
+            String renamedClassName = this.getRenamedClassName(string);
+            list1.add(renamedClassName);
         }
     }
 

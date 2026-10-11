@@ -19,59 +19,33 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public class ZKM extends ZkmApiBase {
-    private static String o = "W5MMsc";
+    private static String buildMarker = "W5MMsc";
 
     
     
     public static void main(String[] strings) {
         try {
-            boolean bl1;
             SystemPropertiesFileLoader.loadSystemProperties();
-            label142:
             if (HiddenOptionFlags.DEBUG_REDIRECT_OUT) {
-                PrintStream printStream = null;
-                boolean bl = false ;
-
-                label139:
-                {
-                    try {
-                        bl = true;
-                        File file1 = new File(ZkmFileUtils.USER_DIR_FILE, "RedirectedOut_" + System.currentTimeMillis() + ".txt");
-                        System.out.println("REDIRECTING System.out to '" + file1.getAbsolutePath() + "'" + '\u0007');
-                        printStream = new PrintStream(new BufferedOutputStream(new FileOutputStream(file1), 4096), true);
-                        ZkmApiBase.savedStdout = System.out;
-                        System.setOut(printStream);
-                        bl = false;
-                        break label139;
-                    } catch (IOException iOException) {
-                        System.setOut(ZkmApiBase.savedStdout);
-                        iOException.printStackTrace();
-                        System.exit(1);
-                        bl = false;
-                    } finally {
-                        if (bl) {
-                            if (printStream != null) {
-                                printStream.close();
-                            }
-                        }
+                PrintStream redirectedOutput = null;
+                try {
+                    File outputFile = new File(ZkmFileUtils.USER_DIR_FILE, "RedirectedOut_" + System.currentTimeMillis() + ".txt");
+                    System.out.println("REDIRECTING System.out to '" + outputFile.getAbsolutePath() + "'" + '\u0007');
+                    redirectedOutput = new PrintStream(new BufferedOutputStream(new FileOutputStream(outputFile), 4096), true);
+                    ZkmApiBase.savedStdout = System.out;
+                    System.setOut(redirectedOutput);
+                } catch (IOException exception) {
+                    System.setOut(ZkmApiBase.savedStdout);
+                    exception.printStackTrace();
+                    System.exit(1);
+                } finally {
+                    if (redirectedOutput != null) {
+                        redirectedOutput.close();
                     }
-
-                    if (printStream != null) {
-                        printStream.close();
-                        bl1 = HiddenOptionFlags.TEST_JVM_VERSION;
-                    } else {
-                        bl1 = HiddenOptionFlags.TEST_JVM_VERSION;
-                    }
-                    break label142;
                 }
-
-                printStream.close();
-                bl1 = HiddenOptionFlags.TEST_JVM_VERSION;
-            } else {
-                bl1 = HiddenOptionFlags.TEST_JVM_VERSION;
             }
 
-            if (bl1 && JavaRuntimeVersion.getRuntimeClassMajorVersion() < 52) {
+            if (HiddenOptionFlags.TEST_JVM_VERSION && JavaRuntimeVersion.getRuntimeClassMajorVersion() < 52) {
                 System.err.println(StartupErrorMessages.LINE_SEPARATOR + StartupErrorMessages.JVM_VERSION_ERROR + StartupErrorMessages.LINE_SEPARATOR);
                 System.exit(1);
             }
@@ -109,13 +83,13 @@ public class ZKM extends ZkmApiBase {
                         );
                 System.exit(1);
             } catch (NoClassDefFoundError noClassDefFoundError) {
-                String string = System.getProperty("java.class.path");
+                String property = System.getProperty("java.class.path");
                 PrintStream printStream1;
-                if (string != null) {
-                    if (string.indexOf("ZKM.jar") == -1) {
+                if (property != null) {
+                    if (property.indexOf("ZKM.jar") == -1) {
                         System.err.println("Startup Error. (Check that ZKM.jar is in classpath) (1)");
                         printStream1 = System.err;
-                    } else if (ZkmApiBase.isZkmJarInClasspath(string)) {
+                    } else if (ZkmApiBase.isZkmJarInClasspath(property)) {
                         System.err
                                 .println(
                                         StartupErrorMessages.LINE_SEPARATOR
@@ -133,7 +107,7 @@ public class ZKM extends ZkmApiBase {
                     printStream1 = System.err;
                 }
 
-                printStream1.println("Classpath is: \"" + string + "\"");
+                printStream1.println("Classpath is: \"" + property + "\"");
                 System.exit(1);
             } catch (InvocationTargetException invocationTargetException) {
                 Throwable throwable = invocationTargetException.getTargetException();
@@ -195,12 +169,12 @@ public class ZKM extends ZkmApiBase {
         }
     }
 
-    public static void N(String string) {
-        o = "W5MMsc";
+    public static void resetBuildMarker(String string) {
+        buildMarker = "W5MMsc";
     }
 
-    public static String f() {
-        return o;
+    public static String getBuildMarker() {
+        return buildMarker;
     }
 
     private ZKM() {

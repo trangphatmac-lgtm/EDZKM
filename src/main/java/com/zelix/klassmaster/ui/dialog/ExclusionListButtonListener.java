@@ -11,12 +11,12 @@ public class ExclusionListButtonListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.dialog.mainAddBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.dialog.mainAddBtn) {
                 this.dialog.startAddParameter();
-            } else if (object == this.dialog.mainModifyBtn) {
+            } else if (source == this.dialog.mainModifyBtn) {
                 this.dialog.modifySelectedParameter();
-            } else if (object == this.dialog.mainDeleteBtn) {
+            } else if (source == this.dialog.mainDeleteBtn) {
                 this.dialog.removeSelectedParameter();
             }
         } catch (Throwable throwable) {

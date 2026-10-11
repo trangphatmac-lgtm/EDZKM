@@ -61,10 +61,10 @@ public class FieldRenamer {
         HashMap hashMap = ZkmUtils.createHashMap();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string);
+            String key = (String) enumeration.nextElement();
+            ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(key);
             if (classFileBase != null) {
-                Iterator iterator = changeLogMapping1.getFieldMappingPairs(string).iterator();
+                Iterator iterator = changeLogMapping1.getFieldMappingPairs(key).iterator();
 
                 while (iterator.hasNext()) {
                     ObjectPair objectPair = (ObjectPair) iterator.next();
@@ -167,18 +167,18 @@ public class FieldRenamer {
         }
 
         if (map1 != null) {
-            int ba = 0;
+            int programClasseIndex = 0;
             int be = 0;
 
             for (ProgramClass[] programClass4 = this.programClasses; be < programClass4.length; programClass4 = this.programClasses) {
-                ProgramClass programClass1 = this.programClasses[ba];
+                ProgramClass programClass1 = this.programClasses[programClasseIndex];
                 FieldInfo[] fieldInfos = programClass1.getFieldInfos();
 
-                for (int i = 0; i < fieldInfos.length; i++) {
-                    FieldInfo fieldInfo2 = fieldInfos[i];
-                    String string1 = (String) map1.get(fieldInfo2);
-                    if (string1 != null) {
-                        FieldSignature fieldSignature1 = new FieldSignature(string1, fieldInfo2.getDescriptor());
+                for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+                    FieldInfo fieldInfo2 = fieldInfos[fieldInfoIndex];
+                    String nameValue = (String) map1.get(fieldInfo2);
+                    if (nameValue != null) {
+                        FieldSignature fieldSignature1 = new FieldSignature(nameValue, fieldInfo2.getDescriptor());
                         ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(programClass1.getClassName());
                         this.reserveInSupertypes(classHierarchyNode1, fieldSignature1, setMultiMap);
                     }
@@ -188,9 +188,9 @@ public class FieldRenamer {
                 if (enumeration4 != null) {
                     while (enumeration4.hasMoreElements()) {
                         AbstractFieldInfo abstractFieldInfo2 = (AbstractFieldInfo) enumeration4.nextElement();
-                        String string2 = (String) map1.get(abstractFieldInfo2);
-                        if (string2 != null) {
-                            new FieldSignature(string2, abstractFieldInfo2.getDescriptor());
+                        String nameValue2 = (String) map1.get(abstractFieldInfo2);
+                        if (nameValue2 != null) {
+                            new FieldSignature(nameValue2, abstractFieldInfo2.getDescriptor());
                             Enumeration enumeration6 = programClass1.enumerateInheritedFieldReferrers(abstractFieldInfo2);
 
                             while (enumeration6.hasMoreElements()) {
@@ -202,7 +202,7 @@ public class FieldRenamer {
                     }
                 }
 
-                be = ++ba;
+                be = ++programClasseIndex;
             }
         }
 
@@ -214,23 +214,23 @@ public class FieldRenamer {
                 Set set1 = nameExclusionSet.getLinkedMethodsOfField(fieldInfo1);
                 AbstractMethodInfo abstractMethodInfo = set1 != null && set1.size() > 0 ? (AbstractMethodInfo) set1.iterator().next() : null;
                 if (abstractMethodInfo != null) {
-                    String string = nameExclusionSet.getLinkPrefix(abstractMethodInfo);
-                    String string3 = MethodSignature.toPropertyName(abstractMethodInfo.getSourceName(), string);
-                    FieldSignature fieldSignature2 = new FieldSignature(string3, fieldInfo1.getDescriptor());
+                    String linkPrefix = nameExclusionSet.getLinkPrefix(abstractMethodInfo);
+                    String value = MethodSignature.toPropertyName(abstractMethodInfo.getSourceName(), linkPrefix);
+                    FieldSignature fieldSignature2 = new FieldSignature(value, fieldInfo1.getDescriptor());
                     setMultiMap.addValue(fieldInfo1.getProgramClass(), fieldSignature2);
                     ClassHierarchyNode classHierarchyNode2 = ClassHierarchyNode.findNode(fieldInfo1.getClassName());
                     this.reserveInSupertypes(classHierarchyNode2, fieldSignature2, setMultiMap);
-                    map2.put(fieldInfo1, string3);
+                    map2.put(fieldInfo1, value);
                 }
             }
         }
 
         if (!HiddenOptionFlags.SKIP_INHERITED_FIELD_NAMES) {
-            int bb = 0;
-            int bd = bb;
+            int programClasseIndexValue = 0;
+            int programClasseIndexValue2 = programClasseIndexValue;
 
-            for (ProgramClass[] programClass3 = this.programClasses; bd < programClass3.length; programClass3 = this.programClasses) {
-                ProgramClass programClass2 = this.programClasses[bb];
+            for (ProgramClass[] programClass3 = this.programClasses; programClasseIndexValue2 < programClass3.length; programClass3 = this.programClasses) {
+                ProgramClass programClass2 = this.programClasses[programClasseIndexValue];
                 Enumeration enumeration3 = programClass2.enumerateInheritedReferencedFields();
                 if (enumeration3 != null) {
                     while (enumeration3.hasMoreElements()) {
@@ -248,7 +248,7 @@ public class FieldRenamer {
                     }
                 }
 
-                bd = ++bb;
+                programClasseIndexValue2 = ++programClasseIndexValue;
             }
         }
 
@@ -267,24 +267,24 @@ public class FieldRenamer {
         }
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string);
+            String key = (String) enumeration.nextElement();
+            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
             if (programClass1 != null) {
-                Enumeration enumeration1 = this.changeLogMapping.getRenamedFields(string);
+                Enumeration enumeration1 = this.changeLogMapping.getRenamedFields(key);
                 if (enumeration1 != null) {
                     while (enumeration1.hasMoreElements()) {
                         FieldSignature fieldSignature = (FieldSignature) enumeration1.nextElement();
                         if (this.classRepository.containsField(fieldSignature, programClass1)) {
                             FieldInfo fieldInfo = programClass1.findFieldBySignature(fieldSignature);
                             if (this.exclusionSet.isFieldExcluded(fieldInfo)) {
-                                String string1 = this.changeLogMapping.getOriginalClassName(string);
-                                string1 = ZkmUtils.slashesToDots(string1);
+                                String originalClassName = this.changeLogMapping.getOriginalClassName(key);
+                                originalClassName = ZkmUtils.slashesToDots(originalClassName);
                                 this.changeLogMapping
                                         .reportError(
                                                 "\""
                                                         + fieldSignature.formatDeclaration(this.classRenameMap)
                                                         + "\" is specified as a new field name in class \""
-                                                        + string1
+                                                        + originalClassName
                                                         + "\" but there is an existing field of that name which will not be renamed."
                                         );
                                 bl = false;
@@ -337,10 +337,10 @@ public class FieldRenamer {
                             ClassFileBase classFileBase = (ClassFileBase) iterator1.next();
                             AbstractFieldInfo[] abstractFieldInfos = classFileBase.getFields();
                             AbstractFieldInfo[] abstractFieldInfos1 = abstractFieldInfos;
-                            int ba = abstractFieldInfos1.length;
+                            int lengthValue = abstractFieldInfos1.length;
 
-                            for (int i = 0; i < ba; i += 1) {
-                                AbstractFieldInfo abstractFieldInfo = abstractFieldInfos1[i];
+                            for (int abstractFieldInfos1ElementIndex = 0; abstractFieldInfos1ElementIndex < lengthValue; abstractFieldInfos1ElementIndex += 1) {
+                                AbstractFieldInfo abstractFieldInfo = abstractFieldInfos1[abstractFieldInfos1ElementIndex];
                                 if ((!abstractFieldInfo.isFinal() || !abstractFieldInfo.isStatic())
                                         && (
                                         abstractFieldInfo.isPublic()
@@ -357,25 +357,28 @@ public class FieldRenamer {
 
             UniqueWorkQueue uniqueWorkQueue = new UniqueWorkQueue(Math.max(this.programClasses.length, 5));
 
-            for (int i = 0; i < list1.size(); i++) {
-                uniqueWorkQueue.enqueue(list1.get(i));
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                uniqueWorkQueue.enqueue(list1.get(elementIndex));
             }
 
-            label243:
-            for (int i = 0; i < list2.size(); i++) {
-                ClassHierarchyNode classHierarchyNode3 = (ClassHierarchyNode) list2.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < list2.size(); elementIndexValue++) {
+                ClassHierarchyNode classHierarchyNode3 = (ClassHierarchyNode) list2.get(elementIndexValue);
                 if (!classHierarchyNode3.isInterface()) {
+                    boolean hasProgramInterface = false;
                     Enumeration enumeration1 = classHierarchyNode3.enumerateInterfaces();
                     if (enumeration1 != null) {
                         while (enumeration1.hasMoreElements()) {
                             ClassHierarchyNode classHierarchyNode4 = (ClassHierarchyNode) enumeration1.nextElement();
                             if (classHierarchyNode4.isProgramClass()) {
-                                continue label243;
+                                hasProgramInterface = true;
+                                break;
                             }
                         }
                     }
 
-                    uniqueWorkQueue.enqueue(classHierarchyNode3);
+                    if (!hasProgramInterface) {
+                        uniqueWorkQueue.enqueue(classHierarchyNode3);
+                    }
                 }
             }
 
@@ -387,12 +390,12 @@ public class FieldRenamer {
 
             while (bl && !uniqueWorkQueue.isEmpty()) {
                 bl = false;
-                int be = uniqueWorkQueue.size();
+                int uniqueWorkQueueSize = uniqueWorkQueue.size();
 
-                label222:
-                for (int i = 0; i < be; i += 1) {
+                for (int i = 0; i < uniqueWorkQueueSize; i += 1) {
                     ClassHierarchyNode classHierarchyNode6 = (ClassHierarchyNode) uniqueWorkQueue.dequeue();
                     ProgramClass programClass2 = classHierarchyNode6.getProgramClass();
+                    boolean deferUntilInheritedFieldsRenamed = false;
                     if (bl1 && programClass2.isInterface() && programClass2.getFieldCount() > 0) {
                         Enumeration enumeration3 = programClass2.enumerateInheritedReferencedFields();
                         if (enumeration3 != null) {
@@ -403,11 +406,16 @@ public class FieldRenamer {
                                     if (!classFileBase1.isInterface()
                                             || !this.classRepository.implementsInterface(classFileBase1.getClassName(), programClass2.getClassName())) {
                                         uniqueWorkQueue.enqueue(classHierarchyNode6);
-                                        continue label222;
+                                        deferUntilInheritedFieldsRenamed = true;
+                                        break;
                                     }
                                 }
                             }
                         }
+                    }
+
+                    if (deferUntilInheritedFieldsRenamed) {
+                        continue;
                     }
 
                     ArrayList arrayList1 = new ArrayList();
@@ -536,19 +544,19 @@ public class FieldRenamer {
                 Enumeration enumeration2 = this.changeLogMapping.getFieldMappedClassNames();
 
                 while (enumeration2.hasMoreElements()) {
-                    String string = (String) enumeration2.nextElement();
-                    if (!ClassHierarchyNode.isProgramClassName(string)) {
-                        ArrayList arrayList = this.changeLogMapping.getFieldMappingPairs(string);
+                    String key = (String) enumeration2.nextElement();
+                    if (!ClassHierarchyNode.isProgramClassName(key)) {
+                        ArrayList arrayList = this.changeLogMapping.getFieldMappingPairs(key);
                         if (arrayList != null) {
-                            for (int i = 0; i < arrayList.size(); i += 1) {
-                                ObjectPair objectPair = (ObjectPair) arrayList.get(i);
+                            for (int elementIndexValue2 = 0; elementIndexValue2 < arrayList.size(); elementIndexValue2 += 1) {
+                                ObjectPair objectPair = (ObjectPair) arrayList.get(elementIndexValue2);
                                 FieldSignature fieldSignature = (FieldSignature) objectPair.getFirst();
                                 FieldSignature fieldSignature1 = (FieldSignature) objectPair.getSecond();
-                                this.oldToNewFieldMap.putValue(string, fieldSignature, fieldSignature1);
-                                this.newToOldFieldMap.putValue(string, fieldSignature1, fieldSignature);
+                                this.oldToNewFieldMap.putValue(key, fieldSignature, fieldSignature1);
+                                this.newToOldFieldMap.putValue(key, fieldSignature1, fieldSignature);
                             }
 
-                            ClasspathClassFile classpathClassFile = (ClasspathClassFile) ClassHierarchyNode.findClassFile(string);
+                            ClasspathClassFile classpathClassFile = (ClasspathClassFile) ClassHierarchyNode.findClassFile(key);
                             classpathClassFile.applyFieldNameMapping(this.oldToNewFieldMap);
                         }
                     }

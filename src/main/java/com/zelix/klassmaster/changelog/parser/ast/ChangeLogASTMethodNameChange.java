@@ -16,20 +16,20 @@ public class ChangeLogASTMethodNameChange extends ChangeLogModifierNode {
     public String newArgumentTypes;
     public String oldMethodName;
 
-    public void setParameterChangeData(String string) {
-        this.parameterChangeData = string;
+    public void setParameterChangeData(String parameterChangeDataArgument) {
+        this.parameterChangeData = parameterChangeDataArgument;
     }
 
-    public void setParameterChangeLookupData(String string) {
-        this.parameterChangeLookupData = string;
+    public void setParameterChangeLookupData(String parameterChangeLookupDataArgument) {
+        this.parameterChangeLookupData = parameterChangeLookupDataArgument;
     }
 
     @Override
     public void interpret(ChangeLogNode changeLogNode, int bd, int be, int bf, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).interpret(this, 30872, 34067, 41973, abstractChangeLog);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).interpret(this, 30872, 34067, 41973, abstractChangeLog);
         }
 
         if (this.newMethodName == null) {
@@ -37,45 +37,45 @@ public class ChangeLogASTMethodNameChange extends ChangeLogModifierNode {
         }
 
         ASTClassChange aSTClassChange = (ASTClassChange) changeLogNode;
-        String string4 = this.oldMethodName;
-        String string5 = this.oldArgumentTypes;
-        String string6 = this.returnType;
+        String oldMethodNameValue = this.oldMethodName;
+        String oldArgumentTypesValue = this.oldArgumentTypes;
+        String returnTypeValue = this.returnType;
         int modifiers = this.getModifiers();
-        String string7 = this.newMethodName;
-        String string8 = this.newArgumentTypes;
+        String newMethodNameValue = this.newMethodName;
+        String newArgumentTypesValue = this.newArgumentTypes;
         boolean parametersObfuscated = this.parametersObfuscated;
-        String string9 = this.parameterChangeData;
-        String string10 = this.parameterChangeLookupData;
+        String parameterChangeDataValue = this.parameterChangeData;
+        String parameterChangeLookupDataValue = this.parameterChangeLookupData;
         Boolean boolean2 = this.isManufactured();
-        String string3 = string10;
-        String string2 = string9;
+        String parameterChangeLookupDataValue2 = parameterChangeLookupDataValue;
+        String parameterChangeDataValue2 = parameterChangeDataValue;
         Boolean boolean1 = parametersObfuscated;
-        String string1 = string8;
-        String string = string7;
-        aSTClassChange.addMethodChange(string4, string5, string6, modifiers, string, string1, boolean1, string2, string3, boolean2);
+        String newArgumentTypesValue2 = newArgumentTypesValue;
+        String newMethodNameValue2 = newMethodNameValue;
+        aSTClassChange.addMethodChange(oldMethodNameValue, oldArgumentTypesValue, returnTypeValue, modifiers, newMethodNameValue2, newArgumentTypesValue2, boolean1, parameterChangeDataValue2, parameterChangeLookupDataValue2, boolean2);
     }
 
-    public void setNewMethodName(String string) {
-        this.newMethodName = string;
+    public void setNewMethodName(String newMethodNameArgument) {
+        this.newMethodName = newMethodNameArgument;
     }
 
-    public void setNewSignature(String string, String string1, boolean parametersObfuscated) {
+    public void setNewSignature(String newMethodNameArgument, String newArgumentTypesArgument, boolean parametersObfuscated) {
         if (this.newMethodName == null) {
-            this.newMethodName = string;
-            this.newArgumentTypes = string1;
+            this.newMethodName = newMethodNameArgument;
+            this.newArgumentTypes = newArgumentTypesArgument;
             this.parametersObfuscated = parametersObfuscated;
         } else {
             this.parametersObfuscated = parametersObfuscated;
         }
     }
 
-    public void setOldSignature(String string, String string1) {
-        this.oldMethodName = string;
-        this.oldArgumentTypes = string1;
+    public void setOldSignature(String oldMethodNameArgument, String oldArgumentTypesArgument) {
+        this.oldMethodName = oldMethodNameArgument;
+        this.oldArgumentTypes = oldArgumentTypesArgument;
     }
 
-    public void setReturnType(String string) {
-        this.returnType = string;
+    public void setReturnType(String returnTypeArgument) {
+        this.returnType = returnTypeArgument;
     }
 
     public ChangeLogASTMethodNameChange() {

@@ -10,7 +10,7 @@ public class ASTComplexAnnotationSpecifier extends AnnotatedSpecifierNode {
     @Override
     public boolean isLiteralName() {
         AnnotationMatcher annotationMatcher = (AnnotationMatcher) this.jjtGetChild(0);
-        return annotationMatcher instanceof ASTAnnotation ? ((ASTAnnotation) annotationMatcher).isLiteralName() : false;
+        return ((annotationMatcher instanceof ASTAnnotation) && (((ASTAnnotation) annotationMatcher).isLiteralName()));
     }
 
     @Override

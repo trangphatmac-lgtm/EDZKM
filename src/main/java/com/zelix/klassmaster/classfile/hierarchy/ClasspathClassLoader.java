@@ -35,27 +35,27 @@ public class ClasspathClassLoader {
         }
     }
 
-    public ClasspathClassFile loadClassFile(String string, Integer integer, boolean bl, String string1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
-        return this.loadClassFile(string, integer, bl, string1, false, ignoreMissingReferencesSpec1);
+    public ClasspathClassFile loadClassFile(String key, Integer integer, boolean bl, String string1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
+        return this.loadClassFile(key, integer, bl, string1, false, ignoreMissingReferencesSpec1);
     }
 
-    public ClasspathClassFile tryLoadClassFile(String string, boolean bl) throws ZkmException, IOException {
+    public ClasspathClassFile tryLoadClassFile(String key, boolean bl) throws ZkmException, IOException {
         try {
             Boolean boolean1 = bl;
-            return this.loadClassFile(string, false, (String) null, boolean1);
+            return this.loadClassFile(key, false, (String) null, boolean1);
         } catch (ClassFileLoadException classFileLoadException) {
             return null;
         }
     }
 
     public static ClasspathClassFile readClassFile(InputFileLocation inputFileLocation) throws ClassFileLoadException {
-        String string = inputFileLocation.getName();
-        int ba = string.lastIndexOf(".class");
-        if (ba == -1) {
-            throw new ClassFileLoadException("\"" + string + "\" doesn't end with \".class\"");
+        String name = inputFileLocation.getName();
+        int endIndex = name.lastIndexOf(".class");
+        if (endIndex == -1) {
+            throw new ClassFileLoadException("\"" + name + "\" doesn't end with \".class\"");
         }
 
-        String string1 = string.substring(0, ba);
+        String string1 = name.substring(0, endIndex);
 
         try {
             MutableInt mutableInt = new MutableInt(0);
@@ -77,15 +77,15 @@ public class ClasspathClassLoader {
         }
     }
 
-    public ClasspathClassFile loadClassFile(String string, boolean bl, String string1, boolean bl1) throws ZkmException, IOException {
-        return this.loadClassFile(string, null, bl, string1, bl1, null);
+    public ClasspathClassFile loadClassFile(String key, boolean bl, String string1, boolean bl1) throws ZkmException, IOException {
+        return this.loadClassFile(key, null, bl, string1, bl1, null);
     }
 
     public ClasspathClassFile loadClassFile(
-            String string, Integer integer, boolean bl, String string1, boolean bl1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1
+            String key, Integer integer, boolean bl, String string1, boolean bl1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1
     ) throws ZkmException, IOException {
-        if (string.startsWith("[")) {
-            string = "java/lang/Object";
+        if (key.startsWith("[")) {
+            key = "java/lang/Object";
         }
 
         ClassPathReaderCache classPathReaderCache = this.readerCache;
@@ -100,7 +100,7 @@ public class ClasspathClassLoader {
             }
         }
 
-        ClasspathClassFile classpathClassFile1 = (ClasspathClassFile) ClassPathReaderCache.getClassCache(classPathReaderCache).get(string);
+        ClasspathClassFile classpathClassFile1 = (ClasspathClassFile) ClassPathReaderCache.getClassCache(classPathReaderCache).get(key);
         if (classpathClassFile1 != null) {
             return classpathClassFile1;
         }
@@ -116,21 +116,21 @@ public class ClasspathClassLoader {
             }
         }
 
-        InputFileLocation inputFileLocation = ClassPathReaderCache.getResolver(classPathReaderCache).findClassFile(string, bl1);
+        InputFileLocation inputFileLocation = ClassPathReaderCache.getResolver(classPathReaderCache).findClassFile(key, bl1);
         InputStream inputStream1 = null;
         int ba = 0;
         if (inputFileLocation == null) {
             if (ClassPathReaderCache.getClasspath(classPathReaderCache).isJrtAvailable()) {
                 try {
                     ObservableHolder observableHolder = new ObservableHolder();
-                    byte[] bb = ClassPathReaderCache.getClasspath(classPathReaderCache).readJrtClassBytes(string, observableHolder);
-                    if (bb != null) {
+                    byte[] byteArray = ClassPathReaderCache.getClasspath(classPathReaderCache).readJrtClassBytes(key, observableHolder);
+                    if (byteArray != null) {
                         inputFileLocation = new InputFileLocation((Path) observableHolder.getValue(), ClassPathReaderCache.getClasspath(classPathReaderCache));
-                        inputStream1 = new ByteArrayInputStream(bb);
-                        ba = bb.length;
+                        inputStream1 = new ByteArrayInputStream(byteArray);
+                        ba = byteArray.length;
                     }
                 } catch (IOException iOException2) {
-                    throw new ClassFileLoadException(string, "'" + string + "' : File error (A) : '" + iOException2 + "'");
+                    throw new ClassFileLoadException(key, "'" + key + "' : File error (A) : '" + iOException2 + "'");
                 }
             }
         } else {
@@ -140,17 +140,17 @@ public class ClasspathClassLoader {
                 inputStream1 = inputFileLocation.openInputStream(mutableInt);
                 ba = mutableInt.getValue();
             } catch (IOException iOException1) {
-                throw new ClassFileLoadException(string, "'" + string + "' : File error (B) : '" + iOException1 + "'");
+                throw new ClassFileLoadException(key, "'" + key + "' : File error (B) : '" + iOException1 + "'");
             }
         }
 
         if (inputStream1 == null) {
             ObservableHolder observableHolder1 = new ObservableHolder();
-            if (ignoreMissingReferencesSpec1 != null && ignoreMissingReferencesSpec1.isMissingClassIgnored(string, observableHolder1)) {
+            if (ignoreMissingReferencesSpec1 != null && ignoreMissingReferencesSpec1.isMissingClassIgnored(key, observableHolder1)) {
                 ignoreMissingReferencesSpec1.getScriptEnvironment()
                         .logMessage(
                                 "Class '"
-                                        + ZkmUtils.slashesToDots(string)
+                                        + ZkmUtils.slashesToDots(key)
                                         + "' could not be found but it has been specified as able to be ignored. : '"
                                         + (String) observableHolder1.getValue()
                                         + "'",
@@ -159,7 +159,7 @@ public class ClasspathClassLoader {
                 return null;
             } else if (bl) {
                 throw new ZkmClassNotFoundException(
-                        string, "Class '" + ZkmUtils.slashesToDots(string) + "' not found" + stringBuilder + ". Check the classpath option and reopen classes. (1a)"
+                        key, "Class '" + ZkmUtils.slashesToDots(key) + "' not found" + stringBuilder + ". Check the classpath option and reopen classes. (1a)"
                 );
             } else {
                 return null;
@@ -169,11 +169,11 @@ public class ClasspathClassLoader {
             try {
                 classFileInputStream = ClassFileInputStream.fromStream(inputStream1, ba);
             } catch (IOException iOException) {
-                throw new ClassFileLoadException(string, "'" + string + "' : File error (C) : " + iOException + "'");
+                throw new ClassFileLoadException(key, "'" + key + "' : File error (C) : " + iOException + "'");
             }
 
             synchronized (ClassPathReaderCache.getClassCache(classPathReaderCache)) {
-                classpathClassFile1 = (ClasspathClassFile) ClassPathReaderCache.getClassCache(classPathReaderCache).get(string);
+                classpathClassFile1 = (ClasspathClassFile) ClassPathReaderCache.getClassCache(classPathReaderCache).get(key);
                 if (classpathClassFile1 != null) {
                     return classpathClassFile1;
                 }
@@ -185,39 +185,39 @@ public class ClasspathClassLoader {
                         classpathClassFile.setReleaseVersion(integer);
                     }
                 } catch (ZkmProcessingException zkmProcessingException) {
-                    throw new ClassFileLoadException(string, zkmProcessingException.getMessage());
+                    throw new ClassFileLoadException(key, zkmProcessingException.getMessage());
                 }
 
-                if (!string.equals(classpathClassFile.getClassName())) {
-                    String string2 = inputFileLocation.getName();
-                    String string3 = inputFileLocation.getArchivePath();
-                    if (string3 != null) {
+                if (!key.equals(classpathClassFile.getClassName())) {
+                    String name = inputFileLocation.getName();
+                    String archivePath = inputFileLocation.getArchivePath();
+                    if (archivePath != null) {
                         throw new ClassFileLoadException(
-                                string,
+                                key,
                                 "File '"
-                                        + string2
+                                        + name
                                         + "' in '"
-                                        + string3
+                                        + archivePath
                                         + "' contains the class '"
                                         + classpathClassFile.getDottedClassName()
                                         + "' rather than '"
-                                        + ZkmUtils.slashesToDots(string)
+                                        + ZkmUtils.slashesToDots(key)
                                         + "' as expected."
                         );
                     } else {
                         throw new ClassFileLoadException(
-                                string,
+                                key,
                                 "File '"
-                                        + string2
+                                        + name
                                         + "' contains the class '"
                                         + classpathClassFile.getDottedClassName()
                                         + "' rather than '"
-                                        + ZkmUtils.slashesToDots(string)
+                                        + ZkmUtils.slashesToDots(key)
                                         + "' as expected."
                         );
                     }
                 } else {
-                    ClassPathReaderCache.getClassCache(classPathReaderCache).put(string, classpathClassFile);
+                    ClassPathReaderCache.getClassCache(classPathReaderCache).put(key, classpathClassFile);
                     return classpathClassFile;
                 }
             }
@@ -256,17 +256,17 @@ public class ClasspathClassLoader {
         this.versionedReaderCaches.add(classPathReaderCache);
     }
 
-    public ClasspathClassFile findClassFile(String string) throws ZkmException, IOException {
-        return this.findClassFile(string, false, (String) null);
+    public ClasspathClassFile findClassFile(String key) throws ZkmException, IOException {
+        return this.findClassFile(key, false, (String) null);
     }
 
-    public void putCachedClass(String string, ClasspathClassFile classpathClassFile) {
-        ClassPathReaderCache.getClassCache(this.readerCache).put(string, classpathClassFile);
+    public void putCachedClass(String key, ClasspathClassFile classpathClassFile) {
+        ClassPathReaderCache.getClassCache(this.readerCache).put(key, classpathClassFile);
         if (this.versionedReaderCaches != null) {
             Iterator iterator = this.versionedReaderCaches.iterator();
 
             while (iterator.hasNext()) {
-                ClassPathReaderCache.getClassCache((ClassPathReaderCache) iterator.next()).put(string, classpathClassFile);
+                ClassPathReaderCache.getClassCache((ClassPathReaderCache) iterator.next()).put(key, classpathClassFile);
             }
         }
     }
@@ -276,8 +276,8 @@ public class ClasspathClassLoader {
         return ClassPathReaderCache.getResolver(this.readerCache);
     }
 
-    public ClasspathClassFile getClassFile(String string) throws ZkmException, IOException {
-        return this.findClassFile(string, true, (String) null);
+    public ClasspathClassFile getClassFile(String key) throws ZkmException, IOException {
+        return this.findClassFile(key, true, (String) null);
     }
 
     public void releaseReaders() {
@@ -291,25 +291,25 @@ public class ClasspathClassLoader {
         }
     }
 
-    public ClasspathClassFile findClassFile(String string, boolean bl, String string1) throws ZkmException, IOException {
-        return this.loadClassFile(string, bl, string1, false);
+    public ClasspathClassFile findClassFile(String key, boolean bl, String string1) throws ZkmException, IOException {
+        return this.loadClassFile(key, bl, string1, false);
     }
 
-    public ClasspathClassFile findClassFileQuietly(String string) throws ZkmException, IOException {
+    public ClasspathClassFile findClassFileQuietly(String key) throws ZkmException, IOException {
         try {
-            return this.findClassFile(string, false, (String) null);
+            return this.findClassFile(key, false, (String) null);
         } catch (ClassFileLoadException classFileLoadException) {
             return null;
         }
     }
 
-    public void removeCachedClass(String string) {
-        ClassPathReaderCache.getClassCache(this.readerCache).remove(string);
+    public void removeCachedClass(String key) {
+        ClassPathReaderCache.getClassCache(this.readerCache).remove(key);
         if (this.versionedReaderCaches != null) {
             Iterator iterator = this.versionedReaderCaches.iterator();
 
             while (iterator.hasNext()) {
-                ClassPathReaderCache.getClassCache((ClassPathReaderCache) iterator.next()).remove(string);
+                ClassPathReaderCache.getClassCache((ClassPathReaderCache) iterator.next()).remove(key);
             }
         }
     }

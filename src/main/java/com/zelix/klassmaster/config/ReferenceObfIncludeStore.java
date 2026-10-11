@@ -19,27 +19,27 @@ public class ReferenceObfIncludeStore extends PersistedStringList {
                 final ReferenceObfIncludeStore referenceObfIncludeStore = (ReferenceObfIncludeStore) objectInputStream.readObject();
                 if (referenceObfIncludeStore.l == null) {
                     referenceObfIncludeStore.l = new LinkedHashMap();
-                    referenceObfIncludeStore.p = true;
+                    referenceObfIncludeStore.saved = true;
                 } else {
-                    referenceObfIncludeStore.p = true;
+                    referenceObfIncludeStore.saved = true;
                 }
                 final ReferenceObfIncludeStore referenceObfIncludeStore2 = referenceObfIncludeStore;
                 try {
                     objectInputStream.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
                 return referenceObfIncludeStore2;
-            } catch (final IOException ex2) {
-            } catch (final ClassNotFoundException ex3) {
-            } catch (final ClassCastException ex4) {
-            } catch (final AssertionFailedException ex5) {
-                throw ex5;
-            } catch (final Throwable t) {
+            } catch (final IOException ioExceptionValue) {
+            } catch (final ClassNotFoundException classNotFoundException) {
+            } catch (final ClassCastException classCastException) {
+            } catch (final AssertionFailedException assertionFailedException) {
+                throw assertionFailedException;
+            } catch (final Throwable throwable) {
             } finally {
                 if (objectInputStream != null) {
                     try {
                         objectInputStream.close();
-                    } catch (final IOException ex6) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }

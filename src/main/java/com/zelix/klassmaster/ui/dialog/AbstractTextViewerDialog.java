@@ -19,14 +19,14 @@ public abstract class AbstractTextViewerDialog extends EscapeClosingDialogBase {
     public ConstraintLayout constraintLayout;
     public BufferedReader reader;
 
-    public AbstractTextViewerDialog(JFrame jFrame, String string, String string1, BufferedReader bufferedReader, boolean bl, boolean bl1) {
+    public AbstractTextViewerDialog(JFrame jFrame, String string, String text, BufferedReader bufferedReader, boolean editable, boolean bl1) {
         super(jFrame, string, bl1);
         this.buildLayout();
-        this.messageLabel.setText(string1);
+        this.messageLabel.setText(text);
         this.reader = bufferedReader;
         String string2 = null;
         StringBuffer stringBuffer = new StringBuffer();
-        this.textArea.setEditable(bl);
+        this.textArea.setEditable(editable);
         int ba = 0;
         if (bufferedReader != null) {
             try {

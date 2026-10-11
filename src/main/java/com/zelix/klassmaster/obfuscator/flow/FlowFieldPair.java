@@ -13,10 +13,10 @@ public class FlowFieldPair {
         return this.packageField;
     }
 
-    public FlowFieldPair(OpaquePredicateField opaquePredicateField, OpaquePredicateField opaquePredicateField1, String string) {
+    public FlowFieldPair(OpaquePredicateField opaquePredicateField, OpaquePredicateField opaquePredicateField1, String packageNameArgument) {
         this.groupField = opaquePredicateField;
         this.packageField = opaquePredicateField1;
-        this.packageName = string;
+        this.packageName = packageNameArgument;
     }
 
     public OpaquePredicateField getGroupField() {

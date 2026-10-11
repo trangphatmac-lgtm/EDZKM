@@ -107,24 +107,24 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.removeBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.removeBtn) {
                 this.removeSelectedPaths();
-            } else if (object == this.moveUpBtn) {
+            } else if (source == this.moveUpBtn) {
                 this.moveSelectedUp();
-            } else if (object == this.moveDownBtn) {
+            } else if (source == this.moveDownBtn) {
                 this.moveSelectedDown();
-            } else if (object == this.addBtn) {
+            } else if (source == this.addBtn) {
                 this.browseToAddPath();
-            } else if (object == this.okBtn) {
+            } else if (source == this.okBtn) {
                 this.acceptPaths();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
-            } else if (object == this.importBtn) {
+            } else if (source == this.importBtn) {
                 this.importPaths();
-            } else if (object == this.exportBtn) {
+            } else if (source == this.exportBtn) {
                 this.exportPaths();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
             }
         } catch (Throwable throwable) {
@@ -135,29 +135,29 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         try {
-            Object object = keyEvent.getSource();
+            Object source = keyEvent.getSource();
             if (keyEvent.getKeyCode() == 10) {
-                if (object == this.removeBtn) {
+                if (source == this.removeBtn) {
                     this.removeSelectedPaths();
-                } else if (object == this.moveUpBtn) {
+                } else if (source == this.moveUpBtn) {
                     this.moveSelectedUp();
-                } else if (object == this.moveDownBtn) {
+                } else if (source == this.moveDownBtn) {
                     this.moveSelectedDown();
-                } else if (object == this.addBtn) {
+                } else if (source == this.addBtn) {
                     this.browseToAddPath();
-                } else if (object == this.okBtn) {
+                } else if (source == this.okBtn) {
                     this.acceptPaths();
-                } else if (object == this.cancelBtn) {
+                } else if (source == this.cancelBtn) {
                     this.cancelDialog();
-                } else if (object == this.importBtn) {
+                } else if (source == this.importBtn) {
                     this.importPaths();
-                } else if (object == this.exportBtn) {
+                } else if (source == this.exportBtn) {
                     this.exportPaths();
-                } else if (object == this.helpBtn) {
+                } else if (source == this.helpBtn) {
                     this.showHelp();
-                } else if (object == this.pathList) {
+                } else if (source == this.pathList) {
                 }
-            } else if (keyEvent.getKeyCode() == 127 && object == this.pathList) {
+            } else if (keyEvent.getKeyCode() == 127 && source == this.pathList) {
                 this.removeSelectedPaths();
             }
         } catch (Throwable throwable) {
@@ -168,18 +168,18 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
     public void updateButtonStates() {
         int size = this.pathListModel.getSize();
         List list1 = this.pathList.getSelectedValuesList();
-        int bb = this.pathListModel.getSize();
-        int bc = 0;
+        int sizeValue = this.pathListModel.getSize();
+        int sizeValue3 = 0;
 
-        for (int i = 0; i < list1.size(); i++) {
-            Object object = list1.get(i);
-            int be = this.pathListModel.indexOf(object);
-            if (be < bb) {
-                bb = be;
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            Object object = list1.get(elementIndex);
+            int sizeValue2 = this.pathListModel.indexOf(object);
+            if (sizeValue2 < sizeValue) {
+                sizeValue = sizeValue2;
             }
 
-            if (be > bc) {
-                bc = be;
+            if (sizeValue2 > sizeValue3) {
+                sizeValue3 = sizeValue2;
             }
         }
 
@@ -189,9 +189,9 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
             this.moveDownBtn.setEnabled(false);
         } else {
             this.removeBtn.setEnabled(true);
-            this.moveUpBtn.setEnabled(bc > list1.size() - 1);
+            this.moveUpBtn.setEnabled(sizeValue3 > list1.size() - 1);
             JButton jButton = this.moveDownBtn;
-            if (bb + list1.size() < size) {
+            if (sizeValue + list1.size() < size) {
                 jButton.setEnabled(true);
             } else {
                 jButton.setEnabled(false);
@@ -223,41 +223,41 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
 
     public final void moveSelectedUp() {
         List list1 = this.pathList.getSelectedValuesList();
-        int[] ba = new int[list1.size()];
-        int[] bb = new int[list1.size()];
+        int[] integerArray = new int[list1.size()];
+        int[] selectedIndices = new int[list1.size()];
 
-        for (int i = 0; i < list1.size(); i++) {
-            Object object = list1.get(i);
-            int bd = this.pathListModel.indexOf(object);
-            ba[i] = bd;
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            Object object = list1.get(elementIndex);
+            int integerArrayElement = this.pathListModel.indexOf(object);
+            integerArray[elementIndex] = integerArrayElement;
         }
 
-        Arrays.sort(ba);
+        Arrays.sort(integerArray);
         int be = 0;
 
-        for (int i = 0; i < ba.length; i++) {
-            int bg = ba[i];
-            if (bg > 0 && bg > be) {
-                File file1 = (File) this.pathListModel.getElementAt(bg - 1);
-                this.pathListModel.setElementAt(this.pathListModel.getElementAt(bg), bg - 1);
-                this.pathListModel.setElementAt(file1, bg);
-                bb[i] = bg - 1;
-                be = bg - 1;
+        for (int i = 0; i < integerArray.length; i++) {
+            int selectedIndice = integerArray[i];
+            if (selectedIndice > 0 && selectedIndice > be) {
+                File file1 = (File) this.pathListModel.getElementAt(selectedIndice - 1);
+                this.pathListModel.setElementAt(this.pathListModel.getElementAt(selectedIndice), selectedIndice - 1);
+                this.pathListModel.setElementAt(file1, selectedIndice);
+                selectedIndices[i] = selectedIndice - 1;
+                be = selectedIndice - 1;
             } else {
-                bb[i] = bg;
-                be = bg + 1;
+                selectedIndices[i] = selectedIndice;
+                be = selectedIndice + 1;
             }
         }
 
         this.pathList.clearSelection();
-        this.pathList.setSelectedIndices(bb);
-        this.pathList.ensureIndexIsVisible(bb[0]);
+        this.pathList.setSelectedIndices(selectedIndices);
+        this.pathList.ensureIndexIsVisible(selectedIndices[0]);
         this.updateButtonStates();
     }
 
-    public void createMainButtons(String string, String string1, StringBuffer stringBuffer, Container container1) {
+    public void createMainButtons(String string, String toolTipText, StringBuffer stringBuffer, Container container1) {
         this.okBtn = new JButton(string);
-        this.okBtn.setToolTipText(string1);
+        this.okBtn.setToolTipText(toolTipText);
         container1.add(this.okBtn, "okBtn");
         this.cancelBtn = new JButton("Cancel");
         this.cancelBtn.setToolTipText(GuiResources.getTooltipText("CANCEL_DIALOG"));
@@ -300,15 +300,15 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
                 this.setPaths(this.readPaths(bufferedReader, list), list);
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
-            } catch (final IOException ex2) {
-                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Couldn't open or read \"" + selectedFile.getAbsolutePath() + "\" : " + ex2.getMessage());
+            } catch (final IOException ioExceptionValue) {
+                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Couldn't open or read \"" + selectedFile.getAbsolutePath() + "\" : " + ioExceptionValue.getMessage());
             } finally {
                 if (bufferedReader != null) {
                     try {
                         bufferedReader.close();
-                    } catch (final IOException ex3) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }
@@ -317,52 +317,52 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
 
     public final void moveSelectedDown() {
         List list1 = this.pathList.getSelectedValuesList();
-        int[] ba = new int[list1.size()];
-        int[] bb = new int[list1.size()];
+        int[] integerArray = new int[list1.size()];
+        int[] selectedIndices = new int[list1.size()];
 
-        for (int i = 0; i < list1.size(); i++) {
-            Object object = list1.get(i);
-            int bd = this.pathListModel.indexOf(object);
-            ba[i] = bd;
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            Object object = list1.get(elementIndex);
+            int integerArrayElement = this.pathListModel.indexOf(object);
+            integerArray[elementIndex] = integerArrayElement;
         }
 
-        Arrays.sort(ba);
+        Arrays.sort(integerArray);
         int bf = this.pathListModel.getSize() - 1;
         int bg = bf;
 
-        for (int i = ba.length - 1; i >= 0; i += -1) {
-            int be = ba[i];
-            if (be < bf && be < bg) {
-                File file1 = (File) this.pathListModel.getElementAt(be + 1);
-                this.pathListModel.setElementAt(this.pathListModel.getElementAt(be), be + 1);
-                this.pathListModel.setElementAt(file1, be);
-                bb[i] = be + 1;
-                bg = be + 1;
+        for (int i = integerArray.length - 1; i >= 0; i += -1) {
+            int selectedIndice = integerArray[i];
+            if (selectedIndice < bf && selectedIndice < bg) {
+                File file1 = (File) this.pathListModel.getElementAt(selectedIndice + 1);
+                this.pathListModel.setElementAt(this.pathListModel.getElementAt(selectedIndice), selectedIndice + 1);
+                this.pathListModel.setElementAt(file1, selectedIndice);
+                selectedIndices[i] = selectedIndice + 1;
+                bg = selectedIndice + 1;
             } else {
-                bb[i] = be;
-                bg = be - 1;
+                selectedIndices[i] = selectedIndice;
+                bg = selectedIndice - 1;
             }
         }
 
         this.pathList.clearSelection();
-        this.pathList.setSelectedIndices(bb);
-        this.pathList.ensureIndexIsVisible(bb[bb.length - 1]);
+        this.pathList.setSelectedIndices(selectedIndices);
+        this.pathList.ensureIndexIsVisible(selectedIndices[selectedIndices.length - 1]);
         this.updateButtonStates();
     }
 
     public abstract void browseToAddPath();
 
-    public boolean addPath(String string) {
-        File file1 = new File(string);
-        boolean bl = this.pathMap.put(string, file1) == null;
+    public boolean addPath(String key) {
+        File file1 = new File(key);
+        boolean bl = this.pathMap.put(key, file1) == null;
         if (bl) {
             this.pathListModel.addElement(file1);
             this.pathList.setSelectedIndex(this.pathListModel.getSize() - 1);
             this.pathList.ensureIndexIsVisible(this.pathListModel.getSize() - 1);
         } else {
-            int ba = this.pathListModel.indexOf(file1);
-            this.pathList.setSelectedIndex(ba);
-            this.pathList.ensureIndexIsVisible(ba);
+            int selectedIndex = this.pathListModel.indexOf(file1);
+            this.pathList.setSelectedIndex(selectedIndex);
+            this.pathList.ensureIndexIsVisible(selectedIndex);
         }
 
         return bl;
@@ -379,15 +379,15 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
                 bufferedWriter.write(pathsText, 0, pathsText.length());
                 try {
                     bufferedWriter.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
-            } catch (final IOException ex2) {
-                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Couldn't save \"" + selectedFile.getAbsolutePath() + "\" : " + ex2.getMessage());
+            } catch (final IOException ioExceptionValue) {
+                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Couldn't save \"" + selectedFile.getAbsolutePath() + "\" : " + ioExceptionValue.getMessage());
             } finally {
                 if (bufferedWriter != null) {
                     try {
                         bufferedWriter.close();
-                    } catch (final IOException ex3) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }
@@ -402,12 +402,12 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
         List list1 = this.pathList.getSelectedValuesList();
         int size = this.pathListModel.getSize();
 
-        for (int i = 0; i < list1.size(); i++) {
-            Object object = list1.get(i);
-            int bc = this.pathListModel.indexOf(object);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            Object object = list1.get(elementIndex);
+            int sizeValue = this.pathListModel.indexOf(object);
             HashMap hashMap;
-            if (bc < size) {
-                size = bc;
+            if (sizeValue < size) {
+                size = sizeValue;
                 hashMap = this.pathMap;
             } else {
                 hashMap = this.pathMap;
@@ -417,11 +417,11 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
             this.pathListModel.removeElement(object);
         }
 
-        int bd = this.pathListModel.getSize();
-        if (bd > size) {
+        int sizeValue2 = this.pathListModel.getSize();
+        if (sizeValue2 > size) {
             this.pathList.setSelectedIndex(size);
-        } else if (bd > 0) {
-            this.pathList.setSelectedIndex(bd - 1);
+        } else if (sizeValue2 > 0) {
+            this.pathList.setSelectedIndex(sizeValue2 - 1);
         } else {
             SwingUtils.requestFocusOnEdt(this.addBtn);
         }
@@ -471,8 +471,8 @@ public abstract class PathListDialog extends OwnedFrameDialogBase implements Hel
         }
 
         if (!list2.isEmpty()) {
-            int ba = list2.size();
-            int bc = Math.min(20, ba);
+            int list2Size = list2.size();
+            int bc = Math.min(20, list2Size);
             int bb = bc;
             SwingUtils.createMessageDialog(
                     this, "FILE ERROR: Files not found", "These strings did not match an existing file.", ZkmUtils.toQuotedListString(list2.subList(0, bb))

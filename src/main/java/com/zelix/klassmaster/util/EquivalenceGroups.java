@@ -26,40 +26,40 @@ public class EquivalenceGroups {
         return Collections.unmodifiableSet(this.groupByElement.keySet());
     }
 
-    public void makeEquivalent(Object object, Object object1) {
-        EquivalenceGroup equivalenceGroup = (EquivalenceGroup) this.groupByElement.get(object);
-        EquivalenceGroup equivalenceGroup1 = (EquivalenceGroup) this.groupByElement.get(object1);
+    public void makeEquivalent(Object key, Object keyArgument) {
+        EquivalenceGroup equivalenceGroup = (EquivalenceGroup) this.groupByElement.get(key);
+        EquivalenceGroup equivalenceGroup1 = (EquivalenceGroup) this.groupByElement.get(keyArgument);
         if (equivalenceGroup == null && equivalenceGroup1 == null) {
             EquivalenceGroup equivalenceGroup2 = new EquivalenceGroup();
-            equivalenceGroup2.add(object);
-            equivalenceGroup2.add(object1);
-            this.groupByElement.put(object, equivalenceGroup2);
-            this.groupByElement.put(object1, equivalenceGroup2);
+            equivalenceGroup2.add(key);
+            equivalenceGroup2.add(keyArgument);
+            this.groupByElement.put(key, equivalenceGroup2);
+            this.groupByElement.put(keyArgument, equivalenceGroup2);
         } else if (equivalenceGroup != null && equivalenceGroup1 != null) {
-            for (Object object2 : equivalenceGroup1) {
-                this.groupByElement.remove(object2);
-                this.groupByElement.put(object2, equivalenceGroup);
+            for (Object keyValue : equivalenceGroup1) {
+                this.groupByElement.remove(keyValue);
+                this.groupByElement.put(keyValue, equivalenceGroup);
             }
 
             equivalenceGroup.addAll(equivalenceGroup1);
         } else if (equivalenceGroup != null) {
-            equivalenceGroup.add(object1);
-            this.groupByElement.put(object1, equivalenceGroup);
+            equivalenceGroup.add(keyArgument);
+            this.groupByElement.put(keyArgument, equivalenceGroup);
         } else {
-            equivalenceGroup1.add(object);
-            this.groupByElement.put(object, equivalenceGroup1);
+            equivalenceGroup1.add(key);
+            this.groupByElement.put(key, equivalenceGroup1);
         }
     }
 
-    public boolean containsElement(Object object) {
-        return this.groupByElement.containsKey(object);
+    public boolean containsElement(Object key) {
+        return this.groupByElement.containsKey(key);
     }
 
     public Set getEntries() {
         return Collections.unmodifiableSet(this.groupByElement.entrySet());
     }
 
-    public EquivalenceGroup getGroup(Object object) {
-        return (EquivalenceGroup) this.groupByElement.get(object);
+    public EquivalenceGroup getGroup(Object key) {
+        return (EquivalenceGroup) this.groupByElement.get(key);
     }
 }

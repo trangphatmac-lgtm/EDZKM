@@ -23,15 +23,15 @@ public class ByteConversionUtils {
         return (ba & 0xFF) << 8 | bb & 0xFF;
     }
 
-    public static long bytesToLong(byte[] ba) {
-        return (ba[0] & 255L) << 56
-                | (ba[1] & 255L) << 48
-                | (ba[2] & 255L) << 40
-                | (ba[3] & 255L) << 32
-                | (ba[4] & 255L) << 24
-                | (ba[5] & 255L) << 16
-                | (ba[6] & 255L) << 8
-                | ba[7] & 255L;
+    public static long bytesToLong(byte[] byteArray) {
+        return (byteArray[0] & 255L) << 56
+                | (byteArray[1] & 255L) << 48
+                | (byteArray[2] & 255L) << 40
+                | (byteArray[3] & 255L) << 32
+                | (byteArray[4] & 255L) << 24
+                | (byteArray[5] & 255L) << 16
+                | (byteArray[6] & 255L) << 8
+                | byteArray[7] & 255L;
     }
 
     public static final int highByte(int ba) {

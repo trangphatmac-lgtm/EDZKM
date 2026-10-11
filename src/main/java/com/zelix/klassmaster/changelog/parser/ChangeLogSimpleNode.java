@@ -23,9 +23,9 @@ public abstract class ChangeLogSimpleNode implements ChangeLogNode {
     @Override
     public void dump() {
         if (this.children != null) {
-            for (int i = 0; i < this.children.length; i++) {
-                this.children[i].dump();
-                this.children[i] = null;
+            for (int childrenElementIndex = 0; childrenElementIndex < this.children.length; childrenElementIndex++) {
+                this.children[childrenElementIndex].dump();
+                this.children[childrenElementIndex] = null;
             }
 
             this.children = null;
@@ -33,16 +33,16 @@ public abstract class ChangeLogSimpleNode implements ChangeLogNode {
     }
 
     @Override
-    public void jjtAddChild(ChangeLogNode changeLogNode, int ba) {
+    public void jjtAddChild(ChangeLogNode changeLogNode, int childrenElementIndex) {
         if (this.children == null) {
-            this.children = new ChangeLogNode[ba + 1];
-        } else if (ba >= this.children.length) {
-            ChangeLogNode[] changeLogNodes = new ChangeLogNode[ba + 1];
+            this.children = new ChangeLogNode[childrenElementIndex + 1];
+        } else if (childrenElementIndex >= this.children.length) {
+            ChangeLogNode[] changeLogNodes = new ChangeLogNode[childrenElementIndex + 1];
             System.arraycopy(this.children, 0, changeLogNodes, 0, this.children.length);
             this.children = changeLogNodes;
         }
 
-        this.children[ba] = changeLogNode;
+        this.children[childrenElementIndex] = changeLogNode;
     }
 
     public ChangeLogSimpleNode(int id) {
@@ -68,8 +68,8 @@ public abstract class ChangeLogSimpleNode implements ChangeLogNode {
     }
 
     @Override
-    public ChangeLogNode jjtGetChild(int ba) {
-        return this.children[ba];
+    public ChangeLogNode jjtGetChild(int childrenElementIndex) {
+        return this.children[childrenElementIndex];
     }
 
     @Override

@@ -54,8 +54,8 @@ public class ConstantRefInstruction
         InvokeDynamicConstantReplaceable {
     public ConstantPoolEntry constantEntry;
 
-    public ConstantRefInstruction(int ba, ConstantPoolEntry constantPoolEntry) {
-        super(ba);
+    public ConstantRefInstruction(int opcodeArgument, ConstantPoolEntry constantPoolEntry) {
+        super(opcodeArgument);
         this.constantEntry = constantPoolEntry;
     }
 
@@ -88,17 +88,17 @@ public class ConstantRefInstruction
                 return true;
             case 178:
             case 180:
-                String string = ((ResolvedFieldRef) this.constantEntry).getStackFieldType();
-                return string != null && (string.equals("J") || string.equals("D"));
+                String stackFieldType = ((ResolvedFieldRef) this.constantEntry).getStackFieldType();
+                return stackFieldType != null && (stackFieldType.equals("J") || stackFieldType.equals("D"));
             case 182:
             case 183:
             case 184:
             case 185:
-                String string1 = ((ResolvedMethodRef) this.constantEntry).getStackReturnType();
-                return string1 != null && (string1.equals("J") || string1.equals("D"));
+                String stackReturnType = ((ResolvedMethodRef) this.constantEntry).getStackReturnType();
+                return stackReturnType != null && (stackReturnType.equals("J") || stackReturnType.equals("D"));
             case 186:
-                String string2 = ((ResolvedInvokeDynamic) this.constantEntry).getStackReturnType();
-                return string2 != null && (string2.equals("J") || string2.equals("D"));
+                String stackReturnTypeValue = ((ResolvedInvokeDynamic) this.constantEntry).getStackReturnType();
+                return stackReturnTypeValue != null && (stackReturnTypeValue.equals("J") || stackReturnTypeValue.equals("D"));
             default:
                 ZkmAssert.assertTrue(false, new String[]{"invalid opcode " + this.opcode});
                 return false;
@@ -167,81 +167,81 @@ public class ConstantRefInstruction
 
     @Override
     public StackFrameState computeFrameAfter(StackFrameState stackFrameState, Object object, Object object1, Object object2) throws ZkmException, IOException {
-        String string = (String) object2;
+        String text = (String) object2;
         boolean bl = (Boolean) object;
         CommonSuperTypeResolver commonSuperTypeResolver1 = (CommonSuperTypeResolver) object1;
-        new TruncatedStringDisplay(string);
+        new TruncatedStringDisplay(text);
         VerifierType[] verifierTypes = stackFrameState.getLocals();
         VerifierType[] verifierTypes1 = stackFrameState.getStack();
-        int ba = verifierTypes1.length;
+        int lengthValue = verifierTypes1.length;
         SubroutineLocalsBitSet subroutineLocalsBitSet = stackFrameState.getSubroutineLocals();
         Set set1 = stackFrameState.getHeldMonitors();
         switch (this.opcode) {
             case 19:
-                VerifierType[] verifierTypes11 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes11, 0, ba);
+                VerifierType[] verifierTypes11 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes11, 0, lengthValue);
                 if (this.constantEntry instanceof LoadableConstant) {
-                    String string2 = ((LoadableConstant) this.constantEntry).getTypeName();
-                    if (string2.equals("integer")) {
-                        verifierTypes11[ba] = VerifierType.INT;
-                    } else if (string2.equals("string")) {
-                        verifierTypes11[ba] = VerifierType.STRING;
-                    } else if (string2.equals("float")) {
-                        verifierTypes11[ba] = VerifierType.FLOAT;
+                    String typeName = ((LoadableConstant) this.constantEntry).getTypeName();
+                    if (typeName.equals("integer")) {
+                        verifierTypes11[lengthValue] = VerifierType.INT;
+                    } else if (typeName.equals("string")) {
+                        verifierTypes11[lengthValue] = VerifierType.STRING;
+                    } else if (typeName.equals("float")) {
+                        verifierTypes11[lengthValue] = VerifierType.FLOAT;
                     }
                 } else if (this.constantEntry instanceof ResolvedClassConstant) {
-                    verifierTypes11[ba] = VerifierType.CLASS;
+                    verifierTypes11[lengthValue] = VerifierType.CLASS;
                 } else if (this.constantEntry instanceof ResolvedMethodType) {
-                    verifierTypes11 = VerifierType.createArray(ba + 1);
-                    System.arraycopy(verifierTypes1, 0, verifierTypes11, 0, ba);
-                    verifierTypes11[ba] = VerifierType.forDescriptor("Ljava/lang/invoke/MethodType;");
+                    verifierTypes11 = VerifierType.createArray(lengthValue + 1);
+                    System.arraycopy(verifierTypes1, 0, verifierTypes11, 0, lengthValue);
+                    verifierTypes11[lengthValue] = VerifierType.forDescriptor("Ljava/lang/invoke/MethodType;");
                 } else if (this.constantEntry instanceof ResolvedMethodHandleConstant) {
-                    verifierTypes11 = VerifierType.createArray(ba + 1);
-                    System.arraycopy(verifierTypes1, 0, verifierTypes11, 0, ba);
-                    verifierTypes11[ba] = VerifierType.forDescriptor("Ljava/lang/invoke/MethodHandle;");
+                    verifierTypes11 = VerifierType.createArray(lengthValue + 1);
+                    System.arraycopy(verifierTypes1, 0, verifierTypes11, 0, lengthValue);
+                    verifierTypes11[lengthValue] = VerifierType.forDescriptor("Ljava/lang/invoke/MethodHandle;");
                 } else if (this.constantEntry instanceof ResolvedConstantDynamic) {
-                    verifierTypes11 = VerifierType.createArray(ba + 1);
-                    System.arraycopy(verifierTypes1, 0, verifierTypes11, 0, ba);
+                    verifierTypes11 = VerifierType.createArray(lengthValue + 1);
+                    System.arraycopy(verifierTypes1, 0, verifierTypes11, 0, lengthValue);
                     ResolvedConstantDynamic resolvedConstantDynamic = (ResolvedConstantDynamic) this.constantEntry;
-                    String string3 = resolvedConstantDynamic.getStackReturnType();
-                    verifierTypes11[ba] = VerifierType.forDescriptor(string3);
+                    String stackReturnType = resolvedConstantDynamic.getStackReturnType();
+                    verifierTypes11[lengthValue] = VerifierType.forDescriptor(stackReturnType);
                 }
 
                 return new StackFrameState(verifierTypes11, verifierTypes, subroutineLocalsBitSet, set1);
             case 20:
-                VerifierType[] verifierTypes10 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes10, 0, ba);
-                String string1 = ((LoadableConstant) this.constantEntry).getTypeName();
-                if (string1.equals("long")) {
-                    verifierTypes10[ba] = VerifierType.LONG;
-                } else if (string1.equals("double")) {
-                    verifierTypes10[ba] = VerifierType.DOUBLE;
+                VerifierType[] verifierTypes10 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes10, 0, lengthValue);
+                String typeNameValue = ((LoadableConstant) this.constantEntry).getTypeName();
+                if (typeNameValue.equals("long")) {
+                    verifierTypes10[lengthValue] = VerifierType.LONG;
+                } else if (typeNameValue.equals("double")) {
+                    verifierTypes10[lengthValue] = VerifierType.DOUBLE;
                 }
 
                 return new StackFrameState(verifierTypes10, verifierTypes, subroutineLocalsBitSet, set1);
             case 178:
-                VerifierType[] verifierTypes9 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes9, 0, ba);
+                VerifierType[] verifierTypes9 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes9, 0, lengthValue);
                 ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.constantEntry;
-                verifierTypes9[ba] = VerifierType.forDescriptor(resolvedFieldRef.getStackFieldType());
+                verifierTypes9[lengthValue] = VerifierType.forDescriptor(resolvedFieldRef.getStackFieldType());
                 return new StackFrameState(verifierTypes9, verifierTypes, subroutineLocalsBitSet, set1);
             case 179:
-                VerifierType[] verifierTypes8 = VerifierType.createArray(ba - 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes8, 0, ba - 1);
+                VerifierType[] verifierTypes8 = VerifierType.createArray(lengthValue - 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes8, 0, lengthValue - 1);
                 return new StackFrameState(verifierTypes8, verifierTypes, subroutineLocalsBitSet, set1);
             case 180:
-                VerifierType[] verifierTypes7 = VerifierType.createArray(ba);
-                System.arraycopy(verifierTypes1, 0, verifierTypes7, 0, ba - 1);
+                VerifierType[] verifierTypes7 = VerifierType.createArray(lengthValue);
+                System.arraycopy(verifierTypes1, 0, verifierTypes7, 0, lengthValue - 1);
                 ResolvedFieldRef resolvedFieldRef1 = (ResolvedFieldRef) this.constantEntry;
-                verifierTypes7[ba - 1] = VerifierType.forDescriptor(resolvedFieldRef1.getStackFieldType());
+                verifierTypes7[lengthValue - 1] = VerifierType.forDescriptor(resolvedFieldRef1.getStackFieldType());
                 return new StackFrameState(verifierTypes7, verifierTypes, subroutineLocalsBitSet, set1);
             case 181:
-                VerifierType[] verifierTypes6 = VerifierType.createArray(ba - 2);
-                System.arraycopy(verifierTypes1, 0, verifierTypes6, 0, ba - 2);
+                VerifierType[] verifierTypes6 = VerifierType.createArray(lengthValue - 2);
+                System.arraycopy(verifierTypes1, 0, verifierTypes6, 0, lengthValue - 2);
                 if (bl) {
                     ResolvedFieldRef resolvedFieldRef2 = (ResolvedFieldRef) this.constantEntry;
                     if (!StackFrameState.isAssignable(
-                            verifierTypes1[ba - 1], VerifierType.forDescriptor(resolvedFieldRef2.getStackFieldType()), commonSuperTypeResolver1, string
+                            verifierTypes1[lengthValue - 1], VerifierType.forDescriptor(resolvedFieldRef2.getStackFieldType()), commonSuperTypeResolver1, text
                     )) {
                     }
                 }
@@ -249,35 +249,35 @@ public class ConstantRefInstruction
                 return new StackFrameState(verifierTypes6, verifierTypes, subroutineLocalsBitSet, set1);
             case 182:
             case 185:
-                return this.simulateInvoke(verifierTypes1, ba, verifierTypes, subroutineLocalsBitSet, set1, true, false, bl, commonSuperTypeResolver1, string);
+                return this.simulateInvoke(verifierTypes1, lengthValue, verifierTypes, subroutineLocalsBitSet, set1, true, false, bl, commonSuperTypeResolver1, text);
             case 183:
-                return this.simulateInvoke(verifierTypes1, ba, verifierTypes, subroutineLocalsBitSet, set1, true, true, bl, commonSuperTypeResolver1, string);
+                return this.simulateInvoke(verifierTypes1, lengthValue, verifierTypes, subroutineLocalsBitSet, set1, true, true, bl, commonSuperTypeResolver1, text);
             case 184:
-                return this.simulateInvoke(verifierTypes1, ba, verifierTypes, subroutineLocalsBitSet, set1, false, false, bl, commonSuperTypeResolver1, string);
+                return this.simulateInvoke(verifierTypes1, lengthValue, verifierTypes, subroutineLocalsBitSet, set1, false, false, bl, commonSuperTypeResolver1, text);
             case 186:
-                return this.simulateInvokeDynamic(verifierTypes1, ba, verifierTypes, subroutineLocalsBitSet, set1, bl, commonSuperTypeResolver1, string);
+                return this.simulateInvokeDynamic(verifierTypes1, lengthValue, verifierTypes, subroutineLocalsBitSet, set1, bl, commonSuperTypeResolver1, text);
             case 187:
-                VerifierType[] verifierTypes5 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes5, 0, ba);
+                VerifierType[] verifierTypes5 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes5, 0, lengthValue);
                 ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) this.constantEntry;
-                verifierTypes5[ba] = VerifierType.resolveType(resolvedClassConstant.getTypeDescriptor(), false, (TypeInstruction) this);
+                verifierTypes5[lengthValue] = VerifierType.resolveType(resolvedClassConstant.getTypeDescriptor(), false, (TypeInstruction) this);
                 return new StackFrameState(verifierTypes5, verifierTypes, subroutineLocalsBitSet, set1);
             case 189:
-                VerifierType[] verifierTypes4 = VerifierType.createArray(ba);
-                System.arraycopy(verifierTypes1, 0, verifierTypes4, 0, ba - 1);
+                VerifierType[] verifierTypes4 = VerifierType.createArray(lengthValue);
+                System.arraycopy(verifierTypes1, 0, verifierTypes4, 0, lengthValue - 1);
                 ResolvedClassConstant resolvedClassConstant1 = (ResolvedClassConstant) this.constantEntry;
-                verifierTypes4[ba - 1] = VerifierType.forDescriptor("[" + resolvedClassConstant1.getTypeDescriptor());
+                verifierTypes4[lengthValue - 1] = VerifierType.forDescriptor("[" + resolvedClassConstant1.getTypeDescriptor());
                 return new StackFrameState(verifierTypes4, verifierTypes, subroutineLocalsBitSet, set1);
             case 192:
-                VerifierType[] verifierTypes3 = VerifierType.createArray(ba);
-                System.arraycopy(verifierTypes1, 0, verifierTypes3, 0, ba - 1);
+                VerifierType[] verifierTypes3 = VerifierType.createArray(lengthValue);
+                System.arraycopy(verifierTypes1, 0, verifierTypes3, 0, lengthValue - 1);
                 ResolvedClassConstant resolvedClassConstant2 = (ResolvedClassConstant) this.constantEntry;
-                verifierTypes3[ba - 1] = VerifierType.forDescriptor(resolvedClassConstant2.getTypeDescriptor());
+                verifierTypes3[lengthValue - 1] = VerifierType.forDescriptor(resolvedClassConstant2.getTypeDescriptor());
                 return new StackFrameState(verifierTypes3, verifierTypes, subroutineLocalsBitSet, set1);
             case 193:
-                VerifierType[] verifierTypes2 = VerifierType.createArray(ba);
-                System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, ba - 1);
-                verifierTypes2[ba - 1] = VerifierType.INT;
+                VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue);
+                System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, lengthValue - 1);
+                verifierTypes2[lengthValue - 1] = VerifierType.INT;
                 return new StackFrameState(verifierTypes2, verifierTypes, subroutineLocalsBitSet, set1);
             default:
                 ZkmAssert.assertTrue(false, new String[]{"invalid opcode " + this.opcode});
@@ -437,7 +437,7 @@ public class ConstantRefInstruction
     }
 
     public ConstantRefInstruction(
-            int ba,
+            int opcodeArgument,
             ClassFileInputStream classFileInputStream,
             ConstantPoolProvider constantPoolProvider,
             ListMultimap listMultimap,
@@ -446,7 +446,7 @@ public class ConstantRefInstruction
             ListMultimap listMultimap3,
             ListMultimap listMultimap4
     ) throws IOException {
-        super(ba);
+        super(opcodeArgument);
         int bb = classFileInputStream.readUnsignedShort();
         this.constantEntry = constantPoolProvider.getConstantPoolEntry(bb);
         switch (LdcConstantSwitchMap.CONSTANT_TAG_SWITCH_MAP[this.constantEntry.getTag().ordinal()]) {
@@ -508,16 +508,16 @@ public class ConstantRefInstruction
 
     public int getInvokeDynamicStackDelta() {
         ResolvedNameAndType resolvedNameAndType = ((ResolvedInvokeDynamic) this.constantEntry).getNameAndType();
-        String string = ConstantPoolEntry.getStackReturnType(resolvedNameAndType);
-        int ba = 0 + (string == null ? 0 : (ConstantPoolEntry.isWideType(string) ? 2 : 1));
+        String stackReturnType = ConstantPoolEntry.getStackReturnType(resolvedNameAndType);
+        int invokeDynamicStackDelta = 0 + (stackReturnType == null ? 0 : (ConstantPoolEntry.isWideType(stackReturnType) ? 2 : 1));
         Iterator iterator = ConstantPoolEntry.getStackParameterTypes(resolvedNameAndType).iterator();
 
         while (iterator.hasNext()) {
             String string1 = (String) iterator.next();
-            ba += ConstantPoolEntry.isWideType(string1) ? -2 : -1;
+            invokeDynamicStackDelta += ConstantPoolEntry.isWideType(string1) ? -2 : -1;
         }
 
-        return ba;
+        return invokeDynamicStackDelta;
     }
 
     @Override
@@ -572,11 +572,11 @@ public class ConstantRefInstruction
         stringBuilder1.append(this.getMnemonic());
         stringBuilder1.append(' ');
         stringBuilder1.append(this.constantEntry.getAbbreviatedValue());
-        String string = this.getDescriptionComment();
-        string = Instruction.formatDescription(string, this.constantEntry.getAbbreviatedValue());
-        if (string.length() > 0) {
+        String descriptionComment = this.getDescriptionComment();
+        descriptionComment = Instruction.formatDescription(descriptionComment, this.constantEntry.getAbbreviatedValue());
+        if (descriptionComment.length() > 0) {
             stringBuilder1.append('\t');
-            stringBuilder1.append(string);
+            stringBuilder1.append(descriptionComment);
         }
 
         printWriter.println(stringBuilder1);
@@ -590,9 +590,9 @@ public class ConstantRefInstruction
             Set set1,
             boolean bl,
             CommonSuperTypeResolver commonSuperTypeResolver1,
-            String string
+            String text
     ) throws ZkmException, IOException {
-        TruncatedStringDisplay truncatedStringDisplay = new TruncatedStringDisplay(string);
+        TruncatedStringDisplay truncatedStringDisplay = new TruncatedStringDisplay(text);
         ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) this.constantEntry;
         ResolvedMethodHandleConstant resolvedMethodHandleConstant = resolvedInvokeDynamic.getBootstrapMethodHandle();
         if (!resolvedMethodHandleConstant.getRefKind().equals(MethodHandleRefKind.REF_INVOKE_STATIC)) {
@@ -602,23 +602,23 @@ public class ConstantRefInstruction
         resolvedInvokeDynamic.getBootstrapArguments();
         ResolvedNameAndType resolvedNameAndType = resolvedInvokeDynamic.getNameAndType();
         List list1 = ConstantPoolEntry.getStackParameterTypes(resolvedNameAndType);
-        int bb = list1.size();
-        String string1 = ConstantPoolEntry.getStackReturnType(resolvedNameAndType);
-        int bc = string1 == null ? 0 : 1;
+        int list1Size = list1.size();
+        String stackReturnType = ConstantPoolEntry.getStackReturnType(resolvedNameAndType);
+        int bc = stackReturnType == null ? 0 : 1;
         if (bl) {
-            for (int i = 0; i < bb; i++) {
-                VerifierType verifierType = verifierTypes[ba - bb + i];
-                VerifierType verifierType1 = VerifierType.forDescriptor((String) list1.get(i));
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                VerifierType verifierType = verifierTypes[ba - list1Size + elementIndex];
+                VerifierType verifierType1 = VerifierType.forDescriptor((String) list1.get(elementIndex));
 
                 try {
-                    if (!StackFrameState.isAssignable(verifierType, verifierType1, commonSuperTypeResolver1, string)) {
+                    if (!StackFrameState.isAssignable(verifierType, verifierType1, commonSuperTypeResolver1, text)) {
                         throw new StackAnalysisException(
                                 "Type mismatch at dynamic method invocation : "
                                         + verifierType.getDescriptor()
                                         + " not assignment compatible with "
                                         + verifierType1.getDescriptor()
                                         + " :  parameter "
-                                        + i
+                                        + elementIndex
                                         + " calling "
                                         + resolvedNameAndType.getDisplayString()
                                         + " while "
@@ -630,7 +630,7 @@ public class ConstantRefInstruction
             }
         }
 
-        int be = ba - bb + bc;
+        int be = ba - list1Size + bc;
         if (be - bc < 0) {
             throw new StackAnalysisException("Stack underflow in dynamic method invocation : " + be + " while " + truncatedStringDisplay);
         }
@@ -638,7 +638,7 @@ public class ConstantRefInstruction
         VerifierType[] verifierTypes2 = VerifierType.createArray(be);
         System.arraycopy(verifierTypes, 0, verifierTypes2, 0, be - bc);
         if (bc == 1) {
-            verifierTypes2[verifierTypes2.length - 1] = VerifierType.forDescriptor(string1);
+            verifierTypes2[verifierTypes2.length - 1] = VerifierType.forDescriptor(stackReturnType);
         }
 
         return new StackFrameState(verifierTypes2, verifierTypes1, subroutineLocalsBitSet, set1);
@@ -654,28 +654,28 @@ public class ConstantRefInstruction
             boolean bl1,
             boolean bl2,
             CommonSuperTypeResolver commonSuperTypeResolver1,
-            String string
+            String text
     ) throws ZkmException, IOException {
-        TruncatedStringDisplay truncatedStringDisplay = new TruncatedStringDisplay(string);
+        TruncatedStringDisplay truncatedStringDisplay = new TruncatedStringDisplay(text);
         ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) this.constantEntry;
         List list1 = resolvedMethodRef.getStackParameterTypes();
-        int bb = list1.size();
-        String string1 = resolvedMethodRef.getStackReturnType();
-        int bc = string1 == null ? 0 : 1;
+        int list1Size = list1.size();
+        String stackReturnType = resolvedMethodRef.getStackReturnType();
+        int bc = stackReturnType == null ? 0 : 1;
         if (bl2) {
-            for (int i = 0; i < bb; i++) {
-                VerifierType verifierType = verifierTypes[ba - bb + i];
-                VerifierType verifierType1 = VerifierType.forDescriptor((String) list1.get(i));
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                VerifierType verifierType = verifierTypes[ba - list1Size + elementIndex];
+                VerifierType verifierType1 = VerifierType.forDescriptor((String) list1.get(elementIndex));
 
                 try {
-                    if (!StackFrameState.isAssignable(verifierType, verifierType1, commonSuperTypeResolver1, string)) {
+                    if (!StackFrameState.isAssignable(verifierType, verifierType1, commonSuperTypeResolver1, text)) {
                         throw new StackAnalysisException(
                                 "Type mismatch at method invocation : "
                                         + verifierType.getDescriptor()
                                         + " not assignment compatible with "
                                         + verifierType1.getDescriptor()
                                         + " :  parameter "
-                                        + i
+                                        + elementIndex
                                         + " calling "
                                         + resolvedMethodRef.getDisplayString()
                                         + " in class "
@@ -689,7 +689,7 @@ public class ConstantRefInstruction
             }
         }
 
-        int bg = ba - bb - (bl ? 1 : 0) + bc;
+        int bg = ba - list1Size - (bl ? 1 : 0) + bc;
         if (bg - bc < 0) {
             throw new StackAnalysisException("Stack underflow : " + bg + " in class " + resolvedMethodRef.getOwnerFilePath() + " while " + truncatedStringDisplay);
         }
@@ -697,25 +697,25 @@ public class ConstantRefInstruction
         VerifierType[] verifierTypes3 = VerifierType.createArray(bg);
         System.arraycopy(verifierTypes, 0, verifierTypes3, 0, bg - bc);
         if (bc == 1) {
-            verifierTypes3[verifierTypes3.length - 1] = VerifierType.forDescriptor(string1);
+            verifierTypes3[verifierTypes3.length - 1] = VerifierType.forDescriptor(stackReturnType);
         }
 
         if (bl1 && resolvedMethodRef.isConstructor()) {
-            VerifierType verifierType3 = verifierTypes[ba - bb - 1];
+            VerifierType verifierType3 = verifierTypes[ba - list1Size - 1];
             VerifierType verifierType2 = verifierType3.createCopy();
-            int be = verifierTypes1.length;
-            VerifierType[] verifierTypes2 = VerifierType.createArray(be);
-            System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, be);
+            int lengthValue = verifierTypes1.length;
+            VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue);
+            System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, lengthValue);
 
-            for (int i = 0; i < bg; i++) {
-                if (verifierTypes3[i] == verifierType3) {
-                    verifierTypes3[i] = verifierType2;
+            for (int verifierTypes3ElementIndex = 0; verifierTypes3ElementIndex < bg; verifierTypes3ElementIndex++) {
+                if (verifierTypes3[verifierTypes3ElementIndex] == verifierType3) {
+                    verifierTypes3[verifierTypes3ElementIndex] = verifierType2;
                 }
             }
 
-            for (int i = 0; i < be; i++) {
-                if (verifierTypes2[i] == verifierType3) {
-                    verifierTypes2[i] = verifierType2;
+            for (int verifierTypes2ElementIndex = 0; verifierTypes2ElementIndex < lengthValue; verifierTypes2ElementIndex++) {
+                if (verifierTypes2[verifierTypes2ElementIndex] == verifierType3) {
+                    verifierTypes2[verifierTypes2ElementIndex] = verifierType2;
                 }
             }
 
@@ -737,21 +737,21 @@ public class ConstantRefInstruction
 
     public int getInvokeStackDelta() {
         ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) this.constantEntry;
-        int ba = 0;
+        int invokeStackDelta = 0;
         if (this.opcode != 184) {
-            ba += -1;
+            invokeStackDelta += -1;
         }
 
-        String string = resolvedMethodRef.getStackReturnType();
-        ba += string == null ? 0 : (ConstantPoolEntry.isWideType(string) ? 2 : 1);
+        String stackReturnType = resolvedMethodRef.getStackReturnType();
+        invokeStackDelta += stackReturnType == null ? 0 : (ConstantPoolEntry.isWideType(stackReturnType) ? 2 : 1);
         Iterator iterator = resolvedMethodRef.getStackParameterTypes().iterator();
 
         while (iterator.hasNext()) {
             String string1 = (String) iterator.next();
-            ba += ConstantPoolEntry.isWideType(string1) ? -2 : -1;
+            invokeStackDelta += ConstantPoolEntry.isWideType(string1) ? -2 : -1;
         }
 
-        return ba;
+        return invokeStackDelta;
     }
 
     @Override
@@ -784,11 +784,11 @@ public class ConstantRefInstruction
     }
 
     @Override
-    public boolean collectStringConstant(MultiMapTable multiMapTable, Set set1, MethodInfo methodInfo1, int ba) {
+    public boolean collectStringConstant(MultiMapTable multiMapTable, Set set1, MethodInfo methodInfo1, int rank) {
         if (this.opcode == 19 && this.constantEntry instanceof ResolvedStringConstant) {
             ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) this.constantEntry;
             if (resolvedStringConstant.getValueUtf8().getLength() >= 2 && resolvedStringConstant.isFromClassFile() && !set1.contains(resolvedStringConstant)) {
-                multiMapTable.addEntry(methodInfo1.getOwnerProgramClass(), methodInfo1, resolvedStringConstant, new RankedValue(ba, this));
+                multiMapTable.addEntry(methodInfo1.getOwnerProgramClass(), methodInfo1, resolvedStringConstant, new RankedValue(rank, this));
                 return true;
             } else {
                 return false;

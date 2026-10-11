@@ -95,8 +95,8 @@ public class GuiResources {
     }
 
     private GuiResources() {
-        String string = this.getClass().getName();
-        String string1 = string.substring(0, string.lastIndexOf(".") + 1);
+        String name = this.getClass().getName();
+        String string1 = name.substring(0, name.lastIndexOf(".") + 1);
         this.resourceBasePath = "/" + string1.replace('.', '/');
         UserPreferences userPreferences1 = HiddenOptionFlags.USER_PREFERENCES;
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();

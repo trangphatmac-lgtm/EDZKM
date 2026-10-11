@@ -7,8 +7,8 @@ public abstract class ZkmScriptParameterNode extends ZkmScriptSimpleNode {
 
     public abstract int getValueCount();
 
-    public ZkmScriptParameterNode(int ba) {
-        super(ba);
+    public ZkmScriptParameterNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     public abstract String getValue(int ba);

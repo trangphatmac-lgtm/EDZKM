@@ -4,25 +4,25 @@ import java.io.StringWriter;
 import java.util.StringTokenizer;
 
 public class ZkmStringUtils {
-    public static String replaceAll(String string, String string1, String string2) {
+    public static String replaceAll(String string, String searchText, String string2) {
         if (string == null) {
             throw new IllegalArgumentException("Null String");
         }
 
         int ba = string.length();
         StringWriter stringWriter = new StringWriter(ba);
-        char[] bb = string.toCharArray();
-        int bc = string1.length();
-        int bd = 0;
+        char[] characterArray = string.toCharArray();
+        int searchTextLength = searchText.length();
+        int fromIndex = 0;
 
         int be;
-        while (bd < ba && (be = string.indexOf(string1, bd)) > -1) {
-            stringWriter.write(bb, bd, be - bd);
+        while (fromIndex < ba && (be = string.indexOf(searchText, fromIndex)) > -1) {
+            stringWriter.write(characterArray, fromIndex, be - fromIndex);
             stringWriter.write(string2);
-            bd = be + bc;
+            fromIndex = be + searchTextLength;
         }
 
-        stringWriter.write(bb, bd, ba - bd);
+        stringWriter.write(characterArray, fromIndex, ba - fromIndex);
         return stringWriter.toString();
     }
 
@@ -56,8 +56,8 @@ public class ZkmStringUtils {
         return stringBuilder.toString();
     }
 
-    private static boolean matchWildcardTokens(String string, int ba, String[] strings, int bb) {
-        if (ba >= string.length()) {
+    private static boolean matchWildcardTokens(String string, int fromIndex, String[] strings, int bb) {
+        if (fromIndex >= string.length()) {
             if (bb >= strings.length) {
                 return true;
             }
@@ -76,40 +76,40 @@ public class ZkmStringUtils {
                 return false;
             }
 
-            String string1 = strings[bb];
-            if (!string1.equals("*")) {
-                boolean bl = string.regionMatches(ba, string1, 0, string1.length());
+            String searchText = strings[bb];
+            if (!searchText.equals("*")) {
+                boolean bl = string.regionMatches(fromIndex, searchText, 0, searchText.length());
                 if (!bl) {
                     return false;
                 }
 
-                ba += string1.length();
-                return matchWildcardTokens(string, ba, strings, bb + 1);
+                fromIndex += searchText.length();
+                return matchWildcardTokens(string, fromIndex, strings, bb + 1);
             } else {
-                while (string1.equals("*")) {
+                while (searchText.equals("*")) {
                     if (++bb >= strings.length) {
                         break;
                     }
 
-                    string1 = strings[bb];
+                    searchText = strings[bb];
                 }
 
-                if (string1.equals("*")) {
+                if (searchText.equals("*")) {
                     return true;
                 }
 
-                while (ba < string.length()) {
-                    int bc = string.indexOf(string1, ba);
-                    if (bc == -1) {
+                while (fromIndex < string.length()) {
+                    int fromIndexValue = string.indexOf(searchText, fromIndex);
+                    if (fromIndexValue == -1) {
                         return false;
                     }
 
-                    ba = bc;
-                    if (matchWildcardTokens(string, ba + string1.length(), strings, bb + 1)) {
+                    fromIndex = fromIndexValue;
+                    if (matchWildcardTokens(string, fromIndex + searchText.length(), strings, bb + 1)) {
                         return true;
                     }
 
-                    ba++;
+                    fromIndex++;
                 }
 
                 return false;
@@ -117,17 +117,17 @@ public class ZkmStringUtils {
         }
     }
 
-    public static int countOccurrences(String string, String string1) {
-        if (string != null && string.length() > 0 && string1 != null && string1.length() > 0) {
-            int ba = string1.length();
+    public static int countOccurrences(String string, String searchText) {
+        if (string != null && string.length() > 0 && searchText != null && searchText.length() > 0) {
+            int searchTextLength = searchText.length();
             int bb = -1;
-            int bc = 0 - ba;
+            int fromIndex = 0 - searchTextLength;
 
             do {
-                bc += ba;
-                bc = string.indexOf(string1, bc);
+                fromIndex += searchTextLength;
+                fromIndex = string.indexOf(searchText, fromIndex);
                 bb++;
-            } while (bc != -1);
+            } while (fromIndex != -1);
 
             return bb;
         } else {
@@ -141,27 +141,27 @@ public class ZkmStringUtils {
             return -1;
         }
 
-        int bc = ba;
-        char bd = string.charAt(bc);
-        boolean bl = Character.isWhitespace(bd);
+        int characterIndex = ba;
+        char bd = string.charAt(characterIndex);
+        boolean whitespace = Character.isWhitespace(bd);
 
-        while (bl) {
-            if (++bc == bb) {
+        while (whitespace) {
+            if (++characterIndex == bb) {
                 return -1;
             }
 
-            bd = string.charAt(bc);
-            bl = Character.isWhitespace(bd);
+            bd = string.charAt(characterIndex);
+            whitespace = Character.isWhitespace(bd);
         }
 
-        return bc;
+        return characterIndex;
     }
 
     public static String escapeJavaString(String string) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < string.length(); i++) {
-            char ba = string.charAt(i);
+        for (int characterIndex = 0; characterIndex < string.length(); characterIndex++) {
+            char ba = string.charAt(characterIndex);
             switch (ba) {
                 case '\u0000':
                     break;
@@ -201,15 +201,15 @@ public class ZkmStringUtils {
         return stringBuilder.toString();
     }
 
-    public static int indexOfAny(String string, int ba, char[] bb) {
+    public static int indexOfAny(String string, int ba, char[] characterArray) {
         int bc = string.length();
 
-        for (int i = ba; i < bc; i++) {
-            char be = string.charAt(i);
+        for (int characterIndex = ba; characterIndex < bc; characterIndex++) {
+            char be = string.charAt(characterIndex);
 
-            for (int j = 0; j < bb.length; j++) {
-                if (be == bb[j]) {
-                    return i;
+            for (int characterArrayElementIndex = 0; characterArrayElementIndex < characterArray.length; characterArrayElementIndex++) {
+                if (be == characterArray[characterArrayElementIndex]) {
+                    return characterIndex;
                 }
             }
         }
@@ -217,13 +217,13 @@ public class ZkmStringUtils {
         return -1;
     }
 
-    public static String pad(String string, int ba, int bb, int bc) {
+    public static String pad(String string, int ba, int endIndex, int bc) {
         int bd = string.length();
         StringBuilder stringBuilder;
         switch (ba) {
             case 76:
                 stringBuilder = new StringBuilder(string);
-                int bg = bb - bd;
+                int bg = endIndex - bd;
 
                 for (int i = 0; i < bg; i++) {
                     stringBuilder.append((char) bc);
@@ -231,7 +231,7 @@ public class ZkmStringUtils {
                 break;
             case 82:
                 stringBuilder = new StringBuilder();
-                int be = bb - bd;
+                int be = endIndex - bd;
 
                 for (int i = 0; i < be; i++) {
                     stringBuilder.append((char) bc);
@@ -243,18 +243,18 @@ public class ZkmStringUtils {
                 throw new IllegalArgumentException("Invalid justification");
         }
 
-        return stringBuilder.toString().substring(0, bb);
+        return stringBuilder.toString().substring(0, endIndex);
     }
 
     public static int countChar(String string, char ba) {
         if (string != null && string.length() > 0) {
-            char[] bb = string.toCharArray();
+            char[] characterArray = string.toCharArray();
             int bc = 0;
-            char[] bd = bb;
-            int be = bd.length;
+            char[] characterArrayValue = characterArray;
+            int lengthValue = characterArrayValue.length;
 
-            for (int i = 0; i < be; i++) {
-                if (bd[i] == ba) {
+            for (int characterArrayValueElementIndex = 0; characterArrayValueElementIndex < lengthValue; characterArrayValueElementIndex++) {
+                if (characterArrayValue[characterArrayValueElementIndex] == ba) {
                     bc++;
                 }
             }

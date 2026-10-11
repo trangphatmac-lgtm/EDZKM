@@ -84,9 +84,9 @@ public class ZKMTask
         }
         try {
             ZKM.runWithHashtable(this.scriptFileName, this.logFileName, this.trimLogFileName, this.defaultExcludeFileName, this.defaultTrimExcludeFileName, this.defaultMethodParameterChangesExcludeFileName, this.defaultMethodParameterObfuscationExcludeFileName, this.defaultDirectoryName, this.isVerbose, this.isParseOnly, this.getProject().getProperties());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new BuildException(ex.toString());
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw new BuildException(exception.toString());
         }
     }
 

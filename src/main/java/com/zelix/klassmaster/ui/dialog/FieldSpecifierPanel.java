@@ -70,34 +70,34 @@ public class FieldSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
     public void focusLost(FocusEvent focusEvent) {
         try {
             super.hintLabel.setText(" ");
-            Object object = focusEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = focusEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
     }
 
-    public FieldSpecifierPanel(JFrame jFrame, RenameFilterModel renameFilterModel, int ba) {
-        super(jFrame, renameFilterModel, ba);
+    public FieldSpecifierPanel(JFrame jFrame, RenameFilterModel renameFilterModel, int exclusionType) {
+        super(jFrame, renameFilterModel, exclusionType);
         this.buildPanel();
     }
 
     public void commitFieldValue(Object object) throws ZkmException, IOException {
         if (object == this.nameFld) {
-            String string = this.nameFld.getText().trim();
-            if (string.length() == 0) {
+            String fieldName = this.nameFld.getText().trim();
+            if (fieldName.length() == 0) {
                 this.nameFld.setText(super.filterModel.getFieldName());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Field name must be specified. Field restored.");
             } else {
-                super.filterModel.setFieldName(string);
+                super.filterModel.setFieldName(fieldName);
             }
         } else if (object == this.typeFld) {
-            String string1 = this.typeFld.getText().trim();
-            if (string1.indexOf("*") != -1) {
+            String fieldType = this.typeFld.getText().trim();
+            if (fieldType.indexOf("*") != -1) {
                 this.typeFld.setText(super.filterModel.getFieldType());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Field type cannot contain wildcards. Field restored.");
             } else {
-                super.filterModel.setFieldType(string1);
+                super.filterModel.setFieldType(fieldType);
             }
         } else if (object == this.annotatedByFld) {
             super.filterModel.setMemberAnnotation(this.annotatedByFld.getText().trim());
@@ -156,8 +156,8 @@ public class FieldSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = actionEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
@@ -165,12 +165,12 @@ public class FieldSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
 
     @Override
     public void focusGained(FocusEvent focusEvent) {
-        Object object = focusEvent.getSource();
-        if (object == this.nameFld) {
+        Object source = focusEvent.getSource();
+        if (source == this.nameFld) {
             super.hintLabel.setText("Enter name of the field. May contain the \"*\" wildcard.");
-        } else if (object == this.typeFld) {
+        } else if (source == this.typeFld) {
             super.hintLabel.setText("Enter fully qualified class name or a primitive type. No wildcards.");
-        } else if (object == this.annotatedByFld) {
+        } else if (source == this.annotatedByFld) {
             super.hintLabel.setText("Enter fully qualified class name. May contain the \"*\" wildcard.");
         }
     }
@@ -238,15 +238,15 @@ public class FieldSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
                 switch (i) {
                     case 0:
                         RenameFilterModel renameFilterModel3 = super.filterModel;
-                        boolean bl4 = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndex = platformAwareJList.isSelectedIndex(i);
                         Integer integer = 2;
-                        renameFilterModel3.setMemberStatic(bl4, integer);
+                        renameFilterModel3.setMemberStatic(selectedIndex, integer);
                         break;
                     case 1:
                         RenameFilterModel renameFilterModel2 = super.filterModel;
-                        boolean bl3 = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndexValue = platformAwareJList.isSelectedIndex(i);
                         Integer integer1 = 2;
-                        renameFilterModel2.setMemberFinal(bl3, integer1);
+                        renameFilterModel2.setMemberFinal(selectedIndexValue, integer1);
                         break;
                     case 2:
                         super.filterModel.setMemberVolatile(platformAwareJList.isSelectedIndex(i));
@@ -256,22 +256,22 @@ public class FieldSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
                         break;
                     case 4:
                         RenameFilterModel renameFilterModel1 = super.filterModel;
-                        boolean bl2 = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndexValue2 = platformAwareJList.isSelectedIndex(i);
                         Integer integer2 = 2;
-                        renameFilterModel1.setMemberNotStatic(bl2, integer2);
+                        renameFilterModel1.setMemberNotStatic(selectedIndexValue2, integer2);
                         break;
                     case 5:
                         RenameFilterModel renameFilterModel = super.filterModel;
-                        boolean bl1 = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndexValue3 = platformAwareJList.isSelectedIndex(i);
                         Integer integer3 = 2;
-                        renameFilterModel.setMemberNotFinal(bl1, integer3);
+                        renameFilterModel.setMemberNotFinal(selectedIndexValue3, integer3);
                         break;
                     case 6:
                         RenameFilterModel renameFilterModel4 = super.filterModel;
-                        boolean bl6 = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndexValue4 = platformAwareJList.isSelectedIndex(i);
                         boolean bl5 = false;
-                        boolean bl = bl6;
-                        renameFilterModel4.setMemberNotVolatile(bl);
+                        boolean memberNotVolatile = selectedIndexValue4;
+                        renameFilterModel4.setMemberNotVolatile(memberNotVolatile);
                         break;
                     case 7:
                         super.filterModel.setMemberNotTransient(platformAwareJList.isSelectedIndex(i));

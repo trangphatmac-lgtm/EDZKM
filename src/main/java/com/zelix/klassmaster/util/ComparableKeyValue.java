@@ -3,16 +3,17 @@ package com.zelix.klassmaster.util;
 import java.io.Serializable;
 
 public class ComparableKeyValue implements Comparable, Serializable {
+    /** key; the field name is retained for serialized settings compatibility. */
     public Comparable P;
     public Object B;
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof ComparableKeyValue)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof ComparableKeyValue)) {
             return false;
         }
 
-        ComparableKeyValue comparableKeyValue1 = (ComparableKeyValue) object;
+        ComparableKeyValue comparableKeyValue1 = (ComparableKeyValue) other;
         return this.P.equals(comparableKeyValue1.P)
                 && (this.B == null && comparableKeyValue1.B == null || this.B != null && comparableKeyValue1.B != null && this.B.equals(comparableKeyValue1.B));
     }
@@ -40,7 +41,7 @@ public class ComparableKeyValue implements Comparable, Serializable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByKey((ComparableKeyValue) object);
+    public int compareTo(Object other) {
+        return this.compareByKey((ComparableKeyValue) other);
     }
 }

@@ -55,16 +55,16 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
         boolean bl;
         if (this.frameworkParams.size() <= size) {
             bl = true;
-            int bb = 0;
+            int elementIndex = 0;
             int bg = 0;
 
             for (OrderedIndexedMap orderedIndexedMap2 = this.frameworkParams; bg < orderedIndexedMap2.size(); orderedIndexedMap2 = this.frameworkParams) {
-                if (!super.paramIndexMap.containsKey(this.frameworkParams.getKeyAt(bb))) {
+                if (!super.paramIndexMap.containsKey(this.frameworkParams.getKeyAt(elementIndex))) {
                     bl = false;
                     break;
                 }
 
-                bg = ++bb;
+                bg = ++elementIndex;
             }
         } else {
             bl = false;
@@ -78,16 +78,16 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
         } else {
             if (this.libraryParams.size() <= size) {
                 bl = true;
-                int bc = 0;
+                int elementIndexValue = 0;
                 int be = 0;
 
                 for (OrderedIndexedMap orderedIndexedMap = this.libraryParams; be < orderedIndexedMap.size(); orderedIndexedMap = this.libraryParams) {
-                    if (!super.paramIndexMap.containsKey(this.libraryParams.getKeyAt(bc))) {
+                    if (!super.paramIndexMap.containsKey(this.libraryParams.getKeyAt(elementIndexValue))) {
                         bl = false;
                         break;
                     }
 
-                    be = ++bc;
+                    be = ++elementIndexValue;
                 }
             } else {
                 bl = false;
@@ -101,16 +101,16 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
             } else {
                 if (this.midletParams.size() <= size) {
                     bl = true;
-                    int bd = 0;
+                    int elementIndexValue2 = 0;
                     int bf = 0;
 
                     for (OrderedIndexedMap orderedIndexedMap1 = this.midletParams; bf < orderedIndexedMap1.size(); orderedIndexedMap1 = this.midletParams) {
-                        if (!super.paramIndexMap.containsKey(this.midletParams.getKeyAt(bd))) {
+                        if (!super.paramIndexMap.containsKey(this.midletParams.getKeyAt(elementIndexValue2))) {
                             bl = false;
                             break;
                         }
 
-                        bf = ++bd;
+                        bf = ++elementIndexValue2;
                     }
                 } else {
                     bl = false;
@@ -137,9 +137,9 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
             WizardAppSettings wizardAppSettings,
             ScriptEnvironment scriptEnvironment1,
             DialogCallback dialogCallback1,
-            int ba
+            int paramKindArgument
     ) {
-        super(zkmMainWindow, scriptEnvironment1, dialogCallback1, ba);
+        super(zkmMainWindow, scriptEnvironment1, dialogCallback1, paramKindArgument);
         this.wizardSettings = wizardAppSettings;
         this.mainClassCandidates = list1;
     }
@@ -149,19 +149,19 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
             super.lastSelectedParameter = ((DisableableListItem) super.paramList.getSelectedValue()).toString();
         }
 
-        int ba = 0;
-        int bb = ba;
+        int elementIndex = 0;
+        int elementIndexValue = elementIndex;
 
-        for (int i = orderedIndexedMap.size(); bb < i; i = orderedIndexedMap.size()) {
-            String string = (String) orderedIndexedMap.getKeyAt(ba);
-            if (super.paramIndexMap.containsKey(string)) {
-                ListItemWrapper listItemWrapper = (ListItemWrapper) super.paramIndexMap.remove(string);
+        for (int orderedIndexedMapSize = orderedIndexedMap.size(); elementIndexValue < orderedIndexedMapSize; orderedIndexedMapSize = orderedIndexedMap.size()) {
+            String keyAt = (String) orderedIndexedMap.getKeyAt(elementIndex);
+            if (super.paramIndexMap.containsKey(keyAt)) {
+                ListItemWrapper listItemWrapper = (ListItemWrapper) super.paramIndexMap.remove(keyAt);
                 super.removingItem = true;
                 super.paramListModel.removeElement(listItemWrapper);
                 super.removingItem = false;
             }
 
-            bb = ++ba;
+            elementIndexValue = ++elementIndex;
         }
 
         if (super.paramList.getSelectedIndex() == -1) {
@@ -208,7 +208,7 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
         return this.wizardSettings;
     }
 
-    public final void buildMainClassSelector(Container container1, String string, String string1) throws ZkmException, IOException {
+    public final void buildMainClassSelector(Container container1, String string, String toolTipText) throws ZkmException, IOException {
         JLabel jLabel = new JLabel(string);
         container1.add(jLabel, "excludeMainClassLbl");
         this.mainClassComboModel = new DefaultComboBoxModel();
@@ -216,29 +216,29 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
         container1.add(this.mainClassComboBox, "mainClassComboBox");
         this.mainClassComboBox.addItem("<None>");
         if (this.mainClassCandidates != null && this.mainClassCandidates.size() != 0) {
-            int ba = 0;
-            int bc = ba;
+            int elementIndex = 0;
+            int elementIndexValue = elementIndex;
 
-            for (List list1 = this.mainClassCandidates; bc < list1.size(); list1 = this.mainClassCandidates) {
-                this.mainClassComboBox.addItem(this.mainClassCandidates.get(ba));
-                bc = ++ba;
+            for (List list1 = this.mainClassCandidates; elementIndexValue < list1.size(); list1 = this.mainClassCandidates) {
+                this.mainClassComboBox.addItem(this.mainClassCandidates.get(elementIndex));
+                elementIndexValue = ++elementIndex;
             }
         } else {
             this.mainClassComboBox.setEnabled(false);
         }
 
         if (this.wizardSettings.hasMainClass() && this.wizardSettings.isSaved()) {
-            String string2 = this.wizardSettings.getMainClassName();
-            int bb = this.findMainClassIndex(string2);
-            if (bb > -1) {
-                this.mainClassComboBox.setSelectedIndex(bb);
+            String mainClassName = this.wizardSettings.getMainClassName();
+            int selectedIndex = this.findMainClassIndex(mainClassName);
+            if (selectedIndex > -1) {
+                this.mainClassComboBox.setSelectedIndex(selectedIndex);
             } else {
-                this.removeParameter(this.buildMainClassParameter(string2, this.wizardSettings.isMainClassApplication()));
+                this.removeParameter(this.buildMainClassParameter(mainClassName, this.wizardSettings.isMainClassApplication()));
             }
         }
 
         this.mainClassComboBox.addItemListener(this);
-        this.mainClassComboBox.setToolTipText(string1);
+        this.mainClassComboBox.setToolTipText(toolTipText);
     }
 
     @Override
@@ -326,12 +326,12 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
                     return;
                 }
 
-                int ba = this.appTypeComboModel.getIndexOf(itemEvent.getItem());
+                int indexOf = this.appTypeComboModel.getIndexOf(itemEvent.getItem());
                 if (itemEvent.getStateChange() == 1) {
-                    this.wizardSettings.setApplicationType(ba);
+                    this.wizardSettings.setApplicationType(indexOf);
                 }
 
-                switch (ba) {
+                switch (indexOf) {
                     case 0:
                         if (itemEvent.getStateChange() == 1) {
                             this.addParameters(this.libraryParams);
@@ -362,18 +362,18 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
                     return;
                 }
 
-                int bb = this.mainClassComboModel.getIndexOf(itemEvent.getItem());
-                switch (bb) {
+                int indexOfValue = this.mainClassComboModel.getIndexOf(itemEvent.getItem());
+                switch (indexOfValue) {
                     case -1:
                     case 0:
                         break;
                     default:
-                        String string = this.getMainClassParameter((ClassListEntry) this.mainClassComboModel.getElementAt(bb));
+                        String mainClassParameter = this.getMainClassParameter((ClassListEntry) this.mainClassComboModel.getElementAt(indexOfValue));
                         if (itemEvent.getStateChange() == 1) {
-                            this.addParameter(string);
+                            this.addParameter(mainClassParameter);
                         } else {
                             this.updatingMainClass = true;
-                            this.removeParameter(string);
+                            this.removeParameter(mainClassParameter);
                             this.updatingMainClass = false;
                         }
                 }
@@ -408,23 +408,23 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
                 ClassListEntry classListEntry = (ClassListEntry) this.mainClassComboBox.getSelectedItem();
                 WizardAppSettings wizardAppSettings = this.wizardSettings;
                 boolean application = classListEntry.isApplication();
-                String string = classListEntry.getClassName();
-                wizardAppSettings.setMainClass(true, string, application);
+                String className = classListEntry.getClassName();
+                wizardAppSettings.setMainClass(true, className, application);
         }
     }
 
     public void addParameters(OrderedIndexedMap orderedIndexedMap) {
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
-        for (int i = orderedIndexedMap.size(); bb < i; i = orderedIndexedMap.size()) {
-            String string = (String) orderedIndexedMap.getKeyAt(ba);
-            if (!super.paramIndexMap.containsKey(string)) {
+        for (int orderedIndexedMapSize = orderedIndexedMap.size(); bb < orderedIndexedMapSize; orderedIndexedMapSize = orderedIndexedMap.size()) {
+            String keyAt = (String) orderedIndexedMap.getKeyAt(elementIndex);
+            if (!super.paramIndexMap.containsKey(keyAt)) {
                 try {
-                    RenameFilterModel renameFilterModel = this.parseParameter(string);
-                    if (renameFilterModel.toScriptText().equals(string)) {
-                        DisableableListItem disableableListItem = new DisableableListItem(string, false);
-                        super.paramIndexMap.put(string, disableableListItem);
+                    RenameFilterModel renameFilterModel = this.parseParameter(keyAt);
+                    if (renameFilterModel.toScriptText().equals(keyAt)) {
+                        DisableableListItem disableableListItem = new DisableableListItem(keyAt, false);
+                        super.paramIndexMap.put(keyAt, disableableListItem);
                         super.paramListModel.addElement(disableableListItem);
                     }
                 } catch (AssertionFailedException assertionFailedException) {
@@ -433,7 +433,7 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
                 }
             }
 
-            bb = ++ba;
+            bb = ++elementIndex;
         }
 
         if (super.paramList.getSelectedIndex() == -1 && super.lastSelectedParameter != null && super.paramIndexMap.containsKey(super.lastSelectedParameter)) {
@@ -476,12 +476,12 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
         Enumeration enumeration = this.defaultParams.keyEnumeration();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
+            String key = (String) enumeration.nextElement();
 
             try {
-                RenameFilterModel renameFilterModel = this.parseParameter(string);
-                if (renameFilterModel.toScriptText().equals(string)) {
-                    this.addParameterItem(string, true);
+                RenameFilterModel renameFilterModel = this.parseParameter(key);
+                if (renameFilterModel.toScriptText().equals(key)) {
+                    this.addParameterItem(key, true);
                 }
             } catch (AssertionFailedException assertionFailedException1) {
                 throw assertionFailedException1;
@@ -493,12 +493,12 @@ public abstract class ExclusionWizardDialogBase extends ParameterListDialog impl
             enumeration = this.wizardSettings.enumerateEntries();
 
             while (enumeration.hasMoreElements()) {
-                String string1 = (String) enumeration.nextElement();
+                String keyValue = (String) enumeration.nextElement();
 
                 try {
-                    RenameFilterModel renameFilterModel1 = this.parseParameter(string1);
-                    if (renameFilterModel1.toScriptText().equals(string1)) {
-                        this.addParameter(string1);
+                    RenameFilterModel renameFilterModel1 = this.parseParameter(keyValue);
+                    if (renameFilterModel1.toScriptText().equals(keyValue)) {
+                        this.addParameter(keyValue);
                     }
                 } catch (AssertionFailedException assertionFailedException) {
                     throw assertionFailedException;

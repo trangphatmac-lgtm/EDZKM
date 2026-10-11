@@ -58,38 +58,14 @@ public class ASTRemoveMethodCallsStatement extends SummarizingStatementNode {
         new LogMessageReporter(scriptEnvironment1, ZkmScriptSimpleNode.getTimestampPrefix().length());
         NoOpCallback.getInstance();
 
-        ASTRemoveMethodCallsStatement aSTRemoveMethodCallsStatement1;
-        ScriptEnvironment scriptEnvironment2;
-        int bd;
-        int be;
-        int bf;
-        String string1;
-        label28:
-        {
-            try {
-                classRepository1.removeMethodCalls(
-                        scriptEnvironment1.getRemoveMethodCallsIncludeStatements(), scriptEnvironment1.getRemoveMethodCallsExcludeStatements(), scriptEnvironment1
-                );
-            } catch (ZkmProcessingException zkmProcessingException) {
-                scriptEnvironment1.logFatalError(zkmProcessingException.getMessage());
-                aSTRemoveMethodCallsStatement1 = this;
-                scriptEnvironment2 = scriptEnvironment1;
-                bd = ba;
-                be = bb;
-                bf = bc;
-                string1 = "while executing";
-                break label28;
-            }
-
-            aSTRemoveMethodCallsStatement1 = this;
-            scriptEnvironment2 = scriptEnvironment1;
-            bd = ba;
-            be = bb;
-            bf = bc;
-            string1 = "while executing";
+        try {
+            classRepository1.removeMethodCalls(
+                    scriptEnvironment1.getRemoveMethodCallsIncludeStatements(), scriptEnvironment1.getRemoveMethodCallsExcludeStatements(), scriptEnvironment1
+            );
+        } catch (ZkmProcessingException exception) {
+            scriptEnvironment1.logFatalError(exception.getMessage());
         }
-
-        aSTRemoveMethodCallsStatement1.printMessageSummary(scriptEnvironment2, bd, be, bf, string1);
+        this.printMessageSummary(scriptEnvironment1, ba, bb, bc, "while executing");
     }
 
     @Override

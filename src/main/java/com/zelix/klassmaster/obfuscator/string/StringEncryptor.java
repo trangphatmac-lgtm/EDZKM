@@ -137,7 +137,7 @@ public class StringEncryptor {
     }
 
     public int[] createShuffledByteTable() {
-        int[] ba = new int[]{
+        int[] integerArray = new int[]{
                 0,
                 1,
                 2,
@@ -395,8 +395,8 @@ public class StringEncryptor {
                 254,
                 255
         };
-        ZkmUtils.shuffleInts(ba, this.random);
-        return ba;
+        ZkmUtils.shuffleInts(integerArray, this.random);
+        return integerArray;
     }
 
     public ResolvedInvokeDynamic getStringIndyEntry() {
@@ -502,22 +502,8 @@ public class StringEncryptor {
         list1.add(SimpleInstruction.forOpcode(90));
         list1.add(SimpleInstruction.forOpcode(95));
         list1.add(new ConstantRefInstruction(183, resolvedMethodRefConstant1));
-        label41:
-        if (resolvedMethodRefConstant2 != null) {
-            boolean bl2;
-            if (!bl1) {
-                if (this.lazyDecrypt) {
-                    break label41;
-                }
-
-                bl2 = HiddenOptionFlags.STRING_ENCRYPT_INTERN;
-            } else {
-                bl2 = HiddenOptionFlags.STRING_ENCRYPT_INTERN;
-            }
-
-            if (bl2) {
-                list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant2));
-            }
+        if (resolvedMethodRefConstant2 != null && (bl1 || !this.lazyDecrypt) && HiddenOptionFlags.STRING_ENCRYPT_INTERN) {
+            list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant2));
         }
 
         if (bl) {
@@ -565,22 +551,22 @@ public class StringEncryptor {
             ClassMemberLookup classMemberLookup1,
             ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        int bb = observableHolders.length;
+        int lengthValue = observableHolders.length;
         HashMap hashMap = ZkmUtils.createHashMap();
         Map map2 = this.buildEncryptedChunks(observableHolders, setMultiMap, map1, set1, bl, long1, hashMap, list2, this.targetClass.getClassConstantPool());
         ConstantPool constantPool1 = this.targetClass.getClassConstantPool();
         int andIncrement = localVariableAllocator.getAndIncrement();
-        int bd = localVariableAllocator.getAndIncrement();
-        int be = localVariableAllocator.getAndIncrement();
-        int bf = localVariableAllocator.getAndIncrement();
-        int bg = localVariableAllocator.getAndIncrement();
+        int andIncrementValue = localVariableAllocator.getAndIncrement();
+        int andIncrementValue2 = localVariableAllocator.getAndIncrement();
+        int andIncrementValue3 = localVariableAllocator.getAndIncrement();
+        int andIncrementValue4 = localVariableAllocator.getAndIncrement();
         int bh = ba == -1 ? localVariableAllocator.getAndIncrement() : ba;
-        Instruction.appendIntConstant(bb, list1, constantPool1, list2);
+        Instruction.appendIntConstant(lengthValue, list1, constantPool1, list2);
         ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant("java/lang/String", list2);
         list1.add(new ConstantRefInstruction(189, resolvedClassConstant));
         list1.add(Instruction.createObjectStore(bh, localVariableList1, 1));
         list1.add(SimpleInstruction.forOpcode(3));
-        list1.add(Instruction.createIntStore(bf, localVariableList1, 1));
+        list1.add(Instruction.createIntStore(andIncrementValue3, localVariableList1, 1));
         Iterator iterator = map2.entrySet().iterator();
 
         while (iterator.hasNext()) {
@@ -590,14 +576,14 @@ public class StringEncryptor {
             ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) entry.getKey();
             list1.add(new ConstantRefInstruction(19, resolvedStringConstant));
             list1.add(SimpleInstruction.forOpcode(89));
-            list1.add(Instruction.createObjectStore(be, localVariableList1, 1));
+            list1.add(Instruction.createObjectStore(andIncrementValue2, localVariableList1, 1));
             ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddMethodRef(
                     "java/lang/String", "length", "()I", list2, classMemberLookup1, classResolver1
             );
             list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant));
-            list1.add(Instruction.createIntStore(bg, localVariableList1, 1));
+            list1.add(Instruction.createIntStore(andIncrementValue4, localVariableList1, 1));
             Instruction.appendIntConstant((Integer) entry.getValue(), list1, constantPool1, list2);
-            list1.add(Instruction.createIntStore(bd, localVariableList1, 1));
+            list1.add(Instruction.createIntStore(andIncrementValue, localVariableList1, 1));
             list1.add(SimpleInstruction.forOpcode(2));
             list1.add(Instruction.createIntStore(andIncrement, localVariableList1, 1));
             list1.add(labelInstruction1);
@@ -606,10 +592,10 @@ public class StringEncryptor {
             }
 
             list1.add(Instruction.createIntIncrement(andIncrement, 1, localVariableList1, 1));
-            list1.add(Instruction.createObjectLoad(be, localVariableList1, 1));
+            list1.add(Instruction.createObjectLoad(andIncrementValue2, localVariableList1, 1));
             list1.add(Instruction.createIntLoad(andIncrement, localVariableList1, 1));
             list1.add(SimpleInstruction.forOpcode(89));
-            list1.add(Instruction.createIntLoad(bd, localVariableList1, 1));
+            list1.add(Instruction.createIntLoad(andIncrementValue, localVariableList1, 1));
             list1.add(SimpleInstruction.forOpcode(96));
             ResolvedMethodRefConstant resolvedMethodRefConstant1 = constantPool1.getOrAddMethodRef(
                     "java/lang/String", "substring", "(II)Ljava/lang/String;", list2, classMemberLookup1, classResolver1
@@ -618,34 +604,34 @@ public class StringEncryptor {
             if (jsrGotoKind == JsrGotoKind.JSR) {
                 list1.add(new JsrInstruction(labelInstruction));
             } else if (jsrGotoKind == JsrGotoKind.GOTO) {
-                int bi = mutableInt.incrementAndGet();
-                list1.add(Instruction.createIntPush(bi));
+                int rank = mutableInt.incrementAndGet();
+                list1.add(Instruction.createIntPush(rank));
                 list1.add(new GotoInstruction(labelInstruction));
                 LabelInstruction labelInstruction3 = new LabelInstruction(true, 1);
                 list1.add(labelInstruction3);
-                listMultimap.addValue(labelInstruction, new RankedValue(bi, labelInstruction3));
+                listMultimap.addValue(labelInstruction, new RankedValue(rank, labelInstruction3));
             }
 
             list1.add(Instruction.createObjectLoad(bh, localVariableList1, 1));
             list1.add(SimpleInstruction.forOpcode(95));
-            list1.add(Instruction.createIntLoad(bf, localVariableList1, 1));
-            list1.add(Instruction.createIntIncrement(bf, 1, localVariableList1, 1));
+            list1.add(Instruction.createIntLoad(andIncrementValue3, localVariableList1, 1));
+            list1.add(Instruction.createIntIncrement(andIncrementValue3, 1, localVariableList1, 1));
             list1.add(SimpleInstruction.forOpcode(95));
             list1.add(SimpleInstruction.forOpcode(83));
             list1.add(Instruction.createIntLoad(andIncrement, localVariableList1, 1));
-            list1.add(Instruction.createIntLoad(bd, localVariableList1, 1));
+            list1.add(Instruction.createIntLoad(andIncrementValue, localVariableList1, 1));
             list1.add(SimpleInstruction.forOpcode(96));
             list1.add(SimpleInstruction.forOpcode(89));
             list1.add(Instruction.createIntStore(andIncrement, localVariableList1, 1));
-            list1.add(Instruction.createIntLoad(bg, localVariableList1, 1));
+            list1.add(Instruction.createIntLoad(andIncrementValue4, localVariableList1, 1));
             list1.add(new BranchInstruction(162, labelInstruction2));
-            list1.add(Instruction.createObjectLoad(be, localVariableList1, 1));
+            list1.add(Instruction.createObjectLoad(andIncrementValue2, localVariableList1, 1));
             list1.add(Instruction.createIntLoad(andIncrement, localVariableList1, 1));
             ResolvedMethodRefConstant resolvedMethodRefConstant2 = constantPool1.getOrAddMethodRef(
                     "java/lang/String", "charAt", "(I)C", list2, classMemberLookup1, classResolver1
             );
             list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant2));
-            list1.add(Instruction.createIntStore(bd, localVariableList1, 1));
+            list1.add(Instruction.createIntStore(andIncrementValue, localVariableList1, 1));
             list1.add(new GotoInstruction(labelInstruction1));
             list1.add(labelInstruction2);
         }
@@ -654,7 +640,7 @@ public class StringEncryptor {
             list1.add(Instruction.createObjectLoad(bh, localVariableList1, 1));
             list1.add(new ConstantRefInstruction(179, resolvedFieldRef));
             if (this.lazyDecrypt) {
-                Instruction.appendIntConstant(bb, list1, constantPool1, list2);
+                Instruction.appendIntConstant(lengthValue, list1, constantPool1, list2);
                 list1.add(new ConstantRefInstruction(189, resolvedClassConstant));
                 list1.add(new ConstantRefInstruction(179, resolvedFieldRef1));
             }
@@ -982,10 +968,10 @@ public class StringEncryptor {
     }
 
     public String desEncrypt(String string, long ba) throws ZkmProcessingException {
-        byte[] bb = longToBytes(ba);
+        byte[] byteArray = longToBytes(ba);
 
         try {
-            DESKeySpec dESKeySpec = new DESKeySpec(bb);
+            DESKeySpec dESKeySpec = new DESKeySpec(byteArray);
             if (this.desKeyFactory == null) {
                 this.desKeyFactory = SecretKeyFactory.getInstance("DES");
             }
@@ -999,9 +985,9 @@ public class StringEncryptor {
             IvParameterSpec ivParameterSpec1 = this.desIv;
             SecretKey secretKey1 = secretKey;
             this.desCipher.init(1, secretKey1, ivParameterSpec1);
-            byte[] bc = ZkmUtils.toModifiedUtf8(string);
-            byte[] bd = this.desCipher.doFinal(bc);
-            return new String(bd, "ISO-8859-1");
+            byte[] byteArrayValue = ZkmUtils.toModifiedUtf8(string);
+            byte[] byteArrayValue2 = this.desCipher.doFinal(byteArrayValue);
+            return new String(byteArrayValue2, "ISO-8859-1");
         } catch (Exception exception) {
             throw new ZkmProcessingException(exception.toString(), exception);
         }
@@ -1042,9 +1028,9 @@ public class StringEncryptor {
             ObservableHolder observableHolder
     ) throws ZkmException, IOException {
         if (bl) {
-            int ba = this.nextRandomKey(this.random, MAX_CHUNK_KEY_VALUE);
-            observableHolder.setValue(ba);
-            list1.add(Instruction.createIntPush(ba));
+            int value = this.nextRandomKey(this.random, MAX_CHUNK_KEY_VALUE);
+            observableHolder.setValue(value);
+            list1.add(Instruction.createIntPush(value));
         }
 
         if (resolvedStringConstant.getIndex() > 255) {
@@ -1056,12 +1042,12 @@ public class StringEncryptor {
         if (jsrGotoKind == JsrGotoKind.JSR) {
             list1.add(new JsrInstruction(labelInstruction));
         } else if (jsrGotoKind == JsrGotoKind.GOTO) {
-            int bb = mutableInt.incrementAndGet();
-            list1.add(Instruction.createIntPush(bb));
+            int rank = mutableInt.incrementAndGet();
+            list1.add(Instruction.createIntPush(rank));
             list1.add(new GotoInstruction(labelInstruction));
             LabelInstruction labelInstruction1 = new LabelInstruction(true, 1);
             list1.add(labelInstruction1);
-            listMultimap.addValue(labelInstruction, new RankedValue(bb, labelInstruction1));
+            listMultimap.addValue(labelInstruction, new RankedValue(rank, labelInstruction1));
         } else {
             list1.add(new ConstantRefInstruction(184, this.toCharArrayHelperRef));
             list1.add(new ConstantRefInstruction(184, this.decryptHelperRef));
@@ -1081,7 +1067,7 @@ public class StringEncryptor {
             ResolvedFieldRef resolvedFieldRef,
             ResolvedFieldRef resolvedFieldRef1,
             Integer integer,
-            int[] ba,
+            int[] integerArray,
             List list2,
             ConstantPool constantPool1,
             ClassMemberLookup classMemberLookup1,
@@ -1654,12 +1640,12 @@ public class StringEncryptor {
 
         for (int i = 0; i < labelInstructions.length; i += 1) {
             list1.add(labelInstructions[i]);
-            list1.add(Instruction.createIntPush(ba[i]));
+            list1.add(Instruction.createIntPush(integerArray[i]));
             list1.add(new GotoInstruction(labelInstruction256));
         }
 
         list1.add(labelInstruction255);
-        list1.add(Instruction.createIntPush(ba[255]));
+        list1.add(Instruction.createIntPush(integerArray[255]));
         list1.add(labelInstruction256);
         list1.add(Instruction.createIntStore(be, localVariableList1, 1));
         list1.add(Instruction.createIntLoad(1, localVariableList1, 1));
@@ -1770,22 +1756,22 @@ public class StringEncryptor {
                 "java/lang/String", "<init>", "([C)V", list2, classMemberLookup1, classResolver1
         );
         list1.add(new ConstantRefInstruction(183, resolvedMethodRefConstant1));
-        byte bn;
+        byte instancesByOpcodeElementIndex;
         if (this.internMethodRef != null) {
             if (HiddenOptionFlags.STRING_ENCRYPT_INTERN) {
                 list1.add(new ConstantRefInstruction(182, this.internMethodRef));
                 list3 = list1;
-                bn = 83;
+                instancesByOpcodeElementIndex = 83;
             } else {
                 list3 = list1;
-                bn = 83;
+                instancesByOpcodeElementIndex = 83;
             }
         } else {
             list3 = list1;
-            bn = 83;
+            instancesByOpcodeElementIndex = 83;
         }
 
-        list3.add(SimpleInstruction.forOpcode(bn));
+        list3.add(SimpleInstruction.forOpcode(instancesByOpcodeElementIndex));
         list1.add(labelInstruction263);
         list1.add(new ConstantRefInstruction(178, resolvedFieldRef));
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 1));
@@ -1793,45 +1779,45 @@ public class StringEncryptor {
         list1.add(SimpleInstruction.forOpcode(176));
     }
 
-    public static String xorWithKeys(String string, int[] ba) {
-        int bb = ba.length;
-        char[] bc = string.toCharArray();
-        int bd = bc.length;
+    public static String xorWithKeys(String string, int[] integerArray) {
+        int lengthValue = integerArray.length;
+        char[] characterArray = string.toCharArray();
+        int lengthValue2 = characterArray.length;
 
-        for (int i = 0; i < bd; i++) {
-            int bf = i % bb;
-            bc[i] = (char) (bc[i] ^ ba[bf]);
+        for (int characterArrayElementIndex = 0; characterArrayElementIndex < lengthValue2; characterArrayElementIndex++) {
+            int integerArrayElementIndex = characterArrayElementIndex % lengthValue;
+            characterArray[characterArrayElementIndex] = (char) (characterArray[characterArrayElementIndex] ^ integerArray[integerArrayElementIndex]);
         }
 
-        return new String(bc);
+        return new String(characterArray);
     }
 
     public int[] deriveXorKeys(int ba) {
-        int[] bb = new int[this.xorKeys.length];
+        int[] integerArray = new int[this.xorKeys.length];
         int bc = 0;
         int bd = 0;
 
         for (int[] xorKeys = this.xorKeys; bd < xorKeys.length; xorKeys = this.xorKeys) {
-            bb[bc] = this.xorKeys[bc] ^ ba;
+            integerArray[bc] = this.xorKeys[bc] ^ ba;
             bd = ++bc;
         }
 
-        return bb;
+        return integerArray;
     }
 
     public static int[] randomKeys(Random random1, int ba, int bb) {
-        int[] bc = new int[ba];
+        int[] integerArray = new int[ba];
 
-        for (int i = 0; i < ba; i++) {
+        for (int integerArrayElementIndex = 0; integerArrayElementIndex < ba; integerArrayElementIndex++) {
             int be = random1.nextInt() % bb;
             if (be < 0) {
                 be += bb;
             }
 
-            bc[i] = ++be;
+            integerArray[integerArrayElementIndex] = ++be;
         }
 
-        return bc;
+        return integerArray;
     }
 
     public void emitDecryptSubroutine(
@@ -1863,8 +1849,8 @@ public class StringEncryptor {
                 LabelInstruction labelInstruction2 = (LabelInstruction) ((RankedValue) list3.get(0)).getValue();
                 LabelInstruction[] labelInstructions = new LabelInstruction[list3.size() - 1];
 
-                for (int i = 1; i < list3.size(); i++) {
-                    labelInstructions[i - 1] = (LabelInstruction) ((RankedValue) list3.get(i)).getValue();
+                for (int elementIndex = 1; elementIndex < list3.size(); elementIndex++) {
+                    labelInstructions[elementIndex - 1] = (LabelInstruction) ((RankedValue) list3.get(elementIndex)).getValue();
                 }
 
                 if (bl) {
@@ -1924,17 +1910,17 @@ public class StringEncryptor {
 
         list1.add(SimpleInstruction.forOpcode(3));
         List list2;
-        byte ba;
+        byte instancesByOpcodeElementIndex;
         if (bl) {
             list1.add(SimpleInstruction.forOpcode(91));
             list2 = list1;
-            ba = 92;
+            instancesByOpcodeElementIndex = 92;
         } else {
             list2 = list1;
-            ba = 92;
+            instancesByOpcodeElementIndex = 92;
         }
 
-        list2.add(SimpleInstruction.forOpcode(ba));
+        list2.add(SimpleInstruction.forOpcode(instancesByOpcodeElementIndex));
         list1.add(SimpleInstruction.forOpcode(52));
         list1.add(Instruction.createIntPush(this.xorKeys[6]));
         list1.add(SimpleInstruction.forOpcode(130));
@@ -1987,22 +1973,22 @@ public class StringEncryptor {
             ConstantPool constantPool1
     ) throws ZkmProcessingException {
         LinkedHashMap linkedHashMap = new LinkedHashMap();
-        int ba = observableHolders.length;
-        int bb = 0;
+        int lengthValue = observableHolders.length;
+        int observableHolderIndex = 0;
 
-        while (bb < ba) {
+        while (observableHolderIndex < lengthValue) {
             StringBuilder stringBuilder = new StringBuilder();
-            int bc = -1;
+            int value = -1;
             int bd = 0;
             Integer integer = null;
-            int[] be = null;
+            int[] integerArray = null;
             if (bl) {
                 integer = this.nextRandomKey(this.random, MAX_CHUNK_KEY_VALUE);
-                be = this.deriveXorKeys(integer);
+                integerArray = this.deriveXorKeys(integer);
             }
 
-            while (bb < ba) {
-                ObservableHolder observableHolder = observableHolders[bb];
+            while (observableHolderIndex < lengthValue) {
+                ObservableHolder observableHolder = observableHolders[observableHolderIndex];
                 EncryptedStringLocation encryptedStringLocation = (EncryptedStringLocation) map1.get(observableHolder);
                 Iterator iterator = setMultiMap.getValues(observableHolder).iterator();
 
@@ -2013,96 +1999,83 @@ public class StringEncryptor {
                 }
 
                 StringEncryptionTechnique stringEncryptionTechnique = encryptedStringLocation.getTechnique();
-                String string1 = (String) observableHolder.getValue();
-                short bf = 0;
+                String valueValue = (String) observableHolder.getValue();
+                short stringIndexValue = 0;
                 if (stringEncryptionTechnique.equals(StringEncryptionTechnique.LOOKUP_METHOD_AND_INDEX)) {
-                    int[] bg = randomKeys(this.random, 2, 255);
-                    string1 = rollingXorEncrypt(string1, bg, true);
-                    int bh = string1.charAt(0) & 255;
-                    offsetKeys(bh, bg, this.byteShuffleTable);
-                    short bi = (short) (bg[0] | bg[1] << 8);
-                    encryptedStringLocation.setLookupKey(bi);
-                    bf = (short) (bb ^ this.indexXorKey);
-                } else {
-                    label81:
-                    {
-                        Iterator iterator1;
-                        if (!stringEncryptionTechnique.equals(StringEncryptionTechnique.LOOKUP_METHOD_AND_INDEX_DES)) {
-                            if (!stringEncryptionTechnique.equals(StringEncryptionTechnique.INDY_ENTRY_AND_INDEX)) {
-                                break label81;
-                            }
-
-                            iterator1 = this.randomLongKeys;
-                        } else {
-                            iterator1 = this.randomLongKeys;
-                        }
-
-                        long bk = (Long) iterator1.next();
-                        encryptedStringLocation.setDecryptKey(bk);
-                        bf = (short) (bb ^ this.indexXorKey);
-                        string1 = this.desEncrypt(string1, bk);
-                    }
+                    int[] sourceArray = randomKeys(this.random, 2, 255);
+                    valueValue = rollingXorEncrypt(valueValue, sourceArray, true);
+                    int integerArrayArgumentElementIndex = valueValue.charAt(0) & 255;
+                    offsetKeys(integerArrayArgumentElementIndex, sourceArray, this.byteShuffleTable);
+                    short lookupKeyValue = (short) (sourceArray[0] | sourceArray[1] << 8);
+                    encryptedStringLocation.setLookupKey(lookupKeyValue);
+                    stringIndexValue = (short) (observableHolderIndex ^ this.indexXorKey);
+                } else if (stringEncryptionTechnique.equals(StringEncryptionTechnique.LOOKUP_METHOD_AND_INDEX_DES)
+                        || stringEncryptionTechnique.equals(StringEncryptionTechnique.INDY_ENTRY_AND_INDEX)) {
+                    long decryptKeyValue = (Long) this.randomLongKeys.next();
+                    encryptedStringLocation.setDecryptKey(decryptKeyValue);
+                    stringIndexValue = (short) (observableHolderIndex ^ this.indexXorKey);
+                    valueValue = this.desEncrypt(valueValue, decryptKeyValue);
                 }
 
                 String string2;
                 if (long1 != null) {
-                    string2 = this.desEncrypt(string1, long1);
+                    string2 = this.desEncrypt(valueValue, long1);
                 } else if (bl) {
-                    string2 = xorWithKeys(string1, be);
+                    string2 = xorWithKeys(valueValue, integerArray);
                 } else {
-                    string2 = xorWithKeys(string1, this.xorKeys);
+                    string2 = xorWithKeys(valueValue, this.xorKeys);
                 }
 
-                int bm = string2.length();
-                StringBuilder stringBuilder1 = new StringBuilder(bm + 1);
-                if (bc == -1) {
-                    bc = bm;
+                int valueValue3 = string2.length();
+                StringBuilder stringBuilder1 = new StringBuilder(valueValue3 + 1);
+                if (value == -1) {
+                    value = valueValue3;
                 } else {
-                    stringBuilder1.append((char) bm);
+                    stringBuilder1.append((char) valueValue3);
                 }
 
                 stringBuilder1.append(string2);
-                int bj = ZkmUtils.getModifiedUtf8Length(stringBuilder1.toString());
-                if (bj > 65535) {
-                    String string = (String) observableHolder.getValue();
+                int modifiedUtf8Length = ZkmUtils.getModifiedUtf8Length(stringBuilder1.toString());
+                if (modifiedUtf8Length > 65535) {
+                    String valueValue2 = (String) observableHolder.getValue();
                     ZkmAssert.assertTrue(
                             false,
                             new String[]{
                                     "String too large in class '"
                                             + this.targetClass.getDisplayLocationName()
                                             + "' : "
-                                            + string.length()
+                                            + valueValue2.length()
                                             + " : "
-                                            + bj
+                                            + modifiedUtf8Length
                                             + " : "
-                                            + ZkmUtils.getModifiedUtf8Length(string)
+                                            + ZkmUtils.getModifiedUtf8Length(valueValue2)
                                             + " : '"
-                                            + ZkmUtils.escapeJavaString(string.substring(0, 50))
+                                            + ZkmUtils.escapeJavaString(valueValue2.substring(0, 50))
                                             + "'"
                             }
                     );
                 }
 
-                if (bd > 0 && bd + bj > 32768) {
+                if (bd > 0 && bd + modifiedUtf8Length > 32768) {
                     break;
                 }
 
-                bd += bj;
-                bb++;
+                bd += modifiedUtf8Length;
+                observableHolderIndex++;
                 stringBuilder.append(stringBuilder1);
                 if (stringEncryptionTechnique.equals(StringEncryptionTechnique.LOOKUP_METHOD_AND_INDEX)
                         || stringEncryptionTechnique.equals(StringEncryptionTechnique.LOOKUP_METHOD_AND_INDEX_DES)
                         || stringEncryptionTechnique.equals(StringEncryptionTechnique.INDY_ENTRY_AND_INDEX)) {
-                    encryptedStringLocation.setStringIndex(bf);
+                    encryptedStringLocation.setStringIndex(stringIndexValue);
                 }
 
-                if (linkedHashMap.size() == 0 && ba > 3 && bb == ba - 2) {
+                if (linkedHashMap.size() == 0 && lengthValue > 3 && observableHolderIndex == lengthValue - 2) {
                     break;
                 }
             }
 
             ResolvedStringConstant resolvedStringConstant1 = constantPool1.addStringConstant(stringBuilder.toString(), list1);
-            linkedHashMap.put(resolvedStringConstant1, bc);
+            linkedHashMap.put(resolvedStringConstant1, value);
             if (integer != null) {
                 map2.put(resolvedStringConstant1, integer);
             }
@@ -2137,11 +2110,11 @@ public class StringEncryptor {
                 if (long1 != null && localVariableIndex1 != null) {
                     ConstantPool constantPool3 = this.targetClass.getClassConstantPool();
                     int stringIndex = encryptedStringLocation.getStringIndex();
-                    int bc = stringIndex ^ long1.intValue();
-                    list1.add(Instruction.createIntConstantPush(bc, constantPool3, list2));
+                    int valueValue4 = stringIndex ^ long1.intValue();
+                    list1.add(Instruction.createIntConstantPush(valueValue4, constantPool3, list2));
                     int lookupKey = encryptedStringLocation.getLookupKey();
-                    int bn = lookupKey ^ long1.intValue();
-                    list1.add(Instruction.createIntConstantPush(bn, constantPool3, list2));
+                    int valueValue5 = lookupKey ^ long1.intValue();
+                    list1.add(Instruction.createIntConstantPush(valueValue5, constantPool3, list2));
                     list1.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), localVariableList1, 1));
                     list1.add(SimpleInstruction.forOpcode(136));
                 } else {
@@ -2153,18 +2126,18 @@ public class StringEncryptor {
                 break;
             case 4:
                 ConstantPool constantPool2 = this.targetClass.getClassConstantPool();
-                int bf = encryptedStringLocation.getStringIndex();
+                int stringIndexValue = encryptedStringLocation.getStringIndex();
                 long decryptKey = encryptedStringLocation.getDecryptKey();
                 if (long1 != null && localVariableIndex1 != null) {
-                    int bk = bf ^ (int) (decryptKey & 32767L);
-                    Instruction.appendIntConstant(bk, list1, constantPool2, list2);
-                    long bm = decryptKey ^ long1;
-                    Instruction.appendLongConstant(bm, list1, constantPool2, list2);
+                    int value = stringIndexValue ^ (int) (decryptKey & 32767L);
+                    Instruction.appendIntConstant(value, list1, constantPool2, list2);
+                    long valueValue6 = decryptKey ^ long1;
+                    Instruction.appendLongConstant(valueValue6, list1, constantPool2, list2);
                     list1.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), localVariableList1, 1));
                     list1.add(SimpleInstruction.forOpcode(131));
                 } else {
-                    int bj = bf ^ (int) decryptKey;
-                    Instruction.appendIntConstant(bj, list1, constantPool2, list2);
+                    int valueValue = stringIndexValue ^ (int) decryptKey;
+                    Instruction.appendIntConstant(valueValue, list1, constantPool2, list2);
                     Instruction.appendLongConstant(decryptKey, list1, constantPool2, list2);
                 }
 
@@ -2173,19 +2146,19 @@ public class StringEncryptor {
                 break;
             case 5:
                 ConstantPool constantPool1 = this.targetClass.getClassConstantPool();
-                int ba = encryptedStringLocation.getStringIndex();
-                long bb = encryptedStringLocation.getDecryptKey();
+                int stringIndexValue2 = encryptedStringLocation.getStringIndex();
+                long decryptKeyValue = encryptedStringLocation.getDecryptKey();
                 if (long1 != null && localVariableIndex1 != null) {
-                    int bi = ba ^ (int) (bb & 32767L);
-                    Instruction.appendIntConstant(bi, list1, constantPool1, list2);
-                    long be = bb ^ long1;
-                    Instruction.appendLongConstant(be, list1, constantPool1, list2);
+                    int valueValue2 = stringIndexValue2 ^ (int) (decryptKeyValue & 32767L);
+                    Instruction.appendIntConstant(valueValue2, list1, constantPool1, list2);
+                    long valueValue7 = decryptKeyValue ^ long1;
+                    Instruction.appendLongConstant(valueValue7, list1, constantPool1, list2);
                     list1.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), localVariableList1, 1));
                     list1.add(SimpleInstruction.forOpcode(131));
                 } else {
-                    int bd = ba ^ (int) bb;
-                    Instruction.appendIntConstant(bd, list1, constantPool1, list2);
-                    Instruction.appendLongConstant(bb, list1, constantPool1, list2);
+                    int valueValue3 = stringIndexValue2 ^ (int) decryptKeyValue;
+                    Instruction.appendIntConstant(valueValue3, list1, constantPool1, list2);
+                    Instruction.appendLongConstant(decryptKeyValue, list1, constantPool1, list2);
                 }
 
                 list1.add(new InvokeDynamicInstruction(encryptedStringLocation.getIndyEntry()));
@@ -2580,8 +2553,8 @@ public class StringEncryptor {
                                     1
                             );
                     ResolvedMethodRef resolvedMethodRef1 = this.targetClass.addMethodRef(methodInfo4, list1);
-                    String string = String.valueOf((char) (97 + this.random.nextInt(26)));
-                    this.stringIndyEntry = this.targetClass.createInvokeDynamic(string, "(IJ)Ljava/lang/String;", resolvedMethodRef1, list1, constantPool1);
+                    String value = String.valueOf((char) (97 + this.random.nextInt(26)));
+                    this.stringIndyEntry = this.targetClass.createInvokeDynamic(value, "(IJ)Ljava/lang/String;", resolvedMethodRef1, list1, constantPool1);
                 }
             }
         } else {
@@ -2650,11 +2623,11 @@ public class StringEncryptor {
                         this.targetClass.getClassName(), fieldInfo1.getSourceName(), fieldInfo1.getDescriptor(), list1, classMemberLookup1, classResolver1, true
                 );
                 String string1 = bl3 ? "(III)Ljava/lang/String;" : "(II)Ljava/lang/String;";
-                int bb = bl3 ? 10 : 9;
-                LocalVariableList localVariableList6 = new LocalVariableList(true, string1, bb);
+                int maxLocals = bl3 ? 10 : 9;
+                LocalVariableList localVariableList6 = new LocalVariableList(true, string1, maxLocals);
                 ArrayList arrayList5 = new ArrayList();
-                int[] bc = randomKeys(this.random, 2, 255);
-                this.indexXorKey = (short) (bc[1] << 8 | bc[0]);
+                int[] integerArray = randomKeys(this.random, 2, 255);
+                this.indexXorKey = (short) (integerArray[1] << 8 | integerArray[0]);
                 this.byteShuffleTable = this.createShuffledByteTable();
                 ResolvedFieldRef resolvedFieldRef1 = this.stringArrayFieldRef;
                 ClassMemberLookup classMemberLookup3 = classMemberLookup1;
@@ -2670,7 +2643,7 @@ public class StringEncryptor {
                                 string1,
                                 arrayList5,
                                 5,
-                                bb,
+                                maxLocals,
                                 1,
                                 localVariableList6,
                                 new ExceptionHandlerSpec[0],
@@ -2685,11 +2658,11 @@ public class StringEncryptor {
         }
     }
 
-    public static void offsetKeys(int ba, int[] bb, int[] bc) {
-        int bd = bc[ba];
+    public static void offsetKeys(int integerArrayArgumentElementIndex, int[] integerArray, int[] integerArrayArgument) {
+        int integerArrayArgumentElement = integerArrayArgument[integerArrayArgumentElementIndex];
 
-        for (int i = 0; i < bb.length; i++) {
-            bb[i] = (bb[i] + bd) % 256;
+        for (int integerArrayElementIndex = 0; integerArrayElementIndex < integerArray.length; integerArrayElementIndex++) {
+            integerArray[integerArrayElementIndex] = (integerArray[integerArrayElementIndex] + integerArrayArgumentElement) % 256;
         }
     }
 
@@ -2831,31 +2804,31 @@ public class StringEncryptor {
         arrayList.add(SimpleInstruction.forOpcode(176));
     }
 
-    public static String rollingXorEncrypt(String string, int[] ba, boolean bl) {
-        int[] bb = new int[ba.length];
-        System.arraycopy(ba, 0, bb, 0, ba.length);
-        int bc = bb.length;
-        char[] bd = string.toCharArray();
-        int be = bd.length;
+    public static String rollingXorEncrypt(String string, int[] sourceArray, boolean bl) {
+        int[] destinationArray = new int[sourceArray.length];
+        System.arraycopy(sourceArray, 0, destinationArray, 0, sourceArray.length);
+        int lengthValue = destinationArray.length;
+        char[] characterArray = string.toCharArray();
+        int lengthValue2 = characterArray.length;
 
-        for (int i = 0; i < be; i++) {
-            int bg = i % bc;
-            char bh = bd[i];
-            bd[i] = (char) (bd[i] ^ bb[bg]);
-            int bi = bb[bg] >>> 3 | bb[bg] << 5;
+        for (int characterArrayElementIndex = 0; characterArrayElementIndex < lengthValue2; characterArrayElementIndex++) {
+            int destinationArrayElementIndex = characterArrayElementIndex % lengthValue;
+            char characterArrayElement = characterArray[characterArrayElementIndex];
+            characterArray[characterArrayElementIndex] = (char) (characterArray[characterArrayElementIndex] ^ destinationArray[destinationArrayElementIndex]);
+            int bi = destinationArray[destinationArrayElementIndex] >>> 3 | destinationArray[destinationArrayElementIndex] << 5;
             short bj;
             if (bl) {
-                bi ^= bh;
+                bi ^= characterArrayElement;
                 bj = 255;
             } else {
-                bi ^= bd[i];
+                bi ^= characterArray[characterArrayElementIndex];
                 bj = 255;
             }
 
-            bb[bg] = bi & bj;
+            destinationArray[destinationArrayElementIndex] = bi & bj;
         }
 
-        return new String(bd);
+        return new String(characterArray);
     }
 
     public StringEncryptor(boolean useAlternateLoopEntry, boolean lazyDecrypt) {
@@ -2957,22 +2930,8 @@ public class StringEncryptor {
         list1.add(SimpleInstruction.forOpcode(90));
         list1.add(SimpleInstruction.forOpcode(95));
         list1.add(new ConstantRefInstruction(183, resolvedMethodRefConstant1));
-        label41:
-        if (resolvedMethodRefConstant2 != null) {
-            boolean bl2;
-            if (!bl1) {
-                if (this.lazyDecrypt) {
-                    break label41;
-                }
-
-                bl2 = HiddenOptionFlags.STRING_ENCRYPT_INTERN;
-            } else {
-                bl2 = HiddenOptionFlags.STRING_ENCRYPT_INTERN;
-            }
-
-            if (bl2) {
-                list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant2));
-            }
+        if (resolvedMethodRefConstant2 != null && (bl1 || !this.lazyDecrypt) && HiddenOptionFlags.STRING_ENCRYPT_INTERN) {
+            list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant2));
         }
 
         if (bl) {

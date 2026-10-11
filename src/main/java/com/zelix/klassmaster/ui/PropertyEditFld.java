@@ -6,9 +6,9 @@ public class PropertyEditFld extends JTextField {
     public boolean settingText;
 
     @Override
-    public void setText(String string) {
+    public void setText(String text) {
         this.settingText = true;
-        super.setText(string);
+        super.setText(text);
         this.settingText = false;
     }
 

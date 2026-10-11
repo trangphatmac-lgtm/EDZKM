@@ -17,26 +17,26 @@ public class ASTKeepPackageNamesOption extends ProGuardOptionNode {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
         int ba = this.jjtGetNumChildren();
         if (ba > 0) {
-            for (int i = 0; i < ba; i++) {
-                String string = ((ASTQuote122Clause) this.jjtGetChild(i)).getValue();
+            for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+                String value = ((ASTQuote122Clause) this.jjtGetChild(childrenElementIndex)).getValue();
                 String string1 = "";
                 String string2 = "";
-                int bc;
-                if ((bc = string.indexOf(":")) == -1 && (bc = string.indexOf("/")) == -1 && (bc = string.indexOf("\\")) == -1) {
+                int characterIndex;
+                if ((characterIndex = value.indexOf(":")) == -1 && (characterIndex = value.indexOf("/")) == -1 && (characterIndex = value.indexOf("\\")) == -1) {
                 }
 
-                if (bc > -1) {
+                if (characterIndex > -1) {
                     proGuardConfigTranslator.logWarning(
-                            "Package name in ProGuard '" + this.getOptionName() + "' command must not contain '" + string.charAt(bc) + "' character : '" + string + "'"
+                            "Package name in ProGuard '" + this.getOptionName() + "' command must not contain '" + value.charAt(characterIndex) + "' character : '" + value + "'"
                     );
                 } else {
-                    if (string.charAt(0) == '!') {
-                        string = string.substring(1);
+                    if (value.charAt(0) == '!') {
+                        value = value.substring(1);
                         string1 = "!(";
                         string2 = ")";
                     }
 
-                    String string3 = ProGuardWildcardConverter.convertPackagePattern(string);
+                    String string3 = ProGuardWildcardConverter.convertPackagePattern(value);
                     proGuardConfigTranslator.addExclude(string1 + string3 + string2);
                 }
             }

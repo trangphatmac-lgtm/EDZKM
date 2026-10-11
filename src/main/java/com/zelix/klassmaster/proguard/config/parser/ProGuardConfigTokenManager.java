@@ -349,12 +349,12 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
     public ProGuardConfigSimpleCharStream input_stream;
 
     private int jjMoveNfa_1() {
-        int ba = 0;
-        int bb = 0;
+        int jjmatchedPosValue = 0;
+        int jjnewStateCntValue = 0;
         this.jjnewStateCnt = 3;
-        int bc = 1;
+        int jjnewStateCntValue2 = 1;
         this.jjstateSet[0] = 0;
-        int bd = Integer.MAX_VALUE;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++this.jjround == Integer.MAX_VALUE) {
@@ -366,28 +366,28 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                 int[] jjstateSet = this.jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (jjstateSet[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
-                            char bh;
+                            char curCharValue;
                             if ((13312L & be) != 0L) {
-                                if (bd > 7) {
-                                    bd = 7;
-                                    bh = this.curChar;
+                                if (jjmatchedKindValue > 7) {
+                                    jjmatchedKindValue = 7;
+                                    curCharValue = this.curChar;
                                 } else {
-                                    bh = this.curChar;
+                                    curCharValue = this.curChar;
                                 }
                             } else {
-                                bh = this.curChar;
+                                curCharValue = this.curChar;
                             }
 
-                            if (bh == '\r') {
+                            if (curCharValue == '\r') {
                                 this.jjstateSet[this.jjnewStateCnt++] = 1;
                             }
                             break;
                         case 1:
-                            if (this.curChar == '\n' && bd > 7) {
-                                bd = 7;
+                            if (this.curChar == '\n' && jjmatchedKindValue > 7) {
+                                jjmatchedKindValue = 7;
                             }
                             break;
                         case 2:
@@ -396,73 +396,73 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             }
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
                     jjstateSet = this.jjstateSet;
                 }
             } else if (this.curChar < 128) {
-                int[] bf = this.jjstateSet;
+                int[] jjstateSetValue = this.jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (bf[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bf = this.jjstateSet;
+                    jjstateSetValue = this.jjstateSet;
                 }
             } else {
-                int[] bi = this.jjstateSet;
+                int[] jjstateSetValue2 = this.jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (bi[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bi = this.jjstateSet;
+                    jjstateSetValue2 = this.jjstateSet;
                 }
             }
 
-            if (bd != Integer.MAX_VALUE) {
-                this.jjmatchedKind = bd;
-                this.jjmatchedPos = ba;
-                bd = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                this.jjmatchedKind = jjmatchedKindValue;
+                this.jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            ba++;
-            if ((bc = this.jjnewStateCnt) == (bb = 3 - (this.jjnewStateCnt = bb))) {
-                return ba;
+            jjmatchedPosValue++;
+            if ((jjnewStateCntValue2 = this.jjnewStateCnt) == (jjnewStateCntValue = 3 - (this.jjnewStateCnt = jjnewStateCntValue))) {
+                return jjmatchedPosValue;
             }
 
             try {
                 this.curChar = this.input_stream.readChar();
             } catch (IOException iOException) {
-                return ba;
+                return jjmatchedPosValue;
             }
         }
     }
 
     public void ReInitRounds() {
         this.jjround = -2147483647;
-        int ba = 12;
+        int jjroundIndex = 12;
 
         while (true) {
-            int bb = ba;
-            ba += -1;
-            if (bb <= 0) {
+            int jjroundIndexValue = jjroundIndex;
+            jjroundIndex += -1;
+            if (jjroundIndexValue <= 0) {
                 return;
             }
 
-            this.jjrounds[ba] = Integer.MIN_VALUE;
+            this.jjrounds[jjroundIndex] = Integer.MIN_VALUE;
         }
     }
 
@@ -815,7 +815,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
         }
     }
 
-    public static final boolean jjCanMove_0(int ba, int bb, int bc, long bd, long be) {
+    public static final boolean jjCanMove_0(int ba, int jjbitVec0ElementIndex, int bc, long bd, long be) {
         switch (ba) {
             case 0:
                 return (jjbitVec1[bc] & be) != 0L;
@@ -892,7 +892,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
             case 255:
                 return (jjbitVec37[bc] & be) != 0L;
             default:
-                return (jjbitVec0[bb] & bd) != 0L;
+                return (jjbitVec0[jjbitVec0ElementIndex] & bd) != 0L;
         }
     }
 
@@ -901,18 +901,18 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
     }
 
     public void jjCheckNAddStates() {
-        int ba = 0;
+        int jjnextStatesValueElementIndex = 0;
         ProGuardConfigTokenManager proGuardConfigTokenManager1 = this;
-        int[] bb = jjnextStates;
+        int[] jjnextStatesValue = jjnextStates;
 
         while (true) {
-            proGuardConfigTokenManager1.jjCheckNAdd(bb[ba]);
-            if (ba++ == 3) {
+            proGuardConfigTokenManager1.jjCheckNAdd(jjnextStatesValue[jjnextStatesValueElementIndex]);
+            if (jjnextStatesValueElementIndex++ == 3) {
                 return;
             }
 
             proGuardConfigTokenManager1 = this;
-            bb = jjnextStates;
+            jjnextStatesValue = jjnextStates;
         }
     }
 
@@ -1226,7 +1226,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
         ProGuardConfigToken proGuardConfigToken = null;
         int ba = 0;
 
-        label124:
+        tokenScan:
         while (true) {
             try {
                 this.curChar = this.input_stream.BeginToken();
@@ -1252,7 +1252,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                                 this.curChar = this.input_stream.BeginToken();
                             }
                         } catch (IOException iOException3) {
-                            continue label124;
+                            continue tokenScan;
                         }
 
                         this.jjmatchedKind = Integer.MAX_VALUE;
@@ -1274,7 +1274,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                 }
 
                 if (this.jjmatchedKind == Integer.MAX_VALUE) {
-                    break label124;
+                    break tokenScan;
                 }
 
                 if (this.jjmatchedPos + 1 < ba) {
@@ -1292,7 +1292,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                 }
 
                 if ((jjtoSkip[this.jjmatchedKind >> 6] & 1L << (this.jjmatchedKind & 63)) != 0L) {
-                    int[] bh;
+                    int[] jjnewLexStateValue;
                     if ((jjtoSpecial[this.jjmatchedKind >> 6] & 1L << (this.jjmatchedKind & 63)) != 0L) {
                         ProGuardConfigToken proGuardConfigToken2 = this.jjFillToken();
                         if (proGuardConfigToken == null) {
@@ -1303,13 +1303,13 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                         }
 
                         this.TokenLexicalActions();
-                        bh = jjnewLexState;
+                        jjnewLexStateValue = jjnewLexState;
                     } else {
                         this.TokenLexicalActions();
-                        bh = jjnewLexState;
+                        jjnewLexStateValue = jjnewLexState;
                     }
 
-                    if (bh[this.jjmatchedKind] != -1) {
+                    if (jjnewLexStateValue[this.jjmatchedKind] != -1) {
                         this.curLexState = jjnewLexState[this.jjmatchedKind];
                     }
                     break;
@@ -1326,7 +1326,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                 try {
                     this.curChar = this.input_stream.readChar();
                 } catch (IOException iOException2) {
-                    break label124;
+                    break tokenScan;
                 }
 
                 curLexState = this.curLexState;
@@ -1357,12 +1357,12 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
             string = ba <= 1 ? "" : this.input_stream.GetImage();
         }
 
-        char bd = this.curChar;
+        char curCharValue = this.curChar;
         String string1 = string;
-        int be = column;
-        int bf = line;
+        int columnValue = column;
+        int lineValue = line;
         boolean bl1 = bl;
-        throw new ProGuardConfigTokenMgrError(bl1, bf, be, string1, bd);
+        throw new ProGuardConfigTokenMgrError(bl1, lineValue, columnValue, string1, curCharValue);
     }
 
     public int jjMoveStringLiteralDfa27_0(long ba, long bb) {
@@ -1526,13 +1526,13 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
         }
     }
 
-    public int jjMoveNfa_0(int ba, int bb) {
-        int bc = bb;
-        int bh = 0;
+    public int jjMoveNfa_0(int jjstateSetElement, int bb) {
+        int jjmatchedPosValue = bb;
+        int jjnewStateCntValue = 0;
         this.jjnewStateCnt = 12;
-        int bi = 1;
-        this.jjstateSet[0] = ba;
-        int bj = Integer.MAX_VALUE;
+        int jjnewStateCntValue2 = 1;
+        this.jjstateSet[0] = jjstateSetElement;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++this.jjround == Integer.MAX_VALUE) {
@@ -1541,15 +1541,15 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
 
             if (this.curChar < '@') {
                 long ck = 1L << this.curChar;
-                int[] co = this.jjstateSet;
+                int[] jjstateSetValue = this.jjstateSet;
 
                 while (true) {
-                    bi += -1;
-                    switch (co[bi]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                         case 0:
                             if ((287948901175001088L & ck) != 0L) {
-                                if (bj > 124) {
-                                    bj = 124;
+                                if (jjmatchedKindValue > 124) {
+                                    jjmatchedKindValue = 124;
                                 }
 
                                 this.jjCheckNAdd(0);
@@ -1557,14 +1557,14 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 1:
                             if ((-8935348299901189633L & ck) != 0L) {
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddStates();
                             } else if (this.curChar == '%') {
-                                if (bj > 127) {
-                                    bj = 127;
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                 }
 
                                 this.jjCheckNAdd(8);
@@ -1573,14 +1573,14 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             }
 
                             if ((287948901175001088L & ck) != 0L) {
-                                if (bj > 124) {
-                                    bj = 124;
+                                if (jjmatchedKindValue > 124) {
+                                    jjmatchedKindValue = 124;
                                 }
 
                                 this.jjCheckNAdd(0);
                             } else if (this.curChar == '$') {
-                                if (bj > 125) {
-                                    bj = 125;
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
@@ -1588,8 +1588,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 2:
                             if ((287948970162897407L & ck) != 0L) {
-                                if (bj > 125) {
-                                    bj = 125;
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
@@ -1607,14 +1607,14 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 5:
                             if (this.curChar == '>') {
-                                bj = 126;
+                                jjmatchedKindValue = 126;
                                 this.jjCheckNAddTwoStates(6, 3);
                             }
                             break;
                         case 6:
                             if ((-8935348299901189633L & ck) != 0L) {
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddTwoStates(6, 3);
@@ -1622,7 +1622,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 7:
                             if (this.curChar == '%') {
-                                bj = 127;
+                                jjmatchedKindValue = 127;
                                 this.jjCheckNAdd(8);
                             }
                         case 8:
@@ -1631,8 +1631,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 10:
                             if ((-8935348299901189633L & ck) != 0L) {
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddStates();
@@ -1642,8 +1642,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             if ((-8935348299901189633L & ck) != 0L) {
                                 ProGuardConfigTokenManager proGuardConfigTokenManager7;
                                 byte dj;
-                                if (bj > 127) {
-                                    bj = 127;
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                     proGuardConfigTokenManager7 = this;
                                     long db = 15152030326468L;
                                     dj = 11;
@@ -1660,8 +1660,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 12:
                             if ((-8935348299901189633L & ck) != 0L) {
-                                if (bj > 127) {
-                                    bj = 127;
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                 }
 
                                 this.jjCheckNAddTwoStates(11, 8);
@@ -1670,8 +1670,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             }
 
                             if ((-8935348299901189633L & ck) != 0L) {
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddTwoStates(6, 3);
@@ -1679,8 +1679,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 13:
                             if ((-8935348299901189633L & ck) != 0L) {
-                                if (bj > 127) {
-                                    bj = 127;
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                 }
 
                                 this.jjCheckNAddTwoStates(11, 8);
@@ -1692,8 +1692,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             if ((-8935348299901189633L & ck) != 0L) {
                                 ProGuardConfigTokenManager proGuardConfigTokenManager6;
                                 byte dh;
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                     proGuardConfigTokenManager6 = this;
                                     long cz = 15152030326468L;
                                     dh = 6;
@@ -1712,32 +1712,32 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             }
 
                             if ((cp & ck) != 0L) {
-                                if (bj > 125) {
-                                    bj = 125;
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
                             }
                     }
 
-                    if (bi == bh) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    co = this.jjstateSet;
+                    jjstateSetValue = this.jjstateSet;
                 }
             } else if (this.curChar < 128) {
                 long cj = 1L << (this.curChar & '?');
-                int[] cl = this.jjstateSet;
+                int[] jjstateSetValue2 = this.jjstateSet;
 
                 while (true) {
-                    bi += -1;
-                    switch (cl[bi]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                         case 1:
                             long cn;
                             if ((-8646911290859585538L & cj) != 0L) {
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddStates();
@@ -1747,8 +1747,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             }
 
                             if ((cn & cj) != 0L) {
-                                if (bj > 125) {
-                                    bj = 125;
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
@@ -1756,8 +1756,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 2:
                             if ((-8646911290859585538L & cj) != 0L) {
-                                if (bj > 125) {
-                                    bj = 125;
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
@@ -1770,8 +1770,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 6:
                             if ((-8646911290859585538L & cj) != 0L) {
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddTwoStates(6, 3);
@@ -1784,14 +1784,14 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 9:
                             if (this.curChar == ']') {
-                                bj = 127;
+                                jjmatchedKindValue = 127;
                                 this.jjCheckNAdd(8);
                             }
                             break;
                         case 10:
                             if ((-8646911290859585538L & cj) != 0L) {
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddStates();
@@ -1801,8 +1801,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             if ((-8646911290859585538L & cj) != 0L) {
                                 ProGuardConfigTokenManager proGuardConfigTokenManager5;
                                 byte dg;
-                                if (bj > 127) {
-                                    bj = 127;
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                     proGuardConfigTokenManager5 = this;
                                     long cx = 15152030326468L;
                                     dg = 11;
@@ -1819,8 +1819,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 12:
                             if ((-8646911290859585538L & cj) != 0L) {
-                                if (bj > 127) {
-                                    bj = 127;
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                 }
 
                                 this.jjCheckNAddTwoStates(11, 8);
@@ -1829,8 +1829,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             }
 
                             if ((-8646911290859585538L & cj) != 0L) {
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddTwoStates(6, 3);
@@ -1838,8 +1838,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             break;
                         case 13:
                             if ((-8646911290859585538L & cj) != 0L) {
-                                if (bj > 127) {
-                                    bj = 127;
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                 }
 
                                 this.jjCheckNAddTwoStates(11, 8);
@@ -1851,8 +1851,8 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             if ((-8646911290859585538L & cj) != 0L) {
                                 ProGuardConfigTokenManager proGuardConfigTokenManager4;
                                 byte df;
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                     proGuardConfigTokenManager4 = this;
                                     long cv = 15152030326468L;
                                     df = 6;
@@ -1871,39 +1871,39 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             }
 
                             if ((cm & cj) != 0L) {
-                                if (bj > 125) {
-                                    bj = 125;
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
                             }
                     }
 
-                    if (bi == bh) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    cl = this.jjstateSet;
+                    jjstateSetValue2 = this.jjstateSet;
                 }
             } else {
                 int bk = this.curChar >> '\b';
-                int bl = bk >> 6;
+                int jjbitVec0ElementIndex = bk >> 6;
                 long bm = 1L << (bk & 63);
                 int bn = (this.curChar & 255) >> 6;
                 long bo = 1L << (this.curChar & '?');
-                int[] dk = this.jjstateSet;
+                int[] jjstateSetValue3 = this.jjstateSet;
 
                 while (true) {
-                    bi += -1;
-                    switch (dk[bi]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue3[jjnewStateCntValue2]) {
                         case 1:
                             long bt = bo;
                             long by = bm;
                             int cd = bn;
-                            int ci = bl;
-                            if (jjCanMove_0(bk, ci, cd, by, bt)) {
-                                if (bj > 125) {
-                                    bj = 125;
+                            int jjbitVec0ElementIndexValue = jjbitVec0ElementIndex;
+                            if (jjCanMove_0(bk, jjbitVec0ElementIndexValue, cd, by, bt)) {
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
@@ -1912,10 +1912,10 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             bt = bo;
                             by = bm;
                             cd = bn;
-                            ci = bl;
-                            if (jjCanMove_1(bk, ci, cd, by, bt)) {
-                                if (bj > 126) {
-                                    bj = 126;
+                            jjbitVec0ElementIndexValue = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue, cd, by, bt)) {
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddStates();
@@ -1925,10 +1925,10 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             long bs = bo;
                             long bx = bm;
                             int cc = bn;
-                            int ch = bl;
-                            if (jjCanMove_1(bk, ch, cc, bx, bs)) {
-                                if (bj > 125) {
-                                    bj = 125;
+                            int jjbitVec0ElementIndexValue2 = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue2, cc, bx, bs)) {
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
@@ -1942,9 +1942,9 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                         default:
                             break;
                         case 6:
-                            if (jjCanMove_1(bk, bl, bn, bm, bo)) {
-                                if (bj > 126) {
-                                    bj = 126;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndex, bn, bm, bo)) {
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddTwoStates(6, 3);
@@ -1954,10 +1954,10 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             long br = bo;
                             long bw = bm;
                             int cb = bn;
-                            int cg = bl;
-                            if (jjCanMove_1(bk, cg, cb, bw, br)) {
-                                if (bj > 126) {
-                                    bj = 126;
+                            int jjbitVec0ElementIndexValue3 = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue3, cb, bw, br)) {
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                 }
 
                                 this.jjCheckNAddStates();
@@ -1967,12 +1967,12 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             long bq = bo;
                             long bv = bm;
                             int ca = bn;
-                            int cf = bl;
-                            if (jjCanMove_1(bk, cf, ca, bv, bq)) {
+                            int jjbitVec0ElementIndexValue4 = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue4, ca, bv, bq)) {
                                 ProGuardConfigTokenManager proGuardConfigTokenManager3;
                                 byte de;
-                                if (bj > 127) {
-                                    bj = 127;
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                     proGuardConfigTokenManager3 = this;
                                     long ct = 15152030326468L;
                                     de = 11;
@@ -1991,12 +1991,12 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             long bp = bo;
                             long bu = bm;
                             int bz = bn;
-                            int ce = bl;
-                            if (jjCanMove_1(bk, ce, bz, bu, bp)) {
+                            int jjbitVec0ElementIndexValue5 = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue5, bz, bu, bp)) {
                                 ProGuardConfigTokenManager proGuardConfigTokenManager2;
                                 byte dd;
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                     proGuardConfigTokenManager2 = this;
                                     long cr = 15152030326468L;
                                     dd = 6;
@@ -2014,10 +2014,10 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             bp = bo;
                             bu = bm;
                             bz = bn;
-                            ce = bl;
-                            if (jjCanMove_1(bk, ce, bz, bu, bp)) {
-                                if (bj > 127) {
-                                    bj = 127;
+                            jjbitVec0ElementIndexValue5 = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue5, bz, bu, bp)) {
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                 }
 
                                 this.jjCheckNAddTwoStates(11, 8);
@@ -2027,10 +2027,10 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             long bd = bo;
                             long be = bm;
                             int bf = bn;
-                            int bg = bl;
-                            if (jjCanMove_1(bk, bg, bf, be, bd)) {
-                                if (bj > 125) {
-                                    bj = 125;
+                            int jjbitVec0ElementIndexValue6 = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue6, bf, be, bd)) {
+                                if (jjmatchedKindValue > 125) {
+                                    jjmatchedKindValue = 125;
                                 }
 
                                 this.jjCheckNAdd(2);
@@ -2039,12 +2039,12 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             bd = bo;
                             be = bm;
                             bf = bn;
-                            bg = bl;
-                            if (jjCanMove_1(bk, bg, bf, be, bd)) {
+                            jjbitVec0ElementIndexValue6 = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue6, bf, be, bd)) {
                                 ProGuardConfigTokenManager proGuardConfigTokenManager1;
                                 byte dm;
-                                if (bj > 126) {
-                                    bj = 126;
+                                if (jjmatchedKindValue > 126) {
+                                    jjmatchedKindValue = 126;
                                     proGuardConfigTokenManager1 = this;
                                     long dl = 15152030326468L;
                                     dm = 6;
@@ -2062,39 +2062,39 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             bd = bo;
                             be = bm;
                             bf = bn;
-                            bg = bl;
-                            if (jjCanMove_1(bk, bg, bf, be, bd)) {
-                                if (bj > 127) {
-                                    bj = 127;
+                            jjbitVec0ElementIndexValue6 = jjbitVec0ElementIndex;
+                            if (jjCanMove_1(bk, jjbitVec0ElementIndexValue6, bf, be, bd)) {
+                                if (jjmatchedKindValue > 127) {
+                                    jjmatchedKindValue = 127;
                                 }
 
                                 this.jjCheckNAddTwoStates(11, 8);
                             }
                     }
 
-                    if (bi == bh) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    dk = this.jjstateSet;
+                    jjstateSetValue3 = this.jjstateSet;
                 }
             }
 
-            if (bj != Integer.MAX_VALUE) {
-                this.jjmatchedKind = bj;
-                this.jjmatchedPos = bc;
-                bj = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                this.jjmatchedKind = jjmatchedKindValue;
+                this.jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            bc++;
-            if ((bi = this.jjnewStateCnt) == (bh = 12 - (this.jjnewStateCnt = bh))) {
-                return bc;
+            jjmatchedPosValue++;
+            if ((jjnewStateCntValue2 = this.jjnewStateCnt) == (jjnewStateCntValue = 12 - (this.jjnewStateCnt = jjnewStateCntValue))) {
+                return jjmatchedPosValue;
             }
 
             try {
                 this.curChar = this.input_stream.readChar();
             } catch (IOException iOException) {
-                return bc;
+                return jjmatchedPosValue;
             }
         }
     }
@@ -2196,7 +2196,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
         }
     }
 
-    public static final boolean jjCanMove_1(int ba, int bb, int bc, long bd, long be) {
+    public static final boolean jjCanMove_1(int ba, int jjbitVec0ElementIndex, int bc, long bd, long be) {
         switch (ba) {
             case 0:
                 return (jjbitVec38[bc] & be) != 0L;
@@ -2273,7 +2273,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
             case 255:
                 return (jjbitVec59[bc] & be) != 0L;
             default:
-                return (jjbitVec0[bb] & bd) != 0L;
+                return (jjbitVec0[jjbitVec0ElementIndex] & bd) != 0L;
         }
     }
 
@@ -2428,12 +2428,12 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
         return this.jjMoveNfa_2(2, 0 + 1);
     }
 
-    public static final boolean jjCanMove_2(int ba, int bb, int bc, long bd, long be) {
+    public static final boolean jjCanMove_2(int ba, int jjbitVec19ElementIndex, int jjbitVec60ElementIndex, long bd, long be) {
         switch (ba) {
             case 0:
-                return (jjbitVec60[bc] & be) != 0L;
+                return (jjbitVec60[jjbitVec60ElementIndex] & be) != 0L;
             default:
-                return (jjbitVec19[bb] & bd) != 0L;
+                return (jjbitVec19[jjbitVec19ElementIndex] & bd) != 0L;
         }
     }
 
@@ -2976,19 +2976,19 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
 
                     return bh;
                 } else {
-                    int bf;
+                    int jjmatchedPosValue;
                     if ((bb & -3425817718492758016L) == 0L) {
                         if ((bc & 1099513989136L) == 0L) {
                             return -1;
                         }
 
-                        bf = this.jjmatchedPos;
+                        jjmatchedPosValue = this.jjmatchedPos;
                     } else {
-                        bf = this.jjmatchedPos;
+                        jjmatchedPosValue = this.jjmatchedPos;
                     }
 
                     byte bg;
-                    if (bf != 1) {
+                    if (jjmatchedPosValue != 1) {
                         this.jjmatchedKind = 125;
                         this.jjmatchedPos = 1;
                         bg = 13;
@@ -3041,7 +3041,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                 this.jjmatchedPos = 3;
                 return 13;
             case 4:
-                int bd;
+                int jjmatchedPosValue2;
                 if ((bb & -3425817725203644416L) == 0L) {
                     if ((bc & 1099513989136L) == 0L) {
                         if ((bb & 6442450944L) != 0L) {
@@ -3051,13 +3051,13 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                         return -1;
                     }
 
-                    bd = this.jjmatchedPos;
+                    jjmatchedPosValue2 = this.jjmatchedPos;
                 } else {
-                    bd = this.jjmatchedPos;
+                    jjmatchedPosValue2 = this.jjmatchedPos;
                 }
 
                 byte be;
-                if (bd != 4) {
+                if (jjmatchedPosValue2 != 4) {
                     this.jjmatchedKind = 125;
                     this.jjmatchedPos = 4;
                     be = 13;
@@ -3349,13 +3349,13 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
         }
     }
 
-    public int jjMoveNfa_2(int ba, int bb) {
-        int bc = bb;
-        int bd = 0;
+    public int jjMoveNfa_2(int jjstateSetElement, int bb) {
+        int jjmatchedPosValue = bb;
+        int jjnewStateCntValue = 0;
         this.jjnewStateCnt = 3;
-        int be = 1;
-        this.jjstateSet[0] = ba;
-        int bf = Integer.MAX_VALUE;
+        int jjnewStateCntValue2 = 1;
+        this.jjstateSet[0] = jjstateSetElement;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++this.jjround == Integer.MAX_VALUE) {
@@ -3367,12 +3367,12 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                 int[] jjstateSet = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
                             if ((-17179882497L & bl) != 0L) {
-                                if (bf > 123) {
-                                    bf = 123;
+                                if (jjmatchedKindValue > 123) {
+                                    jjmatchedKindValue = 123;
                                 }
                             } else if (this.curChar == '"') {
                                 this.jjstateSet[this.jjnewStateCnt++] = 2;
@@ -3384,73 +3384,73 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
                             }
                             break;
                         case 2:
-                            if (this.curChar == '"' && bf > 123) {
-                                bf = 123;
+                            if (this.curChar == '"' && jjmatchedKindValue > 123) {
+                                jjmatchedKindValue = 123;
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
                     jjstateSet = this.jjstateSet;
                 }
             } else if (this.curChar < 128) {
-                int[] bm = this.jjstateSet;
+                int[] jjstateSetValue = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (bm[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                         case 0:
-                            bf = 123;
+                            jjmatchedKindValue = 123;
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bm = this.jjstateSet;
+                    jjstateSetValue = this.jjstateSet;
                 }
             } else {
                 int bg = this.curChar >> '\b';
-                int bh = bg >> 6;
+                int jjbitVec19ElementIndex = bg >> 6;
                 long bi = 1L << (bg & 63);
-                int bj = (this.curChar & 255) >> 6;
+                int jjbitVec60ElementIndex = (this.curChar & 255) >> 6;
                 long bk = 1L << (this.curChar & '?');
-                int[] bo = this.jjstateSet;
+                int[] jjstateSetValue2 = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (bo[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                         case 0:
-                            if (jjCanMove_2(bg, bh, bj, bi, bk) && bf > 123) {
-                                bf = 123;
+                            if (jjCanMove_2(bg, jjbitVec19ElementIndex, jjbitVec60ElementIndex, bi, bk) && jjmatchedKindValue > 123) {
+                                jjmatchedKindValue = 123;
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bo = this.jjstateSet;
+                    jjstateSetValue2 = this.jjstateSet;
                 }
             }
 
-            if (bf != Integer.MAX_VALUE) {
-                this.jjmatchedKind = bf;
-                this.jjmatchedPos = bc;
-                bf = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                this.jjmatchedKind = jjmatchedKindValue;
+                this.jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            bc++;
-            if ((be = this.jjnewStateCnt) == (bd = 3 - (this.jjnewStateCnt = bd))) {
-                return bc;
+            jjmatchedPosValue++;
+            if ((jjnewStateCntValue2 = this.jjnewStateCnt) == (jjnewStateCntValue = 3 - (this.jjnewStateCnt = jjnewStateCntValue))) {
+                return jjmatchedPosValue;
             }
 
             try {
                 this.curChar = this.input_stream.readChar();
             } catch (IOException iOException) {
-                return bc;
+                return jjmatchedPosValue;
             }
         }
     }
@@ -3738,16 +3738,16 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
         }
     }
 
-    public void jjCheckNAdd(int ba) {
-        if (this.jjrounds[ba] != this.jjround) {
-            this.jjstateSet[this.jjnewStateCnt++] = ba;
-            this.jjrounds[ba] = this.jjround;
+    public void jjCheckNAdd(int jjstateSetElement) {
+        if (this.jjrounds[jjstateSetElement] != this.jjround) {
+            this.jjstateSet[this.jjnewStateCnt++] = jjstateSetElement;
+            this.jjrounds[jjstateSetElement] = this.jjround;
         }
     }
 
     public ProGuardConfigToken jjFillToken() {
-        String string1 = jjstrLiteralImages[this.jjmatchedKind];
-        String string = string1 == null ? this.input_stream.GetImage() : string1;
+        String jjstrLiteralImage = jjstrLiteralImages[this.jjmatchedKind];
+        String string = jjstrLiteralImage == null ? this.input_stream.GetImage() : jjstrLiteralImage;
         int endLine = this.input_stream.getEndLine();
         int endColumn = this.input_stream.getEndColumn();
         int line = this.input_stream.getLine();
@@ -4217,12 +4217,12 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
         return this.jjStartNfa_0(1, be, bf);
     }
 
-    public void jjCheckNAddTwoStates(int ba, int bb) {
-        this.jjCheckNAdd(ba);
-        this.jjCheckNAdd(bb);
+    public void jjCheckNAddTwoStates(int jjstateSetElement, int jjstateSetElementArgument) {
+        this.jjCheckNAdd(jjstateSetElement);
+        this.jjCheckNAdd(jjstateSetElementArgument);
     }
 
-    public int jjStartNfaWithStates_0(int jjmatchedPos, int jjmatchedKind, int bc) {
+    public int jjStartNfaWithStates_0(int jjmatchedPos, int jjmatchedKind, int jjstateSetElement) {
         this.jjmatchedKind = jjmatchedKind;
         this.jjmatchedPos = jjmatchedPos;
 
@@ -4232,7 +4232,7 @@ public class ProGuardConfigTokenManager implements ProGuardConfigConstants {
             return jjmatchedPos + 1;
         }
 
-        return this.jjMoveNfa_0(bc, jjmatchedPos + 1);
+        return this.jjMoveNfa_0(jjstateSetElement, jjmatchedPos + 1);
     }
 
     public int jjMoveStringLiteralDfa26_0(long ba, long bb) {

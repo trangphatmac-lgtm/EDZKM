@@ -495,9 +495,9 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
         this.input_stream = zkmScriptSimpleCharStream;
     }
 
-    public void jjCheckNAddTwoStates(int ba, int bb) {
-        this.jjCheckNAdd(ba);
-        this.jjCheckNAdd(bb);
+    public void jjCheckNAddTwoStates(int jjstateSetElement, int jjstateSetElementArgument) {
+        this.jjCheckNAdd(jjstateSetElement);
+        this.jjCheckNAdd(jjstateSetElementArgument);
     }
 
     public int jjMoveStringLiteralDfa16_0(long ba, long bb, long bc, long bd, long be, long bf) {
@@ -1028,7 +1028,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
         }
     }
 
-    public int jjStartNfaWithStates_0(int jjmatchedPos, int jjmatchedKind, int bc) {
+    public int jjStartNfaWithStates_0(int jjmatchedPos, int jjmatchedKind, int jjstateSetElement) {
         this.jjmatchedKind = jjmatchedKind;
         this.jjmatchedPos = jjmatchedPos;
 
@@ -1038,7 +1038,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
             return jjmatchedPos + 1;
         }
 
-        return this.jjMoveNfa_0(bc, jjmatchedPos + 1);
+        return this.jjMoveNfa_0(jjstateSetElement, jjmatchedPos + 1);
     }
 
     public int jjMoveStringLiteralDfa19_0(long ba, long bb, long bc, long bd) {
@@ -1183,18 +1183,18 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
     }
 
     public void jjCheckNAddStates() {
-        int ba = 0;
+        int jjnextStatesValueElementIndex = 0;
         ZkmScriptTokenManager zkmScriptTokenManager1 = this;
-        int[] bb = jjnextStates;
+        int[] jjnextStatesValue = jjnextStates;
 
         while (true) {
-            zkmScriptTokenManager1.jjCheckNAdd(bb[ba]);
-            if (ba++ == 4) {
+            zkmScriptTokenManager1.jjCheckNAdd(jjnextStatesValue[jjnextStatesValueElementIndex]);
+            if (jjnextStatesValueElementIndex++ == 4) {
                 return;
             }
 
             zkmScriptTokenManager1 = this;
-            bb = jjnextStates;
+            jjnextStatesValue = jjnextStates;
         }
     }
 
@@ -1206,7 +1206,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
         ZkmScriptToken zkmScriptToken = null;
         int ba = 0;
 
-        label134:
+        tokenScan:
         while (true) {
             try {
                 this.curChar = this.input_stream.BeginToken();
@@ -1232,7 +1232,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                                 this.curChar = this.input_stream.BeginToken();
                             }
                         } catch (IOException iOException3) {
-                            continue label134;
+                            continue tokenScan;
                         }
 
                         this.jjmatchedKind = Integer.MAX_VALUE;
@@ -1270,7 +1270,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 }
 
                 if (this.jjmatchedKind == Integer.MAX_VALUE) {
-                    break label134;
+                    break tokenScan;
                 }
 
                 if (this.jjmatchedPos + 1 < ba) {
@@ -1288,7 +1288,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 }
 
                 if ((jjtoSkip[this.jjmatchedKind >> 6] & 1L << (this.jjmatchedKind & 63)) != 0L) {
-                    int[] be;
+                    int[] jjnewLexStateValue;
                     if ((jjtoSpecial[this.jjmatchedKind >> 6] & 1L << (this.jjmatchedKind & 63)) != 0L) {
                         ZkmScriptToken zkmScriptToken2 = this.jjFillToken();
                         if (zkmScriptToken == null) {
@@ -1299,13 +1299,13 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                         }
 
                         this.SkipLexicalActions();
-                        be = jjnewLexState;
+                        jjnewLexStateValue = jjnewLexState;
                     } else {
                         this.SkipLexicalActions();
-                        be = jjnewLexState;
+                        jjnewLexStateValue = jjnewLexState;
                     }
 
-                    if (be[this.jjmatchedKind] != -1) {
+                    if (jjnewLexStateValue[this.jjmatchedKind] != -1) {
                         this.curLexState = jjnewLexState[this.jjmatchedKind];
                     }
                     break;
@@ -1322,7 +1322,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 try {
                     this.curChar = this.input_stream.readChar();
                 } catch (IOException iOException2) {
-                    break label134;
+                    break tokenScan;
                 }
 
                 curLexState = this.curLexState;
@@ -1942,12 +1942,12 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
     }
 
     public int jjMoveNfa_1() {
-        int ba = 0;
-        int bb = 0;
+        int jjmatchedPosValue = 0;
+        int jjnewStateCntValue = 0;
         this.jjnewStateCnt = 3;
-        int bc = 1;
+        int jjnewStateCntValue2 = 1;
         this.jjstateSet[0] = 0;
-        int bd = Integer.MAX_VALUE;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++this.jjround == Integer.MAX_VALUE) {
@@ -1959,28 +1959,28 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 int[] jjstateSet = this.jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (jjstateSet[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
-                            char bh;
+                            char curCharValue;
                             if ((13312L & be) != 0L) {
-                                if (bd > 9) {
-                                    bd = 9;
-                                    bh = this.curChar;
+                                if (jjmatchedKindValue > 9) {
+                                    jjmatchedKindValue = 9;
+                                    curCharValue = this.curChar;
                                 } else {
-                                    bh = this.curChar;
+                                    curCharValue = this.curChar;
                                 }
                             } else {
-                                bh = this.curChar;
+                                curCharValue = this.curChar;
                             }
 
-                            if (bh == '\r') {
+                            if (curCharValue == '\r') {
                                 this.jjstateSet[this.jjnewStateCnt++] = 1;
                             }
                             break;
                         case 1:
-                            if (this.curChar == '\n' && bd > 9) {
-                                bd = 9;
+                            if (this.curChar == '\n' && jjmatchedKindValue > 9) {
+                                jjmatchedKindValue = 9;
                             }
                             break;
                         case 2:
@@ -1989,57 +1989,57 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
                     jjstateSet = this.jjstateSet;
                 }
             } else if (this.curChar < 128) {
-                int[] bf = this.jjstateSet;
+                int[] jjstateSetValue = this.jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (bf[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bf = this.jjstateSet;
+                    jjstateSetValue = this.jjstateSet;
                 }
             } else {
-                int[] bi = this.jjstateSet;
+                int[] jjstateSetValue2 = this.jjstateSet;
 
                 while (true) {
-                    bc += -1;
-                    switch (bi[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                     }
 
-                    if (bc == bb) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bi = this.jjstateSet;
+                    jjstateSetValue2 = this.jjstateSet;
                 }
             }
 
-            if (bd != Integer.MAX_VALUE) {
-                this.jjmatchedKind = bd;
-                this.jjmatchedPos = ba;
-                bd = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                this.jjmatchedKind = jjmatchedKindValue;
+                this.jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            ba++;
-            if ((bc = this.jjnewStateCnt) == (bb = 3 - (this.jjnewStateCnt = bb))) {
-                return ba;
+            jjmatchedPosValue++;
+            if ((jjnewStateCntValue2 = this.jjnewStateCnt) == (jjnewStateCntValue = 3 - (this.jjnewStateCnt = jjnewStateCntValue))) {
+                return jjmatchedPosValue;
             }
 
             try {
                 this.curChar = this.input_stream.readChar();
             } catch (IOException iOException) {
-                return ba;
+                return jjmatchedPosValue;
             }
         }
     }
@@ -2682,10 +2682,10 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
         }
     }
 
-    public static final boolean jjCanMove_1(int ba, int bb, long bc) {
+    public static final boolean jjCanMove_1(int ba, int jjbitVec2ElementIndex, long bc) {
         switch (ba) {
             case 0:
-                return (jjbitVec2[bb] & bc) != 0L;
+                return (jjbitVec2[jjbitVec2ElementIndex] & bc) != 0L;
             default:
                 return false;
         }
@@ -3571,10 +3571,10 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
         return this.jjStartNfa_0(31, 0L, 0L, 0L, bc);
     }
 
-    public void jjCheckNAdd(int ba) {
-        if (this.jjrounds[ba] != this.jjround) {
-            this.jjstateSet[this.jjnewStateCnt++] = ba;
-            this.jjrounds[ba] = this.jjround;
+    public void jjCheckNAdd(int jjstateSetElement) {
+        if (this.jjrounds[jjstateSetElement] != this.jjround) {
+            this.jjstateSet[this.jjnewStateCnt++] = jjstateSetElement;
+            this.jjrounds[jjstateSetElement] = this.jjround;
         }
     }
 
@@ -3653,13 +3653,13 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
         }
     }
 
-    public int jjMoveNfa_0(int ba, int bb) {
-        int bc = bb;
-        int bd = 0;
+    public int jjMoveNfa_0(int jjstateSetElement, int bb) {
+        int jjmatchedPosValue = bb;
+        int jjnewStateCntValue = 0;
         this.jjnewStateCnt = 25;
-        int be = 1;
-        this.jjstateSet[0] = ba;
-        int bf = Integer.MAX_VALUE;
+        int jjnewStateCntValue2 = 1;
+        this.jjstateSet[0] = jjstateSetElement;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++this.jjround == Integer.MAX_VALUE) {
@@ -3671,16 +3671,16 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 int[] jjstateSet = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
                             if (this.curChar == '*') {
                                 this.jjstateSet[this.jjnewStateCnt++] = 1;
                             }
                             break;
                         case 1:
-                            if ((-140737488355329L & bm) != 0L && bf > 7) {
-                                bf = 7;
+                            if ((-140737488355329L & bm) != 0L && jjmatchedKindValue > 7) {
+                                jjmatchedKindValue = 7;
                             }
                             break;
                         case 2:
@@ -3692,8 +3692,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             if ((287997348674519551L & bm) != 0L) {
                                 ZkmScriptTokenManager zkmScriptTokenManager8;
                                 byte co;
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                     zkmScriptTokenManager8 = this;
                                     long cg = 2768045378409L;
                                     co = 7;
@@ -3712,24 +3712,24 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
 
                             if ((287962164302430719L & bm) != 0L) {
-                                if (bf > 214) {
-                                    bf = 214;
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
                             }
 
                             if ((287957766255919615L & bm) != 0L) {
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAddStates();
                             }
 
                             if ((287948901175001088L & bm) != 0L) {
-                                if (bf > 212) {
-                                    bf = 212;
+                                if (jjmatchedKindValue > 212) {
+                                    jjmatchedKindValue = 212;
                                 }
 
                                 this.jjCheckNAdd(4);
@@ -3737,8 +3737,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 4:
                             if ((287948901175001088L & bm) != 0L) {
-                                if (bf > 212) {
-                                    bf = 212;
+                                if (jjmatchedKindValue > 212) {
+                                    jjmatchedKindValue = 212;
                                 }
 
                                 this.jjCheckNAdd(4);
@@ -3746,8 +3746,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 5:
                             if ((287962164302430719L & bm) != 0L) {
-                                if (bf > 214) {
-                                    bf = 214;
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
@@ -3755,8 +3755,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 6:
                             if ((287997348674519551L & bm) != 0L) {
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                 }
 
                                 this.jjCheckNAdd(7);
@@ -3764,8 +3764,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 7:
                             if ((576227724826231295L & bm) != 0L) {
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                 }
 
                                 this.jjCheckNAdd(7);
@@ -3778,8 +3778,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 9:
                             if ((287957766255919615L & bm) != 0L) {
-                                if (bf > 216) {
-                                    bf = 216;
+                                if (jjmatchedKindValue > 216) {
+                                    jjmatchedKindValue = 216;
                                 }
 
                                 this.jjCheckNAdd(9);
@@ -3801,8 +3801,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 15:
                             if ((287957766255919615L & bm) != 0L) {
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAddStates();
@@ -3810,8 +3810,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 16:
                             if ((287957766255919615L & bm) != 0L) {
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAdd(16);
@@ -3828,8 +3828,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
                             break;
                         case 19:
-                            if (this.curChar == '>' && bf > 217) {
-                                bf = 217;
+                            if (this.curChar == '>' && jjmatchedKindValue > 217) {
+                                jjmatchedKindValue = 217;
                             }
                             break;
                         case 24:
@@ -3842,8 +3842,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             if ((576227724826231295L & bm) != 0L) {
                                 ZkmScriptTokenManager zkmScriptTokenManager7;
                                 byte cn;
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                     zkmScriptTokenManager7 = this;
                                     long ce = 2768045378409L;
                                     cn = 7;
@@ -3861,8 +3861,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
 
                             if ((bs & bm) != 0L) {
-                                if (bf > 214) {
-                                    bf = 214;
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
@@ -3870,8 +3870,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 26:
                             if ((576227724826231295L & bm) != 0L) {
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                 }
 
                                 this.jjCheckNAdd(7);
@@ -3880,8 +3880,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
 
                             if ((287962164302430719L & bm) != 0L) {
-                                if (bf > 214) {
-                                    bf = 214;
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
@@ -3902,15 +3902,15 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
 
                             if ((287957766255919615L & bm) != 0L) {
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAdd(16);
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
@@ -3918,14 +3918,14 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 }
             } else if (this.curChar < 128) {
                 long bl = 1L << (this.curChar & '?');
-                int[] bn = this.jjstateSet;
+                int[] jjstateSetValue = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (bn[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                         case 1:
-                            if (bf > 7) {
-                                bf = 7;
+                            if (jjmatchedKindValue > 7) {
+                                jjmatchedKindValue = 7;
                             }
                         case 2:
                         case 4:
@@ -3938,8 +3938,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                         case 3:
                             long bp;
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAddStates();
@@ -3951,8 +3951,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             if ((bp & bl) != 0L) {
                                 ZkmScriptTokenManager zkmScriptTokenManager6;
                                 byte cm;
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                     zkmScriptTokenManager6 = this;
                                     long cc = 2768045378409L;
                                     cm = 7;
@@ -3967,8 +3967,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
 
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 214) {
-                                    bf = 214;
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
@@ -3976,8 +3976,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 5:
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 214) {
-                                    bf = 214;
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
@@ -3985,8 +3985,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 6:
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                 }
 
                                 this.jjCheckNAdd(7);
@@ -3994,8 +3994,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 7:
                             if ((-8646911290859585537L & bl) != 0L) {
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                 }
 
                                 this.jjCheckNAdd(7);
@@ -4003,8 +4003,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 9:
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 216) {
-                                    bf = 216;
+                                if (jjmatchedKindValue > 216) {
+                                    jjmatchedKindValue = 216;
                                 }
 
                                 this.jjstateSet[this.jjnewStateCnt++] = 9;
@@ -4032,8 +4032,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 15:
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAddStates();
@@ -4041,8 +4041,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             break;
                         case 16:
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAdd(16);
@@ -4082,8 +4082,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             if ((-8646911290859585537L & bl) != 0L) {
                                 ZkmScriptTokenManager zkmScriptTokenManager5;
                                 byte cl;
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                     zkmScriptTokenManager5 = this;
                                     long ca = 2768045378409L;
                                     cl = 7;
@@ -4098,8 +4098,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
 
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 214) {
-                                    bf = 214;
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
@@ -4109,8 +4109,8 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             if ((-8646911290859585537L & bl) != 0L) {
                                 ZkmScriptTokenManager zkmScriptTokenManager4;
                                 byte ck;
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                     zkmScriptTokenManager4 = this;
                                     long by = 2768045378409L;
                                     ck = 7;
@@ -4137,42 +4137,42 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
 
                             if ((bo & bl) != 0L) {
-                                if (bf > 214) {
-                                    bf = 214;
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
                             }
 
                             if ((-8646911290859585538L & bl) != 0L) {
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAdd(16);
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bn = this.jjstateSet;
+                    jjstateSetValue = this.jjstateSet;
                 }
             } else {
                 int bg = this.curChar >> '\b';
-                int bh = bg >> 6;
+                int jjbitVec0ElementIndex = bg >> 6;
                 long bi = 1L << (bg & 63);
-                int bj = (this.curChar & 255) >> 6;
+                int jjbitVec2ElementIndex = (this.curChar & 255) >> 6;
                 long bk = 1L << (this.curChar & '?');
-                int[] cp = this.jjstateSet;
+                int[] jjstateSetValue2 = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (cp[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                         case 1:
-                            if (jjCanMove_1(bg, bj, bk) && bf > 7) {
-                                bf = 7;
+                            if (jjCanMove_1(bg, jjbitVec2ElementIndex, bk) && jjmatchedKindValue > 7) {
+                                jjmatchedKindValue = 7;
                             }
                         case 2:
                         case 4:
@@ -4191,19 +4191,19 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                         default:
                             break;
                         case 3:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 214) {
-                                    bf = 214;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
                             }
 
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 ZkmScriptTokenManager zkmScriptTokenManager3;
                                 byte cj;
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                     zkmScriptTokenManager3 = this;
                                     long bw = 2768045378409L;
                                     cj = 7;
@@ -4217,101 +4217,101 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                                 zkmScriptTokenManager3.jjCheckNAdd(integer5);
                             }
 
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 213) {
-                                    bf = 213;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAddStates();
                             }
                             break;
                         case 5:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 214) {
-                                    bf = 214;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
                             }
                             break;
                         case 6:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 215) {
-                                    bf = 215;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                 }
 
                                 this.jjCheckNAdd(7);
                             }
                             break;
                         case 7:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 215) {
-                                    bf = 215;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                 }
 
                                 this.jjCheckNAdd(7);
                             }
                             break;
                         case 9:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 216) {
-                                    bf = 216;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 216) {
+                                    jjmatchedKindValue = 216;
                                 }
 
                                 this.jjstateSet[this.jjnewStateCnt++] = 9;
                             }
                             break;
                         case 15:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 213) {
-                                    bf = 213;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAddStates();
                             }
                             break;
                         case 16:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 213) {
-                                    bf = 213;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                 }
 
                                 this.jjCheckNAdd(16);
                             }
                             break;
                         case 17:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 this.jjCheckNAddTwoStates(17, 14);
                             }
                             break;
                         case 18:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 this.jjCheckNAddTwoStates(18, 24);
                             }
                             break;
                         case 25:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 214) {
-                                    bf = 214;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
                             }
 
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 215) {
-                                    bf = 215;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                 }
 
                                 this.jjCheckNAdd(7);
                             }
                             break;
                         case 26:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 ZkmScriptTokenManager zkmScriptTokenManager1;
                                 byte cr;
-                                if (bf > 213) {
-                                    bf = 213;
+                                if (jjmatchedKindValue > 213) {
+                                    jjmatchedKindValue = 213;
                                     zkmScriptTokenManager1 = this;
                                     long cq = 2768045378409L;
                                     cr = 16;
@@ -4325,19 +4325,19 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                                 zkmScriptTokenManager1.jjCheckNAdd(integer6);
                             }
 
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
-                                if (bf > 214) {
-                                    bf = 214;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
+                                if (jjmatchedKindValue > 214) {
+                                    jjmatchedKindValue = 214;
                                 }
 
                                 this.jjCheckNAdd(5);
                             }
 
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 ZkmScriptTokenManager zkmScriptTokenManager2;
                                 byte ci;
-                                if (bf > 215) {
-                                    bf = 215;
+                                if (jjmatchedKindValue > 215) {
+                                    jjmatchedKindValue = 215;
                                     zkmScriptTokenManager2 = this;
                                     long bu = 2768045378409L;
                                     ci = 7;
@@ -4351,38 +4351,38 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                                 zkmScriptTokenManager2.jjCheckNAdd(integer7);
                             }
 
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 this.jjCheckNAddTwoStates(17, 14);
                             }
 
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 this.jjCheckNAddTwoStates(18, 24);
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    cp = this.jjstateSet;
+                    jjstateSetValue2 = this.jjstateSet;
                 }
             }
 
-            if (bf != Integer.MAX_VALUE) {
-                this.jjmatchedKind = bf;
-                this.jjmatchedPos = bc;
-                bf = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                this.jjmatchedKind = jjmatchedKindValue;
+                this.jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            bc++;
-            if ((be = this.jjnewStateCnt) == (bd = 25 - (this.jjnewStateCnt = bd))) {
-                return bc;
+            jjmatchedPosValue++;
+            if ((jjnewStateCntValue2 = this.jjnewStateCnt) == (jjnewStateCntValue = 25 - (this.jjnewStateCnt = jjnewStateCntValue))) {
+                return jjmatchedPosValue;
             }
 
             try {
                 this.curChar = this.input_stream.readChar();
             } catch (IOException iOException) {
-                return bc;
+                return jjmatchedPosValue;
             }
         }
     }
@@ -4974,16 +4974,16 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
 
     public void ReInitRounds() {
         this.jjround = -2147483647;
-        int ba = 25;
+        int jjroundIndex = 25;
 
         while (true) {
-            int bb = ba;
-            ba += -1;
-            if (bb <= 0) {
+            int jjroundIndexValue = jjroundIndex;
+            jjroundIndex += -1;
+            if (jjroundIndexValue <= 0) {
                 return;
             }
 
-            this.jjrounds[ba] = Integer.MIN_VALUE;
+            this.jjrounds[jjroundIndex] = Integer.MIN_VALUE;
         }
     }
 
@@ -5130,7 +5130,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 if ((bb & 9007199254740992L) != 0L) {
                     return 11;
                 } else {
-                    int cs;
+                    int jjmatchedPosValue;
                     if ((bb & -27022147520036864L) == 0L) {
                         if ((bc & -9007199254741505L) == 0L) {
                             if ((bd & -36028797018963969L) == 0L) {
@@ -5153,19 +5153,19 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                                     return ct;
                                 }
 
-                                cs = this.jjmatchedPos;
+                                jjmatchedPosValue = this.jjmatchedPos;
                             } else {
-                                cs = this.jjmatchedPos;
+                                jjmatchedPosValue = this.jjmatchedPos;
                             }
                         } else {
-                            cs = this.jjmatchedPos;
+                            jjmatchedPosValue = this.jjmatchedPos;
                         }
                     } else {
-                        cs = this.jjmatchedPos;
+                        jjmatchedPosValue = this.jjmatchedPos;
                     }
 
                     byte cu;
-                    if (cs != 2) {
+                    if (jjmatchedPosValue != 2) {
                         this.jjmatchedKind = 213;
                         this.jjmatchedPos = 2;
                         cu = 26;
@@ -5190,7 +5190,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
 
                     return cr;
                 } else {
-                    int co;
+                    int jjmatchedPosValue2;
                     if ((bb & -27091966508400640L) == 0L) {
                         if ((bc & -1154047474843783681L) == 0L) {
                             if ((bd & -72339069014642725L) == 0L) {
@@ -5217,19 +5217,19 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                                     return cp;
                                 }
 
-                                co = this.jjmatchedPos;
+                                jjmatchedPosValue2 = this.jjmatchedPos;
                             } else {
-                                co = this.jjmatchedPos;
+                                jjmatchedPosValue2 = this.jjmatchedPos;
                             }
                         } else {
-                            co = this.jjmatchedPos;
+                            jjmatchedPosValue2 = this.jjmatchedPos;
                         }
                     } else {
-                        co = this.jjmatchedPos;
+                        jjmatchedPosValue2 = this.jjmatchedPos;
                     }
 
                     byte cq;
-                    if (co != 3) {
+                    if (jjmatchedPosValue2 != 3) {
                         this.jjmatchedKind = 213;
                         this.jjmatchedPos = 3;
                         cq = 26;
@@ -5281,7 +5281,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 this.jjmatchedPos = 4;
                 return 26;
             case 5:
-                int ck;
+                int jjmatchedPosValue3;
                 if ((bc & -2101761L) == 0L) {
                     if ((bd & -3958276756602883L) == 0L) {
                         if ((be & 131055L) == 0L) {
@@ -5324,16 +5324,16 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             return cl;
                         }
 
-                        ck = this.jjmatchedPos;
+                        jjmatchedPosValue3 = this.jjmatchedPos;
                     } else {
-                        ck = this.jjmatchedPos;
+                        jjmatchedPosValue3 = this.jjmatchedPos;
                     }
                 } else {
-                    ck = this.jjmatchedPos;
+                    jjmatchedPosValue3 = this.jjmatchedPos;
                 }
 
                 byte cn;
-                if (ck != 5) {
+                if (jjmatchedPosValue3 != 5) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 5;
                     cn = 26;
@@ -5343,7 +5343,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
 
                 return cn;
             case 6:
-                int ch;
+                int jjmatchedPosValue4;
                 if ((bc & -8623493696L) == 0L) {
                     if ((bd & -1L) == 0L) {
                         if ((be & 131071L) == 0L) {
@@ -5367,16 +5367,16 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             return -1;
                         }
 
-                        ch = this.jjmatchedPos;
+                        jjmatchedPosValue4 = this.jjmatchedPos;
                     } else {
-                        ch = this.jjmatchedPos;
+                        jjmatchedPosValue4 = this.jjmatchedPos;
                     }
                 } else {
-                    ch = this.jjmatchedPos;
+                    jjmatchedPosValue4 = this.jjmatchedPos;
                 }
 
                 byte cj;
-                if (ch != 6) {
+                if (jjmatchedPosValue4 != 6) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 6;
                     cj = 26;
@@ -5418,7 +5418,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 this.jjmatchedPos = 7;
                 return 26;
             case 8:
-                int cd;
+                int jjmatchedPosValue5;
                 if ((bc & -146037276672L) == 0L) {
                     if ((bd & -1454838601568290945L) == 0L) {
                         if ((be & 131071L) == 0L) {
@@ -5453,16 +5453,16 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             return ce;
                         }
 
-                        cd = this.jjmatchedPos;
+                        jjmatchedPosValue5 = this.jjmatchedPos;
                     } else {
-                        cd = this.jjmatchedPos;
+                        jjmatchedPosValue5 = this.jjmatchedPos;
                     }
                 } else {
-                    cd = this.jjmatchedPos;
+                    jjmatchedPosValue5 = this.jjmatchedPos;
                 }
 
                 byte cg;
-                if (cd != 8) {
+                if (jjmatchedPosValue5 != 8) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 8;
                     cg = 26;
@@ -5472,7 +5472,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
 
                 return cg;
             case 9:
-                int bz;
+                int jjmatchedPosValue6;
                 if ((bc & -8858370048L) == 0L) {
                     if ((bd & -1099511627777L) == 0L) {
                         if ((be & 131071L) == 0L) {
@@ -5503,16 +5503,16 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             return ca;
                         }
 
-                        bz = this.jjmatchedPos;
+                        jjmatchedPosValue6 = this.jjmatchedPos;
                     } else {
-                        bz = this.jjmatchedPos;
+                        jjmatchedPosValue6 = this.jjmatchedPos;
                     }
                 } else {
-                    bz = this.jjmatchedPos;
+                    jjmatchedPosValue6 = this.jjmatchedPos;
                 }
 
                 byte cc;
-                if (bz != 9) {
+                if (jjmatchedPosValue6 != 9) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 9;
                     cc = 26;
@@ -5522,7 +5522,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
 
                 return cc;
             case 10:
-                int bv;
+                int jjmatchedPosValue7;
                 if ((bc & -17179869184L) == 0L) {
                     if ((bd & -72339069014638593L) == 0L) {
                         if ((be & 65535L) == 0L) {
@@ -5557,16 +5557,16 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             return bw;
                         }
 
-                        bv = this.jjmatchedPos;
+                        jjmatchedPosValue7 = this.jjmatchedPos;
                     } else {
-                        bv = this.jjmatchedPos;
+                        jjmatchedPosValue7 = this.jjmatchedPos;
                     }
                 } else {
-                    bv = this.jjmatchedPos;
+                    jjmatchedPosValue7 = this.jjmatchedPos;
                 }
 
                 byte by;
-                if (bv != 10) {
+                if (jjmatchedPosValue7 != 10) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 10;
                     by = 26;
@@ -5606,7 +5606,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 this.jjmatchedPos = 11;
                 return 26;
             case 12:
-                int bs;
+                int jjmatchedPosValue8;
                 if ((bc & -2323268069490688L) == 0L) {
                     if ((bd & -67174401L) == 0L) {
                         if ((be & 131071L) == 0L) {
@@ -5624,16 +5624,16 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             return bt;
                         }
 
-                        bs = this.jjmatchedPos;
+                        jjmatchedPosValue8 = this.jjmatchedPos;
                     } else {
-                        bs = this.jjmatchedPos;
+                        jjmatchedPosValue8 = this.jjmatchedPos;
                     }
                 } else {
-                    bs = this.jjmatchedPos;
+                    jjmatchedPosValue8 = this.jjmatchedPos;
                 }
 
                 byte bu;
-                if (bs != 12) {
+                if (jjmatchedPosValue8 != 12) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 12;
                     bu = 26;
@@ -5721,7 +5721,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 this.jjmatchedPos = 15;
                 return 26;
             case 16:
-                int bp;
+                int jjmatchedPosValue9;
                 if ((bd & -412316860420L) == 0L) {
                     if ((be & 131071L) == 0L) {
                         byte bq;
@@ -5738,13 +5738,13 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                         return bq;
                     }
 
-                    bp = this.jjmatchedPos;
+                    jjmatchedPosValue9 = this.jjmatchedPos;
                 } else {
-                    bp = this.jjmatchedPos;
+                    jjmatchedPosValue9 = this.jjmatchedPos;
                 }
 
                 byte br;
-                if (bp != 16) {
+                if (jjmatchedPosValue9 != 16) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 16;
                     br = 26;
@@ -5775,7 +5775,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 this.jjmatchedPos = 17;
                 return 26;
             case 18:
-                int bn;
+                int jjmatchedPosValue10;
                 if ((bd & -13651536370475008L) == 0L) {
                     if ((be & 131071L) == 0L) {
                         if ((bd & 13651536370474880L) != 0L) {
@@ -5785,13 +5785,13 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                         return -1;
                     }
 
-                    bn = this.jjmatchedPos;
+                    jjmatchedPosValue10 = this.jjmatchedPos;
                 } else {
-                    bn = this.jjmatchedPos;
+                    jjmatchedPosValue10 = this.jjmatchedPos;
                 }
 
                 byte bo;
-                if (bn != 18) {
+                if (jjmatchedPosValue10 != 18) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 18;
                     bo = 26;
@@ -5801,7 +5801,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
 
                 return bo;
             case 19:
-                int bl;
+                int jjmatchedPosValue11;
                 if ((bd & -18014398511579136L) == 0L) {
                     if ((be & 131071L) == 0L) {
                         if ((bd & 18014398511570944L) != 0L) {
@@ -5811,13 +5811,13 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                         return -1;
                     }
 
-                    bl = this.jjmatchedPos;
+                    jjmatchedPosValue11 = this.jjmatchedPos;
                 } else {
-                    bl = this.jjmatchedPos;
+                    jjmatchedPosValue11 = this.jjmatchedPos;
                 }
 
                 byte bm;
-                if (bl != 19) {
+                if (jjmatchedPosValue11 != 19) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 19;
                     bm = 26;
@@ -5848,7 +5848,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 this.jjmatchedPos = 20;
                 return 26;
             case 21:
-                int bi;
+                int jjmatchedPosValue12;
                 if ((bd & -2147483648L) == 0L) {
                     if ((be & 131064L) == 0L) {
                         byte bj;
@@ -5865,13 +5865,13 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                         return bj;
                     }
 
-                    bi = this.jjmatchedPos;
+                    jjmatchedPosValue12 = this.jjmatchedPos;
                 } else {
-                    bi = this.jjmatchedPos;
+                    jjmatchedPosValue12 = this.jjmatchedPos;
                 }
 
                 byte bk;
-                if (bi != 21) {
+                if (jjmatchedPosValue12 != 21) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 21;
                     bk = 26;
@@ -5965,7 +5965,7 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 this.jjmatchedPos = 25;
                 return 26;
             case 26:
-                int bf;
+                int jjmatchedPosValue13;
                 if ((bd & -288230376151711744L) == 0L) {
                     if ((be & 65535L) == 0L) {
                         byte bg;
@@ -5982,13 +5982,13 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                         return bg;
                     }
 
-                    bf = this.jjmatchedPos;
+                    jjmatchedPosValue13 = this.jjmatchedPos;
                 } else {
-                    bf = this.jjmatchedPos;
+                    jjmatchedPosValue13 = this.jjmatchedPos;
                 }
 
                 byte bh;
-                if (bf != 26) {
+                if (jjmatchedPosValue13 != 26) {
                     this.jjmatchedKind = 213;
                     this.jjmatchedPos = 26;
                     bh = 26;
@@ -6523,13 +6523,13 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
         }
     }
 
-    public int jjMoveNfa_4(int ba, int bb) {
-        int bc = bb;
-        int bd = 0;
+    public int jjMoveNfa_4(int jjstateSetElement, int bb) {
+        int jjmatchedPosValue = bb;
+        int jjnewStateCntValue = 0;
         this.jjnewStateCnt = 3;
-        int be = 1;
-        this.jjstateSet[0] = ba;
-        int bf = Integer.MAX_VALUE;
+        int jjnewStateCntValue2 = 1;
+        this.jjstateSet[0] = jjstateSetElement;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++this.jjround == Integer.MAX_VALUE) {
@@ -6541,12 +6541,12 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                 int[] jjstateSet = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
                             if ((-17179882497L & bl) != 0L) {
-                                if (bf > 211) {
-                                    bf = 211;
+                                if (jjmatchedKindValue > 211) {
+                                    jjmatchedKindValue = 211;
                                 }
                             } else if (this.curChar == '"') {
                                 this.jjstateSet[this.jjnewStateCnt++] = 2;
@@ -6558,73 +6558,73 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
                             }
                             break;
                         case 2:
-                            if (this.curChar == '"' && bf > 211) {
-                                bf = 211;
+                            if (this.curChar == '"' && jjmatchedKindValue > 211) {
+                                jjmatchedKindValue = 211;
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
                     jjstateSet = this.jjstateSet;
                 }
             } else if (this.curChar < 128) {
-                int[] bm = this.jjstateSet;
+                int[] jjstateSetValue = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (bm[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue[jjnewStateCntValue2]) {
                         case 0:
-                            bf = 211;
+                            jjmatchedKindValue = 211;
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bm = this.jjstateSet;
+                    jjstateSetValue = this.jjstateSet;
                 }
             } else {
                 int bg = this.curChar >> '\b';
-                int bh = bg >> 6;
+                int jjbitVec0ElementIndex = bg >> 6;
                 long bi = 1L << (bg & 63);
-                int bj = (this.curChar & 255) >> 6;
+                int jjbitVec2ElementIndex = (this.curChar & 255) >> 6;
                 long bk = 1L << (this.curChar & '?');
-                int[] bo = this.jjstateSet;
+                int[] jjstateSetValue2 = this.jjstateSet;
 
                 while (true) {
-                    be += -1;
-                    switch (bo[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSetValue2[jjnewStateCntValue2]) {
                         case 0:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk) && bf > 211) {
-                                bf = 211;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk) && jjmatchedKindValue > 211) {
+                                jjmatchedKindValue = 211;
                             }
                     }
 
-                    if (be == bd) {
+                    if (jjnewStateCntValue2 == jjnewStateCntValue) {
                         break;
                     }
 
-                    bo = this.jjstateSet;
+                    jjstateSetValue2 = this.jjstateSet;
                 }
             }
 
-            if (bf != Integer.MAX_VALUE) {
-                this.jjmatchedKind = bf;
-                this.jjmatchedPos = bc;
-                bf = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                this.jjmatchedKind = jjmatchedKindValue;
+                this.jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            bc++;
-            if ((be = this.jjnewStateCnt) == (bd = 3 - (this.jjnewStateCnt = bd))) {
-                return bc;
+            jjmatchedPosValue++;
+            if ((jjnewStateCntValue2 = this.jjnewStateCnt) == (jjnewStateCntValue = 3 - (this.jjnewStateCnt = jjnewStateCntValue))) {
+                return jjmatchedPosValue;
             }
 
             try {
                 this.curChar = this.input_stream.readChar();
             } catch (IOException iOException) {
-                return bc;
+                return jjmatchedPosValue;
             }
         }
     }
@@ -6816,25 +6816,25 @@ public class ZkmScriptTokenManager implements ZkmScriptConstants {
         }
     }
 
-    public static final boolean jjCanMove_0(int ba, int bb, int bc, long bd, long be) {
+    public static final boolean jjCanMove_0(int ba, int jjbitVec0ElementIndex, int jjbitVec2ElementIndex, long bd, long be) {
         switch (ba) {
             case 0:
-                return (jjbitVec2[bc] & be) != 0L;
+                return (jjbitVec2[jjbitVec2ElementIndex] & be) != 0L;
             default:
-                return (jjbitVec0[bb] & bd) != 0L;
+                return (jjbitVec0[jjbitVec0ElementIndex] & bd) != 0L;
         }
     }
 
     public ZkmScriptToken jjFillToken() {
-        String string1 = jjstrLiteralImages[this.jjmatchedKind];
-        String string = string1 == null ? this.input_stream.GetImage() : string1;
+        String jjstrLiteralImage = jjstrLiteralImages[this.jjmatchedKind];
+        String imageValue = jjstrLiteralImage == null ? this.input_stream.GetImage() : jjstrLiteralImage;
         int line = this.input_stream.getLine();
         int endLine = this.input_stream.getEndLine();
         int column = this.input_stream.getColumn();
         int endColumn = this.input_stream.getEndColumn();
         ZkmScriptToken zkmScriptToken = ZkmScriptToken.newToken(this.jjmatchedKind);
         zkmScriptToken.kind = this.jjmatchedKind;
-        zkmScriptToken.image = string;
+        zkmScriptToken.image = imageValue;
         zkmScriptToken.endLine = line;
         zkmScriptToken.beginColumn = column;
         zkmScriptToken.endColumn = endLine;

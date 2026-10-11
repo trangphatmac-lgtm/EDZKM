@@ -42,9 +42,9 @@ public class GroupingsSpec implements ClassHierarchyQuery {
 
         Collections.sort(arrayList);
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            String string1 = (String) arrayList.get(i);
-            Iterator iterator = this.parametersByGroup.getInnerMap(string1).keySet().iterator();
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            String key = (String) arrayList.get(elementIndex);
+            Iterator iterator = this.parametersByGroup.getInnerMap(key).keySet().iterator();
 
             while (iterator.hasNext()) {
                 ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) iterator.next();
@@ -72,7 +72,7 @@ public class GroupingsSpec implements ClassHierarchyQuery {
 
                         while (iterator1.hasNext()) {
                             ProgramClass programClass1 = (ProgramClass) iterator1.next();
-                            this.classesByGroup.putValue(string1, programClass1, programClass1);
+                            this.classesByGroup.putValue(key, programClass1, programClass1);
                         }
                     }
                 }
@@ -81,8 +81,8 @@ public class GroupingsSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsAnnotatedInterface(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.implementsAnnotatedInterface(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean implementsAnnotatedInterface(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.implementsAnnotatedInterface(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     public GroupingsSpec(ClassRepository classRepository1, List list1, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
@@ -101,14 +101,14 @@ public class GroupingsSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean extendsAnnotatedClassByOriginalName(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.extendsAnnotatedClassByOriginalName(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean extendsAnnotatedClassByOriginalName(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.extendsAnnotatedClassByOriginalName(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     @Override
     public String getOriginalClassName(Object object) {
-        String string = (String) object;
-        return this.classRepository.getOriginalClassName(string);
+        String key = (String) object;
+        return this.classRepository.getOriginalClassName(key);
     }
 
     public Enumeration enumerateClasses() {
@@ -116,8 +116,8 @@ public class GroupingsSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean extendsAnnotatedClass(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.extendsAnnotatedClass(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean extendsAnnotatedClass(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.extendsAnnotatedClass(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     @Override
@@ -145,18 +145,18 @@ public class GroupingsSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsAnnotatedInterfaceByOriginalName(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.implementsAnnotatedInterfaceByOriginalName(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean implementsAnnotatedInterfaceByOriginalName(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.implementsAnnotatedInterfaceByOriginalName(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     @Override
-    public final boolean implementsInterfaceByOriginalName(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.implementsInterfaceByOriginalName(string, string1);
+    public final boolean implementsInterfaceByOriginalName(String keyArgument, String key) throws ZkmException, IOException {
+        return this.classRepository.implementsInterfaceByOriginalName(keyArgument, key);
     }
 
     @Override
-    public final boolean isSubclassByOriginalName(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.isSubclassByOriginalName(string, string1);
+    public final boolean isSubclassByOriginalName(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.isSubclassByOriginalName(key, keyArgument);
     }
 
     public ReadOnlyMultiMap getGroupedClasses() {
@@ -190,10 +190,10 @@ public class GroupingsSpec implements ClassHierarchyQuery {
         Collections.sort(arrayList);
         printWriter.println("\tGroupings parameters:");
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            String string1 = (String) arrayList.get(i);
-            printWriter.println("\t\t\"" + string1 + "\"");
-            Iterator iterator = this.parametersByGroup.getInnerMap(string1).keySet().iterator();
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            String key = (String) arrayList.get(elementIndex);
+            printWriter.println("\t\t\"" + key + "\"");
+            Iterator iterator = this.parametersByGroup.getInnerMap(key).keySet().iterator();
 
             while (iterator.hasNext()) {
                 printWriter.println("\t\t\t\"" + ((ASTRenameFilterParameter) iterator.next()).toScriptText() + "\"");
@@ -202,8 +202,8 @@ public class GroupingsSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsInterface(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.implementsInterface(string, string1);
+    public final boolean implementsInterface(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.implementsInterface(key, keyArgument);
     }
 
     public PrintWriter getLogWriter() {
@@ -212,25 +212,25 @@ public class GroupingsSpec implements ClassHierarchyQuery {
 
     public final void collectGroupingParameters() {
         int ba = 0;
-        int bb = this.groupingsStatements.size();
+        int groupingsStatementsSize = this.groupingsStatements.size();
 
-        for (int i = 0; i < bb; i++) {
-            ArrayList arrayList = ((ASTGroupingsStatement) this.groupingsStatements.get(i)).getGroupings();
+        for (int elementIndex = 0; elementIndex < groupingsStatementsSize; elementIndex++) {
+            ArrayList arrayList = ((ASTGroupingsStatement) this.groupingsStatements.get(elementIndex)).getGroupings();
 
-            for (int j = 0; j < arrayList.size(); j++) {
-                String string = "GROUPING_" + ba++;
-                ArrayList arrayList1 = (ArrayList) arrayList.get(j);
+            for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+                String key = "GROUPING_" + ba++;
+                ArrayList arrayList1 = (ArrayList) arrayList.get(elementIndexValue);
 
-                for (int k = 0; k < arrayList1.size(); k++) {
-                    ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) arrayList1.get(k);
-                    this.parametersByGroup.putValue(string, aSTRenameFilterParameter, aSTRenameFilterParameter);
+                for (int elementIndexValue2 = 0; elementIndexValue2 < arrayList1.size(); elementIndexValue2++) {
+                    ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) arrayList1.get(elementIndexValue2);
+                    this.parametersByGroup.putValue(key, aSTRenameFilterParameter, aSTRenameFilterParameter);
                 }
             }
         }
     }
 
     @Override
-    public final boolean isSubclass(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.isSubclass(string, string1);
+    public final boolean isSubclass(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.isSubclass(key, keyArgument);
     }
 }

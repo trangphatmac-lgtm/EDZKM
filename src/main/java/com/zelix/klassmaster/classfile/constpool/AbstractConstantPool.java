@@ -47,10 +47,10 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
     }
 
     public final void resolveFieldRefs(ScriptEnvironment scriptEnvironment1, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
-        int ba = this.fieldRefs.size();
+        int fieldRefsSize = this.fieldRefs.size();
 
-        for (int i = 0; i < ba; i++) {
-            ((ResolvedFieldRef) this.fieldRefs.get(i)).syncWithResolvedMember(scriptEnvironment1, classMemberLookup1);
+        for (int elementIndex = 0; elementIndex < fieldRefsSize; elementIndex++) {
+            ((ResolvedFieldRef) this.fieldRefs.get(elementIndex)).syncWithResolvedMember(scriptEnvironment1, classMemberLookup1);
         }
     }
 
@@ -60,12 +60,12 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
 
     public abstract void renameThisClass(Object object);
 
-    public ResolvedClassConstant getOrCreateClassConstant(String string, List list1) {
+    public ResolvedClassConstant getOrCreateClassConstant(String value, List list1) {
         Iterator iterator = this.classConstants.iterator();
 
         while (iterator.hasNext()) {
             ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) iterator.next();
-            if (resolvedClassConstant.hasName(string)) {
+            if (resolvedClassConstant.hasName(value)) {
                 return resolvedClassConstant;
             }
         }
@@ -74,12 +74,12 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
 
         while (iterator.hasNext()) {
             ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) iterator.next();
-            if (constantPoolEntry.getTag() == ConstantPoolTag.CLASS && ((ResolvedClassConstant) constantPoolEntry).hasName(string)) {
+            if (constantPoolEntry.getTag() == ConstantPoolTag.CLASS && ((ResolvedClassConstant) constantPoolEntry).hasName(value)) {
                 return (ResolvedClassConstant) constantPoolEntry;
             }
         }
 
-        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this, string);
+        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this, value);
         ResolvedClassConstant resolvedClassConstant1 = new ResolvedClassConstant(this, constantUtf8);
         list1.add(resolvedClassConstant1);
         list1.add(constantUtf8);
@@ -108,8 +108,8 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
         return this.classFile.getThisClassConstant();
     }
 
-    public ConstantUtf8 createUtf8Constant(String string, List list1) {
-        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this, string);
+    public ConstantUtf8 createUtf8Constant(String value, List list1) {
+        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this, value);
         list1.add(constantUtf8);
         return constantUtf8;
     }
@@ -134,8 +134,8 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
             ListMultimap listMultimap6,
             ListMultimap listMultimap7
     ) {
-        for (int i = 0; i < this.utf8Constants.size(); i++) {
-            ConstantUtf8 constantUtf8 = (ConstantUtf8) this.utf8Constants.get(i);
+        for (int elementIndex = 0; elementIndex < this.utf8Constants.size(); elementIndex++) {
+            ConstantUtf8 constantUtf8 = (ConstantUtf8) this.utf8Constants.get(elementIndex);
             if (!listMultimap.containsKey(constantUtf8)) {
                 this.unreferencedUtf8s.add(constantUtf8);
             }
@@ -154,7 +154,7 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
         if (bk > 0) {
             ArrayList arrayList = new ArrayList(this.entries.length + bk);
             arrayList.addAll(new ArrayCollection(this.entries));
-            int bb = this.entries.length;
+            int lengthValue = this.entries.length;
             EnumerationBackedList enumerationBackedList = new EnumerationBackedList(listMultimap2.keys());
             Collections.sort(enumerationBackedList);
             Iterator iterator = enumerationBackedList.iterator();
@@ -162,21 +162,21 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
             while (iterator.hasNext()) {
                 ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) iterator.next();
                 List list1 = listMultimap2.getValues(resolvedStringConstant);
-                int bc = list1.size();
+                int list1Size = list1.size();
 
-                for (int i = 1; i < bc; i++) {
-                    StringConstantReplaceable stringConstantReplaceable = (StringConstantReplaceable) list1.get(i);
-                    ConstantUtf8 constantUtf81 = resolvedStringConstant.getValueUtf8().copyWithIndex(bb++);
+                for (int elementIndexValue = 1; elementIndexValue < list1Size; elementIndexValue++) {
+                    StringConstantReplaceable stringConstantReplaceable = (StringConstantReplaceable) list1.get(elementIndexValue);
+                    ConstantUtf8 constantUtf81 = resolvedStringConstant.getValueUtf8().copyWithIndex(lengthValue++);
                     arrayList.add(constantUtf81);
                     this.utf8Constants.add(constantUtf81);
-                    int bv = bb++;
+                    int bv = lengthValue++;
                     ListMultimap listMultimap8 = listMultimap;
                     ResolvedStringConstant resolvedStringConstant2 = resolvedStringConstant;
                     ConstantUtf8 constantUtf84 = constantUtf81;
                     AbstractConstantPool abstractConstantPool1 = this;
-                    int be = bv;
+                    int indexValue2 = bv;
                     ResolvedStringConstant resolvedStringConstant1 = new ResolvedStringConstant(
-                            be, abstractConstantPool1, constantUtf84, resolvedStringConstant2, listMultimap8, true
+                            indexValue2, abstractConstantPool1, constantUtf84, resolvedStringConstant2, listMultimap8, true
                     );
                     arrayList.add(resolvedStringConstant1);
                     this.stringConstants.add(resolvedStringConstant1);
@@ -191,15 +191,15 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
             while (iterator1.hasNext()) {
                 ConstantInteger constantInteger1 = (ConstantInteger) iterator1.next();
                 List list2 = listMultimap3.getValues(constantInteger1);
-                int bl = list2.size();
+                int list2Size = list2.size();
 
-                for (int i = 1; i < bl; i++) {
-                    ConstantIntegerReplacer constantIntegerReplacer = (ConstantIntegerReplacer) list2.get(i);
-                    int bw = bb++;
+                for (int elementIndexValue2 = 1; elementIndexValue2 < list2Size; elementIndexValue2++) {
+                    ConstantIntegerReplacer constantIntegerReplacer = (ConstantIntegerReplacer) list2.get(elementIndexValue2);
+                    int bw = lengthValue++;
                     ConstantInteger constantInteger = constantInteger1;
                     AbstractConstantPool abstractConstantPool2 = this;
-                    int bf = bw;
-                    ConstantInteger constantInteger2 = new ConstantInteger(bf, abstractConstantPool2, constantInteger);
+                    int indexValue3 = bw;
+                    ConstantInteger constantInteger2 = new ConstantInteger(indexValue3, abstractConstantPool2, constantInteger);
                     arrayList.add(constantInteger2);
                     this.integerConstants.add(constantInteger2);
                     constantIntegerReplacer.replaceIntegerConstant(constantInteger1, constantInteger2);
@@ -214,18 +214,18 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
             while (iterator2.hasNext()) {
                 ConstantLong constantLong2 = (ConstantLong) iterator2.next();
                 List list3 = listMultimap4.getValues(constantLong2);
-                int bn = list3.size();
+                int list3Size = list3.size();
 
-                for (int i = 1; i < bn; i++) {
-                    LongConstantReplaceable longConstantReplaceable = (LongConstantReplaceable) list3.get(i);
-                    int bx = bb++;
+                for (int elementIndexValue3 = 1; elementIndexValue3 < list3Size; elementIndexValue3++) {
+                    LongConstantReplaceable longConstantReplaceable = (LongConstantReplaceable) list3.get(elementIndexValue3);
+                    int bx = lengthValue++;
                     ConstantLong constantLong1 = constantLong2;
                     AbstractConstantPool abstractConstantPool3 = this;
-                    int bg = bx;
-                    ConstantLong constantLong = new ConstantLong(bg, abstractConstantPool3, constantLong1);
+                    int indexValue4 = bx;
+                    ConstantLong constantLong = new ConstantLong(indexValue4, abstractConstantPool3, constantLong1);
                     arrayList.add(constantLong);
                     arrayList.add(constantNullEntry);
-                    bb++;
+                    lengthValue++;
                     this.longConstants.add(constantLong);
                     longConstantReplaceable.replaceLongConstant(constantLong2, constantLong);
                 }
@@ -239,31 +239,31 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
                 ResolvedInvokeDynamic resolvedInvokeDynamic2 = (ResolvedInvokeDynamic) iterator3.next();
                 resolvedInvokeDynamic2.getBootstrapMethod();
                 List list4 = listMultimap7.getValues(resolvedInvokeDynamic2);
-                int bp = list4.size();
+                int list4Size = list4.size();
 
-                for (int i = 1; i < bp; i++) {
-                    InvokeDynamicConstantReplaceable invokeDynamicConstantReplaceable = (InvokeDynamicConstantReplaceable) list4.get(i);
+                for (int elementIndexValue4 = 1; elementIndexValue4 < list4Size; elementIndexValue4++) {
+                    InvokeDynamicConstantReplaceable invokeDynamicConstantReplaceable = (InvokeDynamicConstantReplaceable) list4.get(elementIndexValue4);
                     ResolvedNameAndType resolvedNameAndType = resolvedInvokeDynamic2.getNameAndType();
-                    ConstantUtf8 constantUtf82 = resolvedNameAndType.getNameUtf8().copyWithIndex(bb++);
+                    ConstantUtf8 constantUtf82 = resolvedNameAndType.getNameUtf8().copyWithIndex(lengthValue++);
                     arrayList.add(constantUtf82);
                     this.utf8Constants.add(constantUtf82);
-                    ConstantUtf8 constantUtf83 = resolvedNameAndType.getDescriptorUtf8().copyWithIndex(bb++);
+                    ConstantUtf8 constantUtf83 = resolvedNameAndType.getDescriptorUtf8().copyWithIndex(lengthValue++);
                     arrayList.add(constantUtf83);
                     this.utf8Constants.add(constantUtf83);
-                    int by = bb++;
+                    int by = lengthValue++;
                     ListMultimap listMultimap9 = listMultimap;
                     ConstantUtf8 constantUtf85 = constantUtf83;
                     ConstantUtf8 constantUtf86 = constantUtf82;
                     AbstractConstantPool abstractConstantPool4 = this;
-                    int bh = by;
-                    ResolvedNameAndType resolvedNameAndType1 = new ResolvedNameAndType(bh, abstractConstantPool4, constantUtf86, constantUtf85, listMultimap9);
+                    int index = by;
+                    ResolvedNameAndType resolvedNameAndType1 = new ResolvedNameAndType(index, abstractConstantPool4, constantUtf86, constantUtf85, listMultimap9);
                     arrayList.add(resolvedNameAndType1);
                     this.nameAndTypes.add(resolvedNameAndType1);
-                    by = bb++;
+                    by = lengthValue++;
                     ResolvedInvokeDynamic resolvedInvokeDynamic1 = resolvedInvokeDynamic2;
                     ResolvedNameAndType resolvedNameAndType2 = resolvedNameAndType1;
-                    int bi = by;
-                    ResolvedInvokeDynamic resolvedInvokeDynamic = new ResolvedInvokeDynamic(bi, resolvedNameAndType2, resolvedInvokeDynamic1);
+                    int indexValue5 = by;
+                    ResolvedInvokeDynamic resolvedInvokeDynamic = new ResolvedInvokeDynamic(indexValue5, resolvedNameAndType2, resolvedInvokeDynamic1);
                     arrayList.add(resolvedInvokeDynamic);
                     this.invokeDynamics.add(resolvedInvokeDynamic);
                     invokeDynamicConstantReplaceable.replaceInvokeDynamic(resolvedInvokeDynamic2, resolvedInvokeDynamic);
@@ -277,22 +277,22 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
             while (iterator4.hasNext()) {
                 ResolvedNameAndType resolvedNameAndType3 = (ResolvedNameAndType) iterator4.next();
                 List list5 = listMultimap1.getValues(resolvedNameAndType3);
-                int bq = list5.size();
+                int list5Size = list5.size();
 
-                for (int i = 1; i < bq; i++) {
-                    NameAndTypeHolder nameAndTypeHolder = (NameAndTypeHolder) list5.get(i);
-                    ConstantUtf8 constantUtf810 = resolvedNameAndType3.getNameUtf8().copyWithIndex(bb++);
+                for (int elementIndexValue5 = 1; elementIndexValue5 < list5Size; elementIndexValue5++) {
+                    NameAndTypeHolder nameAndTypeHolder = (NameAndTypeHolder) list5.get(elementIndexValue5);
+                    ConstantUtf8 constantUtf810 = resolvedNameAndType3.getNameUtf8().copyWithIndex(lengthValue++);
                     arrayList.add(constantUtf810);
                     this.utf8Constants.add(constantUtf810);
-                    ConstantUtf8 constantUtf811 = resolvedNameAndType3.getDescriptorUtf8().copyWithIndex(bb++);
+                    ConstantUtf8 constantUtf811 = resolvedNameAndType3.getDescriptorUtf8().copyWithIndex(lengthValue++);
                     arrayList.add(constantUtf811);
                     this.utf8Constants.add(constantUtf811);
-                    int bz = bb++;
+                    int bz = lengthValue++;
                     ConstantUtf8 constantUtf87 = constantUtf811;
                     ConstantUtf8 constantUtf88 = constantUtf810;
                     AbstractConstantPool abstractConstantPool5 = this;
-                    int bj = bz;
-                    ResolvedNameAndType resolvedNameAndType4 = new ResolvedNameAndType(bj, abstractConstantPool5, constantUtf88, constantUtf87, listMultimap);
+                    int indexValue = bz;
+                    ResolvedNameAndType resolvedNameAndType4 = new ResolvedNameAndType(indexValue, abstractConstantPool5, constantUtf88, constantUtf87, listMultimap);
                     arrayList.add(resolvedNameAndType4);
                     this.nameAndTypes.add(resolvedNameAndType4);
                     nameAndTypeHolder.replaceNameAndType(resolvedNameAndType4);
@@ -306,11 +306,11 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
             while (iterator5.hasNext()) {
                 ConstantUtf8 constantUtf89 = (ConstantUtf8) iterator5.next();
                 List list6 = listMultimap.getValues(constantUtf89);
-                int bt = list6.size();
+                int list6Size = list6.size();
 
-                for (int i = 1; i < bt; i++) {
-                    Utf8ConstantReplaceable utf8ConstantReplaceable = (Utf8ConstantReplaceable) list6.get(i);
-                    ConstantUtf8 constantUtf812 = constantUtf89.copyWithIndex(bb++);
+                for (int elementIndexValue6 = 1; elementIndexValue6 < list6Size; elementIndexValue6++) {
+                    Utf8ConstantReplaceable utf8ConstantReplaceable = (Utf8ConstantReplaceable) list6.get(elementIndexValue6);
+                    ConstantUtf8 constantUtf812 = constantUtf89.copyWithIndex(lengthValue++);
                     arrayList.add(constantUtf812);
                     this.utf8Constants.add(constantUtf812);
                     utf8ConstantReplaceable.replaceUtf8Constant(constantUtf89, constantUtf812);
@@ -364,26 +364,26 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
 
     public abstract void applyPackageRenames(Object object);
 
-    public ResolvedMethodRef getOrCreateMethodRef(String string, String string1, String string2, List list1, AbstractMethodInfo abstractMethodInfo) {
+    public ResolvedMethodRef getOrCreateMethodRef(String value, String valueArgument, String valueArgument2, List list1, AbstractMethodInfo abstractMethodInfo) {
         boolean bl = abstractMethodInfo.getOwningClass().isInterface();
         ResolvedMethodRef resolvedMethodRef;
         if (bl) {
-            resolvedMethodRef = this.findInterfaceMethodRef(string, string1, string2);
+            resolvedMethodRef = this.findInterfaceMethodRef(value, valueArgument, valueArgument2);
         } else {
-            resolvedMethodRef = this.findMethodRef(string, string1, string2);
+            resolvedMethodRef = this.findMethodRef(value, valueArgument, valueArgument2);
         }
 
         if (resolvedMethodRef != null) {
             return resolvedMethodRef;
         }
 
-        resolvedMethodRef = (ResolvedMethodRef) this.findPendingMemberRef(string, string1, string2, list1);
+        resolvedMethodRef = (ResolvedMethodRef) this.findPendingMemberRef(value, valueArgument, valueArgument2, list1);
         if (resolvedMethodRef != null) {
             return resolvedMethodRef;
         }
 
-        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(string, list1);
-        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(string1, string2, list1);
+        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(value, list1);
+        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(valueArgument, valueArgument2, list1);
         ResolvedMethodRef resolvedMethodRef1;
         if (bl) {
             resolvedMethodRef1 = new ResolvedInterfaceMethodRef(this, resolvedClassConstant, resolvedNameAndType, abstractMethodInfo);
@@ -396,8 +396,8 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
     }
 
     @Override
-    public final ConstantPoolEntry getConstantPoolEntry(int ba) {
-        return ba > 0 && ba < this.entries.length ? this.entries[ba] : null;
+    public final ConstantPoolEntry getConstantPoolEntry(int entryIndex) {
+        return entryIndex > 0 && entryIndex < this.entries.length ? this.entries[entryIndex] : null;
     }
 
     public final ResolvedFieldRef getOrCreateFieldRef(AbstractFieldInfo abstractFieldInfo, List list1) {
@@ -406,9 +406,9 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
         );
     }
 
-    public ResolvedNameAndType createNameAndType(String string, String string1, List list1) {
-        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this, string);
-        ConstantUtf8 constantUtf81 = new ConstantUtf8(0, this, string1);
+    public ResolvedNameAndType createNameAndType(String value, String valueArgument, List list1) {
+        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this, value);
+        ConstantUtf8 constantUtf81 = new ConstantUtf8(0, this, valueArgument);
         ResolvedNameAndType resolvedNameAndType = new ResolvedNameAndType(0, this, constantUtf8, constantUtf81, null);
         list1.add(resolvedNameAndType);
         list1.add(constantUtf8);
@@ -417,24 +417,24 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
     }
 
     public synchronized int appendEntries(List list1) {
-        int ba = list1.size();
+        int list1Size = list1.size();
         int bb = 0;
 
-        for (int i = 0; i < ba; i++) {
-            bb += ((ConstantPoolEntry) list1.get(i)).getSlotCount();
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            bb += ((ConstantPoolEntry) list1.get(elementIndex)).getSlotCount();
         }
 
-        int be = this.entries.length;
-        ConstantPoolEntry[] constantPoolEntrys = new ConstantPoolEntry[be + bb];
-        System.arraycopy(this.entries, 0, constantPoolEntrys, 0, be);
+        int lengthValue = this.entries.length;
+        ConstantPoolEntry[] constantPoolEntrys = new ConstantPoolEntry[lengthValue + bb];
+        System.arraycopy(this.entries, 0, constantPoolEntrys, 0, lengthValue);
 
-        for (int i = 0; i < ba; i++) {
-            ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) list1.get(i);
-            constantPoolEntry.setIndex(be);
-            constantPoolEntrys[be++] = constantPoolEntry;
+        for (int elementIndexValue = 0; elementIndexValue < list1Size; elementIndexValue++) {
+            ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) list1.get(elementIndexValue);
+            constantPoolEntry.setIndex(lengthValue);
+            constantPoolEntrys[lengthValue++] = constantPoolEntry;
             if (constantPoolEntry.getSlotCount() == 2) {
-                constantPoolEntrys[be] = ConstantNullEntry.getSharedInstance(this);
-                be++;
+                constantPoolEntrys[lengthValue] = ConstantNullEntry.getSharedInstance(this);
+                lengthValue++;
             }
         }
 
@@ -443,10 +443,10 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
     }
 
     public final void renumberEntries() {
-        int ba = this.entries.length;
+        int lengthValue = this.entries.length;
 
-        for (int i = 0; i < ba; i++) {
-            this.entries[i].setIndex(i);
+        for (int index = 0; index < lengthValue; index++) {
+            this.entries[index].setIndex(index);
         }
     }
 
@@ -483,19 +483,19 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
 
         while (iterator1.hasNext()) {
             Entry entry = (Entry) iterator1.next();
-            String string = ((ResolvedClassConstant) entry.getKey()).getClassName();
-            if (twoKeyMap.containsKey(string)) {
-                hashSet.add(string);
+            String className = ((ResolvedClassConstant) entry.getKey()).getClassName();
+            if (twoKeyMap.containsKey(className)) {
+                hashSet.add(className);
             }
 
-            twoKeyMap.putValue(string, entry.getKey(), entry.getValue());
+            twoKeyMap.putValue(className, entry.getKey(), entry.getValue());
         }
 
         iterator1 = hashSet.iterator();
 
         while (iterator1.hasNext()) {
-            String string1 = (String) iterator1.next();
-            Map map1 = twoKeyMap.getInnerMap(string1);
+            String key = (String) iterator1.next();
+            Map map1 = twoKeyMap.getInnerMap(key);
             TreeSet treeSet = new TreeSet(map1.keySet());
             int ba = 0;
             ResolvedClassConstant resolvedClassConstant1 = null;
@@ -520,8 +520,8 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
     }
 
     public ResolvedFieldRef findFieldRef(String string, String string1, String string2) {
-        for (int i = 0; i < this.fieldRefs.size(); i++) {
-            ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.fieldRefs.get(i);
+        for (int elementIndex = 0; elementIndex < this.fieldRefs.size(); elementIndex++) {
+            ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.fieldRefs.get(elementIndex);
             if (resolvedFieldRef.matches(string, string1, string2)) {
                 return resolvedFieldRef;
             }
@@ -531,38 +531,38 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
     }
 
     public final void resolveMethodRefs(ScriptEnvironment scriptEnvironment1, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
-        int ba = this.methodRefs.size();
+        int methodRefsSize = this.methodRefs.size();
 
-        for (int i = 0; i < ba; i++) {
-            ((ResolvedMethodRefConstant) this.methodRefs.get(i)).syncWithResolvedMember(scriptEnvironment1, classMemberLookup1);
+        for (int elementIndex = 0; elementIndex < methodRefsSize; elementIndex++) {
+            ((ResolvedMethodRefConstant) this.methodRefs.get(elementIndex)).syncWithResolvedMember(scriptEnvironment1, classMemberLookup1);
         }
 
-        ba = this.interfaceMethodRefs.size();
+        methodRefsSize = this.interfaceMethodRefs.size();
 
-        for (int i = 0; i < ba; i++) {
-            ((ResolvedInterfaceMethodRef) this.interfaceMethodRefs.get(i)).syncWithResolvedMember(scriptEnvironment1, classMemberLookup1);
+        for (int elementIndexValue = 0; elementIndexValue < methodRefsSize; elementIndexValue++) {
+            ((ResolvedInterfaceMethodRef) this.interfaceMethodRefs.get(elementIndexValue)).syncWithResolvedMember(scriptEnvironment1, classMemberLookup1);
         }
 
-        ba = this.invokeDynamics.size();
+        methodRefsSize = this.invokeDynamics.size();
 
-        for (int i = 0; i < ba; i++) {
-            ((ResolvedInvokeDynamic) this.invokeDynamics.get(i)).updateNameFromTarget();
+        for (int elementIndexValue2 = 0; elementIndexValue2 < methodRefsSize; elementIndexValue2++) {
+            ((ResolvedInvokeDynamic) this.invokeDynamics.get(elementIndexValue2)).updateNameFromTarget();
         }
     }
 
-    public final ResolvedFieldRef getOrCreateFieldRef(String string, String string1, String string2, List list1, AbstractFieldInfo abstractFieldInfo) {
-        ResolvedFieldRef resolvedFieldRef = this.findFieldRef(string, string1, string2);
+    public final ResolvedFieldRef getOrCreateFieldRef(String value, String valueArgument, String valueArgument2, List list1, AbstractFieldInfo abstractFieldInfo) {
+        ResolvedFieldRef resolvedFieldRef = this.findFieldRef(value, valueArgument, valueArgument2);
         if (resolvedFieldRef != null) {
             return resolvedFieldRef;
         }
 
-        resolvedFieldRef = (ResolvedFieldRef) this.findPendingMemberRef(string, string1, string2, list1);
+        resolvedFieldRef = (ResolvedFieldRef) this.findPendingMemberRef(value, valueArgument, valueArgument2, list1);
         if (resolvedFieldRef != null) {
             return resolvedFieldRef;
         }
 
-        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(string, list1);
-        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(string1, string2, list1);
+        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(value, list1);
+        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(valueArgument, valueArgument2, list1);
         ResolvedFieldRef resolvedFieldRef1 = new ResolvedFieldRef(this, resolvedClassConstant, resolvedNameAndType, abstractFieldInfo);
         list1.add(resolvedFieldRef1);
         return resolvedFieldRef1;
@@ -602,19 +602,19 @@ public abstract class AbstractConstantPool implements ConstantPoolProvider {
 
         while (iterator1.hasNext()) {
             Entry entry = (Entry) iterator1.next();
-            String string = ((ResolvedMemberRef) entry.getKey()).getMemberRefKey();
-            if (twoKeyMap.containsKey(string)) {
-                hashSet.add(string);
+            String memberRefKey = ((ResolvedMemberRef) entry.getKey()).getMemberRefKey();
+            if (twoKeyMap.containsKey(memberRefKey)) {
+                hashSet.add(memberRefKey);
             }
 
-            twoKeyMap.putValue(string, entry.getKey(), entry.getValue());
+            twoKeyMap.putValue(memberRefKey, entry.getKey(), entry.getValue());
         }
 
         iterator1 = hashSet.iterator();
 
         while (iterator1.hasNext()) {
-            String string1 = (String) iterator1.next();
-            Map map1 = twoKeyMap.getInnerMap(string1);
+            String key = (String) iterator1.next();
+            Map map1 = twoKeyMap.getInnerMap(key);
             TreeSet treeSet = new TreeSet(map1.keySet());
             int ba = 0;
             ResolvedMemberRef resolvedMemberRef1 = null;

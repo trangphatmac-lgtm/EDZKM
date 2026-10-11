@@ -5,7 +5,7 @@ import com.zelix.klassmaster.util.ZkmAssert;
 import java.io.Serializable;
 
 public class ChangeLogToken implements Serializable {
-    private static final String b = " NULL >";
+    private static final String NULL_IMAGE_SUFFIX = " NULL >";
     public int B;
     public ChangeLogToken h;
     public int n;
@@ -36,6 +36,6 @@ public class ChangeLogToken implements Serializable {
 
     @Override
     public String toString() {
-        return this.k == null ? "<" + ZkmAssert.getSimpleClassName(this) + b : this.k;
+        return this.k == null ? "<" + ZkmAssert.getSimpleClassName(this) + NULL_IMAGE_SUFFIX : this.k;
     }
 }

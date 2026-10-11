@@ -34,59 +34,59 @@ public abstract class ConstantPoolEntry implements Comparable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareIndex((ConstantPoolEntry) object);
+    public int compareTo(Object other) {
+        return this.compareIndex((ConstantPoolEntry) other);
     }
 
     @Override
-    public final boolean equals(Object object) {
-        return super.equals(object);
+    public final boolean equals(Object other) {
+        return super.equals(other);
     }
 
-    public static ConstantPoolEntry readEntry(int ba, ClassFileInputStream classFileInputStream, ConstantPool constantPool1) throws ClassFileFormatException, IOException {
+    public static ConstantPoolEntry readEntry(int indexArgument, ClassFileInputStream classFileInputStream, ConstantPool constantPool1) throws ClassFileFormatException, IOException {
         int bb = classFileInputStream.readUnsignedByte();
         switch (bb) {
             case 1:
-                return new ConstantUtf8(ba, classFileInputStream, constantPool1);
+                return new ConstantUtf8(indexArgument, classFileInputStream, constantPool1);
             case 2:
             case 13:
             case 14:
             default:
                 throw new ClassFileFormatException(
-                        "Class file '" + constantPool1.getClassLocation() + "' is corrupt. Tag '" + bb + "' at " + ba + " is invalid (1)"
+                        "Class file '" + constantPool1.getClassLocation() + "' is corrupt. Tag '" + bb + "' at " + indexArgument + " is invalid (1)"
                 );
             case 3:
-                return new ConstantInteger(ba, classFileInputStream, constantPool1);
+                return new ConstantInteger(indexArgument, classFileInputStream, constantPool1);
             case 4:
-                return new ConstantFloat(ba, classFileInputStream, constantPool1);
+                return new ConstantFloat(indexArgument, classFileInputStream, constantPool1);
             case 5:
-                return new ConstantLong(ba, classFileInputStream, constantPool1);
+                return new ConstantLong(indexArgument, classFileInputStream, constantPool1);
             case 6:
-                return new ConstantDouble(ba, classFileInputStream, constantPool1);
+                return new ConstantDouble(indexArgument, classFileInputStream, constantPool1);
             case 7:
-                return new ConstantClass(ba, classFileInputStream, constantPool1);
+                return new ConstantClass(indexArgument, classFileInputStream, constantPool1);
             case 8:
-                return new ConstantString(ba, classFileInputStream, constantPool1);
+                return new ConstantString(indexArgument, classFileInputStream, constantPool1);
             case 9:
-                return new ConstantFieldref(ba, classFileInputStream, constantPool1);
+                return new ConstantFieldref(indexArgument, classFileInputStream, constantPool1);
             case 10:
-                return new ConstantMethodref(ba, classFileInputStream, constantPool1);
+                return new ConstantMethodref(indexArgument, classFileInputStream, constantPool1);
             case 11:
-                return new ConstantInterfaceMethodref(ba, classFileInputStream, constantPool1);
+                return new ConstantInterfaceMethodref(indexArgument, classFileInputStream, constantPool1);
             case 12:
-                return new ConstantNameAndType(ba, classFileInputStream, constantPool1);
+                return new ConstantNameAndType(indexArgument, classFileInputStream, constantPool1);
             case 15:
-                return new ConstantMethodHandle(ba, classFileInputStream, constantPool1);
+                return new ConstantMethodHandle(indexArgument, classFileInputStream, constantPool1);
             case 16:
-                return new ConstantMethodType(ba, classFileInputStream, constantPool1);
+                return new ConstantMethodType(indexArgument, classFileInputStream, constantPool1);
             case 17:
-                return new ConstantDynamic(ba, classFileInputStream, constantPool1);
+                return new ConstantDynamic(indexArgument, classFileInputStream, constantPool1);
             case 18:
-                return new ConstantInvokeDynamic(ba, classFileInputStream, constantPool1);
+                return new ConstantInvokeDynamic(indexArgument, classFileInputStream, constantPool1);
             case 19:
-                return new ConstantModule(ba, classFileInputStream, constantPool1);
+                return new ConstantModule(indexArgument, classFileInputStream, constantPool1);
             case 20:
-                return new ConstantPackage(ba, classFileInputStream, constantPool1);
+                return new ConstantPackage(indexArgument, classFileInputStream, constantPool1);
         }
     }
 
@@ -98,8 +98,8 @@ public abstract class ConstantPoolEntry implements Comparable {
         return string.substring(string.indexOf(")") + 1);
     }
 
-    public static String getWrapperClassName(Object object) {
-        return (String) PRIMITIVE_WRAPPER_CLASSES.get(object);
+    public static String getWrapperClassName(Object key) {
+        return (String) PRIMITIVE_WRAPPER_CLASSES.get(key);
     }
 
     public abstract ConstantPoolTag getTag();
@@ -153,25 +153,25 @@ public abstract class ConstantPoolEntry implements Comparable {
         }
     }
 
-    public static String getPrimitiveTypeName(Object object) {
-        return (String) PRIMITIVE_TYPE_NAMES.get(object);
+    public static String getPrimitiveTypeName(Object key) {
+        return (String) PRIMITIVE_TYPE_NAMES.get(key);
     }
 
     public static String getStackWrapperClassName(String string) {
-        String string1 = string;
+        String key = string;
         Map map1;
-        switch (string1.charAt(0)) {
+        switch (key.charAt(0)) {
             case 'B':
             case 'C':
             case 'S':
-                string1 = "I";
+                key = "I";
                 map1 = PRIMITIVE_WRAPPER_CLASSES;
                 break;
             default:
                 map1 = PRIMITIVE_WRAPPER_CLASSES;
         }
 
-        return (String) map1.get(string1);
+        return (String) map1.get(key);
     }
 
     public static int countParameterSlots(List list1) {
@@ -189,27 +189,27 @@ public abstract class ConstantPoolEntry implements Comparable {
         return ba;
     }
 
-    public static final String formatMemberSignature(String string, String string1) {
+    public static final String formatMemberSignature(String string, String descriptorArgument) {
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = string1.indexOf(41);
+        int ba = descriptorArgument.indexOf(41);
         if (ba > -1) {
-            stringBuilder.append(descriptorToJavaType(string1.substring(ba + 1)));
+            stringBuilder.append(descriptorToJavaType(descriptorArgument.substring(ba + 1)));
             stringBuilder.append(' ');
             stringBuilder.append(string);
             stringBuilder.append('(');
-            List list1 = getParameterJavaTypes(string1);
-            int bb = list1.size();
+            List list1 = getParameterJavaTypes(descriptorArgument);
+            int list1Size = list1.size();
 
-            for (int i = 0; i < bb; i++) {
-                stringBuilder.append((String) list1.get(i));
-                if (i < bb - 1) {
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                stringBuilder.append((String) list1.get(elementIndex));
+                if (elementIndex < list1Size - 1) {
                     stringBuilder.append(", ");
                 }
             }
 
             stringBuilder.append(')');
         } else {
-            stringBuilder.append(descriptorToJavaType(string1));
+            stringBuilder.append(descriptorToJavaType(descriptorArgument));
             stringBuilder.append(' ');
             stringBuilder.append(string);
         }
@@ -217,12 +217,12 @@ public abstract class ConstantPoolEntry implements Comparable {
         return stringBuilder.toString();
     }
 
-    public static List getReferencedProgramClasses(String string) {
+    public static List getReferencedProgramClasses(String descriptorArgument) {
         ArrayList arrayList = new ArrayList();
-        List list1 = getParameterAndReturnTypes(string);
+        List list1 = getParameterAndReturnTypes(descriptorArgument);
 
-        for (int i = 0; i < list1.size(); i++) {
-            ProgramClass programClass1 = findProgramClassByDescriptor((String) list1.get(i));
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ProgramClass programClass1 = findProgramClassByDescriptor((String) list1.get(elementIndex));
             if (programClass1 != null) {
                 arrayList.add(programClass1);
             }
@@ -235,167 +235,60 @@ public abstract class ConstantPoolEntry implements Comparable {
         return this.index;
     }
 
-    public static List parseParameterTypes(String string, boolean ba) {
-        int bb;
-        String string1;
-        int be;
-        be = ConstantPoolTag.getFlowSeed();
-        string1 = MethodSignature.getParameterPart(string);
-        bb = be;
-        be = (byte) (ba ? 1 : 0);
-        label123:
-        if (bb == 0) {
-            if ((ba ? 1 : 0) != 0) {
-                String string3 = string1;
-                if (bb == 0) {
-                    if (string1.length() < 2) {
-                        return null;
-                    }
+    public static List parseParameterTypes(String descriptor, boolean validate) {
+        int flowSeed = ConstantPoolTag.getFlowSeed();
+        String parameterPart = MethodSignature.getParameterPart(descriptor);
+        if (flowSeed == 0 && validate) {
+            if (parameterPart.length() < 2 || parameterPart.charAt(0) != '('
+                    || parameterPart.charAt(parameterPart.length() - 1) != ')') {
+                return null;
+            }
+        }
 
-                    string3 = string1;
-                }
+        ZkmAssert.assertTrue(flowSeed == 0 ? parameterPart.length() >= 2 : validate,
+                new String[]{"'" + parameterPart + "' : '" + descriptor + "'"});
+        String remainingTypes = parameterPart.substring(1, parameterPart.indexOf(41));
+        ArrayList parameterTypes = new ArrayList();
+        if (flowSeed != 0) {
+            if (remainingTypes.length() == 0) {
+                parameterTypes.trimToSize();
+            }
+            return parameterTypes;
+        }
 
-                be = string3.charAt(0);
-                if (bb == 0) {
-                    if (be != 40) {
-                        return null;
-                    }
+        while (remainingTypes.length() != 0) {
+            int elementTypeIndex = 0;
+            while (remainingTypes.charAt(elementTypeIndex) == '[') {
+                elementTypeIndex++;
+            }
 
-                    be = string1.charAt(string1.length() - 1);
-                }
-
-                if (bb != 0) {
-                    break label123;
-                }
-
-                if (be != 41) {
+            int typeEnd = elementTypeIndex;
+            if (remainingTypes.charAt(elementTypeIndex) == 'L') {
+                typeEnd = remainingTypes.indexOf(59);
+                if (validate && (typeEnd == -1 || typeEnd == elementTypeIndex + 1)) {
                     return null;
                 }
             }
 
-            be = string1.length();
-        }
-
-        if (bb == 0) {
-            be = be >= 2 ? 1 : 0;
-        }
-
-        ZkmAssert.assertTrue(be != 0, new String[]{"'" + string1 + "' : '" + string + "'"});
-        string1 = string1.substring(1, string1.indexOf(41));
-        ArrayList arrayList = new ArrayList();
-
-        while (true) {
-            if (string1.length() != 0) {
-                if (bb != 0) {
-                    break;
-                }
-
-                int bc = 0;
-
-                int bd;
-                label99:
-                {
-                    label98:
-                    {
-                        while (true) {
-                            if (string1.charAt(bc) == '[') {
-                                bc++;
-                                if (bb != 0) {
-                                    break;
-                                }
-
-                                if (bb == 0) {
-                                    continue;
-                                }
-                            }
-
-                            be = string1.charAt(bc);
-                            if (bb != 0) {
-                                break label98;
-                            }
-
-                            if (be == 76) {
-                                bd = string1.indexOf(59);
-                                be = (byte) (ba ? 1 : 0);
-                                if (bb == 0) {
-                                    if ((ba ? 1 : 0) == 0) {
-                                        break label99;
-                                    }
-
-                                    be = bd;
-                                }
-
-                                if (bb == 0) {
-                                    if (be == -1) {
-                                        return null;
-                                    }
-
-                                    be = bd;
-                                }
-
-                                if (be == bc + 1) {
-                                    return null;
-                                }
-                                break label99;
-                            }
-                            break;
-                        }
-
-                        be = bc;
-                    }
-
-                    bd = be;
-                }
-
-                String string2 = string1.substring(0, bd + 1);
-                be = (byte) ((arrayList.add(string2)) ? 1 : 0);
-                label79:
-                if (bb == 0) {
-                    if ((ba ? 1 : 0) != 0) {
-                        be = string2.length();
-                        if (bb != 0) {
-                            break label79;
-                        }
-
-                        if (be == 1 && PRIMITIVE_TYPE_NAMES.get(string2) == null) {
-                            return null;
-                        }
-                    }
-
-                    be = bd;
-                }
-
-                label72:
-                {
-                    if (be == string1.length() - 1) {
-                        string1 = "";
-                        if (bb == 0) {
-                            break label72;
-                        }
-                    }
-
-                    string1 = string1.substring(bd + 1);
-                }
-
-                if (bb == 0) {
-                    continue;
-                }
+            String parameterType = remainingTypes.substring(0, typeEnd + 1);
+            parameterTypes.add(parameterType);
+            if (validate && parameterType.length() == 1 && PRIMITIVE_TYPE_NAMES.get(parameterType) == null) {
+                return null;
             }
-
-            arrayList.trimToSize();
-            break;
+            remainingTypes = typeEnd == remainingTypes.length() - 1 ? "" : remainingTypes.substring(typeEnd + 1);
         }
 
-        return arrayList;
+        parameterTypes.trimToSize();
+        return parameterTypes;
     }
 
-    public static List getParameterClassForNames(String string) {
-        List list1 = getParameterTypes(string);
-        int ba = list1.size();
+    public static List getParameterClassForNames(String descriptorArgument) {
+        List list1 = getParameterTypes(descriptorArgument);
+        int list1Size = list1.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string1 = (String) list1.get(i);
-            list1.set(i, toClassForNameFormat(string1));
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            String string1 = (String) list1.get(elementIndex);
+            list1.set(elementIndex, toClassForNameFormat(string1));
         }
 
         return list1;
@@ -407,8 +300,8 @@ public abstract class ConstantPoolEntry implements Comparable {
         return false;
     }
 
-    public static String descriptorToJavaType(String string, boolean bl) {
-        return descriptorToJavaType(string, bl, true);
+    public static String descriptorToJavaType(String descriptorArgument, boolean validateArgument) {
+        return descriptorToJavaType(descriptorArgument, validateArgument, true);
     }
 
     public String getDisplayString() {
@@ -442,16 +335,16 @@ public abstract class ConstantPoolEntry implements Comparable {
     }
 
     public static String remapDescriptorClassNames(String string, HashMap hashMap) {
-        int ba = 0;
+        int fromIndex = 0;
         String string4 = string;
 
-        for (byte bc = 76; (ba = string4.indexOf(bc, ba)) != -1; bc = 76) {
-            int bb = string.indexOf(59, ba);
-            if (bb == -1) {
+        for (byte searchCharacter = 76; (fromIndex = string4.indexOf(searchCharacter, fromIndex)) != -1; searchCharacter = 76) {
+            int fromIndexValue = string.indexOf(59, fromIndex);
+            if (fromIndexValue == -1) {
                 break;
             }
 
-            String string1 = string.substring(ba + 1, bb);
+            String string1 = string.substring(fromIndex + 1, fromIndexValue);
             String string2 = null;
             if (string1.indexOf(46) > 0 && string1.lastIndexOf(46) < string1.length() && string1.indexOf(47) == -1) {
                 string2 = string1.replace('.', '/');
@@ -464,20 +357,20 @@ public abstract class ConstantPoolEntry implements Comparable {
                 }
 
                 if (!string3.equals(string1)) {
-                    string = string.substring(0, ba + 1) + string3 + string.substring(bb);
-                    bb = bb + string3.length() - string1.length();
+                    string = string.substring(0, fromIndex + 1) + string3 + string.substring(fromIndexValue);
+                    fromIndexValue = fromIndexValue + string3.length() - string1.length();
                 }
             }
 
-            ba = bb;
+            fromIndex = fromIndexValue;
             string4 = string;
         }
 
         return string;
     }
 
-    public static List getParameterTypes(String string) {
-        return parseParameterTypes(string, false);
+    public static List getParameterTypes(String descriptorArgument) {
+        return parseParameterTypes(descriptorArgument, false);
     }
 
     public final void setIndex(int index) {
@@ -492,26 +385,26 @@ public abstract class ConstantPoolEntry implements Comparable {
                 ba++;
             }
 
-            String string1 = string.substring(ba);
-            if (string1.startsWith("L")) {
-                return string1.endsWith(";") || string1.length() > 2;
+            String key = string.substring(ba);
+            if (key.startsWith("L")) {
+                return key.endsWith(";") || key.length() > 2;
             } else {
-                return string1.length() == 1 ? PRIMITIVE_TYPE_NAMES.containsKey(string1) : false;
+                return ((key.length() == 1) && (PRIMITIVE_TYPE_NAMES.containsKey(key)));
             }
         } else {
             return false;
         }
     }
 
-    public static List getParameterAndReturnTypes(String string) {
-        List list1 = getParameterTypes(string);
-        String string1 = getReturnDescriptor(string);
-        list1.add(string1);
+    public static List getParameterAndReturnTypes(String descriptorArgument) {
+        List list1 = getParameterTypes(descriptorArgument);
+        String returnDescriptor = getReturnDescriptor(descriptorArgument);
+        list1.add(returnDescriptor);
         return list1;
     }
 
-    public static String getWrapperPrimitiveDescriptor(Object object) {
-        return (String) WRAPPER_TO_PRIMITIVE.get(object);
+    public static String getWrapperPrimitiveDescriptor(Object key) {
+        return (String) WRAPPER_TO_PRIMITIVE.get(key);
     }
 
     public void writeRemappedTo(DataOutputStream dataOutputStream, Map map1) throws IOException {
@@ -520,86 +413,86 @@ public abstract class ConstantPoolEntry implements Comparable {
 
     public static List getStackParameterTypes(ResolvedNameAndType resolvedNameAndType) {
         List list1 = getParameterTypes(resolvedNameAndType.getDescriptor());
-        int ba = list1.size();
+        int list1Size = list1.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string = (String) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            String string = (String) list1.get(elementIndex);
             if (string.equals("B") || string.equals("C") || string.equals("S") || string.equals("Z")) {
-                list1.set(i, "I");
+                list1.set(elementIndex, "I");
             }
         }
 
         return list1;
     }
 
-    public static String toDescriptor(String string) {
-        if (string.length() == 1) {
-            return isPrimitiveDescriptor(string) ? string : "L" + string + ";";
+    public static String toDescriptor(String key) {
+        if (key.length() == 1) {
+            return isPrimitiveDescriptor(key) ? key : "L" + key + ";";
         }
 
-        int ba = string.indexOf("[]");
-        String string1;
-        String string2;
-        byte be;
-        if (ba > -1) {
-            string1 = string.substring(0, ba);
-            string2 = string1;
-            be = 91;
+        int endIndex = key.indexOf("[]");
+        String keyValue;
+        String keyValue2;
+        byte searchCharacter;
+        if (endIndex > -1) {
+            keyValue = key.substring(0, endIndex);
+            keyValue2 = keyValue;
+            searchCharacter = 91;
         } else {
-            string1 = string;
-            string2 = string1;
-            be = 91;
+            keyValue = key;
+            keyValue2 = keyValue;
+            searchCharacter = 91;
         }
 
-        int bb = string2.lastIndexOf(be);
+        int bb = keyValue2.lastIndexOf(searchCharacter);
         if (bb > -1) {
-            string1 = string1.substring(bb + 1);
+            keyValue = keyValue.substring(bb + 1);
         }
 
-        if (string1.length() == 1) {
-            if (!isPrimitiveDescriptor(string1)) {
-                string1 = "L" + string1 + ";";
+        if (keyValue.length() == 1) {
+            if (!isPrimitiveDescriptor(keyValue)) {
+                keyValue = "L" + keyValue + ";";
             }
         } else {
-            string1 = string1.replace('.', '/');
-            if (!string1.startsWith("L") || !string1.endsWith(";")) {
-                string1 = "L" + string1 + ";";
+            keyValue = keyValue.replace('.', '/');
+            if (!keyValue.startsWith("L") || !keyValue.endsWith(";")) {
+                keyValue = "L" + keyValue + ";";
             }
         }
 
         int bc = 0;
-        if (ba > -1) {
-            bc = ZkmStringUtils.countOccurrences(string, "[]");
+        if (endIndex > -1) {
+            bc = ZkmStringUtils.countOccurrences(key, "[]");
         } else if (bb > -1) {
             bc = bb + 1;
         }
 
         for (int i = 0; i < bc; i++) {
-            string1 = '[' + string1;
+            keyValue = '[' + keyValue;
         }
 
-        return string1;
+        return keyValue;
     }
 
-    public static List getParameterJavaTypes(String string) {
+    public static List getParameterJavaTypes(String descriptorArgument) {
         java.util.List list2 = null;
         int flowSeed = ConstantPoolTag.getFlowSeed();
-        List list1 = getParameterTypes(string);
-        int ba = flowSeed;
-        int bb = list1.size();
-        int bc = 0;
+        List list1 = getParameterTypes(descriptorArgument);
+        int flowSeedValue = flowSeed;
+        int list1Size = list1.size();
+        int elementIndex = 0;
 
         while (true) {
-            if (bc < bb) {
+            if (elementIndex < list1Size) {
                 list2 = list1;
-                if (ba != 0) {
+                if (flowSeedValue != 0) {
                     break;
                 }
 
-                String string1 = (String) list1.get(bc);
-                list1.set(bc, descriptorToJavaType(string1));
-                bc++;
-                if (ba == 0) {
+                String descriptorValue = (String) list1.get(elementIndex);
+                list1.set(elementIndex, descriptorToJavaType(descriptorValue));
+                elementIndex++;
+                if (flowSeedValue == 0) {
                     continue;
                 }
             }
@@ -615,174 +508,55 @@ public abstract class ConstantPoolEntry implements Comparable {
         return this.constantPool.getExternalClassName();
     }
 
-    public static String descriptorToJavaType(String string, boolean ba, boolean bb) {
-        java.lang.String string7 = null;
-        java.lang.String string6 = null;
-        java.lang.String string5 = null;
-        java.lang.String string4 = null;
-        java.lang.String string3 = null;
-        int bc;
-        String string1;
-        label109:
-        {
-            int flowSeed = ConstantPoolTag.getFlowSeed();
-            int bd = string.indexOf(")");
-            bc = flowSeed;
-            if (bd > -1) {
-                string1 = string.substring(bd + 1);
-                if (bc == 0) {
-                    break label109;
-                }
+    public static String descriptorToJavaType(String descriptor, boolean validate, boolean useDottedNames) {
+        int flowSeed = ConstantPoolTag.getFlowSeed();
+        int parameterEnd = descriptor.indexOf(")");
+        String typeDescriptor = descriptor;
+        if (parameterEnd > -1) {
+            typeDescriptor = descriptor.substring(parameterEnd + 1);
+            if (flowSeed != 0) {
+                typeDescriptor = descriptor;
             }
-
-            string1 = string;
         }
 
-        int be = 0;
-        int bf = 0;
-
-        byte bg;
-        label102:
-        {
-            label113:
-            {
-                label114:
-                {
-                    label99:
-                    {
-                        while (true) {
-                            if (bf < string1.length()) {
-                                if (bc != 0) {
-                                    break;
-                                }
-
-                                string3 = string1;
-                                if (bc != 0) {
-                                    break label99;
-                                }
-
-                                if (string1.charAt(bf) == '[') {
-                                    be++;
-                                    bf++;
-                                    if (bc == 0) {
-                                        continue;
-                                    }
-                                }
-                            }
-
-                            string4 = string1;
-                            if (bc != 0) {
-                                break label114;
-                            }
-
-                            string1 = string1.substring(be);
-                            break;
-                        }
-
-                        string3 = string1;
-                    }
-
-                    if (string3.charAt(0) == 'L') {
-                        bg = ((byte) (ba ? 1 : 0));
-                        if (bc == 0) {
-                            int bi;
-                            label81:
-                            {
-                                if ((ba ? 1 : 0) != 0) {
-                                    string5 = string1;
-                                    if (bc == 0) {
-                                        if (string1.length() <= 2) {
-                                            return null;
-                                        }
-
-                                        string5 = string1;
-                                    }
-
-                                    bi = string1.length();
-                                    if (bc != 0) {
-                                        break label81;
-                                    }
-
-                                    if (string5.charAt(bi - 1) != ';') {
-                                        return null;
-                                    }
-                                }
-
-                                string5 = string1;
-                                bi = 1;
-                            }
-
-                            string1 = string5.substring(bi, string1.length() - 1);
-                            bg = ((byte) (bb ? 1 : 0));
-                        }
-
-                        if (bc != 0) {
-                            break label102;
-                        }
-
-                        if (bg == 0) {
-                            break label113;
-                        }
-
-                        string1 = string1.replace('/', '.');
-                        if (bc == 0) {
-                            break label113;
-                        }
-                    }
-
-                    string4 = (String) PRIMITIVE_TYPE_NAMES.get(String.valueOf(string1.charAt(0)));
-                }
-
-                label68:
-                {
-                    String string2 = string4;
-                    if ((ba ? 1 : 0) != 0) {
-                        string6 = string2;
-                        if (bc != 0) {
-                            break label68;
-                        }
-
-                        if (string2 == null) {
-                            return null;
-                        }
-                    }
-
-                    string6 = string2;
-                }
-
-                string1 = string6;
+        if (flowSeed != 0) {
+            if (typeDescriptor.length() == 0 || typeDescriptor.charAt(0) == 'L') {
+                return typeDescriptor;
             }
-
-            bg = 0;
+            return (String) PRIMITIVE_TYPE_NAMES.get(String.valueOf(typeDescriptor.charAt(0)));
         }
 
-        bf = bg;
-
-        while (true) {
-            if (bf < be) {
-                string7 = string1 + "[]";
-                if (bc != 0) {
-                    break;
-                }
-
-                string1 = string7;
-                bf++;
-                if (bc == 0) {
-                    continue;
-                }
+        int dimensions = 0;
+        while (dimensions < typeDescriptor.length() && typeDescriptor.charAt(dimensions) == '[') {
+            dimensions++;
+        }
+        typeDescriptor = typeDescriptor.substring(dimensions);
+        String javaType;
+        if (typeDescriptor.charAt(0) == 'L') {
+            if (validate && (typeDescriptor.length() <= 2 || typeDescriptor.charAt(typeDescriptor.length() - 1) != ';')) {
+                return null;
             }
-
-            string7 = string1;
-            break;
+            javaType = typeDescriptor.substring(1, typeDescriptor.length() - 1);
+            if (useDottedNames) {
+                javaType = javaType.replace('/', '.');
+            }
+        } else {
+            javaType = (String) PRIMITIVE_TYPE_NAMES.get(String.valueOf(typeDescriptor.charAt(0)));
+            if (validate && javaType == null) {
+                return null;
+            }
         }
 
-        return string7;
+        for (int dimension = 0; dimension < dimensions; dimension++) {
+            javaType = javaType + "[]";
+        }
+        return javaType;
     }
 
     public static ClassFileBase lookupClassByDescriptor(String string) {
-        String string1 = ClassFileBase.extractClassName(string);
-        if (string1 != null) {
-            ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string1);
+        String key = ClassFileBase.extractClassName(string);
+        if (key != null) {
+            ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(key);
             if (classFileBase != null) {
                 return classFileBase;
             }
@@ -800,7 +574,7 @@ public abstract class ConstantPoolEntry implements Comparable {
         StringBuilder stringBuilder = new StringBuilder();
         int ba = 0;
 
-        for (int i = 0; i < string.length() && string.charAt(i) == '['; i++) {
+        for (int characterIndex = 0; characterIndex < string.length() && string.charAt(characterIndex) == '['; characterIndex++) {
             ba++;
         }
 
@@ -827,54 +601,54 @@ public abstract class ConstantPoolEntry implements Comparable {
         flowKey = 43;
     }
 
-    public static boolean isPrimitiveDescriptor(String string) {
-        return string.length() == 1 && PRIMITIVE_TYPE_NAMES.containsKey(string);
+    public static boolean isPrimitiveDescriptor(String key) {
+        return key.length() == 1 && PRIMITIVE_TYPE_NAMES.containsKey(key);
     }
 
-    public static ConstantPoolEntry readLibraryEntry(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws ClassFileFormatException, IOException {
+    public static ConstantPoolEntry readLibraryEntry(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws ClassFileFormatException, IOException {
         int bb = classFileInputStream.readUnsignedByte();
         switch (bb) {
             case 1:
-                return new ConstantUtf8(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantUtf8(indexArgument, classFileInputStream, abstractConstantPool);
             case 2:
             case 13:
             case 14:
             default:
                 throw new ClassFileFormatException(
-                        "Class file '" + abstractConstantPool.getClassLocation() + "' is corrupt. Tag '" + bb + "' at " + ba + " is invalid (2)"
+                        "Class file '" + abstractConstantPool.getClassLocation() + "' is corrupt. Tag '" + bb + "' at " + indexArgument + " is invalid (2)"
                 );
             case 3:
-                return new ConstantInteger(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantInteger(indexArgument, classFileInputStream, abstractConstantPool);
             case 4:
-                return new ConstantFloat(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantFloat(indexArgument, classFileInputStream, abstractConstantPool);
             case 5:
-                return new ConstantLong(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantLong(indexArgument, classFileInputStream, abstractConstantPool);
             case 6:
-                return new ConstantDouble(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantDouble(indexArgument, classFileInputStream, abstractConstantPool);
             case 7:
-                return new ConstantClass(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantClass(indexArgument, classFileInputStream, abstractConstantPool);
             case 8:
-                return new ConstantString(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantString(indexArgument, classFileInputStream, abstractConstantPool);
             case 9:
-                return new ConstantFieldref(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantFieldref(indexArgument, classFileInputStream, abstractConstantPool);
             case 10:
-                return new ConstantMethodref(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantMethodref(indexArgument, classFileInputStream, abstractConstantPool);
             case 11:
-                return new ConstantInterfaceMethodref(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantInterfaceMethodref(indexArgument, classFileInputStream, abstractConstantPool);
             case 12:
-                return new ConstantNameAndType(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantNameAndType(indexArgument, classFileInputStream, abstractConstantPool);
             case 15:
-                return new ConstantMethodHandle(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantMethodHandle(indexArgument, classFileInputStream, abstractConstantPool);
             case 16:
-                return new ConstantMethodType(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantMethodType(indexArgument, classFileInputStream, abstractConstantPool);
             case 17:
-                return new ConstantDynamic(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantDynamic(indexArgument, classFileInputStream, abstractConstantPool);
             case 18:
-                return new ConstantInvokeDynamic(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantInvokeDynamic(indexArgument, classFileInputStream, abstractConstantPool);
             case 19:
-                return new ConstantModule(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantModule(indexArgument, classFileInputStream, abstractConstantPool);
             case 20:
-                return new ConstantPackage(ba, classFileInputStream, abstractConstantPool);
+                return new ConstantPackage(indexArgument, classFileInputStream, abstractConstantPool);
         }
     }
 
@@ -892,7 +666,7 @@ public abstract class ConstantPoolEntry implements Comparable {
         if (string1.endsWith(";")) {
             StringBuffer stringBuffer = new StringBuffer();
             String string3;
-            int bi;
+            int stringBufferLength;
             if (!string1.startsWith("[")) {
                 if (!string1.startsWith("L")) {
                     return null;
@@ -900,12 +674,12 @@ public abstract class ConstantPoolEntry implements Comparable {
 
                 stringBuffer.append('L');
                 string3 = string1;
-                bi = stringBuffer.length();
+                stringBufferLength = stringBuffer.length();
             } else {
                 stringBuffer.append('[');
 
-                for (int i = 1; i < ba; i++) {
-                    char bc = string1.charAt(i);
+                for (int characterIndex = 1; characterIndex < ba; characterIndex++) {
+                    char bc = string1.charAt(characterIndex);
                     if (bc != '[') {
                         if (bc != 'L') {
                             return null;
@@ -919,10 +693,10 @@ public abstract class ConstantPoolEntry implements Comparable {
                 }
 
                 string3 = string1;
-                bi = stringBuffer.length();
+                stringBufferLength = stringBuffer.length();
             }
 
-            string1 = string3.substring(bi, ba - 1);
+            string1 = string3.substring(stringBufferLength, ba - 1);
         }
 
         String string2;
@@ -944,8 +718,8 @@ public abstract class ConstantPoolEntry implements Comparable {
                 : string2;
     }
 
-    public static String descriptorToJavaType(String string) {
-        return descriptorToJavaType(string, false, true);
+    public static String descriptorToJavaType(String descriptorArgument) {
+        return descriptorToJavaType(descriptorArgument, false, true);
     }
 
     public static boolean isValidMethodDescriptor(String string) {
@@ -960,31 +734,31 @@ public abstract class ConstantPoolEntry implements Comparable {
             }
 
             while (string1.length() != 0) {
-                int ba = 0;
+                int characterIndex = 0;
 
-                while (string1.charAt(ba) == '[') {
-                    ba++;
+                while (string1.charAt(characterIndex) == '[') {
+                    characterIndex++;
                 }
 
-                int bb;
-                if (string1.charAt(ba) == 'L') {
-                    bb = string1.indexOf(59);
-                    if (bb == -1 || bb == ba + 1) {
+                int characterIndexValue;
+                if (string1.charAt(characterIndex) == 'L') {
+                    characterIndexValue = string1.indexOf(59);
+                    if (characterIndexValue == -1 || characterIndexValue == characterIndex + 1) {
                         return false;
                     }
                 } else {
-                    bb = ba;
+                    characterIndexValue = characterIndex;
                 }
 
-                String string2 = string1.substring(0, bb + 1);
-                if (string2.length() == 1 && PRIMITIVE_TYPE_NAMES.get(string2) == null) {
+                String key = string1.substring(0, characterIndexValue + 1);
+                if (key.length() == 1 && PRIMITIVE_TYPE_NAMES.get(key) == null) {
                     return false;
                 }
 
-                if (bb == string1.length() - 1) {
+                if (characterIndexValue == string1.length() - 1) {
                     string1 = "";
                 } else {
-                    string1 = string1.substring(bb + 1);
+                    string1 = string1.substring(characterIndexValue + 1);
                 }
             }
 
@@ -999,9 +773,9 @@ public abstract class ConstantPoolEntry implements Comparable {
     }
 
     public static ProgramClass findProgramClassByDescriptor(String string) {
-        String string1 = ClassFileBase.extractClassName(string);
-        if (string1 != null) {
-            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string1);
+        String key = ClassFileBase.extractClassName(string);
+        if (key != null) {
+            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
             if (programClass1 != null) {
                 return programClass1;
             }
@@ -1012,17 +786,17 @@ public abstract class ConstantPoolEntry implements Comparable {
 
     public static String remapClassNameString(String string, Map map1, BooleanFlag booleanFlag) {
         booleanFlag.setValue(false);
-        String string1 = string;
-        int ba = string1.length();
+        String keyValue = string;
+        int keyLength = keyValue.length();
         StringBuilder stringBuilder = null;
         String string2 = null;
-        if (string1.endsWith(";")) {
+        if (keyValue.endsWith(";")) {
             stringBuilder = new StringBuilder();
-            if (string1.startsWith("[")) {
+            if (keyValue.startsWith("[")) {
                 stringBuilder.append('[');
 
-                for (int i = 1; i < ba; i++) {
-                    char bc = string1.charAt(i);
+                for (int characterIndex = 1; characterIndex < keyLength; characterIndex++) {
+                    char bc = keyValue.charAt(characterIndex);
                     if (bc != '[') {
                         if (bc != 'L') {
                             return string;
@@ -1035,7 +809,7 @@ public abstract class ConstantPoolEntry implements Comparable {
                     stringBuilder.append('[');
                 }
             } else {
-                if (!string1.startsWith("L")) {
+                if (!keyValue.startsWith("L")) {
                     return string;
                 }
 
@@ -1043,30 +817,30 @@ public abstract class ConstantPoolEntry implements Comparable {
             }
 
             string2 = ";";
-            string1 = string1.substring(stringBuilder.length(), ba - 1);
+            keyValue = keyValue.substring(stringBuilder.length(), keyLength - 1);
         }
 
         boolean bl = false;
-        String string4;
-        if (string1.indexOf(46) != -1 && string1.indexOf(47) == -1) {
-            string4 = string1.replace('.', '/');
+        String key;
+        if (keyValue.indexOf(46) != -1 && keyValue.indexOf(47) == -1) {
+            key = keyValue.replace('.', '/');
             bl = true;
         } else {
-            string4 = string1;
+            key = keyValue;
         }
 
-        String string3 = (String) map1.get(string4);
+        String string3 = (String) map1.get(key);
         booleanFlag.setValue(string3 != null);
-        int bd = string1.length();
-        int be = string1.indexOf(46);
-        int bf = string1.lastIndexOf(46);
-        int bg = string1.indexOf(47);
-        int bh = string1.lastIndexOf(47);
+        int keyLengthValue = keyValue.length();
+        int be = keyValue.indexOf(46);
+        int bf = keyValue.lastIndexOf(46);
+        int bg = keyValue.indexOf(47);
+        int bh = keyValue.lastIndexOf(47);
         if (string3 != null
-                && !string3.equals(string4)
-                && string4.length() >= 3
-                && Character.isJavaIdentifierStart(string4.charAt(0))
-                && (be > 0 && bf < bd - 1 && bg == -1 || bg > 0 && bh < bd - 1 && be == -1)) {
+                && !string3.equals(key)
+                && key.length() >= 3
+                && Character.isJavaIdentifierStart(key.charAt(0))
+                && (be > 0 && bf < keyLengthValue - 1 && bg == -1 || bg > 0 && bh < keyLengthValue - 1 && be == -1)) {
             if (bl) {
                 string3 = string3.replace('/', '.');
             }
@@ -1107,12 +881,12 @@ public abstract class ConstantPoolEntry implements Comparable {
         return classFileBase1;
     }
 
-    public static List getReferencedClasses(String string) {
+    public static List getReferencedClasses(String descriptorArgument) {
         ArrayList arrayList = new ArrayList();
-        List list1 = getParameterAndReturnTypes(string);
+        List list1 = getParameterAndReturnTypes(descriptorArgument);
 
-        for (int i = 0; i < list1.size(); i++) {
-            ClassFileBase classFileBase = lookupClassByDescriptor((String) list1.get(i));
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ClassFileBase classFileBase = lookupClassByDescriptor((String) list1.get(elementIndex));
             if (classFileBase != null) {
                 if (classFileBase.isMultiRelease()) {
                     arrayList.addAll(classFileBase.getAllVersions());
@@ -1182,10 +956,10 @@ public abstract class ConstantPoolEntry implements Comparable {
                 bl1 = true;
             }
 
-            String string2 = bl1 ? string.replace(".", "/") : string;
+            String key = bl1 ? string.replace(".", "/") : string;
             String string1;
             if (bl) {
-                string1 = (String) ZkmUtils.mapOrSelf(string2, map1);
+                string1 = (String) ZkmUtils.mapOrSelf(key, map1);
             } else if ((string.indexOf(".") != -1 || string.indexOf("/") != -1)
                     && (string.indexOf(".") == -1 || string.indexOf("/") == -1)
                     && string.charAt(0) != '.'
@@ -1210,7 +984,7 @@ public abstract class ConstantPoolEntry implements Comparable {
                 }
 
                 if (bl2) {
-                    string1 = (String) ZkmUtils.mapOrSelf(string2, map1);
+                    string1 = (String) ZkmUtils.mapOrSelf(key, map1);
                 } else {
                     string1 = string;
                 }
@@ -1225,18 +999,18 @@ public abstract class ConstantPoolEntry implements Comparable {
     }
 
     public static String getStackReturnType(ResolvedNameAndType resolvedNameAndType) {
-        String string = resolvedNameAndType.getDescriptor();
-        String string1;
-        if (isMethodDescriptor(string)) {
-            string1 = getReturnDescriptor(string);
+        String descriptorValue = resolvedNameAndType.getDescriptor();
+        String returnDescriptor;
+        if (isMethodDescriptor(descriptorValue)) {
+            returnDescriptor = getReturnDescriptor(descriptorValue);
         } else {
-            string1 = string;
+            returnDescriptor = descriptorValue;
         }
 
-        if (string1.equals("V")) {
+        if (returnDescriptor.equals("V")) {
             return null;
         } else {
-            return !string1.equals("B") && !string1.equals("C") && !string1.equals("S") && !string1.equals("Z") ? string1 : "I";
+            return !returnDescriptor.equals("B") && !returnDescriptor.equals("C") && !returnDescriptor.equals("S") && !returnDescriptor.equals("Z") ? returnDescriptor : "I";
         }
     }
 }

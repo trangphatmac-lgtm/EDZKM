@@ -15,14 +15,14 @@ public class TrimExcludeDialogListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.trimExclusionsDialog.okBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.trimExclusionsDialog.okBtn) {
                 this.trimExclusionsDialog.acceptParameters();
-            } else if (object == this.trimExclusionsDialog.testBtn) {
+            } else if (source == this.trimExclusionsDialog.testBtn) {
                 this.trimExclusionsDialog.runTestTrim();
-            } else if (object == this.trimExclusionsDialog.cancelBtn) {
+            } else if (source == this.trimExclusionsDialog.cancelBtn) {
                 this.trimExclusionsDialog.cancelDialog();
-            } else if (object == this.trimExclusionsDialog.helpBtn) {
+            } else if (source == this.trimExclusionsDialog.helpBtn) {
                 this.trimExclusionsDialog.showHelp();
             }
         } catch (Throwable throwable) {

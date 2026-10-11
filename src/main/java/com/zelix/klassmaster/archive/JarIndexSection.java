@@ -28,17 +28,17 @@ public class JarIndexSection {
 
     public Set resolveEntries(String string, SourceArchive sourceArchive1, Map map1, SetMultiMap setMultiMap, SetMultiMap setMultiMap1) throws ZkmException {
         HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(map1.size()));
-        String string1 = sourceArchive1.getQualifiedPath();
+        String qualifiedPath = sourceArchive1.getQualifiedPath();
         if (this.firstSection) {
-            hashMap.put(string1, sourceArchive1);
+            hashMap.put(qualifiedPath, sourceArchive1);
         } else {
             Iterator iterator = map1.entrySet().iterator();
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string2 = (String) entry.getKey();
-                if (!string2.equals(string1) && string2.endsWith(string.replace("\\", "/"))) {
-                    hashMap.put(string2, entry.getValue());
+                String key = (String) entry.getKey();
+                if (!key.equals(qualifiedPath) && key.endsWith(string.replace("\\", "/"))) {
+                    hashMap.put(key, entry.getValue());
                 }
             }
         }
@@ -52,21 +52,25 @@ public class JarIndexSection {
             HashMap hashMap1 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(hashMap.size()));
             Iterator iterator2 = hashMap.entrySet().iterator();
 
-            label70:
             while (iterator2.hasNext()) {
                 Entry entry1 = (Entry) iterator2.next();
-                String string3 = (String) entry1.getKey();
+                String keyValue = (String) entry1.getKey();
                 SourceArchive sourceArchive2 = (SourceArchive) entry1.getValue();
                 Iterator iterator1 = this.entries.iterator();
 
+                boolean matchesAllEntries = true;
                 while (iterator1.hasNext()) {
                     String string4 = (String) iterator1.next();
                     if (string4.indexOf("/") == -1 && !string4.endsWith(".class") && !setMultiMap.getValues(sourceArchive2).contains(string4)) {
-                        continue label70;
+                        matchesAllEntries = false;
+                        break;
                     }
                 }
 
-                hashMap1.put(string3, sourceArchive2);
+                if (!matchesAllEntries) {
+                    continue;
+                }
+                hashMap1.put(keyValue, sourceArchive2);
             }
 
             if (hashMap1.size() == 0) {
@@ -81,14 +85,14 @@ public class JarIndexSection {
                 stringBuilder.append("' : '");
                 int ba = 0;
                 Set set3 = hashMap1.keySet();
-                int bb = set3.size();
+                int set3Size = set3.size();
                 Iterator iterator3 = set3.iterator();
 
                 while (iterator3.hasNext()) {
                     String string5 = (String) iterator3.next();
                     stringBuilder.append(string5);
                     stringBuilder.append("'");
-                    if (++ba < bb) {
+                    if (++ba < set3Size) {
                         stringBuilder.append(", ");
                     }
                 }
@@ -155,25 +159,25 @@ public class JarIndexSection {
     public JarIndexSection(BufferedReader bufferedReader) throws IOException {
         boolean bl = false;
 
-        String string;
-        while ((string = bufferedReader.readLine()) != null) {
-            if (string.equals("")) {
+        String jarNameValue;
+        while ((jarNameValue = bufferedReader.readLine()) != null) {
+            if (jarNameValue.equals("")) {
                 if (bl) {
                     return;
                 }
-            } else if (string.equals(sectionTerminator)) {
+            } else if (jarNameValue.equals(sectionTerminator)) {
                 if (bl) {
                     return;
                 }
             } else if (!bl) {
                 bl = true;
-                this.jarName = string;
-            } else if (string.charAt(0) == ' ') {
+                this.jarName = jarNameValue;
+            } else if (jarNameValue.charAt(0) == ' ') {
                 String string1 = (String) this.entries.get(this.entries.size() - 1);
-                String string2 = string1 + string.substring(1, string.length() - 1);
+                String string2 = string1 + jarNameValue.substring(1, jarNameValue.length() - 1);
                 this.entries.add(string2);
             } else {
-                this.entries.add(string);
+                this.entries.add(jarNameValue);
             }
         }
 

@@ -30,22 +30,22 @@ public class PropertiesFileRewriter {
     private static String markerString;
     private static final String TOKEN_DELIMITERS;
 
-    public static void rewriteClassNames(final InputStream in, final OutputStream outputStream, final String s, final int n, final EnumerableMap enumerableMap, final ObservableHolder observableHolder) throws ZkmException, IOException {
-        ZkmFileUtils.readBytes(in, n);
+    public static void rewriteClassNames(final InputStream inputStream1Argument, final OutputStream outputStream, final String s, final int n, final EnumerableMap enumerableMap, final ObservableHolder observableHolder) throws ZkmException, IOException {
+        ZkmFileUtils.readBytes(inputStream1Argument, n);
         BufferedReader bufferedReader = null;
         ByteArrayOutputStream out = null;
         PrintWriter printWriter = null;
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(in, s));
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream1Argument, s));
             out = new ByteArrayOutputStream();
             printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, s)));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 final int skipWhitespace = ZkmStringUtils.skipWhitespace(line, 0);
-                final StringBuilder sb = new StringBuilder(line.length());
+                final StringBuilder stringBuilder = new StringBuilder(line.length());
                 String substring;
                 if (skipWhitespace > 0) {
-                    sb.append(line.substring(0, skipWhitespace));
+                    stringBuilder.append(line.substring(0, skipWhitespace));
                     substring = line.substring(skipWhitespace);
                 } else {
                     substring = line;
@@ -54,7 +54,7 @@ public class PropertiesFileRewriter {
                     continue;
                 }
                 if (substring.charAt(0) == '#' || substring.charAt(0) == '!') {
-                    sb.append(substring);
+                    stringBuilder.append(substring);
                 } else {
                     boolean b = false;
                     final StringTokenizer stringTokenizer = new StringTokenizer(substring, PropertiesFileRewriter.TOKEN_DELIMITERS, true);
@@ -64,21 +64,21 @@ public class PropertiesFileRewriter {
                             if (nextToken.equals(":") || nextToken.equals("=")) {
                                 b = true;
                             }
-                            sb.append(nextToken);
+                            stringBuilder.append(nextToken);
                         } else if (b) {
                             final String dotsToSlashes = ZkmUtils.dotsToSlashes(nextToken);
                             final String anObject = (String) ZkmUtils.mapOrSelf(dotsToSlashes, enumerableMap);
                             if (!dotsToSlashes.equals(anObject)) {
-                                sb.append(ZkmUtils.slashesToDots(anObject));
+                                stringBuilder.append(ZkmUtils.slashesToDots(anObject));
                             } else {
-                                sb.append(nextToken);
+                                stringBuilder.append(nextToken);
                             }
                         } else {
-                            sb.append(nextToken);
+                            stringBuilder.append(nextToken);
                         }
                     }
                 }
-                printWriter.println(sb.toString());
+                printWriter.println(stringBuilder.toString());
             }
             final byte[] byteArray = out.toByteArray();
             observableHolder.setValue(byteArray);
@@ -86,18 +86,18 @@ public class PropertiesFileRewriter {
             outputStream.flush();
             try {
                 bufferedReader.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
             printWriter.close();
             try {
                 out.close();
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         } finally {
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
             }
             if (printWriter != null) {
@@ -107,7 +107,7 @@ public class PropertiesFileRewriter {
                 if (out != null) {
                     out.close();
                 }
-            } catch (final IOException ex4) {
+            } catch (final IOException ioExceptionValue3) {
             }
         }
     }
@@ -122,7 +122,7 @@ public class PropertiesFileRewriter {
             String string,
             ZipOutputStream zipOutputStream1,
             ResourcePathTranslator resourcePathTranslator1,
-            boolean bl,
+            boolean compressed,
             EnumerableMap enumerableMap,
             ObservableHolder observableHolder
     ) throws ZkmException, IOException {
@@ -130,8 +130,8 @@ public class PropertiesFileRewriter {
 
         try {
             inputStream1 = zipFile1.getInputStream(zipEntry1);
-            String string1 = resourcePathTranslator1.translateResourcePath(zipEntry1.getName());
-            ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, string1, bl);
+            String entryName = resourcePathTranslator1.translateResourcePath(zipEntry1.getName());
+            ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, entryName, compressed);
             OutputStream outputStream = zipEntryWriter.getOutputStream();
             int value = mutableInt.getValue();
             mutableInt1.getValue();
@@ -154,11 +154,11 @@ public class PropertiesFileRewriter {
         return markerString;
     }
 
-    public PropertiesFileRewriter(final File file, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3, final String s, final ZipOutputStream zipOutputStream, final boolean b, final EnumerableMap enumerableMap, final ObservableHolder observableHolder) throws ZkmException, IOException {
+    public PropertiesFileRewriter(final File file, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3, final String s, final ZipOutputStream zipOutputStream, final boolean compressed, final EnumerableMap enumerableMap, final ObservableHolder observableHolder) throws ZkmException, IOException {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(file);
-            final ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream, file.getName(), b);
+            final ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream, file.getName(), compressed);
             final FileInputStream fileInputStream2 = fileInputStream;
             final OutputStream outputStream = zipEntryWriter.getOutputStream();
             final int value = mutableInt.getValue();
@@ -169,14 +169,14 @@ public class PropertiesFileRewriter {
             zipEntryWriter.writeEntry();
             try {
                 fileInputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
         } finally {
             try {
                 if (fileInputStream != null) {
                     fileInputStream.close();
                 }
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         }
     }
@@ -200,24 +200,24 @@ public class PropertiesFileRewriter {
             rewriteClassNames(fileInputStream2, fileOutputStream2, s, value, enumerableMap, new ObservableHolder());
             try {
                 fileInputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
             try {
                 fileOutputStream.close();
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         } finally {
             try {
                 if (fileInputStream != null) {
                     fileInputStream.close();
                 }
-            } catch (final IOException ex3) {
+            } catch (final IOException ioExceptionValue2) {
             }
             try {
                 if (fileOutputStream != null) {
                     fileOutputStream.close();
                 }
-            } catch (final IOException ex4) {
+            } catch (final IOException ioExceptionValue3) {
             }
         }
     }

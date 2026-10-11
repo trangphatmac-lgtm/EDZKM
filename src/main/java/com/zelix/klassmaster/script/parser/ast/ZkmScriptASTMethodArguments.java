@@ -45,10 +45,10 @@ public class ZkmScriptASTMethodArguments extends ZkmScriptSimpleNode implements 
         stringBuffer.append('(');
         StringBuffer stringBuffer1;
         if (this.argumentTypes != null) {
-            int ba = this.argumentTypes.size();
+            int argumentTypesSize = this.argumentTypes.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) this.argumentTypes.get(i);
+            for (int elementIndex = 0; elementIndex < argumentTypesSize; elementIndex++) {
+                String string = (String) this.argumentTypes.get(elementIndex);
                 stringBuffer.append(string);
             }
 
@@ -69,8 +69,8 @@ public class ZkmScriptASTMethodArguments extends ZkmScriptSimpleNode implements 
         ZkmScriptNode zkmScriptNode = (ZkmScriptNode) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         MethodSignatureNodeBase methodSignatureNodeBase = (MethodSignatureNodeBase) zkmScriptNode;
@@ -83,15 +83,15 @@ public class ZkmScriptASTMethodArguments extends ZkmScriptSimpleNode implements 
     }
 
     @Override
-    public void setTypeText(Object object) {
-        this.argumentTypes.add(object);
+    public void setTypeText(Object typeText) {
+        this.argumentTypes.add(typeText);
     }
 
     public static String escapeRegexChars(String string) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < string.length(); i++) {
-            char ba = string.charAt(i);
+        for (int characterIndex = 0; characterIndex < string.length(); characterIndex++) {
+            char ba = string.charAt(characterIndex);
             switch (ba) {
                 case '$':
                     stringBuilder.append("\\$");

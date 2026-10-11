@@ -146,13 +146,13 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
         }
     }
 
-    public static int moveNfaStringState(int ba, int bb) {
-        int bc = bb;
-        int bd = 0;
+    public static int moveNfaStringState(int jjstateSetElement, int bb) {
+        int jjmatchedPosValue = bb;
+        int jjnewStateCntValue = 0;
         jjnewStateCnt = 3;
-        int be = 1;
-        jjstateSet[0] = ba;
-        int bf = Integer.MAX_VALUE;
+        int jjnewStateCntValue2 = 1;
+        jjstateSet[0] = jjstateSetElement;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++jjround == Integer.MAX_VALUE) {
@@ -163,12 +163,12 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 long bl = 1L << curChar;
 
                 do {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
                             if ((-17179882497L & bl) != 0L) {
-                                if (bf > 74) {
-                                    bf = 74;
+                                if (jjmatchedKindValue > 74) {
+                                    jjmatchedKindValue = 74;
                                 }
                             } else if (curChar == '"') {
                                 jjstateSet[jjnewStateCnt++] = 2;
@@ -180,54 +180,54 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                             }
                             break;
                         case 2:
-                            if (curChar == '"' && bf > 74) {
-                                bf = 74;
+                            if (curChar == '"' && jjmatchedKindValue > 74) {
+                                jjmatchedKindValue = 74;
                             }
                     }
-                } while (be != bd);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             } else if (curChar < 128) {
                 do {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
-                            bf = 74;
+                            jjmatchedKindValue = 74;
                     }
-                } while (be != bd);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             } else {
                 int bg = curChar >> '\b';
-                int bh = bg >> 6;
+                int jjbitVec0ElementIndex = bg >> 6;
                 long bi = 1L << (bg & 63);
-                int bj = (curChar & 255) >> 6;
+                int jjbitVec2ElementIndex = (curChar & 255) >> 6;
                 long bk = 1L << (curChar & '?');
 
                 do {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk) && bf > 74) {
-                                bf = 74;
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk) && jjmatchedKindValue > 74) {
+                                jjmatchedKindValue = 74;
                             }
                     }
-                } while (be != bd);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             }
 
-            if (bf != Integer.MAX_VALUE) {
-                jjmatchedKind = bf;
-                jjmatchedPos = bc;
-                bf = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                jjmatchedKind = jjmatchedKindValue;
+                jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            bc++;
-            int bm = be = jjnewStateCnt;
-            jjnewStateCnt = bd;
-            if (bm == (bd = 3 - bd)) {
-                return bc;
+            jjmatchedPosValue++;
+            int bm = jjnewStateCntValue2 = jjnewStateCnt;
+            jjnewStateCnt = jjnewStateCntValue;
+            if (bm == (jjnewStateCntValue = 3 - jjnewStateCntValue)) {
+                return jjmatchedPosValue;
             }
 
             try {
                 curChar = ChangeLogSimpleCharStream.readChar();
             } catch (IOException iOException) {
-                return bc;
+                return jjmatchedPosValue;
             }
         }
     }
@@ -358,10 +358,10 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
         }
     }
 
-    private static int jjStopAtPos(int ba, int bb) {
-        jjmatchedKind = bb;
-        jjmatchedPos = ba;
-        return ba + 1;
+    private static int jjStopAtPos(int jjmatchedPosArgument, int jjmatchedKindArgument) {
+        jjmatchedKind = jjmatchedKindArgument;
+        jjmatchedPos = jjmatchedPosArgument;
+        return jjmatchedPosArgument + 1;
     }
 
     public static int moveStringLiteralDfa7(long ba, long bb, long bc, long bd) {
@@ -533,16 +533,16 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
 
     public static void ReInitRounds() {
         jjround = -2147483647;
-        int ba = 7;
+        int jjroundIndex = 7;
 
         while (true) {
-            int bb = ba;
-            ba += -1;
-            if (bb <= 0) {
+            int jjroundIndexValue = jjroundIndex;
+            jjroundIndex += -1;
+            if (jjroundIndexValue <= 0) {
                 return;
             }
 
-            jjrounds[ba] = Integer.MIN_VALUE;
+            jjrounds[jjroundIndex] = Integer.MIN_VALUE;
         }
     }
 
@@ -625,36 +625,36 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 } else if ((bb & 8192L) != 0L) {
                     return 6;
                 } else {
-                    byte bo;
+                    byte jjmatchedKindValue;
                     if ((bb & -35201585512448L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             return -1;
                         }
 
-                        bo = 76;
+                        jjmatchedKindValue = 76;
                     } else {
-                        bo = 76;
+                        jjmatchedKindValue = 76;
                     }
 
-                    jjmatchedKind = bo;
+                    jjmatchedKind = jjmatchedKindValue;
                     return 7;
                 }
             case 1:
                 if ((bb & 256L) != 0L) {
                     return 0;
                 } else {
-                    byte bn;
+                    byte jjmatchedKindValue2;
                     if ((bb & -35201585512448L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             return -1;
                         }
 
-                        bn = 76;
+                        jjmatchedKindValue2 = 76;
                     } else {
-                        bn = 76;
+                        jjmatchedKindValue2 = 76;
                     }
 
-                    jjmatchedKind = bn;
+                    jjmatchedKind = jjmatchedKindValue2;
                     jjmatchedPos = 1;
                     return 7;
                 }
@@ -662,18 +662,18 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 if ((bb & 33554432L) != 0L) {
                     return 7;
                 } else {
-                    byte bm;
+                    byte jjmatchedKindValue3;
                     if ((bb & -35201619066880L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             return -1;
                         }
 
-                        bm = 76;
+                        jjmatchedKindValue3 = 76;
                     } else {
-                        bm = 76;
+                        jjmatchedKindValue3 = 76;
                     }
 
-                    jjmatchedKind = bm;
+                    jjmatchedKind = jjmatchedKindValue3;
                     jjmatchedPos = 2;
                     return 7;
                 }
@@ -681,18 +681,18 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 if ((bb & 469762048L) != 0L) {
                     return 7;
                 } else {
-                    byte bl;
+                    byte jjmatchedKindValue4;
                     if ((bb & -35202088828928L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             return -1;
                         }
 
-                        bl = 76;
+                        jjmatchedKindValue4 = 76;
                     } else {
-                        bl = 76;
+                        jjmatchedKindValue4 = 76;
                     }
 
-                    jjmatchedKind = bl;
+                    jjmatchedKind = jjmatchedKindValue4;
                     jjmatchedPos = 3;
                     return 7;
                 }
@@ -700,18 +700,18 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 if ((bb & 16106127360L) != 0L) {
                     return 7;
                 } else {
-                    byte bk;
+                    byte jjmatchedKindValue5;
                     if ((bb & -35218731827200L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             return -1;
                         }
 
-                        bk = 76;
+                        jjmatchedKindValue5 = 76;
                     } else {
-                        bk = 76;
+                        jjmatchedKindValue5 = 76;
                     }
 
-                    jjmatchedKind = bk;
+                    jjmatchedKind = jjmatchedKindValue5;
                     jjmatchedPos = 4;
                     return 7;
                 }
@@ -719,18 +719,18 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 if ((bb & 2130303778816L) != 0L) {
                     return 7;
                 } else {
-                    byte bj;
+                    byte jjmatchedKindValue6;
                     if ((bb & -37383395344384L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             return -1;
                         }
 
-                        bj = 76;
+                        jjmatchedKindValue6 = 76;
                     } else {
-                        bj = 76;
+                        jjmatchedKindValue6 = 76;
                     }
 
-                    jjmatchedKind = bj;
+                    jjmatchedKind = jjmatchedKindValue6;
                     jjmatchedPos = 5;
                     return 7;
                 }
@@ -738,18 +738,18 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 if ((bb & 153931627888640L) != 0L) {
                     return 7;
                 } else {
-                    byte bi;
+                    byte jjmatchedKindValue7;
                     if ((bb & -211106232532992L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             return -1;
                         }
 
-                        bi = 76;
+                        jjmatchedKindValue7 = 76;
                     } else {
-                        bi = 76;
+                        jjmatchedKindValue7 = 76;
                     }
 
-                    jjmatchedKind = bi;
+                    jjmatchedKind = jjmatchedKindValue7;
                     jjmatchedPos = 6;
                     return 7;
                 }
@@ -761,18 +761,18 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                     jjmatchedPos = 7;
                     return 6;
                 } else {
-                    byte bh;
+                    byte jjmatchedKindValue8;
                     if ((bb & -578712552117108736L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             return -1;
                         }
 
-                        bh = 76;
+                        jjmatchedKindValue8 = 76;
                     } else {
-                        bh = 76;
+                        jjmatchedKindValue8 = 76;
                     }
 
-                    jjmatchedKind = bh;
+                    jjmatchedKind = jjmatchedKindValue8;
                     jjmatchedPos = 7;
                     return 7;
                 }
@@ -780,7 +780,7 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 if ((bb & 33776997205278720L) != 0L) {
                     return 7;
                 } else {
-                    byte bg;
+                    byte jjmatchedKindValue9;
                     if ((bb & -648518346341351424L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             if ((bb & 576460752303423488L) != 0L) {
@@ -792,12 +792,12 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                             return -1;
                         }
 
-                        bg = 76;
+                        jjmatchedKindValue9 = 76;
                     } else {
-                        bg = 76;
+                        jjmatchedKindValue9 = 76;
                     }
 
-                    jjmatchedKind = bg;
+                    jjmatchedKind = jjmatchedKindValue9;
                     jjmatchedPos = 8;
                     return 7;
                 }
@@ -805,7 +805,7 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 if ((bb & 432345564227567616L) != 0L) {
                     return 7;
                 } else {
-                    byte bf;
+                    byte jjmatchedKindValue10;
                     if ((bb & -1152921504606846976L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             if ((bb & 576460752303423488L) != 0L) {
@@ -817,17 +817,17 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                             return -1;
                         }
 
-                        bf = 76;
+                        jjmatchedKindValue10 = 76;
                     } else {
-                        bf = 76;
+                        jjmatchedKindValue10 = 76;
                     }
 
-                    jjmatchedKind = bf;
+                    jjmatchedKind = jjmatchedKindValue10;
                     jjmatchedPos = 9;
                     return 7;
                 }
             case 10:
-                byte be;
+                byte jjmatchedKindValue11;
                 if ((bb & -1152921504606846976L) == 0L) {
                     if ((bc & 255L) == 0L) {
                         if ((bb & 576460752303423488L) != 0L) {
@@ -839,19 +839,19 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                         return -1;
                     }
 
-                    be = 76;
+                    jjmatchedKindValue11 = 76;
                 } else {
-                    be = 76;
+                    jjmatchedKindValue11 = 76;
                 }
 
-                jjmatchedKind = be;
+                jjmatchedKind = jjmatchedKindValue11;
                 jjmatchedPos = 10;
                 return 7;
             case 11:
                 if ((bb & 2305843009213693952L) != 0L) {
                     return 7;
                 } else {
-                    byte bd;
+                    byte jjmatchedKindValue12;
                     if ((bb & -4611686018427387904L) == 0L) {
                         if ((bc & 255L) == 0L) {
                             if ((bb & 576460752303423488L) != 0L) {
@@ -861,12 +861,12 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                             return -1;
                         }
 
-                        bd = 76;
+                        jjmatchedKindValue12 = 76;
                     } else {
-                        bd = 76;
+                        jjmatchedKindValue12 = 76;
                     }
 
-                    jjmatchedKind = bd;
+                    jjmatchedKind = jjmatchedKindValue12;
                     jjmatchedPos = 11;
                     return 7;
                 }
@@ -1018,10 +1018,10 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
         }
     }
 
-    private static void jjCheckNAdd(int ba) {
-        if (jjrounds[ba] != jjround) {
-            jjstateSet[jjnewStateCnt++] = ba;
-            jjrounds[ba] = jjround;
+    private static void jjCheckNAdd(int jjstateSetElement) {
+        if (jjrounds[jjstateSetElement] != jjround) {
+            jjstateSet[jjnewStateCnt++] = jjstateSetElement;
+            jjrounds[jjstateSetElement] = jjround;
         }
     }
 
@@ -1077,12 +1077,12 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
         return jjStartNfa_0(bf, 0L, be);
     }
 
-    public static final boolean jjCanMove_0(int ba, int bb, int bc, long bd, long be) {
+    public static final boolean jjCanMove_0(int ba, int jjbitVec0ElementIndex, int jjbitVec2ElementIndex, long bd, long be) {
         switch (ba) {
             case 0:
-                return (jjbitVec2[bc] & be) != 0L;
+                return (jjbitVec2[jjbitVec2ElementIndex] & be) != 0L;
             default:
-                return (jjbitVec0[bb] & bd) != 0L;
+                return (jjbitVec0[jjbitVec0ElementIndex] & bd) != 0L;
         }
     }
 
@@ -1414,12 +1414,12 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
     }
 
     private static int jjMoveNfa_0() {
-        int ba = 0;
-        int bb = 0;
+        int jjmatchedPosValue = 0;
+        int jjnewStateCntValue = 0;
         jjnewStateCnt = 3;
-        int bc = 1;
+        int jjnewStateCntValue2 = 1;
         jjstateSet[0] = 0;
-        int bd = Integer.MAX_VALUE;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++jjround == Integer.MAX_VALUE) {
@@ -1430,11 +1430,11 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 long be = 1L << curChar;
 
                 do {
-                    bc += -1;
-                    switch (jjstateSet[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
-                            if ((13312L & be) != 0L && bd > 9) {
-                                bd = 9;
+                            if ((13312L & be) != 0L && jjmatchedKindValue > 9) {
+                                jjmatchedKindValue = 9;
                             }
 
                             if (curChar == '\r') {
@@ -1442,8 +1442,8 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                             }
                             break;
                         case 1:
-                            if (curChar == '\n' && bd > 9) {
-                                bd = 9;
+                            if (curChar == '\n' && jjmatchedKindValue > 9) {
+                                jjmatchedKindValue = 9;
                             }
                             break;
                         case 2:
@@ -1451,38 +1451,38 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                                 jjstateSet[jjnewStateCnt++] = 1;
                             }
                     }
-                } while (bc != bb);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             } else if (curChar < 128) {
                 do {
-                    bc += -1;
-                    switch (jjstateSet[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                     }
-                } while (bc != bb);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             } else {
                 do {
-                    bc += -1;
-                    switch (jjstateSet[bc]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                     }
-                } while (bc != bb);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             }
 
-            if (bd != Integer.MAX_VALUE) {
-                jjmatchedKind = bd;
-                jjmatchedPos = ba;
-                bd = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                jjmatchedKind = jjmatchedKindValue;
+                jjmatchedPos = jjmatchedPosValue;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            ba++;
-            int bf = bc = jjnewStateCnt;
-            jjnewStateCnt = bb;
-            if (bf == (bb = 3 - bb)) {
-                return ba;
+            jjmatchedPosValue++;
+            int bf = jjnewStateCntValue2 = jjnewStateCnt;
+            jjnewStateCnt = jjnewStateCntValue;
+            if (bf == (jjnewStateCntValue = 3 - jjnewStateCntValue)) {
+                return jjmatchedPosValue;
             }
 
             try {
                 curChar = ChangeLogSimpleCharStream.readChar();
             } catch (IOException iOException) {
-                return ba;
+                return jjmatchedPosValue;
             }
         }
     }
@@ -1558,7 +1558,7 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
         ChangeLogToken changeLogToken = null;
         int ba = 0;
 
-        label128:
+        tokenScan:
         while (true) {
             try {
                 curChar = ChangeLogSimpleCharStream.BeginToken();
@@ -1583,7 +1583,7 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                                 curChar = ChangeLogSimpleCharStream.BeginToken();
                             }
                         } catch (IOException iOException3) {
-                            continue label128;
+                            continue tokenScan;
                         }
 
                         jjmatchedKind = Integer.MAX_VALUE;
@@ -1621,7 +1621,7 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 }
 
                 if (jjmatchedKind == Integer.MAX_VALUE) {
-                    break label128;
+                    break tokenScan;
                 }
 
                 if (jjmatchedPos + 1 < ba) {
@@ -1670,7 +1670,7 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 try {
                     curChar = ChangeLogSimpleCharStream.readChar();
                 } catch (IOException iOException2) {
-                    break label128;
+                    break tokenScan;
                 }
             }
         }
@@ -1699,12 +1699,12 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
             string = ba <= 1 ? "" : ChangeLogSimpleCharStream.GetImage();
         }
 
-        char bd = curChar;
+        char curCharValue = curChar;
         String string1 = string;
-        int be = column;
-        int bf = endColumn;
+        int columnValue = column;
+        int endColumnValue = endColumn;
         boolean bl1 = bl;
-        throw new ChangeLogTokenMgrError(bl1, bf, be, string1, bd);
+        throw new ChangeLogTokenMgrError(bl1, endColumnValue, columnValue, string1, curCharValue);
     }
 
     public static int moveStringLiteralDfa8(long ba, long bb, long bc, long bd) {
@@ -2150,8 +2150,8 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
     }
 
     public static ChangeLogToken jjFillToken() {
-        String string1 = jjstrLiteralImages[jjmatchedKind];
-        String string = string1 == null ? ChangeLogSimpleCharStream.GetImage() : string1;
+        String jjstrLiteralImage = jjstrLiteralImages[jjmatchedKind];
+        String string = jjstrLiteralImage == null ? ChangeLogSimpleCharStream.GetImage() : jjstrLiteralImage;
         int endLine = ChangeLogSimpleCharStream.getEndLine();
         int line = ChangeLogSimpleCharStream.getLine();
         int endColumn = ChangeLogSimpleCharStream.getEndColumn();
@@ -2339,25 +2339,25 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
         ReInitRounds();
     }
 
-    public static int jjStartNfaWithStates_0(int ba, int bb, Integer integer) {
-        jjmatchedKind = bb;
-        jjmatchedPos = ba;
+    public static int jjStartNfaWithStates_0(int jjmatchedPosArgument, int jjmatchedKindArgument, Integer integer) {
+        jjmatchedKind = jjmatchedKindArgument;
+        jjmatchedPos = jjmatchedPosArgument;
 
         try {
             curChar = ChangeLogSimpleCharStream.readChar();
         } catch (IOException iOException) {
-            return ba + 1;
+            return jjmatchedPosArgument + 1;
         }
 
-        return moveNfaDefaultState(integer, ba + 1);
+        return moveNfaDefaultState(integer, jjmatchedPosArgument + 1);
     }
 
-    private static int moveNfaDefaultState(int ba, int bb) {
-        int bd = 0;
+    private static int moveNfaDefaultState(int jjstateSetElement, int jjmatchedPosArgument) {
+        int jjnewStateCntValue = 0;
         jjnewStateCnt = 7;
-        int be = 1;
-        jjstateSet[0] = ba;
-        int bf = Integer.MAX_VALUE;
+        int jjnewStateCntValue2 = 1;
+        jjstateSet[0] = jjstateSetElement;
+        int jjmatchedKindValue = Integer.MAX_VALUE;
 
         while (true) {
             if (++jjround == Integer.MAX_VALUE) {
@@ -2368,16 +2368,16 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                 long cc = 1L << curChar;
 
                 do {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 0:
                             if (curChar == '*') {
                                 jjstateSet[jjnewStateCnt++] = 1;
                             }
                             break;
                         case 1:
-                            if ((-140737488355329L & cc) != 0L && bf > 7) {
-                                bf = 7;
+                            if ((-140737488355329L & cc) != 0L && jjmatchedKindValue > 7) {
+                                jjmatchedKindValue = 7;
                             }
                             break;
                         case 2:
@@ -2388,108 +2388,108 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                         case 3:
                             if ((287992950628008447L & cc) != 0L) {
                                 byte cl;
-                                if (bf > 77) {
-                                    bf = 77;
+                                if (jjmatchedKindValue > 77) {
+                                    jjmatchedKindValue = 77;
                                     cl = 6;
                                 } else {
                                     cl = 6;
                                 }
 
-                                byte by = cl;
-                                jjCheckNAdd(by);
+                                byte jjstateSetElementValue = cl;
+                                jjCheckNAdd(jjstateSetElementValue);
                             } else if (curChar == '/') {
                                 jjstateSet[jjnewStateCnt++] = 2;
                             }
 
                             long cm;
                             if ((287948901175001088L & cc) != 0L) {
-                                if (bf > 76) {
-                                    bf = 76;
+                                if (jjmatchedKindValue > 76) {
+                                    jjmatchedKindValue = 76;
                                 }
 
-                                byte bz = 5;
-                                jjCheckNAdd(bz);
+                                byte jjstateSetElementValue2 = 5;
+                                jjCheckNAdd(jjstateSetElementValue2);
                                 cm = 287948901175001088L;
                             } else {
                                 cm = 287948901175001088L;
                             }
 
                             if ((cm & cc) != 0L) {
-                                if (bf > 75) {
-                                    bf = 75;
+                                if (jjmatchedKindValue > 75) {
+                                    jjmatchedKindValue = 75;
                                 }
 
-                                byte ca = 4;
-                                jjCheckNAdd(ca);
+                                byte jjstateSetElementValue3 = 4;
+                                jjCheckNAdd(jjstateSetElementValue3);
                             }
                             break;
                         case 4:
                             if ((287948901175001088L & cc) != 0L) {
-                                if (bf > 75) {
-                                    bf = 75;
+                                if (jjmatchedKindValue > 75) {
+                                    jjmatchedKindValue = 75;
                                 }
 
-                                byte bx = 4;
-                                jjCheckNAdd(bx);
+                                byte jjstateSetElementValue4 = 4;
+                                jjCheckNAdd(jjstateSetElementValue4);
                             }
                             break;
                         case 5:
                             if ((287948901175001088L & cc) != 0L) {
-                                if (bf > 76) {
-                                    bf = 76;
+                                if (jjmatchedKindValue > 76) {
+                                    jjmatchedKindValue = 76;
                                 }
 
-                                byte bw = 5;
-                                jjCheckNAdd(bw);
+                                byte jjstateSetElementValue5 = 5;
+                                jjCheckNAdd(jjstateSetElementValue5);
                             }
                             break;
                         case 6:
                             if ((287992950628008447L & cc) != 0L) {
                                 byte ck;
-                                if (bf > 77) {
-                                    bf = 77;
+                                if (jjmatchedKindValue > 77) {
+                                    jjmatchedKindValue = 77;
                                     ck = 6;
                                 } else {
                                     ck = 6;
                                 }
 
-                                byte bv = ck;
-                                jjCheckNAdd(bv);
+                                byte jjstateSetElementValue6 = ck;
+                                jjCheckNAdd(jjstateSetElementValue6);
                             }
                             break;
                         case 7:
                             if ((287992950628008447L & cc) != 0L) {
                                 byte cj;
-                                if (bf > 77) {
-                                    bf = 77;
+                                if (jjmatchedKindValue > 77) {
+                                    jjmatchedKindValue = 77;
                                     cj = 6;
                                 } else {
                                     cj = 6;
                                 }
 
-                                byte bt = cj;
-                                jjCheckNAdd(bt);
+                                byte jjstateSetElementValue7 = cj;
+                                jjCheckNAdd(jjstateSetElementValue7);
                             }
 
                             if ((287948901175001088L & cc) != 0L) {
-                                if (bf > 76) {
-                                    bf = 76;
+                                if (jjmatchedKindValue > 76) {
+                                    jjmatchedKindValue = 76;
                                 }
 
-                                byte bu = 5;
-                                jjCheckNAdd(bu);
+                                byte jjstateSetElementValue8 = 5;
+                                jjCheckNAdd(jjstateSetElementValue8);
                             }
                     }
-                } while (be != bd);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             } else if (curChar < 128) {
                 long cb = 1L << (curChar & '?');
 
                 do {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 1:
-                            if (bf > 7) {
-                                bf = 7;
+                            if (jjmatchedKindValue > 7) {
+                                jjmatchedKindValue = 7;
                             }
                         case 2:
                         case 4:
@@ -2499,95 +2499,95 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                             long ci;
                             if ((-8646911290859585538L & cb) != 0L) {
                                 byte ch;
-                                if (bf > 77) {
-                                    bf = 77;
+                                if (jjmatchedKindValue > 77) {
+                                    jjmatchedKindValue = 77;
                                     ch = 6;
                                 } else {
                                     ch = 6;
                                 }
 
-                                byte br = ch;
-                                jjCheckNAdd(br);
+                                byte jjstateSetElementValue9 = ch;
+                                jjCheckNAdd(jjstateSetElementValue9);
                                 ci = 576460743847706622L;
                             } else {
                                 ci = 576460743847706622L;
                             }
 
                             if ((ci & cb) != 0L) {
-                                if (bf > 76) {
-                                    bf = 76;
+                                if (jjmatchedKindValue > 76) {
+                                    jjmatchedKindValue = 76;
                                 }
 
-                                byte bs = 5;
-                                jjCheckNAdd(bs);
+                                byte jjstateSetElementValue10 = 5;
+                                jjCheckNAdd(jjstateSetElementValue10);
                             }
                             break;
                         case 5:
                             if ((576460743847706622L & cb) != 0L) {
-                                if (bf > 76) {
-                                    bf = 76;
+                                if (jjmatchedKindValue > 76) {
+                                    jjmatchedKindValue = 76;
                                 }
 
-                                byte bq = 5;
-                                jjCheckNAdd(bq);
+                                byte jjstateSetElementValue11 = 5;
+                                jjCheckNAdd(jjstateSetElementValue11);
                             }
                             break;
                         case 6:
                             if ((-8646911290859585538L & cb) != 0L) {
                                 byte cg;
-                                if (bf > 77) {
-                                    bf = 77;
+                                if (jjmatchedKindValue > 77) {
+                                    jjmatchedKindValue = 77;
                                     cg = 6;
                                 } else {
                                     cg = 6;
                                 }
 
-                                byte bp = cg;
-                                jjCheckNAdd(bp);
+                                byte jjstateSetElementValue12 = cg;
+                                jjCheckNAdd(jjstateSetElementValue12);
                             }
                             break;
                         case 7:
                             long cf;
                             if ((-8646911290859585538L & cb) != 0L) {
                                 byte ce;
-                                if (bf > 77) {
-                                    bf = 77;
+                                if (jjmatchedKindValue > 77) {
+                                    jjmatchedKindValue = 77;
                                     ce = 6;
                                 } else {
                                     ce = 6;
                                 }
 
-                                byte bn = ce;
-                                jjCheckNAdd(bn);
+                                byte jjstateSetElementValue13 = ce;
+                                jjCheckNAdd(jjstateSetElementValue13);
                                 cf = 576460743847706622L;
                             } else {
                                 cf = 576460743847706622L;
                             }
 
                             if ((cf & cb) != 0L) {
-                                if (bf > 76) {
-                                    bf = 76;
+                                if (jjmatchedKindValue > 76) {
+                                    jjmatchedKindValue = 76;
                                 }
 
-                                byte bo = 5;
-                                jjCheckNAdd(bo);
+                                byte jjstateSetElementValue14 = 5;
+                                jjCheckNAdd(jjstateSetElementValue14);
                             }
                     }
-                } while (be != bd);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             } else {
                 int bg = curChar >> '\b';
-                int bh = bg >> 6;
+                int jjbitVec0ElementIndex = bg >> 6;
                 long bi = 1L << (bg & 63);
-                int bj = (curChar & 255) >> 6;
+                int jjbitVec2ElementIndex = (curChar & 255) >> 6;
                 long bk = 1L << (curChar & '?');
 
                 do {
-                    be += -1;
-                    switch (jjstateSet[be]) {
+                    jjnewStateCntValue2 += -1;
+                    switch (jjstateSet[jjnewStateCntValue2]) {
                         case 1:
                             long bm = bk;
-                            if (jjCanMove_1(bg, bj, bm) && bf > 7) {
-                                bf = 7;
+                            if (jjCanMove_1(bg, jjbitVec2ElementIndex, bm) && jjmatchedKindValue > 7) {
+                                jjmatchedKindValue = 7;
                             }
                         case 2:
                         case 4:
@@ -2596,61 +2596,61 @@ public class ChangeLogTokenManager implements ChangeLogConstants {
                             break;
                         case 3:
                         case 6:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 byte cd;
-                                if (bf > 77) {
-                                    bf = 77;
+                                if (jjmatchedKindValue > 77) {
+                                    jjmatchedKindValue = 77;
                                     cd = 6;
                                 } else {
                                     cd = 6;
                                 }
 
-                                byte bl = cd;
-                                jjCheckNAdd(bl);
+                                byte jjstateSetElementValue15 = cd;
+                                jjCheckNAdd(jjstateSetElementValue15);
                             }
                             break;
                         case 7:
-                            if (jjCanMove_0(bg, bh, bj, bi, bk)) {
+                            if (jjCanMove_0(bg, jjbitVec0ElementIndex, jjbitVec2ElementIndex, bi, bk)) {
                                 byte co;
-                                if (bf > 77) {
-                                    bf = 77;
+                                if (jjmatchedKindValue > 77) {
+                                    jjmatchedKindValue = 77;
                                     co = 6;
                                 } else {
                                     co = 6;
                                 }
 
-                                byte bc = co;
-                                jjCheckNAdd(bc);
+                                byte jjstateSetElementValue16 = co;
+                                jjCheckNAdd(jjstateSetElementValue16);
                             }
                     }
-                } while (be != bd);
+                } while (jjnewStateCntValue2 != jjnewStateCntValue);
             }
 
-            if (bf != Integer.MAX_VALUE) {
-                jjmatchedKind = bf;
-                jjmatchedPos = bb;
-                bf = Integer.MAX_VALUE;
+            if (jjmatchedKindValue != Integer.MAX_VALUE) {
+                jjmatchedKind = jjmatchedKindValue;
+                jjmatchedPos = jjmatchedPosArgument;
+                jjmatchedKindValue = Integer.MAX_VALUE;
             }
 
-            bb++;
-            int cn = be = jjnewStateCnt;
-            jjnewStateCnt = bd;
-            if (cn == (bd = 7 - bd)) {
-                return bb;
+            jjmatchedPosArgument++;
+            int cn = jjnewStateCntValue2 = jjnewStateCnt;
+            jjnewStateCnt = jjnewStateCntValue;
+            if (cn == (jjnewStateCntValue = 7 - jjnewStateCntValue)) {
+                return jjmatchedPosArgument;
             }
 
             try {
                 curChar = ChangeLogSimpleCharStream.readChar();
             } catch (IOException iOException) {
-                return bb;
+                return jjmatchedPosArgument;
             }
         }
     }
 
-    public static final boolean jjCanMove_1(int ba, int bb, long bc) {
+    public static final boolean jjCanMove_1(int ba, int jjbitVec2ElementIndex, long bc) {
         switch (ba) {
             case 0:
-                return (jjbitVec2[bb] & bc) != 0L;
+                return (jjbitVec2[jjbitVec2ElementIndex] & bc) != 0L;
             default:
                 return false;
         }

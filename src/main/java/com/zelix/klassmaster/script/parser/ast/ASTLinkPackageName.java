@@ -16,9 +16,9 @@ public class ASTLinkPackageName extends ZkmScriptSimpleNode {
         int ba = this.jjtGetNumChildren();
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = 0; i < ba; i++) {
-            stringBuffer.append(((ScriptValueNode) this.jjtGetChild(i)).getValue());
-            if (i < ba - 1) {
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            stringBuffer.append(((ScriptValueNode) this.jjtGetChild(childrenElementIndex)).getValue());
+            if (childrenElementIndex < ba - 1) {
                 stringBuffer.append("/");
             }
         }

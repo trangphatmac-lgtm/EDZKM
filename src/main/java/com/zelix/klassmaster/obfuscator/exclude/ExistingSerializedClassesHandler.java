@@ -32,12 +32,12 @@ public class ExistingSerializedClassesHandler extends FixedClassMatchHandler {
     public final FixedClassesExclusionSet fixedClassesExclusionSet;
 
     public final void processExclusionParameters() throws ZkmException, IOException {
-        int ba = super.exclusionStatements.size();
+        int exclusionStatementsSize = super.exclusionStatements.size();
         HashMap hashMap = ZkmUtils.createHashMap();
         Vector vector = new Vector();
 
-        for (int i = 0; i < ba; i++) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(i);
+        for (int elementIndex = 0; elementIndex < exclusionStatementsSize; elementIndex++) {
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -52,13 +52,13 @@ public class ExistingSerializedClassesHandler extends FixedClassMatchHandler {
         if (super.scriptEnvironment.isVerbose() && vector.size() > 0) {
             super.logWriter.println("\tExisting Serialized classes parameters:");
 
-            for (int i = vector.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t" + vector.elementAt(i));
+            for (int elementIndexValue = vector.size() - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                super.logWriter.println("\t\t" + vector.elementAt(elementIndexValue));
             }
         }
 
-        for (int i = vector.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter1 = (ASTRenameFilterParameter) vector.elementAt(i);
+        for (int elementIndexValue2 = vector.size() - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter1 = (ASTRenameFilterParameter) vector.elementAt(elementIndexValue2);
             if (!aSTRenameFilterParameter1.isClassSpecifier()) {
                 super.scriptEnvironment
                         .logWarning(
@@ -152,15 +152,15 @@ public class ExistingSerializedClassesHandler extends FixedClassMatchHandler {
         try {
             while (enumeration.hasMoreElements()) {
                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                String string = programClass1.getClassName();
+                String className = programClass1.getClassName();
                 if ((this.fixedClassesExclusionSet == null || !this.fixedClassesExclusionSet.isMatchedClass(programClass1))
-                        && !this.classRepository.isSubclass(string, "java/lang/Enum")
-                        && !this.classRepository.isSubclass(string, "java/lang/reflect/Proxy")) {
-                    FieldInfo fieldInfo = this.classRepository.findField(string, "serialVersionUID", "J");
+                        && !this.classRepository.isSubclass(className, "java/lang/Enum")
+                        && !this.classRepository.isSubclass(className, "java/lang/reflect/Proxy")) {
+                    FieldInfo fieldInfo = this.classRepository.findField(className, "serialVersionUID", "J");
                     Map map1;
                     if (fieldInfo == null) {
-                        long ba = SerialVersionUidCalculator.computeSerialVersionUid(programClass1, this.classRepository);
-                        fieldInfo = programClass1.addSerialVersionUidField(ba, inheritedMemberAnalyzer, this.classRepository);
+                        long value = SerialVersionUidCalculator.computeSerialVersionUid(programClass1, this.classRepository);
+                        fieldInfo = programClass1.addSerialVersionUidField(value, inheritedMemberAnalyzer, this.classRepository);
                         map1 = super.includedFields;
                     } else {
                         map1 = super.includedFields;
@@ -192,10 +192,10 @@ public class ExistingSerializedClassesHandler extends FixedClassMatchHandler {
         }
     }
 
-    public final void excludeSerializedFields(String string, ProgramClass programClass1, Set set1, ProgramClass programClass2) throws ZkmException, IOException {
-        if (this.implementsInterface(string, "java/io/Externalizable")) {
+    public final void excludeSerializedFields(String key, ProgramClass programClass1, Set set1, ProgramClass programClass2) throws ZkmException, IOException {
+        if (this.implementsInterface(key, "java/io/Externalizable")) {
             this.excludeInstanceFields(programClass1, set1, programClass2);
-            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
+            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(key);
 
             for (ClassHierarchyNode classHierarchyNode1 = classHierarchyNode.getSuperclassNode();
                  classHierarchyNode1 != null && classHierarchyNode1.isProgramClass();
@@ -206,7 +206,7 @@ public class ExistingSerializedClassesHandler extends FixedClassMatchHandler {
             }
         } else {
             FieldInfo fieldInfo1;
-            if ((fieldInfo1 = this.classRepository.findField(string, "serialPersistentFields", "[Ljava/io/ObjectStreamField;")) != null && fieldInfo1.isStatic()) {
+            if ((fieldInfo1 = this.classRepository.findField(key, "serialPersistentFields", "[Ljava/io/ObjectStreamField;")) != null && fieldInfo1.isStatic()) {
                 ProgramClass programClass4 = (ProgramClass) super.includedFields.remove(fieldInfo1);
                 if (programClass4 != null) {
                     super.excludedFields.put(fieldInfo1, programClass1);
@@ -214,15 +214,15 @@ public class ExistingSerializedClassesHandler extends FixedClassMatchHandler {
 
                 try {
                     List list1 = programClass1.getSerialPersistentFieldNames(this.classRepository);
-                    int ba = list1.size();
+                    int list1Size = list1.size();
 
-                    for (int i = 0; i < ba; i++) {
-                        FieldInfo fieldInfo = (FieldInfo) list1.get(i);
+                    for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                        FieldInfo fieldInfo = (FieldInfo) list1.get(elementIndex);
                         this.excludeSerializedField(fieldInfo, set1, programClass2);
                     }
                 } catch (ZkmProcessingException zkmProcessingException) {
                     super.scriptEnvironment
-                            .logWarning("Error while analyzing 'serialPersistentFields' in class '" + string + "' : " + zkmProcessingException.getMessage());
+                            .logWarning("Error while analyzing 'serialPersistentFields' in class '" + key + "' : " + zkmProcessingException.getMessage());
                 }
             } else {
                 this.excludeInstanceFields(programClass1, set1, programClass2);
@@ -254,9 +254,9 @@ public class ExistingSerializedClassesHandler extends FixedClassMatchHandler {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
             ProgramClass programClass2 = (ProgramClass) super.excludedClasses.get(programClass1);
-            String string = programClass1.getPackagePath();
-            if (string != null && string.length() > 0) {
-                nameExclusionSet.excludePackage(string, "Existing serialized class '" + this.describeClass(programClass2) + "'");
+            String packagePath = programClass1.getPackagePath();
+            if (packagePath != null && packagePath.length() > 0) {
+                nameExclusionSet.excludePackage(packagePath, "Existing serialized class '" + this.describeClass(programClass2) + "'");
             }
 
             nameExclusionSet.excludeClass(programClass1, "Existing serialized class '" + this.describeClass(programClass2) + "'");
@@ -274,17 +274,17 @@ public class ExistingSerializedClassesHandler extends FixedClassMatchHandler {
     public final void excludeSerializableClass(ProgramClass programClass1, Set set1, ProgramClass programClass2, boolean bl) throws ZkmException, IOException {
         if (programClass1 != null && !set1.contains(programClass1)) {
             set1.add(programClass1);
-            String string = programClass1.getClassName();
+            String className = programClass1.getClassName();
             if (!programClass1.isInterface()
                     && (
                     this.implementsInterface(programClass1.getClassName(), "java/io/Serializable")
                             || this.implementsInterface(programClass1.getClassName(), "java/io/Externalizable")
             )) {
                 this.markClassExcluded(programClass1, programClass2);
-                this.excludeSerializedFields(string, programClass1, set1, programClass2);
+                this.excludeSerializedFields(className, programClass1, set1, programClass2);
             }
 
-            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
+            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(className);
             ClassHierarchyNode classHierarchyNode1 = classHierarchyNode.getSuperclassNode();
             if (classHierarchyNode1 != null && classHierarchyNode1.isProgramClass()) {
                 ProgramClass programClass3 = classHierarchyNode1.getProgramClass();

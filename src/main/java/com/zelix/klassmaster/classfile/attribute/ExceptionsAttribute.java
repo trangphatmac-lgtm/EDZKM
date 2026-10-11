@@ -23,15 +23,15 @@ public class ExceptionsAttribute extends Attribute implements ClassConstantRepla
 
     public Enumeration getExceptionClassNames() {
         String[] strings = new String[this.exceptionClasses.length];
-        int ba = 0;
+        int exceptionClasseIndex = 0;
         int bb = 0;
 
         for (ResolvedClassConstant[] resolvedClassConstants = this.exceptionClasses;
              bb < resolvedClassConstants.length;
              resolvedClassConstants = this.exceptionClasses
         ) {
-            strings[ba] = this.exceptionClasses[ba].getClassName();
-            bb = ++ba;
+            strings[exceptionClasseIndex] = this.exceptionClasses[exceptionClasseIndex].getClassName();
+            bb = ++exceptionClasseIndex;
         }
 
         return new ArrayEnumeration(strings);
@@ -41,17 +41,17 @@ public class ExceptionsAttribute extends Attribute implements ClassConstantRepla
     public void write(DataOutputStream dataOutputStream) throws IOException {
         super.write(dataOutputStream);
         dataOutputStream.writeShort(this.exceptionCount);
-        int ba = 0;
+        int exceptionClasseIndex = 0;
         int bb = 0;
 
-        for (int i = this.exceptionCount; bb < i; i = this.exceptionCount) {
-            dataOutputStream.writeShort(this.exceptionClasses[ba].getIndex());
-            bb = ++ba;
+        for (int exceptionCountValue = this.exceptionCount; bb < exceptionCountValue; exceptionCountValue = this.exceptionCount) {
+            dataOutputStream.writeShort(this.exceptionClasses[exceptionClasseIndex].getIndex());
+            bb = ++exceptionClasseIndex;
         }
     }
 
-    public ResolvedClassConstant getExceptionClass(int ba) {
-        return this.exceptionClasses[ba];
+    public ResolvedClassConstant getExceptionClass(int exceptionClasseIndex) {
+        return this.exceptionClasses[exceptionClasseIndex];
     }
 
     @Override
@@ -65,18 +65,18 @@ public class ExceptionsAttribute extends Attribute implements ClassConstantRepla
         DataOutputStream dataOutputStream1 = dataOutputStream;
         super.writeRemapped(dataOutputStream1, map3, scriptEnvironment3);
         dataOutputStream.writeShort(this.exceptionCount);
-        int ba = 0;
+        int exceptionClasseIndex = 0;
         int bb = 0;
 
-        for (int i = this.exceptionCount; bb < i; i = this.exceptionCount) {
-            ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) map1.get(this.exceptionClasses[ba]);
+        for (int exceptionCountValue = this.exceptionCount; bb < exceptionCountValue; exceptionCountValue = this.exceptionCount) {
+            ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) map1.get(this.exceptionClasses[exceptionClasseIndex]);
             if (constantPoolEntry != null) {
                 dataOutputStream.writeShort(constantPoolEntry.getIndex());
             } else {
-                dataOutputStream.writeShort(this.exceptionClasses[ba].getIndex());
+                dataOutputStream.writeShort(this.exceptionClasses[exceptionClasseIndex].getIndex());
             }
 
-            bb = ++ba;
+            bb = ++exceptionClasseIndex;
         }
     }
 
@@ -99,37 +99,37 @@ public class ExceptionsAttribute extends Attribute implements ClassConstantRepla
     @Override
     public void collectUsedConstants(char ba, int bd, UsedConstantsCollector usedConstantsCollector, char be) {
         usedConstantsCollector.markUsed(this.nameConstant, this, this);
-        int bb = 0;
+        int exceptionClasseIndex = 0;
         int bc = 0;
         ResolvedClassConstant[] resolvedClassConstants = this.exceptionClasses;
 
         while (true) {
             if (bc < resolvedClassConstants.length) {
-                this.exceptionClasses[bb].registerUsage(usedConstantsCollector, this, this);
+                this.exceptionClasses[exceptionClasseIndex].registerUsage(usedConstantsCollector, this, this);
             } else if (ba >= 0) {
                 return;
             }
 
-            bc = ++bb;
+            bc = ++exceptionClasseIndex;
             resolvedClassConstants = this.exceptionClasses;
         }
     }
 
     @Override
     public void replaceClassConstant(ResolvedClassConstant resolvedClassConstant, ResolvedClassConstant resolvedClassConstant1) {
-        int ba = 0;
+        int exceptionClasseIndex = 0;
         int bb = 0;
 
         for (ResolvedClassConstant[] resolvedClassConstants = this.exceptionClasses;
              bb < resolvedClassConstants.length;
              resolvedClassConstants = this.exceptionClasses
         ) {
-            if (this.exceptionClasses[ba] == resolvedClassConstant) {
-                this.exceptionClasses[ba] = resolvedClassConstant1;
+            if (this.exceptionClasses[exceptionClasseIndex] == resolvedClassConstant) {
+                this.exceptionClasses[exceptionClasseIndex] = resolvedClassConstant1;
                 break;
             }
 
-            bb = ++ba;
+            bb = ++exceptionClasseIndex;
         }
     }
 
@@ -145,28 +145,28 @@ public class ExceptionsAttribute extends Attribute implements ClassConstantRepla
 
     public ExceptionsAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndexArgument,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ListMultimap listMultimap1
     ) throws ClassFileFormatException, IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+        super(classFileComponent, constantPoolIndexArgument, attributeName, classFileInputStream, listMultimap);
         this.exceptionCount = classFileInputStream.readUnsignedShort();
         this.exceptionClasses = new ResolvedClassConstant[this.exceptionCount];
-        int bb = 0;
+        int exceptionClasseIndex = 0;
         int bd = 0;
 
-        for (int i = this.exceptionCount; bd < i; i = this.exceptionCount) {
-            int bc = classFileInputStream.readUnsignedShort();
-            ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bc);
+        for (int exceptionCountValue = this.exceptionCount; bd < exceptionCountValue; exceptionCountValue = this.exceptionCount) {
+            int constantPoolIndex = classFileInputStream.readUnsignedShort();
+            ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
             if (!(constantPoolEntry instanceof ResolvedClassConstant)) {
                 throw new ClassFileFormatException(this.getClassName() + " : " + "Invalid Class index in Exception Attribute");
             }
 
-            this.exceptionClasses[bb] = (ResolvedClassConstant) constantPoolEntry;
-            listMultimap1.addValue(this.exceptionClasses[bb], this);
-            bd = ++bb;
+            this.exceptionClasses[exceptionClasseIndex] = (ResolvedClassConstant) constantPoolEntry;
+            listMultimap1.addValue(this.exceptionClasses[exceptionClasseIndex], this);
+            bd = ++exceptionClasseIndex;
         }
     }
 }

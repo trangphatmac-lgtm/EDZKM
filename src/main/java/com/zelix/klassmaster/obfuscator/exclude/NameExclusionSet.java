@@ -211,17 +211,17 @@ public class NameExclusionSet extends ModuleExclusionTracker {
 
     public static ParameterListStatement parseInternalDefaultExcludes(ScriptEnvironment scriptEnvironment1, Throwable throwable) throws ZkmException, IOException {
         if (throwable != null) {
-            String string = scriptEnvironment1.getDefaultExcludeFile();
-            System.err.println("\"" + string + "\" had a parse error and will be ignored. See \"" + scriptEnvironment1.getLogFileName() + "\" for more detail.");
+            String defaultExcludeFile = scriptEnvironment1.getDefaultExcludeFile();
+            System.err.println("\"" + defaultExcludeFile + "\" had a parse error and will be ignored. See \"" + scriptEnvironment1.getLogFileName() + "\" for more detail.");
             scriptEnvironment1.logWarning(
                     "\""
-                            + string
+                            + defaultExcludeFile
                             + "\" had a parse error :"
                             + HiddenOptionFlags.LINE_SEPARATOR
                             + throwable.getMessage()
                             + HiddenOptionFlags.LINE_SEPARATOR
                             + "Will use the internal default exclude statement and ignore \""
-                            + string
+                            + defaultExcludeFile
                             + "\"."
             );
         }
@@ -332,8 +332,8 @@ public class NameExclusionSet extends ModuleExclusionTracker {
         while (iterator.hasNext()) {
             Entry entry5 = (Entry) iterator.next();
             AbstractMethodInfo abstractMethodInfo6 = (AbstractMethodInfo) entry5.getKey();
-            String string1 = (String) this.methodLinkPrefixes.get(abstractMethodInfo6);
-            this.groupMethodsByPrefix.addValue(entry5.getValue(), string1, abstractMethodInfo6);
+            String key = (String) this.methodLinkPrefixes.get(abstractMethodInfo6);
+            this.groupMethodsByPrefix.addValue(entry5.getValue(), key, abstractMethodInfo6);
         }
 
         iterator = this.groupMethodsByPrefix.entrySet().iterator();
@@ -385,25 +385,10 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                     }
                 }
 
-                label164:
-                {
-                    hashSet1.removeAll(hashSet);
-                    stringBuilder = new StringBuilder();
-                    StringBuilder stringBuilder1;
-                    String string7;
-                    if (hashSet.size() <= 1) {
-                        if (set6 == null || set6.size() <= 1) {
-                            break label164;
-                        }
-
-                        stringBuilder1 = stringBuilder;
-                        string7 = "Complex property inter-relationships";
-                    } else {
-                        stringBuilder1 = stringBuilder;
-                        string7 = "Complex property inter-relationships";
-                    }
-
-                    stringBuilder1.append(string7);
+                hashSet1.removeAll(hashSet);
+                stringBuilder = new StringBuilder();
+                if (hashSet.size() > 1 || set6 != null && set6.size() > 1) {
+                    stringBuilder.append("Complex property inter-relationships");
                 }
 
                 if (fieldInfo1 != null) {
@@ -622,8 +607,8 @@ public class NameExclusionSet extends ModuleExclusionTracker {
             Collections.sort(arrayList);
             Collections.sort(arrayList1, Collections.reverseOrder());
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                String string1 = (String) arrayList.get(i);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                String string1 = (String) arrayList.get(elementIndex);
                 this.forceUnexcludePackage(
                         string1,
                         changeLogMapping1,
@@ -664,11 +649,11 @@ public class NameExclusionSet extends ModuleExclusionTracker {
     public final void processExclusionParameters() throws ZkmException, IOException {
         HashMap hashMap = ZkmUtils.createHashMap();
         ArrayList arrayList = new ArrayList();
-        int ba = 0;
+        int elementIndex = 0;
         int bi = 0;
 
         for (List list2 = super.exclusionStatements; bi < list2.size(); list2 = super.exclusionStatements) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(ba);
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -679,30 +664,30 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                 }
             }
 
-            bi = ++ba;
+            bi = ++elementIndex;
         }
 
         Collections.sort(arrayList);
         if (super.scriptEnvironment.isVerbose() && arrayList.size() > 0) {
             super.logWriter.println("\tExclusion parameters:");
 
-            for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t" + arrayList.get(i));
+            for (int elementIndexValue = arrayList.size() - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                super.logWriter.println("\t\t" + arrayList.get(elementIndexValue));
             }
         }
 
-        for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-            ((ASTRenameFilterParameter) arrayList.get(i)).applyNameExclusion(this);
+        for (int elementIndexValue2 = arrayList.size() - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+            ((ASTRenameFilterParameter) arrayList.get(elementIndexValue2)).applyNameExclusion(this);
         }
 
         if (super.unexclusionStatements != null) {
             HashMap hashMap1 = ZkmUtils.createHashMap();
             Vector vector = new Vector();
-            int bd = 0;
+            int elementIndexValue3 = 0;
             bi = 0;
 
             for (List list1 = super.unexclusionStatements; bi < list1.size(); list1 = super.unexclusionStatements) {
-                ParameterListStatement parameterListStatement2 = (ParameterListStatement) super.unexclusionStatements.get(bd);
+                ParameterListStatement parameterListStatement2 = (ParameterListStatement) super.unexclusionStatements.get(elementIndexValue3);
                 Enumeration enumeration1 = parameterListStatement2.getRenameFilterParameters();
 
                 while (enumeration1.hasMoreElements()) {
@@ -713,7 +698,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                     }
                 }
 
-                bi = ++bd;
+                bi = ++elementIndexValue3;
             }
 
             if (vector.size() > 0 && arrayList.size() == 0) {
@@ -727,13 +712,13 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                 if (super.scriptEnvironment.isVerbose() && vector.size() > 0) {
                     super.logWriter.println("\tUnexclusion parameters:");
 
-                    for (int i = vector.size() - 1; i >= 0; i += -1) {
-                        super.logWriter.println("\t\t\"" + vector.elementAt(i) + "\"");
+                    for (int elementIndexValue4 = vector.size() - 1; elementIndexValue4 >= 0; elementIndexValue4 += -1) {
+                        super.logWriter.println("\t\t\"" + vector.elementAt(elementIndexValue4) + "\"");
                     }
                 }
 
-                for (int i = vector.size() - 1; i >= 0; i += -1) {
-                    ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) vector.elementAt(i);
+                for (int elementIndexValue5 = vector.size() - 1; elementIndexValue5 >= 0; elementIndexValue5 += -1) {
+                    ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) vector.elementAt(elementIndexValue5);
                     if (aSTRenameFilterParameter2.isClassSpecifier() && aSTRenameFilterParameter2.hasLinkClassName()) {
                         super.scriptEnvironment
                                 .logWarning(
@@ -752,7 +737,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
         }
 
         ParameterListStatement parameterListStatement1 = loadDefaultExcludes(super.scriptEnvironment);
-        boolean bl;
+        boolean applyChangeLogExclusions;
         if (parameterListStatement1 != null) {
             HashMap hashMap2 = ZkmUtils.createHashMap();
             Vector vector1 = new Vector();
@@ -770,22 +755,22 @@ public class NameExclusionSet extends ModuleExclusionTracker {
             if (super.scriptEnvironment.isVerbose() && vector1.size() > 0) {
                 super.logWriter.println("\tDefault exclusion parameters:");
 
-                for (int i = vector1.size() - 1; i >= 0; i += -1) {
-                    super.logWriter.println("\t\t\"" + vector1.elementAt(i) + "\"");
+                for (int elementIndexValue6 = vector1.size() - 1; elementIndexValue6 >= 0; elementIndexValue6 += -1) {
+                    super.logWriter.println("\t\t\"" + vector1.elementAt(elementIndexValue6) + "\"");
                 }
             }
 
-            for (int i = vector1.size() - 1; i >= 0; i += -1) {
-                ASTRenameFilterParameter aSTRenameFilterParameter4 = (ASTRenameFilterParameter) vector1.elementAt(i);
+            for (int elementIndexValue7 = vector1.size() - 1; elementIndexValue7 >= 0; elementIndexValue7 += -1) {
+                ASTRenameFilterParameter aSTRenameFilterParameter4 = (ASTRenameFilterParameter) vector1.elementAt(elementIndexValue7);
                 aSTRenameFilterParameter4.applyNameExclusion(this);
             }
 
-            bl = HiddenOptionFlags.APPLY_CHANGE_LOG_EXCLUSIONS;
+            applyChangeLogExclusions = HiddenOptionFlags.APPLY_CHANGE_LOG_EXCLUSIONS;
         } else {
-            bl = HiddenOptionFlags.APPLY_CHANGE_LOG_EXCLUSIONS;
+            applyChangeLogExclusions = HiddenOptionFlags.APPLY_CHANGE_LOG_EXCLUSIONS;
         }
 
-        if (bl) {
+        if (applyChangeLogExclusions) {
             TwoKeyMap twoKeyMap = this.classRepository.getXmlReferencedMethods();
             if (twoKeyMap != null && !twoKeyMap.isEmpty()) {
                 Map map1 = this.classRepository.getResourceReferencedMethods();
@@ -798,9 +783,9 @@ public class NameExclusionSet extends ModuleExclusionTracker {
 
                     while (iterator.hasNext()) {
                         Entry entry = (Entry) iterator.next();
-                        String string = (String) entry.getKey();
+                        String key = (String) entry.getKey();
                         String string1 = (String) map1.get(methodInfo1);
-                        this.addMethodLink(methodInfo1, string, entry.getValue(), string1);
+                        this.addMethodLink(methodInfo1, key, entry.getValue(), string1);
                     }
                 }
             }
@@ -821,13 +806,13 @@ public class NameExclusionSet extends ModuleExclusionTracker {
 
     public final void collectPackageNames(RootPackageNode rootPackageNode1) {
         List list1 = rootPackageNode1.getAllPackagePaths();
-        int ba = list1.size();
-        this.packageNames = new String[ba];
+        int list1Size = list1.size();
+        this.packageNames = new String[list1Size];
 
-        for (int i = 0; i < ba; i++) {
-            String string = (String) list1.get(i);
-            this.includedPackages.put(string, string);
-            this.packageNames[i] = string;
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            String packageName = (String) list1.get(elementIndex);
+            this.includedPackages.put(packageName, packageName);
+            this.packageNames[elementIndex] = packageName;
         }
     }
 
@@ -867,22 +852,22 @@ public class NameExclusionSet extends ModuleExclusionTracker {
     }
 
     public static ParameterListStatement loadDefaultExcludes(ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
-        String string = scriptEnvironment1.getDefaultExcludeFile();
+        String defaultExcludeFile = scriptEnvironment1.getDefaultExcludeFile();
         boolean bl = false;
 
         BufferedReader bufferedReader;
         try {
-            File file1 = new File(string);
+            File file1 = new File(defaultExcludeFile);
             bufferedReader = ZkmFileUtils.openReader(file1, HiddenOptionFlags.SCRIPT_ENCODING);
-            scriptEnvironment1.logLine("Using '" + string + "' for default exclusions");
+            scriptEnvironment1.logLine("Using '" + defaultExcludeFile + "' for default exclusions");
         } catch (FileNotFoundException fileNotFoundException) {
             bufferedReader = new BufferedReader(new StringReader(DEFAULT_EXCLUDE_SCRIPT));
             bl = true;
-            scriptEnvironment1.logLine("Using internal default exclusions. File '" + string + "' not found");
+            scriptEnvironment1.logLine("Using internal default exclusions. File '" + defaultExcludeFile + "' not found");
         } catch (IOException iOException) {
             bufferedReader = new BufferedReader(new StringReader(DEFAULT_EXCLUDE_SCRIPT));
             bl = true;
-            scriptEnvironment1.logLine("Using internal default exclusions. Error opening file '" + string + "' : " + iOException);
+            scriptEnvironment1.logLine("Using internal default exclusions. Error opening file '" + defaultExcludeFile + "' : " + iOException);
         }
 
         try {
@@ -958,37 +943,14 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                 }
 
                 MethodSignature methodSignature1 = methodInfo1.getSignature();
-                String string = methodInfo1.getClassName();
+                String className = methodInfo1.getClassName();
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
-                if (changeLogMapping1.isMethodRenamed(string, methodSignature1)
+                ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(className);
+                if (changeLogMapping1.isMethodRenamed(className, methodSignature1)
                         || abstractMethodInfo != null && changeLogMapping1.isMethodRenamed(abstractMethodInfo.getClassName(), methodSignature1)
-                        || setMultiMap.containsValue(string, methodSignature1)) {
-                    Boolean boolean1;
-                    label223:
-                    {
-                        Boolean boolean4;
-                        label197:
-                        if (!changeLogMapping1.isMethodRenamed(string, methodSignature1)) {
-                            if (abstractMethodInfo != null) {
-                                if (changeLogMapping1.isMethodRenamed(abstractMethodInfo.getClassName(), methodSignature1)) {
-                                    boolean4 = Boolean.TRUE;
-                                    break label197;
-                                }
-
-                                boolean4 = Boolean.FALSE;
-                            } else {
-                                boolean4 = Boolean.FALSE;
-                            }
-
-                            boolean1 = boolean4;
-                            break label223;
-                        } else {
-                            boolean4 = Boolean.TRUE;
-                        }
-
-                        boolean1 = boolean4;
-                    }
+                        || setMultiMap.containsValue(className, methodSignature1)) {
+                    Boolean boolean1 = changeLogMapping1.isMethodRenamed(className, methodSignature1)
+                            || abstractMethodInfo != null && changeLogMapping1.isMethodRenamed(abstractMethodInfo.getClassName(), methodSignature1);
 
                     arrayList.add(new ObjectPair(methodInfo1, boolean1));
                     if (programClass1.isInterface()) {
@@ -996,8 +958,8 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                         if (observableHolder != null) {
                             List list1 = (List) observableHolder.getValue();
 
-                            for (int i = 0; i < list1.size(); i++) {
-                                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+                            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndex);
                                 if (classHierarchyNode1.isProgramClass() && classHierarchyNode1 != classHierarchyNode) {
                                     MethodInfo methodInfo2 = this.classRepository.findDeclaredMethod(classHierarchyNode1.getProgramClass(), methodSignature1);
                                     if (methodInfo2 != null) {
@@ -1010,8 +972,8 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                 }
             }
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                ObjectPair objectPair = (ObjectPair) arrayList.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+                ObjectPair objectPair = (ObjectPair) arrayList.get(elementIndexValue);
                 MethodInfo methodInfo3 = (MethodInfo) objectPair.getFirst();
                 Boolean boolean2 = (Boolean) objectPair.getSecond();
                 if (boolean2) {
@@ -1055,9 +1017,9 @@ public class NameExclusionSet extends ModuleExclusionTracker {
 
                 while (iterator2.hasNext()) {
                     AbstractMethodInfo abstractMethodInfo4 = (AbstractMethodInfo) iterator2.next();
-                    String string4 = abstractMethodInfo4.getClassName();
+                    String classNameValue = abstractMethodInfo4.getClassName();
                     MethodSignature methodSignature3 = abstractMethodInfo4.getSignature();
-                    String string8 = changeLogMapping1.lookupNewMethodName(string4, methodSignature3);
+                    String string8 = changeLogMapping1.lookupNewMethodName(classNameValue, methodSignature3);
                     if (string8 != null) {
                         abstractMethodInfo1 = abstractMethodInfo4;
                         break;
@@ -1090,9 +1052,9 @@ public class NameExclusionSet extends ModuleExclusionTracker {
 
                     while (iterator4.hasNext()) {
                         AbstractMethodInfo abstractMethodInfo6 = (AbstractMethodInfo) iterator4.next();
-                        String string6 = abstractMethodInfo6.getClassName();
+                        String classNameValue2 = abstractMethodInfo6.getClassName();
                         MethodSignature methodSignature4 = abstractMethodInfo6.getSignature();
-                        String string10 = changeLogMapping1.lookupNewMethodName(string6, methodSignature4);
+                        String string10 = changeLogMapping1.lookupNewMethodName(classNameValue2, methodSignature4);
                         if (string10 != null) {
                             abstractMethodInfo2 = abstractMethodInfo6;
                             break;
@@ -1121,17 +1083,17 @@ public class NameExclusionSet extends ModuleExclusionTracker {
             while (iterator1.hasNext()) {
                 Entry entry2 = (Entry) iterator1.next();
                 AbstractMethodInfo abstractMethodInfo3 = (AbstractMethodInfo) entry2.getKey();
-                String string3 = abstractMethodInfo3.getClassName();
+                String classNameValue3 = abstractMethodInfo3.getClassName();
                 MethodSignature methodSignature2 = abstractMethodInfo3.getSignature();
-                if (changeLogMapping1.hasMethodMapping(string3, methodSignature2)) {
-                    String string7;
+                if (changeLogMapping1.hasMethodMapping(classNameValue3, methodSignature2)) {
+                    String dottedClassName;
                     String string9;
                     ScriptEnvironment scriptEnvironment1;
                     if (hashMap != null && (string9 = (String) hashMap.get(abstractMethodInfo3.getClassName())) != null) {
-                        string7 = ZkmUtils.slashesToDots(string9);
+                        dottedClassName = ZkmUtils.slashesToDots(string9);
                         scriptEnvironment1 = super.scriptEnvironment;
                     } else {
-                        string7 = abstractMethodInfo3.getDottedClassName();
+                        dottedClassName = abstractMethodInfo3.getDottedClassName();
                         scriptEnvironment1 = super.scriptEnvironment;
                     }
 
@@ -1139,7 +1101,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                             "Prefix exclusion of method \""
                                     + AbstractExclusionSpec.formatMethodWithModifiers(abstractMethodInfo3, this)
                                     + "\" in class \""
-                                    + string7
+                                    + dottedClassName
                                     + "\" may not be effective because method appears in input change log \""
                                     + changeLogMapping1.getChangeLogName()
                                     + "\" (2)"
@@ -1158,10 +1120,10 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                     super.logWriter.println("\tExcluding package \"" + string2 + "\" from name obfuscation because of \"" + string1 + "\"");
                 }
 
-                int ba = string.lastIndexOf("/");
+                int endIndex = string.lastIndexOf("/");
 
-                while (ba > -1) {
-                    String string3 = string.substring(0, ba);
+                while (endIndex > -1) {
+                    String string3 = string.substring(0, endIndex);
                     if (this.includedPackages.remove(string3) != null) {
                         this.excludedPackages.put(string3, string3);
                         if (super.scriptEnvironment.isVerbose()) {
@@ -1176,7 +1138,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                         }
                     }
 
-                    ba = string3.lastIndexOf("/");
+                    endIndex = string3.lastIndexOf("/");
                 }
             }
         }
@@ -1192,12 +1154,12 @@ public class NameExclusionSet extends ModuleExclusionTracker {
         return new ArrayEnumeration(this.allMethods);
     }
 
-    public final Triple getClassLink(Object object) {
-        return (Triple) this.classLinks.get(object);
+    public final Triple getClassLink(Object key) {
+        return (Triple) this.classLinks.get(key);
     }
 
-    public Set getLinkedMethodsOfField(Object object) {
-        Set set1 = this.accessorMethodsByField.getValues(object);
+    public Set getLinkedMethodsOfField(Object key) {
+        Set set1 = this.accessorMethodsByField.getValues(key);
         if (set1 != null && set1.size() > 0) {
             EquivalenceGroup equivalenceGroup = this.methodEquivalenceGroups.getGroup(set1.iterator().next());
             HashSet hashSet = ZkmUtils.createHashSet();
@@ -1228,8 +1190,8 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                 }
             }
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                FieldInfo fieldInfo1 = (FieldInfo) arrayList.get(i);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                FieldInfo fieldInfo1 = (FieldInfo) arrayList.get(elementIndex);
                 this.forceUnexcludeField(
                         fieldInfo1,
                         "Input ChangeLog specifies a new name '" + changeLogMapping1.getResolvedNewFieldName(fieldInfo1.getClassName(), fieldInfo1.getSignature()) + "'",
@@ -1321,7 +1283,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
         return new ArrayEnumeration(this.inputClassFiles);
     }
 
-    public final void addClassLink(ProgramClass programClass1, String string, String string1, List list1, String string2) throws ZkmException, IOException {
+    public final void addClassLink(ProgramClass programClass1, String second, String third, List list1, String string2) throws ZkmException, IOException {
         if (super.excludedClasses.containsKey(programClass1)) {
             super.scriptEnvironment
                     .logWarning(
@@ -1332,51 +1294,53 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                                     + "\" will have no impact on this class."
                     );
         } else {
-            int ba = string.length();
-            int bb = string1.length();
-            String string3 = programClass1.getSimpleName();
-            String string4 = programClass1.getPackagePath();
-            if (string4.length() > 0) {
-                string4 = string4 + "/";
+            int beginIndex = second.length();
+            int thirdLength = third.length();
+            String simpleName = programClass1.getSimpleName();
+            String packagePath = programClass1.getPackagePath();
+            if (packagePath.length() > 0) {
+                packagePath = packagePath + "/";
             }
 
-            String string5 = string4 + string3.substring(ba, string3.length() - bb);
-            ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string5);
+            String key = packagePath + simpleName.substring(beginIndex, simpleName.length() - thirdLength);
+            ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(key);
             if (programClass2 == null && list1.size() > 0) {
-                String string6 = string3.substring(ba, string3.length() - bb);
+                String string6 = simpleName.substring(beginIndex, simpleName.length() - thirdLength);
 
-                label85:
-                for (int i = 0; i < list1.size(); i++) {
-                    String string7 = (String) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    String string7 = (String) list1.get(elementIndex);
                     if (string7.indexOf(42) == -1) {
-                        string5 = string7 + "/" + string6;
-                        programClass2 = ClassHierarchyNode.findProgramClass(string5);
+                        key = string7 + "/" + string6;
+                        programClass2 = ClassHierarchyNode.findProgramClass(key);
                         if (programClass2 != null) {
                             break;
                         }
                     } else {
-                        int bd = 0;
-                        int be = bd;
+                        int packageNameIndex = 0;
+                        int packageNameIndexValue = packageNameIndex;
 
-                        for (String[] strings = this.packageNames; be < strings.length; strings = this.packageNames) {
-                            String string8 = this.packageNames[bd];
-                            if (ZkmStringUtils.matchesWildcard(string8, string7)) {
-                                string5 = string8 + "/" + string6;
-                                programClass2 = ClassHierarchyNode.findProgramClass(string5);
+                        for (String[] packageNamesValue = this.packageNames; packageNameIndexValue < packageNamesValue.length; packageNamesValue = this.packageNames) {
+                            String packageName = this.packageNames[packageNameIndex];
+                            if (ZkmStringUtils.matchesWildcard(packageName, string7)) {
+                                key = packageName + "/" + string6;
+                                programClass2 = ClassHierarchyNode.findProgramClass(key);
                                 if (programClass2 != null) {
-                                    break label85;
+                                    break;
                                 }
                             }
 
-                            be = ++bd;
+                            packageNameIndexValue = ++packageNameIndex;
+                        }
+                        if (programClass2 != null) {
+                            break;
                         }
                     }
                 }
             }
 
-            String string9 = ZkmUtils.slashesToDots(string5);
+            String string9 = ZkmUtils.slashesToDots(key);
             boolean bl = false;
-            Triple triple = ((com.zelix.klassmaster.util.Triple) (this.classLinks.put(programClass1, new Triple(programClass2, string, string1))));
+            Triple triple = ((com.zelix.klassmaster.util.Triple) (this.classLinks.put(programClass1, new Triple(programClass2, second, third))));
             if (triple != null) {
                 ProgramClass programClass3 = (ProgramClass) triple.getFirst();
                 if (programClass3 != null) {
@@ -1393,7 +1357,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                                                 + "\" but it is also matched by another <link> exclusion parameter with"
                                                 + (((String) triple.getSecond()).length() > 0 ? " prefix \"" + (String) triple.getSecond() + "\" and" : "")
                                                 + " suffix \""
-                                                + string1
+                                                + third
                                                 + "\". Cannot satisfy both matches."
                                 );
                     }
@@ -1408,7 +1372,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                                         + "\" matches \""
                                         + string2
                                         + "\" but no class matching \""
-                                        + string3.substring(ba, string3.length() - bb)
+                                        + simpleName.substring(beginIndex, simpleName.length() - thirdLength)
                                         + "\" found in the same package"
                                         + (list1.size() == 0 ? "." : " or in the search path.")
                         );
@@ -1420,9 +1384,9 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                         super.logWriter
                                 .println(
                                         "\tExcluding"
-                                                + (ba > 0 ? " prefix \"" + string + "\" and" : "")
+                                                + (beginIndex > 0 ? " prefix \"" + second + "\" and" : "")
                                                 + " suffix \""
-                                                + string1
+                                                + third
                                                 + "\" from renaming of class \""
                                                 + this.describeClass(programClass1)
                                                 + "\" from name obfuscation because of \""
@@ -1438,9 +1402,9 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                                             + "\" will be renamed to match \""
                                             + string9
                                             + "\" with the"
-                                            + (ba > 0 ? " prefix \"" + string + "\" and the" : "")
+                                            + (beginIndex > 0 ? " prefix \"" + second + "\" and the" : "")
                                             + " suffix \""
-                                            + string1
+                                            + third
                                             + "\" retained because of \""
                                             + string2
                                             + "\""
@@ -1462,10 +1426,10 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                     fixedClassesExclusionSet1.reportPackageRenamed(string, changeLogMapping1.getChangeLogName());
                 }
 
-                int ba = arrayList.size();
+                int arrayListSize = arrayList.size();
 
-                for (int i = 0; i < ba; i++) {
-                    String string3 = (String) arrayList.get(i);
+                for (int elementIndex = 0; elementIndex < arrayListSize; elementIndex++) {
+                    String string3 = (String) arrayList.get(elementIndex);
                     if (string3.compareTo(string) <= 0) {
                         break;
                     }
@@ -1522,12 +1486,12 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                     super.logWriter.println("\tUnexcluding package \"" + string2 + "\" for name obfuscation because of \"" + string1 + "\"");
                 }
 
-                String string3 = string + "/";
+                String prefixValue = string + "/";
                 Iterator iterator = this.excludedPackages.keySet().iterator();
 
                 while (iterator.hasNext()) {
                     String string4 = (String) iterator.next();
-                    if (string4.startsWith(string3)) {
+                    if (string4.startsWith(prefixValue)) {
                         iterator.remove();
                         this.includedPackages.put(string4, string4);
                         if (super.scriptEnvironment.isVerbose()) {
@@ -1572,10 +1536,10 @@ public class NameExclusionSet extends ModuleExclusionTracker {
         return new ArrayEnumeration(strings);
     }
 
-    public final void addMethodLink(MethodInfo methodInfo1, String string, Object object, String string1) throws ZkmException, IOException {
-        String string2 = ((java.lang.String) (this.methodLinkPrefixes.put(methodInfo1, string)));
-        if (string2 != null && !string2.equals(string)) {
-            this.methodLinkPrefixes.put(methodInfo1, string2);
+    public final void addMethodLink(MethodInfo methodInfo1, String valueArgument, Object object, String string1) throws ZkmException, IOException {
+        String valueValue = ((java.lang.String) (this.methodLinkPrefixes.put(methodInfo1, valueArgument)));
+        if (valueValue != null && !valueValue.equals(valueArgument)) {
+            this.methodLinkPrefixes.put(methodInfo1, valueValue);
             super.scriptEnvironment
                     .logWarning(
                             "Method \""
@@ -1583,43 +1547,43 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                                     + "\" in class \""
                                     + AbstractExclusionSpec.formatClassWithModifiers(methodInfo1.getOwnerProgramClass(), this.classRepository)
                                     + "\" matched to more than one prefix : \""
-                                    + string
+                                    + valueArgument
                                     + "\", \""
-                                    + string2
+                                    + valueValue
                                     + "\". Prefix \""
-                                    + string
+                                    + valueArgument
                                     + "\" will be ignored."
                     );
         }
 
         ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-        int ba = string.length();
-        String string3 = methodInfo1.getJvmName();
-        String string5 = null;
-        String string4;
-        if (ba > 0) {
-            string4 = MethodSignature.toPropertyName(string3, string);
+        int valueLength = valueArgument.length();
+        String jvmName = methodInfo1.getJvmName();
+        String returnDescriptorValue = null;
+        String jvmNameValue;
+        if (valueLength > 0) {
+            jvmNameValue = MethodSignature.toPropertyName(jvmName, valueArgument);
         } else {
-            string4 = string3;
+            jvmNameValue = jvmName;
         }
 
-        String string6 = methodInfo1.getReturnDescriptor();
+        String returnDescriptor = methodInfo1.getReturnDescriptor();
         int parameterCount = methodInfo1.getParameterCount();
-        if (parameterCount == 0 && !string6.equals("V")) {
-            string5 = string6;
-        } else if (parameterCount == 1 && string6.equals("V")) {
-            String string7 = methodInfo1.getParameterDescriptor();
-            String string8 = string7.substring(1, string7.length() - 1);
-            string5 = string8;
+        if (parameterCount == 0 && !returnDescriptor.equals("V")) {
+            returnDescriptorValue = returnDescriptor;
+        } else if (parameterCount == 1 && returnDescriptor.equals("V")) {
+            String parameterDescriptor = methodInfo1.getParameterDescriptor();
+            String returnDescriptorValue2 = parameterDescriptor.substring(1, parameterDescriptor.length() - 1);
+            returnDescriptorValue = returnDescriptorValue2;
         }
 
         ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(programClass1.getClassName());
-        AbstractFieldInfo[] abstractFieldInfos = this.findFieldsByName(programClass1, string4, string5);
+        AbstractFieldInfo[] abstractFieldInfos = this.findFieldsByName(programClass1, jvmNameValue, returnDescriptorValue);
         if (abstractFieldInfos == null || abstractFieldInfos.length == 0) {
             do {
                 ProgramClass programClass2 = classHierarchyNode.getSuperProgramClass();
                 if (programClass2 != null) {
-                    abstractFieldInfos = this.findFieldsByName(programClass2, string4, string5);
+                    abstractFieldInfos = this.findFieldsByName(programClass2, jvmNameValue, returnDescriptorValue);
                     classHierarchyNode = ClassHierarchyNode.findNode(programClass2.getClassName());
                 } else {
                     classHierarchyNode = null;
@@ -1632,7 +1596,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                 FieldInfo fieldInfo = (FieldInfo) abstractFieldInfos[0];
                 this.methodsByLinkKey.addValue(fieldInfo, methodInfo1);
                 this.accessorMethodsByField.addValue(fieldInfo, methodInfo1);
-                String string9 = (String) this.methodFieldLinks.putValue(methodInfo1, fieldInfo, string);
+                String string9 = (String) this.methodFieldLinks.putValue(methodInfo1, fieldInfo, valueArgument);
                 if (super.scriptEnvironment.isVerbose()) {
                     super.logWriter
                             .println(
@@ -1643,7 +1607,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                                             + "\" will be renamed to match field \""
                                             + AbstractExclusionSpec.formatFieldWithModifiers(fieldInfo, this)
                                             + "\""
-                                            + (string.length() > 0 ? " with the prefix \"" + string + "\" retained" : "")
+                                            + (valueArgument.length() > 0 ? " with the prefix \"" + valueArgument + "\" retained" : "")
                                             + " because of \""
                                             + string1
                                             + "\""
@@ -1660,15 +1624,15 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                     twoKeyMap = this.methodFieldLinks;
                 }
 
-                twoKeyMap.putValue(methodInfo1, (FieldInfo) abstractFieldInfos[0], string);
+                twoKeyMap.putValue(methodInfo1, (FieldInfo) abstractFieldInfos[0], valueArgument);
                 StringBuilder stringBuilder = new StringBuilder();
 
-                for (int i = 0; i < abstractFieldInfos.length; i++) {
-                    this.accessorMethodsByField.addValue((FieldInfo) abstractFieldInfos[i], methodInfo1);
+                for (int abstractFieldInfoIndex = 0; abstractFieldInfoIndex < abstractFieldInfos.length; abstractFieldInfoIndex++) {
+                    this.accessorMethodsByField.addValue((FieldInfo) abstractFieldInfos[abstractFieldInfoIndex], methodInfo1);
                     stringBuilder.append("\"");
-                    stringBuilder.append(abstractFieldInfos[i].toDisplayString());
+                    stringBuilder.append(abstractFieldInfos[abstractFieldInfoIndex].toDisplayString());
                     stringBuilder.append("\"");
-                    if (i < abstractFieldInfos.length - 1) {
+                    if (abstractFieldInfoIndex < abstractFieldInfos.length - 1) {
                         stringBuilder.append(", ");
                     }
                 }
@@ -1685,14 +1649,14 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                                         + stringBuilder
                         );
             }
-        } else if (ba > 0) {
+        } else if (valueLength > 0) {
             if (object != null) {
                 this.methodsByLinkKey.addValue(object, methodInfo1);
             } else {
-                this.methodsByLinkKey.addValue(methodInfo1.getClassName() + '~' + string4, methodInfo1);
+                this.methodsByLinkKey.addValue(methodInfo1.getClassName() + '~' + jvmNameValue, methodInfo1);
             }
 
-            this.prefixOnlyLinkedMethods.putValue(methodInfo1, string, object);
+            this.prefixOnlyLinkedMethods.putValue(methodInfo1, valueArgument, object);
             if (super.scriptEnvironment.isVerbose()) {
                 super.logWriter
                         .println(
@@ -1701,7 +1665,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                                         + "\" in class \""
                                         + AbstractExclusionSpec.formatClassWithModifiers(programClass1, this.classRepository)
                                         + "\" will be renamed with the prefix \""
-                                        + string
+                                        + valueArgument
                                         + "\" retained because of \""
                                         + string1
                                         + "\""
@@ -1787,8 +1751,8 @@ public class NameExclusionSet extends ModuleExclusionTracker {
                 }
             }
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                ProgramClass programClass2 = (ProgramClass) arrayList.get(i);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                ProgramClass programClass2 = (ProgramClass) arrayList.get(elementIndex);
                 this.unexcludeClassInternal(programClass2, "Input ChangeLog specifies a new name", true);
                 if (fixedClassesExclusionSet1 != null) {
                     fixedClassesExclusionSet1.reportClassRenamed(programClass2, changeLogMapping1.getChangeLogName());
@@ -1819,7 +1783,7 @@ public class NameExclusionSet extends ModuleExclusionTracker {
         return ((ASTDefaultExcludeInput) zkmScriptSimpleNode).getParameterListStatement();
     }
 
-    public final boolean isPackageExcluded(Object object) {
-        return this.excludedPackages.containsKey(object);
+    public final boolean isPackageExcluded(Object key) {
+        return this.excludedPackages.containsKey(key);
     }
 }

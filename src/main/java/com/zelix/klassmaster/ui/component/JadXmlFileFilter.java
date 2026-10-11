@@ -15,7 +15,7 @@ public class JadXmlFileFilter extends ZkmFileFilter {
         } else if (ZkmFileUtils.isKnownArchiveName(file1.getName())) {
             return true;
         } else {
-            return string.endsWith(".jad") ? true : ZkmFileUtils.isXmlFileName(string);
+            return ((string.endsWith(".jad")) || (ZkmFileUtils.isXmlFileName(string)));
         }
     }
 

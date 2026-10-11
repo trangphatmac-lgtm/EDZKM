@@ -30,14 +30,14 @@ public class NewNameMapping {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == null) {
+    public boolean equals(Object other) {
+        if (other == null) {
             return false;
         }
 
         boolean bl;
-        if (object instanceof NewNameMapping) {
-            NewNameMapping newNameMapping1 = (NewNameMapping) object;
+        if (other instanceof NewNameMapping) {
+            NewNameMapping newNameMapping1 = (NewNameMapping) other;
             if (this.newName.equals(newNameMapping1.newName) && this.newParameterTypes.equals(newNameMapping1.newParameterTypes)) {
                 if ((this.parameterChangeData == null || newNameMapping1.parameterChangeData != null)
                         && (this.parameterChangeData != null || newNameMapping1.parameterChangeData == null)
@@ -60,12 +60,12 @@ public class NewNameMapping {
         return bl;
     }
 
-    public NewNameMapping(String string, String string1, boolean parametersObfuscated, String string2, String string3, boolean signatureChanged, boolean manufactured) {
-        this.newName = string;
-        this.newParameterTypes = string1;
-        this.parameterChangeData = string2;
+    public NewNameMapping(String newNameArgument, String newParameterTypesArgument, boolean parametersObfuscated, String parameterChangeDataArgument, String paramChangeNodeDataArgument, boolean signatureChanged, boolean manufactured) {
+        this.newName = newNameArgument;
+        this.newParameterTypes = newParameterTypesArgument;
+        this.parameterChangeData = parameterChangeDataArgument;
         this.signatureChanged = signatureChanged;
-        this.paramChangeNodeData = string3;
+        this.paramChangeNodeData = paramChangeNodeDataArgument;
         this.parametersObfuscated = parametersObfuscated;
         this.manufactured = manufactured;
     }
@@ -88,16 +88,16 @@ public class NewNameMapping {
         return ba;
     }
 
-    public NewNameMapping(String string) {
-        this(string, "", false, null, null, false, false);
+    public NewNameMapping(String newNameArgument) {
+        this(newNameArgument, "", false, null, null, false, false);
     }
 
     public boolean hasParameterChangeData() {
         return this.parameterChangeData != null;
     }
 
-    public NewNameMapping(String string, String string1) {
-        this(string, string1, false, null, null, false, false);
+    public NewNameMapping(String newNameArgument, String newParameterTypesArgument) {
+        this(newNameArgument, newParameterTypesArgument, false, null, null, false, false);
     }
 
     public final String getNameWithParameters() {

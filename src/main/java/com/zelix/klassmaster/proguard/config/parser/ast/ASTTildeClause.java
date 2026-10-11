@@ -21,12 +21,12 @@ public class ASTTildeClause extends ProGuardConfigSimpleNode implements ProGuard
     public void translate(Object object1, Object object) throws ZkmException, IOException {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-            ProGuardConfigNode proGuardConfigNode = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < this.jjtGetNumChildren(); childrenElementIndex++) {
+            ProGuardConfigNode proGuardConfigNode = this.jjtGetChild(childrenElementIndex);
             proGuardConfigNode.translate(this, proGuardConfigTranslator);
             if (proGuardConfigNode instanceof ASTQuote122Clause) {
-                String string = ((ASTQuote122Clause) proGuardConfigNode).getValue();
-                this.paths.add(string.trim());
+                String value = ((ASTQuote122Clause) proGuardConfigNode).getValue();
+                this.paths.add(value.trim());
             } else if (proGuardConfigNode instanceof ASTLparenClause2) {
                 ;
             }

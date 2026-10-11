@@ -1990,7 +1990,7 @@ public class SequentialNameGenerator extends JavaKeywords {
         }
     }
 
-    public SequentialNameGenerator(char[] ba, char[] subsequentChars, List list1, boolean bl) {
+    public SequentialNameGenerator(char[] destinationArrayArgument, char[] subsequentChars, List list1, boolean bl) {
         this.presetNames = list1 != null ? new ArrayList(list1) : null;
         if (bl && !HiddenOptionFlags.DONT_SHUFFLE_NAME_CHARS) {
             Random random1 = ZkmUtils.createRandom(322);
@@ -1998,17 +1998,17 @@ public class SequentialNameGenerator extends JavaKeywords {
                 ZkmUtils.shuffleList(this.presetNames, random1);
             }
 
-            char[] bc = new char[ba.length];
-            System.arraycopy(ba, 0, bc, 0, ba.length);
-            ZkmUtils.shuffleChars(bc, random1);
-            ba = bc;
-            char[] bd = new char[subsequentChars.length];
-            System.arraycopy(subsequentChars, 0, bd, 0, subsequentChars.length);
-            ZkmUtils.shuffleChars(bd, random1);
-            subsequentChars = bd;
+            char[] destinationArray = new char[destinationArrayArgument.length];
+            System.arraycopy(destinationArrayArgument, 0, destinationArray, 0, destinationArrayArgument.length);
+            ZkmUtils.shuffleChars(destinationArray, random1);
+            destinationArrayArgument = destinationArray;
+            char[] subsequentCharsValue = new char[subsequentChars.length];
+            System.arraycopy(subsequentChars, 0, subsequentCharsValue, 0, subsequentChars.length);
+            ZkmUtils.shuffleChars(subsequentCharsValue, random1);
+            subsequentChars = subsequentCharsValue;
         }
 
-        this.firstDigit = new NameGeneratorDigit(ba, String.valueOf(this.digitCounter++));
+        this.firstDigit = new NameGeneratorDigit(destinationArrayArgument, String.valueOf(this.digitCounter++));
         this.subsequentChars = subsequentChars;
         this.lastDigit = this.firstDigit;
     }

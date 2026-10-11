@@ -13,8 +13,8 @@ public class DisableableMap implements Map {
     public Map map;
 
     @Override
-    public Object put(Object object, Object object1) {
-        return this.disabled ? null : this.map.put(object, object1);
+    public Object put(Object key, Object value) {
+        return this.disabled ? null : this.map.put(key, value);
     }
 
     @Override
@@ -38,13 +38,13 @@ public class DisableableMap implements Map {
     }
 
     @Override
-    public Object remove(Object object) {
-        return this.disabled ? null : this.map.remove(object);
+    public Object remove(Object key) {
+        return this.disabled ? null : this.map.remove(key);
     }
 
     @Override
-    public final boolean containsKey(Object object) {
-        return this.disabled ? false : this.map.containsKey(object);
+    public final boolean containsKey(Object key) {
+        return (!(this.disabled) && (this.map.containsKey(key)));
     }
 
     @Override
@@ -65,8 +65,8 @@ public class DisableableMap implements Map {
     }
 
     @Override
-    public final Object get(Object object) {
-        return this.disabled ? null : this.map.get(object);
+    public final Object get(Object key) {
+        return this.disabled ? null : this.map.get(key);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class DisableableMap implements Map {
 
     @Override
     public final boolean isEmpty() {
-        return this.disabled ? true : this.map.isEmpty();
+        return ((this.disabled) || (this.map.isEmpty()));
     }
 
     @Override
@@ -102,7 +102,7 @@ public class DisableableMap implements Map {
 
     @Override
     public final boolean containsValue(Object object) {
-        return this.disabled ? false : this.map.containsValue(object);
+        return (!(this.disabled) && (this.map.containsValue(object)));
     }
 
     static {

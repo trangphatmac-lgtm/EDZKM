@@ -61,12 +61,12 @@ public class RenameFilterModel extends ChangeObservable {
         this.notifyObservers();
     }
 
-    public void setMemberNotTransient(boolean bl) throws ZkmException, IOException {
+    public void setMemberNotTransient(boolean memberNotTransient) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(2);
         }
 
-        this.memberAccessFlags.setTransientForbidden(bl);
+        this.memberAccessFlags.setTransientForbidden(memberNotTransient);
         this.setChanged();
         this.notifyObservers();
     }
@@ -75,55 +75,55 @@ public class RenameFilterModel extends ChangeObservable {
         return this.className.substring(0, this.className.indexOf("<link>"));
     }
 
-    public void setMemberTransient(boolean bl) throws ZkmException, IOException {
+    public void setMemberTransient(boolean memberTransient) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(2);
         }
 
-        this.memberAccessFlags.setTransientRequired(bl);
+        this.memberAccessFlags.setTransientRequired(memberTransient);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setClassNotFinal(boolean bl) throws ZkmException, IOException {
+    public void setClassNotFinal(boolean classNotFinal) throws ZkmException, IOException {
         if (this.classAccessFlags == null) {
             this.classAccessFlags = new AccessFlagsSpec(1);
         }
 
-        this.classAccessFlags.setFinalForbidden(bl);
+        this.classAccessFlags.setFinalForbidden(classNotFinal);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setMemberStatic(boolean bl, Integer integer) throws ZkmException, IOException {
+    public void setMemberStatic(boolean staticRequired, Integer integer) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(integer);
         }
 
-        this.memberAccessFlags.setStaticRequired(bl);
+        this.memberAccessFlags.setStaticRequired(staticRequired);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setFieldType(String string) throws ZkmException, IOException {
-        this.fieldType = string;
+    public void setFieldType(String fieldTypeArgument) throws ZkmException, IOException {
+        this.fieldType = fieldTypeArgument;
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setMethodName(String string) throws ZkmException, IOException {
-        this.methodName = string;
+    public void setMethodName(String methodNameArgument) throws ZkmException, IOException {
+        this.methodName = methodNameArgument;
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setClassAnnotation(String string) throws ZkmException, IOException {
-        String string1 = string;
-        if (string1.startsWith("@")) {
-            string1 = string1.substring(1);
-            this.classAnnotation = string1;
+    public void setClassAnnotation(String classAnnotationArgument) throws ZkmException, IOException {
+        String classAnnotationValue = classAnnotationArgument;
+        if (classAnnotationValue.startsWith("@")) {
+            classAnnotationValue = classAnnotationValue.substring(1);
+            this.classAnnotation = classAnnotationValue;
         } else {
-            this.classAnnotation = string1;
+            this.classAnnotation = classAnnotationValue;
         }
 
         this.setChanged();
@@ -132,10 +132,10 @@ public class RenameFilterModel extends ChangeObservable {
 
     public String getPackagePattern() {
         StringBuffer stringBuffer = new StringBuffer();
-        int ba = this.packageNames.size();
-        if (ba > 0) {
-            for (int i = 0; i < ba; i++) {
-                stringBuffer.append((String) this.packageNames.get(i) + ".");
+        int packageNamesSize = this.packageNames.size();
+        if (packageNamesSize > 0) {
+            for (int elementIndex = 0; elementIndex < packageNamesSize; elementIndex++) {
+                stringBuffer.append((String) this.packageNames.get(elementIndex) + ".");
             }
         }
 
@@ -146,8 +146,8 @@ public class RenameFilterModel extends ChangeObservable {
         return this.methodName;
     }
 
-    public void setPackagePattern(String string) throws ZkmException, IOException {
-        StringTokenizer stringTokenizer = new StringTokenizer(string, ".");
+    public void setPackagePattern(String packagePatternArgument) throws ZkmException, IOException {
+        StringTokenizer stringTokenizer = new StringTokenizer(packagePatternArgument, ".");
         this.packageNames = new ArrayList();
 
         while (stringTokenizer.hasMoreTokens()) {
@@ -166,16 +166,16 @@ public class RenameFilterModel extends ChangeObservable {
     public String getParameterTypesText() {
         StringBuffer stringBuffer = new StringBuffer();
         if (this.parameterTypes != null) {
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = this.parameterTypes; bb < list1.size(); list1 = this.parameterTypes) {
-                stringBuffer.append((String) this.parameterTypes.get(ba));
-                if (ba < this.parameterTypes.size() - 1) {
+                stringBuffer.append((String) this.parameterTypes.get(elementIndex));
+                if (elementIndex < this.parameterTypes.size() - 1) {
                     stringBuffer.append(", ");
                 }
 
-                bb = ++ba;
+                bb = ++elementIndex;
             }
         }
 
@@ -192,8 +192,8 @@ public class RenameFilterModel extends ChangeObservable {
         this.notifyObservers();
     }
 
-    public void setInterfaceNames(String string) throws ZkmException, IOException {
-        StringTokenizer stringTokenizer = new StringTokenizer(string, ",");
+    public void setInterfaceNames(String interfaceNamesArgument) throws ZkmException, IOException {
+        StringTokenizer stringTokenizer = new StringTokenizer(interfaceNamesArgument, ",");
         this.interfaceNames = new ArrayList();
 
         while (stringTokenizer.hasMoreTokens()) {
@@ -204,22 +204,22 @@ public class RenameFilterModel extends ChangeObservable {
         this.notifyObservers();
     }
 
-    public void setClassNotAbstract(boolean bl) throws ZkmException, IOException {
+    public void setClassNotAbstract(boolean classNotAbstract) throws ZkmException, IOException {
         if (this.classAccessFlags == null) {
             this.classAccessFlags = new AccessFlagsSpec(1);
         }
 
-        this.classAccessFlags.setAbstractForbidden(bl);
+        this.classAccessFlags.setAbstractForbidden(classNotAbstract);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setMemberFinal(boolean bl, Integer integer) throws ZkmException, IOException {
+    public void setMemberFinal(boolean finalRequired, Integer integer) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(integer);
         }
 
-        this.memberAccessFlags.setFinalRequired(bl);
+        this.memberAccessFlags.setFinalRequired(finalRequired);
         this.setChanged();
         this.notifyObservers();
     }
@@ -227,16 +227,16 @@ public class RenameFilterModel extends ChangeObservable {
     public String getThrowsText() {
         if (this.throwsNames != null && this.throwsNames.size() > 0) {
             StringBuffer stringBuffer = new StringBuffer();
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = this.throwsNames; bb < list1.size(); list1 = this.throwsNames) {
-                stringBuffer.append((String) this.throwsNames.get(ba));
-                if (ba < this.throwsNames.size() - 1) {
+                stringBuffer.append((String) this.throwsNames.get(elementIndex));
+                if (elementIndex < this.throwsNames.size() - 1) {
                     stringBuffer.append(", ");
                 }
 
-                bb = ++ba;
+                bb = ++elementIndex;
             }
 
             return stringBuffer.toString();
@@ -245,12 +245,12 @@ public class RenameFilterModel extends ChangeObservable {
         }
     }
 
-    public void setMemberNotSynchronized(boolean bl) throws ZkmException, IOException {
+    public void setMemberNotSynchronized(boolean memberNotSynchronized) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(3);
         }
 
-        this.memberAccessFlags.setSynchronizedForbidden(bl);
+        this.memberAccessFlags.setSynchronizedForbidden(memberNotSynchronized);
         this.setChanged();
         this.notifyObservers();
     }
@@ -290,12 +290,12 @@ public class RenameFilterModel extends ChangeObservable {
         }
     }
 
-    public void setMemberAbstract(boolean bl) throws ZkmException, IOException {
+    public void setMemberAbstract(boolean memberAbstract) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(3);
         }
 
-        this.memberAccessFlags.setAbstractRequired(bl);
+        this.memberAccessFlags.setAbstractRequired(memberAbstract);
         this.setChanged();
         this.notifyObservers();
     }
@@ -310,645 +310,223 @@ public class RenameFilterModel extends ChangeObservable {
         this.notifyObservers();
     }
 
-    public void setMemberAnnotation(String string) throws ZkmException, IOException {
-        String string1 = string;
-        if (string1.startsWith("@")) {
-            string1 = string1.substring(1);
-            this.memberAnnotation = string1;
+    public void setMemberAnnotation(String memberAnnotationArgument) throws ZkmException, IOException {
+        String memberAnnotationValue = memberAnnotationArgument;
+        if (memberAnnotationValue.startsWith("@")) {
+            memberAnnotationValue = memberAnnotationValue.substring(1);
+            this.memberAnnotation = memberAnnotationValue;
         } else {
-            this.memberAnnotation = string1;
+            this.memberAnnotation = memberAnnotationValue;
         }
 
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setLinkedClassSuffix(String string) throws ZkmException, IOException {
-        this.className = "<link>" + string;
+    public void setLinkedClassSuffix(String linkedClassSuffix) throws ZkmException, IOException {
+        this.className = "<link>" + linkedClassSuffix;
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setMemberNotVolatile(boolean bl) throws ZkmException, IOException {
+    public void setMemberNotVolatile(boolean memberNotVolatile) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(2);
         }
 
-        this.memberAccessFlags.setVolatileForbidden(bl);
+        this.memberAccessFlags.setVolatileForbidden(memberNotVolatile);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setClassFinal(boolean bl) throws ZkmException, IOException {
+    public void setClassFinal(boolean classFinal) throws ZkmException, IOException {
         if (this.classAccessFlags == null) {
             this.classAccessFlags = new AccessFlagsSpec(1);
         }
 
-        this.classAccessFlags.setFinalRequired(bl);
+        this.classAccessFlags.setFinalRequired(classFinal);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setMemberNotAbstract(boolean bl) throws ZkmException, IOException {
+    public void setMemberNotAbstract(boolean memberNotAbstract) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(3);
         }
 
-        this.memberAccessFlags.setAbstractForbidden(bl);
+        this.memberAccessFlags.setAbstractForbidden(memberNotAbstract);
         this.setChanged();
         this.notifyObservers();
     }
 
     public final String toScriptText() {
-        java.lang.StringBuilder stringBuilder9 = null;
-        java.util.List list2 = null;
-        int bl = 0;
-        int bj = 0;
-        java.lang.StringBuilder stringBuilder2 = null;
-        java.lang.StringBuilder stringBuilder1 = null;
-        int ba;
-        StringBuilder stringBuilder;
-        RenameFilterModel renameFilterModel1;
         int flowControlKey = ZkmScriptSimpleNode.getFlowControlKey();
-        stringBuilder = new StringBuilder();
-        ba = flowControlKey;
-        renameFilterModel1 = this;
-        label456:
-        if (ba != 0) {
-            if (this.classAnnotation != null) {
-                renameFilterModel1 = this;
-                if (ba == 0) {
-                    break label456;
-                }
-
-                if (this.classAnnotation.length() > 0) {
-                    String string1;
-                    label450:
-                    {
-                        String string = this.classAnnotation;
-                        string1 = "@";
-                        if (ba != 0) {
-                            if (this.classAnnotation.startsWith("@")) {
-                                stringBuilder1 = stringBuilder;
-                                string1 = this.classAnnotation;
-                                break label450;
-                            }
-
-                            string = this.classAnnotation;
-                            string1 = "(";
-                        }
-
-                        if (!string.startsWith(string1)) {
-                            stringBuilder.append('@');
-                            stringBuilder1 = stringBuilder;
-                            string1 = this.classAnnotation;
-                        } else {
-                            stringBuilder1 = stringBuilder;
-                            string1 = this.classAnnotation;
-                        }
-                    }
-
-                    stringBuilder1.append(string1);
-                    stringBuilder.append(" ");
-                }
+        StringBuilder script = new StringBuilder();
+        if (flowControlKey != 0 && this.classAnnotation != null && this.classAnnotation.length() > 0) {
+            if (!this.classAnnotation.startsWith("@") && !this.classAnnotation.startsWith("(")) {
+                script.append('@');
             }
-
-            renameFilterModel1 = this;
+            script.append(this.classAnnotation);
+            script.append(" ");
         }
 
-        label442:
-        {
-            if (ba != 0) {
-                if (renameFilterModel1.classAccessFlags == null) {
-                    break label442;
-                }
-
-                renameFilterModel1 = this;
-            }
-
-            if (renameFilterModel1.isClassPackagePrivate()) {
-                stringBuilder.append("package ");
-            }
+        if ((flowControlKey == 0 || this.classAccessFlags != null) && this.isClassPackagePrivate()) {
+            script.append("package ");
         }
+        script.append(flowControlKey != 0 && this.classAccessFlags == null ? "" : this.classAccessFlags.toSpecString());
+        int packageCount = this.packageNames.size();
 
-        String string2;
-        label436:
-        {
-            AccessFlagsSpec accessFlagsSpec1;
-            if (ba != 0) {
-                if (this.classAccessFlags == null) {
-                    string2 = "";
-                    break label436;
+        if (flowControlKey == 0) {
+            // This mode is publicly selectable; preserve its distinct rendering and null behavior.
+            script.append("!");
+            boolean useFirstSearchName = false;
+            if (this.interfaceNames.size() > 0) {
+                script.append(" search ");
+                if (this.searchNames.size() > 0) {
+                    String firstSearchName = (String) this.searchNames.get(0);
+                    script.append(firstSearchName);
+                    useFirstSearchName = true;
                 }
-
-                accessFlagsSpec1 = this.classAccessFlags;
-            } else {
-                accessFlagsSpec1 = this.classAccessFlags;
             }
-
-            string2 = accessFlagsSpec1.toSpecString();
-        }
-
-        int bb;
-        label430:
-        {
-            stringBuilder.append(string2);
-            bb = this.packageNames.size();
-            if (ba != 0) {
-                if (this.archivePattern == null) {
-                    break label430;
+            if (!useFirstSearchName) {
+                if (this.memberAccessFlags != null && script.length() != 0) {
+                    script.append("package ");
                 }
-
-                stringBuilder.append("\"");
-                stringBuilder.append(this.archivePattern);
-                stringBuilder.append("\"");
+                script.append(this.memberAccessFlags.toSpecString());
             }
-
-            stringBuilder.append("!");
-        }
-
-        label459:
-        {
-            label490:
-            {
-                label422:
-                {
-                    label461:
-                    {
-                        int bh = bb;
-                        if (ba != 0) {
-                            if (bb <= 0) {
-                                break label461;
-                            }
-
-                            bh = 0;
-                        }
-
-                        int bc = bh;
-
-                        while (bc < bb) {
-                            stringBuilder2 = stringBuilder.append((String) this.packageNames.get(bc) + '.');
-                            if (ba == 0) {
-                                break label490;
-                            }
-
-                            bc++;
-                            if (ba == 0) {
-                                break;
-                            }
-                        }
-
-                        renameFilterModel1 = this;
-                        if (ba != 0) {
-                            if (this.packageNameOnly) {
-                                stringBuilder.append(".");
-                            }
-
-                            renameFilterModel1 = this;
-                        }
-
-                        if (ba == 0) {
-                            break label422;
-                        }
-
-                        if (renameFilterModel1.excludeContainingPackage) {
-                            stringBuilder.append("^");
-                        }
-                    }
-
-                    renameFilterModel1 = this;
-                }
-
-                label400:
-                if (ba != 0) {
-                    if (renameFilterModel1.className != null) {
-                        stringBuilder.append(this.className);
-                        renameFilterModel1 = this;
-                        if (ba == 0) {
-                            break label400;
-                        }
-
-                        if (this.excludeContainingClass) {
-                            stringBuilder.append("^");
-                        }
-                    }
-
-                    renameFilterModel1 = this;
-                }
-
-                if (ba != 0) {
-                    if (renameFilterModel1.containingClause != null) {
-                        stringBuilder.append(' ' + this.containingClause.toScriptText());
-                    }
-
-                    renameFilterModel1 = this;
-                }
-
-                label391:
-                if (ba != 0) {
-                    if (renameFilterModel1.superclassName != null) {
-                        renameFilterModel1 = this;
-                        if (ba == 0) {
-                            break label391;
-                        }
-
-                        if (this.superclassName.length() > 0) {
-                            stringBuilder.append(" extends " + this.superclassName);
-                        }
-                    }
-
-                    renameFilterModel1 = this;
-                }
-
-                label465:
-                {
-                    label383:
-                    {
-                        List list1 = renameFilterModel1.interfaceNames;
-                        if (ba != 0) {
-                            if (renameFilterModel1.interfaceNames.size() > 0) {
-                                stringBuilder.append(" implements ");
-                                int bd = 0;
-                                int bi = 0;
-
-                                for (List list3 = this.interfaceNames; bi < list3.size(); list3 = this.interfaceNames) {
-                                    stringBuilder.append((String) this.interfaceNames.get(bd));
-                                    if (ba != 0) {
-                                        bj = bd;
-                                        if (ba == 0) {
-                                            break label383;
-                                        }
-
-                                        if (bd < this.interfaceNames.size() - 1) {
-                                            stringBuilder.append(", ");
-                                        }
-
-                                        bd++;
-                                    }
-
-                                    if (ba == 0) {
-                                        break;
-                                    }
-
-                                    bi = bd;
-                                }
-                            }
-
-                            renameFilterModel1 = this;
-                            if (ba == 0) {
-                                break label465;
-                            }
-
-                            list1 = this.searchNames;
-                        }
-
-                        bj = list1.size();
-                    }
-
-                    if (bj > 0) {
-                        stringBuilder.append(" search ");
-                        int be = 0;
-                        int bk = 0;
-
-                        for (List list4 = this.searchNames; bk < list4.size(); list4 = this.searchNames) {
-                            stringBuilder2 = stringBuilder;
-                            string2 = (String) this.searchNames.get(be);
-                            if (ba == 0) {
-                                break label459;
-                            }
-
-                            stringBuilder.append(string2);
-                            if (ba != 0) {
-                                if (be < this.searchNames.size() - 1) {
-                                    stringBuilder.append(", ");
-                                }
-
-                                be++;
-                            }
-
-                            if (ba == 0) {
-                                break;
-                            }
-
-                            bk = be;
-                        }
-                    }
-
-                    renameFilterModel1 = this;
-                }
-
-                label351:
-                if (ba != 0) {
-                    if (renameFilterModel1.memberAnnotation != null) {
-                        renameFilterModel1 = this;
-                        if (ba == 0) {
-                            break label351;
-                        }
-
-                        if (this.memberAnnotation.length() > 0 && ba != 0) {
-                            stringBuilder.append(" ");
-                            StringBuilder stringBuilder3;
-                            if (!this.memberAnnotation.startsWith("@")) {
-                                if (!this.memberAnnotation.startsWith("(")) {
-                                    stringBuilder.append('@');
-                                    stringBuilder3 = stringBuilder;
-                                    string2 = this.memberAnnotation;
-                                } else {
-                                    stringBuilder3 = stringBuilder;
-                                    string2 = this.memberAnnotation;
-                                }
-                            } else {
-                                stringBuilder3 = stringBuilder;
-                                string2 = this.memberAnnotation;
-                            }
-
-                            stringBuilder3.append(string2);
-                            stringBuilder.append(" ");
-                        }
-                    }
-
-                    renameFilterModel1 = this;
-                }
-
-                if (renameFilterModel1.memberAccessFlags != null) {
-                    bl = stringBuilder.length();
-                    label342:
-                    if (ba != 0) {
-                        if (bl > 0) {
-                            bl = stringBuilder.charAt(stringBuilder.length() - 1);
-                            if (ba == 0) {
-                                break label342;
-                            }
-
-                            if (bl != 32) {
-                                stringBuilder.append(" ");
-                            }
-                        }
-
-                        bl = ((this.isMemberPackagePrivate()) ? 1 : 0);
-                    }
-
-                    if (bl != 0) {
-                        stringBuilder.append("package ");
-                    }
-                }
-
-                stringBuilder2 = stringBuilder;
+        } else {
+            if (this.archivePattern != null) {
+                script.append("\"");
+                script.append(this.archivePattern);
+                script.append("\"");
+                script.append("!");
             }
-
-            AccessFlagsSpec accessFlagsSpec2;
-            if (ba != 0) {
-                if (this.memberAccessFlags == null) {
-                    string2 = "";
-                    break label459;
+            if (packageCount > 0) {
+                for (int packageIndex = 0; packageIndex < packageCount; packageIndex++) {
+                    script.append((String) this.packageNames.get(packageIndex) + '.');
                 }
-
-                accessFlagsSpec2 = this.memberAccessFlags;
-            } else {
-                accessFlagsSpec2 = this.memberAccessFlags;
+                if (this.packageNameOnly) {
+                    script.append(".");
+                }
+                if (this.excludeContainingPackage) {
+                    script.append("^");
+                }
             }
-
-            string2 = accessFlagsSpec2.toSpecString();
-        }
-
-        stringBuilder2.append(string2);
-        renameFilterModel1 = this;
-        if (ba != 0) {
-            label315:
-            if (this.fieldType != null && ba != 0) {
-                StringBuilder stringBuilder4;
-                if (stringBuilder.length() > 0) {
-                    if (ba == 0) {
-                        break label315;
+            if (this.className != null) {
+                script.append(this.className);
+                if (this.excludeContainingClass) {
+                    script.append("^");
+                }
+            }
+            if (this.containingClause != null) {
+                script.append(' ' + this.containingClause.toScriptText());
+            }
+            if (this.superclassName != null && this.superclassName.length() > 0) {
+                script.append(" extends " + this.superclassName);
+            }
+            if (this.interfaceNames.size() > 0) {
+                script.append(" implements ");
+                for (int interfaceIndex = 0; interfaceIndex < this.interfaceNames.size(); interfaceIndex++) {
+                    script.append((String) this.interfaceNames.get(interfaceIndex));
+                    if (interfaceIndex < this.interfaceNames.size() - 1) {
+                        script.append(", ");
                     }
-
-                    if (stringBuilder.charAt(stringBuilder.length() - 1) != ' ') {
-                        stringBuilder.append(' ');
-                        stringBuilder4 = stringBuilder;
-                        string2 = this.fieldType;
-                    } else {
-                        stringBuilder4 = stringBuilder;
-                        string2 = this.fieldType;
+                }
+            }
+            if (this.searchNames.size() > 0) {
+                script.append(" search ");
+                for (int searchIndex = 0; searchIndex < this.searchNames.size(); searchIndex++) {
+                    script.append((String) this.searchNames.get(searchIndex));
+                    if (searchIndex < this.searchNames.size() - 1) {
+                        script.append(", ");
                     }
+                }
+            }
+            if (this.memberAnnotation != null && this.memberAnnotation.length() > 0) {
+                script.append(" ");
+                if (!this.memberAnnotation.startsWith("@") && !this.memberAnnotation.startsWith("(")) {
+                    script.append('@');
+                }
+                script.append(this.memberAnnotation);
+                script.append(" ");
+            }
+            if (this.memberAccessFlags != null) {
+                if (script.length() > 0 && script.charAt(script.length() - 1) != ' ') {
+                    script.append(" ");
+                }
+                if (this.isMemberPackagePrivate()) {
+                    script.append("package ");
+                }
+            }
+            script.append(this.memberAccessFlags == null ? "" : this.memberAccessFlags.toSpecString());
+            if (this.fieldType != null) {
+                if (script.length() > 0 && script.charAt(script.length() - 1) != ' ') {
+                    script.append(' ');
+                }
+                script.append(this.fieldType);
+            }
+            if (this.fieldName != null) {
+                if (script.length() > 0 && script.charAt(script.length() - 1) != ' ') {
+                    script.append(' ');
+                }
+                script.append(this.fieldName);
+            }
+            if (this.linkedMethodName != null || this.methodName != null) {
+                if (script.length() > 0 && script.charAt(script.length() - 1) != ' ') {
+                    script.append(" ");
+                }
+                if (this.linkedMethodName != null) {
+                    script.append(this.linkedMethodName);
                 } else {
-                    stringBuilder4 = stringBuilder;
-                    string2 = this.fieldType;
+                    script.append(this.methodName);
                 }
-
-                stringBuilder4.append(string2);
-            }
-
-            renameFilterModel1 = this;
-        }
-
-        if (ba != 0) {
-            label302:
-            if (renameFilterModel1.fieldName != null && ba != 0) {
-                StringBuilder stringBuilder5;
-                if (stringBuilder.length() > 0) {
-                    if (ba == 0) {
-                        break label302;
-                    }
-
-                    if (stringBuilder.charAt(stringBuilder.length() - 1) != ' ') {
-                        stringBuilder.append(' ');
-                        stringBuilder5 = stringBuilder;
-                        string2 = this.fieldName;
-                    } else {
-                        stringBuilder5 = stringBuilder;
-                        string2 = this.fieldName;
-                    }
-                } else {
-                    stringBuilder5 = stringBuilder;
-                    string2 = this.fieldName;
-                }
-
-                stringBuilder5.append(string2);
-            }
-
-            renameFilterModel1 = this;
-        }
-
-        label475:
-        {
-            label297:
-            {
-                label476:
-                {
-                    label477:
-                    {
-                        if (ba != 0) {
-                            if (renameFilterModel1.linkedMethodName != null) {
-                                break label477;
-                            }
-
-                            renameFilterModel1 = this;
-                        }
-
-                        if (ba == 0) {
-                            break label297;
-                        }
-
-                        if (renameFilterModel1.methodName == null) {
-                            break label476;
-                        }
-                    }
-
-                    label478:
-                    {
-                        StringBuilder stringBuilder6 = stringBuilder;
-                        if (ba != 0) {
-                            if (stringBuilder.length() <= 0) {
-                                break label478;
-                            }
-
-                            stringBuilder6 = stringBuilder;
-                        }
-
-                        if (ba != 0 && stringBuilder6.charAt(stringBuilder.length() - 1) != ' ') {
-                            stringBuilder.append(" ");
-                        }
-                    }
-
-                    label276:
-                    {
-                        StringBuilder stringBuilder7;
-                        if (this.linkedMethodName != null) {
-                            stringBuilder.append(this.linkedMethodName);
-                            if (ba != 0) {
-                                break label276;
-                            }
-
-                            stringBuilder7 = stringBuilder;
-                            string2 = this.methodName;
-                        } else {
-                            stringBuilder7 = stringBuilder;
-                            string2 = this.methodName;
-                        }
-
-                        stringBuilder7.append(string2);
-                    }
-
-                    label479:
-                    {
-                        label269:
-                        {
-                            StringBuilder stringBuilder8 = stringBuilder;
-                            char bo = '(';
-                            if (ba != 0) {
-                                stringBuilder.append('(');
-                                if (this.parameterTypes != null) {
-                                    list2 = this.parameterTypes;
-                                    if (ba == 0) {
-                                        break label479;
-                                    }
-
-                                    if (this.parameterTypes.size() > 0) {
-                                        int bf = 0;
-                                        int bm = 0;
-
-                                        for (List list5 = this.parameterTypes; bm < list5.size(); list5 = this.parameterTypes) {
-                                            if (ba == 0) {
-                                                break label269;
-                                            }
-
-                                            stringBuilder.append((String) this.parameterTypes.get(bf));
-                                            if (ba != 0) {
-                                                if (bf < this.parameterTypes.size() - 1) {
-                                                    stringBuilder.append(", ");
-                                                }
-
-                                                bf++;
-                                            }
-
-                                            if (ba == 0) {
-                                                break;
-                                            }
-
-                                            bm = bf;
-                                        }
-                                    }
-                                }
-
-                                stringBuilder8 = stringBuilder;
-                                bo = ')';
-                            }
-
-                            stringBuilder8.append(bo);
-                        }
-
-                        renameFilterModel1 = this;
-                        if (ba == 0) {
-                            break label297;
-                        }
-
-                        list2 = this.throwsNames;
-                    }
-
-                    if (list2.size() > 0) {
-                        stringBuilder.append(" throws ");
-                        int bg = 0;
-                        int bn = bg;
-
-                        for (List list6 = this.throwsNames; bn < list6.size(); list6 = this.throwsNames) {
-                            stringBuilder9 = stringBuilder;
-                            string2 = (String) this.throwsNames.get(bg);
-                            if (ba == 0) {
-                                break label475;
-                            }
-
-                            stringBuilder.append(string2);
-                            if (ba != 0) {
-                                if (bg < this.throwsNames.size() - 1) {
-                                    stringBuilder.append(", ");
-                                }
-
-                                bg++;
-                            }
-
-                            if (ba == 0) {
-                                break;
-                            }
-
-                            bn = bg;
+                script.append('(');
+                if (this.parameterTypes != null && this.parameterTypes.size() > 0) {
+                    for (int parameterIndex = 0; parameterIndex < this.parameterTypes.size(); parameterIndex++) {
+                        script.append((String) this.parameterTypes.get(parameterIndex));
+                        if (parameterIndex < this.parameterTypes.size() - 1) {
+                            script.append(", ");
                         }
                     }
                 }
-
-                renameFilterModel1 = this;
+                script.append(')');
+                if (this.throwsNames.size() > 0) {
+                    script.append(" throws ");
+                    for (int exceptionIndex = 0; exceptionIndex < this.throwsNames.size(); exceptionIndex++) {
+                        script.append((String) this.throwsNames.get(exceptionIndex));
+                        if (exceptionIndex < this.throwsNames.size() - 1) {
+                            script.append(", ");
+                        }
+                    }
+                }
             }
-
-            if (!renameFilterModel1.includeSignatureClasses) {
-                return stringBuilder.toString();
-            }
-
-            stringBuilder9 = stringBuilder;
-            string2 = " +signatureClasses";
         }
 
-        stringBuilder9.append(string2);
-        return stringBuilder.toString();
+        if (this.includeSignatureClasses) {
+            script.append(" +signatureClasses");
+        }
+        return script.toString();
     }
 
     public String getMemberAnnotation() {
         return this.memberAnnotation != null ? this.memberAnnotation : "";
     }
 
-    public void setClassName(String string) throws ZkmException, IOException {
-        boolean bl = !this.className.equals(string);
-        this.className = string;
+    public void setClassName(String classNameArgument) throws ZkmException, IOException {
+        boolean bl = !this.className.equals(classNameArgument);
+        this.className = classNameArgument;
         if (bl) {
             this.setChanged();
             this.notifyObservers();
         }
     }
 
-    public void setMemberSynchronized(boolean bl) throws ZkmException, IOException {
+    public void setMemberSynchronized(boolean memberSynchronized) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(3);
         }
 
-        this.memberAccessFlags.setSynchronizedRequired(bl);
+        this.memberAccessFlags.setSynchronizedRequired(memberSynchronized);
         this.setChanged();
         this.notifyObservers();
     }
@@ -992,8 +570,8 @@ public class RenameFilterModel extends ChangeObservable {
         }
 
         if (aSTRenameFilterParameter.implementsNames != null) {
-            for (int i = 0; i < aSTRenameFilterParameter.implementsNames.size(); i++) {
-                String string = (String) aSTRenameFilterParameter.implementsNames.get(i);
+            for (int elementIndex = 0; elementIndex < aSTRenameFilterParameter.implementsNames.size(); elementIndex++) {
+                String string = (String) aSTRenameFilterParameter.implementsNames.get(elementIndex);
                 this.interfaceNames.add(ASTRenameFilterParameter.toDottedName(string));
             }
         }
@@ -1035,21 +613,21 @@ public class RenameFilterModel extends ChangeObservable {
         }
 
         RenameFilterModel renameFilterModel1;
-        boolean bl;
+        boolean includeSignatureClassesValue;
         if (aSTRenameFilterParameter.throwsTypes != null) {
-            for (int i = 0; i < aSTRenameFilterParameter.throwsTypes.size(); i++) {
-                String string2 = (String) aSTRenameFilterParameter.throwsTypes.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < aSTRenameFilterParameter.throwsTypes.size(); elementIndexValue++) {
+                String string2 = (String) aSTRenameFilterParameter.throwsTypes.get(elementIndexValue);
                 this.throwsNames.add(ASTRenameFilterParameter.toDottedName(string2));
             }
 
             renameFilterModel1 = this;
-            bl = aSTRenameFilterParameter.plusSignatureClasses;
+            includeSignatureClassesValue = aSTRenameFilterParameter.plusSignatureClasses;
         } else {
             renameFilterModel1 = this;
-            bl = aSTRenameFilterParameter.plusSignatureClasses;
+            includeSignatureClassesValue = aSTRenameFilterParameter.plusSignatureClasses;
         }
 
-        renameFilterModel1.includeSignatureClasses = bl;
+        renameFilterModel1.includeSignatureClasses = includeSignatureClassesValue;
         this.parameterKind = aSTRenameFilterParameter.specifierKind;
         this.scriptEnvironment = aSTRenameFilterParameter.scriptEnvironment;
     }
@@ -1059,8 +637,8 @@ public class RenameFilterModel extends ChangeObservable {
         return this.toScriptText();
     }
 
-    public void setThrowsNames(String string) throws ZkmException, IOException {
-        StringTokenizer stringTokenizer = new StringTokenizer(string, ",");
+    public void setThrowsNames(String throwsNamesArgument) throws ZkmException, IOException {
+        StringTokenizer stringTokenizer = new StringTokenizer(throwsNamesArgument, ",");
         this.throwsNames = new ArrayList();
 
         while (stringTokenizer.hasMoreTokens()) {
@@ -1093,8 +671,8 @@ public class RenameFilterModel extends ChangeObservable {
         this.notifyObservers();
     }
 
-    public void setFieldName(String string) throws ZkmException, IOException {
-        this.fieldName = string;
+    public void setFieldName(String fieldNameArgument) throws ZkmException, IOException {
+        this.fieldName = fieldNameArgument;
         this.setChanged();
         this.notifyObservers();
     }
@@ -1109,12 +687,12 @@ public class RenameFilterModel extends ChangeObservable {
         this.notifyObservers();
     }
 
-    public void setMemberNotFinal(boolean bl, Integer integer) throws ZkmException, IOException {
+    public void setMemberNotFinal(boolean finalForbidden, Integer integer) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(integer);
         }
 
-        this.memberAccessFlags.setFinalForbidden(bl);
+        this.memberAccessFlags.setFinalForbidden(finalForbidden);
         this.setChanged();
         this.notifyObservers();
     }
@@ -1199,14 +777,14 @@ public class RenameFilterModel extends ChangeObservable {
                         stringBuilder.append("\t" + bb++ + ") with a name that ends with \"" + this.getLinkSuffix() + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                     }
 
-                    String string13 = this.getSuperclassName();
-                    if (string13.length() > 0) {
-                        stringBuilder.append("\t" + bb++ + ") that extend \"" + string13 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                    String superclassNameValue = this.getSuperclassName();
+                    if (superclassNameValue.length() > 0) {
+                        stringBuilder.append("\t" + bb++ + ") that extend \"" + superclassNameValue + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                     }
 
-                    String string15 = this.getInterfaceNamesText();
-                    if (string15.length() > 0) {
-                        stringBuilder.append("\t" + bb + ") that implement \"" + string15 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                    String interfaceNamesText = this.getInterfaceNamesText();
+                    if (interfaceNamesText.length() > 0) {
+                        stringBuilder.append("\t" + bb + ") that implement \"" + interfaceNamesText + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                     }
                 } else {
                     stringBuilder.append(string + "all classes:" + HiddenOptionFlags.LINE_SEPARATOR);
@@ -1216,9 +794,9 @@ public class RenameFilterModel extends ChangeObservable {
                         );
                     }
 
-                    String string12 = this.getClassAccessText();
-                    if (string12.length() > 0) {
-                        stringBuilder.append("\t" + bb++ + ") that are \"" + string12 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                    String classAccessText = this.getClassAccessText();
+                    if (classAccessText.length() > 0) {
+                        stringBuilder.append("\t" + bb++ + ") that are \"" + classAccessText + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                     }
 
                     if (this.packageNames != null && this.packageNames.size() > 0) {
@@ -1230,19 +808,19 @@ public class RenameFilterModel extends ChangeObservable {
                     }
 
                     stringBuilder.append("\t" + bb++ + ") with a name that matches \"" + this.className + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
-                    String string14 = this.getContainingText();
-                    if (string14.length() > 0) {
-                        stringBuilder.append("\t" + bb++ + ") that contains fields or methods matching \"" + string14 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                    String containingText = this.getContainingText();
+                    if (containingText.length() > 0) {
+                        stringBuilder.append("\t" + bb++ + ") that contains fields or methods matching \"" + containingText + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                     }
 
-                    String string16 = this.getSuperclassName();
-                    if (string16.length() > 0) {
-                        stringBuilder.append("\t" + bb++ + ") that extend \"" + string16 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                    String superclassNameValue2 = this.getSuperclassName();
+                    if (superclassNameValue2.length() > 0) {
+                        stringBuilder.append("\t" + bb++ + ") that extend \"" + superclassNameValue2 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                     }
 
-                    String string17 = this.getInterfaceNamesText();
-                    if (string17.length() > 0) {
-                        stringBuilder.append("\t" + bb + ") that implement \"" + string17 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                    String interfaceNamesTextValue = this.getInterfaceNamesText();
+                    if (interfaceNamesTextValue.length() > 0) {
+                        stringBuilder.append("\t" + bb + ") that implement \"" + interfaceNamesTextValue + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                     }
                 }
 
@@ -1252,15 +830,15 @@ public class RenameFilterModel extends ChangeObservable {
                 break;
             case 3:
                 stringBuilder.append(string + "all fields:" + HiddenOptionFlags.LINE_SEPARATOR);
-                String string2 = this.getMemberAccessText();
+                String memberAccessText = this.getMemberAccessText();
                 if (this.memberAnnotation != null) {
                     stringBuilder.append(
                             "\t" + bb++ + ") that are annotated by a class matching \"" + this.memberAnnotation + "\"" + HiddenOptionFlags.LINE_SEPARATOR
                     );
                 }
 
-                if (string2.length() > 0) {
-                    stringBuilder.append("\t" + bb++ + ") that are \"" + string2 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                if (memberAccessText.length() > 0) {
+                    stringBuilder.append("\t" + bb++ + ") that are \"" + memberAccessText + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
                 if (this.fieldType != null && this.fieldType.length() > 0) {
@@ -1282,9 +860,9 @@ public class RenameFilterModel extends ChangeObservable {
                     );
                 }
 
-                String string3 = this.getClassAccessText();
-                if (string3.length() > 0) {
-                    stringBuilder.append("\t\t" + bc++ + ") that is \"" + string3 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                String classAccessTextValue = this.getClassAccessText();
+                if (classAccessTextValue.length() > 0) {
+                    stringBuilder.append("\t\t" + bc++ + ") that is \"" + classAccessTextValue + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
                 if (this.packageNames != null && this.packageNames.size() > 0) {
@@ -1296,14 +874,14 @@ public class RenameFilterModel extends ChangeObservable {
                 }
 
                 stringBuilder.append("\t\t" + bc++ + ") with a name that matches \"" + this.className + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
-                String string4 = this.getSuperclassName();
-                if (string4.length() > 0) {
-                    stringBuilder.append("\t\t" + bc++ + ") that extends \"" + string4 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                String superclassNameValue3 = this.getSuperclassName();
+                if (superclassNameValue3.length() > 0) {
+                    stringBuilder.append("\t\t" + bc++ + ") that extends \"" + superclassNameValue3 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
-                String string5 = this.getInterfaceNamesText();
-                if (string5.length() > 0) {
-                    stringBuilder.append("\t\t" + bc + ") that implements \"" + string5 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                String interfaceNamesTextValue2 = this.getInterfaceNamesText();
+                if (interfaceNamesTextValue2.length() > 0) {
+                    stringBuilder.append("\t\t" + bc + ") that implements \"" + interfaceNamesTextValue2 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
                 if (this.packageNames != null && this.packageNames.size() > 0 && this.excludeContainingPackage) {
@@ -1332,16 +910,16 @@ public class RenameFilterModel extends ChangeObservable {
                     );
                 }
 
-                String string6 = this.getMemberAccessText();
-                String string18;
-                if (string6.length() > 0) {
-                    stringBuilder.append("\t" + bb++ + ") that are \"" + string6 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
-                    string18 = this.linkedMethodName;
+                String memberAccessTextValue = this.getMemberAccessText();
+                String linkedMethodNameValue;
+                if (memberAccessTextValue.length() > 0) {
+                    stringBuilder.append("\t" + bb++ + ") that are \"" + memberAccessTextValue + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                    linkedMethodNameValue = this.linkedMethodName;
                 } else {
-                    string18 = this.linkedMethodName;
+                    linkedMethodNameValue = this.linkedMethodName;
                 }
 
-                if (string18 != null) {
+                if (linkedMethodNameValue != null) {
                     stringBuilder.append(
                             "\t"
                                     + bb++
@@ -1354,20 +932,20 @@ public class RenameFilterModel extends ChangeObservable {
                     stringBuilder.append("\t" + bb++ + ") that have a name matching \"" + this.methodName + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
-                String string7 = this.getParameterTypesText();
-                if (string7.length() > 0) {
-                    if (string7.equals("*")) {
+                String parameterTypesText = this.getParameterTypesText();
+                if (parameterTypesText.length() > 0) {
+                    if (parameterTypesText.equals("*")) {
                         stringBuilder.append("\t" + bb++ + ") that have any argument types" + HiddenOptionFlags.LINE_SEPARATOR);
                     } else {
-                        stringBuilder.append("\t" + bb++ + ") that have arguments matching \"" + string7 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                        stringBuilder.append("\t" + bb++ + ") that have arguments matching \"" + parameterTypesText + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                     }
                 } else {
                     stringBuilder.append("\t" + bb++ + ") that have no arguments" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
-                String string8 = this.getThrowsText();
-                if (string8.length() > 0) {
-                    stringBuilder.append("\t" + bb++ + ") that throw \"" + string8 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                String throwsText = this.getThrowsText();
+                if (throwsText.length() > 0) {
+                    stringBuilder.append("\t" + bb++ + ") that throw \"" + throwsText + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
                 stringBuilder.append("\t" + bb + ") that are contained within a class:" + HiddenOptionFlags.LINE_SEPARATOR);
@@ -1377,9 +955,9 @@ public class RenameFilterModel extends ChangeObservable {
                     );
                 }
 
-                String string9 = this.getClassAccessText();
-                if (string9.length() > 0) {
-                    stringBuilder.append("\t\t" + bc++ + ") that is \"" + string9 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                String classAccessTextValue2 = this.getClassAccessText();
+                if (classAccessTextValue2.length() > 0) {
+                    stringBuilder.append("\t\t" + bc++ + ") that is \"" + classAccessTextValue2 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
                 if (this.packageNames != null && this.packageNames.size() > 0) {
@@ -1391,14 +969,14 @@ public class RenameFilterModel extends ChangeObservable {
                 }
 
                 stringBuilder.append("\t\t" + bc++ + ") with a name that matches \"" + this.className + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
-                String string10 = this.getSuperclassName();
-                if (string10.length() > 0) {
-                    stringBuilder.append("\t\t" + bc++ + ") that extends \"" + string10 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                String superclassNameValue4 = this.getSuperclassName();
+                if (superclassNameValue4.length() > 0) {
+                    stringBuilder.append("\t\t" + bc++ + ") that extends \"" + superclassNameValue4 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
-                String string11 = this.getInterfaceNamesText();
-                if (string11.length() > 0) {
-                    stringBuilder.append("\t\t" + bc + ") that implements \"" + string11 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
+                String interfaceNamesTextValue3 = this.getInterfaceNamesText();
+                if (interfaceNamesTextValue3.length() > 0) {
+                    stringBuilder.append("\t\t" + bc + ") that implements \"" + interfaceNamesTextValue3 + "\"" + HiddenOptionFlags.LINE_SEPARATOR);
                 }
 
                 if (this.packageNames != null && this.packageNames.size() > 0 && this.excludeContainingPackage) {
@@ -1437,32 +1015,32 @@ public class RenameFilterModel extends ChangeObservable {
         return this.containingClause != null ? this.containingClause.toScriptText().substring("containing".length()) : "";
     }
 
-    public void setClassNotInterface(boolean bl) throws ZkmException, IOException {
+    public void setClassNotInterface(boolean classNotInterface) throws ZkmException, IOException {
         if (this.classAccessFlags == null) {
             this.classAccessFlags = new AccessFlagsSpec(1);
         }
 
-        this.classAccessFlags.setInterfaceForbidden(bl);
+        this.classAccessFlags.setInterfaceForbidden(classNotInterface);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setMemberNative(boolean bl) throws ZkmException, IOException {
+    public void setMemberNative(boolean memberNative) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(3);
         }
 
-        this.memberAccessFlags.setNativeRequired(bl);
+        this.memberAccessFlags.setNativeRequired(memberNative);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setMemberNotNative(boolean bl) throws ZkmException, IOException {
+    public void setMemberNotNative(boolean memberNotNative) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(3);
         }
 
-        this.memberAccessFlags.setNativeForbidden(bl);
+        this.memberAccessFlags.setNativeForbidden(memberNotNative);
         this.setChanged();
         this.notifyObservers();
     }
@@ -1477,8 +1055,8 @@ public class RenameFilterModel extends ChangeObservable {
         this.notifyObservers();
     }
 
-    public void setParameterTypes(String string) throws ZkmException, IOException {
-        StringTokenizer stringTokenizer = new StringTokenizer(string, ",");
+    public void setParameterTypes(String parameterTypesArgument) throws ZkmException, IOException {
+        StringTokenizer stringTokenizer = new StringTokenizer(parameterTypesArgument, ",");
         this.parameterTypes = new ArrayList();
 
         while (stringTokenizer.hasMoreTokens()) {
@@ -1503,47 +1081,40 @@ public class RenameFilterModel extends ChangeObservable {
         return stringBuffer.toString();
     }
 
-    public void setClassInterface(boolean bl) throws ZkmException, IOException {
+    public void setClassInterface(boolean classInterface) throws ZkmException, IOException {
         if (this.classAccessFlags == null) {
             this.classAccessFlags = new AccessFlagsSpec(1);
         }
 
-        this.classAccessFlags.setInterfaceRequired(bl);
+        this.classAccessFlags.setInterfaceRequired(classInterface);
         this.setChanged();
         this.notifyObservers();
     }
 
     public boolean isMemberPackagePrivate() {
         int flowControlKey = ZkmScriptSimpleNode.getFlowControlKey();
-        RenameFilterModel renameFilterModel1 = this;
-        if (flowControlKey != 0) {
-            if (this.memberAccessFlags == null) {
-                return false;
-            }
-
-            renameFilterModel1 = this;
+        if (flowControlKey != 0 && this.memberAccessFlags == null) {
+            return false;
         }
-
-        boolean packageRequired = renameFilterModel1.memberAccessFlags.isPackageRequired();
-        return flowControlKey == 0 ? packageRequired : packageRequired;
+        return this.memberAccessFlags.isPackageRequired();
     }
 
-    public void setClassAbstract(boolean bl) throws ZkmException, IOException {
+    public void setClassAbstract(boolean classAbstract) throws ZkmException, IOException {
         if (this.classAccessFlags == null) {
             this.classAccessFlags = new AccessFlagsSpec(1);
         }
 
-        this.classAccessFlags.setAbstractRequired(bl);
+        this.classAccessFlags.setAbstractRequired(classAbstract);
         this.setChanged();
         this.notifyObservers();
     }
 
-    public void setMemberVolatile(boolean bl) throws ZkmException, IOException {
+    public void setMemberVolatile(boolean memberVolatile) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(2);
         }
 
-        this.memberAccessFlags.setVolatileRequired(bl);
+        this.memberAccessFlags.setVolatileRequired(memberVolatile);
         this.setChanged();
         this.notifyObservers();
     }
@@ -1560,17 +1131,10 @@ public class RenameFilterModel extends ChangeObservable {
 
     public boolean isClassPackagePrivate() {
         int flowControlKey = ZkmScriptSimpleNode.getFlowControlKey();
-        RenameFilterModel renameFilterModel1 = this;
-        if (flowControlKey != 0) {
-            if (this.classAccessFlags == null) {
-                return false;
-            }
-
-            renameFilterModel1 = this;
+        if (flowControlKey != 0 && this.classAccessFlags == null) {
+            return false;
         }
-
-        boolean packageRequired = renameFilterModel1.classAccessFlags.isPackageRequired();
-        return flowControlKey == 0 ? packageRequired : packageRequired;
+        return this.classAccessFlags.isPackageRequired();
     }
 
     public void setMemberPublic(Integer integer) throws ZkmException, IOException {
@@ -1600,16 +1164,16 @@ public class RenameFilterModel extends ChangeObservable {
     public String getInterfaceNamesText() {
         if (this.interfaceNames != null && this.interfaceNames.size() > 0) {
             StringBuffer stringBuffer = new StringBuffer();
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = this.interfaceNames; bb < list1.size(); list1 = this.interfaceNames) {
-                stringBuffer.append((String) this.interfaceNames.get(ba));
-                if (ba < this.interfaceNames.size() - 1) {
+                stringBuffer.append((String) this.interfaceNames.get(elementIndex));
+                if (elementIndex < this.interfaceNames.size() - 1) {
                     stringBuffer.append(", ");
                 }
 
-                bb = ++ba;
+                bb = ++elementIndex;
             }
 
             return stringBuffer.toString();
@@ -1618,8 +1182,8 @@ public class RenameFilterModel extends ChangeObservable {
         }
     }
 
-    public void setSuperclassName(String string) throws ZkmException, IOException {
-        this.superclassName = string;
+    public void setSuperclassName(String superclassNameArgument) throws ZkmException, IOException {
+        this.superclassName = superclassNameArgument;
         this.setChanged();
         this.notifyObservers();
     }
@@ -1638,12 +1202,12 @@ public class RenameFilterModel extends ChangeObservable {
         this.notifyObservers();
     }
 
-    public void setMemberNotStatic(boolean bl, Integer integer) throws ZkmException, IOException {
+    public void setMemberNotStatic(boolean staticForbidden, Integer integer) throws ZkmException, IOException {
         if (this.memberAccessFlags == null) {
             this.memberAccessFlags = new AccessFlagsSpec(integer);
         }
 
-        this.memberAccessFlags.setStaticForbidden(bl);
+        this.memberAccessFlags.setStaticForbidden(staticForbidden);
         this.setChanged();
         this.notifyObservers();
     }

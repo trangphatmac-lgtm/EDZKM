@@ -35,13 +35,13 @@ public class UnknownAttribute extends Attribute implements Utf8ConstantReplaceab
         DataOutputStream dataOutputStream1 = dataOutputStream;
         super.writeRemapped(dataOutputStream1, map3, scriptEnvironment3);
         if (this.parsedAsIndices) {
-            int ba = 0;
-            int bb = ba;
+            int elementIndex = 0;
+            int elementIndexValue = elementIndex;
 
-            for (ArrayList arrayList = this.referencedConstants; bb < arrayList.size(); arrayList = this.referencedConstants) {
-                Object object2 = this.referencedConstants.get(ba);
+            for (ArrayList arrayList = this.referencedConstants; elementIndexValue < arrayList.size(); arrayList = this.referencedConstants) {
+                Object object2 = this.referencedConstants.get(elementIndex);
                 if (object2 == null) {
-                    dataOutputStream.writeShort(this.rawIndices[ba]);
+                    dataOutputStream.writeShort(this.rawIndices[elementIndex]);
                 } else {
                     ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) object2;
                     ConstantPoolEntry constantPoolEntry1 = (ConstantPoolEntry) map1.get(constantPoolEntry);
@@ -52,7 +52,7 @@ public class UnknownAttribute extends Attribute implements Utf8ConstantReplaceab
                     }
                 }
 
-                bb = ++ba;
+                elementIndexValue = ++elementIndex;
             }
         } else {
             dataOutputStream.write(this.rawBytes);
@@ -72,27 +72,27 @@ public class UnknownAttribute extends Attribute implements Utf8ConstantReplaceab
         return this.commonAcrossClasses;
     }
 
-    public void clearReferenceAt(int ba) {
-        this.referencedConstants.set(ba, null);
+    public void clearReferenceAt(int elementIndex) {
+        this.referencedConstants.set(elementIndex, null);
     }
 
     @Override
     public void write(DataOutputStream dataOutputStream) throws IOException {
         super.write(dataOutputStream);
         if (this.parsedAsIndices) {
-            int ba = 0;
-            int bb = ba;
+            int elementIndex = 0;
+            int elementIndexValue = elementIndex;
 
-            for (ArrayList arrayList = this.referencedConstants; bb < arrayList.size(); arrayList = this.referencedConstants) {
-                Object object = this.referencedConstants.get(ba);
+            for (ArrayList arrayList = this.referencedConstants; elementIndexValue < arrayList.size(); arrayList = this.referencedConstants) {
+                Object object = this.referencedConstants.get(elementIndex);
                 if (object == null) {
-                    dataOutputStream.writeShort(this.rawIndices[ba]);
+                    dataOutputStream.writeShort(this.rawIndices[elementIndex]);
                 } else {
                     ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) object;
                     dataOutputStream.writeShort(constantPoolEntry.getIndex());
                 }
 
-                bb = ++ba;
+                elementIndexValue = ++elementIndex;
             }
         } else {
             dataOutputStream.write(this.rawBytes);
@@ -110,16 +110,16 @@ public class UnknownAttribute extends Attribute implements Utf8ConstantReplaceab
             this.nameConstant = constantUtf81;
         } else {
             if (this.parsedAsIndices) {
-                int ba = 0;
-                int bb = ba;
+                int elementIndex = 0;
+                int elementIndexValue = elementIndex;
 
-                for (ArrayList arrayList = this.referencedConstants; bb < arrayList.size(); arrayList = this.referencedConstants) {
-                    if (this.referencedConstants.get(ba) == constantUtf8) {
-                        this.referencedConstants.set(ba, constantUtf81);
+                for (ArrayList arrayList = this.referencedConstants; elementIndexValue < arrayList.size(); arrayList = this.referencedConstants) {
+                    if (this.referencedConstants.get(elementIndex) == constantUtf8) {
+                        this.referencedConstants.set(elementIndex, constantUtf81);
                         break;
                     }
 
-                    bb = ++ba;
+                    elementIndexValue = ++elementIndex;
                 }
             }
         }
@@ -127,16 +127,16 @@ public class UnknownAttribute extends Attribute implements Utf8ConstantReplaceab
 
     public UnknownAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ThreeKeyMultiMap threeKeyMultiMap
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         classFileInputStream.read(this.rawBytes);
         if (this.rawBytes.length % 2 == 0) {
-            String string1 = classFileComponent.getClass().getName();
+            String name = classFileComponent.getClass().getName();
             this.parsedAsIndices = true;
             this.commonAcrossClasses = true;
             int bb = this.rawBytes.length / 2;
@@ -144,15 +144,15 @@ public class UnknownAttribute extends Attribute implements Utf8ConstantReplaceab
             this.referencedConstants = new ArrayList(bb);
             int bc = 0;
 
-            for (int i = 0; i < bb; i++) {
-                int be = ByteConversionUtils.bytesToUnsignedShort(this.rawBytes[bc++], this.rawBytes[bc++]);
-                this.rawIndices[i] = be;
-                ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(be);
+            for (int rawIndiceIndex = 0; rawIndiceIndex < bb; rawIndiceIndex++) {
+                int rawIndice = ByteConversionUtils.bytesToUnsignedShort(this.rawBytes[bc++], this.rawBytes[bc++]);
+                this.rawIndices[rawIndiceIndex] = rawIndice;
+                ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(rawIndice);
                 ArrayList arrayList;
                 if (constantPoolEntry != null) {
                     if (constantPoolEntry instanceof ConstantUtf8) {
                         this.referencedConstants.add(constantPoolEntry);
-                        threeKeyMultiMap.addValue(string1, this.getAttributeName(), this, constantPoolEntry);
+                        threeKeyMultiMap.addValue(name, this.getAttributeName(), this, constantPoolEntry);
                         listMultimap.addValue((ConstantUtf8) constantPoolEntry, this);
                         continue;
                     }
@@ -163,7 +163,7 @@ public class UnknownAttribute extends Attribute implements Utf8ConstantReplaceab
                 }
 
                 arrayList.add(null);
-                threeKeyMultiMap.addValue(string1, this.getAttributeName(), this, NON_UTF8_MARKER);
+                threeKeyMultiMap.addValue(name, this.getAttributeName(), this, NON_UTF8_MARKER);
             }
         }
     }

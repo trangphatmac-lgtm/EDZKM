@@ -25,27 +25,27 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
     }
 
     public boolean areExpressionsResolved(boolean bl) {
-        int ba = 0;
+        int expressionIndex = 0;
         int bb = 0;
 
         for (byte bc = 10; bb < bc; bc = 10) {
-            LayoutExpression layoutExpression = this.expressions[ba];
+            LayoutExpression layoutExpression = this.expressions[expressionIndex];
             if (layoutExpression != null && !layoutExpression.tryEvaluate(bl)) {
                 return false;
             }
 
-            bb = ++ba;
+            bb = ++expressionIndex;
         }
 
         return true;
     }
 
-    public void evaluateProperty(int ba, LayoutExpression[] layoutExpressions, boolean[] bl, boolean bl1) {
+    public void evaluateProperty(int ba, LayoutExpression[] layoutExpressions, boolean[] booleanArray, boolean bl1) {
         if (this.values[ba] == null) {
             LayoutExpression layoutExpression = layoutExpressions[ba];
             if (layoutExpression != null && layoutExpression.tryEvaluate(bl1)) {
                 this.values[ba] = layoutExpression.getValue();
-                bl[0] = true;
+                booleanArray[0] = true;
             }
         }
     }
@@ -109,17 +109,17 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
         return this.componentName;
     }
 
-    public LayoutComponentSpec(String string, Component component1, ConstraintLayout constraintLayout1) {
-        this.componentName = string;
+    public LayoutComponentSpec(String componentNameArgument, Component component1, ConstraintLayout constraintLayout1) {
+        this.componentName = componentNameArgument;
         this.component = component1;
         this.layout = constraintLayout1;
     }
 
-    public int getPropertyValue(int ba) {
-        if (ba == 10) {
+    public int getPropertyValue(int valueIndex) {
+        if (valueIndex == 10) {
             return this.component.getPreferredSize().width;
         } else {
-            return ba == 11 ? this.component.getPreferredSize().height : this.values[ba];
+            return valueIndex == 11 ? this.component.getPreferredSize().height : this.values[valueIndex];
         }
     }
 
@@ -127,29 +127,29 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
         return new Point(this.values[5], this.values[4]);
     }
 
-    public boolean isPropertyResolved(int ba) {
-        return ba == 10 || ba == 11 ? true : this.values[ba] != null;
+    public boolean isPropertyResolved(int valueIndex) {
+        return ((valueIndex == 10 || valueIndex == 11) || (this.values[valueIndex] != null));
     }
 
-    public void deriveProperty(int ba, LayoutExpression[] layoutExpressions, boolean[] bl) {
+    public void deriveProperty(int ba, LayoutExpression[] layoutExpressions, boolean[] booleanArray) {
         if (layoutExpressions[ba] == null && this.values[ba] == null) {
-            int bb = Integer.MIN_VALUE;
+            int value = Integer.MIN_VALUE;
             switch (ba) {
                 case 0:
                     if (layoutExpressions[3] != null && layoutExpressions[5] != null) {
                         if (this.values[3] != null && this.values[5] != null) {
-                            bb = this.values[5] - this.values[3];
+                            value = this.values[5] - this.values[3];
                         }
                     } else if (layoutExpressions[3] != null && layoutExpressions[6] != null) {
                         if (this.values[3] != null && this.values[6] != null) {
-                            bb = (this.values[6] - this.values[3]) * 2;
+                            value = (this.values[6] - this.values[3]) * 2;
                         }
                     } else {
                         Component component1;
                         if (layoutExpressions[6] != null) {
                             if (layoutExpressions[5] != null) {
                                 if (this.values[6] != null && this.values[5] != null) {
-                                    bb = (this.values[5] - this.values[6]) * 2;
+                                    value = (this.values[5] - this.values[6]) * 2;
                                 }
                                 break;
                             }
@@ -159,28 +159,28 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
                             component1 = this.component;
                         }
 
-                        bb = component1.getPreferredSize().width;
+                        value = component1.getPreferredSize().width;
                         LayoutExpression layoutExpression1 = this.expressions[8];
                         if (layoutExpression1 != null) {
-                            bb = Math.max(bb, layoutExpression1.getValue());
+                            value = Math.max(value, layoutExpression1.getValue());
                         }
                     }
                     break;
                 case 1:
                     if (layoutExpressions[4] != null && layoutExpressions[2] != null) {
                         if (this.values[4] != null && this.values[2] != null) {
-                            bb = this.values[4] - this.values[2];
+                            value = this.values[4] - this.values[2];
                         }
                     } else if (layoutExpressions[2] != null && layoutExpressions[7] != null) {
                         if (this.values[7] != null && this.values[2] != null) {
-                            bb = (this.values[7] - this.values[2]) * 2;
+                            value = (this.values[7] - this.values[2]) * 2;
                         }
                     } else {
                         Component component2;
                         if (layoutExpressions[7] != null) {
                             if (layoutExpressions[4] != null) {
                                 if (this.values[7] != null && this.values[4] != null) {
-                                    bb = (this.values[4] - this.values[7]) * 2;
+                                    value = (this.values[4] - this.values[7]) * 2;
                                 }
                                 break;
                             }
@@ -190,42 +190,42 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
                             component2 = this.component;
                         }
 
-                        bb = component2.getPreferredSize().height;
+                        value = component2.getPreferredSize().height;
                         LayoutExpression layoutExpression = this.expressions[9];
                         if (layoutExpression != null) {
-                            bb = Math.max(bb, layoutExpression.getValue());
+                            value = Math.max(value, layoutExpression.getValue());
                         }
                     }
                     break;
                 case 2:
                     if (layoutExpressions[7] == null && layoutExpressions[4] == null) {
-                        bb = 0;
+                        value = 0;
                     } else {
                         if (this.values[1] == null) {
                             return;
                         }
 
-                        int bh = this.values[1];
+                        int valueValue = this.values[1];
                         if (this.values[4] != null) {
-                            bb = this.values[4] - bh;
+                            value = this.values[4] - valueValue;
                         } else if (this.values[7] != null) {
-                            bb = this.values[7] - bh / 2;
+                            value = this.values[7] - valueValue / 2;
                         }
                     }
                     break;
                 case 3:
                     if (layoutExpressions[6] == null && layoutExpressions[5] == null) {
-                        bb = 0;
+                        value = 0;
                     } else {
                         if (this.values[0] == null) {
                             return;
                         }
 
-                        int bg = this.values[0];
+                        int valueValue2 = this.values[0];
                         if (this.values[5] != null) {
-                            bb = this.values[5] - bg;
+                            value = this.values[5] - valueValue2;
                         } else if (this.values[6] != null) {
-                            bb = this.values[6] - bg / 2;
+                            value = this.values[6] - valueValue2 / 2;
                         }
                     }
                     break;
@@ -234,11 +234,11 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
                         return;
                     }
 
-                    int bc = this.values[1];
+                    int valueValue3 = this.values[1];
                     if (this.values[2] != null) {
-                        bb = this.values[2] + bc;
+                        value = this.values[2] + valueValue3;
                     } else if (this.values[7] != null) {
-                        bb = this.values[7] + bc / 2;
+                        value = this.values[7] + valueValue3 / 2;
                     }
                     break;
                 case 5:
@@ -246,11 +246,11 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
                         return;
                     }
 
-                    int bd = this.values[0];
+                    int valueValue4 = this.values[0];
                     if (this.values[3] != null) {
-                        bb = this.values[3] + bd;
+                        value = this.values[3] + valueValue4;
                     } else if (this.values[6] != null) {
-                        bb = this.values[6] + bd / 2;
+                        value = this.values[6] + valueValue4 / 2;
                     }
                     break;
                 case 6:
@@ -258,11 +258,11 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
                         return;
                     }
 
-                    int bf = this.values[0];
+                    int valueValue5 = this.values[0];
                     if (this.values[3] != null) {
-                        bb = this.values[3] + bf / 2;
+                        value = this.values[3] + valueValue5 / 2;
                     } else if (this.values[5] != null) {
-                        bb = this.values[5] - bf / 2;
+                        value = this.values[5] - valueValue5 / 2;
                     }
                     break;
                 case 7:
@@ -270,17 +270,17 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
                         return;
                     }
 
-                    int be = this.values[1];
+                    int valueValue6 = this.values[1];
                     if (this.values[2] != null) {
-                        bb = this.values[2] + be / 2;
+                        value = this.values[2] + valueValue6 / 2;
                     } else if (this.values[4] != null) {
-                        bb = this.values[4] - be / 2;
+                        value = this.values[4] - valueValue6 / 2;
                     }
             }
 
-            if (bb != Integer.MIN_VALUE) {
-                bl[0] = true;
-                this.values[ba] = bb;
+            if (value != Integer.MIN_VALUE) {
+                booleanArray[0] = true;
+                this.values[ba] = value;
             }
         }
     }
@@ -292,11 +292,11 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
     public String validateExpressions() {
         this.cachedSize = null;
         this.cachedLocation = null;
-        int ba = 0;
+        int expressionIndex = 0;
         int bb = 0;
 
         for (byte bc = 10; bb < bc; bc = 10) {
-            LayoutExpression layoutExpression = this.expressions[ba];
+            LayoutExpression layoutExpression = this.expressions[expressionIndex];
             if (layoutExpression != null) {
                 String string = layoutExpression.prepare();
                 if (string != null) {
@@ -304,43 +304,43 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
                 }
             }
 
-            bb = ++ba;
+            bb = ++expressionIndex;
         }
 
         return null;
     }
 
     public boolean resolveProperties(boolean bl, LayoutExpression[] layoutExpressions) {
-        boolean[] bl1 = new boolean[]{false};
+        boolean[] booleanArray = new boolean[]{false};
         int ba = 0;
         int bd = 0;
 
         for (byte be = 10; bd < be; be = 10) {
-            this.evaluateProperty(ba, layoutExpressions, bl1, bl);
+            this.evaluateProperty(ba, layoutExpressions, booleanArray, bl);
             bd = ++ba;
         }
 
         boolean bl4 = false;
 
-        for (boolean bl2 = true; bl2; bl4 = bl2 ? true : bl4) {
-            boolean[] bl3 = new boolean[]{false};
+        for (boolean booleanArrayValueElement = true; booleanArrayValueElement; bl4 = ((booleanArrayValueElement) || (bl4))) {
+            boolean[] booleanArrayValue = new boolean[]{false};
             int bb = 0;
             bd = 0;
 
             for (byte bc = 8; bd < bc; bc = 8) {
-                this.deriveProperty(bb, layoutExpressions, bl3);
+                this.deriveProperty(bb, layoutExpressions, booleanArrayValue);
                 bd = ++bb;
             }
 
-            bl2 = bl3[0];
+            booleanArrayValueElement = booleanArrayValue[0];
         }
 
-        return bl1[0] || bl4;
+        return booleanArray[0] || bl4;
     }
 
-    public String setProperty(String string, String string1) {
-        int ba = ConstraintLayout.getPropertyIndex(string);
-        this.expressions[ba] = new LayoutExpression(this.layout, string1);
+    public String setProperty(String string, String expressionText) {
+        int propertyIndex = ConstraintLayout.getPropertyIndex(string);
+        this.expressions[propertyIndex] = new LayoutExpression(this.layout, expressionText);
         return null;
     }
 
@@ -356,14 +356,14 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
         if (this.preferredSizeExpressions == null) {
             this.preferredSizeExpressions = new LayoutExpression[10];
             System.arraycopy(this.expressions, 0, this.preferredSizeExpressions, 0, 10);
-            int ba = 0;
+            int preferredSizeExpressionIndex = 0;
             int bb = 0;
 
             for (byte bc = 10; bb < bc; bc = 10) {
-                LayoutExpression layoutExpression = this.preferredSizeExpressions[ba];
+                LayoutExpression layoutExpression = this.preferredSizeExpressions[preferredSizeExpressionIndex];
                 if (layoutExpression != null && !layoutExpression.isResolved()) {
                     if (layoutExpression.isContainerSizeRelative()) {
-                        this.preferredSizeExpressions[ba] = null;
+                        this.preferredSizeExpressions[preferredSizeExpressionIndex] = null;
                     } else if (layoutExpression.isContainerTrailingEdge()) {
                         if (layoutExpression.getContainerPropertyIndex() == 5) {
                             this.rightPad = layoutExpression.getPaddingValue();
@@ -371,13 +371,13 @@ public class LayoutComponentSpec implements LayoutConstraintMarker {
                             this.bottomPad = layoutExpression.getPaddingValue();
                         }
 
-                        this.preferredSizeExpressions[ba] = null;
+                        this.preferredSizeExpressions[preferredSizeExpressionIndex] = null;
                     } else if (layoutExpression.isContainerLeadingEdge()) {
                         layoutExpression.tryEvaluate(true);
                     }
                 }
 
-                bb = ++ba;
+                bb = ++preferredSizeExpressionIndex;
             }
         }
 

@@ -5,33 +5,33 @@ public class FrameSignatureKey extends FrameStateKey {
         VerifierType[] verifierTypes = stackFrameState.getStack();
         StringBuilder stringBuilder = new StringBuilder();
         super.stackSlotCount = 0;
-        int ba = verifierTypes.length;
+        int lengthValue = verifierTypes.length;
 
-        for (int i = 0; i < ba; i++) {
-            VerifierType verifierType = verifierTypes[i];
+        for (int verifierTypeIndex = 0; verifierTypeIndex < lengthValue; verifierTypeIndex++) {
+            VerifierType verifierType = verifierTypes[verifierTypeIndex];
             super.stackSlotCount = super.stackSlotCount + verifierType.getSlotSize();
             if (!verifierType.isInitialized()) {
                 super.hasUninitializedThis = true;
             }
 
             stringBuilder.append(verifierType.toDisplayString());
-            if (i < ba - 1) {
+            if (verifierTypeIndex < lengthValue - 1) {
                 stringBuilder.append("|");
             }
         }
 
         stringBuilder.append("||");
         VerifierType[] verifierTypes1 = stackFrameState.getLocals();
-        int bd = verifierTypes1.length;
+        int lengthValue2 = verifierTypes1.length;
 
-        for (int i = 0; i < bd; i++) {
-            VerifierType verifierType1 = verifierTypes1[i];
+        for (int verifierTypes1ElementIndex = 0; verifierTypes1ElementIndex < lengthValue2; verifierTypes1ElementIndex++) {
+            VerifierType verifierType1 = verifierTypes1[verifierTypes1ElementIndex];
             if (!verifierType1.isInitialized()) {
                 super.hasUninitializedThis = true;
             }
 
             stringBuilder.append(verifierType1.toDisplayString());
-            if (i < bd - 1) {
+            if (verifierTypes1ElementIndex < lengthValue2 - 1) {
                 stringBuilder.append("|");
             }
         }

@@ -41,24 +41,24 @@ public class MethodSignature extends MemberSignatureBase {
         this.hash = (this.name + this.parameterDescriptor + this.returnDescriptor).hashCode();
     }
 
-    public static List splitParameterDescriptors(String string) {
-        return ConstantPoolEntry.getParameterTypes(string);
+    public static List splitParameterDescriptors(String descriptor) {
+        return ConstantPoolEntry.getParameterTypes(descriptor);
     }
 
     public String toDeclarationString() {
         return ConstantPoolEntry.descriptorToJavaType(this.returnDescriptor) + " " + this.formatSignature();
     }
 
-    public static String formatParameterTypes(String string, Map map1) {
+    public static String formatParameterTypes(String descriptor, Map map1) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append('(');
-        List list1 = ConstantPoolEntry.getParameterTypes(string);
-        int ba = list1.size();
+        List list1 = ConstantPoolEntry.getParameterTypes(descriptor);
+        int list1Size = list1.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string1 = (String) list1.get(i);
-            stringBuilder.append(descriptorToJavaType(string1, map1));
-            if (i + 1 < ba) {
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            String descriptorValue = (String) list1.get(elementIndex);
+            stringBuilder.append(descriptorToJavaType(descriptorValue, map1));
+            if (elementIndex + 1 < list1Size) {
                 stringBuilder.append(", ");
             }
         }
@@ -90,16 +90,16 @@ public class MethodSignature extends MemberSignatureBase {
         return string2;
     }
 
-    public static String descriptorToJavaType(String string, Map map1) {
+    public static String descriptorToJavaType(String descriptor, Map map1) {
         String string1 = "";
-        String string2 = ConstantPoolEntry.descriptorToJavaType(string, false, false);
-        if (string2.endsWith("]")) {
-            int ba = string2.indexOf(91);
-            string1 = string2.substring(ba);
-            string2 = string2.substring(0, ba);
+        String key = ConstantPoolEntry.descriptorToJavaType(descriptor, false, false);
+        if (key.endsWith("]")) {
+            int ba = key.indexOf(91);
+            string1 = key.substring(ba);
+            key = key.substring(0, ba);
         }
 
-        String string3 = (String) ZkmUtils.mapOrSelf(string2, map1);
+        String string3 = (String) ZkmUtils.mapOrSelf(key, map1);
         return string3.replace('/', '.') + string1;
     }
 
@@ -168,9 +168,9 @@ public class MethodSignature extends MemberSignatureBase {
     }
 
     public static MethodSignature remapClassNames(MethodSignature methodSignature1, Map map1) {
-        String string = methodSignature1.getDescriptor();
-        String string1 = remapDescriptor(string, map1);
-        return string1.equals(string) ? methodSignature1 : new MethodSignature(methodSignature1.getName(), string1);
+        String descriptor = methodSignature1.getDescriptor();
+        String string1 = remapDescriptor(descriptor, map1);
+        return string1.equals(descriptor) ? methodSignature1 : new MethodSignature(methodSignature1.getName(), string1);
     }
 
     public String formatDeclaration(Map map1, String string) {
@@ -195,9 +195,9 @@ public class MethodSignature extends MemberSignatureBase {
 
     public static boolean isSignaturePolymorphic(String string, String string1, ClassHierarchyQuery classHierarchyQuery) throws ZkmException, IOException {
         if (METHOD_HANDLE_POLYMORPHIC_NAMES.contains(string1)) {
-            return string.equals("java/lang/invoke/MethodHandle") ? true : classHierarchyQuery.isSubclass(string, "java/lang/invoke/MethodHandle");
+            return ((string.equals("java/lang/invoke/MethodHandle")) || (classHierarchyQuery.isSubclass(string, "java/lang/invoke/MethodHandle")));
         } else if (VAR_HANDLE_POLYMORPHIC_NAMES.contains(string1)) {
-            return string.equals("java/lang/invoke/VarHandle") ? true : classHierarchyQuery.isSubclass(string, "java/lang/invoke/VarHandle");
+            return ((string.equals("java/lang/invoke/VarHandle")) || (classHierarchyQuery.isSubclass(string, "java/lang/invoke/VarHandle")));
         } else {
             return false;
         }
@@ -226,22 +226,22 @@ public class MethodSignature extends MemberSignatureBase {
         this.hash = (string + this.parameterDescriptor + this.returnDescriptor).hashCode();
     }
 
-    public static boolean isPrimitiveKeyword(Object object) {
-        return PRIMITIVE_TYPE_DESCRIPTORS.containsKey(object);
+    public static boolean isPrimitiveKeyword(Object key) {
+        return PRIMITIVE_TYPE_DESCRIPTORS.containsKey(key);
     }
 
-    public static String remapDescriptor(String string, Map map1) {
-        List list1 = ConstantPoolEntry.getParameterTypes(string);
+    public static String remapDescriptor(String descriptor, Map map1) {
+        List list1 = ConstantPoolEntry.getParameterTypes(descriptor);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("(");
 
-        for (int i = 0; i < list1.size(); i++) {
-            String string1 = remapTypeDescriptor((String) list1.get(i), map1);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            String string1 = remapTypeDescriptor((String) list1.get(elementIndex), map1);
             stringBuilder.append(string1);
         }
 
         stringBuilder.append(")");
-        String string2 = string.substring(string.indexOf(")") + 1);
+        String string2 = descriptor.substring(descriptor.indexOf(")") + 1);
         String string3 = remapTypeDescriptor(string2, map1);
         stringBuilder.append(string3);
         return stringBuilder.toString();
@@ -253,21 +253,21 @@ public class MethodSignature extends MemberSignatureBase {
     }
 
     public static String toTypeDescriptor(String string) {
-        String string1 = string.replace('.', '/');
-        StringBuilder stringBuilder = new StringBuilder(Math.max(string1.length(), 16));
-        int ba = string1.length();
-        if ((ba > 1 || ba == 1 && !ConstantPoolEntry.isPrimitiveDescriptor(string1)) && string1.charAt(0) != '[' && string1.charAt(ba - 1) != ';') {
+        String key = string.replace('.', '/');
+        StringBuilder stringBuilder = new StringBuilder(Math.max(key.length(), 16));
+        int keyLength = key.length();
+        if ((keyLength > 1 || keyLength == 1 && !ConstantPoolEntry.isPrimitiveDescriptor(key)) && key.charAt(0) != '[' && key.charAt(keyLength - 1) != ';') {
             stringBuilder.append('L');
-            stringBuilder.append(string1);
+            stringBuilder.append(key);
             stringBuilder.append(';');
             return stringBuilder.toString();
         }
 
-        int bb = string1.lastIndexOf(91);
-        if (bb > -1 && (bb < ba - 2 || bb < ba - 1 && !ConstantPoolEntry.isPrimitiveDescriptor(string1.substring(bb + 1)))) {
-            String string2 = string1.substring(bb + 1);
+        int bb = key.lastIndexOf(91);
+        if (bb > -1 && (bb < keyLength - 2 || bb < keyLength - 1 && !ConstantPoolEntry.isPrimitiveDescriptor(key.substring(bb + 1)))) {
+            String string2 = key.substring(bb + 1);
             if (string2.charAt(0) != 'L' && string2.charAt(string2.length() - 1) != ';') {
-                stringBuilder.append(string1.substring(0, bb + 1));
+                stringBuilder.append(key.substring(0, bb + 1));
                 stringBuilder.append('L');
                 stringBuilder.append(string2);
                 stringBuilder.append(';');
@@ -275,7 +275,7 @@ public class MethodSignature extends MemberSignatureBase {
             }
         }
 
-        return string1;
+        return key;
     }
 
     private MethodSignature(String string, String string1, String string2, int hash, FieldNameTypeSignature fieldNameTypeSignature) {
@@ -288,20 +288,20 @@ public class MethodSignature extends MemberSignatureBase {
     public static String remapTypeDescriptor(String string, Map map1) {
         int ba = 0;
 
-        for (int i = 0; i < string.length() && string.charAt(i) == '['; i++) {
+        for (int characterIndex = 0; characterIndex < string.length() && string.charAt(characterIndex) == '['; characterIndex++) {
             ba++;
         }
 
-        String string2 = string.substring(ba);
-        String string1;
-        if (string2.length() > 1) {
-            string2 = string2.substring(1, string2.length() - 1);
-            string1 = "L" + (String) ZkmUtils.mapOrSelf(string2, map1) + ";";
+        String key = string.substring(ba);
+        String keyValue;
+        if (key.length() > 1) {
+            key = key.substring(1, key.length() - 1);
+            keyValue = "L" + (String) ZkmUtils.mapOrSelf(key, map1) + ";";
         } else {
-            string1 = string2;
+            keyValue = key;
         }
 
-        return ba > 0 ? string.substring(0, ba) + string1 : string1;
+        return ba > 0 ? string.substring(0, ba) + keyValue : keyValue;
     }
 
     public MethodSignature(String string, String string1, String string2) {
@@ -325,11 +325,11 @@ public class MethodSignature extends MemberSignatureBase {
     public static String javaTypeToDescriptor(String string, Map map1) {
         StringBuilder stringBuilder = new StringBuilder(Math.max(string.length(), 16));
         int ba = 0;
-        int bb = string.indexOf("[]");
+        int endIndex = string.indexOf("[]");
         String string1;
-        if (bb > -1) {
+        if (endIndex > -1) {
             ba = ZkmStringUtils.countOccurrences(string, "[]");
-            string1 = string.substring(0, bb);
+            string1 = string.substring(0, endIndex);
         } else {
             string1 = string;
         }
@@ -341,14 +341,14 @@ public class MethodSignature extends MemberSignatureBase {
         StringTokenizer stringTokenizer = new StringTokenizer(string1, ".");
         int bd = stringTokenizer.countTokens();
         if (bd == 1) {
-            String string2 = stringTokenizer.nextToken();
-            String string3 = (String) PRIMITIVE_TYPE_DESCRIPTORS.get(string2);
+            String key = stringTokenizer.nextToken();
+            String string3 = (String) PRIMITIVE_TYPE_DESCRIPTORS.get(key);
             if (string3 != null) {
                 stringBuilder.append(string3);
             } else {
-                string2 = (String) ZkmUtils.mapOrSelf(string2, map1);
+                key = (String) ZkmUtils.mapOrSelf(key, map1);
                 stringBuilder.append("L");
-                stringBuilder.append(string2);
+                stringBuilder.append(key);
                 stringBuilder.append(";");
             }
         } else {
@@ -381,9 +381,9 @@ public class MethodSignature extends MemberSignatureBase {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object != null && object instanceof MethodSignature) {
-            MethodSignature methodSignature2 = (MethodSignature) object;
+    public boolean equals(Object other) {
+        if (other != null && other instanceof MethodSignature) {
+            MethodSignature methodSignature2 = (MethodSignature) other;
             return this.hash == methodSignature2.hash
                     && this.name == methodSignature2.name
                     && this.parameterDescriptor == methodSignature2.parameterDescriptor

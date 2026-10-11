@@ -23,11 +23,11 @@ public class NaturalLoop implements Comparable {
     }
 
     private void addMarkedBlocks(BitSet bitSet, List list1) {
-        int ba = list1.size();
+        int list1Size = list1.size();
 
-        for (int i = 0; i < ba; i++) {
-            if (bitSet.get(i)) {
-                this.loopBlocks.add(list1.get(i));
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            if (bitSet.get(elementIndex)) {
+                this.loopBlocks.add(list1.get(elementIndex));
             }
         }
     }
@@ -128,12 +128,12 @@ public class NaturalLoop implements Comparable {
             } else {
                 List list2 = basicBlock.getPredecessors();
                 if (list2 != null) {
-                    int ba = list2.size();
+                    int list2Size = list2.size();
                     Iterator iterator = list2.iterator();
 
                     while (iterator.hasNext()) {
                         BasicBlock basicBlock1 = (BasicBlock) iterator.next();
-                        this.collectBlocksToHeader(basicBlock1, ba > 0 ? (BitSet) bitSet.clone() : bitSet, set1, list1);
+                        this.collectBlocksToHeader(basicBlock1, list2Size > 0 ? (BitSet) bitSet.clone() : bitSet, set1, list1);
                     }
                 }
             }
@@ -147,7 +147,7 @@ public class NaturalLoop implements Comparable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareHeaderPosition((NaturalLoop) object);
+    public int compareTo(Object other) {
+        return this.compareHeaderPosition((NaturalLoop) other);
     }
 }

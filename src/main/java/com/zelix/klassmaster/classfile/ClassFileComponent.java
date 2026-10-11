@@ -25,15 +25,15 @@ public abstract class ClassFileComponent extends ObservableSupport implements Co
         return this.parent.getInputPath();
     }
 
-    public void setParent(ClassFileComponent classFileComponent1) {
-        this.parent = classFileComponent1;
+    public void setParent(ClassFileComponent parent) {
+        this.parent = parent;
     }
 
     public static VisitableNode[] getFlowGuardNodes() {
         return flowGuardNodes;
     }
 
-    public abstract void collectUsedConstants(char ba, int bb, UsedConstantsCollector usedConstantsCollector, char bc);
+    public abstract void collectUsedConstants(char controlTag, int controlSeed, UsedConstantsCollector collector, char controlMode);
 
     public String getOriginalClassName() {
         return this.parent.getOriginalClassName();
@@ -43,8 +43,8 @@ public abstract class ClassFileComponent extends ObservableSupport implements Co
         return this.parent.getLocationName();
     }
 
-    public static void setFlowGuardNodes(VisitableNode[] visitableNodes1) {
-        flowGuardNodes = visitableNodes1;
+    public static void setFlowGuardNodes(VisitableNode[] nodes) {
+        flowGuardNodes = nodes;
     }
 
     public boolean isClassFile() {
@@ -56,13 +56,13 @@ public abstract class ClassFileComponent extends ObservableSupport implements Co
     }
 
     public ClassFileBase getOwningClass() {
-        ClassFileComponent classFileComponent1 = this;
+        ClassFileComponent ancestor = this;
 
-        while (classFileComponent1.parent != null) {
-            classFileComponent1 = classFileComponent1.parent;
+        while (ancestor.parent != null) {
+            ancestor = ancestor.parent;
         }
 
-        return (ClassFileBase) classFileComponent1;
+        return (ClassFileBase) ancestor;
     }
 
     public String getPackagePath() {
@@ -70,24 +70,24 @@ public abstract class ClassFileComponent extends ObservableSupport implements Co
     }
 
     @Override
-    public ConstantPoolEntry getConstantPoolEntry(int ba) {
-        return this.parent.getConstantPoolEntry(ba);
+    public ConstantPoolEntry getConstantPoolEntry(int constantPoolIndex) {
+        return this.parent.getConstantPoolEntry(constantPoolIndex);
     }
 
     public String formatDeclaration() throws ZkmProcessingException, IOException {
         return "";
     }
 
-    public ClassFileComponent(ClassFileComponent classFileComponent1) {
-        this.parent = classFileComponent1;
+    public ClassFileComponent(ClassFileComponent parent) {
+        this.parent = parent;
     }
 
     public String getOriginalDottedName() {
         return this.parent.getOriginalDottedName();
     }
 
-    public final ProgramClass selectMatchingProgramClass(ProgramClass programClass1) {
-        return (ProgramClass) this.selectMatchingVariant(programClass1);
+    public final ProgramClass selectMatchingProgramClass(ProgramClass programClass) {
+        return (ProgramClass) this.selectMatchingVariant(programClass);
     }
 
     public ClassFileComponent getParent() {
@@ -95,13 +95,13 @@ public abstract class ClassFileComponent extends ObservableSupport implements Co
     }
 
     public final Attribute getEnclosingAttribute() {
-        ClassFileComponent classFileComponent1 = this;
+        ClassFileComponent ancestor = this;
 
-        while (classFileComponent1.parent != null && !(classFileComponent1 instanceof Attribute)) {
-            classFileComponent1 = classFileComponent1.parent;
+        while (ancestor.parent != null && !(ancestor instanceof Attribute)) {
+            ancestor = ancestor.parent;
         }
 
-        return (Attribute) classFileComponent1;
+        return (Attribute) ancestor;
     }
 
     public String getDottedClassName() {
@@ -117,20 +117,20 @@ public abstract class ClassFileComponent extends ObservableSupport implements Co
     }
 
     static {
-        VisitableNode[] visitableNodes1 = new VisitableNode[4];
-        setFlowGuardNodes(visitableNodes1);
+        VisitableNode[] initialFlowGuardNodes = new VisitableNode[4];
+        setFlowGuardNodes(initialFlowGuardNodes);
     }
 
-    public final ClassFileBase selectMatchingVariant(ClassFileBase classFileBase) {
-        ClassFileBase classFileBase2 = this.getOwningClass();
-        ClassFileBase classFileBase1;
-        if (classFileBase2.isVersionedVariant() && classFileBase.hasVersionedVariants()) {
-            classFileBase1 = classFileBase.selectVersionForRelease(classFileBase2.getReleaseVersion());
+    public final ClassFileBase selectMatchingVariant(ClassFileBase candidateClass) {
+        ClassFileBase owningClass = this.getOwningClass();
+        ClassFileBase matchingClass;
+        if (owningClass.isVersionedVariant() && candidateClass.hasVersionedVariants()) {
+            matchingClass = candidateClass.selectVersionForRelease(owningClass.getReleaseVersion());
         } else {
-            classFileBase1 = classFileBase;
+            matchingClass = candidateClass;
         }
 
-        return classFileBase1;
+        return matchingClass;
     }
 
     public final int getParentKind() {

@@ -36,8 +36,8 @@ public class MainClassSearchTask implements Runnable {
                 if (list1 != null && list1.size() > 0) {
                     vector = new Vector(Math.max(5, list1.size()));
 
-                    for (int i = 0; i < list1.size(); i++) {
-                        vector.addElement(new ClassListEntry((ClassFileBase) list1.get(i), true));
+                    for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                        vector.addElement(new ClassListEntry((ClassFileBase) list1.get(elementIndex), true));
                     }
                 }
 
@@ -51,8 +51,8 @@ public class MainClassSearchTask implements Runnable {
                         vector = new Vector(list2.size());
                     }
 
-                    for (int i = 0; i < list2.size(); i++) {
-                        vector.addElement(new ClassListEntry((ClassFileBase) list2.get(i), false));
+                    for (int elementIndexValue = 0; elementIndexValue < list2.size(); elementIndexValue++) {
+                        vector.addElement(new ClassListEntry((ClassFileBase) list2.get(elementIndexValue), false));
                     }
 
                     scriptHelperWizard = this.wizard;

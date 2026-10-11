@@ -108,21 +108,13 @@ public class OpenClassesChoiceDialog extends OwnedFrameDialogBase implements Hel
         JEditorPane jEditorPane = new JEditorPane();
         jEditorPane.setEditable(false);
 
-        BevelBorderPanel bevelBorderPanel;
-        label20:
-        {
-            try {
-                jEditorPane.setPage(GuiResources.getHelpTopicUrl("000"));
-            } catch (IOException iOException) {
-                jEditorPane.setText(iOException.toString() + " : " + "000");
-                bevelBorderPanel = this.mainPnl;
-                break label20;
-            }
-
-            bevelBorderPanel = this.mainPnl;
+        try {
+            jEditorPane.setPage(GuiResources.getHelpTopicUrl("000"));
+        } catch (IOException pageLoadException) {
+            jEditorPane.setText(pageLoadException.toString() + " : " + "000");
         }
 
-        bevelBorderPanel.add(new ZkmScrollPane(jEditorPane), "Center");
+        this.mainPnl.add(new ZkmScrollPane(jEditorPane), "Center");
         container1.add(this.mainPnl, "mainPnl");
         constraintLayout1.setConstraints(this.getLayoutConstraints());
         this.setIconImage(KlassMaster.getLogoImage(this));
@@ -132,12 +124,12 @@ public class OpenClassesChoiceDialog extends OwnedFrameDialogBase implements Hel
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.okBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.okBtn) {
                 this.confirmChoice();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
             }
         } catch (Throwable throwable) {

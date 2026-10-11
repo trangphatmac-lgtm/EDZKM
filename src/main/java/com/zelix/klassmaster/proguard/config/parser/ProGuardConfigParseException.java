@@ -6,38 +6,38 @@ public class ProGuardConfigParseException extends Exception {
     public int[][] expectedTokenSequences;
     public String[] tokenImage;
 
-    public ProGuardConfigParseException(ProGuardConfigToken proGuardConfigToken, int[][] expectedTokenSequences, String[] strings) {
-        super(initialise(proGuardConfigToken, expectedTokenSequences, strings));
+    public ProGuardConfigParseException(ProGuardConfigToken proGuardConfigToken, int[][] expectedTokenSequences, String[] tokenImageArgument) {
+        super(initialise(proGuardConfigToken, expectedTokenSequences, tokenImageArgument));
         this.currentToken = proGuardConfigToken;
         this.expectedTokenSequences = expectedTokenSequences;
-        this.tokenImage = strings;
+        this.tokenImage = tokenImageArgument;
     }
 
-    private static String initialise(ProGuardConfigToken proGuardConfigToken, int[][] ba, String[] strings) {
-        String string = System.getProperty("line.separator", "\n");
+    private static String initialise(ProGuardConfigToken proGuardConfigToken, int[][] integerArrayArray, String[] strings) {
+        String property = System.getProperty("line.separator", "\n");
         StringBuffer stringBuffer = new StringBuffer();
-        int bb = 0;
+        int lengthValue = 0;
 
-        for (int i = 0; i < ba.length; i++) {
-            if (bb < ba[i].length) {
-                bb = ba[i].length;
+        for (int integerArrayArrayElementIndex = 0; integerArrayArrayElementIndex < integerArrayArray.length; integerArrayArrayElementIndex++) {
+            if (lengthValue < integerArrayArray[integerArrayArrayElementIndex].length) {
+                lengthValue = integerArrayArray[integerArrayArrayElementIndex].length;
             }
 
-            for (int j = 0; j < ba[i].length; j++) {
-                stringBuffer.append(strings[ba[i][j]]).append(' ');
+            for (int integerArrayArrayElementElementIndex = 0; integerArrayArrayElementElementIndex < integerArrayArray[integerArrayArrayElementIndex].length; integerArrayArrayElementElementIndex++) {
+                stringBuffer.append(strings[integerArrayArray[integerArrayArrayElementIndex][integerArrayArrayElementElementIndex]]).append(' ');
             }
 
-            if (ba[i][ba[i].length - 1] != 0) {
+            if (integerArrayArray[integerArrayArrayElementIndex][integerArrayArray[integerArrayArrayElementIndex].length - 1] != 0) {
                 stringBuffer.append("...");
             }
 
-            stringBuffer.append(string).append("    ");
+            stringBuffer.append(property).append("    ");
         }
 
         String string1 = "Encountered \"";
         ProGuardConfigToken proGuardConfigToken1 = proGuardConfigToken.Y;
 
-        for (int i = 0; i < bb; i++) {
+        for (int i = 0; i < lengthValue; i++) {
             if (i != 0) {
                 string1 = string1 + " ";
             }
@@ -55,11 +55,11 @@ public class ProGuardConfigParseException extends Exception {
         }
 
         string1 = string1 + "\" at line " + proGuardConfigToken.Y.c + ", column " + proGuardConfigToken.Y.F;
-        string1 = string1 + "." + string;
-        if (ba.length == 1) {
-            string1 = string1 + "Was expecting:" + string + "    ";
+        string1 = string1 + "." + property;
+        if (integerArrayArray.length == 1) {
+            string1 = string1 + "Was expecting:" + property + "    ";
         } else {
-            string1 = string1 + "Was expecting one of:" + string + "    ";
+            string1 = string1 + "Was expecting one of:" + property + "    ";
         }
 
         return string1 + stringBuffer.toString();
@@ -68,8 +68,8 @@ public class ProGuardConfigParseException extends Exception {
     public static String add_escapes(String string) {
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = 0; i < string.length(); i++) {
-            switch (string.charAt(i)) {
+        for (int characterIndex = 0; characterIndex < string.length(); characterIndex++) {
+            switch (string.charAt(characterIndex)) {
                 case '\u0000':
                     break;
                 case '\b':
@@ -98,7 +98,7 @@ public class ProGuardConfigParseException extends Exception {
                     break;
                 default:
                     char ba;
-                    if ((ba = string.charAt(i)) >= ' ' && ba <= '~') {
+                    if ((ba = string.charAt(characterIndex)) >= ' ' && ba <= '~') {
                         stringBuffer.append(ba);
                     } else {
                         String string1 = "0000" + Integer.toString(ba, 16);

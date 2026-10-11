@@ -14,13 +14,13 @@ public class ChangeLogKeyComparator implements Comparator {
     }
 
     public int compareFlowEntries(ObjectPair objectPair, ObjectPair objectPair1) {
-        String string = ((OpaquePredicateField) objectPair.getSecond()).getOwnerClassName();
-        String string1 = ((OpaquePredicateField) objectPair1.getSecond()).getOwnerClassName();
-        int ba = string.compareTo(string1);
+        String ownerClassName = ((OpaquePredicateField) objectPair.getSecond()).getOwnerClassName();
+        String ownerClassNameValue = ((OpaquePredicateField) objectPair1.getSecond()).getOwnerClassName();
+        int ba = ownerClassName.compareTo(ownerClassNameValue);
         if (ba == 0) {
-            String string2 = (String) objectPair.getFirst();
-            String string3 = (String) objectPair1.getFirst();
-            return string2.compareTo(string3);
+            String first = (String) objectPair.getFirst();
+            String firstValue = (String) objectPair1.getFirst();
+            return first.compareTo(firstValue);
         } else {
             return ba;
         }

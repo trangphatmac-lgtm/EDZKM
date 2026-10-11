@@ -12,8 +12,8 @@ public class ASTObfuscationDictionaryOption extends ProGuardOptionNode {
     public void translateOption(Object object) throws ZkmException, IOException {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
         if (this.jjtGetNumChildren() > 0) {
-            String string = ((ASTQuote122Clause) this.jjtGetChild(0)).getValue();
-            proGuardConfigTranslator.setObfuscationDictionary(string);
+            String value = ((ASTQuote122Clause) this.jjtGetChild(0)).getValue();
+            proGuardConfigTranslator.setObfuscationDictionary(value);
         }
     }
 

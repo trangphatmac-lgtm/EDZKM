@@ -80,18 +80,18 @@ public class ExceptionObfuscationExclusions extends ExclusionHandlerBase {
     }
 
     public final void processExclusionParameters() throws ZkmException, IOException {
-        int ba;
+        int exclusionStatementsSize;
         if (super.exclusionStatements == null) {
-            ba = 0;
+            exclusionStatementsSize = 0;
         } else {
-            ba = super.exclusionStatements.size();
+            exclusionStatementsSize = super.exclusionStatements.size();
         }
 
         HashMap hashMap = ZkmUtils.createHashMap();
         Vector vector = new Vector();
 
-        for (int i = 0; i < ba; i++) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(i);
+        for (int elementIndex = 0; elementIndex < exclusionStatementsSize; elementIndex++) {
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -167,18 +167,18 @@ public class ExceptionObfuscationExclusions extends ExclusionHandlerBase {
             }
         }
 
-        int bc;
+        int unexclusionStatementsSize;
         if (super.unexclusionStatements == null) {
-            bc = 0;
+            unexclusionStatementsSize = 0;
         } else {
-            bc = super.unexclusionStatements.size();
+            unexclusionStatementsSize = super.unexclusionStatements.size();
         }
 
         HashMap hashMap1 = ZkmUtils.createHashMap();
         Vector vector1 = new Vector();
 
-        for (int i = 0; i < bc; i++) {
-            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < unexclusionStatementsSize; elementIndexValue++) {
+            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(elementIndexValue);
             Enumeration enumeration1 = parameterListStatement1.getRenameFilterParameters();
 
             while (enumeration1.hasMoreElements()) {

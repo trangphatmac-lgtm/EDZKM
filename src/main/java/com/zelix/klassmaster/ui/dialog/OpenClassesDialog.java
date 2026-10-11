@@ -78,12 +78,12 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
         this.showWaitCursor();
         File[] files = this.fileSelector.getSelectedFiles();
 
-        for (int i = 0; i < files.length; i++) {
-            files[i].getAbsolutePath();
-            File[] files1 = this.fileSelector.listDirectoryTree(files[i]);
+        for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+            files[fileIndex].getAbsolutePath();
+            File[] files1 = this.fileSelector.listDirectoryTree(files[fileIndex]);
 
-            for (int j = 0; j < files1.length; j++) {
-                File file1 = files1[j];
+            for (int files1ElementIndex = 0; files1ElementIndex < files1.length; files1ElementIndex++) {
+                File file1 = files1[files1ElementIndex];
                 if (this.selectedFileSet.add(file1)) {
                     this.selectedListModel.addElement(file1);
                 }
@@ -109,7 +109,7 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
         this.removeBtn.setEnabled(false);
     }
 
-    public void initComponents(String string, String string1, String string2, InputFileLocation[] inputFileLocations) {
+    public void initComponents(String title, String string1, String string2, InputFileLocation[] inputFileLocations) {
         Container container1 = this.getContentPane();
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
@@ -138,8 +138,8 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
         this.dirPanel.add(new ZkmScrollPane(this.selectedList), "Center");
         container1.add(this.selectedDirLbl, "selectedDirLbl");
         if (inputFileLocations != null && inputFileLocations.length > 0) {
-            for (int i = 0; i < inputFileLocations.length; i++) {
-                File file3 = new File(inputFileLocations[i].getName());
+            for (int inputFileLocationIndex = 0; inputFileLocationIndex < inputFileLocations.length; inputFileLocationIndex++) {
+                File file3 = new File(inputFileLocations[inputFileLocationIndex].getName());
                 this.selectedListModel.addElement(file3);
                 this.selectedFileSet.add(file3);
             }
@@ -179,7 +179,7 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
         );
         this.createMainButtons(string1, stringBuffer, container1);
         constraintLayout1.parseConstraints(stringBuffer.toString());
-        this.setTitle(string);
+        this.setTitle(title);
         this.setIconImage(KlassMaster.getLogoImage(this));
         this.setSize(550, 400);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
@@ -192,9 +192,9 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
     public void addSelectedFiles() {
         File[] files = this.fileSelector.getSelectedFiles();
 
-        for (int i = 0; i < files.length; i++) {
-            if (this.selectedFileSet.add(files[i])) {
-                this.selectedListModel.addElement(files[i]);
+        for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+            if (this.selectedFileSet.add(files[fileIndex])) {
+                this.selectedListModel.addElement(files[fileIndex]);
             }
         }
 
@@ -212,8 +212,8 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
         GuiResources.showHelpTopic("018");
     }
 
-    public void setAddEnabled(boolean bl) {
-        this.addBtn.setEnabled(bl);
+    public void setAddEnabled(boolean addEnabled) {
+        this.addBtn.setEnabled(addEnabled);
     }
 
     public void createMainButtons(String string, StringBuffer stringBuffer, Container container1) {
@@ -238,7 +238,7 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
     }
 
     public void fireOpenCallback(SourceArchive[] sourceArchives1, InputFileLocation[] inputFileLocations, InputFileLocation[] inputFileLocations1, Set set1) throws ZkmException, IOException {
-        String string = this.fileSelector.getCurrentDirectoryPath();
+        String currentDirectoryPath = this.fileSelector.getCurrentDirectoryPath();
         this.callback
                 .onDialogResult(
                         this.classLocations,
@@ -246,7 +246,7 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
                         inputFileLocations,
                         inputFileLocations1,
                         this.inputRoots,
-                        new ObservableHolder(string),
+                        new ObservableHolder(currentDirectoryPath),
                         this.openNestedArchivesChk.isSelected(),
                         set1
                 );
@@ -298,12 +298,12 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
     public void keyPressed(KeyEvent keyEvent) {
         try {
             if (keyEvent.getKeyCode() == 10) {
-                Object object = keyEvent.getSource();
-                if (object == this.okBtn) {
+                Object source = keyEvent.getSource();
+                if (source == this.okBtn) {
                     this.confirmOpen();
-                } else if (object == this.cancelBtn) {
+                } else if (source == this.cancelBtn) {
                     this.cancelOpen();
-                } else if (object == this.helpBtn) {
+                } else if (source == this.helpBtn) {
                     this.showHelp();
                 }
             }
@@ -325,12 +325,12 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.okBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.okBtn) {
                 this.confirmOpen();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelOpen();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
             }
         } catch (Throwable throwable) {
@@ -338,17 +338,17 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
         }
     }
 
-    public void setRemoveAllEnabled(boolean bl) {
-        this.removeAllBtn.setEnabled(bl);
+    public void setRemoveAllEnabled(boolean removeAllEnabled) {
+        this.removeAllBtn.setEnabled(removeAllEnabled);
     }
 
     public void openSelectedLocations() throws ZkmException, IOException {
-        String[] strings = this.getSelectedPaths();
-        if (strings.length != 0) {
-            this.classLocations = new InputFileLocation[strings.length];
+        String[] selectedPaths = this.getSelectedPaths();
+        if (selectedPaths.length != 0) {
+            this.classLocations = new InputFileLocation[selectedPaths.length];
 
-            for (int i = 0; i < strings.length; i++) {
-                this.classLocations[i] = new InputFileLocation(strings[i]);
+            for (int i = 0; i < selectedPaths.length; i++) {
+                this.classLocations[i] = new InputFileLocation(selectedPaths[i]);
             }
 
             this.closedByButton = true;
@@ -377,9 +377,9 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
     public void removeSelectedEntries() {
         List list1 = this.selectedList.getSelectedValuesList();
 
-        for (int i = 0; i < list1.size(); i++) {
-            this.selectedFileSet.remove(list1.get(i));
-            this.selectedListModel.removeElement(list1.get(i));
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            this.selectedFileSet.remove(list1.get(elementIndex));
+            this.selectedListModel.removeElement(list1.get(elementIndex));
         }
 
         if (this.selectedListModel.getSize() == 0) {
@@ -389,13 +389,13 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
 
     public String[] getSelectedPaths() {
         int size = this.selectedListModel.getSize();
-        String[] strings = new String[size];
+        String[] selectedPaths = new String[size];
 
-        for (int i = 0; i < size; i++) {
-            strings[i] = ((File) this.selectedListModel.getElementAt(i)).getAbsolutePath();
+        for (int selectedPathIndex = 0; selectedPathIndex < size; selectedPathIndex++) {
+            selectedPaths[selectedPathIndex] = ((File) this.selectedListModel.getElementAt(selectedPathIndex)).getAbsolutePath();
         }
 
-        return strings;
+        return selectedPaths;
     }
 
     public final void cancelOpen() throws ZkmException, IOException {
@@ -412,59 +412,59 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
     public void keyTyped(KeyEvent keyEvent) {
     }
 
-    public void setAddPlusEnabled(boolean bl) {
-        this.addPlusBtn.setEnabled(bl);
+    public void setAddPlusEnabled(boolean addPlusEnabled) {
+        this.addPlusBtn.setEnabled(addPlusEnabled);
     }
 
     public OpenClassesDialog(
             JFrame jFrame,
-            String string,
+            String title,
             String string1,
             boolean expandToClassFiles,
             String string2,
-            boolean bl1,
+            boolean selectedArgument,
             InputFileLocation[] inputFileLocations,
             DialogCallback dialogCallback1
     ) {
         this.ownerFrame = jFrame;
         this.expandToClassFiles = expandToClassFiles;
         this.callback = dialogCallback1;
-        this.initComponents(string, string1, string2, inputFileLocations);
+        this.initComponents(title, string1, string2, inputFileLocations);
         this.setAddEnabled(false);
         this.setAddPlusEnabled(false);
         this.setRemoveEnabled(false);
         this.setRemoveAllEnabled(inputFileLocations != null && inputFileLocations.length > 0);
-        this.openNestedArchivesChk.setSelected(bl1);
+        this.openNestedArchivesChk.setSelected(selectedArgument);
         SwingUtils.setVisibleOnEdt(this);
         SwingUtils.requestFocusOnEdt(this.okBtn);
     }
 
     public void scanAndOpenClasses() throws ZkmException, IOException {
         this.showWaitCursor();
-        String[] strings = this.getSelectedPaths();
+        String[] selectedPaths = this.getSelectedPaths();
         HashMap hashMap = ZkmUtils.createHashMap(27);
         ArrayList arrayList = new ArrayList();
         ArrayList arrayList1 = new ArrayList();
         LinkedHashSet linkedHashSet = new LinkedHashSet();
         LinkedHashSet linkedHashSet1 = new LinkedHashSet(13);
-        if (strings.length != 0) {
-            this.inputRoots = new InputFileLocation[strings.length];
+        if (selectedPaths.length != 0) {
+            this.inputRoots = new InputFileLocation[selectedPaths.length];
 
-            for (int i = 0; i < strings.length; i++) {
-                this.inputRoots[i] = new InputFileLocation(strings[i]);
+            for (int i = 0; i < selectedPaths.length; i++) {
+                this.inputRoots[i] = new InputFileLocation(selectedPaths[i]);
             }
 
-            String string2 = System.getProperty("file.separator");
+            String property = System.getProperty("file.separator");
             GuiMessageReporter guiMessageReporter = new GuiMessageReporter(this, null);
 
-            for (int i = 0; i < strings.length; i++) {
-                File file1 = new File(strings[i]);
+            for (int selectedPathIndex = 0; selectedPathIndex < selectedPaths.length; selectedPathIndex++) {
+                File file1 = new File(selectedPaths[selectedPathIndex]);
                 if (file1.exists()) {
                     if (file1.isDirectory()) {
                         String[] strings1 = file1.list(new ClassFileNameFilter());
                         if (strings1 != null) {
                             for (int j = 0; j < strings1.length; j++) {
-                                String string = strings[i] + string2 + strings1[j];
+                                String string = selectedPaths[selectedPathIndex] + property + strings1[j];
                                 linkedHashSet.add(new InputFileLocation(string));
                             }
                         }
@@ -492,12 +492,12 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
                             ArrayList arrayList3 = new ArrayList(1);
                             HashSet hashSet = ZkmUtils.createHashSet(7);
                             HashSet hashSet1 = ZkmUtils.createHashSet(7);
-                            String string3 = file1.getAbsolutePath();
+                            String absolutePath = file1.getAbsolutePath();
                             GuiMessageReporter guiMessageReporter1 = guiMessageReporter;
                             Object object6 = null;
                             Object object5 = null;
                             Object object4 = null;
-                            String string1 = string3;
+                            String absolutePathValue = absolutePath;
                             Object object3 = null;
                             Object object2 = null;
                             Object object1 = null;
@@ -518,7 +518,7 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
                                     (Set) object1,
                                     (Set) object2,
                                     (Set) object3,
-                                    string1,
+                                    absolutePathValue,
                                     (SourceArchive) object4,
                                     (ZipOutputTarget) object5,
                                     (Set) object6,
@@ -535,8 +535,8 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
                 SourceArchive[] sourceArchives1 = new SourceArchive[hashMap.size()];
                 Iterator iterator = hashMap.values().iterator();
 
-                for (int i = 0; i < sourceArchives1.length; i++) {
-                    sourceArchives1[i] = (SourceArchive) iterator.next();
+                for (int sourceArchives1ElementIndex = 0; sourceArchives1ElementIndex < sourceArchives1.length; sourceArchives1ElementIndex++) {
+                    sourceArchives1[sourceArchives1ElementIndex] = (SourceArchive) iterator.next();
                 }
 
                 this.classLocations = new InputFileLocation[linkedHashSet.size()];
@@ -555,7 +555,7 @@ public class OpenClassesDialog extends EscapeClosableFrame implements ActionList
         this.showDefaultCursor();
     }
 
-    public void setRemoveEnabled(boolean bl) {
-        this.removeBtn.setEnabled(bl);
+    public void setRemoveEnabled(boolean removeEnabled) {
+        this.removeBtn.setEnabled(removeEnabled);
     }
 }

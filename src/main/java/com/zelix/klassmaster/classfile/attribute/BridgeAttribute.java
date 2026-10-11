@@ -8,8 +8,8 @@ import com.zelix.klassmaster.util.ListMultimap;
 import java.io.IOException;
 
 public class BridgeAttribute extends Attribute {
-    public BridgeAttribute(ClassFileComponent classFileComponent, int ba, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+    public BridgeAttribute(ClassFileComponent classFileComponent, int constantPoolIndex, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
     }
 
     @Override

@@ -30,25 +30,25 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
         int warningCount = scriptEnvironment1.getWarningCount();
         int errorCount = scriptEnvironment1.getErrorCount();
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptNode zkmScriptNode = this.jjtGetChild(childrenElementIndex);
             if (zkmScriptNode instanceof ASTIntegerLiteral) {
-                String string = ((ASTIntegerLiteral) zkmScriptNode).getValue();
-                if (i == 0) {
+                String value = ((ASTIntegerLiteral) zkmScriptNode).getValue();
+                if (childrenElementIndex == 0) {
                     try {
-                        int bf = Integer.parseInt(string);
-                        if (bf < 9) {
+                        int multiReleaseVersionValue = Integer.parseInt(value);
+                        if (multiReleaseVersionValue < 9) {
                             scriptEnvironment1.logFatalError(
                                     "'"
                                             + this.getStatementName()
                                             + "' statement at line "
                                             + this.getStatementLine()
                                             + " has a multi-release version integer '"
-                                            + string
+                                            + value
                                             + "' which is not 9 or greater."
                             );
                         } else {
-                            this.multiReleaseVersion = bf;
+                            this.multiReleaseVersion = multiReleaseVersionValue;
                         }
                     } catch (NumberFormatException numberFormatException) {
                         scriptEnvironment1.logFatalError(
@@ -57,7 +57,7 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
                                         + "' statement at line "
                                         + this.getStatementLine()
                                         + " has an invalid multi-release version integer : '"
-                                        + string
+                                        + value
                                         + "'d."
                         );
                     }
@@ -68,19 +68,19 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
                                     + "' statement at line "
                                     + this.getStatementLine()
                                     + " had a multi-release version integer '"
-                                    + string
+                                    + value
                                     + "' that was not the first parameter of the statement : "
-                                    + i
+                                    + childrenElementIndex
                                     + "."
                     );
                 }
             } else if (zkmScriptNode instanceof ZkmScriptASTStringLiteral) {
                 ZkmScriptASTStringLiteral zkmScriptASTStringLiteral = (ZkmScriptASTStringLiteral) zkmScriptNode;
-                String string1 = zkmScriptASTStringLiteral.getValue();
-                if (this.classpathEntries.contains(string1)) {
+                String valueValue = zkmScriptASTStringLiteral.getValue();
+                if (this.classpathEntries.contains(valueValue)) {
                     scriptEnvironment1.logWarning(
                             "\""
-                                    + string1
+                                    + valueValue
                                     + "\" appears more than once in \""
                                     + this.getStatementName()
                                     + "\" statement at line "
@@ -88,11 +88,11 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
                                     + ". First occurrence will be used."
                     );
                 } else {
-                    this.classpathEntries.add(string1);
+                    this.classpathEntries.add(valueValue);
                 }
             } else {
                 scriptEnvironment1.logFatalError(
-                        this.getClass().getName() + " had " + zkmScriptNode.getClass().getName() + " as child " + i + " at line " + this.getStatementLine() + "."
+                        this.getClass().getName() + " had " + zkmScriptNode.getClass().getName() + " as child " + childrenElementIndex + " at line " + this.getStatementLine() + "."
                 );
             }
         }
@@ -116,17 +116,17 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
         LogMessageReporter logMessageReporter = new LogMessageReporter(scriptEnvironment1, ZkmScriptSimpleNode.getTimestampPrefix().length());
         ZkmClasspath zkmClasspath = scriptEnvironment1.getClasspathForVersion(this.multiReleaseVersion);
         StringBuilder stringBuilder = new StringBuilder();
-        int bd = 0;
+        int elementIndex = 0;
         int bf = 0;
 
         for (List list1 = this.classpathEntries; bf < list1.size(); list1 = this.classpathEntries) {
-            String string = (String) this.classpathEntries.get(bd);
+            String string = (String) this.classpathEntries.get(elementIndex);
             if (stringBuilder.length() > 0 && stringBuilder.charAt(stringBuilder.length() - 1) != pathSeparator) {
                 stringBuilder.append(pathSeparator);
             }
 
             stringBuilder.append(string);
-            bf = ++bd;
+            bf = ++elementIndex;
         }
 
         String string4 = stringBuilder.toString();
@@ -137,7 +137,7 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
         ObservableHolder observableHolder = new ObservableHolder();
         ObservableHolder observableHolder1 = new ObservableHolder();
         boolean bl = ZkmClasspath.validateClasspath(string4, scriptEnvironment1.getDefaultDirectory(), observableHolder, logMessageReporter, observableHolder1);
-        String string5 = (String) observableHolder.getValue();
+        String value = (String) observableHolder.getValue();
         if (!bl) {
             scriptEnvironment1.logError(
                     "Invalid classpath in \""
@@ -154,8 +154,8 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
             printStream.println(stringBuilder1.append(ZkmStringUtils.repeatChar(bg, integer)).append("Error detected while setting classpath.").toString());
         }
 
-        String string1 = zkmClasspath.getClasspath();
-        zkmClasspath.setClasspath(string5);
+        String classpathValue = zkmClasspath.getClasspath();
+        zkmClasspath.setClasspath(value);
         ObservableHolder observableHolder2 = new ObservableHolder();
         ObservableHolder observableHolder3 = new ObservableHolder();
         if (zkmClasspath.locateRuntimeClasses(observableHolder3, observableHolder2)) {
@@ -170,8 +170,8 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
             }
         }
 
-        String string2 = zkmClasspath.getClasspath();
-        printWriter.println(string6 + " to \"" + ZkmClasspath.describeClasspath(string2) + "\"");
+        String classpathValue2 = zkmClasspath.getClasspath();
+        printWriter.println(string6 + " to \"" + ZkmClasspath.describeClasspath(classpathValue2) + "\"");
         observableHolder3.clearValue();
         observableHolder2.clearValue();
         ASTClasspathStatement aSTClasspathStatement1;
@@ -183,7 +183,7 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
         if (!zkmClasspath.locateRuntimeClasses(observableHolder3, observableHolder2)) {
             scriptEnvironment1.logFatalError(
                     "Could not find java.lang.Object : '"
-                            + string2
+                            + classpathValue2
                             + "' : "
                             + "java.home"
                             + "='"
@@ -205,8 +205,8 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
             bi = ba;
             string7 = "while executing";
         } else if (!observableHolder2.isValueNull()) {
-            String string3 = (String) observableHolder2.getValue();
-            printWriter.println("\tAdding '" + string3 + "' to classpath. Must be able to find java.lang.Object.");
+            String valueValue = (String) observableHolder2.getValue();
+            printWriter.println("\tAdding '" + valueValue + "' to classpath. Must be able to find java.lang.Object.");
             aSTClasspathStatement1 = this;
             scriptEnvironment2 = scriptEnvironment1;
             be = bb;
@@ -227,7 +227,7 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
             printWriter.println(
                     "\tChanging classpath" + (this.multiReleaseVersion == null ? "" : " for multi-release version " + this.multiReleaseVersion) + "..."
             );
-            printWriter.println("\tfrom\t\"" + string1 + "\"");
+            printWriter.println("\tfrom\t\"" + classpathValue + "\"");
             printWriter.println("\tto\t\"" + zkmClasspath.getClasspathDescription() + "\"");
         }
     }

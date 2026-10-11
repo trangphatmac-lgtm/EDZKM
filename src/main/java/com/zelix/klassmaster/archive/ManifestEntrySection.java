@@ -28,36 +28,36 @@ public class ManifestEntrySection extends AbstractManifestProcessor {
             MessageReporter messageReporter1
     ) throws IOException {
         ResourcePathTranslator resourcePathTranslator1 = (ResourcePathTranslator) object;
-        String string7 = ResourcePathTranslator.getMarkerString();
+        String markerString = ResourcePathTranslator.getMarkerString();
         Enumeration enumeration = super.headers.keys();
-        String string1 = string7;
+        String markerStringValue = markerString;
 
         while (enumeration.hasMoreElements()) {
-            String string2 = (String) enumeration.nextElement();
-            if (string2.equals("Name")) {
-                String string3 = this.getSectionName();
-                if (string3 != null && string3.length() <= 0) {
+            String key = (String) enumeration.nextElement();
+            if (key.equals("Name")) {
+                String sectionName = this.getSectionName();
+                if (sectionName != null && sectionName.length() <= 0) {
                     printWriter.println(this.wrapManifestLine("Name: "));
                 } else {
                     printWriter.println(
-                            this.wrapManifestLine("Name: " + AbstractManifestProcessor.translateResourcePath(string3, enumerableMap1, resourcePathTranslator1))
+                            this.wrapManifestLine("Name: " + AbstractManifestProcessor.translateResourcePath(sectionName, enumerableMap1, resourcePathTranslator1))
                     );
                 }
-            } else if (string2.equals("Java-Bean")) {
-                String string5 = this.getRawHeaderValue("Java-Bean");
-                printWriter.println("Java-Bean: " + string5);
-            } else if (string2.equals("Sealed")) {
-                String string6 = this.getRawHeaderValue("Sealed");
-                printWriter.println("Sealed: " + string6);
-            } else if (!string2.equals("Magic") && string2.indexOf("Digest") == -1) {
+            } else if (key.equals("Java-Bean")) {
+                String rawHeaderValue = this.getRawHeaderValue("Java-Bean");
+                printWriter.println("Java-Bean: " + rawHeaderValue);
+            } else if (key.equals("Sealed")) {
+                String rawHeaderValueValue = this.getRawHeaderValue("Sealed");
+                printWriter.println("Sealed: " + rawHeaderValueValue);
+            } else if (!key.equals("Magic") && key.indexOf("Digest") == -1) {
                 BooleanFlag booleanFlag = new BooleanFlag();
-                String string4 = this.translateClassListAttribute(string2, enumerableMap, enumerableMap1, booleanFlag, string, bl, messageReporter1);
+                String string4 = this.translateClassListAttribute(key, enumerableMap, enumerableMap1, booleanFlag, string, bl, messageReporter1);
                 if (!booleanFlag.getValue() || HiddenOptionFlags.KEEP_UNCHANGED_MANIFEST_ENTRIES) {
                     printWriter.println(string4);
                 }
             }
 
-            if (string1 == null) {
+            if (markerStringValue == null) {
                 break;
             }
         }

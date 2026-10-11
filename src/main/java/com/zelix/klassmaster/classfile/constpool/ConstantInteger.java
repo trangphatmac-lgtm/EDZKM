@@ -17,8 +17,8 @@ public class ConstantInteger extends NumericConstantEntry implements ConstantKey
         return String.valueOf(this.value);
     }
 
-    public ConstantInteger(int ba, AbstractConstantPool abstractConstantPool, ConstantInteger constantInteger1) {
-        super(ba, abstractConstantPool);
+    public ConstantInteger(int index, AbstractConstantPool abstractConstantPool, ConstantInteger constantInteger1) {
+        super(index, abstractConstantPool);
         this.value = constantInteger1.value;
         this.inProgramPool = constantInteger1.inProgramPool;
     }
@@ -42,8 +42,8 @@ public class ConstantInteger extends NumericConstantEntry implements ConstantKey
         this.value = value;
     }
 
-    public ConstantInteger(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantInteger(int index, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(index, abstractConstantPool);
         this.value = classFileInputStream.readInt();
         this.inProgramPool = abstractConstantPool.isProgramPool();
     }
@@ -69,15 +69,15 @@ public class ConstantInteger extends NumericConstantEntry implements ConstantKey
     }
 
     @Override
-    public void setValueFromString(String string) throws ZkmException, IOException {
-        int ba;
+    public void setValueFromString(String valueFromString) throws ZkmException, IOException {
+        int valueValue;
         try {
-            ba = Integer.parseInt(string);
+            valueValue = Integer.parseInt(valueFromString);
         } catch (NumberFormatException numberFormatException) {
-            throw new InvalidEditException(string + " is not a valid integer");
+            throw new InvalidEditException(valueFromString + " is not a valid integer");
         }
 
-        this.value = ba;
+        this.value = valueValue;
         this.notifyObservers();
     }
 

@@ -13,8 +13,8 @@ public class ArrayListMultiMap {
 
     @Override
     public Object clone() {
-        int ba = this.map.size();
-        ArrayListMultiMap arrayListMultiMap1 = new ArrayListMultiMap(ba);
+        int mapSize = this.map.size();
+        ArrayListMultiMap arrayListMultiMap1 = new ArrayListMultiMap(mapSize);
         Iterator iterator = this.map.entrySet().iterator();
 
         while (iterator.hasNext()) {
@@ -30,8 +30,8 @@ public class ArrayListMultiMap {
         return this.map.keyEnumeration();
     }
 
-    public boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
     public ArrayListMultiMap(int ba, int bb) {
@@ -43,19 +43,19 @@ public class ArrayListMultiMap {
         this(ba, 5);
     }
 
-    public void addValue(Object object, Object object1) {
-        java.util.List arrayList = (List) this.map.get(object);
+    public void addValue(Object key, Object object1) {
+        java.util.List arrayList = (List) this.map.get(key);
         if (arrayList == null) {
             arrayList = new ArrayList(this.initialListCapacity);
             arrayList.add(object1);
-            this.map.put(object, arrayList);
+            this.map.put(key, arrayList);
         } else {
             arrayList.add(object1);
         }
     }
 
-    public void putValues(Object object, Object object1) {
-        this.map.put(object, object1);
+    public void putValues(Object key, Object second) {
+        this.map.put(key, second);
     }
 
     public int getKeyCount() {
@@ -66,7 +66,7 @@ public class ArrayListMultiMap {
         this(75, 5);
     }
 
-    public List getValues(Object object) {
-        return (List) this.map.get(object);
+    public List getValues(Object key) {
+        return (List) this.map.get(key);
     }
 }

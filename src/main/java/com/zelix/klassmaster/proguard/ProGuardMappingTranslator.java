@@ -25,38 +25,38 @@ public class ProGuardMappingTranslator {
     public final ListMultimap methodMappings = new ListMultimap();
     public final String mappingFileName;
 
-    public void addClassMapping(String string, String string1) {
-        String string2 = ((java.lang.String) (this.classMappings.put(string, string1)));
-        String string6;
+    public void addClassMapping(String key, String value) {
+        String string2 = ((java.lang.String) (this.classMappings.put(key, value)));
+        String keyValue;
         byte be;
         if (string2 != null) {
-            if (!string2.equals(string1)) {
-                this.addWarning("Old class name '" + string + "' is mapped to more than one new class name. : '" + string2 + "' and '" + string1 + "'");
+            if (!string2.equals(value)) {
+                this.addWarning("Old class name '" + key + "' is mapped to more than one new class name. : '" + string2 + "' and '" + value + "'");
                 long bd = 52413964347291L;
-                string6 = string;
+                keyValue = key;
                 be = 46;
             } else {
-                this.addWarning("Class mapping '" + string + " -> " + string1 + "' appears more than once.");
+                this.addWarning("Class mapping '" + key + " -> " + value + "' appears more than once.");
                 long bb = 52413964347291L;
-                string6 = string;
+                keyValue = key;
                 be = 46;
             }
         } else {
             long bc = 52413964347291L;
-            string6 = string;
+            keyValue = key;
             be = 46;
         }
 
-        char ba = (char) be;
-        String string5 = string6;
-        String string3 = ClassFileBase.substringBeforeLast(string5, ba);
-        if (string3.length() > 0) {
-            String string4 = ClassFileBase.substringBeforeLast(string1, '.');
-            this.addPackageMapping(string3, string4);
+        char searchCharacter = (char) be;
+        String keyValue3 = keyValue;
+        String keyValue2 = ClassFileBase.substringBeforeLast(keyValue3, searchCharacter);
+        if (keyValue2.length() > 0) {
+            String valueValue = ClassFileBase.substringBeforeLast(value, '.');
+            this.addPackageMapping(keyValue2, valueValue);
         }
     }
 
-    public void addFieldMapping(Object object, String string, String string1, String string2) {
+    public void addFieldMapping(Object key, String string, String string1, String string2) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(string);
         stringBuilder.append(' ');
@@ -72,7 +72,7 @@ public class ProGuardMappingTranslator {
             listMultimap = this.fieldMappings;
         }
 
-        listMultimap.addValue(object, stringBuilder.toString());
+        listMultimap.addValue(key, stringBuilder.toString());
     }
 
     public void addWarning(String string) {
@@ -80,10 +80,10 @@ public class ProGuardMappingTranslator {
         this.warnings.add(string1);
     }
 
-    public void addPackageMapping(String string, String string1) {
-        String string2 = ((java.lang.String) (this.packageMappings.put(string, string1)));
-        if (string2 != null && !string2.equals(string1)) {
-            this.addWarning("Old package name '" + string + "' is mapped to more than one new package name. : '" + string2 + "' and '" + string1 + "'");
+    public void addPackageMapping(String key, String value) {
+        String string2 = ((java.lang.String) (this.packageMappings.put(key, value)));
+        if (string2 != null && !string2.equals(value)) {
+            this.addWarning("Old package name '" + key + "' is mapped to more than one new package name. : '" + string2 + "' and '" + value + "'");
         }
     }
 
@@ -149,17 +149,17 @@ public class ProGuardMappingTranslator {
 
             while (iterator1.hasNext()) {
                 Entry entry = (Entry) iterator1.next();
-                String string = (String) entry.getKey();
-                String string1 = (String) entry.getValue();
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
                 StringBuilder stringBuilder1 = new StringBuilder();
-                StringTokenizer stringTokenizer = new StringTokenizer(string, ".");
+                StringTokenizer stringTokenizer = new StringTokenizer(key, ".");
                 int ba = stringTokenizer.countTokens();
 
                 for (int i = 1; i <= ba - 1; i++) {
                     stringBuilder1.append(stringTokenizer.nextToken());
                     String string2 = stringBuilder1.toString();
                     if (!hashSet.contains(string2)) {
-                        this.appendPackageMapping(string2, getPackagePrefix(string1, i), stringBuilder);
+                        this.appendPackageMapping(string2, getPackagePrefix(value, i), stringBuilder);
                         hashSet.add(string2);
                     }
 
@@ -168,8 +168,8 @@ public class ProGuardMappingTranslator {
                     }
                 }
 
-                this.appendPackageMapping(string, string1, stringBuilder);
-                hashSet.add(string);
+                this.appendPackageMapping(key, value, stringBuilder);
+                hashSet.add(key);
             }
 
             stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
@@ -181,9 +181,9 @@ public class ProGuardMappingTranslator {
             while (iterator.hasNext()) {
                 Entry entry1 = (Entry) iterator.next();
                 stringBuilder.append("Class: ");
-                String string3 = (String) entry1.getKey();
-                stringBuilder.append(string3);
-                if (string3.equals(entry1.getValue())) {
+                String keyValue = (String) entry1.getKey();
+                stringBuilder.append(keyValue);
+                if (keyValue.equals(entry1.getValue())) {
                     stringBuilder.append('\t');
                     stringBuilder.append("NameNotChanged");
                 } else {
@@ -192,8 +192,8 @@ public class ProGuardMappingTranslator {
                 }
 
                 stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-                this.appendMemberMappings(string3, "\tFieldsOf: ", this.fieldMappings.getValues(string3), stringBuilder);
-                this.appendMemberMappings(string3, "\tMethodsOf: ", this.methodMappings.getValues(string3), stringBuilder);
+                this.appendMemberMappings(keyValue, "\tFieldsOf: ", this.fieldMappings.getValues(keyValue), stringBuilder);
+                this.appendMemberMappings(keyValue, "\tMethodsOf: ", this.methodMappings.getValues(keyValue), stringBuilder);
                 stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
         }
@@ -217,22 +217,22 @@ public class ProGuardMappingTranslator {
         return stringBuilder.toString();
     }
 
-    public ProGuardMappingTranslator(String string) {
-        this.mappingFileName = string;
+    public ProGuardMappingTranslator(String mappingFileNameArgument) {
+        this.mappingFileName = mappingFileNameArgument;
     }
 
-    public void addMethodMapping(Object object, String string, String string1, String string2, List list1) {
+    public void addMethodMapping(Object key, String string, String string1, String string2, List list1) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(string);
         stringBuilder.append(' ');
         stringBuilder.append(string1);
         stringBuilder.append('(');
         if (list1 != null) {
-            int ba = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < ba; i++) {
-                stringBuilder.append((String) list1.get(i));
-                if (i < ba - 1) {
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                stringBuilder.append((String) list1.get(elementIndex));
+                if (elementIndex < list1Size - 1) {
                     stringBuilder.append(',');
                 }
             }
@@ -250,6 +250,6 @@ public class ProGuardMappingTranslator {
             listMultimap = this.methodMappings;
         }
 
-        listMultimap.addValue(object, stringBuilder.toString());
+        listMultimap.addValue(key, stringBuilder.toString());
     }
 }

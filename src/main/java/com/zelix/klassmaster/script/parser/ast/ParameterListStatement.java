@@ -5,16 +5,16 @@ import com.zelix.klassmaster.util.ArrayEnumeration;
 import java.util.Enumeration;
 
 public abstract class ParameterListStatement extends ParameterListStatementBase {
-    public ParameterListStatement(int ba) {
-        super(ba);
+    public ParameterListStatement(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     public final Enumeration getRenameFilterParameters() {
-        int ba = super.parameters.size();
-        ASTRenameFilterParameter[] aSTRenameFilterParameters = new ASTRenameFilterParameter[ba];
+        int parametersSize = super.parameters.size();
+        ASTRenameFilterParameter[] aSTRenameFilterParameters = new ASTRenameFilterParameter[parametersSize];
 
-        for (int i = 0; i < ba; i++) {
-            aSTRenameFilterParameters[i] = (ASTRenameFilterParameter) super.parameters.get(i);
+        for (int elementIndex = 0; elementIndex < parametersSize; elementIndex++) {
+            aSTRenameFilterParameters[elementIndex] = (ASTRenameFilterParameter) super.parameters.get(elementIndex);
         }
 
         return new ArrayEnumeration(aSTRenameFilterParameters);

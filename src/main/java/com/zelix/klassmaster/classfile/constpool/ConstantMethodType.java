@@ -21,8 +21,8 @@ public class ConstantMethodType extends MethodTypeConstantBase implements Resolv
         dataOutputStream.writeShort(this.descriptorIndex);
     }
 
-    public ConstantMethodType(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantMethodType(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, abstractConstantPool);
         this.descriptorIndex = classFileInputStream.readUnsignedShort();
     }
 
@@ -40,8 +40,8 @@ public class ConstantMethodType extends MethodTypeConstantBase implements Resolv
                     listMultimap.addValue((ConstantUtf8) constantPoolEntry, resolvedMethodType);
                 }
 
-                String string1 = resolvedMethodType.getDescriptor();
-                if (string1.startsWith("(") && string1.indexOf(")") != -1 && string1.indexOf(")") < string1.length() - 1) {
+                String descriptorValue = resolvedMethodType.getDescriptor();
+                if (descriptorValue.startsWith("(") && descriptorValue.indexOf(")") != -1 && descriptorValue.indexOf(")") < descriptorValue.length() - 1) {
                     return resolvedMethodType;
                 } else {
                     throw new ClassFileFormatException(
@@ -49,7 +49,7 @@ public class ConstantMethodType extends MethodTypeConstantBase implements Resolv
                                     + " : "
                                     + "Invalid method descriptor"
                                     + " : "
-                                    + string1
+                                    + descriptorValue
                                     + " : "
                                     + ConstantPoolEntry.getTagName(this.getTag())
                                     + " entry"

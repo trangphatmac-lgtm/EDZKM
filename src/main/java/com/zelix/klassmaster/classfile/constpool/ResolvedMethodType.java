@@ -48,15 +48,15 @@ public class ResolvedMethodType extends MethodTypeConstantBase implements Utf8Co
     }
 
     public void remapDescriptor(HashMap hashMap) {
-        String string = this.descriptorUtf8.getValue();
-        String string1 = ConstantPoolEntry.remapDescriptorClassNames(string, hashMap);
-        if (string1 != string) {
-            this.descriptorUtf8.setValue(string1);
+        String value = this.descriptorUtf8.getValue();
+        String valueValue = ConstantPoolEntry.remapDescriptorClassNames(value, hashMap);
+        if (valueValue != value) {
+            this.descriptorUtf8.setValue(valueValue);
         }
     }
 
-    public ResolvedMethodType(int ba, AbstractConstantPool abstractConstantPool, ConstantUtf8 constantUtf8) {
-        super(ba, abstractConstantPool);
+    public ResolvedMethodType(int index, AbstractConstantPool abstractConstantPool, ConstantUtf8 constantUtf8) {
+        super(index, abstractConstantPool);
         this.descriptorUtf8 = constantUtf8;
     }
 

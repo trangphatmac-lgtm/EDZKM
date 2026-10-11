@@ -14,12 +14,12 @@ public class ASTFieldType extends ChangeLogSimpleNode implements TypeNameSetter 
     @Override
     public void interpret(ChangeLogNode changeLogNode, int bd, int ba, int be, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int bb = this.jjtGetNumChildren();
-        int bc = 0;
+        int childrenElementIndex = 0;
 
-        while (bc < bb) {
-            this.jjtGetChild(bc).interpret(this, 30872, 34067, 41973, abstractChangeLog);
+        while (childrenElementIndex < bb) {
+            this.jjtGetChild(childrenElementIndex).interpret(this, 30872, 34067, 41973, abstractChangeLog);
             if (ba > 0) {
-                bc++;
+                childrenElementIndex++;
             }
         }
 
@@ -31,7 +31,7 @@ public class ASTFieldType extends ChangeLogSimpleNode implements TypeNameSetter 
     }
 
     @Override
-    public void setTypeName(Object object) {
-        this.typeName = (String) object;
+    public void setTypeName(Object typeNameArgument) {
+        this.typeName = (String) typeNameArgument;
     }
 }

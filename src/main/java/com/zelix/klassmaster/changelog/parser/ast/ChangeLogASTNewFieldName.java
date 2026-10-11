@@ -16,8 +16,8 @@ public class ChangeLogASTNewFieldName extends ChangeLogSimpleNode implements Cha
     }
 
     @Override
-    public void setParsedName(Object object) {
-        this.newFieldName = (String) object;
+    public void setParsedName(Object parsedName) {
+        this.newFieldName = (String) parsedName;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ChangeLogASTNewFieldName extends ChangeLogSimpleNode implements Cha
         int bg = (int) (bi << 48 >>> 48);
         this.jjtGetChild(0).interpret(this, be, bf, bg, abstractChangeLog);
         ChangeLogASTFieldNameChange changeLogASTFieldNameChange = (ChangeLogASTFieldNameChange) changeLogNode;
-        String string = this.newFieldName;
-        changeLogASTFieldNameChange.setNewFieldName(string);
+        String newFieldNameValue = this.newFieldName;
+        changeLogASTFieldNameChange.setNewFieldName(newFieldNameValue);
     }
 }

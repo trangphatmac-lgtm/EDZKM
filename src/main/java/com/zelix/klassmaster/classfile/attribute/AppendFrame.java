@@ -41,11 +41,11 @@ public class AppendFrame extends StackMapTableFrame {
         int bb = this.frameType - 251;
         this.appendedLocals = new VerificationTypeInfo[bb];
 
-        for (int i = 0; i < bb; i++) {
-            this.appendedLocals[i] = VerificationTypeInfo.readTypeInfo(
+        for (int appendedLocalIndex = 0; appendedLocalIndex < bb; appendedLocalIndex++) {
+            this.appendedLocals[appendedLocalIndex] = VerificationTypeInfo.readTypeInfo(
                     (StackMapTableAttribute) classFileComponent, classFileInputStream, listMultimap, listMultimap1, printWriter, map1, map2, integerCache1
             );
-            if (!this.appendedLocals[i].isValid()) {
+            if (!this.appendedLocals[appendedLocalIndex].isValid()) {
                 this.valid = false;
             }
         }
@@ -73,14 +73,14 @@ public class AppendFrame extends StackMapTableFrame {
 
     @Override
     public int getFrameSize() {
-        int ba = 1;
-        ba += 2;
+        int frameSize = 1;
+        frameSize += 2;
 
         for (VerificationTypeInfo verificationTypeInfo : this.appendedLocals) {
-            ba += verificationTypeInfo.getByteSize();
+            frameSize += verificationTypeInfo.getByteSize();
         }
 
-        return ba;
+        return frameSize;
     }
 
     public VerificationTypeInfo[] getAppendedLocals() {
@@ -90,10 +90,10 @@ public class AppendFrame extends StackMapTableFrame {
     @Override
     public final void collectUsedConstants(char bc, int bd, UsedConstantsCollector usedConstantsCollector, char be) {
         VerificationTypeInfo[] verificationTypeInfos = this.appendedLocals;
-        int ba = verificationTypeInfos.length;
+        int lengthValue = verificationTypeInfos.length;
 
-        for (int i = 0; i < ba; i++) {
-            verificationTypeInfos[i].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+        for (int verificationTypeInfoIndex = 0; verificationTypeInfoIndex < lengthValue; verificationTypeInfoIndex++) {
+            verificationTypeInfos[verificationTypeInfoIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
         }
     }
 
@@ -102,10 +102,10 @@ public class AppendFrame extends StackMapTableFrame {
         dataOutputStream.writeByte(this.frameType);
         dataOutputStream.writeShort(this.offsetDelta);
         VerificationTypeInfo[] verificationTypeInfos = this.appendedLocals;
-        int ba = verificationTypeInfos.length;
+        int lengthValue = verificationTypeInfos.length;
 
-        for (int i = 0; i < ba; i++) {
-            verificationTypeInfos[i].writeRemapped(dataOutputStream, map1);
+        for (int verificationTypeInfoIndex = 0; verificationTypeInfoIndex < lengthValue; verificationTypeInfoIndex++) {
+            verificationTypeInfos[verificationTypeInfoIndex].writeRemapped(dataOutputStream, map1);
         }
     }
 

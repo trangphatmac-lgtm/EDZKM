@@ -50,9 +50,9 @@ public class FieldNameTypeSignature extends MemberSignatureBase {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object != null && object instanceof FieldNameTypeSignature) {
-            FieldNameTypeSignature fieldNameTypeSignature1 = (FieldNameTypeSignature) object;
+    public boolean equals(Object other) {
+        if (other != null && other instanceof FieldNameTypeSignature) {
+            FieldNameTypeSignature fieldNameTypeSignature1 = (FieldNameTypeSignature) other;
             return this.hash == fieldNameTypeSignature1.hash
                     && this.name == fieldNameTypeSignature1.name
                     && this.parameterDescriptor == fieldNameTypeSignature1.parameterDescriptor;

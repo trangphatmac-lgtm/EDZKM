@@ -39,8 +39,8 @@ public class ClassSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
     public JTextField implementsFld;
     public boolean showHigherLevelExclude;
 
-    public ClassSpecifierPanel(JFrame jFrame, RenameFilterModel renameFilterModel, boolean showHigherLevelExclude, int ba) {
-        super(jFrame, renameFilterModel, ba);
+    public ClassSpecifierPanel(JFrame jFrame, RenameFilterModel renameFilterModel, boolean showHigherLevelExclude, int exclusionTypeArgument) {
+        super(jFrame, renameFilterModel, exclusionTypeArgument);
         this.showHigherLevelExclude = showHigherLevelExclude;
         this.buildPanel();
     }
@@ -48,8 +48,8 @@ public class ClassSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = actionEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
@@ -62,8 +62,8 @@ public class ClassSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
             int[] selectedIndices = platformAwareJList.getSelectedIndices();
             StringBuffer stringBuffer = new StringBuffer();
 
-            for (int i = 0; i < selectedIndices.length; i++) {
-                stringBuffer.append(selectedIndices[i] + ",");
+            for (int selectedIndiceIndex = 0; selectedIndiceIndex < selectedIndices.length; selectedIndiceIndex++) {
+                stringBuffer.append(selectedIndices[selectedIndiceIndex] + ",");
             }
 
             int size = this.modifierListModel.getSize();
@@ -133,14 +133,14 @@ public class ClassSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
 
     @Override
     public void focusGained(FocusEvent focusEvent) {
-        Object object = focusEvent.getSource();
-        if (object == this.nameFld) {
+        Object source = focusEvent.getSource();
+        if (source == this.nameFld) {
             super.hintLabel.setText("Enter name of the class. May contain the \"*\" wildcard.");
-        } else if (object == this.extendsFld) {
+        } else if (source == this.extendsFld) {
             super.hintLabel.setText("Enter fully qualified class name. May not contain wildcards.");
-        } else if (object == this.implementsFld) {
+        } else if (source == this.implementsFld) {
             super.hintLabel.setText("Enter comma separated list of fully qualified class names. May not contain wildcards.");
-        } else if (object == this.annotatedByFld) {
+        } else if (source == this.annotatedByFld) {
             super.hintLabel.setText("Enter fully qualified class name.  May contain the \"*\" wildcard.");
         }
     }
@@ -219,8 +219,8 @@ public class ClassSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
     @Override
     public void itemStateChanged(ItemEvent itemEvent) {
         try {
-            Object object = itemEvent.getSource();
-            if (object == this.accessModifierComboBox) {
+            Object source = itemEvent.getSource();
+            if (source == this.accessModifierComboBox) {
                 if (itemEvent.getStateChange() == 1) {
                     switch (this.accessModifierComboBox.getSelectedIndex()) {
                         case 0:
@@ -233,7 +233,7 @@ public class ClassSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
                             super.filterModel.setClassPackagePrivate();
                     }
                 }
-            } else if (object == this.higherLevelExcludeChk) {
+            } else if (source == this.higherLevelExcludeChk) {
                 if (itemEvent.getStateChange() == 1) {
                     super.filterModel.setExcludeContainingClass(true);
                 } else {
@@ -249,8 +249,8 @@ public class ClassSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
     public void focusLost(FocusEvent focusEvent) {
         try {
             super.hintLabel.setText(" ");
-            Object object = focusEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = focusEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
@@ -280,20 +280,20 @@ public class ClassSpecifierPanel extends ExcludeParamTabPanel implements ItemLis
                 );
             }
         } else if (object == this.extendsFld) {
-            String string1 = this.extendsFld.getText().trim();
-            if (string1.indexOf("*") != -1) {
+            String superclassName = this.extendsFld.getText().trim();
+            if (superclassName.indexOf("*") != -1) {
                 this.extendsFld.setText(super.filterModel.getSuperclassName());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Extends class name cannot contain wildcards. Field restored.");
             } else {
-                super.filterModel.setSuperclassName(string1);
+                super.filterModel.setSuperclassName(superclassName);
             }
         } else if (object == this.implementsFld) {
-            String string2 = this.implementsFld.getText().trim();
-            if (string2.indexOf("*") != -1) {
+            String interfaceNames = this.implementsFld.getText().trim();
+            if (interfaceNames.indexOf("*") != -1) {
                 this.implementsFld.setText(super.filterModel.getInterfaceNamesText());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Implements class names cannot contain wildcards. Field restored.");
             } else {
-                super.filterModel.setInterfaceNames(string2);
+                super.filterModel.setInterfaceNames(interfaceNames);
             }
         } else if (object == this.annotatedByFld) {
             super.filterModel.setClassAnnotation(this.annotatedByFld.getText().trim());

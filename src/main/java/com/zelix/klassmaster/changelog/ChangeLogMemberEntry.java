@@ -31,15 +31,15 @@ public class ChangeLogMemberEntry implements Comparable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof ChangeLogMemberEntry)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof ChangeLogMemberEntry)) {
             return false;
         }
 
-        ChangeLogMemberEntry changeLogMemberEntry1 = (ChangeLogMemberEntry) object;
+        ChangeLogMemberEntry changeLogMemberEntry1 = (ChangeLogMemberEntry) other;
         return this.className.equals(changeLogMemberEntry1.className)
                 && (
-                this.fieldName == null && changeLogMemberEntry1.fieldName == null && this == object
+                this.fieldName == null && changeLogMemberEntry1.fieldName == null && this == other
                         || this.fieldName != null && changeLogMemberEntry1.fieldName != null && this.fieldName.equals(changeLogMemberEntry1.fieldName)
         );
     }
@@ -60,8 +60,8 @@ public class ChangeLogMemberEntry implements Comparable {
         return this.fieldTypeName;
     }
 
-    public void setGetterMethodName(String string) {
-        this.getterMethodName = string;
+    public void setGetterMethodName(String getterMethodNameArgument) {
+        this.getterMethodName = getterMethodNameArgument;
     }
 
     public String getNewAltGetterMethodName() {
@@ -84,8 +84,8 @@ public class ChangeLogMemberEntry implements Comparable {
         }
     }
 
-    public void setNewSetterMethodName(String string) {
-        this.newSetterMethodName = string;
+    public void setNewSetterMethodName(String newSetterMethodNameArgument) {
+        this.newSetterMethodName = newSetterMethodNameArgument;
     }
 
     public String getFieldName() {
@@ -99,12 +99,12 @@ public class ChangeLogMemberEntry implements Comparable {
     public ChangeLogMemberEntry(
             String string,
             String string1,
-            String string2,
+            String fieldDescriptorArgument,
             String string3,
             String string4,
             String string5,
             boolean alternateVariant,
-            String string6,
+            String packageNameArgument,
             ChangeLogMapping changeLogMapping1,
             String string7,
             ObservableHolder observableHolder
@@ -112,14 +112,14 @@ public class ChangeLogMemberEntry implements Comparable {
         observableHolder.clearValue();
         this.className = string;
         this.fieldName = string1;
-        this.fieldDescriptor = string2;
+        this.fieldDescriptor = fieldDescriptorArgument;
         this.setterMethodName = string3;
         this.getterMethodName = string4;
         this.altGetterMethodName = string5;
         this.alternateVariant = alternateVariant;
-        this.packageName = string6;
-        if (string2 != null) {
-            this.fieldTypeName = ConstantPoolEntry.descriptorToJavaType(string2);
+        this.packageName = packageNameArgument;
+        if (fieldDescriptorArgument != null) {
+            this.fieldTypeName = ConstantPoolEntry.descriptorToJavaType(fieldDescriptorArgument);
         }
 
         if (changeLogMapping1.hasClassMapping(string)) {
@@ -226,8 +226,8 @@ public class ChangeLogMemberEntry implements Comparable {
         return this.newGetterMethodName;
     }
 
-    public void setNewGetterMethodName(String string) {
-        this.newGetterMethodName = string;
+    public void setNewGetterMethodName(String newGetterMethodNameArgument) {
+        this.newGetterMethodName = newGetterMethodNameArgument;
     }
 
     public boolean hasNoField() {
@@ -247,13 +247,13 @@ public class ChangeLogMemberEntry implements Comparable {
         return this.fieldName != null ? this.className.hashCode() ^ this.fieldName.hashCode() : System.identityHashCode(this);
     }
 
-    public void setAltGetterMethodName(String string) {
-        this.altGetterMethodName = string;
+    public void setAltGetterMethodName(String altGetterMethodNameArgument) {
+        this.altGetterMethodName = altGetterMethodNameArgument;
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareEntries((ChangeLogMemberEntry) object);
+    public int compareTo(Object other) {
+        return this.compareEntries((ChangeLogMemberEntry) other);
     }
 
     public boolean hasCustomReferenceType() {
@@ -264,16 +264,16 @@ public class ChangeLogMemberEntry implements Comparable {
         return this.setterMethodName != null;
     }
 
-    public void setNewAltGetterMethodName(String string) {
-        this.newAltGetterMethodName = string;
+    public void setNewAltGetterMethodName(String newAltGetterMethodNameArgument) {
+        this.newAltGetterMethodName = newAltGetterMethodNameArgument;
     }
 
     public String getGetterMethodName() {
         return this.getterMethodName;
     }
 
-    public void setSetterMethodName(String string) {
-        this.setterMethodName = string;
+    public void setSetterMethodName(String setterMethodNameArgument) {
+        this.setterMethodName = setterMethodNameArgument;
     }
 
     public String getFieldDescriptor() {

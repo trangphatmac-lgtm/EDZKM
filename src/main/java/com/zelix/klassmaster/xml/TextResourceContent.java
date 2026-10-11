@@ -12,13 +12,13 @@ public class TextResourceContent {
     public final String content;
 
     public TextResourceContent(
-            ObservableHolder observableHolder, MutableInt mutableInt, MutableInt mutableInt1, MutableInt mutableInt2, String string, String string1
+            ObservableHolder observableHolder, MutableInt mutableInt, MutableInt mutableInt1, MutableInt mutableInt2, String resourceNameArgument, String contentArgument
     ) {
         this.encoding = observableHolder;
         this.skipByteCount = mutableInt;
         this.bomLength = mutableInt1;
         this.byteOrder = mutableInt2;
-        this.resourceName = string;
-        this.content = string1;
+        this.resourceName = resourceNameArgument;
+        this.content = contentArgument;
     }
 }

@@ -16,33 +16,33 @@ public class GuiMessageReporter extends MessageReporter {
     public final ScriptEnvironment scriptEnvironment;
 
     @Override
-    public void reportErrorWithDetail(Object object, String string, String string1) throws ZkmException, IOException {
-        String string3 = string;
-        String string2 = (String) object;
+    public void reportErrorWithDetail(Object object, String string, String details) throws ZkmException, IOException {
+        String message = string;
+        String title = (String) object;
         if (this.scriptEnvironment != null) {
-            string3 = string3 + this.scriptEnvironment.takeMessageSuffix();
+            message = message + this.scriptEnvironment.takeMessageSuffix();
             PrintWriter printWriter = this.scriptEnvironment.getLogWriter();
-            printWriter.println(string2 + " : " + string3);
-            printWriter.println(string1);
+            printWriter.println(title + " : " + message);
+            printWriter.println(details);
         }
 
-        CopyableMessageDialog.showMessage(this.ownerFrame, string2, string3, string1);
+        CopyableMessageDialog.showMessage(this.ownerFrame, title, message, details);
     }
 
     @Override
-    public void reportFatalErrorWithDetail(Object object, String string, String string1) throws ZkmException, IOException {
-        String string2 = (String) object;
-        String string3 = string;
+    public void reportFatalErrorWithDetail(Object object, String string, String details) throws ZkmException, IOException {
+        String title = (String) object;
+        String message = string;
         if (this.scriptEnvironment != null) {
-            string3 = string3 + this.scriptEnvironment.takeMessageSuffix();
+            message = message + this.scriptEnvironment.takeMessageSuffix();
             PrintWriter printWriter = this.scriptEnvironment.getLogWriter();
-            printWriter.println(string2 + " : " + string3);
-            printWriter.println(string1);
+            printWriter.println(title + " : " + message);
+            printWriter.println(details);
         }
 
-        CopyableMessageDialog.showMessage(this.ownerFrame, string2, string3, string1);
+        CopyableMessageDialog.showMessage(this.ownerFrame, title, message, details);
         System.err.println();
-        System.err.println(string2 + " : " + string3);
+        System.err.println(title + " : " + message);
         this.ownerFrame.closeFrame();
     }
 

@@ -27,9 +27,9 @@ public class SimpleMapEntry implements Entry {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object instanceof SimpleMapEntry) {
-            SimpleMapEntry simpleMapEntry1 = (SimpleMapEntry) object;
+    public boolean equals(Object other) {
+        if (other instanceof SimpleMapEntry) {
+            SimpleMapEntry simpleMapEntry1 = (SimpleMapEntry) other;
             return this.key == null
                     ? simpleMapEntry1.key == null
                     : this.key.equals(simpleMapEntry1.key) && (this.value == null ? simpleMapEntry1.value == null : this.value.equals(simpleMapEntry1.value));
@@ -38,13 +38,13 @@ public class SimpleMapEntry implements Entry {
         }
     }
 
-    public SimpleMapEntry(Object object, Object object1) {
-        this.key = object;
-        this.value = object1;
+    public SimpleMapEntry(Object keyArgument, Object valueArgument) {
+        this.key = keyArgument;
+        this.value = valueArgument;
     }
 
     @Override
-    public Object setValue(Object object) {
+    public Object setValue(Object valueArgument) {
         throw new UnsupportedOperationException();
     }
 }

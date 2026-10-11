@@ -16,8 +16,8 @@ public class ReadOnlyMultiMap {
         return new ReadOnlyMultiMap(ZkmUtils.copyTwoKeyMap(this.map));
     }
 
-    public EnumerableMap getInnerMap(Object object) {
-        Map map1 = this.map.getInnerMap(object);
+    public EnumerableMap getInnerMap(Object key) {
+        Map map1 = this.map.getInnerMap(key);
         return map1 != null ? new EnumerableMap(map1) : null;
     }
 
@@ -33,7 +33,7 @@ public class ReadOnlyMultiMap {
         this.map = twoKeyMap;
     }
 
-    public final Object getValue(Object object, Object object1) {
-        return this.map.getValue(object, object1);
+    public final Object getValue(Object key, Object keyArgument) {
+        return this.map.getValue(key, keyArgument);
     }
 }

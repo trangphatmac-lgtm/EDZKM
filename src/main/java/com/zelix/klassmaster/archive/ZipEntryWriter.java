@@ -31,20 +31,20 @@ public class ZipEntryWriter {
         return this.writeEntry((Long) null, (Long) object);
     }
 
-    public CRC32 writeEntry(final Long n, final Long n2, final String comment) throws IOException {
+    public CRC32 writeEntry(final Long time, final Long n2, final String comment) throws IOException {
         CRC32 crc32 = null;
-        final ZipEntry e = new ZipEntry(this.entryName);
-        if (n != null) {
-            e.setTime(n);
+        final ZipEntry zipEntry = new ZipEntry(this.entryName);
+        if (time != null) {
+            zipEntry.setTime(time);
         }
         if (n2 != null) {
             final Object b = n2.toString();
-            e.setExtra(((String) b).getBytes("UTF-8"));
+            zipEntry.setExtra(((String) b).getBytes("UTF-8"));
             if (comment != null && comment.length() > 0) {
-                e.setComment(comment);
+                zipEntry.setComment(comment);
             }
         }
-        e.setMethod(this.compressed ? 8 : 0);
+        zipEntry.setMethod(this.compressed ? 8 : 0);
         if (!this.compressed || this.byteBuffer != null) {
             if (this.sourceFile != null) {
                 BufferedInputStream bufferedInputStream = null;
@@ -65,9 +65,9 @@ public class ZipEntryWriter {
                         n3 = (n4 = bufferedInputStream.read(array));
                     }
                     bufferedInputStream.close();
-                    e.setCrc(crc32.getValue());
-                    e.setSize(size);
-                    this.zipOutputStream.putNextEntry(e);
+                    zipEntry.setCrc(crc32.getValue());
+                    zipEntry.setSize(size);
+                    this.zipOutputStream.putNextEntry(zipEntry);
                     bufferedInputStream = new BufferedInputStream(new FileInputStream(this.sourceFile));
                     int n6;
                     int n5 = n6 = bufferedInputStream.read(array);
@@ -81,13 +81,13 @@ public class ZipEntryWriter {
                     }
                     try {
                         bufferedInputStream.close();
-                    } catch (final IOException ex) {
+                    } catch (final IOException ioException) {
                     }
                 } finally {
                     if (bufferedInputStream != null) {
                         try {
                             bufferedInputStream.close();
-                        } catch (final IOException ex2) {
+                        } catch (final IOException ioExceptionValue) {
                         }
                     }
                 }
@@ -112,7 +112,7 @@ public class ZipEntryWriter {
                         if (this.inputStream != null) {
                             try {
                                 this.inputStream.close();
-                            } catch (final IOException ex3) {
+                            } catch (final IOException ioExceptionValue2) {
                             }
                         }
                     }
@@ -121,17 +121,17 @@ public class ZipEntryWriter {
                 if (!this.compressed) {
                     crc32 = new CRC32();
                     crc32.update((byte[]) b);
-                    e.setCrc(crc32.getValue());
-                    e.setSize(((byte[]) b).length);
+                    zipEntry.setCrc(crc32.getValue());
+                    zipEntry.setSize(((byte[]) b).length);
                     zipOutputStream = this.zipOutputStream;
                 } else {
                     zipOutputStream = this.zipOutputStream;
                 }
-                zipOutputStream.putNextEntry(e);
+                zipOutputStream.putNextEntry(zipEntry);
                 this.zipOutputStream.write((byte[]) b, 0, ((byte[]) b).length);
             }
         } else {
-            this.zipOutputStream.putNextEntry(e);
+            this.zipOutputStream.putNextEntry(zipEntry);
             try {
                 if (this.inputStream == null) {
                     final File sourceFile = this.sourceFile;
@@ -140,19 +140,19 @@ public class ZipEntryWriter {
                     this.inputStream = new BufferedInputStream(new FileInputStream(this.sourceFile));
                 }
                 crc32 = new CRC32();
-                final byte[] b2 = new byte[1024];
+                final byte[] byteArray = new byte[1024];
                 InputStream inputStream = this.inputStream;
                 int read2;
-                while ((read2 = inputStream.read(b2)) >= 0) {
-                    this.zipOutputStream.write(b2, 0, read2);
-                    crc32.update(b2, 0, read2);
+                while ((read2 = inputStream.read(byteArray)) >= 0) {
+                    this.zipOutputStream.write(byteArray, 0, read2);
+                    crc32.update(byteArray, 0, read2);
                     inputStream = this.inputStream;
                 }
             } finally {
                 if (this.inputStream != null) {
                     try {
                         this.inputStream.close();
-                    } catch (final IOException ex4) {
+                    } catch (final IOException ioExceptionValue3) {
                     }
                 }
             }
@@ -162,9 +162,9 @@ public class ZipEntryWriter {
         return crc32;
     }
 
-    public ZipEntryWriter(ZipOutputStream zipOutputStream1, String string, boolean compressed, File file1) {
+    public ZipEntryWriter(ZipOutputStream zipOutputStream1, String entryNameArgument, boolean compressed, File file1) {
         this.zipOutputStream = zipOutputStream1;
-        this.entryName = string;
+        this.entryName = entryNameArgument;
         this.compressed = compressed;
         this.sourceFile = file1;
         this.sourceKind = "FILE";
@@ -174,18 +174,18 @@ public class ZipEntryWriter {
         return this.writeEntry(long1, (Long) null);
     }
 
-    public ZipEntryWriter(ZipOutputStream zipOutputStream1, String string, boolean compressed, InputStream inputStream1, int inputLength) {
+    public ZipEntryWriter(ZipOutputStream zipOutputStream1, String entryNameArgument, boolean compressed, InputStream inputStream1, int inputLength) {
         this.zipOutputStream = zipOutputStream1;
-        this.entryName = string;
+        this.entryName = entryNameArgument;
         this.compressed = compressed;
         this.inputStream = inputStream1;
         this.inputLength = inputLength;
         this.sourceKind = "IS";
     }
 
-    public ZipEntryWriter(ZipOutputStream zipOutputStream1, String string, boolean compressed) {
+    public ZipEntryWriter(ZipOutputStream zipOutputStream1, String entryNameArgument, boolean compressed) {
         this.zipOutputStream = zipOutputStream1;
-        this.entryName = string;
+        this.entryName = entryNameArgument;
         this.compressed = compressed;
         this.sourceKind = "BAOS";
     }

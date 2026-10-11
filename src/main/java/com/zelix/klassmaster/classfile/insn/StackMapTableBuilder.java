@@ -31,34 +31,34 @@ public class StackMapTableBuilder {
     public final String methodDescription;
 
     public int findLastNonTopIndex(VerifierType[] verifierTypes) {
-        int ba = -1;
+        int verifierTypeIndexValue = -1;
 
-        for (int i = verifierTypes.length - 1; i >= 0; i += -1) {
-            if (!verifierTypes[i].isTop()) {
-                ba = i;
+        for (int verifierTypeIndex = verifierTypes.length - 1; verifierTypeIndex >= 0; verifierTypeIndex += -1) {
+            if (!verifierTypes[verifierTypeIndex].isTop()) {
+                verifierTypeIndexValue = verifierTypeIndex;
                 break;
             }
         }
 
-        return ba;
+        return verifierTypeIndexValue;
     }
 
-    public static boolean[][] pruneFixedLocalCombinations(int ba, boolean[] bl, boolean[][] bl1) {
-        boolean[][] bl2 = bl1;
+    public static boolean[][] pruneFixedLocalCombinations(int copyLength, boolean[] booleanArray, boolean[][] booleanArrayArray) {
+        boolean[][] booleanArrayArrayValue = booleanArrayArray;
 
-        for (int i = 0; i < bl.length; i++) {
-            if (bl[i]) {
-                boolean[][] bl3 = new boolean[bl2.length / 2][ba];
-                int bc = (int) Math.pow(2.0, i + 1);
-                int bd = bl1.length / bc;
+        for (int booleanArrayElementIndex = 0; booleanArrayElementIndex < booleanArray.length; booleanArrayElementIndex++) {
+            if (booleanArray[booleanArrayElementIndex]) {
+                boolean[][] booleanArrayArrayValue2 = new boolean[booleanArrayArrayValue.length / 2][copyLength];
+                int bc = (int) Math.pow(2.0, booleanArrayElementIndex + 1);
+                int bd = booleanArrayArray.length / bc;
                 boolean bl4 = true;
-                int be = 0;
+                int booleanArrayArrayValue2ElementIndex = 0;
                 int bf = 1;
 
-                for (int j = 0; j < bl2.length; j++) {
+                for (int booleanArrayArrayValueElementIndex = 0; booleanArrayArrayValueElementIndex < booleanArrayArrayValue.length; booleanArrayArrayValueElementIndex++) {
                     if (bl4) {
-                        System.arraycopy(bl2[j], 0, bl3[be], 0, ba);
-                        be++;
+                        System.arraycopy(booleanArrayArrayValue[booleanArrayArrayValueElementIndex], 0, booleanArrayArrayValue2[booleanArrayArrayValue2ElementIndex], 0, copyLength);
+                        booleanArrayArrayValue2ElementIndex++;
                     }
 
                     if (++bf > bd) {
@@ -67,11 +67,11 @@ public class StackMapTableBuilder {
                     }
                 }
 
-                bl2 = bl3;
+                booleanArrayArrayValue = booleanArrayArrayValue2;
             }
         }
 
-        return bl2;
+        return booleanArrayArrayValue;
     }
 
     public StackMapTableBuilder(MethodBytecode methodBytecode1, MethodFlowAnalyzer methodFlowAnalyzer) throws ZkmException, IOException {
@@ -93,10 +93,10 @@ public class StackMapTableBuilder {
         boolean bl3 = bl;
         boolean bl2 = bl1;
         Integer[] integers = this.flowAnalyzer.getFrameLabelIndices();
-        int ba = integers.length;
+        int lengthValue = integers.length;
         HashMap hashMap = ZkmUtils.createHashMap();
         HashMap hashMap1 = ZkmUtils.createHashMap();
-        StackMapTableFrame[] stackMapTableFrames = new StackMapTableFrame[ba];
+        StackMapTableFrame[] stackMapTableFrames = new StackMapTableFrame[lengthValue];
         MutableInt mutableInt = new MutableInt(-1);
         ObservableHolder observableHolder = new ObservableHolder();
         ObservableHolder observableHolder1 = new ObservableHolder();
@@ -110,9 +110,9 @@ public class StackMapTableBuilder {
         }
 
         if (bl3 || bl2) {
-            for (int i = 0; i < ba; i++) {
-                int bc = integers[i];
-                StackFrameState stackFrameState = this.frameStates[bc];
+            for (int integerIndex = 0; integerIndex < lengthValue; integerIndex++) {
+                int integer = integers[integerIndex];
+                StackFrameState stackFrameState = this.frameStates[integer];
                 if (stackFrameState.hasWideLocal()) {
                     bl3 = false;
                     bl2 = false;
@@ -123,16 +123,16 @@ public class StackMapTableBuilder {
 
         StackFrameState stackFrameState2 = this.frameStates[0];
 
-        for (int i = 0; i < ba; i++) {
-            int be = integers[i];
-            LabelInstruction labelInstruction = (LabelInstruction) this.instructions.get(be);
-            StackFrameState stackFrameState1 = this.frameStates[be];
+        for (int i = 0; i < lengthValue; i++) {
+            int integerValue = integers[i];
+            LabelInstruction labelInstruction = (LabelInstruction) this.instructions.get(integerValue);
+            StackFrameState stackFrameState1 = this.frameStates[integerValue];
             if (stackFrameState1 == null) {
                 ZkmAssert.assertNotNullMessage(
                         stackFrameState1,
                         new String[]{
                                 "Dead instruction at ",
-                                String.valueOf(be),
+                                String.valueOf(integerValue),
                                 " : '",
                                 this.methodDescription,
                                 "' : ",
@@ -143,7 +143,7 @@ public class StackMapTableBuilder {
                 );
             }
 
-            if (bl2 && i >= ba - 1) {
+            if (bl2 && i >= lengthValue - 1) {
                 stackMapTableFrames[i] = this.buildCompactFrame(
                         stackMapTableAttribute,
                         labelInstruction,
@@ -188,31 +188,31 @@ public class StackMapTableBuilder {
         return stackMapTableFrames;
     }
 
-    public static boolean[][] getLocalMaskCombinations(int ba) {
-        if (maskCombinationCache[ba] == null) {
-            int bb = (int) Math.pow(2.0, ba);
-            boolean[][] bl = new boolean[bb][ba];
+    public static boolean[][] getLocalMaskCombinations(int maskCombinationCacheElementIndex) {
+        if (maskCombinationCache[maskCombinationCacheElementIndex] == null) {
+            int bb = (int) Math.pow(2.0, maskCombinationCacheElementIndex);
+            boolean[][] maskCombinationCacheElement = new boolean[bb][maskCombinationCacheElementIndex];
 
-            for (int i = 0; i < ba; i++) {
-                int bd = (int) Math.pow(2.0, i + 1);
+            for (int maskCombinationCacheElementElementElementIndex = 0; maskCombinationCacheElementElementElementIndex < maskCombinationCacheElementIndex; maskCombinationCacheElementElementElementIndex++) {
+                int bd = (int) Math.pow(2.0, maskCombinationCacheElementElementElementIndex + 1);
                 int be = bb / bd;
-                boolean bl1 = true;
+                boolean maskCombinationCacheElementElementElement = true;
                 int bf = 0;
 
-                for (int j = 0; j < bb; j++) {
+                for (int maskCombinationCacheElementElementIndex = 0; maskCombinationCacheElementElementIndex < bb; maskCombinationCacheElementElementIndex++) {
                     if (++bf > be) {
                         bf = 1;
-                        bl1 = !bl1;
+                        maskCombinationCacheElementElementElement = !maskCombinationCacheElementElementElement;
                     }
 
-                    bl[j][i] = bl1;
+                    maskCombinationCacheElement[maskCombinationCacheElementElementIndex][maskCombinationCacheElementElementElementIndex] = maskCombinationCacheElementElementElement;
                 }
             }
 
-            maskCombinationCache[ba] = bl;
+            maskCombinationCache[maskCombinationCacheElementIndex] = maskCombinationCacheElement;
         }
 
-        return maskCombinationCache[ba];
+        return maskCombinationCache[maskCombinationCacheElementIndex];
     }
 
     public StackMapTableFrame buildCompactFrame(
@@ -377,15 +377,15 @@ public class StackMapTableBuilder {
         );
     }
 
-    public boolean[][] getReducedMaskCombinations(int ba, Integer[] integers, boolean[][] bl) {
-        boolean[] bl1 = this.findLivenessInvariantLocals(ba, integers);
-        return pruneFixedLocalCombinations(ba, bl1, bl);
+    public boolean[][] getReducedMaskCombinations(int copyLength, Integer[] integers, boolean[][] booleanArrayArray) {
+        boolean[] booleanArray = this.findLivenessInvariantLocals(copyLength, integers);
+        return pruneFixedLocalCombinations(copyLength, booleanArray, booleanArrayArray);
     }
 
     public StackMapTableFrame[] buildFramesWithMask(
             int ba,
             Integer[] integers,
-            boolean[] bl,
+            boolean[] booleanArray,
             StackMapTableAttribute stackMapTableAttribute,
             ConstantPool constantPool1,
             Set set1,
@@ -403,15 +403,15 @@ public class StackMapTableBuilder {
         StackMapTableFrame[] stackMapTableFrames = new StackMapTableFrame[integers.length];
 
         for (int i = 0; i < integers.length; i++) {
-            int bc = integers[i];
-            LabelInstruction labelInstruction = (LabelInstruction) this.instructions.get(bc);
-            StackFrameState stackFrameState = this.frameStates[bc];
+            int integer = integers[i];
+            LabelInstruction labelInstruction = (LabelInstruction) this.instructions.get(integer);
+            StackFrameState stackFrameState = this.frameStates[integer];
             VerifierType[] verifierTypes = stackFrameState.getLocals();
             VerifierType[] verifierTypes1 = stackFrameState.getLocalsMaskedByLiveness();
             VerifierType[] verifierTypes2 = new VerifierType[ba];
 
             for (int j = 0; j < ba; j++) {
-                if (bl[j]) {
+                if (booleanArray[j]) {
                     verifierTypes2[j] = verifierTypes[j];
                 } else {
                     verifierTypes2[j] = verifierTypes1[j];
@@ -445,84 +445,84 @@ public class StackMapTableBuilder {
         return stackMapTableFrames;
     }
 
-    public StackMapTableFrame[] buildSmallestFrames(int ba, StackMapTableAttribute stackMapTableAttribute, ConstantPool constantPool1, Set set1, List list1) throws ZkmException, IOException {
-        ZkmAssert.assertTrue(ba <= 20, new String[]{"Variable count : " + ba + ">" + 20, this.methodBytecode.getDisplayLocationName()});
+    public StackMapTableFrame[] buildSmallestFrames(int copyLength, StackMapTableAttribute stackMapTableAttribute, ConstantPool constantPool1, Set set1, List list1) throws ZkmException, IOException {
+        ZkmAssert.assertTrue(copyLength <= 20, new String[]{"Variable count : " + copyLength + ">" + 20, this.methodBytecode.getDisplayLocationName()});
         Integer[] integers = this.flowAnalyzer.getFrameLabelIndices();
         StackMapTableFrame[] stackMapTableFrames = new StackMapTableFrame[integers.length];
         if (integers.length > 0 && this.frameStates.length > 0) {
-            boolean[][] bl = getLocalMaskCombinations(ba);
-            bl = this.getReducedMaskCombinations(ba, integers, bl);
-            if (bl.length > 128) {
-                boolean[][] bl1 = new boolean[2][bl[0].length];
-                System.arraycopy(bl[0], 0, bl1[0], 0, bl[0].length);
-                System.arraycopy(bl[bl.length - 1], 0, bl1[1], 0, bl[1].length);
-                bl = bl1;
+            boolean[][] localMaskCombinations = getLocalMaskCombinations(copyLength);
+            localMaskCombinations = this.getReducedMaskCombinations(copyLength, integers, localMaskCombinations);
+            if (localMaskCombinations.length > 128) {
+                boolean[][] localMaskCombinationsValue = new boolean[2][localMaskCombinations[0].length];
+                System.arraycopy(localMaskCombinations[0], 0, localMaskCombinationsValue[0], 0, localMaskCombinations[0].length);
+                System.arraycopy(localMaskCombinations[localMaskCombinations.length - 1], 0, localMaskCombinationsValue[1], 0, localMaskCombinations[1].length);
+                localMaskCombinations = localMaskCombinationsValue;
             }
 
-            int bb = Integer.MAX_VALUE;
-            int bc = -1;
+            int maxValue = Integer.MAX_VALUE;
+            int localMaskCombinationIndex = -1;
             ArrayList arrayList = new ArrayList(list1);
             HashSet hashSet = ZkmUtils.createHashSetFrom(set1);
 
-            for (int i = 0; i < bl.length; i++) {
+            for (int localMaskCombinationIndexValue = 0; localMaskCombinationIndexValue < localMaskCombinations.length; localMaskCombinationIndexValue++) {
                 HashMap hashMap = ZkmUtils.createHashMap();
                 HashMap hashMap1 = ZkmUtils.createHashMap();
                 StackMapTableFrame[] stackMapTableFrames2 = new StackMapTableFrame[integers.length];
                 StackMapTableFrame[] stackMapTableFrames1 = this.buildFramesWithMask(
-                        ba, integers, bl[i], stackMapTableAttribute, constantPool1, hashSet, arrayList, hashMap, hashMap1
+                        copyLength, integers, localMaskCombinations[localMaskCombinationIndexValue], stackMapTableAttribute, constantPool1, hashSet, arrayList, hashMap, hashMap1
                 );
-                int be = 0;
+                int maxValueValue = 0;
 
                 for (StackMapTableFrame stackMapTableFrame : stackMapTableFrames1) {
-                    be += stackMapTableFrame.getFrameSize();
+                    maxValueValue += stackMapTableFrame.getFrameSize();
                 }
 
-                if (be < bb) {
-                    bb = be;
-                    bc = i;
+                if (maxValueValue < maxValue) {
+                    maxValue = maxValueValue;
+                    localMaskCombinationIndex = localMaskCombinationIndexValue;
                 }
             }
 
             HashMap hashMap2 = ZkmUtils.createHashMap();
             HashMap hashMap3 = ZkmUtils.createHashMap();
-            stackMapTableFrames = this.buildFramesWithMask(ba, integers, bl[bc], stackMapTableAttribute, constantPool1, set1, list1, hashMap2, hashMap3);
+            stackMapTableFrames = this.buildFramesWithMask(copyLength, integers, localMaskCombinations[localMaskCombinationIndex], stackMapTableAttribute, constantPool1, set1, list1, hashMap2, hashMap3);
         }
 
         return stackMapTableFrames;
     }
 
     public boolean[] findLivenessInvariantLocals(int ba, Integer[] integers) {
-        boolean[] bl = new boolean[ba];
+        boolean[] booleanArray = new boolean[ba];
 
-        for (int i = 0; i < bl.length; i++) {
-            bl[i] = true;
+        for (int booleanArrayElementIndex = 0; booleanArrayElementIndex < booleanArray.length; booleanArrayElementIndex++) {
+            booleanArray[booleanArrayElementIndex] = true;
         }
 
         StringBuilder[] stringBuilders1 = new StringBuilder[ba];
         StringBuilder[] stringBuilders = new StringBuilder[ba];
 
-        for (int i = 0; i < integers.length; i++) {
-            if (i == 0) {
+        for (int integerIndex = 0; integerIndex < integers.length; integerIndex++) {
+            if (integerIndex == 0) {
                 for (int j = 0; j < ba; j++) {
                     stringBuilders1[j] = new StringBuilder();
                     stringBuilders[j] = new StringBuilder();
                 }
             }
 
-            int bf = integers[i];
-            StackFrameState stackFrameState = this.frameStates[bf];
+            int integer = integers[integerIndex];
+            StackFrameState stackFrameState = this.frameStates[integer];
             VerifierType[] verifierTypes = stackFrameState.getLocals();
             VerifierType[] verifierTypes1 = stackFrameState.getLocalsMaskedByLiveness();
 
             for (int j = 0; j < ba; j++) {
                 stringBuilders1[j].append(verifierTypes[j] + ";");
                 stringBuilders[j].append(verifierTypes1[j] + ";");
-                if (bl[j] && !verifierTypes[j].equals(verifierTypes1[j])) {
-                    bl[j] = false;
+                if (booleanArray[j] && !verifierTypes[j].equals(verifierTypes1[j])) {
+                    booleanArray[j] = false;
                 }
             }
         }
 
-        return bl;
+        return booleanArray;
     }
 }

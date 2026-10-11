@@ -47,12 +47,12 @@ public class ZkmFileUtils {
     public static List extraXmlFilePatterns;
 
     public static List listFilesInMatchingDirectories(String string, String string1, File file1, ObservableHolder observableHolder) throws ZkmException, IOException {
-        int ba = string.lastIndexOf(FILE_SEPARATOR);
+        int endIndex = string.lastIndexOf(FILE_SEPARATOR);
         String string2;
         String string3;
-        if (ba > -1) {
-            string2 = string.substring(0, ba);
-            string3 = string.substring(ba + 1);
+        if (endIndex > -1) {
+            string2 = string.substring(0, endIndex);
+            string3 = string.substring(endIndex + 1);
         } else {
             string2 = null;
             string3 = string;
@@ -94,19 +94,19 @@ public class ZkmFileUtils {
     }
 
     public static byte[] readBytes(InputStream inputStream1, int ba) throws IOException {
-        byte[] bb = null;
+        byte[] byteArray = null;
         if (ba > 0) {
-            bb = new byte[ba];
-            readFully(inputStream1, bb);
+            byteArray = new byte[ba];
+            readFully(inputStream1, byteArray);
         }
 
-        return bb;
+        return byteArray;
     }
 
     
     
-    public static File copyStreamToTempFile(BufferedInputStream bufferedInputStream, String string) throws IOException {
-        File file1 = TempFileManager.createTempFile(string);
+    public static File copyStreamToTempFile(BufferedInputStream bufferedInputStream, String value) throws IOException {
+        File file1 = TempFileManager.createTempFile(value);
         BufferedOutputStream bufferedOutputStream = null;
         boolean bl = false ;
 
@@ -114,9 +114,9 @@ public class ZkmFileUtils {
             bl = true;
             bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(file1));
             bufferedInputStream.available();
-            byte[] ba = new byte[2048];
+            byte[] byteArray = new byte[2048];
             int bc = 0;
-            int be = bufferedInputStream.read(ba);
+            int be = bufferedInputStream.read(byteArray);
 
             while (true) {
                 int bb = be;
@@ -127,8 +127,8 @@ public class ZkmFileUtils {
 
                 bc += bb;
                 int bd = bb;
-                bufferedOutputStream.write(ba, 0, bd);
-                be = bufferedInputStream.read(ba);
+                bufferedOutputStream.write(byteArray, 0, bd);
+                be = bufferedInputStream.read(byteArray);
             }
         } finally {
             if (bl) {
@@ -153,7 +153,7 @@ public class ZkmFileUtils {
         String string1 = string;
         if (string1 != null && string1.trim().length() != 0) {
             string1 = string1.trim();
-            return string1.charAt(0) == File.separatorChar ? false : string1.length() <= 1 || !Character.isLetter(string1.charAt(0)) || string1.charAt(1) != ':';
+            return (!(string1.charAt(0) == File.separatorChar) && (string1.length() <= 1 || !Character.isLetter(string1.charAt(0)) || string1.charAt(1) != ':'));
         } else {
             return false;
         }
@@ -173,16 +173,16 @@ public class ZkmFileUtils {
 
     public static byte[] peekBytes(PushbackInputStream pushbackInputStream) {
         try {
-            byte[] ba = new byte[4];
-            int bb = readFully(pushbackInputStream, ba);
+            byte[] byteArray = new byte[4];
+            int bb = readFully(pushbackInputStream, byteArray);
             if (bb == -1) {
-                pushbackInputStream.unread(ba, 0, 0);
+                pushbackInputStream.unread(byteArray, 0, 0);
             } else {
                 int bc = bb;
-                pushbackInputStream.unread(ba, 0, bc);
+                pushbackInputStream.unread(byteArray, 0, bc);
             }
 
-            return ba;
+            return byteArray;
         } catch (IOException iOException) {
             return null;
         }
@@ -198,24 +198,24 @@ public class ZkmFileUtils {
         }
 
         char bb = '/';
-        int ba;
-        if (((ba = string.lastIndexOf(FILE_SEPARATOR)) > -1 || (ba = string.lastIndexOf("\\")) > -1 || (ba = string.lastIndexOf("/")) > -1) && ba > -1) {
-            bb = string.charAt(ba);
+        int characterIndex;
+        if (((characterIndex = string.lastIndexOf(FILE_SEPARATOR)) > -1 || (characterIndex = string.lastIndexOf("\\")) > -1 || (characterIndex = string.lastIndexOf("/")) > -1) && characterIndex > -1) {
+            bb = string.charAt(characterIndex);
         }
 
         if (bb == 0
-                && ((ba = string1.lastIndexOf(FILE_SEPARATOR)) > -1 || (ba = string1.lastIndexOf("\\")) > -1 || (ba = string1.lastIndexOf("/")) > -1)
-                && ba > -1) {
-            bb = string1.charAt(ba);
+                && ((characterIndex = string1.lastIndexOf(FILE_SEPARATOR)) > -1 || (characterIndex = string1.lastIndexOf("\\")) > -1 || (characterIndex = string1.lastIndexOf("/")) > -1)
+                && characterIndex > -1) {
+            bb = string1.charAt(characterIndex);
         }
 
         if (string.trim().length() == 0) {
             return string1.charAt(0) == bb ? string1.substring(1) : string1;
         }
 
-        String string2 = String.valueOf(bb);
-        StringTokenizer stringTokenizer = new StringTokenizer(string, string2, true);
-        StringTokenizer stringTokenizer1 = new StringTokenizer(string1, string2, true);
+        String prefix = String.valueOf(bb);
+        StringTokenizer stringTokenizer = new StringTokenizer(string, prefix, true);
+        StringTokenizer stringTokenizer1 = new StringTokenizer(string1, prefix, true);
         int bc = stringTokenizer.countTokens();
         int bd = stringTokenizer1.countTokens();
         StringBuilder stringBuilder = new StringBuilder();
@@ -232,25 +232,25 @@ public class ZkmFileUtils {
 
         String string6 = stringBuilder.toString();
         if (string6.length() == 0) {
-            StringTokenizer stringTokenizer3 = new StringTokenizer(string, string2);
+            StringTokenizer stringTokenizer3 = new StringTokenizer(string, prefix);
             int bi = stringTokenizer3.countTokens();
             StringBuilder stringBuilder2 = new StringBuilder();
 
             for (int i = 0; i < bi; i++) {
                 stringBuilder2.append("..");
                 if (i < bi - 1) {
-                    stringBuilder2.append(string2);
+                    stringBuilder2.append(prefix);
                 }
             }
 
-            if (!string1.startsWith(string2)) {
-                stringBuilder2.append(string2);
+            if (!string1.startsWith(prefix)) {
+                stringBuilder2.append(prefix);
             }
 
             stringBuilder2.append(string1);
             return stringBuilder2.toString();
         } else {
-            StringTokenizer stringTokenizer2 = new StringTokenizer(string6, string2, true);
+            StringTokenizer stringTokenizer2 = new StringTokenizer(string6, prefix, true);
             int bh = stringTokenizer2.countTokens();
             String string5 = string1.substring(string6.length());
             StringBuilder stringBuilder1 = new StringBuilder();
@@ -262,7 +262,7 @@ public class ZkmFileUtils {
                 bf += -1;
 
                 for (int i = 0; i < bf / 2; i++) {
-                    stringBuilder1.append(string2);
+                    stringBuilder1.append(prefix);
                     stringBuilder1.append("..");
                 }
             }
@@ -278,7 +278,7 @@ public class ZkmFileUtils {
                         stringBuilder1.setLength(stringBuilder1.length() - 1);
                     }
                 } else if (string5.charAt(0) != bb) {
-                    stringBuilder1.append(string2);
+                    stringBuilder1.append(prefix);
                 }
 
                 stringBuilder1.append(string5);
@@ -320,9 +320,9 @@ public class ZkmFileUtils {
     }
 
     public static boolean isXmlFileName(String string) {
-        int ba = string.lastIndexOf(46);
-        if (ba > -1) {
-            String string1 = string.substring(ba, string.length());
+        int beginIndex = string.lastIndexOf(46);
+        if (beginIndex > -1) {
+            String string1 = string.substring(beginIndex, string.length());
             if (string1.equalsIgnoreCase(".xml") || string1.equalsIgnoreCase(".tld") || string1.equalsIgnoreCase(".fxml") || string1.equalsIgnoreCase(".e4xmi")) {
                 return true;
             }
@@ -342,23 +342,23 @@ public class ZkmFileUtils {
         return false;
     }
 
-    public static String detectBomEncoding(byte[] ba) {
-        return detectBomEncoding(ba, new MutableInt(), new MutableInt(), new MutableInt());
+    public static String detectBomEncoding(byte[] byteArray) {
+        return detectBomEncoding(byteArray, new MutableInt(), new MutableInt(), new MutableInt());
     }
 
     public static BufferedReader openReaderDetectingCharset(File file1, ObservableHolder observableHolder) throws ZkmException, IOException {
         return createBomAwareReader(new FileInputStream(file1), (String) null, observableHolder);
     }
 
-    public static String detectBomEncoding(byte[] ba, MutableInt mutableInt, MutableInt mutableInt1, MutableInt mutableInt2) {
-        if (ba == null) {
+    public static String detectBomEncoding(byte[] byteArray, MutableInt mutableInt, MutableInt mutableInt1, MutableInt mutableInt2) {
+        if (byteArray == null) {
             return null;
-        } else if (ba.length != 4) {
-            throw new IllegalArgumentException("Byte Order Mark byte array length not4 : " + ba.length);
+        } else if (byteArray.length != 4) {
+            throw new IllegalArgumentException("Byte Order Mark byte array length not4 : " + byteArray.length);
         } else {
-            int bb = ba[0] & 255;
-            int bc = ba[1] & 255;
-            int bd = ba[2] & 255;
+            int bb = byteArray[0] & 255;
+            int bc = byteArray[1] & 255;
+            int bd = byteArray[2] & 255;
             if (bb == 239 && bc == 187 && bd == 191) {
                 mutableInt.setValue(3);
                 mutableInt1.setValue(3);
@@ -379,41 +379,21 @@ public class ZkmFileUtils {
 
     
     
-    public static File writeStringToFile(String string, File file1, ObservableHolder observableHolder) throws ZkmException, IOException {
-        PrintWriter printWriter = null;
-        boolean bl = false ;
-
-        label52:
-        {
-            Object object;
-            try {
-                bl = true;
-                printWriter = new PrintWriter(new BufferedWriter(new FileWriter(file1)));
-                printWriter.println(string);
-                printWriter.flush();
-                bl = false;
-                break label52;
-            } catch (IOException iOException) {
-                observableHolder.setValue(iOException.getMessage());
-                object = null;
-                bl = false;
-            } finally {
-                if (bl) {
-                    if (printWriter != null) {
-                        printWriter.close();
-                    }
-                }
+    public static File writeStringToFile(String text, File outputFile, ObservableHolder errorMessage) throws ZkmException, IOException {
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
+            writer.println(text);
+            writer.flush();
+            return outputFile;
+        } catch (IOException exception) {
+            errorMessage.setValue(exception.getMessage());
+            return null;
+        } finally {
+            if (writer != null) {
+                writer.close();
             }
-
-            if (printWriter != null) {
-                printWriter.close();
-            }
-
-            return (File) object;
         }
-
-        printWriter.close();
-        return file1;
     }
 
     public static String resolveDotRelativePath(String string, File file1) {
@@ -475,8 +455,8 @@ public class ZkmFileUtils {
             return false;
         }
 
-        int ba = string.lastIndexOf(46);
-        return ba > -1 && string.substring(ba, string.length()).equalsIgnoreCase(".properties");
+        int beginIndex = string.lastIndexOf(46);
+        return beginIndex > -1 && string.substring(beginIndex, string.length()).equalsIgnoreCase(".properties");
     }
 
     
@@ -568,9 +548,9 @@ public class ZkmFileUtils {
             return false;
         }
 
-        int ba = string.lastIndexOf(46);
-        if (ba > -1) {
-            String string1 = string.substring(ba, string.length());
+        int beginIndex = string.lastIndexOf(46);
+        if (beginIndex > -1) {
+            String string1 = string.substring(beginIndex, string.length());
             if (string1.equalsIgnoreCase(".yaml") || string1.equalsIgnoreCase(".yml")) {
                 return true;
             }
@@ -589,9 +569,9 @@ public class ZkmFileUtils {
 
     public static boolean looksLikeArchiveName(String string) {
         int ba = string.length();
-        int bb = string.lastIndexOf(46);
-        if (bb > 0 && (bb == ba - 4 || bb == ba - 5)) {
-            String string1 = string.substring(bb).toLowerCase();
+        int beginIndex = string.lastIndexOf(46);
+        if (beginIndex > 0 && (beginIndex == ba - 4 || beginIndex == ba - 5)) {
+            String string1 = string.substring(beginIndex).toLowerCase();
             if (string1.equals(".zip") || string1.equals(".jmod") || string1.endsWith("ar")) {
                 return true;
             }
@@ -600,109 +580,63 @@ public class ZkmFileUtils {
         return false;
     }
 
-    public static String splitPath(String string, ObservableHolder observableHolder, ObservableHolder observableHolder1) throws ZkmException, IOException {
+    public static String splitPath(String value, ObservableHolder observableHolder, ObservableHolder observableHolder1) throws ZkmException, IOException {
         int ba;
-        if ((ba = string.lastIndexOf(FILE_SEPARATOR)) <= -1 && (ba = string.lastIndexOf("\\")) <= -1 && (ba = string.lastIndexOf("/")) <= -1) {
+        if ((ba = value.lastIndexOf(FILE_SEPARATOR)) <= -1 && (ba = value.lastIndexOf("\\")) <= -1 && (ba = value.lastIndexOf("/")) <= -1) {
             observableHolder.setValue("");
-            observableHolder1.setValue(string);
+            observableHolder1.setValue(value);
             return "";
         } else {
-            observableHolder.setValue(string.substring(0, ba));
-            observableHolder1.setValue(string.substring(ba + 1));
-            return string.substring(ba, ba + 1);
+            observableHolder.setValue(value.substring(0, ba));
+            observableHolder1.setValue(value.substring(ba + 1));
+            return value.substring(ba, ba + 1);
         }
     }
 
     
     
-    public static boolean canWriteAndReadFile(String string, ObservableHolder observableHolder) throws ZkmException, IOException {
-        PrintWriter printWriter = null;
-        boolean bl1 = false ;
-
-        label185:
-        {
-            try {
-                bl1 = true;
-                printWriter = new PrintWriter(new FileWriter(string));
-                printWriter.println("xXyYzZ");
-                bl1 = false;
-                break label185;
-            } catch (IOException iOException4) {
-                if (observableHolder != null) {
-                    observableHolder.setValue(iOException4.toString());
-                    bl1 = false;
-                } else {
-                    bl1 = false;
-                }
-            } finally {
-                if (bl1) {
-                    if (printWriter != null) {
-                        printWriter.close();
-                    }
-                }
-            }
-
-            if (printWriter != null) {
-                printWriter.close();
-            }
-
-            return false;
-        }
-
-        printWriter.close();
-        BufferedReader bufferedReader = null;
-        boolean bl = false ;
-
-        String string1;
-        label186:
-        {
-            try {
-                bl = true;
-                bufferedReader = new BufferedReader(new FileReader(string));
-                string1 = bufferedReader.readLine();
-                bl = false;
-                break label186;
-            } catch (IOException iOException3) {
-                if (observableHolder != null) {
-                    observableHolder.setValue(iOException3.toString());
-                    bl = false;
-                } else {
-                    bl = false;
-                }
-            } finally {
-                if (bl) {
-                    if (bufferedReader != null) {
-                        try {
-                            bufferedReader.close();
-                        } catch (IOException iOException) {
-                        }
-                    }
-                }
-            }
-
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException iOException1) {
-                }
-            }
-
-            return false;
-        }
-
+    public static boolean canWriteAndReadFile(String fileName, ObservableHolder errorMessage) throws ZkmException, IOException {
+        PrintWriter writer = null;
         try {
-            bufferedReader.close();
-        } catch (IOException iOException2) {
+            writer = new PrintWriter(new FileWriter(fileName));
+            writer.println("xXyYzZ");
+        } catch (IOException exception) {
+            if (errorMessage != null) {
+                errorMessage.setValue(exception.toString());
+            }
+            return false;
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
         }
 
-        return string1 != null && "xXyYzZ".equals(string1);
+        BufferedReader reader = null;
+        String firstLine;
+        try {
+            reader = new BufferedReader(new FileReader(fileName));
+            firstLine = reader.readLine();
+        } catch (IOException exception) {
+            if (errorMessage != null) {
+                errorMessage.setValue(exception.toString());
+            }
+            return false;
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException exception) {
+                }
+            }
+        }
+        return firstLine != null && "xXyYzZ".equals(firstLine);
     }
 
-    public static int readFully(InputStream inputStream1, byte[] ba) throws IOException {
+    public static int readFully(InputStream inputStream1, byte[] byteArray) throws IOException {
         int bb = 0;
 
         do {
-            int bc = inputStream1.read(ba, bb, ba.length - bb);
+            int bc = inputStream1.read(byteArray, bb, byteArray.length - bb);
             if (bc == -1) {
                 if (bb == 0) {
                     bb = -1;
@@ -711,7 +645,7 @@ public class ZkmFileUtils {
             }
 
             bb += bc;
-        } while (bb < ba.length);
+        } while (bb < byteArray.length);
 
         return bb;
     }
@@ -719,61 +653,61 @@ public class ZkmFileUtils {
     public static String getParentPath(String string) {
         String string1 = string;
         String string2;
-        String string3;
+        String fileSeparator;
         if (string1.length() > 1) {
             char ba = string1.charAt(string1.length() - 1);
             if (ba != FILE_SEPARATOR.charAt(0) && ba != "/".charAt(0) && ba != "\\".charAt(0)) {
                 string2 = string1;
-                string3 = FILE_SEPARATOR;
+                fileSeparator = FILE_SEPARATOR;
             } else {
                 string1 = string1.substring(0, string1.length() - 1);
                 string2 = string1;
-                string3 = FILE_SEPARATOR;
+                fileSeparator = FILE_SEPARATOR;
             }
         } else {
             string2 = string1;
-            string3 = FILE_SEPARATOR;
+            fileSeparator = FILE_SEPARATOR;
         }
 
-        int bb;
-        if ((bb = string2.lastIndexOf(string3)) <= -1 && (bb = string1.lastIndexOf("/")) <= -1 && (bb = string1.lastIndexOf("\\")) <= -1) {
+        int endIndex;
+        if ((endIndex = string2.lastIndexOf(fileSeparator)) <= -1 && (endIndex = string1.lastIndexOf("/")) <= -1 && (endIndex = string1.lastIndexOf("\\")) <= -1) {
             return string1.length() > 0 ? "" : null;
-        } else if (bb == 0) {
-            return string1.length() == 1 ? null : string1.substring(0, bb + 1);
+        } else if (endIndex == 0) {
+            return string1.length() == 1 ? null : string1.substring(0, endIndex + 1);
         } else {
-            return string1.substring(0, bb);
+            return string1.substring(0, endIndex);
         }
     }
 
     public static BufferedReader createBomAwareReader(InputStream inputStream1, String string, ObservableHolder observableHolder) throws ZkmException, IOException {
         PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream1, 4);
-        String string1 = null;
+        String value = null;
         if (string != null && string.trim().length() > 0) {
-            string1 = string.trim();
+            value = string.trim();
         }
 
         boolean bl = false;
-        if (string1 == null || string1.length() == 0 || string1.equals("UTF-8")) {
-            String string2 = detectBomEncoding(peekBytes(pushbackInputStream));
-            bl = string2 != null && string2.equals("UTF-8");
-            if (string2 != null && string2.length() > 0 && (string1 == null || string1.length() == 0)) {
-                string1 = string2;
+        if (value == null || value.length() == 0 || value.equals("UTF-8")) {
+            String valueValue = detectBomEncoding(peekBytes(pushbackInputStream));
+            bl = valueValue != null && valueValue.equals("UTF-8");
+            if (valueValue != null && valueValue.length() > 0 && (value == null || value.length() == 0)) {
+                value = valueValue;
             }
         }
 
         BufferedReader bufferedReader;
-        if (string1 != null && string1.length() != 0) {
+        if (value != null && value.length() != 0) {
             if (bl) {
                 readBytes(pushbackInputStream, 3);
             }
 
-            bufferedReader = new BufferedReader(new InputStreamReader(pushbackInputStream, string1));
+            bufferedReader = new BufferedReader(new InputStreamReader(pushbackInputStream, value));
         } else {
             bufferedReader = new BufferedReader(new InputStreamReader(pushbackInputStream));
         }
 
         if (observableHolder != null) {
-            observableHolder.setValue(string1);
+            observableHolder.setValue(value);
         }
 
         return bufferedReader;
@@ -788,10 +722,10 @@ public class ZkmFileUtils {
         stringBuilder.append(zipFile1.getName());
         File file1 = new File(zipFile1.getName());
         if (TempFileManager.isZkmTempFile(file1)) {
-            String string = TempFileManager.getOriginalName(file1.getAbsolutePath());
-            if (string != null) {
+            String originalName = TempFileManager.getOriginalName(file1.getAbsolutePath());
+            if (originalName != null) {
                 stringBuilder.append('(');
-                stringBuilder.append(string);
+                stringBuilder.append(originalName);
                 stringBuilder.append(')');
             }
         }
@@ -829,8 +763,8 @@ public class ZkmFileUtils {
     }
 
     public static boolean isArchiveFile(File file1) throws IOException {
-        String string = file1.getName();
-        return isKnownArchiveName(string) || looksLikeArchiveName(string) && fileHasZipSignature(file1);
+        String nameValue = file1.getName();
+        return isKnownArchiveName(nameValue) || looksLikeArchiveName(nameValue) && fileHasZipSignature(file1);
     }
 
     public static String readFileTransformed(File file1, String string, StringKeyTransform stringKeyTransform) throws IOException {
@@ -838,9 +772,9 @@ public class ZkmFileUtils {
         return readStreamAsString(fileInputStream, string, fileInputStream.available() + 10, stringKeyTransform);
     }
 
-    public static File writeStringToTempFile(String string, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public static File writeStringToTempFile(String textArgument, ObservableHolder observableHolder) throws ZkmException, IOException {
         try {
-            return writeStringToFile(string, TempFileManager.createTempFile(), observableHolder);
+            return writeStringToFile(textArgument, TempFileManager.createTempFile(), observableHolder);
         } catch (IOException iOException) {
             observableHolder.setValue(iOException.getMessage());
             return null;
@@ -852,12 +786,12 @@ public class ZkmFileUtils {
             if (file2.isDirectory()) {
                 collectMatchingFiles(file2, string, list1);
             } else {
-                String string1 = file2.getName();
+                String nameValue = file2.getName();
                 if (!caseSensitiveFileSystem) {
-                    string1 = string1.toUpperCase();
+                    nameValue = nameValue.toUpperCase();
                 }
 
-                if (ZkmStringUtils.matchesWildcard(string1, string)) {
+                if (ZkmStringUtils.matchesWildcard(nameValue, string)) {
                     list1.add(file2.getAbsolutePath());
                 }
             }
@@ -979,8 +913,8 @@ public class ZkmFileUtils {
 
     public static boolean streamHasZipSignature(InputStream inputStream1) throws IOException {
         if (inputStream1.available() >= 4) {
-            byte[] ba = readBytes(inputStream1, 4);
-            return (ba[0] & 255) == 80 && (ba[1] & 255) == 75 && (ba[2] & 255) == 3 && (ba[3] & 255) == 4;
+            byte[] byteArray = readBytes(inputStream1, 4);
+            return (byteArray[0] & 255) == 80 && (byteArray[1] & 255) == 75 && (byteArray[2] & 255) == 3 && (byteArray[3] & 255) == 4;
         } else {
             return false;
         }
@@ -1000,36 +934,17 @@ public class ZkmFileUtils {
 
         PrintWriter printWriter = null;
 
-        label96:
-        {
-            label95:
-            {
-                try {
-                    printWriter = new PrintWriter(new FileWriter(file1), true);
-                    printWriter.println("aAzZyY");
-                    printWriter.flush();
-                    if (!file2.exists()) {
-                        caseSensitiveFileSystem = true;
-                    } else {
-                        caseSensitiveFileSystem = false;
-                    }
-                    break label95;
-                } catch (IOException iOException) {
-                    if (!OS_NAME.startsWith("Windows") && !OS_NAME.startsWith("OS/2") && !OS_NAME.startsWith("Mac OS")) {
-                        caseSensitiveFileSystem = true;
-                    } else {
-                        caseSensitiveFileSystem = false;
-                    }
-                } finally {
-                    printWriter.close();
-                }
-
-                file1.delete();
-                break label96;
-            }
-
-            file1.delete();
+        try {
+            printWriter = new PrintWriter(new FileWriter(file1), true);
+            printWriter.println("aAzZyY");
+            printWriter.flush();
+            caseSensitiveFileSystem = !file2.exists();
+        } catch (IOException exception) {
+            caseSensitiveFileSystem = !OS_NAME.startsWith("Windows") && !OS_NAME.startsWith("OS/2") && !OS_NAME.startsWith("Mac OS");
+        } finally {
+            printWriter.close();
         }
+        file1.delete();
 
         if (HiddenOptionFlags.EXTRA_XML_FILE_TYPES != null) {
             extraXmlFilePatterns = new ArrayList();
@@ -1055,22 +970,22 @@ public class ZkmFileUtils {
             return null;
         }
 
-        String string1 = string.trim();
+        String lastPathComponent = string.trim();
         if (FILE_SEPARATOR_CHAR == '\\') {
-            string1 = string1.replace('/', FILE_SEPARATOR_CHAR);
+            lastPathComponent = lastPathComponent.replace('/', FILE_SEPARATOR_CHAR);
         } else if (FILE_SEPARATOR_CHAR == '/') {
-            string1 = string1.replace('\\', FILE_SEPARATOR_CHAR);
+            lastPathComponent = lastPathComponent.replace('\\', FILE_SEPARATOR_CHAR);
         }
 
-        while (string1.endsWith(FILE_SEPARATOR)) {
-            string1 = string1.substring(0, string1.length() - FILE_SEPARATOR.length());
+        while (lastPathComponent.endsWith(FILE_SEPARATOR)) {
+            lastPathComponent = lastPathComponent.substring(0, lastPathComponent.length() - FILE_SEPARATOR.length());
         }
 
-        int ba = string1.lastIndexOf(FILE_SEPARATOR_CHAR);
+        int ba = lastPathComponent.lastIndexOf(FILE_SEPARATOR_CHAR);
         if (ba > -1) {
-            return ba == string1.length() - 1 ? string1.substring(0, string1.length() - 1) : string1.substring(ba + 1);
+            return ba == lastPathComponent.length() - 1 ? lastPathComponent.substring(0, lastPathComponent.length() - 1) : lastPathComponent.substring(ba + 1);
         } else {
-            return string1;
+            return lastPathComponent;
         }
     }
 
@@ -1078,19 +993,19 @@ public class ZkmFileUtils {
         observableHolder.clearValue();
         Vector vector = new Vector();
         ObservableHolder observableHolder1;
-        String string5;
+        String value;
         if (string != null) {
             if (string.trim().length() != 0) {
                 String string1 = string.trim();
                 string1 = normalizeSeparators(string1);
                 string1 = resolveDotRelativePath(string1, file1);
                 if (containsWildcard(string1)) {
-                    int ba = string1.lastIndexOf(FILE_SEPARATOR);
+                    int endIndex = string1.lastIndexOf(FILE_SEPARATOR);
                     File file2;
                     String string2;
-                    if (ba > 0) {
-                        string2 = string1.substring(ba + 1, string1.length());
-                        String string3 = string1.substring(0, ba);
+                    if (endIndex > 0) {
+                        string2 = string1.substring(endIndex + 1, string1.length());
+                        String string3 = string1.substring(0, endIndex);
                         if (containsWildcard(string3)) {
                             int bb = string3.indexOf("*");
                             int bc = string3.lastIndexOf(FILE_SEPARATOR);
@@ -1123,14 +1038,14 @@ public class ZkmFileUtils {
                     if (file2.isDirectory() && file2.exists()) {
                         File[] files = file2.listFiles();
                         if (files != null) {
-                            for (int i = 0; i < files.length; i++) {
-                                String string4 = files[i].getName();
+                            for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+                                String nameValue = files[fileIndex].getName();
                                 if (!caseSensitiveFileSystem) {
-                                    string4 = string4.toUpperCase();
+                                    nameValue = nameValue.toUpperCase();
                                 }
 
-                                if (ZkmStringUtils.matchesWildcard(string4, string2)) {
-                                    vector.add(files[i].getAbsolutePath());
+                                if (ZkmStringUtils.matchesWildcard(nameValue, string2)) {
+                                    vector.add(files[fileIndex].getAbsolutePath());
                                 }
                             }
                         } else {
@@ -1148,13 +1063,13 @@ public class ZkmFileUtils {
             }
 
             observableHolder1 = observableHolder;
-            string5 = "No file path specified";
+            value = "No file path specified";
         } else {
             observableHolder1 = observableHolder;
-            string5 = "No file path specified";
+            value = "No file path specified";
         }
 
-        observableHolder1.setValue(string5);
+        observableHolder1.setValue(value);
         return vector;
     }
 
@@ -1176,16 +1091,16 @@ public class ZkmFileUtils {
         StringBuilder stringBuilder = new StringBuilder();
         if (string2.startsWith("..")) {
             String string3 = string2;
-            String string4 = string1;
+            String parentPathValue = string1;
             String string7 = string3;
 
-            for (String string8 = ".."; string7.startsWith(string8); string8 = "..") {
-                String string5 = getParentPath(string4);
-                if (string5 == null) {
+            for (String prefix = ".."; string7.startsWith(prefix); prefix = "..") {
+                String parentPath = getParentPath(parentPathValue);
+                if (parentPath == null) {
                     throw new IllegalArgumentException("Base directory '" + string1 + "' has inadequate parent. Cannot translate '" + string2 + "'.");
                 }
 
-                string4 = string5;
+                parentPathValue = parentPath;
                 if (string3.length() > 2) {
                     string3 = string3.substring(3);
                 } else {
@@ -1195,7 +1110,7 @@ public class ZkmFileUtils {
                 string7 = string3;
             }
 
-            stringBuilder.append(string4);
+            stringBuilder.append(parentPathValue);
             if (stringBuilder.length() > 0 && stringBuilder.charAt(stringBuilder.length() - 1) != '/' && string3.length() > 0) {
                 stringBuilder.append('/');
             }
@@ -1269,20 +1184,20 @@ public class ZkmFileUtils {
             }
 
             int ba = bf;
-            byte[] bb = new byte[ba];
+            byte[] byteArray = new byte[ba];
             int bc = 0;
 
             while (bc < ba) {
                 int be = ba - bc;
                 int bd;
-                if ((bd = bufferedInputStream.read(bb, bc, Math.min(8192, be))) == -1) {
+                if ((bd = bufferedInputStream.read(byteArray, bc, Math.min(8192, be))) == -1) {
                     break;
                 }
 
                 bc += bd;
             }
 
-            bufferedOutputStream.write(bb);
+            bufferedOutputStream.write(byteArray);
             bl = false;
         } finally {
             if (bl) {

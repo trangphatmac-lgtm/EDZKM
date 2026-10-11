@@ -7,15 +7,15 @@ public abstract class TranslatedStackTrace {
     public StackTraceLine[] lines;
 
     public boolean hasMappedClasses() {
-        int ba = 0;
+        int lineIndex = 0;
         int bb = 0;
 
         for (StackTraceLine[] stackTraceLines = this.lines; bb < stackTraceLines.length; stackTraceLines = this.lines) {
-            if (this.lines[ba].isClassMapped()) {
+            if (this.lines[lineIndex].isClassMapped()) {
                 return true;
             }
 
-            bb = ++ba;
+            bb = ++lineIndex;
         }
 
         return false;
@@ -23,15 +23,15 @@ public abstract class TranslatedStackTrace {
 
     public String format(int ba, LoadedChangeLog loadedChangeLog, ClasspathClassResolver classpathClassResolver) {
         StringBuffer stringBuffer = new StringBuffer(1024);
-        boolean bl = false;
+        boolean callTraceBreak = false;
         StackTraceLine stackTraceLine1 = null;
 
-        for (int i = this.lines.length - 1; i >= 0; i += -1) {
-            StackTraceLine stackTraceLine2 = this.lines[i];
-            if (bl) {
+        for (int lineIndex = this.lines.length - 1; lineIndex >= 0; lineIndex += -1) {
+            StackTraceLine stackTraceLine2 = this.lines[lineIndex];
+            if (callTraceBreak) {
                 if (stackTraceLine2.isValidFrame()) {
-                    String string = stackTraceLine2.getClassName();
-                    if (string.startsWith("java.") || string.startsWith("sun.")) {
+                    String className = stackTraceLine2.getClassName();
+                    if (className.startsWith("java.") || className.startsWith("sun.")) {
                         stringBuffer.append("<Break in method call trace.>" + HiddenOptionFlags.LINE_SEPARATOR);
                     } else if (stackTraceLine1.isStaticInitializer()) {
                         stringBuffer.append("<Break in method call trace due to class initializer call.>" + HiddenOptionFlags.LINE_SEPARATOR);
@@ -48,7 +48,7 @@ public abstract class TranslatedStackTrace {
                 stringBuffer.append("<" + stackTraceLine2.getErrorMessage() + ">" + HiddenOptionFlags.LINE_SEPARATOR);
             }
 
-            bl = stackTraceLine2.hasCallTraceBreak();
+            callTraceBreak = stackTraceLine2.hasCallTraceBreak();
             stackTraceLine1 = stackTraceLine2;
         }
 

@@ -16,8 +16,8 @@ public class ConstantModule extends ConstantPoolEntry implements ResolvableConst
         return true;
     }
 
-    public ConstantModule(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantModule(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, abstractConstantPool);
         this.nameIndex = classFileInputStream.readUnsignedShort();
     }
 

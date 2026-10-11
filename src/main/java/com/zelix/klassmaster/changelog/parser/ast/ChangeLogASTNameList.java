@@ -14,11 +14,11 @@ public class ChangeLogASTNameList extends ChangeLogSimpleNode implements ChangeL
 
     public String buildDottedName() {
         StringBuffer stringBuffer = new StringBuffer();
-        int ba = this.nameParts.size();
+        int namePartsSize = this.nameParts.size();
 
-        for (int i = 0; i < ba; i++) {
-            stringBuffer.append((String) this.nameParts.elementAt(i));
-            if (i < ba - 1) {
+        for (int elementIndex = 0; elementIndex < namePartsSize; elementIndex++) {
+            stringBuffer.append((String) this.nameParts.elementAt(elementIndex));
+            if (elementIndex < namePartsSize - 1) {
                 stringBuffer.append(".");
             }
         }
@@ -31,18 +31,18 @@ public class ChangeLogASTNameList extends ChangeLogSimpleNode implements ChangeL
     }
 
     @Override
-    public void setParsedName(Object object) {
-        this.nameParts.addElement(object);
+    public void setParsedName(Object parsedName) {
+        this.nameParts.addElement(parsedName);
     }
 
     @Override
     public void interpret(ChangeLogNode changeLogNode, int bd, int ba, int be, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int bb = this.jjtGetNumChildren();
 
-        for (int i = 0; i < bb; i++) {
+        for (int childrenElementIndex = 0; childrenElementIndex < bb; childrenElementIndex++) {
             ChangeLogNode changeLogNode1 = this;
             if (ba > 0) {
-                changeLogNode1 = this.jjtGetChild(i);
+                changeLogNode1 = this.jjtGetChild(childrenElementIndex);
             }
 
             changeLogNode1.interpret(this, 30872, 34067, 41973, abstractChangeLog);

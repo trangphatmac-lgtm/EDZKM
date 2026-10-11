@@ -134,9 +134,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration != null) {
                             while (enumeration.hasMoreElements()) {
                                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                                if (this.matchesClass(programClass1, set1, string, string1, flowObfuscationExclusions)) {
+                                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, flowObfuscationExclusions)) {
                                     ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                     while (arrayEnumeration.hasMoreElements()) {
@@ -160,9 +160,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) enumeration.nextElement();
             if (this.matchesField(abstractFieldInfo, referenceObfuscationExclusions)) {
                 ClassFileBase classFileBase = abstractFieldInfo.getOwningClass();
-                String string = AbstractExclusionSpec.getClassMatchName(classFileBase);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
-                if (this.matchesClass(classFileBase, set1, string, string1, referenceObfuscationExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(classFileBase);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
+                if (this.matchesClass(classFileBase, set1, classMatchName, classSimpleMatchName, referenceObfuscationExclusions)) {
                     if (this.containedInClause == null) {
                         String string2 = "inclusion parameter '" + this.parameterText + "'";
                         referenceObfuscationExclusions.includeFieldReference(abstractFieldInfo, (MethodBytecode) null, string2);
@@ -188,19 +188,19 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(methodParameterExclusions, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, methodParameterExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, methodParameterExclusions)) {
                     methodParameterExclusions.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
         }
     }
 
-    public void setLinkMethodSignature(String string) {
-        this.linkMethodSignature = string;
-        int ba = this.linkMethodSignature.indexOf("<link>");
-        this.linkMethodPrefix = this.linkMethodSignature.substring(0, ba);
+    public void setLinkMethodSignature(String linkMethodSignatureArgument) {
+        this.linkMethodSignature = linkMethodSignatureArgument;
+        int endIndex = this.linkMethodSignature.indexOf("<link>");
+        this.linkMethodPrefix = this.linkMethodSignature.substring(0, endIndex);
     }
 
     public boolean hasExtendsClause() {
@@ -210,9 +210,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeFlowFieldHosts(FlowObfuscationExclusions flowObfuscationExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, flowObfuscationExclusions)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, flowObfuscationExclusions)) {
                 flowObfuscationExclusions.unexcludeFromPredicateFields(programClass1, "unexclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -245,9 +245,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration != null) {
                             while (enumeration.hasMoreElements()) {
                                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                                if (this.matchesClass(programClass1, set1, string, string1, exceptionObfuscationExclusions)) {
+                                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, exceptionObfuscationExclusions)) {
                                     ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                     while (arrayEnumeration.hasMoreElements()) {
@@ -270,8 +270,8 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         return this.containingClause != null;
     }
 
-    public void addClassModifier(String string) {
-        this.addModifier(string, this.classModifiers);
+    public void addClassModifier(String accessModifierArgument) {
+        this.addModifier(accessModifierArgument, this.classModifiers);
     }
 
     public boolean isInterfaceRequired() {
@@ -295,14 +295,14 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeReflectionMembers(ReflectionAccessMatcher reflectionAccessMatcher, ProgramClass programClass1) throws ZkmException, IOException {
         FieldInfo[] fieldInfos = programClass1.getFieldInfos();
 
-        for (int i = 0; i < fieldInfos.length; i++) {
-            reflectionAccessMatcher.markFieldNotAccessed(fieldInfos[i], "unexclusion parameter '" + this.parameterText + "'");
+        for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+            reflectionAccessMatcher.markFieldNotAccessed(fieldInfos[fieldInfoIndex], "unexclusion parameter '" + this.parameterText + "'");
         }
 
         MethodInfo[] methodInfos = programClass1.getMethodInfos();
 
-        for (int i = 0; i < methodInfos.length; i++) {
-            MethodInfo methodInfo1 = methodInfos[i];
+        for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+            MethodInfo methodInfo1 = methodInfos[methodInfoIndex];
             if (!methodInfo1.isConstructor() && !methodInfo1.isStaticInitializer()) {
                 reflectionAccessMatcher.markMethodNotAccessed(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
             }
@@ -314,11 +314,11 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, nameExclusionSet)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, nameExclusionSet)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, nameExclusionSet)) {
                     nameExclusionSet.unexcludeField(fieldInfo, "unexclusion parameter '" + this.parameterText + "'");
-                    this.unexcludePackageIfCaret(nameExclusionSet, string);
+                    this.unexcludePackageIfCaret(nameExclusionSet, classMatchName);
                     this.unexcludeClassIfCaret(nameExclusionSet, programClass1);
                 }
             }
@@ -326,8 +326,8 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     @Override
-    public void setFieldType(String string) {
-        this.fieldType = string;
+    public void setFieldType(String fieldTypeArgument) {
+        this.fieldType = fieldTypeArgument;
     }
 
     public void setContainedInClause(ASTContainedInClause aSTContainedInClause) {
@@ -356,9 +356,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration1 != null) {
                         while (enumeration1.hasMoreElements()) {
                             ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                            String string2 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                            String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                            if (this.matchesClass(programClass2, set1, string2, string3, longEncryptionExclusionHandler)) {
+                            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass2);
+                            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                            if (this.matchesClass(programClass2, set1, classMatchName, classSimpleMatchName, longEncryptionExclusionHandler)) {
                                 ArrayEnumeration arrayEnumeration1 = programClass2.enumerateFields();
 
                                 while (arrayEnumeration1.hasMoreElements()) {
@@ -380,9 +380,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration != null) {
                         while (enumeration.hasMoreElements()) {
                             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                            if (this.matchesClass(programClass1, set1, string, string1, longEncryptionExclusionHandler)) {
+                            String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                            String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                            if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, longEncryptionExclusionHandler)) {
                                 ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                 while (arrayEnumeration.hasMoreElements()) {
@@ -415,8 +415,8 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             boolean bl = false;
             int ba;
             if (HiddenOptionFlags.MATCH_ORIGINAL_NAMES && classHierarchyQuery.hasOriginalNameCaches()) {
-                String string = abstractMethodInfo.getOriginalDescriptor();
-                ba = ConstantPoolEntry.getParameterTypes(string).size();
+                String originalDescriptor = abstractMethodInfo.getOriginalDescriptor();
+                ba = ConstantPoolEntry.getParameterTypes(originalDescriptor).size();
                 bl = true;
             } else {
                 ba = abstractMethodInfo.getParameterCount();
@@ -451,14 +451,14 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             }
 
             if (aSTComplexAnnotationSpecifiers.length == ba) {
-                for (int i = 0; i < aSTComplexAnnotationSpecifiers.length; i++) {
-                    if (aSTComplexAnnotationSpecifiers[i] != null) {
+                for (int aSTComplexAnnotationSpecifierIndex = 0; aSTComplexAnnotationSpecifierIndex < aSTComplexAnnotationSpecifiers.length; aSTComplexAnnotationSpecifierIndex++) {
+                    if (aSTComplexAnnotationSpecifiers[aSTComplexAnnotationSpecifierIndex] != null) {
                         HashSet hashSet = ZkmUtils.createHashSet(13);
                         Enumeration enumeration;
                         if (bl) {
-                            enumeration = abstractMethodInfo.enumerateParameterAnnotationTypes(i);
+                            enumeration = abstractMethodInfo.enumerateParameterAnnotationTypes(aSTComplexAnnotationSpecifierIndex);
                         } else {
-                            enumeration = abstractMethodInfo.enumerateDeclaredParameterAnnotationTypes(i);
+                            enumeration = abstractMethodInfo.enumerateDeclaredParameterAnnotationTypes(aSTComplexAnnotationSpecifierIndex);
                         }
 
                         while (enumeration.hasMoreElements()) {
@@ -470,7 +470,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                             }
                         }
 
-                        if (!aSTComplexAnnotationSpecifiers[i].matchesAnyAnnotation(hashSet)) {
+                        if (!aSTComplexAnnotationSpecifiers[aSTComplexAnnotationSpecifierIndex].matchesAnyAnnotation(hashSet)) {
                             return false;
                         }
                     }
@@ -509,9 +509,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration != null) {
                             while (enumeration.hasMoreElements()) {
                                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                                if (this.matchesClass(programClass1, set1, string, string1, exceptionObfuscationExclusions)) {
+                                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, exceptionObfuscationExclusions)) {
                                     ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                     while (arrayEnumeration.hasMoreElements()) {
@@ -544,39 +544,39 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string2 = programClass1.getClassName();
-            String string3 = programClass1.getOriginalClassName();
-            String string4 = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string5 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            String className = programClass1.getClassName();
+            String originalClassName = programClass1.getOriginalClassName();
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
             boolean bl1 = HiddenOptionFlags.MATCH_ORIGINAL_NAMES && existingSerializedClassesHandler.hasOriginalNameCaches();
 
             try {
-                if (this.matchesClass(programClass1, set1, string4, string5, existingSerializedClassesHandler) && !programClass1.isInterface()) {
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, existingSerializedClassesHandler) && !programClass1.isInterface()) {
                     if (!this.implementsNames.contains("java/io/Serializable") && !this.implementsNames.contains("java/io/Externalizable")) {
-                        String string6;
-                        String string7;
+                        String keyValueValue;
+                        String keyValue2;
                         if (bl1) {
-                            string6 = string3;
-                            string7 = "java/io/Serializable";
+                            keyValueValue = originalClassName;
+                            keyValue2 = "java/io/Serializable";
                         } else {
-                            string6 = string2;
-                            string7 = "java/io/Serializable";
+                            keyValueValue = className;
+                            keyValue2 = "java/io/Serializable";
                         }
 
-                        String string = string7;
-                        String string1 = string6;
-                        if (!existingSerializedClassesHandler.implementsInterface(string1, string)) {
+                        String key = keyValue2;
+                        String keyValue = keyValueValue;
+                        if (!existingSerializedClassesHandler.implementsInterface(keyValue, key)) {
                             if (bl1) {
-                                string6 = string3;
-                                string7 = "java/io/Externalizable";
+                                keyValueValue = originalClassName;
+                                keyValue2 = "java/io/Externalizable";
                             } else {
-                                string6 = string2;
-                                string7 = "java/io/Externalizable";
+                                keyValueValue = className;
+                                keyValue2 = "java/io/Externalizable";
                             }
 
-                            string = string7;
-                            string1 = string6;
-                            if (!existingSerializedClassesHandler.implementsInterface(string1, string)) {
+                            key = keyValue2;
+                            keyValue = keyValueValue;
+                            if (!existingSerializedClassesHandler.implementsInterface(keyValue, key)) {
                                 continue;
                             }
                         }
@@ -632,9 +632,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                 if (enumeration != null) {
                     while (enumeration.hasMoreElements()) {
                         ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                        String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                        String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                        if (this.matchesClass(programClass1, set1, string, string1, methodParameterExclusions)) {
+                        String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                        String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                        if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, methodParameterExclusions)) {
                             ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                             while (arrayEnumeration.hasMoreElements()) {
@@ -666,9 +666,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(reflectionAccessMatcher, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, reflectionAccessMatcher)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, reflectionAccessMatcher)) {
                     reflectionAccessMatcher.markMethodNotAccessed(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
                     this.unexcludeClassIfCaret(reflectionAccessMatcher, programClass1);
                 }
@@ -677,12 +677,12 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     @Override
-    public final boolean equals(Object object) {
+    public final boolean equals(Object other) {
         int flowControlKey = ZkmScriptSimpleNode.getFlowControlKey();
-        boolean bl = object instanceof ASTRenameFilterParameter;
+        boolean bl = other instanceof ASTRenameFilterParameter;
         if (flowControlKey != 0) {
             if (bl) {
-                ASTRenameFilterParameter aSTRenameFilterParameter1 = (ASTRenameFilterParameter) object;
+                ASTRenameFilterParameter aSTRenameFilterParameter1 = (ASTRenameFilterParameter) other;
                 return this.parameterText.equals(aSTRenameFilterParameter1.parameterText);
             }
 
@@ -697,10 +697,10 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public void excludeNameClass(NameExclusionSet nameExclusionSet, ProgramClass programClass1, Set set1) throws ZkmException, IOException {
-        String string = programClass1.getPackagePath();
-        String string1 = AbstractExclusionSpec.getClassMatchName(programClass1);
-        String string2 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-        if (this.matchesClass(programClass1, set1, string1, string2, nameExclusionSet)) {
+        String packagePath = programClass1.getPackagePath();
+        String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+        String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+        if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, nameExclusionSet)) {
             if (this.hasLinkClassName()) {
                 nameExclusionSet.addClassLink(
                         programClass1, this.linkClassPrefix, this.linkClassSuffix, this.linkPackageNames, "exclusion parameter '" + this.parameterText + "'"
@@ -709,7 +709,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                 nameExclusionSet.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
             }
 
-            this.excludePackageIfCaret(nameExclusionSet, string);
+            this.excludePackageIfCaret(nameExclusionSet, packagePath);
             if (this.classNamePattern != null && this.classNamePattern.hasPlusTag()) {
                 this.excludeNameMembers(nameExclusionSet, programClass1);
             }
@@ -719,18 +719,18 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeFlowClasses(FlowObfuscationExclusions flowObfuscationExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, flowObfuscationExclusions)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, flowObfuscationExclusions)) {
                 flowObfuscationExclusions.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
             }
         }
     }
 
     public void unexcludeTrimClass(TrimProcessor trimProcessor1, ProgramClass programClass1, Set set1) throws ZkmException, IOException {
-        String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-        String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-        if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+        String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+        String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+        if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
             trimProcessor1.unexcludeClass(programClass1, "unexclusion parameter '" + this.parameterText + "'");
             if (this.classNamePattern.hasPlusTag()) {
                 this.unexcludeTrimMembers(trimProcessor1, programClass1);
@@ -755,9 +755,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeFlowClasses(FlowObfuscationExclusions flowObfuscationExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, flowObfuscationExclusions)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, flowObfuscationExclusions)) {
                 flowObfuscationExclusions.unexcludeClass(programClass1, "unexclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -773,7 +773,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         } else if (!this.matchesFieldName(abstractFieldInfo)) {
             return false;
         } else {
-            return !this.matchesFieldType(abstractFieldInfo) ? false : matchesFieldAnnotations(abstractFieldInfo, this.memberAnnotation, classHierarchyQuery);
+            return (!(!this.matchesFieldType(abstractFieldInfo)) && (matchesFieldAnnotations(abstractFieldInfo, this.memberAnnotation, classHierarchyQuery)));
         }
     }
 
@@ -800,9 +800,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, trimProcessor1)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
                     trimProcessor1.matchField(fieldInfo, "exclusion parameter '" + this.parameterText + "'");
                     this.warnPackageExclusionIgnored();
                     this.excludeClassIfCaret(trimProcessor1, programClass1);
@@ -818,14 +818,14 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeTrimMembers(TrimProcessor trimProcessor1, ProgramClass programClass1) throws ZkmException, IOException {
         FieldInfo[] fieldInfos = programClass1.getFieldInfos();
 
-        for (int i = 0; i < fieldInfos.length; i++) {
-            trimProcessor1.matchField(fieldInfos[i], "exclusion parameter '" + this.parameterText + "'");
+        for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+            trimProcessor1.matchField(fieldInfos[fieldInfoIndex], "exclusion parameter '" + this.parameterText + "'");
         }
 
         MethodInfo[] methodInfos = programClass1.getMethodInfos();
 
-        for (int i = 0; i < methodInfos.length; i++) {
-            MethodInfo methodInfo1 = methodInfos[i];
+        for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+            MethodInfo methodInfo1 = methodInfos[methodInfoIndex];
             trimProcessor1.matchMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
         }
     }
@@ -877,64 +877,36 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, stringEncryptionExclusionSpec)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, stringEncryptionExclusionSpec)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, stringEncryptionExclusionSpec)) {
                     stringEncryptionExclusionSpec.excludeField(fieldInfo, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
         }
     }
 
-    public static String formatArgsWithAnnotations(MethodArgsPattern methodArgsPattern1, ASTComplexAnnotationSpecifier[] aSTComplexAnnotationSpecifiers) {
-        java.lang.String string1 = null;
+    public static String formatArgsWithAnnotations(MethodArgsPattern arguments, ASTComplexAnnotationSpecifier[] annotations) {
         int flowControlKey = ZkmScriptSimpleNode.getFlowControlKey();
-        ZkmAssert.formatArray(aSTComplexAnnotationSpecifiers);
-        int ba = flowControlKey;
-        StringBuilder stringBuilder = new StringBuilder();
-        List list1 = ConstantPoolEntry.getParameterTypes(methodArgsPattern1.argsText);
-        int bb = list1.size();
-        int bc = 0;
-
-        while (true) {
-            if (bc < bb) {
-                string1 = (String) list1.get(bc);
-                if (ba == 0) {
-                    break;
-                }
-
-                label39:
-                {
-                    String string = string1;
-                    if (ba != 0) {
-                        if (aSTComplexAnnotationSpecifiers != null && aSTComplexAnnotationSpecifiers[bc] != null) {
-                            stringBuilder.append(aSTComplexAnnotationSpecifiers[bc].getSpecText());
-                            stringBuilder.append(' ');
-                        }
-
-                        stringBuilder.append(toJavaTypeName(string));
-                        if (ba == 0) {
-                            break label39;
-                        }
-                    }
-
-                    if (bc < list1.size() - 1) {
-                        stringBuilder.append(", ");
-                    }
-
-                    bc++;
-                }
-
-                if (ba != 0) {
-                    continue;
-                }
+        ZkmAssert.formatArray(annotations);
+        StringBuilder result = new StringBuilder();
+        List parameterTypes = ConstantPoolEntry.getParameterTypes(arguments.argsText);
+        int parameterCount = parameterTypes.size();
+        for (int parameterIndex = 0; parameterIndex < parameterCount; parameterIndex++) {
+            String parameterType = (String) parameterTypes.get(parameterIndex);
+            if (flowControlKey == 0) {
+                return parameterType;
             }
-
-            string1 = stringBuilder.toString();
-            break;
+            if (annotations != null && annotations[parameterIndex] != null) {
+                result.append(annotations[parameterIndex].getSpecText());
+                result.append(' ');
+            }
+            result.append(toJavaTypeName(parameterType));
+            if (parameterIndex < parameterTypes.size() - 1) {
+                result.append(", ");
+            }
         }
-
-        return string1;
+        return result.toString();
     }
 
     public void excludeReferenceMethods(ReferenceObfuscationExclusions referenceObfuscationExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
@@ -942,9 +914,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) enumeration.nextElement();
             if (this.matchesMethod(referenceObfuscationExclusions, abstractMethodInfo)) {
                 ClassFileBase classFileBase = abstractMethodInfo.getOwningClass();
-                String string = AbstractExclusionSpec.getClassMatchName(classFileBase);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
-                if (this.matchesClass(classFileBase, set1, string, string1, referenceObfuscationExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(classFileBase);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
+                if (this.matchesClass(classFileBase, set1, classMatchName, classSimpleMatchName, referenceObfuscationExclusions)) {
                     if (this.containedInClause == null) {
                         String string2 = "exclusion parameter '" + this.parameterText + "'";
                         referenceObfuscationExclusions.excludeMethodReference(abstractMethodInfo, (MethodBytecode) null, string2);
@@ -976,7 +948,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public boolean isAnyFieldWithoutType() {
-        return this.fieldSpecifier == null ? false : this.fieldType == null && isAnyWildcard(this.fieldSpecifier.getChildDescription());
+        return (!(this.fieldSpecifier == null) && (this.fieldType == null && isAnyWildcard(this.fieldSpecifier.getChildDescription())));
     }
 
     public void excludeTrimLinkedClasses(TrimProcessor trimProcessor1, Enumeration enumeration, Set set1) throws ZkmException, IOException {
@@ -985,14 +957,14 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
         while (enumeration1.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration1.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
                 trimProcessor1.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
-                String string2 = programClass1.getClassName();
-                if (string1.length() > this.linkClassSuffix.length()) {
-                    String string3 = string2.substring(0, string2.length() - this.linkClassSuffix.length());
-                    hashMap.put(string3, programClass1);
+                String className = programClass1.getClassName();
+                if (classSimpleMatchName.length() > this.linkClassSuffix.length()) {
+                    String key = className.substring(0, className.length() - this.linkClassSuffix.length());
+                    hashMap.put(key, programClass1);
                 }
             }
         }
@@ -1001,9 +973,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
         while (enumeration1.hasMoreElements()) {
             ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-            String string4 = programClass2.getClassName();
-            if (hashMap.containsKey(string4)) {
-                ProgramClass programClass3 = (ProgramClass) hashMap.get(string4);
+            String classNameValue = programClass2.getClassName();
+            if (hashMap.containsKey(classNameValue)) {
+                ProgramClass programClass3 = (ProgramClass) hashMap.get(classNameValue);
                 trimProcessor1.excludeClass(
                         programClass2, "exclusion parameter '" + this.parameterText + "' matching class '" + programClass3.getDottedClassName() + "'"
                 );
@@ -1035,12 +1007,12 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         return this.memberAccessFlags.isPrivateRequired();
     }
 
-    public void setReferencingAnnotation(String string) {
-        this.referencingAnnotation = string;
+    public void setReferencingAnnotation(String referencingAnnotationArgument) {
+        this.referencingAnnotation = referencingAnnotationArgument;
     }
 
-    public void setReferencingAnnotationComponent(String string) {
-        this.referencingAnnotationComponent = string;
+    public void setReferencingAnnotationComponent(String referencingAnnotationComponentArgument) {
+        this.referencingAnnotationComponent = referencingAnnotationComponentArgument;
     }
 
     public static AccessFlagsSpec buildMemberAccessFlags(Map map1, int ba) {
@@ -1049,16 +1021,16 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
         while (iterator.hasNext()) {
             if (accessFlagsSpec1 == null) {
-                byte bb;
+                byte memberKind;
                 if (ba == 3) {
-                    bb = 2;
+                    memberKind = 2;
                 } else if (ba == 4) {
-                    bb = 3;
+                    memberKind = 3;
                 } else {
-                    bb = 0;
+                    memberKind = 0;
                 }
 
-                accessFlagsSpec1 = new AccessFlagsSpec(bb);
+                accessFlagsSpec1 = new AccessFlagsSpec(memberKind);
             }
 
             boolean bl = false;
@@ -1139,13 +1111,13 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public String joinWithAnd(Vector vector) {
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = 0; i < vector.size(); i++) {
-            if (i == vector.size() - 1) {
-                stringBuffer.append((String) vector.elementAt(i));
-            } else if (i == vector.size() - 2) {
-                stringBuffer.append((String) vector.elementAt(i) + " and ");
+        for (int elementIndex = 0; elementIndex < vector.size(); elementIndex++) {
+            if (elementIndex == vector.size() - 1) {
+                stringBuffer.append((String) vector.elementAt(elementIndex));
+            } else if (elementIndex == vector.size() - 2) {
+                stringBuffer.append((String) vector.elementAt(elementIndex) + " and ");
             } else {
-                stringBuffer.append((String) vector.elementAt(i) + ", ");
+                stringBuffer.append((String) vector.elementAt(elementIndex) + ", ");
             }
         }
 
@@ -1155,9 +1127,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeTrimAnnotationTypes(TrimProcessor trimProcessor1, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ClassFileBase classFileBase = (ClassFileBase) enumeration.nextElement();
-            String string = classFileBase.getPackagePath();
-            String string1 = classFileBase.getSimpleName();
-            if (this.matchesClass(classFileBase, set1, string, string1, trimProcessor1)) {
+            String packagePath = classFileBase.getPackagePath();
+            String simpleName = classFileBase.getSimpleName();
+            if (this.matchesClass(classFileBase, set1, packagePath, simpleName, trimProcessor1)) {
                 trimProcessor1.addAnnotationRetainedClass(classFileBase, "exclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -1172,11 +1144,11 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(nameExclusionSet, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, nameExclusionSet)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, nameExclusionSet)) {
                     nameExclusionSet.unexcludeMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
-                    this.unexcludePackageIfCaret(nameExclusionSet, string);
+                    this.unexcludePackageIfCaret(nameExclusionSet, classMatchName);
                     this.unexcludeClassIfCaret(nameExclusionSet, programClass1);
                     if (this.plusSignatureClasses) {
                         this.unexcludeSignatureClasses(nameExclusionSet, methodInfo1);
@@ -1190,8 +1162,8 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         return this.linkMethodSignature != null;
     }
 
-    public void addMemberModifier(String string) {
-        this.addModifier(string, this.memberModifiers);
+    public void addMemberModifier(String accessModifierArgument) {
+        this.addModifier(accessModifierArgument, this.memberModifiers);
     }
 
     public void collectGroupingClasses(GroupingsSpec groupingsSpec1, HashSet hashSet) throws ZkmException, IOException {
@@ -1206,9 +1178,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, groupingsSpec1)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, groupingsSpec1)) {
                 hashSet.add(programClass1);
             }
         }
@@ -1216,8 +1188,8 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
     public boolean matchesMethodName(AbstractMethodInfo abstractMethodInfo) {
         if (this.hasLinkMethodSignature()) {
-            String string = AbstractExclusionSpec.getMethodMatchName(abstractMethodInfo);
-            return string.startsWith(this.linkMethodPrefix) && string.length() > this.linkMethodPrefix.length();
+            String methodMatchName = AbstractExclusionSpec.getMethodMatchName(abstractMethodInfo);
+            return methodMatchName.startsWith(this.linkMethodPrefix) && methodMatchName.length() > this.linkMethodPrefix.length();
         } else {
             return this.methodSpecifier.matchesName(AbstractExclusionSpec.getMethodMatchName(abstractMethodInfo));
         }
@@ -1228,9 +1200,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(exceptionObfuscationExclusions, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, exceptionObfuscationExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, exceptionObfuscationExclusions)) {
                     exceptionObfuscationExclusions.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -1294,9 +1266,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration1 != null) {
                             while (enumeration1.hasMoreElements()) {
                                 ProgramClass programClass3 = (ProgramClass) enumeration1.nextElement();
-                                String string2 = AbstractExclusionSpec.getClassMatchName(programClass3);
-                                String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass3);
-                                if (this.matchesClass(programClass3, set1, string2, string3, trimProcessor1)) {
+                                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass3);
+                                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass3);
+                                if (this.matchesClass(programClass3, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
                                     ArrayEnumeration arrayEnumeration1 = programClass3.enumerateFields();
 
                                     while (arrayEnumeration1.hasMoreElements()) {
@@ -1320,9 +1292,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration != null) {
                             while (enumeration.hasMoreElements()) {
                                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                                if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+                                String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                                String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                                if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, trimProcessor1)) {
                                     ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                     while (arrayEnumeration.hasMoreElements()) {
@@ -1343,15 +1315,15 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         }
     }
 
-    public void addModifier(String string, Map map1) {
-        if (string.equals("public") || string.equals("protected") || string.equals("private") || string.equals("package")) {
+    public void addModifier(String accessModifierArgument, Map map1) {
+        if (accessModifierArgument.equals("public") || accessModifierArgument.equals("protected") || accessModifierArgument.equals("private") || accessModifierArgument.equals("package")) {
             if (this.accessModifier == null) {
-                this.accessModifier = string;
-            } else if (!this.accessModifier.equals(string)) {
+                this.accessModifier = accessModifierArgument;
+            } else if (!this.accessModifier.equals(accessModifierArgument)) {
                 this.scriptEnvironment
                         .logWarning(
                                 "\""
-                                        + string
+                                        + accessModifierArgument
                                         + "\" appears after \""
                                         + this.accessModifier
                                         + "\" in \""
@@ -1359,7 +1331,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                                         + "\" statement at line "
                                         + this.getLineNumber()
                                         + ". \""
-                                        + string
+                                        + accessModifierArgument
                                         + "\" ignored.",
                                 true
                         );
@@ -1367,10 +1339,10 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             }
         }
 
-        if (map1.put(string, string) != null) {
+        if (map1.put(accessModifierArgument, accessModifierArgument) != null) {
             this.scriptEnvironment
                     .logWarning(
-                            "\"" + string + "\" appears more than once in \"" + this.getStatementName() + "\" statement at line " + this.getLineNumber() + ".", true
+                            "\"" + accessModifierArgument + "\" appears more than once in \"" + this.getStatementName() + "\" statement at line " + this.getLineNumber() + ".", true
                     );
         }
     }
@@ -1380,9 +1352,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(flowObfuscationExclusions, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, flowObfuscationExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, flowObfuscationExclusions)) {
                     flowObfuscationExclusions.unexcludeMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -1423,9 +1395,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration1 != null) {
                             while (enumeration1.hasMoreElements()) {
                                 ProgramClass programClass3 = (ProgramClass) enumeration1.nextElement();
-                                String string2 = AbstractExclusionSpec.getClassMatchName(programClass3);
-                                String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass3);
-                                if (this.matchesClass(programClass3, set1, string2, string3, trimProcessor1)) {
+                                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass3);
+                                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass3);
+                                if (this.matchesClass(programClass3, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
                                     ArrayEnumeration arrayEnumeration1 = programClass3.enumerateFields();
 
                                     while (arrayEnumeration1.hasMoreElements()) {
@@ -1449,9 +1421,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration != null) {
                             while (enumeration.hasMoreElements()) {
                                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                                if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+                                String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                                String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                                if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, trimProcessor1)) {
                                     ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                     while (arrayEnumeration.hasMoreElements()) {
@@ -1496,11 +1468,11 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         ObservableHolder observableHolder = new ObservableHolder();
         boolean bl = matchesThrowsClause(classHierarchyQuery, abstractMethodInfo, this.throwsTypes, observableHolder);
         if (!observableHolder.isValueNull()) {
-            String string = (String) observableHolder.getValue();
-            string = ZkmStringUtils.replaceAll(string, "<0>", this.parameterText);
-            string = ZkmStringUtils.replaceAll(string, "<1>", this.getStatementName());
-            string = ZkmStringUtils.replaceAll(string, "<2>", String.valueOf(this.getLineNumber()));
-            this.scriptEnvironment.logWarning(string);
+            String value = (String) observableHolder.getValue();
+            value = ZkmStringUtils.replaceAll(value, "<0>", this.parameterText);
+            value = ZkmStringUtils.replaceAll(value, "<1>", this.getStatementName());
+            value = ZkmStringUtils.replaceAll(value, "<2>", String.valueOf(this.getLineNumber()));
+            this.scriptEnvironment.logWarning(value);
         }
 
         return bl;
@@ -1511,9 +1483,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(trimProcessor1, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
                     trimProcessor1.unmatchMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
                     this.warnPackageExclusionIgnored();
                     this.unexcludeClassIfCaret(trimProcessor1, programClass1);
@@ -1548,9 +1520,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration != null) {
                             while (enumeration.hasMoreElements()) {
                                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                                if (this.matchesClass(programClass1, set1, string, string1, flowObfuscationExclusions)) {
+                                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, flowObfuscationExclusions)) {
                                     ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                     while (arrayEnumeration.hasMoreElements()) {
@@ -1614,9 +1586,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration1 != null) {
                         while (enumeration1.hasMoreElements()) {
                             ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                            String string2 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                            String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                            if (this.matchesClass(programClass2, set1, string2, string3, stringEncryptionExclusionSpec)) {
+                            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass2);
+                            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                            if (this.matchesClass(programClass2, set1, classMatchName, classSimpleMatchName, stringEncryptionExclusionSpec)) {
                                 ArrayEnumeration arrayEnumeration1 = programClass2.enumerateFields();
 
                                 while (arrayEnumeration1.hasMoreElements()) {
@@ -1638,9 +1610,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration != null) {
                         while (enumeration.hasMoreElements()) {
                             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                            if (this.matchesClass(programClass1, set1, string, string1, stringEncryptionExclusionSpec)) {
+                            String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                            String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                            if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, stringEncryptionExclusionSpec)) {
                                 ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                 while (arrayEnumeration.hasMoreElements()) {
@@ -1663,9 +1635,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, reflectionAccessMatcher)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, reflectionAccessMatcher)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, reflectionAccessMatcher)) {
                     reflectionAccessMatcher.markFieldAccessed(fieldInfo, "exclusion parameter '" + this.parameterText + "'");
                     this.excludeClassIfCaret(reflectionAccessMatcher, programClass1);
                 }
@@ -1690,9 +1662,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) enumeration.nextElement();
             if (this.matchesField(abstractFieldInfo, referenceObfuscationExclusions)) {
                 ClassFileBase classFileBase = abstractFieldInfo.getOwningClass();
-                String string = AbstractExclusionSpec.getClassMatchName(classFileBase);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
-                if (this.matchesClass(classFileBase, set1, string, string1, referenceObfuscationExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(classFileBase);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
+                if (this.matchesClass(classFileBase, set1, classMatchName, classSimpleMatchName, referenceObfuscationExclusions)) {
                     if (this.containedInClause == null) {
                         String string2 = "exclusion parameter '" + this.parameterText + "'";
                         referenceObfuscationExclusions.excludeFieldReference(abstractFieldInfo, (MethodBytecode) null, string2);
@@ -1716,9 +1688,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeReflectionClasses(ReflectionAccessMatcher reflectionAccessMatcher, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, reflectionAccessMatcher)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, reflectionAccessMatcher)) {
                 reflectionAccessMatcher.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
                 if (this.classNamePattern != null && this.classNamePattern.hasPlusTag()) {
                     this.excludeReflectionMembers(reflectionAccessMatcher, programClass1);
@@ -1732,9 +1704,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (MethodParameterExclusions.isEligible(methodInfo1) && this.matchesMethod(methodParameterExclusions, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, methodParameterExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, methodParameterExclusions)) {
                     methodParameterExclusions.includeMatchedMethod(methodInfo1, "inclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -1750,9 +1722,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeTrimClasses(TrimProcessor trimProcessor1, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
                 trimProcessor1.unexcludeClass(programClass1, "unexclusion parameter '" + this.parameterText + "'");
                 if (this.classNamePattern.hasPlusTag()) {
                     this.unexcludeTrimMembers(trimProcessor1, programClass1);
@@ -1791,179 +1763,93 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public static String formatMemberSpec(
-            ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier,
-            AccessFlagsSpec accessFlagsSpec1,
-            String string,
-            DescribableSpec describableSpec,
-            String string1,
-            DescribableSpec describableSpec1,
-            MethodArgsPattern methodArgsPattern1,
-            ASTComplexAnnotationSpecifier[] aSTComplexAnnotationSpecifiers,
-            List list1,
-            boolean ba
+            ASTComplexAnnotationSpecifier annotation,
+            AccessFlagsSpec accessFlags,
+            String fieldType,
+            DescribableSpec fieldName,
+            String methodName,
+            DescribableSpec methodSpecifier,
+            MethodArgsPattern arguments,
+            ASTComplexAnnotationSpecifier[] parameterAnnotations,
+            List throwsTypes,
+            boolean plusSignatureClasses
     ) {
-        com.zelix.klassmaster.obfuscator.exclude.AccessFlagsSpec accessFlagsSpec2 = null;
         int flowPredicate = ZkmScriptSimpleNode.getFlowPredicate();
-        StringBuilder stringBuilder = new StringBuilder();
-        int bb = flowPredicate;
-        if (aSTComplexAnnotationSpecifier != null) {
-            stringBuilder.append(aSTComplexAnnotationSpecifier.getSpecText());
+        StringBuilder result = new StringBuilder();
+        if (annotation != null) {
+            result.append(annotation.getSpecText());
         }
-
-        if (accessFlagsSpec1 != null) {
-            label153:
-            {
-                flowPredicate = stringBuilder.length();
-                label145:
-                if (bb == 0) {
-                    if (flowPredicate > 0) {
-                        flowPredicate = stringBuilder.charAt(stringBuilder.length() - 1);
-                        if (bb != 0) {
-                            break label145;
-                        }
-
-                        if (flowPredicate != 32) {
-                            stringBuilder.append(' ');
-                        }
-                    }
-
-                    accessFlagsSpec2 = accessFlagsSpec1;
-                    if (bb != 0) {
-                        break label153;
-                    }
-
-                    flowPredicate = ((accessFlagsSpec1.isPackageRequired()) ? 1 : 0);
+        if (accessFlags != null) {
+            boolean appendPackage;
+            int prefixLength = result.length();
+            if (flowPredicate == 0) {
+                if (prefixLength > 0 && result.charAt(result.length() - 1) != ' ') {
+                    result.append(' ');
                 }
-
-                if (flowPredicate != 0) {
-                    stringBuilder.append("package ");
-                }
-
-                accessFlagsSpec2 = accessFlagsSpec1;
+                appendPackage = accessFlags.isPackageRequired();
+            } else {
+                appendPackage = prefixLength != 0;
             }
-
-            if (accessFlagsSpec2.isPackageForbidden()) {
-                stringBuilder.append("!package ");
+            if (appendPackage) {
+                result.append("package ");
             }
-
-            stringBuilder.append(accessFlagsSpec1.toSpecString());
+            if (accessFlags.isPackageForbidden()) {
+                result.append("!package ");
+            }
+            result.append(accessFlags.toSpecString());
         }
-
-        label135:
-        if (string != null && bb == 0) {
-            if (stringBuilder.length() > 0) {
-                if (bb != 0) {
-                    break label135;
-                }
-
-                if (stringBuilder.charAt(stringBuilder.length() - 1) != ' ') {
-                    stringBuilder.append(' ');
-                }
+        if (fieldType != null && flowPredicate == 0) {
+            if (result.length() > 0 && result.charAt(result.length() - 1) != ' ') {
+                result.append(' ');
             }
-
-            stringBuilder.append(toJavaTypeName(string));
+            result.append(toJavaTypeName(fieldType));
         }
-
-        label125:
-        if (describableSpec != null && bb == 0) {
-            if (stringBuilder.length() > 0) {
-                if (bb != 0) {
-                    break label125;
-                }
-
-                if (stringBuilder.charAt(stringBuilder.length() - 1) != ' ') {
-                    stringBuilder.append(' ');
-                }
+        if (fieldName != null && flowPredicate == 0) {
+            if (result.length() > 0 && result.charAt(result.length() - 1) != ' ') {
+                result.append(' ');
             }
-
-            stringBuilder.append(describableSpec.getSpecText());
+            result.append(fieldName.getSpecText());
         }
-
-        if (string1 != null || describableSpec1 != null) {
-            label158:
-            {
-                StringBuilder stringBuilder1 = stringBuilder;
-                if (bb == 0) {
-                    if (stringBuilder.length() <= 0) {
-                        break label158;
-                    }
-
-                    stringBuilder1 = stringBuilder;
+        if (methodName != null || methodSpecifier != null) {
+            if (flowPredicate == 0) {
+                if (result.length() > 0 && result.charAt(result.length() - 1) != ' ') {
+                    result.append(' ');
                 }
-
-                int bf = stringBuilder.length();
-                if (bb == 0) {
-                    if (stringBuilder1.charAt(bf - 1) == ' ') {
-                        break label158;
-                    }
-
-                    stringBuilder1 = stringBuilder;
-                    bf = 32;
-                }
-
-                stringBuilder1.append((char) bf);
+            } else {
+                result.append((char) result.length());
             }
-
-            label100:
-            {
-                if (string1 != null) {
-                    stringBuilder.append(string1);
-                    if (bb == 0) {
-                        break label100;
-                    }
-                }
-
-                stringBuilder.append(describableSpec1.getSpecText());
+            if (methodName != null) {
+                result.append(methodName);
             }
-
-            StringBuilder stringBuilder2 = stringBuilder;
-            char bd = '(';
-            if (bb == 0) {
-                stringBuilder.append('(');
-                if (methodArgsPattern1 != null) {
-                    stringBuilder.append(formatArgsWithAnnotations(methodArgsPattern1, aSTComplexAnnotationSpecifiers));
-                }
-
-                stringBuilder2 = stringBuilder;
-                bd = ')';
+            if (methodName == null || flowPredicate != 0) {
+                result.append(methodSpecifier.getSpecText());
             }
-
-            stringBuilder2.append(bd);
-            flowPredicate = list1.size();
-            if (bb == 0) {
-                if (flowPredicate > 0) {
-                    stringBuilder.append(" throws ");
-                    int bc = 0;
-
-                    while (bc < list1.size()) {
-                        stringBuilder.append(toDottedName((String) list1.get(bc)));
-                        if (bb != 0) {
-                            return stringBuilder.toString();
-                        }
-
-                        if (bb == 0) {
-                            if (bc < list1.size() - 1) {
-                                stringBuilder.append(", ");
-                            }
-
-                            bc++;
-                        }
-
-                        if (bb != 0) {
-                            break;
+            result.append('(');
+            if (flowPredicate == 0) {
+                if (arguments != null) {
+                    result.append(formatArgsWithAnnotations(arguments, parameterAnnotations));
+                }
+                result.append(')');
+            }
+            int throwsCount = throwsTypes.size();
+            if (flowPredicate == 0) {
+                if (throwsCount > 0) {
+                    result.append(" throws ");
+                    for (int typeIndex = 0; typeIndex < throwsTypes.size(); typeIndex++) {
+                        result.append(toDottedName((String) throwsTypes.get(typeIndex)));
+                        if (typeIndex < throwsTypes.size() - 1) {
+                            result.append(", ");
                         }
                     }
                 }
-
-                flowPredicate = (ba ? 1 : 0);
-            }
-
-            if (flowPredicate != 0) {
-                stringBuilder.append(" +signatureClasses");
+                if (plusSignatureClasses) {
+                    result.append(" +signatureClasses");
+                }
+            } else if (throwsCount != 0) {
+                result.append(" +signatureClasses");
             }
         }
-
-        return stringBuilder.toString();
+        return result.toString();
     }
 
     public void unexcludeStringEncryptionMethods(StringEncryptionExclusionSpec stringEncryptionExclusionSpec, Enumeration enumeration, Set set1) throws ZkmException, IOException {
@@ -1971,9 +1857,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(stringEncryptionExclusionSpec, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, stringEncryptionExclusionSpec)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, stringEncryptionExclusionSpec)) {
                     stringEncryptionExclusionSpec.unexcludeMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -1985,19 +1871,19 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             return true;
         }
 
-        String string = AbstractExclusionSpec.getMemberMatchDescriptor(abstractFieldInfo);
-        return this.fieldType.equals(string);
+        String memberMatchDescriptor = AbstractExclusionSpec.getMemberMatchDescriptor(abstractFieldInfo);
+        return this.fieldType.equals(memberMatchDescriptor);
     }
 
     public static boolean isAnyWildcard(String string) {
         return string.equals("*");
     }
 
-    public void setLinkClassName(String string) {
-        this.linkClassName = string;
-        int ba = string.indexOf("<link>");
-        this.linkClassSuffix = string.substring(ba + "<link>".length());
-        this.linkClassPrefix = string.substring(0, ba);
+    public void setLinkClassName(String linkClassNameArgument) {
+        this.linkClassName = linkClassNameArgument;
+        int endIndex = linkClassNameArgument.indexOf("<link>");
+        this.linkClassSuffix = linkClassNameArgument.substring(endIndex + "<link>".length());
+        this.linkClassPrefix = linkClassNameArgument.substring(0, endIndex);
         this.accessModifier = null;
     }
 
@@ -2047,9 +1933,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, fixedClassesExclusionSet1)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, fixedClassesExclusionSet1)) {
                 fixedClassesExclusionSet1.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -2060,9 +1946,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) enumeration.nextElement();
             if (this.matchesMethod(referenceObfuscationExclusions, abstractMethodInfo)) {
                 ClassFileBase classFileBase = abstractMethodInfo.getOwningClass();
-                String string = AbstractExclusionSpec.getClassMatchName(classFileBase);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
-                if (this.matchesClass(classFileBase, set1, string, string1, referenceObfuscationExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(classFileBase);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
+                if (this.matchesClass(classFileBase, set1, classMatchName, classSimpleMatchName, referenceObfuscationExclusions)) {
                     if (this.containedInClause == null) {
                         String string2 = "inclusion parameter '" + this.parameterText + "'";
                         referenceObfuscationExclusions.includeMethodReference(abstractMethodInfo, (MethodBytecode) null, string2);
@@ -2107,29 +1993,12 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         }
     }
 
-    public static String toJavaTypeName(String string) {
+    public static String toJavaTypeName(String descriptor) {
         int flowControlKey = ZkmScriptSimpleNode.getFlowControlKey();
-        String string2 = string;
-        if (flowControlKey != 0) {
-            label20:
-            if (!string.equals("*")) {
-                string2 = string;
-                if (flowControlKey != 0) {
-                    if (string.equals("?")) {
-                        break label20;
-                    }
-
-                    string2 = ConstantPoolEntry.descriptorToJavaType(string);
-                }
-
-                String string1 = string2;
-                return string1.replace('/', '.');
-            }
-
-            string2 = string;
+        if (flowControlKey == 0 || descriptor.equals("*") || descriptor.equals("?")) {
+            return descriptor;
         }
-
-        return string2;
+        return ConstantPoolEntry.descriptorToJavaType(descriptor).replace('/', '.');
     }
 
     public boolean isStandaloneAnnotation() {
@@ -2139,9 +2008,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeFlowFieldHosts(FlowObfuscationExclusions flowObfuscationExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, flowObfuscationExclusions)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, flowObfuscationExclusions)) {
                 flowObfuscationExclusions.excludeFromPredicateFields(programClass1, "exclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -2169,9 +2038,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                 if (enumeration != null) {
                     while (enumeration.hasMoreElements()) {
                         ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                        String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                        String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                        if (this.matchesClass(programClass1, set1, string, string1, methodParameterExclusions)) {
+                        String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                        String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                        if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, methodParameterExclusions)) {
                             ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                             while (arrayEnumeration.hasMoreElements()) {
@@ -2199,9 +2068,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, longEncryptionExclusionHandler)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, longEncryptionExclusionHandler)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, longEncryptionExclusionHandler)) {
                     longEncryptionExclusionHandler.unexcludeField(fieldInfo, "unexclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -2211,9 +2080,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeStringEncryptionClasses(StringEncryptionExclusionSpec stringEncryptionExclusionSpec, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, stringEncryptionExclusionSpec)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, stringEncryptionExclusionSpec)) {
                 stringEncryptionExclusionSpec.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -2241,9 +2110,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration1 != null) {
                         while (enumeration1.hasMoreElements()) {
                             ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                            String string2 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                            String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                            if (this.matchesClass(programClass2, set1, string2, string3, integerEncryptionExclusions)) {
+                            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass2);
+                            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                            if (this.matchesClass(programClass2, set1, classMatchName, classSimpleMatchName, integerEncryptionExclusions)) {
                                 ArrayEnumeration arrayEnumeration1 = programClass2.enumerateFields();
 
                                 while (arrayEnumeration1.hasMoreElements()) {
@@ -2265,9 +2134,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration != null) {
                         while (enumeration.hasMoreElements()) {
                             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                            if (this.matchesClass(programClass1, set1, string, string1, integerEncryptionExclusions)) {
+                            String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                            String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                            if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, integerEncryptionExclusions)) {
                                 ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                 while (arrayEnumeration.hasMoreElements()) {
@@ -2505,9 +2374,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(reflectionAccessMatcher, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, reflectionAccessMatcher)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, reflectionAccessMatcher)) {
                     reflectionAccessMatcher.markMethodAccessed(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
                     this.excludeClassIfCaret(reflectionAccessMatcher, programClass1);
                 }
@@ -2540,7 +2409,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public static String formatFieldSpec(
-            ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier, AccessFlagsSpec accessFlagsSpec1, String string, DescribableSpec describableSpec
+            ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier, AccessFlagsSpec accessFlagsSpec1, String fieldTypeArgument, DescribableSpec describableSpec
     ) {
         Boolean boolean1 = false;
         Object object3 = null;
@@ -2550,7 +2419,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         return formatMemberSpec(
                 aSTComplexAnnotationSpecifier,
                 accessFlagsSpec1,
-                string,
+                fieldTypeArgument,
                 describableSpec,
                 (String) null,
                 (DescribableSpec) object,
@@ -2562,16 +2431,16 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareSpecificity((ASTRenameFilterParameter) object);
+    public int compareTo(Object other) {
+        return this.compareSpecificity((ASTRenameFilterParameter) other);
     }
 
     public void excludeIntegerEncryptionClasses(IntegerEncryptionExclusions integerEncryptionExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, integerEncryptionExclusions)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, integerEncryptionExclusions)) {
                 integerEncryptionExclusions.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -2580,14 +2449,14 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeNameMembers(NameExclusionSet nameExclusionSet, ProgramClass programClass1) throws ZkmException, IOException {
         FieldInfo[] fieldInfos = programClass1.getFieldInfos();
 
-        for (int i = 0; i < fieldInfos.length; i++) {
-            nameExclusionSet.excludeField(fieldInfos[i], "exclusion parameter '" + this.parameterText + "'");
+        for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+            nameExclusionSet.excludeField(fieldInfos[fieldInfoIndex], "exclusion parameter '" + this.parameterText + "'");
         }
 
         MethodInfo[] methodInfos = programClass1.getMethodInfos();
 
-        for (int i = 0; i < methodInfos.length; i++) {
-            MethodInfo methodInfo1 = methodInfos[i];
+        for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+            MethodInfo methodInfo1 = methodInfos[methodInfoIndex];
             if (!methodInfo1.isConstructor() && !methodInfo1.isStaticInitializer()) {
                 nameExclusionSet.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
             }
@@ -2601,9 +2470,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeLongEncryptionClasses(LongEncryptionExclusionHandler longEncryptionExclusionHandler, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, longEncryptionExclusionHandler)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, longEncryptionExclusionHandler)) {
                 longEncryptionExclusionHandler.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -2612,9 +2481,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeIntegerEncryptionClasses(IntegerEncryptionExclusions integerEncryptionExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, integerEncryptionExclusions)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, integerEncryptionExclusions)) {
                 integerEncryptionExclusions.unexcludeClass(programClass1, "unexclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -2625,9 +2494,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, stringEncryptionExclusionSpec)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, stringEncryptionExclusionSpec)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, stringEncryptionExclusionSpec)) {
                     stringEncryptionExclusionSpec.unexcludeField(fieldInfo, "unexclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -2665,9 +2534,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public final boolean matchesImplementsClause(ClassFileBase classFileBase, ClassHierarchyQuery classHierarchyQuery) throws ZkmException, IOException {
-        for (int i = 0; i < this.implementsNames.size(); i++) {
-            String string = (String) this.implementsNames.get(i);
-            ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier = (ASTComplexAnnotationSpecifier) this.implementsAnnotations.get(i);
+        for (int elementIndex = 0; elementIndex < this.implementsNames.size(); elementIndex++) {
+            String string = (String) this.implementsNames.get(elementIndex);
+            ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier = (ASTComplexAnnotationSpecifier) this.implementsAnnotations.get(elementIndex);
 
             try {
                 if (classFileBase.isGenerated()) {
@@ -2729,9 +2598,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) enumeration.nextElement();
             if (this.matchesMethod(removeMethodCallsHandler, abstractMethodInfo)) {
                 ClassFileBase classFileBase = abstractMethodInfo.getOwningClass();
-                String string = AbstractExclusionSpec.getClassMatchName(classFileBase);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
-                if (this.matchesClass(classFileBase, set1, string, string1, removeMethodCallsHandler)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(classFileBase);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
+                if (this.matchesClass(classFileBase, set1, classMatchName, classSimpleMatchName, removeMethodCallsHandler)) {
                     if (this.containedInClause == null) {
                         String string2 = "exclusion parameter '" + this.parameterText + "'";
                         removeMethodCallsHandler.excludeMethodCall(abstractMethodInfo, (MethodBytecode) null, string2);
@@ -2755,26 +2624,26 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(integerEncryptionExclusions, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, integerEncryptionExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, integerEncryptionExclusions)) {
                     integerEncryptionExclusions.unexcludeMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
                 }
             }
         }
     }
 
-    public static boolean matchesAccessFlags(int ba, AccessFlagsSpec accessFlagsSpec1) {
-        return accessFlagsSpec1 == null ? true : accessFlagsSpec1.matches(ba);
+    public static boolean matchesAccessFlags(int flags, AccessFlagsSpec accessFlagsSpec1) {
+        return ((accessFlagsSpec1 == null) || (accessFlagsSpec1.matches(flags)));
     }
 
     public void excludeSignatureClasses(NameExclusionSet nameExclusionSet, MethodInfo methodInfo1) throws ZkmException, IOException {
         ArrayList arrayList = methodInfo1.getDescriptorProgramClasses();
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            ProgramClass programClass1 = (ProgramClass) arrayList.get(i);
-            String string = programClass1.getPackagePath();
-            nameExclusionSet.excludePackage(string, "exclusion parameter '" + this.parameterText + "'");
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            ProgramClass programClass1 = (ProgramClass) arrayList.get(elementIndex);
+            String packagePath = programClass1.getPackagePath();
+            nameExclusionSet.excludePackage(packagePath, "exclusion parameter '" + this.parameterText + "'");
             nameExclusionSet.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
         }
     }
@@ -2784,9 +2653,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(stringEncryptionExclusionSpec, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, stringEncryptionExclusionSpec)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, stringEncryptionExclusionSpec)) {
                     stringEncryptionExclusionSpec.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -2794,11 +2663,11 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public void unexcludeNameClass(NameExclusionSet nameExclusionSet, ProgramClass programClass1, Set set1) throws ZkmException, IOException {
-        String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-        String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-        if (this.matchesClass(programClass1, set1, string, string1, nameExclusionSet)) {
+        String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+        String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+        if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, nameExclusionSet)) {
             nameExclusionSet.unexcludeClassInternal(programClass1, "unexclusion parameter '" + this.parameterText + "'", false);
-            this.unexcludePackageIfCaret(nameExclusionSet, string);
+            this.unexcludePackageIfCaret(nameExclusionSet, classMatchName);
             if (this.classNamePattern != null && this.classNamePattern.hasPlusTag()) {
                 this.unexcludeNameMembers(nameExclusionSet, programClass1);
             }
@@ -2810,9 +2679,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) enumeration.nextElement();
             if (this.matchesMethod(removeMethodCallsHandler, abstractMethodInfo)) {
                 ClassFileBase classFileBase = abstractMethodInfo.getOwningClass();
-                String string = AbstractExclusionSpec.getClassMatchName(classFileBase);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
-                if (this.matchesClass(classFileBase, set1, string, string1, removeMethodCallsHandler)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(classFileBase);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
+                if (this.matchesClass(classFileBase, set1, classMatchName, classSimpleMatchName, removeMethodCallsHandler)) {
                     if (this.containedInClause == null) {
                         String string2 = "inclusion parameter '" + this.parameterText + "'";
                         removeMethodCallsHandler.includeMethodCall(abstractMethodInfo, (MethodBytecode) null, string2);
@@ -2902,9 +2771,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(integerEncryptionExclusions, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, integerEncryptionExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, integerEncryptionExclusions)) {
                     integerEncryptionExclusions.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -2933,9 +2802,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration1 != null) {
                         while (enumeration1.hasMoreElements()) {
                             ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                            String string2 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                            String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                            if (this.matchesClass(programClass2, set1, string2, string3, longEncryptionExclusionHandler)) {
+                            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass2);
+                            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                            if (this.matchesClass(programClass2, set1, classMatchName, classSimpleMatchName, longEncryptionExclusionHandler)) {
                                 ArrayEnumeration arrayEnumeration1 = programClass2.enumerateFields();
 
                                 while (arrayEnumeration1.hasMoreElements()) {
@@ -2957,9 +2826,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration != null) {
                         while (enumeration.hasMoreElements()) {
                             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                            if (this.matchesClass(programClass1, set1, string, string1, longEncryptionExclusionHandler)) {
+                            String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                            String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                            if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, longEncryptionExclusionHandler)) {
                                 ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                 while (arrayEnumeration.hasMoreElements()) {
@@ -2984,17 +2853,17 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void applyNameExclusion(NameExclusionSet nameExclusionSet) throws ZkmException, IOException {
         if (this.enabled) {
             Set set1 = null;
-            int ba;
+            int specifierKindValue;
             if (this.hasReferencingAnnotation()) {
                 boolean bl = HiddenOptionFlags.MATCH_ORIGINAL_NAMES
                         && (nameExclusionSet.hasOriginalNameCaches() || nameExclusionSet.isHierarchySealed() || nameExclusionSet.isHierarchyMarked());
                 set1 = this.findAnnotationReferencingClasses(nameExclusionSet.getInputClassFiles(), bl);
-                ba = this.specifierKind;
+                specifierKindValue = this.specifierKind;
             } else {
-                ba = this.specifierKind;
+                specifierKindValue = this.specifierKind;
             }
 
-            switch (ba) {
+            switch (specifierKindValue) {
                 case 0:
                     Enumeration enumeration3 = nameExclusionSet.getIncludedModules();
 
@@ -3040,17 +2909,17 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                             if (enumeration2 != null) {
                                 while (enumeration2.hasMoreElements()) {
                                     ProgramClass programClass5 = (ProgramClass) enumeration2.nextElement();
-                                    String string4 = programClass5.getPackagePath();
-                                    String string5 = AbstractExclusionSpec.getClassMatchName(programClass5);
-                                    String string6 = AbstractExclusionSpec.getClassSimpleMatchName(programClass5);
-                                    if (this.matchesClass(programClass5, set1, string5, string6, nameExclusionSet)) {
+                                    String packagePath = programClass5.getPackagePath();
+                                    String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass5);
+                                    String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass5);
+                                    if (this.matchesClass(programClass5, set1, classMatchName, classSimpleMatchName, nameExclusionSet)) {
                                         ArrayEnumeration arrayEnumeration1 = programClass5.enumerateFields();
 
                                         while (arrayEnumeration1.hasMoreElements()) {
                                             FieldInfo fieldInfo = (FieldInfo) arrayEnumeration1.nextElement();
                                             if (this.matchesField(fieldInfo, nameExclusionSet)) {
                                                 nameExclusionSet.excludeField(fieldInfo, "exclusion parameter '" + this.parameterText + "'");
-                                                this.excludePackageIfCaret(nameExclusionSet, string4);
+                                                this.excludePackageIfCaret(nameExclusionSet, packagePath);
                                                 this.excludeClassIfCaret(nameExclusionSet, programClass5);
                                             }
                                         }
@@ -3080,17 +2949,17 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                             if (enumeration1 != null) {
                                 while (enumeration1.hasMoreElements()) {
                                     ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                                    String string = programClass2.getPackagePath();
-                                    String string1 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                                    String string2 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                                    if (this.matchesClass(programClass2, set1, string1, string2, nameExclusionSet)) {
+                                    String packagePathValue = programClass2.getPackagePath();
+                                    String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass2);
+                                    String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                                    if (this.matchesClass(programClass2, set1, classMatchNameValue, classSimpleMatchNameValue, nameExclusionSet)) {
                                         ArrayEnumeration arrayEnumeration = programClass2.enumerateMethods();
 
                                         while (arrayEnumeration.hasMoreElements()) {
                                             MethodInfo methodInfo1 = (MethodInfo) arrayEnumeration.nextElement();
                                             if (this.matchesMethod(nameExclusionSet, methodInfo1)) {
                                                 nameExclusionSet.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
-                                                this.excludePackageIfCaret(nameExclusionSet, string);
+                                                this.excludePackageIfCaret(nameExclusionSet, packagePathValue);
                                                 this.excludeClassIfCaret(nameExclusionSet, programClass2);
                                                 if (this.plusSignatureClasses) {
                                                     this.excludeSignatureClasses(nameExclusionSet, methodInfo1);
@@ -3177,10 +3046,10 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
     public boolean matchesMethodSpec(ClassHierarchyQuery classHierarchyQuery, ClassFileBase classFileBase, String string, String string1) throws ZkmException, IOException {
         Object object = null;
-        String string2 = classFileBase.getPackagePath();
-        String string3 = classFileBase.getSimpleName();
-        if (this.matchesClass(classFileBase, (Set) object, string2, string3, classHierarchyQuery)) {
-            return this.isClassPlusSpec() ? true : this.methodSpecifier.matchesName(string) && matchesArgs(string1, this.argsPattern);
+        String packagePath = classFileBase.getPackagePath();
+        String simpleName = classFileBase.getSimpleName();
+        if (this.matchesClass(classFileBase, (Set) object, packagePath, simpleName, classHierarchyQuery)) {
+            return ((this.isClassPlusSpec()) || (this.methodSpecifier.matchesName(string) && matchesArgs(string1, this.argsPattern)));
         } else {
             return false;
         }
@@ -3195,16 +3064,16 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             Enumeration enumeration = classFileBase.enumerateInputLocations();
 
             while (enumeration.hasMoreElements()) {
-                String string = ((InputFileLocation) enumeration.nextElement()).getArchivePath();
-                if (string != null) {
+                String archivePath = ((InputFileLocation) enumeration.nextElement()).getArchivePath();
+                if (archivePath != null) {
                     if (this.archivePathPattern.length() > 0) {
-                        string = string.replace('\\', '/');
+                        archivePath = archivePath.replace('\\', '/');
                         if (!ZkmFileUtils.caseSensitiveFileSystem) {
-                            string = string.toLowerCase();
+                            archivePath = archivePath.toLowerCase();
                         }
 
                         String string1 = "*" + this.archivePathPattern;
-                        if (ZkmStringUtils.matchesWildcard(string, string1)) {
+                        if (ZkmStringUtils.matchesWildcard(archivePath, string1)) {
                             return true;
                         }
                     }
@@ -3244,8 +3113,8 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         this.statementInfo = (ScriptStatementInfo) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, this.scriptEnvironment);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, this.scriptEnvironment);
         }
 
         this.specifierKind = this.computeSpecifierKind();
@@ -3258,9 +3127,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         this.validateModifiers();
     }
 
-    public void setArchivePathPattern(String string) {
-        if (string != null) {
-            this.archivePathPattern = string.replace('\\', '/');
+    public void setArchivePathPattern(String archivePathPatternArgument) {
+        if (archivePathPatternArgument != null) {
+            this.archivePathPattern = archivePathPatternArgument.replace('\\', '/');
             if (!ZkmFileUtils.caseSensitiveFileSystem && !this.archivePathPattern.equals(this.archivePathPattern.toLowerCase())) {
                 this.scriptEnvironment
                         .logMessage(
@@ -3291,288 +3160,109 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public final String toScriptText() {
-        com.zelix.klassmaster.script.parser.ast.ASTRenameFilterParameter aSTRenameFilterParameter2 = null;
         int flowPredicate = ZkmScriptSimpleNode.getFlowPredicate();
-        StringBuilder stringBuilder = new StringBuilder();
-        int ba = flowPredicate;
-        ASTRenameFilterParameter aSTRenameFilterParameter1 = this;
-        if (ba == 0) {
+        StringBuilder result = new StringBuilder();
+        if (flowPredicate == 0) {
             if (this.containedInClause != null) {
-                stringBuilder.append(this.containedInClause.toScriptText());
-                stringBuilder.append(' ');
+                result.append(this.containedInClause.toScriptText());
+                result.append(' ');
             }
-
-            aSTRenameFilterParameter1 = this;
+            if (this.classAnnotation != null) {
+                result.append(this.classAnnotation.getSpecText());
+                result.append(' ');
+            }
+            if (this.classAccessFlags != null && this.classAccessFlags.isPackageRequired()) {
+                result.append("package ");
+            }
+            if (this.classAccessFlags != null && this.classAccessFlags.isPackageForbidden()) {
+                result.append("!package ");
+            }
         }
 
-        if (ba == 0) {
-            if (aSTRenameFilterParameter1.classAnnotation != null) {
-                stringBuilder.append(this.classAnnotation.getSpecText());
-                stringBuilder.append(' ');
+        if (flowPredicate == 0 && !this.standaloneAnnotation) {
+            result.append(this.classAccessFlags == null ? "" : this.classAccessFlags.toSpecString());
+            if (this.referencingAnnotation != null) {
+                result.append('@');
+                result.append(toDottedName(this.referencingAnnotation));
+                result.append('(');
+                result.append(this.referencingAnnotationComponent);
+                result.append('=');
             }
-
-            aSTRenameFilterParameter1 = this;
-        }
-
-        label231:
-        if (ba == 0) {
-            if (aSTRenameFilterParameter1.classAccessFlags != null) {
-                aSTRenameFilterParameter1 = this;
-                if (ba != 0) {
-                    break label231;
-                }
-
-                if (this.classAccessFlags.isPackageRequired()) {
-                    stringBuilder.append("package ");
-                }
+            if (this.archivePathPattern != null) {
+                result.append("\"");
+                result.append(this.archivePathPattern);
+                result.append("\"");
+                result.append("!");
             }
-
-            aSTRenameFilterParameter1 = this;
-        }
-
-        label224:
-        if (ba == 0) {
-            if (aSTRenameFilterParameter1.classAccessFlags != null) {
-                aSTRenameFilterParameter1 = this;
-                if (ba != 0) {
-                    break label224;
-                }
-
-                if (this.classAccessFlags.isPackageForbidden()) {
-                    stringBuilder.append("!package ");
-                }
+            if (this.packagePattern != null) {
+                result.append(this.packagePattern.getSpecText());
             }
-
-            aSTRenameFilterParameter1 = this;
-        }
-
-        label244:
-        {
-            label237:
-            {
-                if (ba == 0) {
-                    if (!aSTRenameFilterParameter1.standaloneAnnotation) {
-                        String string1;
-                        label210:
-                        {
-                            ASTRenameFilterParameter aSTRenameFilterParameter3 = this;
-                            if (ba == 0) {
-                                if (this.classAccessFlags == null) {
-                                    string1 = "";
-                                    break label210;
-                                }
-
-                                aSTRenameFilterParameter3 = this;
-                            }
-
-                            string1 = aSTRenameFilterParameter3.classAccessFlags.toSpecString();
-                        }
-
-                        stringBuilder.append(string1);
-                        aSTRenameFilterParameter2 = this;
-                        if (ba == 0) {
-                            if (this.referencingAnnotation != null) {
-                                stringBuilder.append('@');
-                                stringBuilder.append(toDottedName(this.referencingAnnotation));
-                                stringBuilder.append('(');
-                                stringBuilder.append(this.referencingAnnotationComponent);
-                                stringBuilder.append('=');
-                            }
-
-                            aSTRenameFilterParameter2 = this;
-                        }
-
-                        if (ba == 0) {
-                            if (aSTRenameFilterParameter2.archivePathPattern != null) {
-                                stringBuilder.append("\"");
-                                stringBuilder.append(this.archivePathPattern);
-                                stringBuilder.append("\"");
-                                stringBuilder.append("!");
-                            }
-
-                            aSTRenameFilterParameter2 = this;
-                        }
-
-                        if (ba == 0) {
-                            if (aSTRenameFilterParameter2.packagePattern != null) {
-                                stringBuilder.append(this.packagePattern.getSpecText());
-                            }
-
-                            aSTRenameFilterParameter2 = this;
-                        }
-
-                        label200:
-                        {
-                            label240:
-                            {
-                                if (ba == 0) {
-                                    if (aSTRenameFilterParameter2.linkClassName != null) {
-                                        stringBuilder.append(this.linkClassName);
-                                        if (ba == 0) {
-                                            break label240;
-                                        }
-                                    }
-
-                                    aSTRenameFilterParameter2 = this;
-                                }
-
-                                if (ba != 0) {
-                                    break label200;
-                                }
-
-                                if (aSTRenameFilterParameter2.classNamePattern != null) {
-                                    stringBuilder.append(this.classNamePattern.getSpecText());
-                                }
-                            }
-
-                            aSTRenameFilterParameter2 = this;
-                        }
-
-                        if (ba == 0) {
-                            if (aSTRenameFilterParameter2.referencingAnnotation != null) {
-                                stringBuilder.append(')');
-                            }
-
-                            aSTRenameFilterParameter2 = this;
-                        }
-
-                        if (ba == 0) {
-                            if (aSTRenameFilterParameter2.containingClause != null) {
-                                stringBuilder.append(' ' + this.containingClause.toScriptText());
-                            }
-
-                            aSTRenameFilterParameter2 = this;
-                        }
-
-                        if (ba == 0) {
-                            if (aSTRenameFilterParameter2.extendsClassName != null && ba == 0) {
-                                stringBuilder.append(" extends ");
-                                if (this.extendsAnnotation != null) {
-                                    stringBuilder.append(this.extendsAnnotation.getSpecText());
-                                    stringBuilder.append(" ");
-                                }
-
-                                stringBuilder.append(toDottedName(this.extendsClassName));
-                            }
-
-                            aSTRenameFilterParameter2 = this;
-                        }
-
-                        if (ba != 0) {
-                            break label244;
-                        }
-
-                        if (aSTRenameFilterParameter2.implementsNames.size() <= 0) {
-                            break label237;
-                        }
-
-                        stringBuilder.append(" implements ");
-                        int bb = 0;
-
-                        while (bb < this.implementsNames.size()) {
-                            if (ba != 0) {
-                                break label237;
-                            }
-
-                            if (this.implementsAnnotations.get(bb) != null) {
-                                stringBuilder.append(((ASTComplexAnnotationSpecifier) this.implementsAnnotations.get(bb)).getSpecText());
-                                stringBuilder.append(" ");
-                            }
-
-                            stringBuilder.append(toDottedName((String) this.implementsNames.get(bb)));
-                            if (ba == 0) {
-                                if (bb < this.implementsNames.size() - 1) {
-                                    stringBuilder.append(", ");
-                                }
-
-                                bb++;
-                            }
-
-                            if (ba != 0) {
-                                break;
-                            }
-                        }
-
-                        if (ba == 0) {
-                            break label237;
-                        }
+            if (this.linkClassName != null) {
+                result.append(this.linkClassName);
+            } else if (this.classNamePattern != null) {
+                result.append(this.classNamePattern.getSpecText());
+            }
+            if (this.referencingAnnotation != null) {
+                result.append(')');
+            }
+            if (this.containingClause != null) {
+                result.append(' ' + this.containingClause.toScriptText());
+            }
+            if (this.extendsClassName != null) {
+                result.append(" extends ");
+                if (this.extendsAnnotation != null) {
+                    result.append(this.extendsAnnotation.getSpecText());
+                    result.append(" ");
+                }
+                result.append(toDottedName(this.extendsClassName));
+            }
+            if (this.implementsNames.size() > 0) {
+                result.append(" implements ");
+                for (int interfaceIndex = 0; interfaceIndex < this.implementsNames.size(); interfaceIndex++) {
+                    if (this.implementsAnnotations.get(interfaceIndex) != null) {
+                        result.append(((ASTComplexAnnotationSpecifier) this.implementsAnnotations.get(interfaceIndex)).getSpecText());
+                        result.append(" ");
                     }
-
-                    if (ba != 0) {
-                        break label237;
+                    result.append(toDottedName((String) this.implementsNames.get(interfaceIndex)));
+                    if (interfaceIndex < this.implementsNames.size() - 1) {
+                        result.append(", ");
                     }
-
-                    stringBuilder.append('@');
-                    aSTRenameFilterParameter1 = this;
-                }
-
-                if (aSTRenameFilterParameter1.packagePattern != null) {
-                    stringBuilder.append(this.packagePattern.getSpecText());
-                }
-
-                stringBuilder.append(this.classNamePattern.getSpecText());
-            }
-
-            aSTRenameFilterParameter2 = this;
-        }
-
-        if (ba == 0) {
-            if (aSTRenameFilterParameter2.linkPackageNames.size() > 0) {
-                stringBuilder.append(" search ");
-                int bc = 0;
-                flowPredicate = 0;
-
-                for (ArrayList arrayList = this.linkPackageNames; flowPredicate < arrayList.size(); arrayList = this.linkPackageNames) {
-                    stringBuilder.append(((String) this.linkPackageNames.get(bc)).replace('/', '.'));
-                    if (ba == 0) {
-                        if (bc < this.linkPackageNames.size() - 1) {
-                            stringBuilder.append(", ");
-                        }
-
-                        bc++;
-                    }
-
-                    if (ba != 0) {
-                        break;
-                    }
-
-                    flowPredicate = bc;
                 }
             }
-
-            aSTRenameFilterParameter2 = this;
-        }
-
-        label148:
-        {
-            String string = formatMemberSpec(
-                    aSTRenameFilterParameter2.memberAnnotation,
-                    this.memberAccessFlags,
-                    this.fieldType,
-                    this.fieldSpecifier,
-                    this.linkMethodSignature,
-                    this.methodSpecifier,
-                    this.argsPattern,
-                    this.parameterAnnotations,
-                    this.throwsTypes,
-                    this.plusSignatureClasses
-            );
-            if (ba == 0) {
-                if (string.length() <= 0) {
-                    break label148;
-                }
-
-                stringBuilder.append(' ');
+        } else {
+            if (flowPredicate == 0) {
+                result.append('@');
             }
-
-            stringBuilder.append(string);
+            if (this.packagePattern != null) {
+                result.append(this.packagePattern.getSpecText());
+            }
+            result.append(this.classNamePattern.getSpecText());
         }
 
+        if (flowPredicate == 0 && this.linkPackageNames.size() > 0) {
+            result.append(" search ");
+            for (int packageIndex = 0; packageIndex < this.linkPackageNames.size(); packageIndex++) {
+                result.append(((String) this.linkPackageNames.get(packageIndex)).replace('/', '.'));
+                if (packageIndex < this.linkPackageNames.size() - 1) {
+                    result.append(", ");
+                }
+            }
+        }
+        String memberText = formatMemberSpec(
+                this.memberAnnotation, this.memberAccessFlags, this.fieldType, this.fieldSpecifier,
+                this.linkMethodSignature, this.methodSpecifier, this.argsPattern, this.parameterAnnotations,
+                this.throwsTypes, this.plusSignatureClasses
+        );
+        if (flowPredicate != 0 || memberText.length() > 0) {
+            if (flowPredicate == 0) {
+                result.append(' ');
+            }
+            result.append(memberText);
+        }
         if (this.moduleSpecifier != null) {
-            stringBuilder.append(this.moduleSpecifier.getSpecText());
+            result.append(this.moduleSpecifier.getSpecText());
         }
-
-        return stringBuilder.toString();
+        return result.toString();
     }
 
     public boolean isNativeRequired() {
@@ -3595,12 +3285,12 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         } else if (!this.matchesExtendsClause(classFileBase, classHierarchyQuery)) {
             return false;
         } else {
-            return !this.matchesImplementsClause(classFileBase, classHierarchyQuery) ? false : this.matchesClassAnnotation(classFileBase, classHierarchyQuery);
+            return (!(!this.matchesImplementsClause(classFileBase, classHierarchyQuery)) && (this.matchesClassAnnotation(classFileBase, classHierarchyQuery)));
         }
     }
 
     public boolean matchesCaretClassName(String string) {
-        return this.classNamePattern != null && this.classNamePattern.hasCaretTag() ? this.classNamePattern.matchesName(string) : false;
+        return ((this.classNamePattern != null && this.classNamePattern.hasCaretTag()) && (this.classNamePattern.matchesName(string)));
     }
 
     public void unexcludeReflectionFields(ReflectionAccessMatcher reflectionAccessMatcher, Enumeration enumeration, Set set1) throws ZkmException, IOException {
@@ -3608,9 +3298,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, reflectionAccessMatcher)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, reflectionAccessMatcher)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, reflectionAccessMatcher)) {
                     reflectionAccessMatcher.markFieldNotAccessed(fieldInfo, "unexclusion parameter '" + this.parameterText + "'");
                     this.unexcludeClassIfCaret(reflectionAccessMatcher, programClass1);
                 }
@@ -3625,9 +3315,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeStringEncryptionClasses(StringEncryptionExclusionSpec stringEncryptionExclusionSpec, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, stringEncryptionExclusionSpec)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, stringEncryptionExclusionSpec)) {
                 stringEncryptionExclusionSpec.unexcludeClass(programClass1, "unexclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -3643,14 +3333,14 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeTrimMembers(TrimProcessor trimProcessor1, ProgramClass programClass1) throws ZkmException, IOException {
         FieldInfo[] fieldInfos = programClass1.getFieldInfos();
 
-        for (int i = 0; i < fieldInfos.length; i++) {
-            trimProcessor1.unmatchField(fieldInfos[i], "unexclusion parameter '" + this.parameterText + "'");
+        for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+            trimProcessor1.unmatchField(fieldInfos[fieldInfoIndex], "unexclusion parameter '" + this.parameterText + "'");
         }
 
         MethodInfo[] methodInfos = programClass1.getMethodInfos();
 
-        for (int i = 0; i < methodInfos.length; i++) {
-            MethodInfo methodInfo1 = methodInfos[i];
+        for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+            MethodInfo methodInfo1 = methodInfos[methodInfoIndex];
             trimProcessor1.unmatchMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
         }
     }
@@ -3677,9 +3367,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration1 != null) {
                         while (enumeration1.hasMoreElements()) {
                             ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                            String string2 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                            String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                            if (this.matchesClass(programClass2, set1, string2, string3, stringEncryptionExclusionSpec)) {
+                            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass2);
+                            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                            if (this.matchesClass(programClass2, set1, classMatchName, classSimpleMatchName, stringEncryptionExclusionSpec)) {
                                 ArrayEnumeration arrayEnumeration1 = programClass2.enumerateFields();
 
                                 while (arrayEnumeration1.hasMoreElements()) {
@@ -3701,9 +3391,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration != null) {
                         while (enumeration.hasMoreElements()) {
                             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                            if (this.matchesClass(programClass1, set1, string, string1, stringEncryptionExclusionSpec)) {
+                            String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                            String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                            if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, stringEncryptionExclusionSpec)) {
                                 ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                 while (arrayEnumeration.hasMoreElements()) {
@@ -3726,9 +3416,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(longEncryptionExclusionHandler, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, longEncryptionExclusionHandler)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, longEncryptionExclusionHandler)) {
                     longEncryptionExclusionHandler.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -3738,9 +3428,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeExceptionClasses(ExceptionObfuscationExclusions exceptionObfuscationExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, exceptionObfuscationExclusions)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, exceptionObfuscationExclusions)) {
                 exceptionObfuscationExclusions.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -3758,39 +3448,28 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             return false;
         }
 
-        for (int i = 0; i < list1.size(); i++) {
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
             boolean bl = false;
-            String string = (String) list1.get(i);
+            String string = (String) list1.get(elementIndex);
             if (!containsWildcard(string)) {
                 try {
-                    label73:
                     if (!string.equals("java/lang/Throwable")) {
-                        ObservableHolder observableHolder1;
-                        String string4;
+                        boolean throwableType;
                         if (HiddenOptionFlags.MATCH_ORIGINAL_NAMES && classHierarchyQuery.hasOriginalNameCaches()) {
-                            if (classHierarchyQuery.isSubclassByOriginalName(string, "java/lang/Throwable")) {
-                                break label73;
-                            }
-
-                            observableHolder1 = observableHolder;
-                            string4 = "Method exclude parameter '<0>' in \"<1>\" statement at line <2> has a non-Throwable class in it's throws clause";
+                            throwableType = classHierarchyQuery.isSubclassByOriginalName(string, "java/lang/Throwable");
                         } else {
-                            if (classHierarchyQuery.isSubclass(string, "java/lang/Throwable")) {
-                                break label73;
-                            }
-
-                            observableHolder1 = observableHolder;
-                            string4 = "Method exclude parameter '<0>' in \"<1>\" statement at line <2> has a non-Throwable class in it's throws clause";
+                            throwableType = classHierarchyQuery.isSubclass(string, "java/lang/Throwable");
                         }
-
-                        observableHolder1.setValue(string4);
+                        if (!throwableType) {
+                            observableHolder.setValue("Method exclude parameter '<0>' in \"<1>\" statement at line <2> has a non-Throwable class in it's throws clause");
+                        }
                     }
                 } catch (ZkmClassNotFoundException zkmClassNotFoundException) {
-                    String string1 = zkmClassNotFoundException.getClassName();
-                    if (!string1.startsWith("java.rmi")) {
+                    String className = zkmClassNotFoundException.getClassName();
+                    if (!className.startsWith("java.rmi")) {
                         observableHolder.setValue(
                                 "Error while executing \"<1>\" statement at line <2> while analysing '<0>' : class '"
-                                        + ZkmUtils.slashesToDots(string1)
+                                        + ZkmUtils.slashesToDots(className)
                                         + "' not found. (A)"
                         );
                     }
@@ -3805,15 +3484,15 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                 }
             }
 
-            for (int j = 0; j < arrayList.size(); j++) {
-                String string3 = (String) arrayList.get(j);
+            for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+                String string3 = (String) arrayList.get(elementIndexValue);
 
                 try {
                     if (HiddenOptionFlags.MATCH_ORIGINAL_NAMES && classHierarchyQuery.hasOriginalNameCaches()) {
-                        String string2 = classHierarchyQuery.getOriginalClassName(string3);
-                        if (string.equals(string2)
-                                || containsWildcard(string) && ZkmStringUtils.matchesWildcard(string2, string)
-                                || classHierarchyQuery.isSubclassByOriginalName(string2, string)) {
+                        String originalClassName = classHierarchyQuery.getOriginalClassName(string3);
+                        if (string.equals(originalClassName)
+                                || containsWildcard(string) && ZkmStringUtils.matchesWildcard(originalClassName, string)
+                                || classHierarchyQuery.isSubclassByOriginalName(originalClassName, string)) {
                             bl = true;
                             break;
                         }
@@ -3849,12 +3528,12 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, nameExclusionSet)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = programClass1.getPackagePath();
-                String string1 = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string2 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string1, string2, nameExclusionSet)) {
+                String packagePath = programClass1.getPackagePath();
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, nameExclusionSet)) {
                     nameExclusionSet.excludeField(fieldInfo, "exclusion parameter '" + this.parameterText + "'");
-                    this.excludePackageIfCaret(nameExclusionSet, string);
+                    this.excludePackageIfCaret(nameExclusionSet, packagePath);
                     this.excludeClassIfCaret(nameExclusionSet, programClass1);
                 }
             }
@@ -3890,9 +3569,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration1 != null) {
                             while (enumeration1.hasMoreElements()) {
                                 ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                                String string2 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                                String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                                if (this.matchesClass(programClass2, set1, string2, string3, reflectionAccessMatcher)) {
+                                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass2);
+                                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                                if (this.matchesClass(programClass2, set1, classMatchName, classSimpleMatchName, reflectionAccessMatcher)) {
                                     ArrayEnumeration arrayEnumeration1 = programClass2.enumerateFields();
 
                                     while (arrayEnumeration1.hasMoreElements()) {
@@ -3917,9 +3596,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration != null) {
                             while (enumeration.hasMoreElements()) {
                                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                                if (this.matchesClass(programClass1, set1, string, string1, reflectionAccessMatcher)) {
+                                String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                                String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                                if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, reflectionAccessMatcher)) {
                                     ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                     while (arrayEnumeration.hasMoreElements()) {
@@ -3966,9 +3645,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration1 != null) {
                             while (enumeration1.hasMoreElements()) {
                                 ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                                String string2 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                                String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                                if (this.matchesClass(programClass2, set1, string2, string3, reflectionAccessMatcher)) {
+                                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass2);
+                                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                                if (this.matchesClass(programClass2, set1, classMatchName, classSimpleMatchName, reflectionAccessMatcher)) {
                                     ArrayEnumeration arrayEnumeration1 = programClass2.enumerateFields();
 
                                     while (arrayEnumeration1.hasMoreElements()) {
@@ -3993,9 +3672,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                         if (enumeration != null) {
                             while (enumeration.hasMoreElements()) {
                                 ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                                if (this.matchesClass(programClass1, set1, string, string1, reflectionAccessMatcher)) {
+                                String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                                String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                                if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, reflectionAccessMatcher)) {
                                     ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                     while (arrayEnumeration.hasMoreElements()) {
@@ -4022,15 +3701,15 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(nameExclusionSet, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = programClass1.getPackagePath();
-                String string1 = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string2 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string1, string2, nameExclusionSet)) {
+                String packagePath = programClass1.getPackagePath();
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, nameExclusionSet)) {
                     if (this.hasLinkMethodSignature()) {
                         nameExclusionSet.addMethodLink(methodInfo1, this.linkMethodPrefix, null, "exclusion parameter '" + this.parameterText + "'");
                     } else {
                         nameExclusionSet.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
-                        this.excludePackageIfCaret(nameExclusionSet, string);
+                        this.excludePackageIfCaret(nameExclusionSet, packagePath);
                         this.excludeClassIfCaret(nameExclusionSet, programClass1);
                         if (this.plusSignatureClasses) {
                             this.excludeSignatureClasses(nameExclusionSet, methodInfo1);
@@ -4053,9 +3732,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(flowObfuscationExclusions, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, flowObfuscationExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, flowObfuscationExclusions)) {
                     flowObfuscationExclusions.excludeMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -4067,9 +3746,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, integerEncryptionExclusions)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, integerEncryptionExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, integerEncryptionExclusions)) {
                     integerEncryptionExclusions.excludeField(fieldInfo, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -4083,9 +3762,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeReflectionClasses(ReflectionAccessMatcher reflectionAccessMatcher, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, reflectionAccessMatcher)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, reflectionAccessMatcher)) {
                 reflectionAccessMatcher.unexcludeClass(programClass1, "unexclusion parameter '" + this.parameterText + "'");
                 if (this.classNamePattern != null && this.classNamePattern.hasPlusTag()) {
                     this.unexcludeReflectionMembers(reflectionAccessMatcher, programClass1);
@@ -4132,9 +3811,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(longEncryptionExclusionHandler, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, longEncryptionExclusionHandler)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, longEncryptionExclusionHandler)) {
                     longEncryptionExclusionHandler.unexcludeMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -4147,13 +3826,13 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public final boolean matchesContainingClause(ClassFileBase classFileBase, ClassHierarchyQuery classHierarchyQuery) throws ZkmException, IOException {
-        return this.containingClause != null ? this.containingClause.containsMatchingMember(classFileBase, classHierarchyQuery) : true;
+        return (!(this.containingClause != null) || (this.containingClause.containsMatchingMember(classFileBase, classHierarchyQuery)));
     }
 
     public void excludeTrimClass(TrimProcessor trimProcessor1, ProgramClass programClass1, Set set1) throws ZkmException, IOException {
-        String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-        String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-        if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+        String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+        String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+        if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
             trimProcessor1.excludeClass(programClass1, "exclusion parameter '" + this.parameterText + "'");
             if (this.classNamePattern.hasPlusTag()) {
                 this.excludeTrimMembers(trimProcessor1, programClass1);
@@ -4162,7 +3841,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public boolean matchesQualifiedClassName(String string) {
-        return !this.matchesClassName(ClassFileBase.stripPackage(string)) ? false : this.matchesPackageName(ClassFileBase.getPackagePath(string));
+        return (!(!this.matchesClassName(ClassFileBase.stripPackage(string))) && (this.matchesPackageName(ClassFileBase.getPackagePath(string))));
     }
 
     public void markStandaloneAnnotation() {
@@ -4180,10 +3859,10 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeSignatureClasses(NameExclusionSet nameExclusionSet, MethodInfo methodInfo1) throws ZkmException, IOException {
         ArrayList arrayList = methodInfo1.getDescriptorProgramClasses();
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            ProgramClass programClass1 = (ProgramClass) arrayList.get(i);
-            String string = programClass1.getPackagePath();
-            nameExclusionSet.unexcludePackage(string, "unexclusion parameter '" + this.parameterText + "'");
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            ProgramClass programClass1 = (ProgramClass) arrayList.get(elementIndex);
+            String packagePath = programClass1.getPackagePath();
+            nameExclusionSet.unexcludePackage(packagePath, "unexclusion parameter '" + this.parameterText + "'");
             nameExclusionSet.unexcludeClassInternal(programClass1, "unexclusion parameter '" + this.parameterText + "'", false);
         }
     }
@@ -4193,9 +3872,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, longEncryptionExclusionHandler)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, longEncryptionExclusionHandler)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, longEncryptionExclusionHandler)) {
                     longEncryptionExclusionHandler.excludeField(fieldInfo, "exclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -4205,9 +3884,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeExceptionClasses(ExceptionObfuscationExclusions exceptionObfuscationExclusions, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, exceptionObfuscationExclusions)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, exceptionObfuscationExclusions)) {
                 exceptionObfuscationExclusions.unexcludeClass(programClass1, "unexclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -4224,9 +3903,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(exceptionObfuscationExclusions, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, exceptionObfuscationExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, exceptionObfuscationExclusions)) {
                     exceptionObfuscationExclusions.unexcludeMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -4266,9 +3945,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             AbstractMethodInfo abstractMethodInfo = methodBytecode1.getMethod();
             if (aSTRenameFilterParameter1.matchesMethod(classHierarchyQuery, abstractMethodInfo)) {
                 ClassFileBase classFileBase = abstractMethodInfo.getOwningClass();
-                String string = AbstractExclusionSpec.getClassMatchName(classFileBase);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
-                if (aSTRenameFilterParameter1.matchesClass(classFileBase, null, string, string1, classHierarchyQuery)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(classFileBase);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(classFileBase);
+                if (aSTRenameFilterParameter1.matchesClass(classFileBase, null, classMatchName, classSimpleMatchName, classHierarchyQuery)) {
                     return true;
                 }
             }
@@ -4309,9 +3988,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration1 != null) {
                         while (enumeration1.hasMoreElements()) {
                             ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                            String string2 = AbstractExclusionSpec.getClassMatchName(programClass2);
-                            String string3 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                            if (this.matchesClass(programClass2, set1, string2, string3, integerEncryptionExclusions)) {
+                            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass2);
+                            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                            if (this.matchesClass(programClass2, set1, classMatchName, classSimpleMatchName, integerEncryptionExclusions)) {
                                 ArrayEnumeration arrayEnumeration1 = programClass2.enumerateFields();
 
                                 while (arrayEnumeration1.hasMoreElements()) {
@@ -4333,9 +4012,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                     if (enumeration != null) {
                         while (enumeration.hasMoreElements()) {
                             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-                            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                            if (this.matchesClass(programClass1, set1, string, string1, integerEncryptionExclusions)) {
+                            String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass1);
+                            String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                            if (this.matchesClass(programClass1, set1, classMatchNameValue, classSimpleMatchNameValue, integerEncryptionExclusions)) {
                                 ArrayEnumeration arrayEnumeration = programClass1.enumerateMethods();
 
                                 while (arrayEnumeration.hasMoreElements()) {
@@ -4362,11 +4041,11 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             boolean bl;
             if (this.classAnnotation.isLiteralName()) {
                 bl = false;
-                String string = this.classAnnotation.getSpecText();
-                String string1 = ZkmUtils.dotsToSlashes(string.substring(1));
+                String specText = this.classAnnotation.getSpecText();
+                String key = ZkmUtils.dotsToSlashes(specText.substring(1));
 
                 try {
-                    ClassFileBase classFileBase1 = classHierarchyQuery.getClassResolver().getClassFile(string1);
+                    ClassFileBase classFileBase1 = classHierarchyQuery.getClassResolver().getClassFile(key);
                     if (classFileBase1.hasAnnotation("java/lang/annotation/Inherited")) {
                         bl = true;
                     }
@@ -4380,7 +4059,7 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                             + "' : '"
                             + classFileLoadException.getMessage()
                             + "' : While looking for class '"
-                            + string1
+                            + key
                             + "'. (F)";
                     this.scriptEnvironment.logError(string2);
                 }
@@ -4391,11 +4070,11 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             try {
                 Integer integer1 = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : null;
                 boolean bl1 = HiddenOptionFlags.MATCH_ORIGINAL_NAMES && classHierarchyQuery.hasOriginalNameCaches();
-                String string6 = classFileBase.getClassName();
+                String className = classFileBase.getClassName();
                 Boolean boolean1 = bl1;
                 Integer integer = integer1;
-                String string3 = string6;
-                Set set1 = classHierarchyQuery.getClassAnnotations(bl, string3, integer, boolean1);
+                String classNameValue = className;
+                Set set1 = classHierarchyQuery.getClassAnnotations(bl, classNameValue, integer, boolean1);
                 return this.classAnnotation.matchesAnyAnnotation(set1);
             } catch (ZkmClassNotFoundException zkmClassNotFoundException) {
                 String string5 = "Error while executing \""
@@ -4449,8 +4128,8 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         return this.classNamePattern != null && this.classNamePattern.hasCaretTag();
     }
 
-    public void setExtendsClassName(String string) {
-        this.extendsClassName = string;
+    public void setExtendsClassName(String extendsClassNameArgument) {
+        this.extendsClassName = extendsClassNameArgument;
     }
 
     public void setEnabled() {
@@ -4468,9 +4147,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeTrimAnnotationTypes(TrimProcessor trimProcessor1, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ClassFileBase classFileBase = (ClassFileBase) enumeration.nextElement();
-            String string = classFileBase.getPackagePath();
-            String string1 = classFileBase.getSimpleName();
-            if (this.matchesClass(classFileBase, set1, string, string1, trimProcessor1)) {
+            String packagePath = classFileBase.getPackagePath();
+            String simpleName = classFileBase.getSimpleName();
+            if (this.matchesClass(classFileBase, set1, packagePath, simpleName, trimProcessor1)) {
                 trimProcessor1.removeAnnotationRetainedClass(classFileBase, "unexclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -4481,9 +4160,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, integerEncryptionExclusions)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, integerEncryptionExclusions)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, integerEncryptionExclusions)) {
                     integerEncryptionExclusions.unexcludeField(fieldInfo, "unexclusion parameter '" + this.parameterText + "'");
                 }
             }
@@ -4493,9 +4172,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeLongEncryptionClasses(LongEncryptionExclusionHandler longEncryptionExclusionHandler, Enumeration enumeration, Set set1) throws ZkmException, IOException {
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-            String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-            if (this.matchesClass(programClass1, set1, string, string1, longEncryptionExclusionHandler)) {
+            String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+            String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+            if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, longEncryptionExclusionHandler)) {
                 longEncryptionExclusionHandler.unexcludeClass(programClass1, "unexclusion parameter '" + this.parameterText + "'");
             }
         }
@@ -4508,14 +4187,14 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void unexcludeNameMembers(NameExclusionSet nameExclusionSet, ProgramClass programClass1) throws ZkmException, IOException {
         FieldInfo[] fieldInfos = programClass1.getFieldInfos();
 
-        for (int i = 0; i < fieldInfos.length; i++) {
-            nameExclusionSet.unexcludeField(fieldInfos[i], "unexclusion parameter '" + this.parameterText + "'");
+        for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+            nameExclusionSet.unexcludeField(fieldInfos[fieldInfoIndex], "unexclusion parameter '" + this.parameterText + "'");
         }
 
         MethodInfo[] methodInfos = programClass1.getMethodInfos();
 
-        for (int i = 0; i < methodInfos.length; i++) {
-            MethodInfo methodInfo1 = methodInfos[i];
+        for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+            MethodInfo methodInfo1 = methodInfos[methodInfoIndex];
             if (!methodInfo1.isConstructor() && !methodInfo1.isStaticInitializer()) {
                 nameExclusionSet.unexcludeMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
             }
@@ -4527,12 +4206,12 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
         if (methodArgsPattern1 == null) {
             return string1.length() == 2;
         } else {
-            return methodArgsPattern1.isAnyArgs() ? true : methodArgsPattern1.argsRegex.matcher(string1).matches();
+            return ((methodArgsPattern1.isAnyArgs()) || (methodArgsPattern1.argsRegex.matcher(string1).matches()));
         }
     }
 
     public boolean matchesModule(ModuleInfoClass moduleInfoClass) {
-        return this.moduleSpecifier != null ? this.moduleSpecifier.matchesName(moduleInfoClass.getModuleName()) : false;
+        return ((this.moduleSpecifier != null) && (this.moduleSpecifier.matchesName(moduleInfoClass.getModuleName())));
     }
 
     public void setClassNamePattern(ClassNamePattern classNamePattern1) {
@@ -4547,14 +4226,14 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void excludeReflectionMembers(ReflectionAccessMatcher reflectionAccessMatcher, ProgramClass programClass1) throws ZkmException, IOException {
         FieldInfo[] fieldInfos = programClass1.getFieldInfos();
 
-        for (int i = 0; i < fieldInfos.length; i++) {
-            reflectionAccessMatcher.markFieldAccessed(fieldInfos[i], "exclusion parameter '" + this.parameterText + "'");
+        for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+            reflectionAccessMatcher.markFieldAccessed(fieldInfos[fieldInfoIndex], "exclusion parameter '" + this.parameterText + "'");
         }
 
         MethodInfo[] methodInfos = programClass1.getMethodInfos();
 
-        for (int i = 0; i < methodInfos.length; i++) {
-            MethodInfo methodInfo1 = methodInfos[i];
+        for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+            MethodInfo methodInfo1 = methodInfos[methodInfoIndex];
             if (!methodInfo1.isConstructor() && !methodInfo1.isStaticInitializer()) {
                 reflectionAccessMatcher.markMethodAccessed(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
             }
@@ -4575,10 +4254,10 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
 
     public boolean matchesFieldSpec(ClassHierarchyQuery classHierarchyQuery, ClassFileBase classFileBase, String string, Object object) throws ZkmException, IOException {
         Object object1 = null;
-        String string1 = classFileBase.getPackagePath();
-        String string2 = classFileBase.getSimpleName();
-        if (this.matchesClass(classFileBase, (Set) object1, string1, string2, classHierarchyQuery)) {
-            return this.isClassPlusSpec() ? true : this.fieldSpecifier.matchesName(string) && (this.fieldType == null || this.fieldType.equals(object));
+        String packagePath = classFileBase.getPackagePath();
+        String simpleName = classFileBase.getSimpleName();
+        if (this.matchesClass(classFileBase, (Set) object1, packagePath, simpleName, classHierarchyQuery)) {
+            return ((this.isClassPlusSpec()) || (this.fieldSpecifier.matchesName(string) && (this.fieldType == null || this.fieldType.equals(object))));
         } else {
             return false;
         }
@@ -4589,9 +4268,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             MethodInfo methodInfo1 = (MethodInfo) enumeration.nextElement();
             if (this.matchesMethod(trimProcessor1, methodInfo1)) {
                 ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
                     trimProcessor1.matchMethod(methodInfo1, "exclusion parameter '" + this.parameterText + "'");
                     this.warnPackageExclusionIgnored();
                     this.excludeClassIfCaret(trimProcessor1, programClass1);
@@ -4605,9 +4284,9 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
             FieldInfo fieldInfo = (FieldInfo) enumeration.nextElement();
             if (this.matchesField(fieldInfo, trimProcessor1)) {
                 ProgramClass programClass1 = fieldInfo.getProgramClass();
-                String string = AbstractExclusionSpec.getClassMatchName(programClass1);
-                String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
-                if (this.matchesClass(programClass1, set1, string, string1, trimProcessor1)) {
+                String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass1);
+                String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass1);
+                if (this.matchesClass(programClass1, set1, classMatchName, classSimpleMatchName, trimProcessor1)) {
                     trimProcessor1.unmatchField(fieldInfo, "unexclusion parameter '" + this.parameterText + "'");
                     this.warnPackageExclusionIgnored();
                     this.unexcludeClassIfCaret(trimProcessor1, programClass1);
@@ -4625,17 +4304,17 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     public void applyNameUnexclusion(NameExclusionSet nameExclusionSet) throws ZkmException, IOException {
         if (this.enabled) {
             Set set1 = null;
-            int ba;
+            int specifierKindValue;
             if (this.hasReferencingAnnotation()) {
                 boolean bl = HiddenOptionFlags.MATCH_ORIGINAL_NAMES
                         && (nameExclusionSet.hasOriginalNameCaches() || nameExclusionSet.isHierarchySealed() || nameExclusionSet.isHierarchyMarked());
                 set1 = this.findAnnotationReferencingClasses(nameExclusionSet.getInputClassFiles(), bl);
-                ba = this.specifierKind;
+                specifierKindValue = this.specifierKind;
             } else {
-                ba = this.specifierKind;
+                specifierKindValue = this.specifierKind;
             }
 
-            switch (ba) {
+            switch (specifierKindValue) {
                 case 1:
                     Enumeration enumeration = nameExclusionSet.getExcludedPackages();
 
@@ -4671,16 +4350,16 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                             if (enumeration2 != null) {
                                 while (enumeration2.hasMoreElements()) {
                                     ProgramClass programClass5 = (ProgramClass) enumeration2.nextElement();
-                                    String string3 = AbstractExclusionSpec.getClassMatchName(programClass5);
-                                    String string4 = AbstractExclusionSpec.getClassSimpleMatchName(programClass5);
-                                    if (this.matchesClass(programClass5, set1, string3, string4, nameExclusionSet)) {
+                                    String classMatchName = AbstractExclusionSpec.getClassMatchName(programClass5);
+                                    String classSimpleMatchName = AbstractExclusionSpec.getClassSimpleMatchName(programClass5);
+                                    if (this.matchesClass(programClass5, set1, classMatchName, classSimpleMatchName, nameExclusionSet)) {
                                         ArrayEnumeration arrayEnumeration1 = programClass5.enumerateFields();
 
                                         while (arrayEnumeration1.hasMoreElements()) {
                                             FieldInfo fieldInfo = (FieldInfo) arrayEnumeration1.nextElement();
                                             if (this.matchesField(fieldInfo, nameExclusionSet)) {
                                                 nameExclusionSet.unexcludeField(fieldInfo, "unexclusion parameter '" + this.parameterText + "'");
-                                                this.unexcludePackageIfCaret(nameExclusionSet, string3);
+                                                this.unexcludePackageIfCaret(nameExclusionSet, classMatchName);
                                                 this.unexcludeClassIfCaret(nameExclusionSet, programClass5);
                                             }
                                         }
@@ -4708,16 +4387,16 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
                             if (enumeration1 != null) {
                                 while (enumeration1.hasMoreElements()) {
                                     ProgramClass programClass2 = (ProgramClass) enumeration1.nextElement();
-                                    String string = AbstractExclusionSpec.getClassMatchName(programClass2);
-                                    String string1 = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
-                                    if (this.matchesClass(programClass2, set1, string, string1, nameExclusionSet)) {
+                                    String classMatchNameValue = AbstractExclusionSpec.getClassMatchName(programClass2);
+                                    String classSimpleMatchNameValue = AbstractExclusionSpec.getClassSimpleMatchName(programClass2);
+                                    if (this.matchesClass(programClass2, set1, classMatchNameValue, classSimpleMatchNameValue, nameExclusionSet)) {
                                         ArrayEnumeration arrayEnumeration = programClass2.enumerateMethods();
 
                                         while (arrayEnumeration.hasMoreElements()) {
                                             MethodInfo methodInfo1 = (MethodInfo) arrayEnumeration.nextElement();
                                             if (this.matchesMethod(nameExclusionSet, methodInfo1)) {
                                                 nameExclusionSet.unexcludeMethod(methodInfo1, "unexclusion parameter '" + this.parameterText + "'");
-                                                this.unexcludePackageIfCaret(nameExclusionSet, string);
+                                                this.unexcludePackageIfCaret(nameExclusionSet, classMatchNameValue);
                                                 this.unexcludeClassIfCaret(nameExclusionSet, programClass2);
                                                 if (this.plusSignatureClasses) {
                                                     this.unexcludeSignatureClasses(nameExclusionSet, methodInfo1);
@@ -4766,23 +4445,23 @@ public class ASTRenameFilterParameter extends ZkmScriptSimpleNode implements Mem
     }
 
     public ProgramClass findLiteralClass() {
-        String string3;
+        String namePatternValue;
         char ba;
         if (this.packagePattern != null) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(this.packagePattern.getNamePattern());
             stringBuilder.append(this.classNamePattern.getNamePattern());
-            String string = stringBuilder.toString();
-            string3 = string;
+            String namePatternValue2 = stringBuilder.toString();
+            namePatternValue = namePatternValue2;
             ba = '.';
         } else {
-            String string1 = this.classNamePattern.getNamePattern();
-            string3 = string1;
+            String namePattern = this.classNamePattern.getNamePattern();
+            namePatternValue = namePattern;
             ba = '.';
         }
 
-        String string2 = string3.replace(ba, '/');
-        return ClassHierarchyNode.findProgramClass(string2);
+        String key = namePatternValue.replace(ba, '/');
+        return ClassHierarchyNode.findProgramClass(key);
     }
 
     public final boolean hasLinkClassName() {

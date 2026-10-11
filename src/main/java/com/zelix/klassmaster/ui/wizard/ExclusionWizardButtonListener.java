@@ -15,14 +15,14 @@ public class ExclusionWizardButtonListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.excludeHelperDialog.previousBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.excludeHelperDialog.previousBtn) {
                 this.excludeHelperDialog.goPrevious();
-            } else if (object == this.excludeHelperDialog.okBtn) {
+            } else if (source == this.excludeHelperDialog.okBtn) {
                 this.excludeHelperDialog.acceptParameters();
-            } else if (object == this.excludeHelperDialog.cancelBtn) {
+            } else if (source == this.excludeHelperDialog.cancelBtn) {
                 this.excludeHelperDialog.cancelDialog();
-            } else if (object == this.excludeHelperDialog.helpBtn) {
+            } else if (source == this.excludeHelperDialog.helpBtn) {
                 this.excludeHelperDialog.showHelp();
             }
         } catch (Throwable throwable) {

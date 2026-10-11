@@ -25,7 +25,7 @@ public abstract class ProGuardValueNode extends ProGuardConfigSimpleNode {
         super.translate(proGuardConfigNode, proGuardConfigTranslator);
     }
 
-    public final void setValue(String string) {
-        this.value = string.trim();
+    public final void setValue(String valueArgument) {
+        this.value = valueArgument.trim();
     }
 }

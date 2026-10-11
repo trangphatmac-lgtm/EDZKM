@@ -16,14 +16,14 @@ public class ConstantClass extends ClassConstantBase implements ResolvableConsta
         dataOutputStream.writeShort(this.nameIndex);
     }
 
-    public ConstantClass(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantClass(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, abstractConstantPool);
         this.nameIndex = classFileInputStream.readUnsignedShort();
     }
 
     @Override
-    public void setClassName(String string) {
-        ((ConstantUtf8) this.constantPool.getConstantPoolEntry(this.nameIndex)).setValue(string);
+    public void setClassName(String className) {
+        ((ConstantUtf8) this.constantPool.getConstantPoolEntry(this.nameIndex)).setValue(className);
     }
 
     @Override

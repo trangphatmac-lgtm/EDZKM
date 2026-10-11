@@ -59,8 +59,8 @@ public class MethodOverrideAnalyzer {
     public TwoKeyMap overriddenMethodOwners;
     public TwoKeyMap determiningInterfaceMethods;
 
-    public final String getGroupNewName(Object object) {
-        return (String) ((ObservableHolder) this.groupRenameTargets.get(object)).getValue();
+    public final String getGroupNewName(Object key) {
+        return (String) ((ObservableHolder) this.groupRenameTargets.get(key)).getValue();
     }
 
     public final boolean tryReserveGroupRename(
@@ -126,14 +126,14 @@ public class MethodOverrideAnalyzer {
         return true;
     }
 
-    public final void setGroupChangedDescriptor(Object object, Object object1) throws ZkmException, IOException {
-        ((ObservableHolder) this.groupRenameTargets.get(object)).setValue(object1);
+    public final void setGroupChangedDescriptor(Object key, Object value) throws ZkmException, IOException {
+        ((ObservableHolder) this.groupRenameTargets.get(key)).setValue(value);
     }
 
     public final ClassFileBase findTopOverriddenOwner(ClassFileBase classFileBase, MethodSignature methodSignature1) {
-        String string = classFileBase.getClassName();
+        String className = classFileBase.getClassName();
         HashSet hashSet = null;
-        ClassFileBase classFileBase1 = (ClassFileBase) this.overriddenMethodOwners.getValue(string, methodSignature1);
+        ClassFileBase classFileBase1 = (ClassFileBase) this.overriddenMethodOwners.getValue(className, methodSignature1);
         ClassFileBase classFileBase2 = null;
 
         while (classFileBase1 != null) {
@@ -164,12 +164,12 @@ public class MethodOverrideAnalyzer {
         return classFileBase2;
     }
 
-    public final ObservableHolder getInterfaceMethodGroup(Object object, Object object1) {
-        return (ObservableHolder) this.interfaceMethodGroups.getValue(object, object1);
+    public final ObservableHolder getInterfaceMethodGroup(Object key, Object keyArgument) {
+        return (ObservableHolder) this.interfaceMethodGroups.getValue(key, keyArgument);
     }
 
-    public Map getVisibleMethodOwners(Object object) {
-        return this.visibleMethodOwners.getInnerMap(object);
+    public Map getVisibleMethodOwners(Object key) {
+        return this.visibleMethodOwners.getInnerMap(key);
     }
 
     public int reserveVirtual(
@@ -250,8 +250,8 @@ public class MethodOverrideAnalyzer {
         return this.reservePrivate(classHierarchyNode, memberSignatureBase, observableHolder) != -1;
     }
 
-    public Map getOverriddenMethodOwners(Object object) {
-        return this.overriddenMethodOwners.getInnerMap(object);
+    public Map getOverriddenMethodOwners(Object key) {
+        return this.overriddenMethodOwners.getInnerMap(key);
     }
 
     public final AbstractMethodInfo getRootMethod(AbstractMethodInfo abstractMethodInfo) {
@@ -364,12 +364,12 @@ public class MethodOverrideAnalyzer {
         }
     }
 
-    public final Set getInterfaceImplementors(Object object) {
-        return this.interfaceImplementors.getValues(object);
+    public final Set getInterfaceImplementors(Object key) {
+        return this.interfaceImplementors.getValues(key);
     }
 
-    public final Map putVisibleMethodOwners(String string, Map map1) {
-        return this.visibleMethodOwners.putInnerMap(string, map1);
+    public final Map putVisibleMethodOwners(String key, Map map1) {
+        return this.visibleMethodOwners.putInnerMap(key, map1);
     }
 
     public Map getMethodSignatureByGroup() {
@@ -437,8 +437,8 @@ public class MethodOverrideAnalyzer {
         return true;
     }
 
-    public final AbstractMethodInfo findRootMethod(Object object) {
-        return (AbstractMethodInfo) this.rootMethodByMethod.get(object);
+    public final AbstractMethodInfo findRootMethod(Object key) {
+        return (AbstractMethodInfo) this.rootMethodByMethod.get(key);
     }
 
     public void collectGroupNodes(ClassHierarchyNode classHierarchyNode, MemberSignatureBase memberSignatureBase, Set set1, Set set2) {
@@ -446,8 +446,8 @@ public class MethodOverrideAnalyzer {
         if (observableHolder != null) {
             List list1 = (List) observableHolder.getValue();
 
-            for (int i = 0; i < list1.size(); i++) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndex);
                 set1.add(classHierarchyNode1);
             }
         } else {
@@ -476,8 +476,8 @@ public class MethodOverrideAnalyzer {
         set1.add(memberSignatureBase);
     }
 
-    public final void setGroupNewName(Object object, Object object1) throws ZkmException, IOException {
-        ((ObservableHolder) this.groupRenameTargets.get(object)).setValue(object1);
+    public final void setGroupNewName(Object key, Object value) throws ZkmException, IOException {
+        ((ObservableHolder) this.groupRenameTargets.get(key)).setValue(value);
     }
 
     public int reserveStatic(ClassHierarchyNode classHierarchyNode, MemberSignatureBase memberSignatureBase, ObservableHolder observableHolder) throws ZkmException, IOException {
@@ -504,8 +504,8 @@ public class MethodOverrideAnalyzer {
         }
     }
 
-    public boolean hasRootMethod(Object object) {
-        return this.rootMethodByMethod.containsKey(object);
+    public boolean hasRootMethod(Object key) {
+        return this.rootMethodByMethod.containsKey(key);
     }
 
     public final void collectImplementors(
@@ -517,8 +517,8 @@ public class MethodOverrideAnalyzer {
             ArrayList arrayList = new ArrayList(5);
             classHierarchyNode1.collectSuperclasses(arrayList);
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) arrayList.get(i);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) arrayList.get(elementIndex);
                 if (twoKeyMap.containsKeys(classHierarchyNode2, classHierarchyNode)) {
                     break;
                 }
@@ -577,19 +577,19 @@ public class MethodOverrideAnalyzer {
 
     public void analyze(ClassMemberLookup classMemberLookup1, ClassHierarchy classHierarchy1, ScriptEnvironment scriptEnvironment1, boolean bl) throws ZkmException, IOException {
         List list1 = classHierarchy1.getTopLoadedNodes();
-        int ba = list1.size();
+        int list1Size = list1.size();
         if (!bl) {
             this.rootMethodByMethod = ZkmUtils.createHashMap();
         } else {
             Random random1 = ZkmUtils.createRandom(2049);
             ObservableHolder observableHolder = new ObservableHolder();
 
-            for (int i = 0; i < ba; i++) {
-                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(elementIndex);
                 ClassFileBase classFileBase = classHierarchyNode.getClassFile();
-                String string = classFileBase.getClassName();
+                String className = classFileBase.getClassName();
                 String string1 = "looking for superclass of '" + classFileBase.getLocationName() + "'";
-                this.getOrBuildVisibleMethodOwners(string, observableHolder, scriptEnvironment1, random1, string1);
+                this.getOrBuildVisibleMethodOwners(className, observableHolder, scriptEnvironment1, random1, string1);
                 classHierarchyNode.analyzeSubclassOverrides(this, this.classResolver, observableHolder, scriptEnvironment1, random1);
             }
 
@@ -597,12 +597,12 @@ public class MethodOverrideAnalyzer {
             TwoKeyMap twoKeyMap = new TwoKeyMap();
             TwoKeyMap twoKeyMap1 = new TwoKeyMap();
 
-            for (int i = 0; i < ba; i++) {
-                ClassHierarchyNode classHierarchyNode4 = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < list1Size; elementIndexValue++) {
+                ClassHierarchyNode classHierarchyNode4 = (ClassHierarchyNode) list1.get(elementIndexValue);
                 ClassFileBase classFileBase1 = classHierarchyNode4.getClassFile();
                 if (classFileBase1.isInterface()) {
-                    String string2 = classFileBase1.getClassName();
-                    Map map1 = this.getOverriddenMethodOwners(string2);
+                    String classNameValue = classFileBase1.getClassName();
+                    Map map1 = this.getOverriddenMethodOwners(classNameValue);
                     Iterator iterator = map1.entrySet().iterator();
 
                     while (iterator.hasNext()) {
@@ -665,8 +665,8 @@ public class MethodOverrideAnalyzer {
                     }
                 }
 
-                for (int i = 0; i < arrayList.size(); i++) {
-                    EnumerableHashSet enumerableHashSet2 = (EnumerableHashSet) arrayList.get(i);
+                for (int elementIndexValue2 = 0; elementIndexValue2 < arrayList.size(); elementIndexValue2++) {
+                    EnumerableHashSet enumerableHashSet2 = (EnumerableHashSet) arrayList.get(elementIndexValue2);
                     Vector vector = new Vector(enumerableHashSet2.size());
                     ObservableHolder observableHolder1 = new ObservableHolder(vector);
                     this.groupRenameTargets.put(observableHolder1, new ObservableHolder());
@@ -680,8 +680,8 @@ public class MethodOverrideAnalyzer {
 
                     ClassFileBase classFileBase5 = null;
 
-                    for (int j = 0; j < vector.size(); j++) {
-                        ClassHierarchyNode classHierarchyNode3 = (ClassHierarchyNode) vector.elementAt(j);
+                    for (int elementIndexValue3 = 0; elementIndexValue3 < vector.size(); elementIndexValue3++) {
+                        ClassHierarchyNode classHierarchyNode3 = (ClassHierarchyNode) vector.elementAt(elementIndexValue3);
                         ClassFileBase classFileBase3 = (ClassFileBase) twoKeyMap1.getValue(classHierarchyNode3, methodSignature2);
                         if (classFileBase3 != null) {
                             classFileBase5 = classFileBase3;
@@ -692,8 +692,8 @@ public class MethodOverrideAnalyzer {
                     if (classFileBase5 == null) {
                         ClassFileBase classFileBase7 = null;
 
-                        for (int j = 0; j < vector.size(); j++) {
-                            ClassFileBase classFileBase4 = ((ClassHierarchyNode) vector.elementAt(j)).getClassFile();
+                        for (int elementIndexValue4 = 0; elementIndexValue4 < vector.size(); elementIndexValue4++) {
+                            ClassFileBase classFileBase4 = ((ClassHierarchyNode) vector.elementAt(elementIndexValue4)).getClassFile();
                             ClassFileBase classFileBase6 = this.findTopOverriddenOwner(classFileBase4, methodSignature2);
                             if (classFileBase4.isProgramClass() && classMemberLookup1.declaresMethod(methodSignature2, (ProgramClass) classFileBase4)
                                     || !classFileBase4.isProgramClass() && classFileBase4.findMethod(methodSignature2) != null) {
@@ -714,8 +714,8 @@ public class MethodOverrideAnalyzer {
                     AbstractMethodInfo abstractMethodInfo = classFileBase5.findMethod(methodSignature2);
                     ZkmAssert.assertNotNull(classFileBase5, "Failed to find deemed determining interface " + methodSignature2 + " " + vector);
 
-                    for (int j = 0; j < vector.size(); j++) {
-                        ClassHierarchyNode classHierarchyNode10 = (ClassHierarchyNode) vector.elementAt(j);
+                    for (int elementIndexValue5 = 0; elementIndexValue5 < vector.size(); elementIndexValue5++) {
+                        ClassHierarchyNode classHierarchyNode10 = (ClassHierarchyNode) vector.elementAt(elementIndexValue5);
                         this.determiningInterfaceMethods
                                 .putValue(classHierarchyNode10.getClassName(), methodSignature2, new ObjectPair(classFileBase5, abstractMethodInfo));
                     }
@@ -732,8 +732,8 @@ public class MethodOverrideAnalyzer {
                     while (iterator2.hasNext()) {
                         Entry entry2 = (Entry) iterator2.next();
                         ClassHierarchyNode classHierarchyNode5 = (ClassHierarchyNode) entry2.getKey();
-                        String string3 = (String) entry2.getValue();
-                        if (string3 != "d") {
+                        String value = (String) entry2.getValue();
+                        if (value != "d") {
                             Iterator iterator3 = map2.keySet().iterator();
 
                             while (iterator3.hasNext()) {
@@ -761,8 +761,8 @@ public class MethodOverrideAnalyzer {
         }
     }
 
-    public final ClassFileBase putVisibleMethodOwner(Object object, Object object1, Object object2) {
-        return (ClassFileBase) this.visibleMethodOwners.putValue(object, object1, object2);
+    public final ClassFileBase putVisibleMethodOwner(Object key, Object keyArgument, Object value) {
+        return (ClassFileBase) this.visibleMethodOwners.putValue(key, keyArgument, value);
     }
 
     public void resolveRootMethods(Entry entry) {
@@ -805,12 +805,12 @@ public class MethodOverrideAnalyzer {
         }
     }
 
-    public boolean hasOverridingMethods(Object object) {
+    public boolean hasOverridingMethods(Object key) {
         if (this.methodsByRoot == null) {
             this.buildMethodsByRoot();
         }
 
-        return this.methodsByRoot.containsKey(object);
+        return this.methodsByRoot.containsKey(key);
     }
 
     public int reservePrivate(ClassHierarchyNode classHierarchyNode, MemberSignatureBase memberSignatureBase, ObservableHolder observableHolder) throws ZkmException, IOException {
@@ -893,8 +893,8 @@ public class MethodOverrideAnalyzer {
         }
     }
 
-    public void addRelatedInterfaceNodes(Object object, Set set1) {
-        Set set2 = this.relatedInterfaceNodes.getValues(object);
+    public void addRelatedInterfaceNodes(Object key, Set set1) {
+        Set set2 = this.relatedInterfaceNodes.getValues(key);
         if (set2 != null) {
             Iterator iterator = set2.iterator();
 
@@ -926,8 +926,8 @@ public class MethodOverrideAnalyzer {
         HashSet hashSet = ZkmUtils.createHashSet();
         LinkedHashSet linkedHashSet = new LinkedHashSet();
 
-        for (int i = 0; i < list1.size(); i++) {
-            ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(elementIndex);
             switch (this.reserveName(classHierarchyNode, memberSignatureBase, memberSignatureBase1, observableHolder1)) {
                 case -1:
                     this.rollbackReservations(hashSet, linkedHashSet, memberSignatureBase);
@@ -986,13 +986,13 @@ public class MethodOverrideAnalyzer {
     }
 
     public final Map getOrBuildVisibleMethodOwners(
-            String string, ObservableHolder observableHolder, ScriptEnvironment scriptEnvironment1, Random random1, String string1
+            String key, ObservableHolder observableHolder, ScriptEnvironment scriptEnvironment1, Random random1, String string1
     ) throws ZkmException, IOException {
-        Map map1 = this.getVisibleMethodOwners(string);
+        Map map1 = this.getVisibleMethodOwners(key);
         if (map1 == null) {
             ClassFileBase classFileBase;
             try {
-                classFileBase = this.classResolver.getClassFile(string, string1);
+                classFileBase = this.classResolver.getClassFile(key, string1);
             } catch (ZkmClassNotFoundException zkmClassNotFoundException) {
                 throw new MissingClassException(
                         "Class '" + ZkmUtils.slashesToDots(zkmClassNotFoundException.getClassName()) + "' not found while " + string1 + ". (1)"
@@ -1007,21 +1007,21 @@ public class MethodOverrideAnalyzer {
         return map1;
     }
 
-    public final ClassFileBase getRootMethodClass(Object object) {
-        AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) this.rootMethodByMethod.get(object);
+    public final ClassFileBase getRootMethodClass(Object key) {
+        AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) this.rootMethodByMethod.get(key);
         return abstractMethodInfo != null ? abstractMethodInfo.getOwningClass() : null;
     }
 
-    public final Map putOverriddenMethodOwners(String string, Map map1) {
-        return this.overriddenMethodOwners.putInnerMap(string, map1);
+    public final Map putOverriddenMethodOwners(String key, Map map1) {
+        return this.overriddenMethodOwners.putInnerMap(key, map1);
     }
 
     public boolean isFullDescriptorMode() {
         return this.useFullDescriptor;
     }
 
-    public final ClassFileBase putOverriddenMethodOwner(Object object, Object object1, Object object2) {
-        return (ClassFileBase) this.overriddenMethodOwners.putValue(object, object1, object2);
+    public final ClassFileBase putOverriddenMethodOwner(Object key, Object keyArgument, Object value) {
+        return (ClassFileBase) this.overriddenMethodOwners.putValue(key, keyArgument, value);
     }
 
     public final boolean tryReserveRename(
@@ -1044,11 +1044,11 @@ public class MethodOverrideAnalyzer {
         return set1.contains(memberSignatureBase);
     }
 
-    public boolean hasOverriddenMethod(String string, MethodSignature methodSignature1) {
-        return this.overriddenMethodOwners.containsKeys(string, methodSignature1);
+    public boolean hasOverriddenMethod(String key, MethodSignature methodSignature1) {
+        return this.overriddenMethodOwners.containsKeys(key, methodSignature1);
     }
 
-    public final boolean isReservedForOther(Object object, MethodSignature methodSignature1, MethodSignature methodSignature2) {
+    public final boolean isReservedForOther(Object key, MethodSignature methodSignature1, MethodSignature methodSignature2) {
         MemberSignatureBase memberSignatureBase;
         MemberSignatureBase memberSignatureBase1;
         TwoKeyMap twoKeyMap;
@@ -1062,14 +1062,12 @@ public class MethodOverrideAnalyzer {
             twoKeyMap = this.nameReservations;
         }
 
-        NameReservationMark nameReservationMark = (NameReservationMark) twoKeyMap.getValue(object, memberSignatureBase1);
-        return nameReservationMark == null
-                ? false
-                : nameReservationMark.reservedSignature == null || !nameReservationMark.reservedSignature.equals(memberSignatureBase);
+        NameReservationMark nameReservationMark = (NameReservationMark) twoKeyMap.getValue(key, memberSignatureBase1);
+        return (!(nameReservationMark == null) && (nameReservationMark.reservedSignature == null || !nameReservationMark.reservedSignature.equals(memberSignatureBase)));
     }
 
-    public final ChangedMethodDescriptor getGroupChangedDescriptor(Object object) {
-        return (ChangedMethodDescriptor) ((ObservableHolder) this.groupRenameTargets.get(object)).getValue();
+    public final ChangedMethodDescriptor getGroupChangedDescriptor(Object key) {
+        return (ChangedMethodDescriptor) ((ObservableHolder) this.groupRenameTargets.get(key)).getValue();
     }
 
     public int reserveVirtualStrict(
@@ -1128,8 +1126,8 @@ public class MethodOverrideAnalyzer {
         if (enumerableHashSet.add(classHierarchyNode)) {
             List list1 = listMultimap.getValues(classHierarchyNode);
             if (list1 != null) {
-                for (int i = 0; i < list1.size(); i++) {
-                    ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndex);
                     this.collectConnectedNodes(enumerableHashSet, classHierarchyNode1, listMultimap);
                 }
             }

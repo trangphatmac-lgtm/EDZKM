@@ -29,19 +29,19 @@ public class BootstrapMethodIndex {
             StringBuilder stringBuilder = new StringBuilder();
             List list1 = bootstrapMethodInfo.getRecipeTokens();
             ConstantPoolEntry[] constantPoolEntrys = bootstrapMethodInfo.getConstantArguments();
-            int ba = 0;
+            int constantPoolEntryIndex = 0;
 
             for (int i = 0; i < list1.size(); i++) {
-                String string = (String) list1.get(i);
+                String text = (String) list1.get(i);
                 stringBuilder.append(ARG_PLACEHOLDER);
-                if (!string.equals(ARG_PLACEHOLDER)) {
-                    if (string.equals(CONST_PLACEHOLDER)) {
-                        ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) constantPoolEntrys[ba];
+                if (!text.equals(ARG_PLACEHOLDER)) {
+                    if (text.equals(CONST_PLACEHOLDER)) {
+                        ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) constantPoolEntrys[constantPoolEntryIndex];
                         ConcatRecipePart concatRecipePart = new ConcatRecipePart(i, resolvedStringConstant.getValueString(), resolvedStringConstant);
                         bootstrapMethodInfo.addRecipePart(concatRecipePart);
-                        ba++;
+                        constantPoolEntryIndex++;
                     } else {
-                        ConcatRecipePart concatRecipePart1 = new ConcatRecipePart(i, string);
+                        ConcatRecipePart concatRecipePart1 = new ConcatRecipePart(i, text);
                         bootstrapMethodInfo.addRecipePart(concatRecipePart1);
                     }
                 }
@@ -78,52 +78,52 @@ public class BootstrapMethodIndex {
         this.bootstrapMethodsAttribute = bootstrapMethodsAttribute1;
     }
 
-    public BootstrapMethodInfo getInfo(Object object) {
-        return (BootstrapMethodInfo) this.infoByEntry.get(object);
+    public BootstrapMethodInfo getInfo(Object key) {
+        return (BootstrapMethodInfo) this.infoByEntry.get(key);
     }
 
-    public boolean hasInfo(Object object) {
-        return this.infoByEntry.containsKey(object);
+    public boolean hasInfo(Object key) {
+        return this.infoByEntry.containsKey(key);
     }
 
     public static List tokenizeRecipe(String string, MutableInt mutableInt) {
         ArrayList arrayList = new ArrayList();
-        int ba = 0;
+        int value = 0;
         int bb = 0;
         int bc = 0;
 
-        int bd;
+        int endIndex;
         do {
             boolean bl = false;
-            int be = string.indexOf(1, bc);
-            int bf = string.indexOf(2, bc);
-            if (be > -1 && bf == -1) {
-                bd = be;
+            int endIndexValue = string.indexOf(1, bc);
+            int endIndexValue2 = string.indexOf(2, bc);
+            if (endIndexValue > -1 && endIndexValue2 == -1) {
+                endIndex = endIndexValue;
                 bl = true;
-            } else if (be == -1 && bf > -1) {
-                bd = bf;
+            } else if (endIndexValue == -1 && endIndexValue2 > -1) {
+                endIndex = endIndexValue2;
                 bb++;
-            } else if (be <= -1 || bf <= -1) {
-                bd = -1;
-            } else if (be < bf) {
+            } else if (endIndexValue <= -1 || endIndexValue2 <= -1) {
+                endIndex = -1;
+            } else if (endIndexValue < endIndexValue2) {
                 bl = true;
-                bd = be;
+                endIndex = endIndexValue;
             } else {
-                bd = bf;
+                endIndex = endIndexValue2;
                 bb++;
             }
 
-            if (bd > -1) {
-                ba++;
-                if (bd > bc) {
-                    arrayList.add(string.substring(bc, bd));
+            if (endIndex > -1) {
+                value++;
+                if (endIndex > bc) {
+                    arrayList.add(string.substring(bc, endIndex));
                     bb++;
                 }
 
                 arrayList.add(bl ? ARG_PLACEHOLDER : CONST_PLACEHOLDER);
-                bc = bd + 1;
+                bc = endIndex + 1;
             }
-        } while (bd > -1);
+        } while (endIndex > -1);
 
         if (bc < string.length()) {
             arrayList.add(string.substring(bc));
@@ -131,14 +131,14 @@ public class BootstrapMethodIndex {
         }
 
         if (bb > 0) {
-            mutableInt.setValue(ba);
+            mutableInt.setValue(value);
             return arrayList;
         } else {
             return null;
         }
     }
 
-    public void registerConcatBootstrap(BootstrapMethodEntry bootstrapMethodEntry, List list1, int ba) {
-        this.infoByEntry.put(bootstrapMethodEntry, new BootstrapMethodInfo(bootstrapMethodEntry, list1, ba));
+    public void registerConcatBootstrap(BootstrapMethodEntry bootstrapMethodEntry, List list1, int placeholderCount) {
+        this.infoByEntry.put(bootstrapMethodEntry, new BootstrapMethodInfo(bootstrapMethodEntry, list1, placeholderCount));
     }
 }

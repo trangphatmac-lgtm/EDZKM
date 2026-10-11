@@ -39,7 +39,7 @@ public class StackFrameState {
 
     public MonitorEnterInstruction popMatchingMonitorEnter(MonitorExitInstruction monitorExitInstruction) {
         if (this.heldMonitors != null && this.heldMonitors.size() > 0) {
-            int ba = this.heldMonitors.size();
+            int heldMonitorsSize = this.heldMonitors.size();
             int bb = -1;
             MonitorEnterInstruction monitorEnterInstruction = null;
             Iterator iterator = this.heldMonitors.iterator();
@@ -53,7 +53,7 @@ public class StackFrameState {
                     break;
                 }
 
-                if (bb == ba - 1) {
+                if (bb == heldMonitorsSize - 1) {
                     monitorEnterInstruction = monitorEnterInstruction1;
                     iterator.remove();
                 }
@@ -74,28 +74,28 @@ public class StackFrameState {
     }
 
     public int getStackSlotCount() {
-        int ba = 0;
+        int stackSlotCount = 0;
 
         for (VerifierType verifierType : this.stack) {
-            ba += verifierType.getSlotSize();
+            stackSlotCount += verifierType.getSlotSize();
         }
 
-        return ba;
+        return stackSlotCount;
     }
 
     public boolean isFullyInitialized() {
-        int ba = this.stack.length;
+        int lengthValue = this.stack.length;
 
-        for (int i = 0; i < ba; i++) {
-            if (!this.stack[i].isInitialized()) {
+        for (int stackElementIndex = 0; stackElementIndex < lengthValue; stackElementIndex++) {
+            if (!this.stack[stackElementIndex].isInitialized()) {
                 return false;
             }
         }
 
-        int bd = this.locals.length;
+        int lengthValue2 = this.locals.length;
 
-        for (int i = 0; i < bd; i++) {
-            if (!this.locals[i].isInitialized()) {
+        for (int localIndex = 0; localIndex < lengthValue2; localIndex++) {
+            if (!this.locals[localIndex].isInitialized()) {
                 return false;
             }
         }
@@ -148,10 +148,10 @@ public class StackFrameState {
             throw new StackAnalysisException("Inconsistent stack heights " + verifierTypes.length + " " + verifierTypes1.length + " : '" + string + "'");
         }
 
-        int ba = verifierTypes.length;
+        int lengthValue = verifierTypes.length;
         VerifierType[] verifierTypes2 = verifierTypes.clone();
 
-        for (int i = 0; i < ba; i++) {
+        for (int i = 0; i < lengthValue; i++) {
             if (!verifierTypes1[i].equals(verifierTypes2[i])) {
                 booleanFlag.setValue(true);
                 if (!isReferenceType(verifierTypes1[i]) || !isReferenceType(verifierTypes2[i])) {
@@ -174,11 +174,11 @@ public class StackFrameState {
     public static VerifierType[] mergeSubroutineLocals(
             VerifierType[] verifierTypes, VerifierType[] verifierTypes1, SubroutineLocalsBitSet subroutineLocalsBitSet, BooleanFlag booleanFlag
     ) {
-        int ba = verifierTypes.length;
+        int lengthValue = verifierTypes.length;
         VerifierType[] verifierTypes2 = verifierTypes.clone();
         booleanFlag.setValue(false);
         if (subroutineLocalsBitSet != null) {
-            for (int i = 0; i < ba; i++) {
+            for (int i = 0; i < lengthValue; i++) {
                 if (!verifierTypes1[i].equals(verifierTypes2[i]) && subroutineLocalsBitSet.get(i)) {
                     booleanFlag.setValue(true);
                     verifierTypes2[i] = verifierTypes1[i];
@@ -190,13 +190,13 @@ public class StackFrameState {
     }
 
     private boolean areLocalsCompatible(CommonSuperTypeResolver commonSuperTypeResolver1, StackFrameState stackFrameState1, String string) throws ZkmException, IOException {
-        int ba = this.locals.length;
+        int lengthValue = this.locals.length;
         VerifierType[] verifierTypes = stackFrameState1.locals;
-        if (ba != verifierTypes.length) {
-            throw new ZkmProcessingException("Mismatched local variable counts: " + ba + " " + verifierTypes.length);
+        if (lengthValue != verifierTypes.length) {
+            throw new ZkmProcessingException("Mismatched local variable counts: " + lengthValue + " " + verifierTypes.length);
         }
 
-        for (int i = 0; i < ba; i++) {
+        for (int i = 0; i < lengthValue; i++) {
             if (!this.locals[i].equals(verifierTypes[i]) && !verifierTypes[i].hasDescriptor("?")) {
                 if (this.locals[i].hasDescriptor("?")) {
                     return false;
@@ -244,43 +244,46 @@ public class StackFrameState {
         this(VerifierType.createArray(0), verifierTypes, subroutineLocalsBitSet, set1);
     }
 
-    public boolean hasMatchingMonitors(StackFrameState stackFrameState1, Set set1) {
-        for (VerifierType verifierType : this.getStack()) {
-            if (set1.contains(verifierType)) {
+    public boolean hasMatchingMonitors(StackFrameState otherFrame, Set excludedStackValues) {
+        for (VerifierType stackValue : this.getStack()) {
+            if (excludedStackValues.contains(stackValue)) {
                 return false;
             }
         }
 
-        for (VerifierType verifierType1 : stackFrameState1.getStack()) {
-            if (set1.contains(verifierType1)) {
+        for (VerifierType otherStackValue : otherFrame.getStack()) {
+            if (excludedStackValues.contains(otherStackValue)) {
                 return false;
             }
         }
 
-        if (this.heldMonitors == null && stackFrameState1.heldMonitors == null) {
+        if (this.heldMonitors == null && otherFrame.heldMonitors == null) {
             return true;
         }
 
-        if (this.heldMonitors != null && stackFrameState1.heldMonitors != null) {
-            if (this.heldMonitors.size() != stackFrameState1.heldMonitors.size()) {
+        if (this.heldMonitors != null && otherFrame.heldMonitors != null) {
+            if (this.heldMonitors.size() != otherFrame.heldMonitors.size()) {
                 return false;
             }
 
-            Iterator iterator = this.heldMonitors.iterator();
+            Iterator monitors = this.heldMonitors.iterator();
 
-            label47:
-            while (iterator.hasNext()) {
-                MonitorEnterInstruction monitorEnterInstruction = (MonitorEnterInstruction) iterator.next();
-                Iterator iterator1 = stackFrameState1.heldMonitors.iterator();
+            while (monitors.hasNext()) {
+                MonitorEnterInstruction monitor = (MonitorEnterInstruction) monitors.next();
+                Iterator otherMonitors = otherFrame.heldMonitors.iterator();
 
-                while (iterator1.hasNext()) {
-                    MonitorEnterInstruction monitorEnterInstruction1 = (MonitorEnterInstruction) iterator1.next();
-                    if (monitorEnterInstruction == monitorEnterInstruction1) {
-                        continue label47;
+                boolean matchingMonitorFound = false;
+                while (otherMonitors.hasNext()) {
+                    MonitorEnterInstruction otherMonitor = (MonitorEnterInstruction) otherMonitors.next();
+                    if (monitor == otherMonitor) {
+                        matchingMonitorFound = true;
+                        break;
                     }
                 }
 
-                return false;
+                if (!matchingMonitorFound) {
+                    return false;
+                }
             }
 
             return true;
@@ -305,16 +308,16 @@ public class StackFrameState {
         return false;
     }
 
-    public boolean isLocalDefined(int ba) {
-        return this.locals[ba] != null && !this.locals[ba].hasDescriptor("?");
+    public boolean isLocalDefined(int localIndex) {
+        return this.locals[localIndex] != null && !this.locals[localIndex].hasDescriptor("?");
     }
 
-    public String getLocalTypeDescriptor(int ba) {
-        return !this.locals[ba].isWideSecondSlot()
-                && this.locals[ba] != VerifierType.NULL
-                && this.locals[ba] != VerifierType.RETURN_ADDRESS
-                && this.locals[ba] != VerifierType.TOP
-                ? this.locals[ba].getDescriptor()
+    public String getLocalTypeDescriptor(int localIndex) {
+        return !this.locals[localIndex].isWideSecondSlot()
+                && this.locals[localIndex] != VerifierType.NULL
+                && this.locals[localIndex] != VerifierType.RETURN_ADDRESS
+                && this.locals[localIndex] != VerifierType.TOP
+                ? this.locals[localIndex].getDescriptor()
                 : null;
     }
 
@@ -338,7 +341,7 @@ public class StackFrameState {
             BooleanFlag booleanFlag,
             String string
     ) throws ZkmException, IOException {
-        int ba = verifierTypes.length;
+        int lengthValue = verifierTypes.length;
         VerifierType[] verifierTypes2;
         if (bl) {
             verifierTypes2 = verifierTypes.clone();
@@ -348,7 +351,7 @@ public class StackFrameState {
 
         booleanFlag.setValue(false);
 
-        for (int i = 0; i < ba; i++) {
+        for (int i = 0; i < lengthValue; i++) {
             if (verifierTypes1[i].equals(verifierTypes2[i])) {
                 if (verifierTypes2[i].hasDescriptor("~")
                         && !verifierTypes2[i - 1].equals(VerifierType.LONG)
@@ -418,9 +421,7 @@ public class StackFrameState {
         } else if (verifierType.hasDescriptor("n")) {
             return true;
         } else {
-            return commonSuperTypeResolver1.isVerifierTypeAssignable(verifierType, verifierType1, string)
-                    ? true
-                    : commonSuperTypeResolver1.isInterfaceType(verifierType1, string);
+            return ((commonSuperTypeResolver1.isVerifierTypeAssignable(verifierType, verifierType1, string)) || (commonSuperTypeResolver1.isInterfaceType(verifierType1, string)));
         }
     }
 
@@ -430,9 +431,9 @@ public class StackFrameState {
         this.subroutineLocals = subroutineLocalsBitSet;
         this.heldMonitors = set1;
 
-        for (int i = 0; i < this.locals.length; i++) {
-            if (this.locals[i] == null) {
-                this.locals[i] = VerifierType.TOP;
+        for (int localIndex = 0; localIndex < this.locals.length; localIndex++) {
+            if (this.locals[localIndex] == null) {
+                this.locals[localIndex] = VerifierType.TOP;
             }
         }
     }
@@ -445,16 +446,16 @@ public class StackFrameState {
         return (BitSet) this.liveLocals.clone();
     }
 
-    public StackFrameState(String string, VerifierType[] verifierTypes, SubroutineLocalsBitSet subroutineLocalsBitSet, Set set1) {
+    public StackFrameState(String key, VerifierType[] verifierTypes, SubroutineLocalsBitSet subroutineLocalsBitSet, Set set1) {
         this.locals = verifierTypes;
         this.stack = VerifierType.createArray(1);
         this.subroutineLocals = subroutineLocalsBitSet;
         this.heldMonitors = set1;
-        this.stack[0] = VerifierType.forDescriptor(string);
+        this.stack[0] = VerifierType.forDescriptor(key);
 
-        for (int i = 0; i < this.locals.length; i++) {
-            if (this.locals[i] == null) {
-                this.locals[i] = VerifierType.TOP;
+        for (int localIndex = 0; localIndex < this.locals.length; localIndex++) {
+            if (this.locals[localIndex] == null) {
+                this.locals[localIndex] = VerifierType.TOP;
             }
         }
     }
@@ -523,30 +524,30 @@ public class StackFrameState {
     }
 
     private boolean areStacksCompatible(CommonSuperTypeResolver commonSuperTypeResolver1, StackFrameState stackFrameState1, String string) throws ZkmException, IOException {
-        int ba = this.stack.length;
-        if (ba != stackFrameState1.getStackDepth()) {
+        int lengthValue = this.stack.length;
+        if (lengthValue != stackFrameState1.getStackDepth()) {
             return false;
         }
 
-        for (int i = 0; i < ba; i++) {
-            if (!this.stack[i].equals(stackFrameState1.stack[i])) {
-                if (!isReferenceType(this.stack[i]) || !isReferenceType(stackFrameState1.stack[i])) {
+        for (int stackElementIndex = 0; stackElementIndex < lengthValue; stackElementIndex++) {
+            if (!this.stack[stackElementIndex].equals(stackFrameState1.stack[stackElementIndex])) {
+                if (!isReferenceType(this.stack[stackElementIndex]) || !isReferenceType(stackFrameState1.stack[stackElementIndex])) {
                     return false;
                 }
 
-                if (this.stack[i].isInitialized() != stackFrameState1.stack[i].isInitialized()) {
+                if (this.stack[stackElementIndex].isInitialized() != stackFrameState1.stack[stackElementIndex].isInitialized()) {
                     return false;
                 }
 
-                if (this.stack[i].hasDescriptor("n")) {
+                if (this.stack[stackElementIndex].hasDescriptor("n")) {
                     return false;
                 }
 
-                if (stackFrameState1.stack[i].hasDescriptor("n")) {
+                if (stackFrameState1.stack[stackElementIndex].hasDescriptor("n")) {
                     return false;
                 }
 
-                if (!commonSuperTypeResolver1.isVerifierTypeAssignable(this.stack[i], stackFrameState1.stack[i], string)) {
+                if (!commonSuperTypeResolver1.isVerifierTypeAssignable(this.stack[stackElementIndex], stackFrameState1.stack[stackElementIndex], string)) {
                     return false;
                 }
             }
@@ -581,13 +582,13 @@ public class StackFrameState {
         return verifierType == null || verifierType.hasDescriptor("?");
     }
 
-    public boolean isLocalOccupied(int ba) {
-        return !this.locals[ba].isWideSecondSlot() && this.locals[ba] != VerifierType.RETURN_ADDRESS && this.locals[ba] != VerifierType.TOP;
+    public boolean isLocalOccupied(int localIndex) {
+        return !this.locals[localIndex].isWideSecondSlot() && this.locals[localIndex] != VerifierType.RETURN_ADDRESS && this.locals[localIndex] != VerifierType.TOP;
     }
 
     public boolean hasWideLocal() {
-        for (int i = 0; i < this.locals.length; i++) {
-            if (isWideType(this.locals[i])) {
+        for (int localIndex = 0; localIndex < this.locals.length; localIndex++) {
+            if (isWideType(this.locals[localIndex])) {
                 return true;
             }
         }

@@ -7,10 +7,10 @@ public class ShowErrorDialogTask implements Runnable {
     public final String title;
     public final String message;
 
-    public ShowErrorDialogTask(Frame frame1, String string, String string1) {
+    public ShowErrorDialogTask(Frame frame1, String titleArgument, String messageArgument) {
         this.ownerFrame = frame1;
-        this.title = string;
-        this.message = string1;
+        this.title = titleArgument;
+        this.message = messageArgument;
     }
 
     @Override

@@ -2,33 +2,33 @@ package com.zelix.klassmaster.license;
 
 public class ObfuscatedLongDecoder {
     public static long decodeLong(String string) {
-        char[] ba = string.toCharArray();
-        char[] bb = new char[ba.length];
+        char[] characterArray = string.toCharArray();
+        char[] characterArrayValue = new char[characterArray.length];
 
-        for (int i = 0; i < ba.length; i++) {
-            char bd = ba[i];
-            if (bd >= '0' && bd <= '9') {
-                if (bd > '0') {
-                    bd = (char) (':' - bd + 48);
+        for (int i = 0; i < characterArray.length; i++) {
+            char characterArrayValueElement = characterArray[i];
+            if (characterArrayValueElement >= '0' && characterArrayValueElement <= '9') {
+                if (characterArrayValueElement > '0') {
+                    characterArrayValueElement = (char) (':' - characterArrayValueElement + 48);
                 }
-            } else if (bd >= 'A' && bd <= 'J') {
-                bd = (char) (bd - 17);
-            } else if (bd >= 'K' && bd <= 'T') {
-                bd = (char) (bd - 27);
-            } else if (bd >= 'U' && bd <= 'Z') {
-                bd = (char) (bd - '%');
-            } else if (bd >= 'a' && bd <= 'd') {
-                bd = (char) (bd - '+');
-            } else if (bd >= 'e' && bd <= 'n') {
-                bd = (char) (bd - '5');
-            } else if (bd >= 'o' && bd <= 'x') {
-                bd = (char) (bd - '?');
+            } else if (characterArrayValueElement >= 'A' && characterArrayValueElement <= 'J') {
+                characterArrayValueElement = (char) (characterArrayValueElement - 17);
+            } else if (characterArrayValueElement >= 'K' && characterArrayValueElement <= 'T') {
+                characterArrayValueElement = (char) (characterArrayValueElement - 27);
+            } else if (characterArrayValueElement >= 'U' && characterArrayValueElement <= 'Z') {
+                characterArrayValueElement = (char) (characterArrayValueElement - '%');
+            } else if (characterArrayValueElement >= 'a' && characterArrayValueElement <= 'd') {
+                characterArrayValueElement = (char) (characterArrayValueElement - '+');
+            } else if (characterArrayValueElement >= 'e' && characterArrayValueElement <= 'n') {
+                characterArrayValueElement = (char) (characterArrayValueElement - '5');
+            } else if (characterArrayValueElement >= 'o' && characterArrayValueElement <= 'x') {
+                characterArrayValueElement = (char) (characterArrayValueElement - '?');
             }
 
-            bb[i] = bd;
+            characterArrayValue[i] = characterArrayValueElement;
         }
 
-        return Long.parseLong(new String(bb));
+        return Long.parseLong(new String(characterArrayValue));
     }
 
     private ObfuscatedLongDecoder() {

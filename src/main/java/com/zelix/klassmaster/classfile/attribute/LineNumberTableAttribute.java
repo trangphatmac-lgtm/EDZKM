@@ -29,8 +29,8 @@ public class LineNumberTableAttribute extends Attribute implements Utf8ConstantR
             return false;
         }
 
-        for (int i = 0; i < this.entries.length; i++) {
-            if (this.entries[i].getLineNumber() == ba) {
+        for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+            if (this.entries[entryIndex].getLineNumber() == ba) {
                 return true;
             }
         }
@@ -51,8 +51,8 @@ public class LineNumberTableAttribute extends Attribute implements Utf8ConstantR
         if (this.valid) {
             dataOutputStream.writeShort(this.entryCount);
 
-            for (int i = 0; i < this.entryCount; i++) {
-                this.entries[i].writeTo(dataOutputStream);
+            for (int entryIndex = 0; entryIndex < this.entryCount; entryIndex++) {
+                this.entries[entryIndex].writeTo(dataOutputStream);
             }
         } else {
             dataOutputStream.write(this.rawBytes);
@@ -63,12 +63,12 @@ public class LineNumberTableAttribute extends Attribute implements Utf8ConstantR
         if (this.valid && hashSet.size() > 0) {
             ArrayList arrayList = new ArrayList(this.entries.length);
 
-            for (int i = 0; i < this.entries.length; i++) {
-                LabelInstruction labelInstruction = this.entries[i].getLabel();
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                LabelInstruction labelInstruction = this.entries[entryIndex].getLabel();
                 if (!hashSet.contains(labelInstruction)) {
-                    arrayList.add(this.entries[i]);
+                    arrayList.add(this.entries[entryIndex]);
                 } else {
-                    setMultiMap.removeValue(labelInstruction, this.entries[i]);
+                    setMultiMap.removeValue(labelInstruction, this.entries[entryIndex]);
                     labelInstruction.clearUsageFlag(InstructionUsageClearFlag.CLEAR_USAGE_LINE_NUMBER);
                 }
             }
@@ -84,29 +84,29 @@ public class LineNumberTableAttribute extends Attribute implements Utf8ConstantR
 
     public void addEntriesTo(ArrayList arrayList) {
         if (this.valid) {
-            for (int i = 0; i < this.entries.length; i++) {
-                arrayList.add(this.entries[i]);
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                arrayList.add(this.entries[entryIndex]);
             }
         }
     }
 
     public LineNumberTableAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             PrintWriter printWriter,
             ListMultimap listMultimap1
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         if (this.length >= 2) {
             this.entryCount = classFileInputStream.readUnsignedShort();
             if (this.entryCount * 4 + 2 == this.length) {
                 this.entries = new LineNumberEntry[this.entryCount];
 
-                for (int i = 0; i < this.entryCount; i++) {
-                    this.entries[i] = new LineNumberEntry(this, classFileInputStream, listMultimap1);
+                for (int entryIndex = 0; entryIndex < this.entryCount; entryIndex++) {
+                    this.entries[entryIndex] = new LineNumberEntry(this, classFileInputStream, listMultimap1);
                 }
             } else {
                 this.valid = false;
@@ -126,23 +126,23 @@ public class LineNumberTableAttribute extends Attribute implements Utf8ConstantR
     }
 
     public int[] getSortedLineNumbers() {
-        int[] ba = new int[this.entryCount];
+        int[] sortedLineNumbers = new int[this.entryCount];
         int bb = 0;
 
         for (LineNumberEntry lineNumberEntry : this.entries) {
-            ba[bb++] = lineNumberEntry.getLineNumber();
+            sortedLineNumbers[bb++] = lineNumberEntry.getLineNumber();
         }
 
-        Arrays.sort(ba);
-        return ba;
+        Arrays.sort(sortedLineNumbers);
+        return sortedLineNumbers;
     }
 
     @Override
     public void collectUsedConstants(char bb, int bc, UsedConstantsCollector usedConstantsCollector, char bd) {
         usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
         if (this.valid) {
-            for (int i = 0; i < this.entryCount; i++) {
-                this.entries[i].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+            for (int entryIndex = 0; entryIndex < this.entryCount; entryIndex++) {
+                this.entries[entryIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
             }
         }
     }
@@ -153,8 +153,8 @@ public class LineNumberTableAttribute extends Attribute implements Utf8ConstantR
         if (this.valid) {
             dataOutputStream.writeShort(this.entryCount);
 
-            for (int i = 0; i < this.entryCount; i++) {
-                this.entries[i].writeTo(dataOutputStream);
+            for (int entryIndex = 0; entryIndex < this.entryCount; entryIndex++) {
+                this.entries[entryIndex].writeTo(dataOutputStream);
             }
         } else {
             dataOutputStream.write(this.rawBytes);
@@ -163,8 +163,8 @@ public class LineNumberTableAttribute extends Attribute implements Utf8ConstantR
 
     public void registerLabelTargets(SetMultiMap setMultiMap) {
         if (this.valid) {
-            for (int i = 0; i < this.entries.length; i++) {
-                this.entries[i].registerLabelTargets(setMultiMap);
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                this.entries[entryIndex].registerLabelTargets(setMultiMap);
             }
         }
     }

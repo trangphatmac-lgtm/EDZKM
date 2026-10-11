@@ -5,8 +5,8 @@ import com.zelix.klassmaster.obfuscator.exclude.MemberSpecCollector;
 public abstract class MethodSpecifierChildNode extends MethodSignatureNodeBase {
     public ASTComplexMethodSpecifier methodSpecifier;
 
-    public MethodSpecifierChildNode(int ba) {
-        super(ba);
+    public MethodSpecifierChildNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     public void addThrownException(String string) {

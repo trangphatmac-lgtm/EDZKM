@@ -77,8 +77,8 @@ public abstract class ConstantMemberRef extends ConstantPoolEntry implements Res
         }
     }
 
-    public ConstantMemberRef(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantMemberRef(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, abstractConstantPool);
         this.classIndex = classFileInputStream.readUnsignedShort();
         this.nameAndTypeIndex = classFileInputStream.readUnsignedShort();
     }

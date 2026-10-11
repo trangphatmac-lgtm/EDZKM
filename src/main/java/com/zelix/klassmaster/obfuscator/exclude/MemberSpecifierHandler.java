@@ -5,5 +5,5 @@ import com.zelix.klassmaster.script.parser.ast.ASTComplexFieldSpecifier;
 public interface MemberSpecifierHandler {
     void setFieldSpecifier(ASTComplexFieldSpecifier aSTComplexFieldSpecifier);
 
-    void setFieldType(String string);
+    void setFieldType(String fieldType);
 }

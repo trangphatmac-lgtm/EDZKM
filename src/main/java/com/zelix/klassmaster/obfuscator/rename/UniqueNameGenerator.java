@@ -11,8 +11,8 @@ public class UniqueNameGenerator {
     public final SequentialNameGenerator defaultGenerator;
     public final SequentialNameGenerator archiveGenerator;
 
-    public static void setFlowCounters(int[] ba) {
-        flowCounters = ba;
+    public static void setFlowCounters(int[] flowCountersArgument) {
+        flowCounters = flowCountersArgument;
     }
 
     public static int[] getFlowCounters() {
@@ -42,9 +42,9 @@ public class UniqueNameGenerator {
         return string1;
     }
 
-    public UniqueNameGenerator(char[] ba, char[] bb, char[] bc, char[] bd, List list1, boolean bl) {
-        this.defaultGenerator = new SequentialNameGenerator(ba, bb, list1, bl);
-        this.archiveGenerator = new SequentialNameGenerator(bc, bd, list1, bl);
+    public UniqueNameGenerator(char[] destinationArray, char[] subsequentChars, char[] destinationArrayArgument, char[] subsequentCharsArgument, List list1, boolean bl) {
+        this.defaultGenerator = new SequentialNameGenerator(destinationArray, subsequentChars, list1, bl);
+        this.archiveGenerator = new SequentialNameGenerator(destinationArrayArgument, subsequentCharsArgument, list1, bl);
     }
 
     static {

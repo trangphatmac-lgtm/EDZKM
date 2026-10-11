@@ -17,8 +17,8 @@ public class ExclusionParamAddCallback extends CallbackAdapter {
         this.parentCallback = parameterAddCallback;
     }
 
-    public void addParameter(String string) {
-        this.parentCallback.parameterListDialog.addParameter(string);
+    public void addParameter(String key) {
+        this.parentCallback.parameterListDialog.addParameter(key);
         this.parentCallback.parameterListDialog.onParametersChanged();
         this.parentCallback.parameterListDialog.paramList.ensureIndexIsVisible(this.parentCallback.parameterListDialog.paramListModel.getSize() - 1);
         this.parentCallback.parameterListDialog.toFront();

@@ -16,16 +16,16 @@ public class WizardStepEnterKeyListener extends KeyAdapter {
     public void keyPressed(KeyEvent keyEvent) {
         try {
             if (keyEvent.getKeyCode() == 10) {
-                Object object = keyEvent.getSource();
-                if (object == this.dialog.previousBtn) {
+                Object source = keyEvent.getSource();
+                if (source == this.dialog.previousBtn) {
                     this.dialog.onPrevious();
-                } else if (object == this.dialog.okBtn) {
+                } else if (source == this.dialog.okBtn) {
                     this.dialog.onOk();
-                } else if (object == this.dialog.skipBtn) {
+                } else if (source == this.dialog.skipBtn) {
                     this.dialog.skipStep();
-                } else if (object == this.dialog.cancelBtn) {
+                } else if (source == this.dialog.cancelBtn) {
                     this.dialog.onCancel();
-                } else if (object == this.dialog.helpBtn) {
+                } else if (source == this.dialog.helpBtn) {
                     this.dialog.showHelp();
                 }
             }

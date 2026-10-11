@@ -52,15 +52,15 @@ public class IntElementValue extends AnnotationElementValue {
     public void updateAfterMethodRename() {
     }
 
-    public IntElementValue(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream) throws IOException {
-        super(classFileComponent, ba);
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+    public IntElementValue(ClassFileComponent classFileComponent, int tagArgument, ClassFileInputStream classFileInputStream) throws IOException {
+        super(classFileComponent, tagArgument);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry != null && constantPoolEntry instanceof ConstantInteger) {
             this.intConstant = (ConstantInteger) constantPoolEntry;
         } else {
             this.setValid();
-            this.setErrorMessage("Invalid component constant index : " + bb + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
+            this.setErrorMessage("Invalid component constant index : " + constantPoolIndex + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
         }
     }
 

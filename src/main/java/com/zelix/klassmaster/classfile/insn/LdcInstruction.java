@@ -84,35 +84,35 @@ public class LdcInstruction extends Instruction implements ConstantPoolOperand, 
     @Override
     public StackFrameState computeFrameAfter(StackFrameState stackFrameState, Object object, Object object1, Object object2) throws ZkmException, IOException {
         VerifierType[] verifierTypes = stackFrameState.getStack();
-        int ba = verifierTypes.length;
-        VerifierType[] verifierTypes1 = VerifierType.createArray(ba + 1);
+        int lengthValue = verifierTypes.length;
+        VerifierType[] verifierTypes1 = VerifierType.createArray(lengthValue + 1);
         VerifierType[] verifierTypes2 = stackFrameState.getLocals();
-        System.arraycopy(verifierTypes, 0, verifierTypes1, 0, ba);
+        System.arraycopy(verifierTypes, 0, verifierTypes1, 0, lengthValue);
         if (this.constant instanceof LoadableConstant) {
-            String string = ((LoadableConstant) this.constant).getTypeName();
-            if (string.equals("integer")) {
-                verifierTypes1[ba] = VerifierType.INT;
-            } else if (string.equals("string")) {
-                verifierTypes1[ba] = VerifierType.STRING;
-            } else if (string.equals("float")) {
-                verifierTypes1[ba] = VerifierType.FLOAT;
+            String typeName = ((LoadableConstant) this.constant).getTypeName();
+            if (typeName.equals("integer")) {
+                verifierTypes1[lengthValue] = VerifierType.INT;
+            } else if (typeName.equals("string")) {
+                verifierTypes1[lengthValue] = VerifierType.STRING;
+            } else if (typeName.equals("float")) {
+                verifierTypes1[lengthValue] = VerifierType.FLOAT;
             }
         } else if (this.constant instanceof ResolvedClassConstant) {
-            verifierTypes1[ba] = VerifierType.CLASS;
+            verifierTypes1[lengthValue] = VerifierType.CLASS;
         } else if (this.constant instanceof ResolvedMethodType) {
-            verifierTypes1 = VerifierType.createArray(ba + 1);
-            System.arraycopy(verifierTypes, 0, verifierTypes1, 0, ba);
-            verifierTypes1[ba] = VerifierType.forDescriptor("Ljava/lang/invoke/MethodType;");
+            verifierTypes1 = VerifierType.createArray(lengthValue + 1);
+            System.arraycopy(verifierTypes, 0, verifierTypes1, 0, lengthValue);
+            verifierTypes1[lengthValue] = VerifierType.forDescriptor("Ljava/lang/invoke/MethodType;");
         } else if (this.constant instanceof ResolvedMethodHandleConstant) {
-            verifierTypes1 = VerifierType.createArray(ba + 1);
-            System.arraycopy(verifierTypes, 0, verifierTypes1, 0, ba);
-            verifierTypes1[ba] = VerifierType.forDescriptor("Ljava/lang/invoke/MethodHandle;");
+            verifierTypes1 = VerifierType.createArray(lengthValue + 1);
+            System.arraycopy(verifierTypes, 0, verifierTypes1, 0, lengthValue);
+            verifierTypes1[lengthValue] = VerifierType.forDescriptor("Ljava/lang/invoke/MethodHandle;");
         } else if (this.constant instanceof ResolvedConstantDynamic) {
-            verifierTypes1 = VerifierType.createArray(ba + 1);
-            System.arraycopy(verifierTypes, 0, verifierTypes1, 0, ba);
+            verifierTypes1 = VerifierType.createArray(lengthValue + 1);
+            System.arraycopy(verifierTypes, 0, verifierTypes1, 0, lengthValue);
             ResolvedConstantDynamic resolvedConstantDynamic = (ResolvedConstantDynamic) this.constant;
-            String string1 = resolvedConstantDynamic.getStackReturnType();
-            verifierTypes1[ba] = VerifierType.forDescriptor(string1);
+            String stackReturnType = resolvedConstantDynamic.getStackReturnType();
+            verifierTypes1[lengthValue] = VerifierType.forDescriptor(stackReturnType);
         }
 
         return new StackFrameState(verifierTypes1, verifierTypes2, stackFrameState.getSubroutineLocals(), stackFrameState.getHeldMonitors());
@@ -126,12 +126,12 @@ public class LdcInstruction extends Instruction implements ConstantPoolOperand, 
     @Override
     public void printDisassembly(PrintWriter printWriter, StringBuilder stringBuilder) throws UnknownOpcodeException {
         StringBuilder stringBuilder1 = new StringBuilder(100);
-        String string = this.getMnemonic();
-        stringBuilder1.append(string + " " + this.constant.getAbbreviatedValue());
-        String string1 = Instruction.getDescriptionComment(this.opcode);
-        string1 = Instruction.formatDescription(string1, this.constant.getAbbreviatedValue());
-        if (string1.length() > 0) {
-            stringBuilder1.append("\t" + string1);
+        String mnemonic = this.getMnemonic();
+        stringBuilder1.append(mnemonic + " " + this.constant.getAbbreviatedValue());
+        String descriptionComment = Instruction.getDescriptionComment(this.opcode);
+        descriptionComment = Instruction.formatDescription(descriptionComment, this.constant.getAbbreviatedValue());
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);
@@ -186,11 +186,11 @@ public class LdcInstruction extends Instruction implements ConstantPoolOperand, 
     }
 
     @Override
-    public boolean collectStringConstant(MultiMapTable multiMapTable, Set set1, MethodInfo methodInfo1, int ba) {
+    public boolean collectStringConstant(MultiMapTable multiMapTable, Set set1, MethodInfo methodInfo1, int rank) {
         if (this.constant instanceof ResolvedStringConstant) {
             ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) this.constant;
             if (resolvedStringConstant.getValueUtf8().getLength() >= 2 && resolvedStringConstant.isFromClassFile() && !set1.contains(resolvedStringConstant)) {
-                multiMapTable.addEntry(methodInfo1.getOwnerProgramClass(), methodInfo1, resolvedStringConstant, new RankedValue(ba, this));
+                multiMapTable.addEntry(methodInfo1.getOwnerProgramClass(), methodInfo1, resolvedStringConstant, new RankedValue(rank, this));
                 return true;
             } else {
                 return false;

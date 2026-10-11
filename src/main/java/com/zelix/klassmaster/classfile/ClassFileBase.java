@@ -93,9 +93,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public final int creationKind;
 
     public String getPackageName() {
-        String string = this.getClassName();
-        int ba = string.lastIndexOf(47);
-        return ba == -1 ? "" : string.substring(0, ba).replace('/', '.');
+        String classNameValue = this.getClassName();
+        int endIndex = classNameValue.lastIndexOf(47);
+        return endIndex == -1 ? "" : classNameValue.substring(0, endIndex).replace('/', '.');
     }
 
     @Override
@@ -114,49 +114,49 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public final void renameMethods(ClassHierarchyNode classHierarchyNode, MethodRenamer methodRenamer1) throws ZkmException, IOException {
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
 
-        for (int i = 0; i < this.methodCount; i++) {
-            AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[i];
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < this.methodCount; abstractMethodInfoIndex++) {
+            AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[abstractMethodInfoIndex];
             if (!abstractMethodInfo.isStaticInitializer() && !abstractMethodInfo.isConstructor()) {
                 methodRenamer1.applyChangeLogMethodMapping(classHierarchyNode, this, abstractMethodInfo);
             }
         }
     }
 
-    public static String substringBeforeLast(String string, char ba) {
-        int bb = string.lastIndexOf(ba);
-        return bb == -1 ? "" : string.substring(0, bb);
+    public static String substringBeforeLast(String string, char searchCharacter) {
+        int endIndex = string.lastIndexOf(searchCharacter);
+        return endIndex == -1 ? "" : string.substring(0, endIndex);
     }
 
     public String getOuterClassName() {
         if (this.innerClassEntry != null) {
-            String string = this.innerClassEntry.getCommonOuterPrefix();
-            if (string != null) {
-                if (string.equals(this.getClassName())) {
+            String commonOuterPrefix = this.innerClassEntry.getCommonOuterPrefix();
+            if (commonOuterPrefix != null) {
+                if (commonOuterPrefix.equals(this.getClassName())) {
                     return null;
                 }
 
-                return string;
+                return commonOuterPrefix;
             }
 
-            String string1 = this.getEnclosingClassName();
-            if (string1 != null) {
-                String string2 = this.getClassName();
-                if (string2.startsWith(string1)) {
-                    string = string1;
+            String enclosingClassName = this.getEnclosingClassName();
+            if (enclosingClassName != null) {
+                String classNameValue = this.getClassName();
+                if (classNameValue.startsWith(enclosingClassName)) {
+                    commonOuterPrefix = enclosingClassName;
                 } else {
-                    string = string2;
+                    commonOuterPrefix = classNameValue;
 
-                    while (string != null && !string1.startsWith(string)) {
-                        int ba = string.lastIndexOf("$");
-                        if (ba > 0) {
-                            string = string.substring(0, ba);
+                    while (commonOuterPrefix != null && !enclosingClassName.startsWith(commonOuterPrefix)) {
+                        int endIndex = commonOuterPrefix.lastIndexOf("$");
+                        if (endIndex > 0) {
+                            commonOuterPrefix = commonOuterPrefix.substring(0, endIndex);
                         } else {
-                            string = null;
+                            commonOuterPrefix = null;
                         }
                     }
                 }
 
-                return string;
+                return commonOuterPrefix;
             }
         }
 
@@ -170,16 +170,16 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public final Set getAnnotationTypes() {
         HashSet hashSet = null;
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof AnnotationsAttribute) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof AnnotationsAttribute) {
                 if (hashSet == null) {
                     hashSet = ZkmUtils.createHashSet(13);
                 }
 
-                String[] strings = ((AnnotationsAttribute) this.attributes[i]).getAnnotationTypeNames();
+                String[] annotationTypeNames = ((AnnotationsAttribute) this.attributes[attributeIndex]).getAnnotationTypeNames();
 
-                for (int j = 0; j < strings.length; j++) {
-                    hashSet.add(strings[j]);
+                for (int annotationTypeNameIndex = 0; annotationTypeNameIndex < annotationTypeNames.length; annotationTypeNameIndex++) {
+                    hashSet.add(annotationTypeNames[annotationTypeNameIndex]);
                 }
             }
         }
@@ -199,9 +199,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public final Map computeInheritedMethods(
             MethodOverrideAnalyzer methodOverrideAnalyzer, ObservableHolder observableHolder, ScriptEnvironment scriptEnvironment1, Random random1
     ) throws ZkmException, IOException {
-        String string = this.getClassName();
+        String classNameValue = this.getClassName();
         boolean bl = true;
-        String string10;
+        String classNameValue3;
         String string11;
         if (random1.nextInt(23) == 0) {
             if (observableHolder.isValueNull()) {
@@ -253,67 +253,67 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
                 }
             }
 
-            bl = !observableHolder.isValueNull() ? (Boolean) observableHolder.getValue() : true;
+            bl = (!(!observableHolder.isValueNull()) || ((Boolean) observableHolder.getValue()));
             if (!bl) {
                 if (scriptEnvironment1.getPendingMarkerCount() == 0) {
                     scriptEnvironment1.incrementPendingMarkerCount();
-                    string10 = string;
+                    classNameValue3 = classNameValue;
                     string11 = "java/lang/Object";
                 } else {
-                    string10 = string;
+                    classNameValue3 = classNameValue;
                     string11 = "java/lang/Object";
                 }
             } else {
-                string10 = string;
+                classNameValue3 = classNameValue;
                 string11 = "java/lang/Object";
             }
         } else {
-            string10 = string;
+            classNameValue3 = classNameValue;
             string11 = "java/lang/Object";
         }
 
         HashMap hashMap;
-        if (!string10.equals(string11) && !this.isModule() && bl) {
-            String string6 = this.getSuperclassName();
+        if (!classNameValue3.equals(string11) && !this.isModule() && bl) {
+            String superclassName = this.getSuperclassName();
             String string7 = "looking for superclass of '" + this.getLocationName() + "'";
-            Map map1 = methodOverrideAnalyzer.getOrBuildVisibleMethodOwners(string6, observableHolder, scriptEnvironment1, random1, string7);
+            Map map1 = methodOverrideAnalyzer.getOrBuildVisibleMethodOwners(superclassName, observableHolder, scriptEnvironment1, random1, string7);
             hashMap = ZkmUtils.copyToHashMap(map1);
         } else {
             hashMap = ZkmUtils.createHashMap();
         }
 
         Vector vector = new Vector();
-        int bc = 0;
+        int interfaceIndex = 0;
         int bf = 0;
 
-        for (int i = this.interfaceCount; bf < i; i = this.interfaceCount) {
-            String string8 = this.getInterfaceName(bc);
+        for (int interfaceCountValue = this.interfaceCount; bf < interfaceCountValue; interfaceCountValue = this.interfaceCount) {
+            String interfaceName = this.getInterfaceName(interfaceIndex);
             String string9 = "looking implemented interface of '" + this.getLocationName() + "'";
-            Map map3 = methodOverrideAnalyzer.getOrBuildVisibleMethodOwners(string8, observableHolder, scriptEnvironment1, random1, string9);
+            Map map3 = methodOverrideAnalyzer.getOrBuildVisibleMethodOwners(interfaceName, observableHolder, scriptEnvironment1, random1, string9);
             vector.add(map3);
-            bf = ++bc;
+            bf = ++interfaceIndex;
         }
 
-        for (int i = 0; i < vector.size(); i++) {
-            Map map2 = (Map) vector.elementAt(i);
+        for (int elementIndex = 0; elementIndex < vector.size(); elementIndex++) {
+            Map map2 = (Map) vector.elementAt(elementIndex);
             Iterator iterator = map2.entrySet().iterator();
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
                 MethodSignature methodSignature1 = (MethodSignature) entry.getKey();
                 ClassFileBase classFileBase1 = (ClassFileBase) entry.getValue();
-                String string3 = classFileBase1.getClassName();
-                if (!string3.equals("java/lang/Object")) {
+                String classNameValue2 = classFileBase1.getClassName();
+                if (!classNameValue2.equals("java/lang/Object")) {
                     ClassFileBase classFileBase2 = methodOverrideAnalyzer.findTopOverriddenOwner(classFileBase1, methodSignature1);
                     if (classFileBase2 != null && classFileBase2 != classFileBase1) {
                         classFileBase1 = classFileBase2;
-                        string3 = classFileBase2.getClassName();
+                        classNameValue2 = classFileBase2.getClassName();
                     }
 
                     if (classFileBase1 != this) {
                         ClassFileBase classFileBase3 = ((com.zelix.klassmaster.classfile.ClassFileBase) (hashMap.put(methodSignature1, classFileBase1)));
                         if (classFileBase3 != null && classFileBase1 != classFileBase3) {
-                            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string3);
+                            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(classNameValue2);
                             ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(classFileBase3.getClassName());
                             if (classHierarchyNode1 != null && !classHierarchyNode1.hasNoClassFile()) {
                                 if (classHierarchyNode != null && !classHierarchyNode.hasNoClassFile()) {
@@ -334,12 +334,12 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         HashMap hashMap1 = ZkmUtils.copyToHashMap(hashMap);
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
 
-        for (int i = 0; i < this.methodCount; i++) {
-            abstractMethodInfos[i].addToInheritedMethods(methodOverrideAnalyzer, hashMap1, ClassHierarchyNode.isUnknownClass(string), this);
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < this.methodCount; abstractMethodInfoIndex++) {
+            abstractMethodInfos[abstractMethodInfoIndex].addToInheritedMethods(methodOverrideAnalyzer, hashMap1, ClassHierarchyNode.isUnknownClass(classNameValue), this);
         }
 
-        methodOverrideAnalyzer.putOverriddenMethodOwners(string, hashMap);
-        methodOverrideAnalyzer.putVisibleMethodOwners(string, hashMap1);
+        methodOverrideAnalyzer.putOverriddenMethodOwners(classNameValue, hashMap);
+        methodOverrideAnalyzer.putVisibleMethodOwners(classNameValue, hashMap1);
         return hashMap1;
     }
 
@@ -349,9 +349,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
 
     public void resolveInnerClassEntry() {
         if (!this.isModule()) {
-            for (int i = 0; i < this.attributeCount; i++) {
-                if (this.attributes[i] instanceof InnerClassesAttribute) {
-                    InnerClassesAttribute innerClassesAttribute = (InnerClassesAttribute) this.attributes[i];
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                if (this.attributes[attributeIndex] instanceof InnerClassesAttribute) {
+                    InnerClassesAttribute innerClassesAttribute = (InnerClassesAttribute) this.attributes[attributeIndex];
                     if (innerClassesAttribute.valid) {
                         this.innerClassEntry = innerClassesAttribute.findEntryForClass(this.thisClassConstant);
                     }
@@ -379,9 +379,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
 
     @Override
     public String getClassSimpleName() {
-        String string = this.getClassName();
-        int ba = string.lastIndexOf(47);
-        return ba == -1 ? string : string.substring(ba + 1);
+        String classNameValue = this.getClassName();
+        int ba = classNameValue.lastIndexOf(47);
+        return ba == -1 ? classNameValue : classNameValue.substring(ba + 1);
     }
 
     public boolean isInnerClassesTrimPending() {
@@ -406,21 +406,21 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     }
 
     public final String[] getInterfaceNames() {
-        String[] strings;
+        String[] interfaceNames;
         if (this.interfaces == null) {
-            strings = new String[0];
+            interfaceNames = new String[0];
         } else {
-            strings = new String[this.interfaces.length];
+            interfaceNames = new String[this.interfaces.length];
             int ba = 0;
             int bb = 0;
 
             for (ClassConstantBase[] classConstantBases = this.interfaces; bb < classConstantBases.length; classConstantBases = this.interfaces) {
-                strings[ba] = this.interfaces[ba].getClassName();
+                interfaceNames[ba] = this.interfaces[ba].getClassName();
                 bb = ++ba;
             }
         }
 
-        return strings;
+        return interfaceNames;
     }
 
     public final boolean isAbstract() {
@@ -470,14 +470,14 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public Set collectAnnotationValues(String string, String string1, boolean bl) {
         HashSet hashSet = ZkmUtils.createHashSet(13);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof AnnotationsAttribute) {
-                AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof AnnotationsAttribute) {
+                AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) this.attributes[attributeIndex];
                 AnnotationEntry annotationEntry = annotationsAttribute.findAnnotation(string, bl);
                 if (annotationEntry != null) {
-                    String string2 = annotationEntry.getElementClassValue(string1, bl);
-                    if (string2 != null && !string2.startsWith("[")) {
-                        hashSet.add(string2);
+                    String elementClassValue = annotationEntry.getElementClassValue(string1, bl);
+                    if (elementClassValue != null && !elementClassValue.startsWith("[")) {
+                        hashSet.add(elementClassValue);
                     }
                 }
             }
@@ -485,15 +485,15 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
 
         AbstractFieldInfo[] abstractFieldInfos = this.getFields();
 
-        for (int i = 0; i < abstractFieldInfos.length; i++) {
-            Set set1 = abstractFieldInfos[i].collectAnnotationValues(string, string1, bl);
+        for (int abstractFieldInfoIndex = 0; abstractFieldInfoIndex < abstractFieldInfos.length; abstractFieldInfoIndex++) {
+            Set set1 = abstractFieldInfos[abstractFieldInfoIndex].collectAnnotationValues(string, string1, bl);
             hashSet.addAll(set1);
         }
 
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
 
-        for (int i = 0; i < abstractMethodInfos.length; i++) {
-            Set set2 = abstractMethodInfos[i].collectAnnotationValues(string, string1, bl);
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < abstractMethodInfos.length; abstractMethodInfoIndex++) {
+            Set set2 = abstractMethodInfos[abstractMethodInfoIndex].collectAnnotationValues(string, string1, bl);
             hashSet.addAll(set2);
         }
 
@@ -507,9 +507,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public AbstractMethodInfo findMethod(MethodSignature methodSignature1) {
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
 
-        for (int i = 0; i < abstractMethodInfos.length; i++) {
-            if (abstractMethodInfos[i].getSignature().equals(methodSignature1)) {
-                return abstractMethodInfos[i];
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < abstractMethodInfos.length; abstractMethodInfoIndex++) {
+            if (abstractMethodInfos[abstractMethodInfoIndex].getSignature().equals(methodSignature1)) {
+                return abstractMethodInfos[abstractMethodInfoIndex];
             }
         }
 
@@ -559,9 +559,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
 
     public void trimInnerClassesAttribute() {
         if (this.innerClassesTrimPending) {
-            for (int i = 0; i < this.attributeCount; i++) {
-                if (this.attributes[i] instanceof InnerClassesAttribute) {
-                    ((InnerClassesAttribute) this.attributes[i]).syncInnerNames();
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                if (this.attributes[attributeIndex] instanceof InnerClassesAttribute) {
+                    ((InnerClassesAttribute) this.attributes[attributeIndex]).syncInnerNames();
                 }
             }
         }
@@ -569,9 +569,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
 
     public String getEnclosingClassName() {
         if (this.innerClassEntry != null) {
-            for (int i = 0; i < this.attributeCount; i++) {
-                if (this.attributes[i] instanceof EnclosingMethodAttribute) {
-                    EnclosingMethodAttribute enclosingMethodAttribute = (EnclosingMethodAttribute) this.attributes[i];
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                if (this.attributes[attributeIndex] instanceof EnclosingMethodAttribute) {
+                    EnclosingMethodAttribute enclosingMethodAttribute = (EnclosingMethodAttribute) this.attributes[attributeIndex];
                     if (enclosingMethodAttribute.isValid()) {
                         return enclosingMethodAttribute.getEnclosingClassName();
                     }
@@ -579,39 +579,39 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
                 }
             }
 
-            String string3 = this.innerClassEntry.getOuterClassName();
-            if (string3 != null) {
-                return string3;
+            String outerClassName = this.innerClassEntry.getOuterClassName();
+            if (outerClassName != null) {
+                return outerClassName;
             }
 
-            String string4 = this.getClassName();
-            String string = this.innerClassEntry.getInnerSimpleName();
-            if (string != null && string.trim().length() > 0 && string4.endsWith(string)) {
-                String string1 = string4.substring(0, string4.length() - string.length());
-                if (string1.endsWith("$")) {
-                    string1 = string1.substring(0, string1.length() - 1);
+            String classNameValue = this.getClassName();
+            String innerSimpleName = this.innerClassEntry.getInnerSimpleName();
+            if (innerSimpleName != null && innerSimpleName.trim().length() > 0 && classNameValue.endsWith(innerSimpleName)) {
+                String enclosingClassName = classNameValue.substring(0, classNameValue.length() - innerSimpleName.length());
+                if (enclosingClassName.endsWith("$")) {
+                    enclosingClassName = enclosingClassName.substring(0, enclosingClassName.length() - 1);
                 }
 
-                if (ClassHierarchyNode.findNode(string1) != null) {
-                    return string1;
+                if (ClassHierarchyNode.findNode(enclosingClassName) != null) {
+                    return enclosingClassName;
                 }
 
-                String string2 = this.resolveAnonymousOuterClass(string1);
-                if (string2 != null) {
-                    return string2;
+                String enclosingClassNameValue = this.resolveAnonymousOuterClass(enclosingClassName);
+                if (enclosingClassNameValue != null) {
+                    return enclosingClassNameValue;
                 }
             }
 
-            int bb = string4.lastIndexOf("$");
-            if (bb > -1 && bb < string4.length() - 1) {
-                string3 = string4.substring(0, bb);
-                if (ClassHierarchyNode.findNode(string3) != null) {
-                    return string3;
+            int endIndex = classNameValue.lastIndexOf("$");
+            if (endIndex > -1 && endIndex < classNameValue.length() - 1) {
+                outerClassName = classNameValue.substring(0, endIndex);
+                if (ClassHierarchyNode.findNode(outerClassName) != null) {
+                    return outerClassName;
                 }
 
-                String string5 = this.resolveAnonymousOuterClass(string3);
-                if (string5 != null) {
-                    return string5;
+                String enclosingClassNameValue2 = this.resolveAnonymousOuterClass(outerClassName);
+                if (enclosingClassNameValue2 != null) {
+                    return enclosingClassNameValue2;
                 }
             }
         }
@@ -652,9 +652,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     }
 
     public static String descriptorToClassName(String string) {
-        int ba = string.lastIndexOf("[") + 1;
-        String string1 = string.substring(ba);
-        if (ba > 0 && string1.length() == 1) {
+        int beginIndex = string.lastIndexOf("[") + 1;
+        String string1 = string.substring(beginIndex);
+        if (beginIndex > 0 && string1.length() == 1) {
             return null;
         }
 
@@ -684,12 +684,12 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     }
 
     public String resolveAnonymousOuterClass(String string) {
-        String string1 = string;
-        int ba = string1.lastIndexOf("$");
-        if (ba > -1 && ba < string1.length() - 1 && NumericStringUtil.isInteger(string1.substring(ba + 1))) {
-            string1 = string1.substring(0, ba);
-            if (ClassHierarchyNode.findNode(string1) != null) {
-                return string1;
+        String key = string;
+        int endIndex = key.lastIndexOf("$");
+        if (endIndex > -1 && endIndex < key.length() - 1 && NumericStringUtil.isInteger(key.substring(endIndex + 1))) {
+            key = key.substring(0, endIndex);
+            if (ClassHierarchyNode.findNode(key) != null) {
+                return key;
             }
         }
 
@@ -700,9 +700,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
             MethodOverrideAnalyzer methodOverrideAnalyzer, ClassFileBase classFileBase, MethodSignature methodSignature1, ClassFileBase classFileBase1
     ) {
         if (classFileBase != classFileBase1) {
-            String string = classFileBase.getClassName();
-            methodOverrideAnalyzer.putVisibleMethodOwner(string, methodSignature1, classFileBase1);
-            ClassFileBase classFileBase2 = methodOverrideAnalyzer.putOverriddenMethodOwner(string, methodSignature1, classFileBase1);
+            String classNameValue = classFileBase.getClassName();
+            methodOverrideAnalyzer.putVisibleMethodOwner(classNameValue, methodSignature1, classFileBase1);
+            ClassFileBase classFileBase2 = methodOverrideAnalyzer.putOverriddenMethodOwner(classNameValue, methodSignature1, classFileBase1);
             if (!ClassHierarchyNode.isUnknownClass(classFileBase1.getClassName()) && classFileBase1.isInterface()) {
                 while (
                         classFileBase2 != null
@@ -710,10 +710,10 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
                                 && !ClassHierarchyNode.isUnknownClass(classFileBase2.getClassName())
                                 && classFileBase2.isInterface()
                 ) {
-                    String string1 = classFileBase2.getClassName();
-                    methodOverrideAnalyzer.putVisibleMethodOwner(string1, methodSignature1, classFileBase1);
+                    String classNameValue2 = classFileBase2.getClassName();
+                    methodOverrideAnalyzer.putVisibleMethodOwner(classNameValue2, methodSignature1, classFileBase1);
                     ClassFileBase classFileBase3 = classFileBase2;
-                    classFileBase2 = methodOverrideAnalyzer.putOverriddenMethodOwner(string1, methodSignature1, classFileBase1);
+                    classFileBase2 = methodOverrideAnalyzer.putOverriddenMethodOwner(classNameValue2, methodSignature1, classFileBase1);
                     ZkmAssert.assertTrue(
                             classFileBase2 == null || classFileBase2 != classFileBase3,
                             new String[]{"Loop: " + classFileBase.getDottedClassName() + " " + (classFileBase2 != null ? classFileBase2.getDottedClassName() : "null")}
@@ -732,9 +732,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     }
 
     public String getNestHostName() {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof NestHostAttribute) {
-                NestHostAttribute nestHostAttribute = (NestHostAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof NestHostAttribute) {
+                NestHostAttribute nestHostAttribute = (NestHostAttribute) this.attributes[attributeIndex];
                 if (nestHostAttribute.valid) {
                     return nestHostAttribute.getHostClassName();
                 }
@@ -790,13 +790,13 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     }
 
     public static String extractClassName(String string, MutableInt mutableInt) {
-        int ba = string.lastIndexOf("[") + 1;
+        int value = string.lastIndexOf("[") + 1;
         if (mutableInt != null) {
-            mutableInt.setValue(ba);
+            mutableInt.setValue(value);
         }
 
-        String string1 = string.substring(ba);
-        if (ba > 0 && string1.length() == 1) {
+        String string1 = string.substring(value);
+        if (value > 0 && string1.length() == 1) {
             return null;
         } else if (string1.startsWith("L") && string1.endsWith(";")) {
             return toInternalName(string1.substring(1, string1.length() - 1));
@@ -808,9 +808,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public final AbstractFieldInfo findField(Object object, Object object1) {
         AbstractFieldInfo[] abstractFieldInfos = this.getFields();
 
-        for (int i = 0; i < abstractFieldInfos.length; i++) {
-            if (abstractFieldInfos[i].getSourceName().equals(object) && abstractFieldInfos[i].getDescriptor().equals(object1)) {
-                return abstractFieldInfos[i];
+        for (int abstractFieldInfoIndex = 0; abstractFieldInfoIndex < abstractFieldInfos.length; abstractFieldInfoIndex++) {
+            if (abstractFieldInfos[abstractFieldInfoIndex].getSourceName().equals(object) && abstractFieldInfos[abstractFieldInfoIndex].getDescriptor().equals(object1)) {
+                return abstractFieldInfos[abstractFieldInfoIndex];
             }
         }
 
@@ -826,12 +826,12 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         return this.getClassName().compareTo(classFileBase1.getClassName());
     }
 
-    public AbstractFieldInfo findField(Object object) {
+    public AbstractFieldInfo findField(Object other) {
         AbstractFieldInfo[] abstractFieldInfos = this.getFields();
 
-        for (int i = 0; i < abstractFieldInfos.length; i++) {
-            if (abstractFieldInfos[i].getSignature().equals(object)) {
-                return abstractFieldInfos[i];
+        for (int abstractFieldInfoIndex = 0; abstractFieldInfoIndex < abstractFieldInfos.length; abstractFieldInfoIndex++) {
+            if (abstractFieldInfos[abstractFieldInfoIndex].getSignature().equals(other)) {
+                return abstractFieldInfos[abstractFieldInfoIndex];
             }
         }
 
@@ -842,15 +842,15 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         return marker;
     }
 
-    public final void renameClass(String string, HashMap hashMap) throws ZkmException, IOException {
-        this.getConstantPool().renameThisClass(string);
-        this.className = string;
+    public final void renameClass(String classNameArgument, HashMap hashMap) throws ZkmException, IOException {
+        this.getConstantPool().renameThisClass(classNameArgument);
+        this.className = classNameArgument;
         this.lowerCaseClassName = this.className.toLowerCase();
         if (!HiddenOptionFlags.KEEP_SOURCE_FILE_NAMES) {
-            for (int i = 0; i < this.attributeCount; i++) {
-                if (this.attributes[i] instanceof SourceFileAttribute) {
-                    hashMap.put(this.className, ((SourceFileAttribute) this.attributes[i]).sourceFileName.getValue());
-                    ((SourceFileAttribute) this.attributes[i]).sourceFileName.setValue(this.getSimpleName() + ".java");
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                if (this.attributes[attributeIndex] instanceof SourceFileAttribute) {
+                    hashMap.put(this.className, ((SourceFileAttribute) this.attributes[attributeIndex]).sourceFileName.getValue());
+                    ((SourceFileAttribute) this.attributes[attributeIndex]).sourceFileName.setValue(this.getSimpleName() + ".java");
                     break;
                 }
             }
@@ -862,7 +862,7 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
             Iterator iterator = this.getVersionedVariants().iterator();
 
             while (iterator.hasNext()) {
-                ((ClassFileBase) iterator.next()).renameClass(string, hashMap);
+                ((ClassFileBase) iterator.next()).renameClass(classNameArgument, hashMap);
             }
         }
     }
@@ -875,32 +875,32 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public ArrayList getSuperclassChain(ClassResolver classResolver1, Integer integer) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList();
         HashSet hashSet = null;
-        String string = this.getSuperclassName();
+        String superclassName = this.getSuperclassName();
         int ba = 0;
         ClassFileBase classFileBase1 = this;
         ClassFileBase classFileBase2 = null;
         Integer integer1 = integer;
 
-        while (string != null) {
-            arrayList.add(string);
+        while (superclassName != null) {
+            arrayList.add(superclassName);
             String string1 = "looking for the superclass of '" + classFileBase1.getLocationName() + "'";
-            classFileBase1 = classResolver1.getVersionedClass(string, integer1, string1);
-            String string2;
+            classFileBase1 = classResolver1.getVersionedClass(superclassName, integer1, string1);
+            String hierarchyGapMessage;
             if (HiddenOptionFlags.TEST_HIERARCHY
                     && classFileBase2 != null
-                    && (string2 = ClassHierarchyNode.getHierarchyGapMessage(classFileBase2, classFileBase1, 1)) != null) {
-                throw new ZkmRuntimeException(string2);
+                    && (hierarchyGapMessage = ClassHierarchyNode.getHierarchyGapMessage(classFileBase2, classFileBase1, 1)) != null) {
+                throw new ZkmRuntimeException(hierarchyGapMessage);
             }
 
             classFileBase2 = classFileBase1;
-            string = classFileBase1.getSuperclassName();
+            superclassName = classFileBase1.getSuperclassName();
             integer1 = classFileBase1.hasReleaseVersion() ? classFileBase1.getReleaseVersion() : integer;
             if (ba++ > 1000) {
                 if (hashSet == null) {
                     hashSet = ZkmUtils.createHashSet();
                 }
 
-                if (!hashSet.add(string)) {
+                if (!hashSet.add(superclassName)) {
                     throw new ZkmRuntimeException(
                             "Class '" + classFileBase1.getLocationName() + "' appears more than once in inheritance hierarchy of class '" + this.getLocationName() + "'"
                     );
@@ -915,7 +915,7 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         return this.lowerCaseClassName;
     }
 
-    public void readClassConstants(int ba, Integer integer, int[] bb, ListMultimap listMultimap) throws ClassFileFormatException {
+    public void readClassConstants(int ba, Integer integer, int[] integerArray, ListMultimap listMultimap) throws ClassFileFormatException {
         ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(ba);
         if (!(constantPoolEntry instanceof ClassConstantBase)) {
             throw new ClassFileFormatException(this.getLocationName() + " : " + "Invalid Constant Pool index" + " (A)");
@@ -943,12 +943,12 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
             }
         }
 
-        this.interfaces = new ClassConstantBase[bb.length];
+        this.interfaces = new ClassConstantBase[integerArray.length];
         int bc = 0;
         int bd = 0;
 
-        for (int i = this.interfaceCount; bd < i; i = this.interfaceCount) {
-            ConstantPoolEntry constantPoolEntry2 = this.getConstantPoolEntry(bb[bc]);
+        for (int interfaceCountValue = this.interfaceCount; bd < interfaceCountValue; interfaceCountValue = this.interfaceCount) {
+            ConstantPoolEntry constantPoolEntry2 = this.getConstantPoolEntry(integerArray[bc]);
             if (!(constantPoolEntry2 instanceof ClassConstantBase)) {
                 throw new ClassFileFormatException(this.getLocationName() + " : " + "Invalid Constant Pool index" + " (C)");
             }
@@ -1022,10 +1022,10 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         processingStatistics1.incrementClassCount();
         processingStatistics1.addPackageName(this.getPackagePath());
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
-        int ba = abstractMethodInfos.length;
+        int lengthValue = abstractMethodInfos.length;
 
-        for (int i = 0; i < ba; i++) {
-            abstractMethodInfos[i].collectStatistics(processingStatistics1);
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < lengthValue; abstractMethodInfoIndex++) {
+            abstractMethodInfos[abstractMethodInfoIndex].collectStatistics(processingStatistics1);
         }
     }
 
@@ -1033,9 +1033,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         ArrayList arrayList = new ArrayList();
         AbstractFieldInfo[] abstractFieldInfos = this.getFields();
 
-        for (int i = 0; i < abstractFieldInfos.length; i++) {
-            if (abstractFieldInfos[i].getSourceName().equals(object)) {
-                arrayList.add(abstractFieldInfos[i]);
+        for (int abstractFieldInfoIndex = 0; abstractFieldInfoIndex < abstractFieldInfos.length; abstractFieldInfoIndex++) {
+            if (abstractFieldInfos[abstractFieldInfoIndex].getSourceName().equals(object)) {
+                arrayList.add(abstractFieldInfos[abstractFieldInfoIndex]);
             }
         }
 
@@ -1064,8 +1064,8 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         marker = "T4iqpc";
     }
 
-    public String getInterfaceName(int ba) {
-        return this.interfaces[ba].getClassName();
+    public String getInterfaceName(int interfaceIndex) {
+        return this.interfaces[interfaceIndex].getClassName();
     }
 
     public boolean supportsJava4() {
@@ -1082,17 +1082,17 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
 
     @Override
     public String getDisplayLocationName() {
-        String string = ((InputFileLocation) this.inputLocations.get(0)).getQualifiedName();
-        String string1 = TempFileManager.replaceTempPaths(string);
-        if (!string.equals(string1)) {
+        String qualifiedName = ((InputFileLocation) this.inputLocations.get(0)).getQualifiedName();
+        String string1 = TempFileManager.replaceTempPaths(qualifiedName);
+        if (!qualifiedName.equals(string1)) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(string1);
             stringBuilder.append(" (");
-            stringBuilder.append(string);
+            stringBuilder.append(qualifiedName);
             stringBuilder.append(")");
             return stringBuilder.toString();
         } else {
-            return string;
+            return qualifiedName;
         }
     }
 
@@ -1126,8 +1126,8 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public final void applyParameterChanges(ClassHierarchyNode classHierarchyNode, MethodParameterChangeSet methodParameterChangeSet) throws ZkmException, IOException {
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
 
-        for (int i = 0; i < this.methodCount; i++) {
-            AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[i];
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < this.methodCount; abstractMethodInfoIndex++) {
+            AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[abstractMethodInfoIndex];
             if (!abstractMethodInfo.isStaticInitializer()) {
                 methodParameterChangeSet.validateMappedSignature(classHierarchyNode, this, abstractMethodInfo);
             }
@@ -1136,65 +1136,65 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
 
     public SyncIndexedSet collectAllInterfaces(HashSet hashSet, ClassResolver classResolver1, Integer integer) throws ZkmException, IOException {
         SyncIndexedSet syncIndexedSet = new SyncIndexedSet();
-        int ba = 0;
+        int syncIndexedSetSizeValue = 0;
         int bg = 0;
 
-        for (int i = this.interfaceCount; bg < i; i = this.interfaceCount) {
-            String string = this.interfaces[ba].getClassName();
-            syncIndexedSet.add(string);
-            bg = ++ba;
+        for (int interfaceCountValue = this.interfaceCount; bg < interfaceCountValue; interfaceCountValue = this.interfaceCount) {
+            String classNameValue = this.interfaces[syncIndexedSetSizeValue].getClassName();
+            syncIndexedSet.add(classNameValue);
+            bg = ++syncIndexedSetSizeValue;
         }
 
-        ba = 0;
-        int bd = syncIndexedSet.size();
+        syncIndexedSetSizeValue = 0;
+        int syncIndexedSetSize = syncIndexedSet.size();
         Integer integer1 = integer;
 
-        while (ba < bd) {
-            for (int i = ba; i < bd; i++) {
-                String string1 = (String) syncIndexedSet.getElementAt(i);
+        while (syncIndexedSetSizeValue < syncIndexedSetSize) {
+            for (int elementIndex = syncIndexedSetSizeValue; elementIndex < syncIndexedSetSize; elementIndex++) {
+                String elementAtValue = (String) syncIndexedSet.getElementAt(elementIndex);
                 String string2 = "looking for an interface implemented by '" + this.getLocationName() + "'";
-                ClassFileBase classFileBase1 = classResolver1.getVersionedClass(string1, integer1, string2);
+                ClassFileBase classFileBase1 = classResolver1.getVersionedClass(elementAtValue, integer1, string2);
                 integer1 = classFileBase1.hasReleaseVersion() ? classFileBase1.getReleaseVersion() : integer;
-                String string3;
-                if (HiddenOptionFlags.TEST_HIERARCHY && (string3 = ClassHierarchyNode.getHierarchyGapMessage(this, classFileBase1, 2)) != null) {
-                    throw new ZkmRuntimeException(string3);
+                String hierarchyGapMessage;
+                if (HiddenOptionFlags.TEST_HIERARCHY && (hierarchyGapMessage = ClassHierarchyNode.getHierarchyGapMessage(this, classFileBase1, 2)) != null) {
+                    throw new ZkmRuntimeException(hierarchyGapMessage);
                 }
 
                 if (hashSet.add(classFileBase1)) {
-                    String[] strings = classFileBase1.getInterfaceNames();
+                    String[] interfaceNames = classFileBase1.getInterfaceNames();
 
-                    for (int j = 0; j < strings.length; j++) {
-                        syncIndexedSet.add(strings[j]);
+                    for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+                        syncIndexedSet.add(interfaceNames[interfaceNameIndex]);
                     }
                 }
             }
 
-            ba = bd;
-            bd = syncIndexedSet.size();
+            syncIndexedSetSizeValue = syncIndexedSetSize;
+            syncIndexedSetSize = syncIndexedSet.size();
         }
 
-        String string4 = this.getSuperclassName();
-        if (string4 != null) {
+        String superclassName = this.getSuperclassName();
+        if (superclassName != null) {
             String string5 = "looking for the superclass of '" + this.getLocationName() + "'";
-            ClassFileBase classFileBase2 = classResolver1.getVersionedClass(string4, integer1, string5);
+            ClassFileBase classFileBase2 = classResolver1.getVersionedClass(superclassName, integer1, string5);
             if (classFileBase2.hasReleaseVersion()) {
                 classFileBase2.getReleaseVersion();
             }
 
-            String string6;
-            if (HiddenOptionFlags.TEST_HIERARCHY && (string6 = ClassHierarchyNode.getHierarchyGapMessage(this, classFileBase2, 1)) != null) {
-                throw new ZkmRuntimeException(string6);
+            String hierarchyGapMessageValue;
+            if (HiddenOptionFlags.TEST_HIERARCHY && (hierarchyGapMessageValue = ClassHierarchyNode.getHierarchyGapMessage(this, classFileBase2, 1)) != null) {
+                throw new ZkmRuntimeException(hierarchyGapMessageValue);
             }
 
             if (hashSet.add(classFileBase2)) {
                 SyncIndexedSet syncIndexedSet1 = classFileBase2.collectAllInterfaces(hashSet, classResolver1, integer);
-                int be = 0;
+                int elementIndexValue = 0;
                 bg = 0;
 
-                for (int i = syncIndexedSet1.size(); bg < i; i = syncIndexedSet1.size()) {
-                    String string7 = (String) syncIndexedSet1.getElementAt(be);
-                    syncIndexedSet.add(string7);
-                    bg = ++be;
+                for (int syncIndexedSet1Size = syncIndexedSet1.size(); bg < syncIndexedSet1Size; syncIndexedSet1Size = syncIndexedSet1.size()) {
+                    String elementAtValue2 = (String) syncIndexedSet1.getElementAt(elementIndexValue);
+                    syncIndexedSet.add(elementAtValue2);
+                    bg = ++elementIndexValue;
                 }
             }
         }
@@ -1214,10 +1214,10 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < abstractMethodInfos.length; i++) {
-            if (abstractMethodInfos[i].getJvmName().equals(fieldNameTypeSignature.getName())
-                    && abstractMethodInfos[i].getParameterDescriptor().equals(fieldNameTypeSignature.getParameterDescriptor())) {
-                arrayList.add(abstractMethodInfos[i]);
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < abstractMethodInfos.length; abstractMethodInfoIndex++) {
+            if (abstractMethodInfos[abstractMethodInfoIndex].getJvmName().equals(fieldNameTypeSignature.getName())
+                    && abstractMethodInfos[abstractMethodInfoIndex].getParameterDescriptor().equals(fieldNameTypeSignature.getParameterDescriptor())) {
+                arrayList.add(abstractMethodInfos[abstractMethodInfoIndex]);
             }
         }
 
@@ -1230,8 +1230,8 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByName((ClassFileBase) object);
+    public int compareTo(Object other) {
+        return this.compareByName((ClassFileBase) other);
     }
 
     public String formatInheritedAnnotations(ClassHierarchyQuery classHierarchyQuery) throws ZkmException, IOException {
@@ -1322,12 +1322,12 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public abstract void remapClassNames(int ba, int bb, HashMap hashMap, Object object, Object object1, HashMap hashMap1, MessageReporter messageReporter1) throws ZkmException, IOException;
 
     public boolean hasAnnotation(Object object) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof AnnotationsAttribute) {
-                String[] strings = ((AnnotationsAttribute) this.attributes[i]).getAnnotationTypeNames();
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof AnnotationsAttribute) {
+                String[] annotationTypeNames = ((AnnotationsAttribute) this.attributes[attributeIndex]).getAnnotationTypeNames();
 
-                for (int j = 0; j < strings.length; j++) {
-                    if (strings[j].equals(object)) {
+                for (int annotationTypeNameIndex = 0; annotationTypeNameIndex < annotationTypeNames.length; annotationTypeNameIndex++) {
+                    if (annotationTypeNames[annotationTypeNameIndex].equals(object)) {
                         return true;
                     }
                 }
@@ -1384,9 +1384,9 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
         ArrayList arrayList = new ArrayList();
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
 
-        for (int i = 0; i < abstractMethodInfos.length; i++) {
-            if (abstractMethodInfos[i].getJvmName().equals(object)) {
-                arrayList.add(abstractMethodInfos[i]);
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < abstractMethodInfos.length; abstractMethodInfoIndex++) {
+            if (abstractMethodInfos[abstractMethodInfoIndex].getJvmName().equals(object)) {
+                arrayList.add(abstractMethodInfos[abstractMethodInfoIndex]);
             }
         }
 
@@ -1416,8 +1416,8 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public final void propagateParameterChanges(MethodParameterChangeSet methodParameterChangeSet) {
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
 
-        for (int i = 0; i < this.methodCount; i++) {
-            methodParameterChangeSet.checkOverriddenMapping(abstractMethodInfos[i]);
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < this.methodCount; abstractMethodInfoIndex++) {
+            methodParameterChangeSet.checkOverriddenMapping(abstractMethodInfos[abstractMethodInfoIndex]);
         }
     }
 
@@ -1437,8 +1437,8 @@ public abstract class ClassFileBase extends ClassFileComponent implements Compar
     public final void propagateMethodRenames(MethodRenamer methodRenamer1) throws IOException {
         AbstractMethodInfo[] abstractMethodInfos = this.getDeclaredMethods();
 
-        for (int i = 0; i < this.methodCount; i++) {
-            methodRenamer1.checkChangeLogOverrideMapping(this, abstractMethodInfos[i]);
+        for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < this.methodCount; abstractMethodInfoIndex++) {
+            methodRenamer1.checkChangeLogOverrideMapping(this, abstractMethodInfos[abstractMethodInfoIndex]);
         }
     }
 

@@ -9,6 +9,6 @@ public class PrefixSuffixFilenameFilter implements FilenameFilter {
 
     @Override
     public boolean accept(File file1, String string) {
-        return new File(file1, string).isDirectory() ? false : string.startsWith(this.prefix) && string.endsWith(this.suffix);
+        return (!(new File(file1, string).isDirectory()) && (string.startsWith(this.prefix) && string.endsWith(this.suffix)));
     }
 }

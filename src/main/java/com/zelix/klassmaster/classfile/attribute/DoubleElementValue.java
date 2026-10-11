@@ -14,15 +14,15 @@ import java.io.IOException;
 public class DoubleElementValue extends AnnotationElementValue {
     public ConstantDouble doubleConstant;
 
-    public DoubleElementValue(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream) throws IOException {
-        super(classFileComponent, ba);
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+    public DoubleElementValue(ClassFileComponent classFileComponent, int tagArgument, ClassFileInputStream classFileInputStream) throws IOException {
+        super(classFileComponent, tagArgument);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry != null && constantPoolEntry instanceof ConstantDouble) {
             this.doubleConstant = (ConstantDouble) constantPoolEntry;
         } else {
             this.setValid();
-            this.setErrorMessage("Invalid component double constant index : " + bb + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
+            this.setErrorMessage("Invalid component double constant index : " + constantPoolIndex + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
         }
     }
 

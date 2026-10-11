@@ -10,11 +10,11 @@ public class ASTChangeLogInParameter extends SingleValueParameterNode {
     public boolean loose = false;
 
     @Override
-    public String getValue(int ba) {
-        if (ba < this.fileNames.size()) {
-            return (String) this.fileNames.get(ba);
+    public String getValue(int elementIndex) {
+        if (elementIndex < this.fileNames.size()) {
+            return (String) this.fileNames.get(elementIndex);
         } else {
-            throw new IllegalArgumentException(String.valueOf(ba));
+            throw new IllegalArgumentException(String.valueOf(elementIndex));
         }
     }
 
@@ -27,8 +27,8 @@ public class ASTChangeLogInParameter extends SingleValueParameterNode {
     public void execute(Object object, Object object1) throws ZkmException, IOException {
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptASTStringLiteral zkmScriptASTStringLiteral = (ZkmScriptASTStringLiteral) this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptASTStringLiteral zkmScriptASTStringLiteral = (ZkmScriptASTStringLiteral) this.jjtGetChild(childrenElementIndex);
             this.fileNames.add(zkmScriptASTStringLiteral.getValue());
         }
     }

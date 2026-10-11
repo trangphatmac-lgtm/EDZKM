@@ -90,11 +90,11 @@ public class BuildHelperWizard extends AbstractHelperWizard {
             this.jadFileLocations = inputFileLocations1;
             this.xmlFileLocations = inputFileLocations2;
             this.inputRoots = inputFileLocations3;
-            String string = (String) observableHolder.getValue();
+            String value = (String) observableHolder.getValue();
             Boolean boolean2 = boolean1;
             UserPreferences userPreferences1;
-            if (string != null) {
-                super.userPreferences.setOpenClassesDirectory(string);
+            if (value != null) {
+                super.userPreferences.setOpenClassesDirectory(value);
                 userPreferences1 = super.userPreferences;
             } else {
                 userPreferences1 = super.userPreferences;
@@ -155,10 +155,10 @@ public class BuildHelperWizard extends AbstractHelperWizard {
     }
 
     @Override
-    public void showSaveDialog(String string) {
+    public void showSaveDialog(String initialDirectory) {
         BuildHelperSaveDialogCallback buildHelperSaveDialogCallback = new BuildHelperSaveDialogCallback(this);
         new SaveClassesDialog(
-                super.mainWindow, "Build Helper - Save Classes", "Next", GuiResources.getTooltipText("SAVE_CLASSES"), string, buildHelperSaveDialogCallback
+                super.mainWindow, "Build Helper - Save Classes", "Next", GuiResources.getTooltipText("SAVE_CLASSES"), initialDirectory, buildHelperSaveDialogCallback
         );
     }
 

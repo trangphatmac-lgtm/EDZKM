@@ -40,19 +40,19 @@ public class TrimOptions implements Serializable {
                 this.f = trimOptions.f;
                 try {
                     objectInputStream.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
-            } catch (final IOException ex2) {
-            } catch (final ClassNotFoundException ex3) {
-            } catch (final ClassCastException ex4) {
-            } catch (final AssertionFailedException ex5) {
-                throw ex5;
-            } catch (final Throwable t) {
+            } catch (final IOException ioExceptionValue) {
+            } catch (final ClassNotFoundException classNotFoundException) {
+            } catch (final ClassCastException classCastException) {
+            } catch (final AssertionFailedException assertionFailedException) {
+                throw assertionFailedException;
+            } catch (final Throwable throwable) {
             } finally {
                 if (objectInputStream != null) {
                     try {
                         objectInputStream.close();
-                    } catch (final IOException ex6) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }
@@ -73,14 +73,14 @@ public class TrimOptions implements Serializable {
             objectOutputStream.writeObject(this);
             try {
                 objectOutputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
-        } catch (final IOException ex2) {
+        } catch (final IOException ioExceptionValue) {
         } finally {
             if (objectOutputStream != null) {
                 try {
                     objectOutputStream.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
             }
         }

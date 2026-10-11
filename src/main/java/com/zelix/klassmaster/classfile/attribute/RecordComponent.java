@@ -43,10 +43,10 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
         dataOutputStream.writeShort(this.descriptorConstant.getIndex());
         dataOutputStream.writeShort(this.attributes.length);
         Attribute[] attributes1 = this.attributes;
-        int ba = attributes1.length;
+        int lengthValue = attributes1.length;
 
-        for (int i = 0; i < ba; i++) {
-            attributes1[i].write(dataOutputStream);
+        for (int attributes1ElementIndex = 0; attributes1ElementIndex < lengthValue; attributes1ElementIndex++) {
+            attributes1[attributes1ElementIndex].write(dataOutputStream);
         }
     }
 
@@ -55,10 +55,10 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
         usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
         usedConstantsCollector.markUsed(this.descriptorConstant, this, this.getParent());
         Attribute[] attributes1 = this.attributes;
-        int ba = attributes1.length;
+        int lengthValue = attributes1.length;
 
-        for (int i = 0; i < ba; i++) {
-            attributes1[i].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+        for (int attributes1ElementIndex = 0; attributes1ElementIndex < lengthValue; attributes1ElementIndex++) {
+            attributes1[attributes1ElementIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
         }
     }
 
@@ -78,14 +78,14 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
 
     public void resolveReferences(ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
         ClassFileBase classFileBase = this.getOwningClass();
-        String string = this.descriptorConstant.getValue();
-        this.field = classFileBase.findField(this.nameConstant.getValue(), string);
+        String value = this.descriptorConstant.getValue();
+        this.field = classFileBase.findField(this.nameConstant.getValue(), value);
         if (this.field == null) {
             AbstractFieldInfo[] abstractFieldInfos = classFileBase.getFields();
             ArrayList arrayList = new ArrayList();
 
             for (AbstractFieldInfo abstractFieldInfo : abstractFieldInfos) {
-                if (abstractFieldInfo.getDescriptor().equals(string)) {
+                if (abstractFieldInfo.getDescriptor().equals(value)) {
                     arrayList.add(abstractFieldInfo);
                 }
             }
@@ -95,7 +95,7 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
             }
         }
 
-        String string1 = "()" + string;
+        String string1 = "()" + value;
         MethodSignature methodSignature1 = new MethodSignature(this.nameConstant.getValue(), string1);
         this.accessorMethod = classFileBase.findMethod(methodSignature1);
         if (this.accessorMethod == null) {
@@ -104,18 +104,18 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
 
             for (AbstractMethodInfo abstractMethodInfo : abstractMethodInfos) {
                 if (abstractMethodInfo.getDescriptor().equals(string1)) {
-                    String string2;
+                    String sourceName;
                     if (abstractMethodInfo.getSourceName().equals("hashCode")) {
                         if (abstractMethodInfo.getDescriptor().equals("()I")) {
                             continue;
                         }
 
-                        string2 = abstractMethodInfo.getSourceName();
+                        sourceName = abstractMethodInfo.getSourceName();
                     } else {
-                        string2 = abstractMethodInfo.getSourceName();
+                        sourceName = abstractMethodInfo.getSourceName();
                     }
 
-                    if (!string2.equals("toString") || !abstractMethodInfo.getDescriptor().equals("()Ljava/lang/String;")) {
+                    if (!sourceName.equals("toString") || !abstractMethodInfo.getDescriptor().equals("()Ljava/lang/String;")) {
                         arrayList1.add(abstractMethodInfo);
                     }
                 }
@@ -126,24 +126,24 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
             }
         }
 
-        int ba = 0;
-        int bb = ba;
+        int attributeIndex = 0;
+        int attributeIndexValue = attributeIndex;
 
-        for (Attribute[] attributes1 = this.attributes; bb < attributes1.length; attributes1 = this.attributes) {
-            if (this.attributes[ba] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[ba]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+        for (Attribute[] attributes1 = this.attributes; attributeIndexValue < attributes1.length; attributes1 = this.attributes) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
             }
 
-            bb = ++ba;
+            attributeIndexValue = ++attributeIndex;
         }
     }
 
     public void applyFieldRenames() {
         if (this.valid) {
             if (this.field != null) {
-                String string = this.field.getSourceName();
-                if (!this.nameConstant.getValue().equals(string)) {
-                    this.nameConstant.setValue(string);
+                String sourceName = this.field.getSourceName();
+                if (!this.nameConstant.getValue().equals(sourceName)) {
+                    this.nameConstant.setValue(sourceName);
                 }
             }
 
@@ -157,11 +157,11 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
 
     public void remapClassNames(int ba, int bb, HashMap hashMap, HashMap hashMap1) throws ZkmProcessingException {
         if (this.valid) {
-            String string = this.descriptorConstant.getValue();
-            String string1 = ConstantPoolEntry.remapDescriptorClassNames(string, hashMap1);
+            String value = this.descriptorConstant.getValue();
+            String valueValue = ConstantPoolEntry.remapDescriptorClassNames(value, hashMap1);
             Attribute[] attributes1;
-            if (!string1.equals(string)) {
-                this.descriptorConstant.setValue(string1);
+            if (!valueValue.equals(value)) {
+                this.descriptorConstant.setValue(valueValue);
                 attributes1 = this.attributes;
             } else {
                 attributes1 = this.attributes;
@@ -198,8 +198,8 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
             PrintWriter printWriter
     ) throws ZkmProcessingException, IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(ba);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry instanceof ConstantUtf8) {
             this.nameConstant = (ConstantUtf8) constantPoolEntry;
             listMultimap.addValue(this.nameConstant, this);
@@ -208,8 +208,8 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
             this.errorMessage = "Name index does not point to a CONSTANT_Utf8 : " + constantPoolEntry.getTag();
         }
 
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(bb);
+        int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(constantPoolIndexValue);
         if (constantPoolEntry1 instanceof ConstantUtf8) {
             this.descriptorConstant = (ConstantUtf8) constantPoolEntry1;
             listMultimap.addValue(this.descriptorConstant, this);
@@ -228,9 +228,9 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
         ListMultimap listMultimap7 = new ListMultimap();
         ListMultimap listMultimap8 = new ListMultimap();
 
-        for (int i = 0; i < bc; i++) {
+        for (int attributeIndex = 0; attributeIndex < bc; attributeIndex++) {
             try {
-                this.attributes[i] = Attribute.readAttribute(
+                this.attributes[attributeIndex] = Attribute.readAttribute(
                         this,
                         classFileInputStream,
                         listMultimap,
@@ -332,15 +332,15 @@ public class RecordComponent extends ClassFileComponent implements Utf8ConstantR
             hashSet3.add((MethodInfo) this.accessorMethod);
         }
 
-        int ba = 0;
-        int bb = ba;
+        int attributeIndex = 0;
+        int attributeIndexValue = attributeIndex;
 
-        for (Attribute[] attributes1 = this.attributes; bb < attributes1.length; attributes1 = this.attributes) {
-            if (this.attributes[ba] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[ba]).collectReferencedMembers(hashSet, hashSet1, hashSet2, hashSet3);
+        for (Attribute[] attributes1 = this.attributes; attributeIndexValue < attributes1.length; attributes1 = this.attributes) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).collectReferencedMembers(hashSet, hashSet1, hashSet2, hashSet3);
             }
 
-            bb = ++ba;
+            attributeIndexValue = ++attributeIndex;
         }
     }
 }

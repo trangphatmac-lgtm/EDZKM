@@ -38,7 +38,7 @@ public abstract class ProGuardAssumeMethodOption extends ProGuardClassSpecificat
 
         while (iterator.hasNext()) {
             ProGuardClassNameEntry proGuardClassNameEntry = (ProGuardClassNameEntry) iterator.next();
-            String string = proGuardClassNameEntry.getClassName();
+            String className = proGuardClassNameEntry.getClassName();
             if (super.memberSpecs.size() == 0) {
                 proGuardConfigTranslator.logWarning("ProGuard '" + this.getOptionName() + "' at line " + this.getLineNumber() + " requires a method specification.");
             } else {
@@ -46,7 +46,7 @@ public abstract class ProGuardAssumeMethodOption extends ProGuardClassSpecificat
 
                 while (iterator1.hasNext()) {
                     String string1 = (String) iterator1.next();
-                    String string2 = string + ' ' + string1 + "";
+                    String string2 = className + ' ' + string1 + "";
                     this.addAssumeMethodSpec(proGuardConfigTranslator, string2, proGuardClassNameEntry.isNegated());
                 }
             }

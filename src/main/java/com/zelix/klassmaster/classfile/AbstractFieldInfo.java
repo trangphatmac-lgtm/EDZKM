@@ -64,11 +64,11 @@ public abstract class AbstractFieldInfo extends MemberInfo {
         return stringBuffer.toString();
     }
 
-    public AbstractFieldInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, int ba) {
-        super(classFileBase, constantUtf8, constantUtf81, attributes1, ba);
+    public AbstractFieldInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, int creationKind) {
+        super(classFileBase, constantUtf8, constantUtf81, attributes1, creationKind);
 
-        for (int i = 0; i < attributes1.length; i++) {
-            attributes1[i].setParent(this);
+        for (int attributes1ElementIndex = 0; attributes1ElementIndex < attributes1.length; attributes1ElementIndex++) {
+            attributes1[attributes1ElementIndex].setParent(this);
         }
     }
 
@@ -94,9 +94,9 @@ public abstract class AbstractFieldInfo extends MemberInfo {
     }
 
     public ConstantValueAttribute getConstantValueAttribute() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ConstantValueAttribute) {
-                return (ConstantValueAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ConstantValueAttribute) {
+                return (ConstantValueAttribute) this.attributes[attributeIndex];
             }
         }
 

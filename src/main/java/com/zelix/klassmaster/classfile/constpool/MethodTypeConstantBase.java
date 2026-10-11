@@ -8,7 +8,7 @@ public abstract class MethodTypeConstantBase extends ConstantPoolEntry {
         return TAG;
     }
 
-    public MethodTypeConstantBase(int ba, AbstractConstantPool abstractConstantPool) {
-        super(ba, abstractConstantPool);
+    public MethodTypeConstantBase(int index, AbstractConstantPool abstractConstantPool) {
+        super(index, abstractConstantPool);
     }
 }

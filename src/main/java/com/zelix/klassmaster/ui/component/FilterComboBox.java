@@ -21,8 +21,8 @@ public class FilterComboBox extends JComboBox implements ItemListener, FileChoos
         FilterComboBox filterComboBox2;
         DefaultComboBoxModel defaultComboBoxModel;
         if (zkmFileFilters != null && zkmFileFilters.length != 0) {
-            for (int i = 0; i < zkmFileFilters.length; i++) {
-                this.comboModel.addElement(zkmFileFilters[i]);
+            for (int zkmFileFilterIndex = 0; zkmFileFilterIndex < zkmFileFilters.length; zkmFileFilterIndex++) {
+                this.comboModel.addElement(zkmFileFilters[zkmFileFilterIndex]);
             }
 
             filterComboBox2 = this;

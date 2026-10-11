@@ -98,24 +98,24 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     public final BooleanFlag twoLongKeysFlag;
     public final List nameDictionary;
 
-    public String encryptMemberString(String string, int ba, ObservableHolder observableHolder, int[] bb) throws ZkmException, IOException {
-        long bc = ba;
-        bc <<= 46;
-        int[] bd = StringEncryptor.randomKeys(this.random, 6, MAX_CHAR_VALUE);
+    public String encryptMemberString(String string, int ba, ObservableHolder observableHolder, int[] integerArray) throws ZkmException, IOException {
+        long valueValue = ba;
+        valueValue <<= 46;
+        int[] integerArrayValue = StringEncryptor.randomKeys(this.random, 6, MAX_CHAR_VALUE);
         long be = Math.abs(this.random.nextInt() % 16);
-        int bf = (int) ((ba & 3) << 4 | be);
-        bc |= be << 42;
-        String string1 = StringEncryptor.xorWithKeys(string, bd);
-        shiftCharOffsets(bf, bd, bb);
+        int integerArrayArgumentElementIndex = (int) ((ba & 3) << 4 | be);
+        valueValue |= be << 42;
+        String string1 = StringEncryptor.xorWithKeys(string, integerArrayValue);
+        shiftCharOffsets(integerArrayArgumentElementIndex, integerArrayValue, integerArray);
 
-        for (int i = 0; i < bd.length; i++) {
-            long bh = bd[i];
-            int bi = 7 * (6 - i - 1);
-            long bj = bh << bi;
-            bc |= bj;
+        for (int integerArrayValueElementIndex = 0; integerArrayValueElementIndex < integerArrayValue.length; integerArrayValueElementIndex++) {
+            long integerArrayValueElement = integerArrayValue[integerArrayValueElementIndex];
+            int bi = 7 * (6 - integerArrayValueElementIndex - 1);
+            long bj = integerArrayValueElement << bi;
+            valueValue |= bj;
         }
 
-        observableHolder.setValue(bc);
+        observableHolder.setValue(valueValue);
         return string1;
     }
 
@@ -210,7 +210,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     public ResolvedMethodRef createMethodHandleResolverMethod(
             boolean bl,
             ProgramClass programClass1,
-            int[] ba,
+            int[] integerArray,
             ResolvedMethodRef resolvedMethodRef,
             ResolvedMethodRef resolvedMethodRef1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
@@ -226,8 +226,8 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         int bb = this.usesTwoLongKeys() ? 15 : 13;
         String string = string2;
         int bc = bb;
-        String string1 = string;
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, bc);
+        String descriptor = string;
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, bc);
         ArrayList arrayList = new ArrayList();
         MutableInt mutableInt = new MutableInt(0);
         MutableInt mutableInt1 = new MutableInt(0);
@@ -235,7 +235,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 arrayList,
                 localVariableList1,
                 exceptionHandlerSpecs,
-                ba,
+                integerArray,
                 resolvedMethodRef,
                 resolvedMethodRef1,
                 list1,
@@ -262,11 +262,11 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         );
     }
 
-    public static void shiftCharOffsets(int ba, int[] bb, int[] bc) {
-        int bd = bc[ba];
+    public static void shiftCharOffsets(int integerArrayArgumentElementIndex, int[] integerArray, int[] integerArrayArgument) {
+        int integerArrayArgumentElement = integerArrayArgument[integerArrayArgumentElementIndex];
 
-        for (int i = 0; i < bb.length; i++) {
-            bb[i] = (bb[i] + bd) % (MAX_CHAR_VALUE + 1);
+        for (int integerArrayElementIndex = 0; integerArrayElementIndex < integerArray.length; integerArrayElementIndex++) {
+            integerArray[integerArrayElementIndex] = (integerArray[integerArrayElementIndex] + integerArrayArgumentElement) % (MAX_CHAR_VALUE + 1);
         }
     }
 
@@ -757,8 +757,8 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         int ba = booleanFlag.getValue() ? 16 : 14;
         String string = string2;
         int bb = ba;
-        String string1 = string;
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, bb);
+        String descriptor = string;
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, bb);
         ArrayList arrayList = new ArrayList();
         MutableInt mutableInt = new MutableInt(0);
         MutableInt mutableInt1 = new MutableInt(0);
@@ -804,7 +804,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     }
 
     public int[] pickRandomLetters() {
-        int[] ba = new int[]{
+        int[] sourceArrayValue = new int[]{
                 97,
                 98,
                 99,
@@ -928,39 +928,39 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 254,
                 255
         };
-        int[] bb = new int[]{104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115};
-        int[] bc;
+        int[] sourceArrayValue2 = new int[]{104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115};
+        int[] sourceArray;
         if (this.usesTwoLongKeys() && HiddenOptionFlags.XOR_INDY_OPCODE_KEY) {
-            bc = bb;
+            sourceArray = sourceArrayValue2;
         } else {
-            bc = ba;
+            sourceArray = sourceArrayValue;
         }
 
         byte be;
         if (!HiddenOptionFlags.DONT_SHUFFLE_REFERENCE_OPCODES) {
-            ZkmUtils.shuffleInts(bc, this.random);
+            ZkmUtils.shuffleInts(sourceArray, this.random);
             be = 7;
         } else {
             be = 7;
         }
 
-        int[] bd = new int[be];
-        System.arraycopy(bc, 0, bd, 0, bd.length);
-        return bd;
+        int[] destinationArray = new int[be];
+        System.arraycopy(sourceArray, 0, destinationArray, 0, destinationArray.length);
+        return destinationArray;
     }
 
     public List buildReturnUnboxCode(
             ResolvedMethodRef resolvedMethodRef, ConstantPool constantPool1, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1
     ) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList(2);
-        String string = ConstantPoolEntry.getReturnDescriptor(resolvedMethodRef.getDescriptor());
-        if (string.equals("V")) {
+        String returnDescriptor = ConstantPoolEntry.getReturnDescriptor(resolvedMethodRef.getDescriptor());
+        if (returnDescriptor.equals("V")) {
             arrayList.add(SimpleInstruction.forOpcode(87));
             return arrayList;
         }
 
-        if (!string.startsWith("[") && (!string.startsWith("L") || !string.endsWith(";"))) {
-            if (string.equals("Z")) {
+        if (!returnDescriptor.startsWith("[") && (!returnDescriptor.startsWith("L") || !returnDescriptor.endsWith(";"))) {
+            if (returnDescriptor.equals("Z")) {
                 ResolvedClassConstant resolvedClassConstant8 = constantPool1.getOrCreateClassConstant("java/lang/Boolean", list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant8));
                 ResolvedMethodRefConstant resolvedMethodRefConstant7 = constantPool1.getOrAddMethodRef(
@@ -968,7 +968,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 );
                 arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant7));
                 return arrayList;
-            } else if (string.equals("B")) {
+            } else if (returnDescriptor.equals("B")) {
                 ResolvedClassConstant resolvedClassConstant7 = constantPool1.getOrCreateClassConstant("java/lang/Byte", list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant7));
                 ResolvedMethodRefConstant resolvedMethodRefConstant6 = constantPool1.getOrAddMethodRef(
@@ -976,7 +976,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 );
                 arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant6));
                 return arrayList;
-            } else if (string.equals("S")) {
+            } else if (returnDescriptor.equals("S")) {
                 ResolvedClassConstant resolvedClassConstant6 = constantPool1.getOrCreateClassConstant("java/lang/Short", list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant6));
                 ResolvedMethodRefConstant resolvedMethodRefConstant5 = constantPool1.getOrAddMethodRef(
@@ -984,7 +984,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 );
                 arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant5));
                 return arrayList;
-            } else if (string.equals("C")) {
+            } else if (returnDescriptor.equals("C")) {
                 ResolvedClassConstant resolvedClassConstant5 = constantPool1.getOrCreateClassConstant("java/lang/Character", list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant5));
                 ResolvedMethodRefConstant resolvedMethodRefConstant4 = constantPool1.getOrAddMethodRef(
@@ -992,7 +992,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 );
                 arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant4));
                 return arrayList;
-            } else if (string.equals("I")) {
+            } else if (returnDescriptor.equals("I")) {
                 ResolvedClassConstant resolvedClassConstant4 = constantPool1.getOrCreateClassConstant("java/lang/Integer", list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant4));
                 ResolvedMethodRefConstant resolvedMethodRefConstant3 = constantPool1.getOrAddMethodRef(
@@ -1000,7 +1000,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 );
                 arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant3));
                 return arrayList;
-            } else if (string.equals("J")) {
+            } else if (returnDescriptor.equals("J")) {
                 ResolvedClassConstant resolvedClassConstant3 = constantPool1.getOrCreateClassConstant("java/lang/Long", list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant3));
                 ResolvedMethodRefConstant resolvedMethodRefConstant2 = constantPool1.getOrAddMethodRef(
@@ -1008,7 +1008,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 );
                 arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant2));
                 return arrayList;
-            } else if (string.equals("F")) {
+            } else if (returnDescriptor.equals("F")) {
                 ResolvedClassConstant resolvedClassConstant2 = constantPool1.getOrCreateClassConstant("java/lang/Float", list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant2));
                 ResolvedMethodRefConstant resolvedMethodRefConstant1 = constantPool1.getOrAddMethodRef(
@@ -1016,7 +1016,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 );
                 arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant1));
                 return arrayList;
-            } else if (string.equals("D")) {
+            } else if (returnDescriptor.equals("D")) {
                 ResolvedClassConstant resolvedClassConstant1 = constantPool1.getOrCreateClassConstant("java/lang/Double", list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant1));
                 ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddMethodRef(
@@ -1037,11 +1037,11 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     }
 
     public void buildReferenceTableChunks(
-            String string,
+            String descriptorArgument,
             List list1,
             Map map1,
             Map map2,
-            int[] ba,
+            int[] integerArray,
             Map map3,
             ResolvedFieldRef resolvedFieldRef,
             ResolvedFieldRef resolvedFieldRef1,
@@ -1054,7 +1054,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         int bb = map1.size() + map2.size();
         int bc = 0;
         int bd = 0;
-        InstructionListBuffer instructionListBuffer = new InstructionListBuffer(bb, string);
+        InstructionListBuffer instructionListBuffer = new InstructionListBuffer(bb, descriptorArgument);
         ArrayList arrayList = instructionListBuffer.getInstructions();
         list1.add(instructionListBuffer);
         arrayList.add(new ConstantRefInstruction(178, resolvedFieldRef));
@@ -1066,11 +1066,11 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
             NamedTypeRef namedTypeRef = (NamedTypeRef) entry.getKey();
-            String string1 = namedTypeRef.getClassName().replace('/', '.');
+            String key = namedTypeRef.getClassName().replace('/', '.');
             Integer integer = (Integer) entry.getValue();
-            hashMap.put(string1, integer);
+            hashMap.put(key, integer);
             ArrayList arrayList1;
-            byte bf;
+            byte instancesByOpcodeElementIndex;
             if (methodKeyInjector != null) {
                 if (arrayList.size() == 1) {
                     MutableInt mutableInt = new MutableInt();
@@ -1080,17 +1080,17 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                     arrayList.addAll(0, list3);
                     bd += mutableInt.getValue();
                     arrayList1 = arrayList;
-                    bf = 89;
+                    instancesByOpcodeElementIndex = 89;
                 } else {
                     arrayList1 = arrayList;
-                    bf = 89;
+                    instancesByOpcodeElementIndex = 89;
                 }
             } else {
                 arrayList1 = arrayList;
-                bf = 89;
+                instancesByOpcodeElementIndex = 89;
             }
 
-            arrayList1.add(SimpleInstruction.forOpcode(bf));
+            arrayList1.add(SimpleInstruction.forOpcode(instancesByOpcodeElementIndex));
             bd = ++bd + Instruction.appendIntConstant(integer, arrayList, constantPool1, list2);
             if (namedTypeRef.isPrimitive()) {
                 map3.put(integer, this.createIndexedKey(integer));
@@ -1114,9 +1114,9 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 arrayList.add(SimpleInstruction.forOpcode(83));
                 bd += 4;
             } else {
-                String string3 = this.encryptMemberString(string1, integer, observableHolder, ba);
+                String valueValue2 = this.encryptMemberString(key, integer, observableHolder, integerArray);
                 map3.put(integer, observableHolder.getValue());
-                ResolvedStringConstant resolvedStringConstant1 = constantPool1.addStringConstant(string3, list2);
+                ResolvedStringConstant resolvedStringConstant1 = constantPool1.addStringConstant(valueValue2, list2);
                 arrayList.add(new ConstantRefInstruction(19, resolvedStringConstant1));
                 bd += 3;
                 arrayList.add(SimpleInstruction.forOpcode(83));
@@ -1127,7 +1127,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             if (bd > MAX_METHOD_CODE_SIZE) {
                 arrayList.add(SimpleInstruction.forOpcode(177));
                 if (bc < bb) {
-                    instructionListBuffer = new InstructionListBuffer(bb, string);
+                    instructionListBuffer = new InstructionListBuffer(bb, descriptorArgument);
                     arrayList = instructionListBuffer.getInstructions();
                     list1.add(instructionListBuffer);
                     arrayList.add(new ConstantRefInstruction(178, resolvedFieldRef));
@@ -1144,11 +1144,11 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         while (iterator.hasNext()) {
             Entry entry1 = (Entry) iterator.next();
             ClassMemberRef classMemberRef = (ClassMemberRef) entry1.getKey();
-            int be = (Integer) entry1.getValue();
+            int valueValue = (Integer) entry1.getValue();
             String string2 = this.buildMemberDescriptor(classMemberRef, hashMap, map3);
-            String string4 = this.encryptMemberString(string2, be, observableHolder, ba);
-            map3.put(be, observableHolder.getValue());
-            ResolvedStringConstant resolvedStringConstant2 = constantPool1.addStringConstant(string4, list2);
+            String valueValue3 = this.encryptMemberString(string2, valueValue, observableHolder, integerArray);
+            map3.put(valueValue, observableHolder.getValue());
+            ResolvedStringConstant resolvedStringConstant2 = constantPool1.addStringConstant(valueValue3, list2);
             if (methodKeyInjector != null && arrayList.size() == 1) {
                 MutableInt mutableInt1 = new MutableInt();
                 LocalVariableList localVariableList1 = instructionListBuffer.getLocalVariables();
@@ -1159,7 +1159,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             }
 
             arrayList.add(SimpleInstruction.forOpcode(89));
-            bd += Instruction.appendIntConstant(be, arrayList, constantPool1, list2);
+            bd += Instruction.appendIntConstant(valueValue, arrayList, constantPool1, list2);
             arrayList.add(new ConstantRefInstruction(19, resolvedStringConstant2));
             arrayList.add(SimpleInstruction.forOpcode(83));
             bd += 5;
@@ -1167,7 +1167,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             if (bd > MAX_METHOD_CODE_SIZE) {
                 arrayList.add(SimpleInstruction.forOpcode(177));
                 if (bc < bb) {
-                    instructionListBuffer = new InstructionListBuffer(bb, string);
+                    instructionListBuffer = new InstructionListBuffer(bb, descriptorArgument);
                     arrayList = instructionListBuffer.getInstructions();
                     list1.add(instructionListBuffer);
                     arrayList.add(new ConstantRefInstruction(178, resolvedFieldRef));
@@ -1186,10 +1186,10 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
 
     public ResolvedMethodRef addHelperMethod(
             ProgramClass programClass1,
-            String string,
+            String valueArgument,
             ArrayList arrayList,
-            int ba,
-            int bb,
+            int maxStack,
+            int maxLocals,
             LocalVariableList localVariableList1,
             ExceptionHandlerSpec[] exceptionHandlerSpecs,
             boolean bl,
@@ -1206,10 +1206,10 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         }
 
         MethodInfo methodInfo1 = programClass1.createUniquelyNamedStaticMethod(
-                string,
+                valueArgument,
                 arrayList,
-                ba,
-                bb,
+                maxStack,
+                maxLocals,
                 bc,
                 localVariableList1,
                 exceptionHandlerSpecs,
@@ -1263,8 +1263,8 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             throw zkmRuntimeException;
         }
 
-        String string2 = string3;
-        return classResolver2.getVersionedClass(string2, integer1, "Looking for type '" + string1 + "' during " + "Reference Obfuscation");
+        String key = string3;
+        return classResolver2.getVersionedClass(key, integer1, "Looking for type '" + string1 + "' during " + "Reference Obfuscation");
     }
 
     public void buildDeclaredMethodFinderCode(
@@ -1370,7 +1370,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             ProgramClass programClass1,
             ResolvedFieldRef resolvedFieldRef,
             ResolvedFieldRef resolvedFieldRef1,
-            int[] ba,
+            int[] integerArray,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
             ClassRepository classRepository1,
             ClassResolver classResolver1,
@@ -1379,8 +1379,8 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     ) throws ZkmException, IOException {
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
         String string = this.twoLongKeysFlag.getValue() ? "(JJ)I" : "(J)I";
-        String string1 = string;
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, 5);
+        String descriptor = string;
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, 5);
         ArrayList arrayList = new ArrayList();
         MutableInt mutableInt = new MutableInt(0);
         MutableInt mutableInt1 = new MutableInt(0);
@@ -1389,7 +1389,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 localVariableList1,
                 resolvedFieldRef,
                 resolvedFieldRef1,
-                ba,
+                integerArray,
                 list1,
                 mutableInt1,
                 mutableInt,
@@ -1453,20 +1453,20 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
 
         while (iterator3.hasNext()) {
             Entry entry1 = (Entry) iterator3.next();
-            String string1 = (String) entry1.getKey();
-            String string2 = "(" + string1 + ")[Ljava/lang/Object;";
-            LocalVariableList localVariableList1 = new LocalVariableList(true, string2, 5);
+            String key = (String) entry1.getKey();
+            String descriptor = "(" + key + ")[Ljava/lang/Object;";
+            LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, 5);
             ArrayList arrayList = new ArrayList();
             MutableInt mutableInt = new MutableInt();
-            int ba = this.buildArgumentPackerCode(
-                    string2, arrayList, localVariableList1, mutableInt, list1, constantPool1, classRepository1, classResolver1, programClass1.supportsJava5()
+            int maxLocalsValue = this.buildArgumentPackerCode(
+                    descriptor, arrayList, localVariableList1, mutableInt, list1, constantPool1, classRepository1, classResolver1, programClass1.supportsJava5()
             );
             ResolvedMethodRef resolvedMethodRef = this.addGeneratedMethod(
                     programClass1,
-                    string2,
+                    descriptor,
                     arrayList,
                     mutableInt.getValue(),
-                    ba,
+                    maxLocalsValue,
                     localVariableList1,
                     exceptionHandlerSpecs,
                     bl,
@@ -1564,7 +1564,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     }
 
     public int[] shuffleKeyBitPositions() {
-        int[] ba = new int[]{
+        int[] integerArray = new int[]{
                 0,
                 1,
                 2,
@@ -1630,8 +1630,8 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 62,
                 63
         };
-        ZkmUtils.shuffleInts(ba, this.random);
-        return ba;
+        ZkmUtils.shuffleInts(integerArray, this.random);
+        return integerArray;
     }
 
     public ResolvedMethodRef createDeclaredMethodFinderMethod(
@@ -1678,8 +1678,8 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     ) throws ZkmException, IOException {
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[1];
         String string = this.twoLongKeysFlag.getValue() ? "(JJ)Ljava/lang/Class;" : "(J)Ljava/lang/Class;";
-        String string1 = string;
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, 5);
+        String descriptor = string;
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, 5);
         ArrayList arrayList = new ArrayList();
         MutableInt mutableInt = new MutableInt(0);
         MutableInt mutableInt1 = new MutableInt(0);
@@ -1748,31 +1748,31 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
 
     public String buildMemberDescriptor(ClassMemberRef classMemberRef, Map map1, Map map2) {
         StringBuilder stringBuilder = new StringBuilder();
-        String string = classMemberRef.getOwnerClass().getClassName();
-        Integer integer = (Integer) map1.get(string.replace('/', '.'));
+        String className = classMemberRef.getOwnerClass().getClassName();
+        Integer integer = (Integer) map1.get(className.replace('/', '.'));
         if (integer != null) {
             stringBuilder.append(String.valueOf(Long.toString((Long) map2.get(integer), 36)));
         } else {
-            stringBuilder.append(string);
+            stringBuilder.append(className);
         }
 
         stringBuilder.append('\b');
         stringBuilder.append(classMemberRef.getName());
         if (!classMemberRef.isField()) {
             stringBuilder.append('\b');
-            String string1 = classMemberRef.getDescriptor();
-            Iterator iterator = ConstantPoolEntry.getParameterClassForNames(string1).iterator();
+            String descriptor = classMemberRef.getDescriptor();
+            Iterator iterator = ConstantPoolEntry.getParameterClassForNames(descriptor).iterator();
 
             while (iterator.hasNext()) {
                 String string2 = (String) iterator.next();
                 this.appendTypeName(string2, stringBuilder, map1, map2, true);
             }
 
-            this.appendTypeName(MethodSignature.getReturnPart(string1), stringBuilder, map1, map2, true);
+            this.appendTypeName(MethodSignature.getReturnPart(descriptor), stringBuilder, map1, map2, true);
         } else {
             stringBuilder.append('\b');
-            String string3 = classMemberRef.getDescriptor();
-            this.appendTypeName(string3, stringBuilder, map1, map2, false);
+            String descriptorValue = classMemberRef.getDescriptor();
+            this.appendTypeName(descriptorValue, stringBuilder, map1, map2, false);
         }
 
         return stringBuilder.toString();
@@ -1807,8 +1807,8 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         int ba = booleanFlag.getValue() ? 20 : 18;
         String string = string2;
         int bb = ba;
-        String string1 = string;
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, bb);
+        String descriptor = string;
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, bb);
         ArrayList arrayList = new ArrayList();
         MutableInt mutableInt = new MutableInt(0);
         MutableInt mutableInt1 = new MutableInt(0);
@@ -1846,7 +1846,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     }
 
     public int buildArgumentPackerCode(
-            String string,
+            String descriptor,
             List list1,
             LocalVariableList localVariableList1,
             MutableInt mutableInt,
@@ -1861,15 +1861,15 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         boolean bl1 = false;
         boolean bl2 = false;
         boolean bl3 = false;
-        List list3 = ConstantPoolEntry.getParameterTypes(string);
+        List list3 = ConstantPoolEntry.getParameterTypes(descriptor);
         list1.add(Instruction.createIntPush(list3.size()));
         ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant("java/lang/Object", list2);
         list1.add(new ConstantRefInstruction(189, resolvedClassConstant));
 
-        for (int i = 0; i < list3.size(); i++) {
+        for (int elementIndex = 0; elementIndex < list3.size(); elementIndex++) {
             list1.add(SimpleInstruction.forOpcode(89));
-            list1.add(Instruction.createIntPush(i));
-            String string1 = (String) list3.get(i);
+            list1.add(Instruction.createIntPush(elementIndex));
+            String string1 = (String) list3.get(elementIndex);
             if (string1.length() > 1) {
                 list1.add(Instruction.createObjectLoad(ba, localVariableList1, 4));
             } else {
@@ -1982,7 +1982,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         HashSet hashSet1 = ZkmUtils.createHashSet();
         HashSet hashSet2 = ZkmUtils.createHashSet();
         set2 = LookupClassFactory.partitionClassesByModule(set2, hashSet1, hashSet2, hashSet);
-        int ba = hashSet2.size();
+        int hashSet2Size = hashSet2.size();
         HashSet hashSet3 = ZkmUtils.createHashSet();
         Object object = null;
         HashSet hashSet4 = ZkmUtils.createHashSet();
@@ -1993,20 +1993,20 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         Map map6;
         String string11;
         if (changeLogMapping1 != null) {
-            String string2 = changeLogMapping1.getReferenceObfuscationClass();
-            if (string2 != null) {
-                String string3 = LookupClassFactory.validateChangeLogLookupName(
-                        "ObfuscateReferencesClass:", string2, "obfuscateReferencesPackage", string, "Reference Obfuscation", hashSet, changeLogMapping1, enumerableMap2
+            String referenceObfuscationClass = changeLogMapping1.getReferenceObfuscationClass();
+            if (referenceObfuscationClass != null) {
+                String valueValue = LookupClassFactory.validateChangeLogLookupName(
+                        "ObfuscateReferencesClass:", referenceObfuscationClass, "obfuscateReferencesPackage", string, "Reference Obfuscation", hashSet, changeLogMapping1, enumerableMap2
                 );
-                if (string3 != null) {
-                    observableHolder.setValue(string3);
-                    hashSet3.add(string3);
-                    hashSet4.add(ZkmUtils.dotsToSlashes(string3));
+                if (valueValue != null) {
+                    observableHolder.setValue(valueValue);
+                    hashSet3.add(valueValue);
+                    hashSet4.add(ZkmUtils.dotsToSlashes(valueValue));
                     Iterator iterator = hashSet1.iterator();
 
                     while (iterator.hasNext()) {
                         ProgramClass programClass1 = (ProgramClass) iterator.next();
-                        map2.put(programClass1, string3);
+                        map2.put(programClass1, valueValue);
                     }
                 }
             }
@@ -2015,12 +2015,12 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
 
             while (iterator2.hasNext()) {
                 SourceArchive sourceArchive1 = (SourceArchive) iterator2.next();
-                String string9 = sourceArchive1.getModuleName();
-                String string4 = changeLogMapping1.getModuleReferenceObfuscationClass(string9);
-                if (string4 != null) {
-                    String string5 = LookupClassFactory.validateChangeLogLookupName(
+                String moduleName = sourceArchive1.getModuleName();
+                String moduleReferenceObfuscationClass = changeLogMapping1.getModuleReferenceObfuscationClass(moduleName);
+                if (moduleReferenceObfuscationClass != null) {
+                    String valueValue2 = LookupClassFactory.validateChangeLogLookupName(
                             "ObfuscateReferencesClass:",
-                            string4,
+                            moduleReferenceObfuscationClass,
                             "obfuscateReferencesPackage",
                             string,
                             "Reference Obfuscation",
@@ -2028,24 +2028,24 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                             changeLogMapping1,
                             enumerableMap2
                     );
-                    if (string5 != null) {
-                        map1.put(sourceArchive1, string5);
-                        hashSet3.add(string5);
-                        hashSet4.add(ZkmUtils.dotsToSlashes(string5));
+                    if (valueValue2 != null) {
+                        map1.put(sourceArchive1, valueValue2);
+                        hashSet3.add(valueValue2);
+                        hashSet4.add(ZkmUtils.dotsToSlashes(valueValue2));
                         List list1 = readOnlyMultiMapView.getValues(sourceArchive1);
                         if (list1 != null) {
                             Iterator iterator1 = list1.iterator();
 
                             while (iterator1.hasNext()) {
                                 ProgramClass programClass2 = (ProgramClass) iterator1.next();
-                                map2.put(programClass2, string5);
+                                map2.put(programClass2, valueValue2);
                             }
                         }
                     }
                 }
             }
 
-            if (ba != 0 && observableHolder.isValueNull()) {
+            if (hashSet2Size != 0 && observableHolder.isValueNull()) {
                 set3 = set2;
                 object1 = object;
                 observableHolder2 = observableHolder;
@@ -2123,7 +2123,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             List list1,
             LocalVariableList localVariableList1,
             ExceptionHandlerSpec[] exceptionHandlerSpecs,
-            int[] ba,
+            int[] integerArray,
             ResolvedMethodRef resolvedMethodRef,
             ResolvedMethodRef resolvedMethodRef1,
             List list2,
@@ -2187,17 +2187,17 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         list1.add(Instruction.createObjectStore(bf, localVariableList1, 4));
         list1.add(labelInstruction);
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[0]));
+        list1.add(Instruction.createIntPush(integerArray[0]));
         list1.add(new BranchInstruction(159, labelInstruction4));
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[1]));
+        list1.add(Instruction.createIntPush(integerArray[1]));
         list1.add(new BranchInstruction(159, labelInstruction4));
         list1.add(labelInstruction3);
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[2]));
+        list1.add(Instruction.createIntPush(integerArray[2]));
         list1.add(new BranchInstruction(159, labelInstruction4));
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[3]));
+        list1.add(Instruction.createIntPush(integerArray[3]));
         list1.add(new BranchInstruction(160, labelInstruction8));
         list1.add(labelInstruction4);
         list1.add(Instruction.createLongLoad(4, localVariableList1, 4));
@@ -2226,7 +2226,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant3));
         list1.add(Instruction.createObjectStore(bj, localVariableList1, 4));
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[0]));
+        list1.add(Instruction.createIntPush(integerArray[0]));
         list1.add(new BranchInstruction(160, labelInstruction5));
         list1.add(Instruction.createObjectLoad(0, localVariableList1, 4));
         list1.add(Instruction.createObjectLoad(bg, localVariableList1, 4));
@@ -2245,7 +2245,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         list1.add(new GotoInstruction(labelInstruction11));
         list1.add(labelInstruction5);
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[1]));
+        list1.add(Instruction.createIntPush(integerArray[1]));
         list1.add(new BranchInstruction(160, labelInstruction6));
         list1.add(Instruction.createObjectLoad(0, localVariableList1, 4));
         list1.add(Instruction.createObjectLoad(bg, localVariableList1, 4));
@@ -2264,7 +2264,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         list1.add(new GotoInstruction(labelInstruction11));
         list1.add(labelInstruction6);
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[2]));
+        list1.add(Instruction.createIntPush(integerArray[2]));
         list1.add(new BranchInstruction(160, labelInstruction7));
         list1.add(Instruction.createObjectLoad(0, localVariableList1, 4));
         list1.add(Instruction.createObjectLoad(bg, localVariableList1, 4));
@@ -2338,7 +2338,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         list1.add(new ConstantRefInstruction(184, resolvedMethodRefConstant12));
         list1.add(Instruction.createObjectStore(bk, localVariableList1, 4));
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[4]));
+        list1.add(Instruction.createIntPush(integerArray[4]));
         list1.add(new BranchInstruction(160, labelInstruction9));
         list1.add(Instruction.createObjectLoad(0, localVariableList1, 4));
         list1.add(Instruction.createObjectLoad(bg, localVariableList1, 4));
@@ -2357,7 +2357,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         list1.add(new GotoInstruction(labelInstruction11));
         list1.add(labelInstruction9);
         list1.add(Instruction.createIntLoad(bc, localVariableList1, 4));
-        list1.add(Instruction.createIntPush(ba[5]));
+        list1.add(Instruction.createIntPush(integerArray[5]));
         list1.add(new BranchInstruction(160, labelInstruction10));
         list1.add(Instruction.createObjectLoad(0, localVariableList1, 4));
         list1.add(Instruction.createObjectLoad(bg, localVariableList1, 4));
@@ -2410,21 +2410,21 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         list1.add(new ConstantRefInstruction(178, resolvedFieldRef));
         list1.add(SimpleInstruction.forOpcode(83));
         ConstantPool constantPool2;
-        String string;
+        String valueValue;
         if (this.usesTwoLongKeys()) {
             list1.add(SimpleInstruction.forOpcode(89));
             list1.add(Instruction.createIntPush(1));
             list1.add(new ConstantRefInstruction(178, resolvedFieldRef));
             list1.add(SimpleInstruction.forOpcode(83));
             constantPool2 = constantPool1;
-            string = "java/lang/invoke/MethodHandles";
+            valueValue = "java/lang/invoke/MethodHandles";
         } else {
             constantPool2 = constantPool1;
-            string = "java/lang/invoke/MethodHandles";
+            valueValue = "java/lang/invoke/MethodHandles";
         }
 
         ResolvedMethodRefConstant resolvedMethodRefConstant17 = constantPool2.getOrAddMethodRef(
-                string,
+                valueValue,
                 "dropArguments",
                 "(Ljava/lang/invoke/MethodHandle;I[Ljava/lang/Class;)Ljava/lang/invoke/MethodHandle;",
                 list2,
@@ -2653,32 +2653,20 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     }
 
     @Override
-    public ProgramClass createSyntheticClass(String string, int ba, int bb, int bc, Object object) throws ZkmException {
+    public ProgramClass createSyntheticClass(String className, int majorVersion, int bb, int minorVersion, Object object) throws ZkmException {
         VisitableNode[] visitableNodes1 = ReferenceObfuscationExclusions.getVisitableNodes();
 
         try {
             ClassFileInputStream classFileInputStream1;
-            label24:
-            {
-                byte[] bd;
-                if (ba < 46) {
-                    bd = LEGACY_LOOKUP_CLASS_BYTES;
-                    if (bb < 0) {
-                        VisitableNode[] visitableNodes2 = visitableNodes1;
-                        classFileInputStream1 = ClassFileInputStream.fromBytes((byte[]) (Object) (visitableNodes2[0]), (Boolean) (Object) (visitableNodes2[2]));
-                        break label24;
-                    }
-                } else {
-                    bd = LOOKUP_CLASS_BYTES;
-                }
-
-                Boolean boolean1 = false;
-                byte[] be = bd;
-                classFileInputStream1 = ClassFileInputStream.fromBytes(be, boolean1);
+            if (majorVersion < 46 && bb < 0) {
+                classFileInputStream1 = ClassFileInputStream.fromBytes((byte[]) (Object) (visitableNodes1[0]), (Boolean) (Object) (visitableNodes1[2]));
+            } else {
+                byte[] classBytes = majorVersion < 46 ? LEGACY_LOOKUP_CLASS_BYTES : LOOKUP_CLASS_BYTES;
+                classFileInputStream1 = ClassFileInputStream.fromBytes(classBytes, false);
             }
 
             ClassFileInputStream classFileInputStream = classFileInputStream1;
-            InputFileLocation inputFileLocation = InputFileLocation.createNamedPlaceholder("ReferenceObfuscation." + string);
+            InputFileLocation inputFileLocation = InputFileLocation.createNamedPlaceholder("ReferenceObfuscation." + className);
             ObservableHolder observableHolder = new ObservableHolder();
             ListenerRegistry listenerRegistry1 = new ListenerRegistry();
             PrintWriter printWriter = new PrintWriter(new StringWriter());
@@ -2687,9 +2675,9 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             ProgramClass programClass1 = new ProgramClass(
                     classFileInputStream, inputFileLocation, observableHolder, listenerRegistry1, printWriter, threeKeyMultiMap, 4
             );
-            programClass1.renameClass(string, ZkmUtils.createHashMap(13));
-            programClass1.setMajorVersion(ba);
-            programClass1.setMinorVersion(bc);
+            programClass1.renameClass(className, ZkmUtils.createHashMap(13));
+            programClass1.setMajorVersion(majorVersion);
+            programClass1.setMinorVersion(minorVersion);
             return programClass1;
         } catch (IOException iOException) {
             throw new ReferenceObfuscationException("ObfuscateReferences (A) : " + iOException.getMessage(), iOException);
@@ -2701,46 +2689,46 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     public ResolvedMethodRefConstant getFieldSetterRef(
             ResolvedFieldRef resolvedFieldRef, ConstantPool constantPool1, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        String string = resolvedFieldRef.getDescriptor();
+        String descriptor = resolvedFieldRef.getDescriptor();
         ConstantPool constantPool2;
-        String string1;
-        if (!string.startsWith("[")) {
-            if (!string.startsWith("L") || !string.endsWith(";")) {
-                if (string.equals("Z")) {
+        String valueValue;
+        if (!descriptor.startsWith("[")) {
+            if (!descriptor.startsWith("L") || !descriptor.endsWith(";")) {
+                if (descriptor.equals("Z")) {
                     return constantPool1.getOrAddMethodRef(
                             "java/lang/reflect/Field", "setBoolean", "(Ljava/lang/Object;Z)V", list1, classMemberLookup1, classResolver1
                     );
                 }
 
-                if (string.equals("B")) {
+                if (descriptor.equals("B")) {
                     return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "setByte", "(Ljava/lang/Object;B)V", list1, classMemberLookup1, classResolver1);
                 }
 
-                if (string.equals("S")) {
+                if (descriptor.equals("S")) {
                     return constantPool1.getOrAddMethodRef(
                             "java/lang/reflect/Field", "setShort", "(Ljava/lang/Object;S)V", list1, classMemberLookup1, classResolver1
                     );
                 }
 
-                if (string.equals("C")) {
+                if (descriptor.equals("C")) {
                     return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "setChar", "(Ljava/lang/Object;C)V", list1, classMemberLookup1, classResolver1);
                 }
 
-                if (string.equals("I")) {
+                if (descriptor.equals("I")) {
                     return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "setInt", "(Ljava/lang/Object;I)V", list1, classMemberLookup1, classResolver1);
                 }
 
-                if (string.equals("J")) {
+                if (descriptor.equals("J")) {
                     return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "setLong", "(Ljava/lang/Object;J)V", list1, classMemberLookup1, classResolver1);
                 }
 
-                if (string.equals("F")) {
+                if (descriptor.equals("F")) {
                     return constantPool1.getOrAddMethodRef(
                             "java/lang/reflect/Field", "setFloat", "(Ljava/lang/Object;F)V", list1, classMemberLookup1, classResolver1
                     );
                 }
 
-                if (string.equals("D")) {
+                if (descriptor.equals("D")) {
                     return constantPool1.getOrAddMethodRef(
                             "java/lang/reflect/Field", "setDouble", "(Ljava/lang/Object;D)V", list1, classMemberLookup1, classResolver1
                     );
@@ -2752,13 +2740,13 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             }
 
             constantPool2 = constantPool1;
-            string1 = "java/lang/reflect/Field";
+            valueValue = "java/lang/reflect/Field";
         } else {
             constantPool2 = constantPool1;
-            string1 = "java/lang/reflect/Field";
+            valueValue = "java/lang/reflect/Field";
         }
 
-        return constantPool2.getOrAddMethodRef(string1, "set", "(Ljava/lang/Object;Ljava/lang/Object;)V", list1, classMemberLookup1, classResolver1);
+        return constantPool2.getOrAddMethodRef(valueValue, "set", "(Ljava/lang/Object;Ljava/lang/Object;)V", list1, classMemberLookup1, classResolver1);
     }
 
     public static boolean needsReflectionInvoker(
@@ -2769,12 +2757,12 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         } else if (!HiddenOptionFlags.OBFUSCATE_REFERENCES_INDY) {
             return true;
         } else {
-            return !canUseInvokedynamic(classMemberRef, classHierarchyQuery) ? true : !bothSupportInvokedynamic(programClass1, programClass2);
+            return ((!canUseInvokedynamic(classMemberRef, classHierarchyQuery)) || (!bothSupportInvokedynamic(programClass1, programClass2)));
         }
     }
 
     public Map assignTypeIndices(ListMultimap listMultimap, ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
-        int ba = 0;
+        int valueValue = 0;
         LinkedHashMap linkedHashMap = new LinkedHashMap();
         String string5;
         ClassResolver classResolver2;
@@ -2792,34 +2780,34 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                     if (hashSet.add(classMemberRef)) {
                         ClassFileBase classFileBase = classMemberRef.getOwnerClass();
                         if (!linkedHashMap.containsKey(classFileBase)) {
-                            linkedHashMap.put(classFileBase, integerCache.valueOf(ba++));
+                            linkedHashMap.put(classFileBase, integerCache.valueOf(valueValue++));
                         }
 
                         ClassFileBase classFileBase1 = methodBytecode1.getOwningClass();
                         Integer integer = classFileBase1.hasReleaseVersion() ? classFileBase1.getReleaseVersion() : null;
                         if (!classMemberRef.isField()) {
-                            String string3 = classMemberRef.getDescriptor();
-                            List list1 = ConstantPoolEntry.getParameterClassForNames(string3);
+                            String descriptor = classMemberRef.getDescriptor();
+                            List list1 = ConstantPoolEntry.getParameterClassForNames(descriptor);
                             Iterator iterator2 = list1.iterator();
 
                             while (iterator2.hasNext()) {
                                 String string1 = (String) iterator2.next();
                                 NamedTypeRef namedTypeRef1 = this.resolveTypeRef(string1, integer, classResolver1, ignoreMissingReferencesSpec1);
                                 if (!linkedHashMap.containsKey(namedTypeRef1)) {
-                                    linkedHashMap.put(namedTypeRef1, ba++);
+                                    linkedHashMap.put(namedTypeRef1, valueValue++);
                                 }
                             }
 
-                            String string4 = MethodSignature.getReturnPart(string3);
-                            NamedTypeRef namedTypeRef2 = this.resolveTypeRef(string4, integer, classResolver1, ignoreMissingReferencesSpec1);
+                            String returnPart = MethodSignature.getReturnPart(descriptor);
+                            NamedTypeRef namedTypeRef2 = this.resolveTypeRef(returnPart, integer, classResolver1, ignoreMissingReferencesSpec1);
                             if (!linkedHashMap.containsKey(namedTypeRef2)) {
-                                linkedHashMap.put(namedTypeRef2, ba++);
+                                linkedHashMap.put(namedTypeRef2, valueValue++);
                             }
                         } else {
-                            String string = classMemberRef.getDescriptor();
-                            NamedTypeRef namedTypeRef = this.resolveTypeRef(string, integer, classResolver1, ignoreMissingReferencesSpec1);
+                            String descriptorValue = classMemberRef.getDescriptor();
+                            NamedTypeRef namedTypeRef = this.resolveTypeRef(descriptorValue, integer, classResolver1, ignoreMissingReferencesSpec1);
                             if (!linkedHashMap.containsKey(namedTypeRef)) {
-                                linkedHashMap.put(namedTypeRef, ba++);
+                                linkedHashMap.put(namedTypeRef, valueValue++);
                             }
                         }
                     }
@@ -2835,10 +2823,10 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             string5 = "java/lang/Object";
         }
 
-        String string2 = string5;
-        ClassFileBase classFileBase2 = classResolver2.getClassFile(string2);
+        String key = string5;
+        ClassFileBase classFileBase2 = classResolver2.getClassFile(key);
         if (!linkedHashMap.containsKey(classFileBase2)) {
-            linkedHashMap.put(classFileBase2, ba);
+            linkedHashMap.put(classFileBase2, valueValue);
         }
 
         return linkedHashMap;
@@ -3270,7 +3258,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 arrayList, localVariableList1, resolvedMethodRef, list1, mutableInt1, mutableInt, constantPool1, classRepository1, classResolver1
         );
         int value = mutableInt1.getValue();
-        int bd = mutableInt.getValue();
+        int valueValue = mutableInt.getValue();
         ClassRepository classRepository2 = classRepository1;
         InheritedMemberAnalyzer inheritedMemberAnalyzer1 = inheritedMemberAnalyzer;
         return this.addHelperMethod(
@@ -3278,7 +3266,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
                 "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/invoke/MutableCallSite;Ljava/lang/String;Ljava/lang/invoke/MethodType;[Ljava/lang/Object;)Ljava/lang/Object;",
                 arrayList,
                 value,
-                bd,
+                valueValue,
                 localVariableList1,
                 exceptionHandlerSpecs,
                 bl,
@@ -3297,24 +3285,24 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             ClassMemberLookup classMemberLookup1,
             ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        String string = resolvedFieldRef.getDescriptor();
-        if (!string.startsWith("[") && (!string.startsWith("L") || !string.endsWith(";"))) {
-            if (string.equals("Z")) {
+        String descriptor = resolvedFieldRef.getDescriptor();
+        if (!descriptor.startsWith("[") && (!descriptor.startsWith("L") || !descriptor.endsWith(";"))) {
+            if (descriptor.equals("Z")) {
                 return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "getBoolean", "(Ljava/lang/Object;)Z", list1, classMemberLookup1, classResolver1);
-            } else if (string.equals("B")) {
+            } else if (descriptor.equals("B")) {
                 return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "getByte", "(Ljava/lang/Object;)B", list1, classMemberLookup1, classResolver1);
-            } else if (string.equals("S")) {
+            } else if (descriptor.equals("S")) {
                 return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "getShort", "(Ljava/lang/Object;)S", list1, classMemberLookup1, classResolver1);
-            } else if (string.equals("C")) {
+            } else if (descriptor.equals("C")) {
                 return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "getChar", "(Ljava/lang/Object;)C", list1, classMemberLookup1, classResolver1);
-            } else if (string.equals("I")) {
+            } else if (descriptor.equals("I")) {
                 return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "getInt", "(Ljava/lang/Object;)I", list1, classMemberLookup1, classResolver1);
-            } else if (string.equals("J")) {
+            } else if (descriptor.equals("J")) {
                 return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "getLong", "(Ljava/lang/Object;)J", list1, classMemberLookup1, classResolver1);
-            } else if (string.equals("F")) {
+            } else if (descriptor.equals("F")) {
                 return constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "getFloat", "(Ljava/lang/Object;)F", list1, classMemberLookup1, classResolver1);
             } else {
-                return string.equals("D")
+                return descriptor.equals("D")
                         ? constantPool1.getOrAddMethodRef("java/lang/reflect/Field", "getDouble", "(Ljava/lang/Object;)D", list1, classMemberLookup1, classResolver1)
                         : constantPool1.getOrAddMethodRef(
                         "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", list1, classMemberLookup1, classResolver1
@@ -3377,13 +3365,13 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     }
 
     public void appendTypeName(String string, StringBuilder stringBuilder, Map map1, Map map2, boolean bl) {
-        String string1 = ConstantPoolEntry.stripClassDescriptor(string).replace('/', '.');
-        Integer integer = (Integer) map1.get(string1);
+        String key = ConstantPoolEntry.stripClassDescriptor(string).replace('/', '.');
+        Integer integer = (Integer) map1.get(key);
         if (integer != null) {
             Long long1 = (Long) map2.get(integer);
             stringBuilder.append(String.valueOf(Long.toString(long1, 36)));
         } else {
-            stringBuilder.append(string1);
+            stringBuilder.append(key);
         }
 
         if (bl) {
@@ -3452,10 +3440,10 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         if (classMemberRef.isProgramMember()) {
             bl = true;
         } else if (HiddenOptionFlags.OBFUSCATE_JDK_MEMBER_REFERENCES) {
-            String string = classMemberRef.getPackagePath();
+            String packagePath = classMemberRef.getPackagePath();
             MemberInfo memberInfo1 = classMemberRef.getMember();
             ClassFileBase classFileBase = classMemberRef.getOwnerClass();
-            if (!string.equals("java/lang/invoke")
+            if (!packagePath.equals("java/lang/invoke")
                     && (!memberInfo1.isMethod() || !memberInfo1.isNative() || !memberInfo1.getClassName().equals("java/lang/Object"))
                     && (
                     !classFileBase.isInterface()
@@ -3479,7 +3467,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             LocalVariableList localVariableList1,
             ResolvedFieldRef resolvedFieldRef,
             ResolvedFieldRef resolvedFieldRef1,
-            int[] ba,
+            int[] integerArray,
             List list2,
             MutableInt mutableInt,
             MutableInt mutableInt1,
@@ -3699,12 +3687,12 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
 
         for (int i = 0; i < labelInstructions.length; i += 1) {
             list1.add(labelInstructions[i]);
-            list1.add(Instruction.createIntPush(ba[i]));
+            list1.add(Instruction.createIntPush(integerArray[i]));
             list1.add(new GotoInstruction(labelInstruction67));
         }
 
         list1.add(labelInstruction66);
-        list1.add(Instruction.createIntPush(ba[63]));
+        list1.add(Instruction.createIntPush(integerArray[63]));
         list1.add(labelInstruction67);
         list1.add(Instruction.createIntStore(be, localVariableList1, 4));
         list1.add(Instruction.createIntPush(6));
@@ -3806,7 +3794,7 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             MethodInfo methodInfo1,
             Map map1,
             Map map2,
-            int[] ba,
+            int[] integerArray,
             Map map3,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
             MethodKeyInjector methodKeyInjector,
@@ -3815,14 +3803,14 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             List list1,
             ConstantPool constantPool1
     ) throws ZkmException, IOException {
-        int bb = map1.size() + map2.size();
+        int valueValue2 = map1.size() + map2.size();
         int bc = 65535 - constantPool1.getEntryCount() - list1.size() - 100;
-        if (!HiddenOptionFlags.REFERENCE_OBFUSCATION_METHOD_KEYS && bb > bc) {
+        if (!HiddenOptionFlags.REFERENCE_OBFUSCATION_METHOD_KEYS && valueValue2 > bc) {
             throw new ZkmProcessingException(
                     "Reference Obfuscation : ConstantPool length too large in class '"
                             + programClass1.getLocationName()
                             + "' : "
-                            + bb
+                            + valueValue2
                             + " > "
                             + bc
                             + " : "
@@ -3835,14 +3823,14 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             methodKeyInjector.initializeForMethod(methodInfo1, 1);
         }
 
-        String string = methodKeyInjector == null ? "()V" : "(J)V";
+        String valueValue3 = methodKeyInjector == null ? "()V" : "(J)V";
         ArrayList arrayList = new ArrayList();
         this.buildReferenceTableChunks(
-                string,
+                valueValue3,
                 arrayList,
                 map1,
                 map2,
-                ba,
+                integerArray,
                 map3,
                 resolvedFieldRef,
                 resolvedFieldRef1,
@@ -3857,26 +3845,26 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             arrayList1.addAll(methodKeyInjector.buildKeyInitInstructions(methodInfo1, list1, inheritedMemberAnalyzer, 4));
         }
 
-        Instruction instruction1 = Instruction.createIntConstantPush(bb, constantPool1, list1);
+        Instruction instruction1 = Instruction.createIntConstantPush(valueValue2, constantPool1, list1);
         arrayList1.add(instruction1);
         ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant("java/lang/Object", list1);
         arrayList1.add(new ConstantRefInstruction(189, resolvedClassConstant));
         arrayList1.add(new ConstantRefInstruction(179, resolvedFieldRef));
-        Instruction instruction2 = Instruction.createIntConstantPush(bb, constantPool1, list1);
+        Instruction instruction2 = Instruction.createIntConstantPush(valueValue2, constantPool1, list1);
         arrayList1.add(instruction2);
         ResolvedClassConstant resolvedClassConstant1 = constantPool1.getOrCreateClassConstant("java/lang/String", list1);
         arrayList1.add(new ConstantRefInstruction(189, resolvedClassConstant1));
         arrayList1.add(new ConstantRefInstruction(179, resolvedFieldRef1));
-        int bd = methodKeyInjector == null ? 0 : 2;
+        int maxLocals = methodKeyInjector == null ? 0 : 2;
         LocalVariableList localVariableList1 = methodInfo1.getLocalVariableList();
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            InstructionListBuffer instructionListBuffer = (InstructionListBuffer) arrayList.get(i);
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            InstructionListBuffer instructionListBuffer = (InstructionListBuffer) arrayList.get(elementIndex);
             MethodInfo methodInfo2 = programClass1.createUniquelyNamedStaticMethod(
-                    string,
+                    valueValue3,
                     instructionListBuffer.getInstructions(),
                     4,
-                    bd,
+                    maxLocals,
                     1,
                     instructionListBuffer.getLocalVariables(),
                     new ExceptionHandlerSpec[0],
@@ -3889,11 +3877,11 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
             if (methodKeyInjector != null) {
                 Long long1 = methodKeyInjector.createMethodKey(methodInfo2);
                 methodKeyInjector.putKeyLocal(methodInfo2, instructionListBuffer.getLocalVariables().getSlotAt(0));
-                long bf = methodKeyInjector.getMethodKey(methodInfo1);
+                long methodKey = methodKeyInjector.getMethodKey(methodInfo1);
                 arrayList1.add(Instruction.createLongLoad(methodKeyInjector.getKeyLocal(methodInfo1).getIndex(), localVariableList1, 4));
-                long bg = methodKeyInjector.getKeyValueAt(i);
-                long bh = long1 ^ bf ^ bg;
-                arrayList1.add(Instruction.createLongConstantLoad(bh, constantPool1, list1));
+                long keyValueAt = methodKeyInjector.getKeyValueAt(elementIndex);
+                long valueValue = long1 ^ methodKey ^ keyValueAt;
+                arrayList1.add(Instruction.createLongConstantLoad(valueValue, constantPool1, list1));
                 arrayList1.add(SimpleInstruction.forOpcode(131));
             }
 
@@ -3906,10 +3894,10 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
 
     public ResolvedMethodRef addGeneratedMethod(
             ProgramClass programClass1,
-            String string,
+            String valueArgumentArgument,
             ArrayList arrayList,
-            int ba,
-            int bb,
+            int maxStack,
+            int maxLocals,
             LocalVariableList localVariableList1,
             ExceptionHandlerSpec[] exceptionHandlerSpecs,
             boolean bl,
@@ -3921,10 +3909,10 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
         InheritedMemberAnalyzer inheritedMemberAnalyzer1 = inheritedMemberAnalyzer;
         return this.addHelperMethod(
                 programClass1,
-                string,
+                valueArgumentArgument,
                 arrayList,
-                ba,
-                bb,
+                maxStack,
+                maxLocals,
                 localVariableList1,
                 exceptionHandlerSpecs,
                 bl,
@@ -3936,9 +3924,9 @@ public class ReferenceObfuscator implements SyntheticClassFactory {
     }
 
     public boolean isWideField(ResolvedFieldRef resolvedFieldRef) {
-        String string = resolvedFieldRef.getDescriptor();
-        if (string.length() == 1) {
-            switch (string.charAt(0)) {
+        String descriptor = resolvedFieldRef.getDescriptor();
+        if (descriptor.length() == 1) {
+            switch (descriptor.charAt(0)) {
                 case 'B':
                 case 'C':
                 case 'F':

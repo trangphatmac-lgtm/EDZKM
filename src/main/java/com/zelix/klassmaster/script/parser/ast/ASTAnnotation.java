@@ -31,8 +31,8 @@ public class ASTAnnotation extends ZkmScriptSimpleNode implements AnnotationMatc
         StringBuilder stringBuilder = new StringBuilder();
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptNode zkmScriptNode = this.jjtGetChild(childrenElementIndex);
             zkmScriptNode.execute(this, scriptEnvironment1);
             QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) zkmScriptNode;
             stringBuilder.append(qualifiedNameMatcher.getSpecText());

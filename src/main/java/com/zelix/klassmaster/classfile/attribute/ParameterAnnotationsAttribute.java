@@ -42,12 +42,12 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             int n = i = 0;
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    this.parameterAnnotations[n][n2].collectReferencedClasses(set);
-                    n2 = (j = n2 + 1);
+                    this.parameterAnnotations[n][parameterAnnotationElementIndex].collectReferencedClasses(set);
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -63,12 +63,12 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             int n = i = 0;
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    this.parameterAnnotations[n][n2].updateAfterMethodRename();
-                    n2 = (j = n2 + 1);
+                    this.parameterAnnotations[n][parameterAnnotationElementIndex].updateAfterMethodRename();
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -83,14 +83,14 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             int n = i = 0;
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    if (s.equals(this.parameterAnnotations[n][n2].getTypeName())) {
-                        return this.parameterAnnotations[n][n2];
+                    if (s.equals(this.parameterAnnotations[n][parameterAnnotationElementIndex].getTypeName())) {
+                        return this.parameterAnnotations[n][parameterAnnotationElementIndex];
                     }
-                    n2 = (j = n2 + 1);
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -153,11 +153,11 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             while (i < array.length) {
                 final ArrayList list2 = new ArrayList();
                 list.add(list2);
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    final AnnotationEntry annotationEntry = this.parameterAnnotations[n][n2];
+                    final AnnotationEntry annotationEntry = this.parameterAnnotations[n][parameterAnnotationElementIndex];
                     final ClassFileBase annotationClass = annotationEntry.getAnnotationClass();
                     if (trimProcessor.isAnnotationRetained(annotationClass)) {
                         b2 = false;
@@ -170,7 +170,7 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
                     } else {
                         b = true;
                     }
-                    n2 = (j = n2 + 1);
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -179,9 +179,9 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             if (b) {
                 final int size = list.size();
                 final AnnotationEntry[][] parameterAnnotations = new AnnotationEntry[size][];
-                for (int k = 0; k < size; ++k) {
-                    final List list3 = (List) list.get(k);
-                    parameterAnnotations[k] = ((com.zelix.klassmaster.classfile.attribute.AnnotationEntry[]) (list3.toArray(new AnnotationEntry[list3.size()])));
+                for (int elementIndex = 0; elementIndex < size; ++elementIndex) {
+                    final List list3 = (List) list.get(elementIndex);
+                    parameterAnnotations[elementIndex] = ((com.zelix.klassmaster.classfile.attribute.AnnotationEntry[]) (list3.toArray(new AnnotationEntry[list3.size()])));
                 }
                 this.parameterAnnotations = parameterAnnotations;
             }
@@ -197,12 +197,12 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             int n = i = 0;
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    this.parameterAnnotations[n][n2].updateAfterFieldRename();
-                    n2 = (j = n2 + 1);
+                    this.parameterAnnotations[n][parameterAnnotationElementIndex].updateAfterFieldRename();
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -215,10 +215,10 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
     public int getLength() {
         if (super.valid) {
             int length = 1;
-            for (int length2 = this.parameterAnnotations.length, i = 0; i < length2; ++i) {
+            for (int length2 = this.parameterAnnotations.length, parameterAnnotationIndex = 0; parameterAnnotationIndex < length2; ++parameterAnnotationIndex) {
                 length += 2;
-                for (int length3 = this.parameterAnnotations[i].length, j = 0; j < length3; ++j) {
-                    length += this.parameterAnnotations[i][j].getByteLength();
+                for (int length3 = this.parameterAnnotations[parameterAnnotationIndex].length, parameterAnnotationElementIndex = 0; parameterAnnotationElementIndex < length3; ++parameterAnnotationElementIndex) {
+                    length += this.parameterAnnotations[parameterAnnotationIndex][parameterAnnotationElementIndex].getByteLength();
                 }
             }
             return this.length = length;
@@ -233,12 +233,12 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             int n = i = 0;
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    this.parameterAnnotations[n][n2].collectReferencedMembers(set, set2, set3, set4);
-                    n2 = (j = n2 + 1);
+                    this.parameterAnnotations[n][parameterAnnotationElementIndex].collectReferencedMembers(set, set2, set3, set4);
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -247,8 +247,8 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
         }
     }
 
-    public ParameterAnnotationsAttribute(final ClassFileComponent classFileComponent, final int n, final String s, final ClassFileInputStream classFileInputStream, final ListMultimap listMultimap, final PrintWriter printWriter, final String str) throws IOException {
-        super(classFileComponent, n, s, classFileInputStream, listMultimap);
+    public ParameterAnnotationsAttribute(final ClassFileComponent classFileComponent, final int constantPoolIndex, final String attributeName, final ClassFileInputStream classFileInputStream, final ListMultimap listMultimap, final PrintWriter printWriter, final String str) throws IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         final byte[] array = new byte[this.length];
         classFileInputStream.read(array);
         final ClassFileInputStream fromBytes = ClassFileInputStream.fromBytes(array, false);
@@ -256,17 +256,18 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             if (this.length >= 1) {
                 final int unsignedByte = fromBytes.readUnsignedByte();
                 this.parameterAnnotations = new AnnotationEntry[unsignedByte][];
-                Label_0247:
-                for (int i = 0; i < unsignedByte; ++i) {
+                boolean invalidAnnotationFound = false;
+                for (int parameterAnnotationIndex = 0; !invalidAnnotationFound && parameterAnnotationIndex < unsignedByte; ++parameterAnnotationIndex) {
                     final int unsignedShort = fromBytes.readUnsignedShort();
-                    this.parameterAnnotations[i] = new AnnotationEntry[unsignedShort];
-                    for (int j = 0; j < unsignedShort; ++j) {
-                        this.parameterAnnotations[i][j] = AnnotationEntry.read(this, fromBytes, listMultimap);
-                        if (!this.parameterAnnotations[i][j].isValid()) {
+                    this.parameterAnnotations[parameterAnnotationIndex] = new AnnotationEntry[unsignedShort];
+                    for (int parameterAnnotationElementIndex = 0; parameterAnnotationElementIndex < unsignedShort; ++parameterAnnotationElementIndex) {
+                        this.parameterAnnotations[parameterAnnotationIndex][parameterAnnotationElementIndex] = AnnotationEntry.read(this, fromBytes, listMultimap);
+                        if (!this.parameterAnnotations[parameterAnnotationIndex][parameterAnnotationElementIndex].isValid()) {
                             super.valid = false;
-                            printWriter.println("ERROR: " + this.getLocationName() + " : " + str + " (A) " + this.parameterAnnotations[i][j].getErrorMessage(0, 761259100, 9539));
+                            printWriter.println("ERROR: " + this.getLocationName() + " : " + str + " (A) " + this.parameterAnnotations[parameterAnnotationIndex][parameterAnnotationElementIndex].getErrorMessage(0, 761259100, 9539));
                             super.rawBytes = array;
-                            break Label_0247;
+                            invalidAnnotationFound = true;
+                            break;
                         }
                     }
                 }
@@ -296,12 +297,12 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
                 dataOutputStream.writeShort(this.parameterAnnotations[n].length);
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    this.parameterAnnotations[n][n2].writeRemapped(dataOutputStream, map, scriptEnvironment);
-                    n2 = (j = n2 + 1);
+                    this.parameterAnnotations[n][parameterAnnotationElementIndex].writeRemapped(dataOutputStream, map, scriptEnvironment);
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -321,12 +322,12 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             int n = i = 0;
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    this.parameterAnnotations[n][n2].updateAfterClassRename(hashMap, hashMap2);
-                    n2 = (j = n2 + 1);
+                    this.parameterAnnotations[n][parameterAnnotationElementIndex].updateAfterClassRename(hashMap, hashMap2);
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -341,19 +342,19 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
         final int addedParamCount = changedMethodDescriptor.getAddedParamCount();
         int n = 0;
         final int n2 = 0;
-        final int n3 = 0;
+        final int parameterIndexValue = 0;
         int n4 = n2 + 1;
-        int n5 = changedMethodDescriptor.getParamIndex(n3);
-        for (int i = 0; i < paramCount; ++i) {
-            if (i == n5) {
-                array[i] = new AnnotationEntry[0];
+        int paramIndex = changedMethodDescriptor.getParamIndex(parameterIndexValue);
+        for (int arrayElementIndex = 0; arrayElementIndex < paramCount; ++arrayElementIndex) {
+            if (arrayElementIndex == paramIndex) {
+                array[arrayElementIndex] = new AnnotationEntry[0];
                 if (n4 < addedParamCount) {
-                    n5 = changedMethodDescriptor.getParamIndex(n4++);
+                    paramIndex = changedMethodDescriptor.getParamIndex(n4++);
                 }
             } else if (n < this.parameterAnnotations.length) {
-                array[i] = this.parameterAnnotations[n++];
+                array[arrayElementIndex] = this.parameterAnnotations[n++];
             } else {
-                array[i] = new AnnotationEntry[0];
+                array[arrayElementIndex] = new AnnotationEntry[0];
             }
         }
         if (this.originalParameterAnnotations == null) {
@@ -366,40 +367,36 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
     }
 
     @Override
-    public void collectUsedConstants(final char c, final int n, final UsedConstantsCollector usedConstantsCollector, final char c2) {
-        final VisitableNode[] flowGuardNodes = ClassFileComponent.getFlowGuardNodes();
-        usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
-        Label_0126:
-        {
-            if (super.valid) {
-                int i;
-                int n2 = i = 0;
-                AnnotationEntry[][] array = this.parameterAnnotations;
-                Label_0047:
-                while (i < array.length) {
-                    int n3 = 0;
-                    int j = 0;
-                    AnnotationEntry[][] array2 = this.parameterAnnotations;
-                    while (true) {
-                        while (j < array2[n2].length) {
-                            final VisitableNode[] array4;
-                            final AnnotationEntry[] array3 = (AnnotationEntry[]) (array4 = this.parameterAnnotations[n2]);
-                            if (c2 > '\0') {
-                                array3[n3].collectUsedConstants('\0', 1103830477, usedConstantsCollector, '\u978d');
-                                n3 = (j = n3 + 1);
-                                array2 = this.parameterAnnotations;
-                            } else {
-                                if (array4 == null) {
-                                    break Label_0126;
-                                }
-                                i = n2;
-                                array = this.parameterAnnotations;
-                                continue Label_0047;
+    public void collectUsedConstants(final char controlTag, final int controlSeed, final UsedConstantsCollector collector, final char controlMode) {
+        ClassFileComponent.getFlowGuardNodes();
+        collector.markUsed(this.nameConstant, this, this.getParent());
+        if (super.valid) {
+            int parameterIndex = 0;
+            int outerIndex = 0;
+            AnnotationEntry[][] outerAnnotations = this.parameterAnnotations;
+            while (outerIndex < outerAnnotations.length) {
+                int annotationIndex = 0;
+                AnnotationEntry[][] annotations = this.parameterAnnotations;
+                boolean restartParameter = false;
+                while (!restartParameter) {
+                    while (annotationIndex < annotations[parameterIndex].length) {
+                        final AnnotationEntry[] entries = this.parameterAnnotations[parameterIndex];
+                        if (controlMode > '\0') {
+                            entries[annotationIndex].collectUsedConstants('\0', 1103830477, collector, '\u978d');
+                            annotationIndex++;
+                            annotations = this.parameterAnnotations;
+                        } else {
+                            if (entries == null) {
+                                return;
                             }
+                            outerIndex = parameterIndex;
+                            outerAnnotations = this.parameterAnnotations;
+                            restartParameter = true;
+                            break;
                         }
-                        ++n2;
-                        VisitableNode[] array4 = flowGuardNodes;
-                        continue;
+                    }
+                    if (!restartParameter) {
+                        parameterIndex++;
                     }
                 }
             }
@@ -416,12 +413,12 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
                 dataOutputStream.writeShort(this.parameterAnnotations[n].length);
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    this.parameterAnnotations[n][n2].write(15571, dataOutputStream, 54846, 41447);
-                    n2 = (j = n2 + 1);
+                    this.parameterAnnotations[n][parameterAnnotationElementIndex].write(15571, dataOutputStream, 54846, 41447);
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);
@@ -439,12 +436,12 @@ public abstract class ParameterAnnotationsAttribute extends AnnotationAttributeB
             int n = i = 0;
             AnnotationEntry[][] array = this.parameterAnnotations;
             while (i < array.length) {
-                int n2 = 0;
+                int parameterAnnotationElementIndex = 0;
                 int j = 0;
                 AnnotationEntry[][] array2 = this.parameterAnnotations;
                 while (j < array2[n].length) {
-                    this.parameterAnnotations[n][n2].resolveReferences(classResolver, ignoreMissingReferencesSpec, scriptEnvironment);
-                    n2 = (j = n2 + 1);
+                    this.parameterAnnotations[n][parameterAnnotationElementIndex].resolveReferences(classResolver, ignoreMissingReferencesSpec, scriptEnvironment);
+                    parameterAnnotationElementIndex = (j = parameterAnnotationElementIndex + 1);
                     array2 = this.parameterAnnotations;
                 }
                 n = (i = n + 1);

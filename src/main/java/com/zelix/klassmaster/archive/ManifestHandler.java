@@ -81,16 +81,16 @@ public class ManifestHandler extends AbstractManifestProcessor {
     }
 
     public boolean isCldc10() throws ZkmException {
-        String string = this.getUnwrappedHeaderValue("MicroEdition-Configuration");
-        if (string == null) {
+        String unwrappedHeaderValue = this.getUnwrappedHeaderValue("MicroEdition-Configuration");
+        if (unwrappedHeaderValue == null) {
             return false;
         } else {
-            int ba = string.indexOf("-");
-            if (ba > -1 && ba < string.length() - 1) {
-                String string1 = string.substring(ba + 1);
+            int ba = unwrappedHeaderValue.indexOf("-");
+            if (ba > -1 && ba < unwrappedHeaderValue.length() - 1) {
+                String string1 = unwrappedHeaderValue.substring(ba + 1);
                 return string1.startsWith("1.0");
             } else {
-                throw new ZkmException("Invalid MicroEdition-Configuration '" + string + "' in manifest");
+                throw new ZkmException("Invalid MicroEdition-Configuration '" + unwrappedHeaderValue + "' in manifest");
             }
         }
     }
@@ -134,9 +134,9 @@ public class ManifestHandler extends AbstractManifestProcessor {
         return string2 + stringBuilder.toString();
     }
 
-    public String translateMidletAttribute(String string, EnumerableMap enumerableMap, EnumerableMap enumerableMap1) {
-        String string1 = this.getUnwrappedHeaderValue(string);
-        return this.wrapManifestLine(translateMidletValue(string, string1, enumerableMap, enumerableMap1));
+    public String translateMidletAttribute(String key, EnumerableMap enumerableMap, EnumerableMap enumerableMap1) {
+        String unwrappedHeaderValue = this.getUnwrappedHeaderValue(key);
+        return this.wrapManifestLine(translateMidletValue(key, unwrappedHeaderValue, enumerableMap, enumerableMap1));
     }
 
     public void collectEntryPointClasses(String string, Map map1, Map map2, Map map3) {
@@ -144,48 +144,48 @@ public class ManifestHandler extends AbstractManifestProcessor {
         Enumeration enumeration = super.headers.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string3 = (String) enumeration.nextElement();
-            if (string3.equals("Main-Class")
-                    || string3.equals("Rsrc-Main-Class")
-                    || string3.equals("Start-Class:")
-                    || string3.equals("Premain-Class:")
-                    || string3.equals("Agent-Class:")
-                    || string3.equals("Launcher-Agent-Class:")
-                    || string3.equals("JavaFX-Application-Class")
-                    || string3.equals("JavaFX-Preloader-Class")
-                    || string3.equals("JavaFX-Fallback-Class")) {
-                String string4 = this.getUnwrappedHeaderValue(string3);
-                String string5 = ZkmUtils.dotsToSlashes(string4);
-                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string5);
+            String keyValue3 = (String) enumeration.nextElement();
+            if (keyValue3.equals("Main-Class")
+                    || keyValue3.equals("Rsrc-Main-Class")
+                    || keyValue3.equals("Start-Class:")
+                    || keyValue3.equals("Premain-Class:")
+                    || keyValue3.equals("Agent-Class:")
+                    || keyValue3.equals("Launcher-Agent-Class:")
+                    || keyValue3.equals("JavaFX-Application-Class")
+                    || keyValue3.equals("JavaFX-Preloader-Class")
+                    || keyValue3.equals("JavaFX-Fallback-Class")) {
+                String unwrappedHeaderValue = this.getUnwrappedHeaderValue(keyValue3);
+                String key = ZkmUtils.dotsToSlashes(unwrappedHeaderValue);
+                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
                 if (programClass1 != null) {
-                    map1.put(programClass1, "MANIFEST.MF " + string3 + string2);
-                    switch (string3) {
+                    map1.put(programClass1, "MANIFEST.MF " + keyValue3 + string2);
+                    switch (keyValue3) {
                         case "Main-Class":
                         case "Rsrc-Main-Class":
                         case "Start-Class:":
                             MethodInfo methodInfo1 = programClass1.findMethodBySignature(MethodSignature.MAIN_METHOD);
                             if (methodInfo1 != null) {
-                                map2.put(methodInfo1, "MANIFEST.MF " + string3 + string2);
+                                map2.put(methodInfo1, "MANIFEST.MF " + keyValue3 + string2);
                                 if (HiddenOptionFlags.FIX_MANIFEST_MAIN_METHODS) {
-                                    map3.put(methodInfo1, "MANIFEST.MF " + string3 + string2);
+                                    map3.put(methodInfo1, "MANIFEST.MF " + keyValue3 + string2);
                                 }
                             }
                             break;
                         case "Premain-Class:":
                         case "Agent-Class:":
                         case "Launcher-Agent-Class:":
-                            this.addAgentEntryMethod(string3, string2, PREMAIN_WITH_INSTRUMENTATION, programClass1, map2, map3);
-                            this.addAgentEntryMethod(string3, string2, PREMAIN, programClass1, map2, map3);
-                            this.addAgentEntryMethod(string3, string2, AGENTMAIN_WITH_INSTRUMENTATION, programClass1, map2, map3);
-                            this.addAgentEntryMethod(string3, string2, AGENTMAIN, programClass1, map2, map3);
+                            this.addAgentEntryMethod(keyValue3, string2, PREMAIN_WITH_INSTRUMENTATION, programClass1, map2, map3);
+                            this.addAgentEntryMethod(keyValue3, string2, PREMAIN, programClass1, map2, map3);
+                            this.addAgentEntryMethod(keyValue3, string2, AGENTMAIN_WITH_INSTRUMENTATION, programClass1, map2, map3);
+                            this.addAgentEntryMethod(keyValue3, string2, AGENTMAIN, programClass1, map2, map3);
                         case "JavaFX-Application-Class":
                         case "JavaFX-Preloader-Class":
                         case "JavaFX-Fallback-Class":
                     }
                 }
-            } else if (string3.startsWith("MIDlet-") && NumericStringUtil.isInteger(string3.substring("MIDlet-".length()))) {
-                String string7 = this.getUnwrappedHeaderValue(string3);
-                StringTokenizer stringTokenizer1 = new StringTokenizer(string7, ",", true);
+            } else if (keyValue3.startsWith("MIDlet-") && NumericStringUtil.isInteger(keyValue3.substring("MIDlet-".length()))) {
+                String unwrappedHeaderValueValue = this.getUnwrappedHeaderValue(keyValue3);
+                StringTokenizer stringTokenizer1 = new StringTokenizer(unwrappedHeaderValueValue, ",", true);
                 int ba = 0;
 
                 while (stringTokenizer1.hasMoreTokens()) {
@@ -198,21 +198,21 @@ public class ManifestHandler extends AbstractManifestProcessor {
                             case 1:
                                 break;
                             case 2:
-                                String string11 = ZkmUtils.dotsToSlashes(string9);
-                                ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(string11);
+                                String keyValue = ZkmUtils.dotsToSlashes(string9);
+                                ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(keyValue);
                                 if (programClass3 != null) {
-                                    map1.put(programClass3, "MANIFEST.MF " + string3 + string2);
+                                    map1.put(programClass3, "MANIFEST.MF " + keyValue3 + string2);
                                 }
                                 break;
                             default:
-                                String[] strings = new String[]{"'" + string3 + "' has invalid value '" + string7 + "' : " + ba};
+                                String[] strings = new String[]{"'" + keyValue3 + "' has invalid value '" + unwrappedHeaderValueValue + "' : " + ba};
                                 ZkmAssert.assertTrue(false, strings);
                         }
                     }
                 }
-            } else if (!string3.equals("Signature-Version")) {
-                String string6 = this.getUnwrappedHeaderValue(string3);
-                StringTokenizer stringTokenizer = new StringTokenizer(string6, " ,;", true);
+            } else if (!keyValue3.equals("Signature-Version")) {
+                String unwrappedHeaderValueValue2 = this.getUnwrappedHeaderValue(keyValue3);
+                StringTokenizer stringTokenizer = new StringTokenizer(unwrappedHeaderValueValue2, " ,;", true);
 
                 while (stringTokenizer.hasMoreTokens()) {
                     String string8 = stringTokenizer.nextToken();
@@ -221,15 +221,15 @@ public class ManifestHandler extends AbstractManifestProcessor {
                         if (bb > 0 && bb < string8.length() - 1) {
                             String string1 = ".";
                             if (AbstractManifestProcessor.isDottedIdentifier(string8, string1)) {
-                                String string10 = ZkmUtils.dotsToSlashes(string8);
-                                if (!string10.endsWith(";")
-                                        && string10.indexOf("[") == -1
-                                        && string10.indexOf(".") == -1
-                                        && string10.indexOf("<") == -1
-                                        && string10.indexOf(">") == -1) {
-                                    ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string10);
+                                String keyValue2 = ZkmUtils.dotsToSlashes(string8);
+                                if (!keyValue2.endsWith(";")
+                                        && keyValue2.indexOf("[") == -1
+                                        && keyValue2.indexOf(".") == -1
+                                        && keyValue2.indexOf("<") == -1
+                                        && keyValue2.indexOf(">") == -1) {
+                                    ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(keyValue2);
                                     if (programClass2 != null) {
-                                        map1.put(programClass2, "MANIFEST.MF " + string3 + string2);
+                                        map1.put(programClass2, "MANIFEST.MF " + keyValue3 + string2);
                                     }
                                 }
                             }
@@ -253,43 +253,43 @@ public class ManifestHandler extends AbstractManifestProcessor {
         Enumeration enumeration = super.headers.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string1 = (String) enumeration.nextElement();
-            if (string1.equals("Main-Class")
-                    || string1.equals("Rsrc-Main-Class")
-                    || string1.equals("Start-Class:")
-                    || string1.equals("JavaFX-Application-Class")
-                    || string1.equals("JavaFX-Preloader-Class")
-                    || string1.equals("JavaFX-Fallback-Class")
-                    || string1.equals("Premain-Class:")
-                    || string1.equals("Agent-Class:")
-                    || string1.equals("Launcher-Agent-Class:")) {
-                String string5 = this.getUnwrappedHeaderValue(string1);
-                printWriter.println(this.wrapManifestLine(string1 + ":" + " " + AbstractManifestProcessor.translateName(string5, enumerableMap1)));
-            } else if (string1.equals("Manifest-Version") || string1.equals("Sealed")) {
-                String string4 = this.getRawHeaderValue(string1);
-                printWriter.println(string1 + ":" + " " + string4);
-            } else if (string1.equals("MIDlet-Icon")) {
+            String key = (String) enumeration.nextElement();
+            if (key.equals("Main-Class")
+                    || key.equals("Rsrc-Main-Class")
+                    || key.equals("Start-Class:")
+                    || key.equals("JavaFX-Application-Class")
+                    || key.equals("JavaFX-Preloader-Class")
+                    || key.equals("JavaFX-Fallback-Class")
+                    || key.equals("Premain-Class:")
+                    || key.equals("Agent-Class:")
+                    || key.equals("Launcher-Agent-Class:")) {
+                String unwrappedHeaderValue = this.getUnwrappedHeaderValue(key);
+                printWriter.println(this.wrapManifestLine(key + ":" + " " + AbstractManifestProcessor.translateName(unwrappedHeaderValue, enumerableMap1)));
+            } else if (key.equals("Manifest-Version") || key.equals("Sealed")) {
+                String rawHeaderValue = this.getRawHeaderValue(key);
+                printWriter.println(key + ":" + " " + rawHeaderValue);
+            } else if (key.equals("MIDlet-Icon")) {
                 printWriter.println(
                         this.wrapManifestLine(
-                                string1 + ":" + " " + ResourcePathTranslator.renameResourceParentPath(this.getUnwrappedHeaderValue(string1), enumerableMap)
+                                key + ":" + " " + ResourcePathTranslator.renameResourceParentPath(this.getUnwrappedHeaderValue(key), enumerableMap)
                         )
                 );
-            } else if (string1.startsWith("MIDlet-") && NumericStringUtil.isInteger(string1.substring("MIDlet-".length()))) {
-                printWriter.println(this.translateMidletAttribute(string1, enumerableMap, enumerableMap1));
-            } else if (!string1.equals("Signature-Version")) {
-                if (!string1.equals("Bundle-SymbolicName")
-                        && !string1.equals("Require-Bundle")
-                        && !string1.equals("Fragment-Host")
-                        && !string1.equals("Class-Path")
-                        && !string1.equals("Rsrc-Class-Path")
-                        && !string1.equals("JavaFX-Class-Path")) {
+            } else if (key.startsWith("MIDlet-") && NumericStringUtil.isInteger(key.substring("MIDlet-".length()))) {
+                printWriter.println(this.translateMidletAttribute(key, enumerableMap, enumerableMap1));
+            } else if (!key.equals("Signature-Version")) {
+                if (!key.equals("Bundle-SymbolicName")
+                        && !key.equals("Require-Bundle")
+                        && !key.equals("Fragment-Host")
+                        && !key.equals("Class-Path")
+                        && !key.equals("Rsrc-Class-Path")
+                        && !key.equals("JavaFX-Class-Path")) {
                     BooleanFlag booleanFlag = new BooleanFlag();
-                    String string3 = this.translateClassListAttribute(string1, enumerableMap, enumerableMap1, booleanFlag, string, bl, messageReporter1);
+                    String string3 = this.translateClassListAttribute(key, enumerableMap, enumerableMap1, booleanFlag, string, bl, messageReporter1);
                     if (!booleanFlag.getValue() || HiddenOptionFlags.KEEP_UNCHANGED_MANIFEST_ENTRIES) {
                         printWriter.println(string3);
                     }
                 } else {
-                    String string2 = this.wrapManifestLine(string1 + ":" + " " + this.getUnwrappedHeaderValue(string1));
+                    String string2 = this.wrapManifestLine(key + ":" + " " + this.getUnwrappedHeaderValue(key));
                     printWriter.println(string2);
                 }
             }

@@ -14,10 +14,10 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
 
     @Override
     public void handleFactoryAttribute(Object object, ProgramClass programClass1, Object object1, ObservableHolder observableHolder) throws ZkmException, IOException {
-        String string = (String) observableHolder.getValue();
-        String string1 = this.fxmlUpdater.lookupRenamedMethodName(programClass1.getDottedClassName(), string, BeanPropertyXmlHandler.GETTER_DESCRIPTOR, 8);
-        if (string1 != null && !string1.equals(string)) {
-            observableHolder.setValue(string1);
+        String value = (String) observableHolder.getValue();
+        String valueValue = this.fxmlUpdater.lookupRenamedMethodName(programClass1.getDottedClassName(), value, BeanPropertyXmlHandler.GETTER_DESCRIPTOR, 8);
+        if (valueValue != null && !valueValue.equals(value)) {
+            observableHolder.setValue(valueValue);
         }
     }
 
@@ -30,15 +30,15 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
 
     @Override
     public boolean handleControllerFieldId(
-            XmlElementNode xmlElementNode, ProgramClass programClass1, ClassFileBase classFileBase, Object object, String string, ObservableHolder observableHolder
+            XmlElementNode xmlElementNode, ProgramClass programClass1, ClassFileBase classFileBase, Object object, String name, ObservableHolder observableHolder
     ) throws ZkmException, IOException {
         xmlElementNode.getTagName();
-        String string1 = this.fxmlUpdater.getRenamedTypedFieldName(programClass1, classFileBase, string);
-        if (string1 != null && !string1.equals(string)) {
-            observableHolder.setValue(string1);
+        String renamedTypedFieldName = this.fxmlUpdater.getRenamedTypedFieldName(programClass1, classFileBase, name);
+        if (renamedTypedFieldName != null && !renamedTypedFieldName.equals(name)) {
+            observableHolder.setValue(renamedTypedFieldName);
         }
 
-        return string1 != null;
+        return renamedTypedFieldName != null;
     }
 
     @Override
@@ -46,19 +46,19 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
     }
 
     @Override
-    public void handleStaticPropertyAttribute(XmlElementNode xmlElementNode, ProgramClass programClass1, String string, Object object, String string1) throws ZkmException, IOException {
+    public void handleStaticPropertyAttribute(XmlElementNode xmlElementNode, ProgramClass programClass1, String key, Object object, String value) throws ZkmException, IOException {
         String string2 = (String) object;
         xmlElementNode.getTagName();
-        ObservableHolder observableHolder = new ObservableHolder(string1);
+        ObservableHolder observableHolder = new ObservableHolder(value);
         String string3 = (String) ZkmUtils.mapOrSelf(programClass1.getClassName(), FxmlFileUpdater.getOriginalClassNames(this.fxmlUpdater));
-        this.fxmlUpdater.resolveRenamedPropertyName(programClass1.getDottedClassName(), string3, string1, observableHolder);
-        if (!((String) observableHolder.getValue()).equals(string1) || !programClass1.getClassName().equals(string3)) {
-            String string4 = ZkmUtils.concatStrings(
+        this.fxmlUpdater.resolveRenamedPropertyName(programClass1.getDottedClassName(), string3, value, observableHolder);
+        if (!((String) observableHolder.getValue()).equals(value) || !programClass1.getClassName().equals(string3)) {
+            String valueValue = ZkmUtils.concatStrings(
                     new String[]{
                             string2.indexOf(46) == -1 ? programClass1.getSimpleName() : programClass1.getDottedClassName(), ".", (String) observableHolder.getValue()
                     }
             );
-            xmlElementNode.renameAttribute(string, string4);
+            xmlElementNode.renameAttribute(key, valueValue);
         }
     }
 
@@ -77,8 +77,8 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
         String string1 = this.fxmlUpdater
                 .lookupRenamedMethodName(programClass1.getDottedClassName(), string, FxmlFileUpdater.getHandlerSignatureFilter(this.fxmlUpdater), 0);
         if (string1 != null && !string1.equals(string)) {
-            String string2 = ZkmUtils.concatStrings(new String[]{String.valueOf('#'), string1});
-            observableHolder.setValue(string2);
+            String value = ZkmUtils.concatStrings(new String[]{String.valueOf('#'), string1});
+            observableHolder.setValue(value);
         }
 
         return string1 != null;
@@ -88,24 +88,24 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
     public void handleResourceLocation(Object object, Object object1) throws ZkmException, IOException {
         ObservableHolder observableHolder = (ObservableHolder) object1;
         FxmlFileUpdater.getEntryName(this.fxmlUpdater);
-        String string = ZkmFileUtils.getParentPath(
+        String parentPath = ZkmFileUtils.getParentPath(
                 this.fxmlUpdater.resourcePathTranslator.translateResourcePath(FxmlFileUpdater.getEntryPathName(this.fxmlUpdater))
         );
         FxmlFileUpdater fxmlFileUpdater;
-        if (string == null) {
-            string = "";
+        if (parentPath == null) {
+            parentPath = "";
             fxmlFileUpdater = this.fxmlUpdater;
         } else {
             fxmlFileUpdater = this.fxmlUpdater;
         }
 
-        String string1 = ZkmFileUtils.getParentPath(FxmlFileUpdater.getOriginalEntryName(fxmlFileUpdater));
-        if (string1 == null) {
-            string1 = "";
+        String parentPathValue = ZkmFileUtils.getParentPath(FxmlFileUpdater.getOriginalEntryName(fxmlFileUpdater));
+        if (parentPathValue == null) {
+            parentPathValue = "";
         }
 
         String string2 = ((String) object).substring(1);
-        String string3 = ZkmFileUtils.resolveAgainstBase(string2, string1);
+        String string3 = ZkmFileUtils.resolveAgainstBase(string2, parentPathValue);
         int ba = string3.indexOf(58);
         if (ba > -1) {
             if (ba < string3.length() - 1) {
@@ -121,7 +121,7 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
         String string4 = fxmlFileUpdater.resourcePathTranslator.translateResourcePath(string3);
         String string5 = string4;
         if (string2.charAt(0) != '/') {
-            string5 = ZkmFileUtils.computeRelativePath(string, string4);
+            string5 = ZkmFileUtils.computeRelativePath(parentPath, string4);
         }
 
         if (!string5.equals(string2)) {
@@ -131,16 +131,16 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
 
     @Override
     public void handlePropertyTag(XmlElementNode xmlElementNode, ProgramClass programClass1) throws ZkmException, IOException {
-        String string = xmlElementNode.getTagName();
-        ObservableHolder observableHolder = new ObservableHolder(string);
+        String tagName = xmlElementNode.getTagName();
+        ObservableHolder observableHolder = new ObservableHolder(tagName);
         this.fxmlUpdater
                 .resolveRenamedPropertyName(
                         programClass1.getDottedClassName(),
                         (String) ZkmUtils.mapOrSelf(programClass1.getClassName(), FxmlFileUpdater.getOriginalClassNames(this.fxmlUpdater)),
-                        string,
+                        tagName,
                         observableHolder
                 );
-        if (!((String) observableHolder.getValue()).equals(string)) {
+        if (!((String) observableHolder.getValue()).equals(tagName)) {
             xmlElementNode.setTagName((String) observableHolder.getValue());
         }
     }
@@ -160,21 +160,21 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
 
     @Override
     public void handleStaticPropertyTag(XmlElementNode xmlElementNode, ProgramClass programClass1, Object object, String string) throws ZkmException, IOException {
-        String string1 = this.fxmlUpdater.getRenamedFieldName(programClass1.getClassName(), string);
-        if (!programClass1.getSimpleName().equals(object) || !string.equals(string1)) {
-            String string2 = ZkmUtils.concatStrings(new String[]{programClass1.getSimpleName(), ".", string1});
-            xmlElementNode.setTagName(string2);
+        String renamedFieldName = this.fxmlUpdater.getRenamedFieldName(programClass1.getClassName(), string);
+        if (!programClass1.getSimpleName().equals(object) || !string.equals(renamedFieldName)) {
+            String tagName = ZkmUtils.concatStrings(new String[]{programClass1.getSimpleName(), ".", renamedFieldName});
+            xmlElementNode.setTagName(tagName);
         }
     }
 
     @Override
-    public boolean handleAnnotatedEventHandler(XmlElementNode xmlElementNode, Object object, String string, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public boolean handleAnnotatedEventHandler(XmlElementNode xmlElementNode, Object object, String key, ObservableHolder observableHolder) throws ZkmException, IOException {
         xmlElementNode.getTagName();
         ObservableHolder observableHolder1 = new ObservableHolder();
-        String string1 = this.fxmlUpdater.resolveRenamedMethodByName(string, FxmlFileUpdater.getHandlerSignatureFilter(this.fxmlUpdater), observableHolder1);
-        if (string1 != null && !string1.equals(string)) {
-            String string2 = ZkmUtils.concatStrings(new String[]{String.valueOf('#'), string1});
-            observableHolder.setValue(string2);
+        String string1 = this.fxmlUpdater.resolveRenamedMethodByName(key, FxmlFileUpdater.getHandlerSignatureFilter(this.fxmlUpdater), observableHolder1);
+        if (string1 != null && !string1.equals(key)) {
+            String value = ZkmUtils.concatStrings(new String[]{String.valueOf('#'), string1});
+            observableHolder.setValue(value);
         }
 
         return string1 != null;
@@ -186,16 +186,16 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
 
     @Override
     public boolean handleAnnotatedFieldId(
-            XmlElementNode xmlElementNode, ClassFileBase classFileBase, Object object, String string, ObservableHolder observableHolder
+            XmlElementNode xmlElementNode, ClassFileBase classFileBase, Object object, String name, ObservableHolder observableHolder
     ) throws ZkmException, IOException {
         xmlElementNode.getTagName();
         ObservableHolder observableHolder1 = new ObservableHolder();
-        String string1 = this.fxmlUpdater.resolveRenamedFieldName(classFileBase, string, observableHolder1);
-        if (string1 != null && !string1.equals(string)) {
-            observableHolder.setValue(string1);
+        String value = this.fxmlUpdater.resolveRenamedFieldName(classFileBase, name, observableHolder1);
+        if (value != null && !value.equals(name)) {
+            observableHolder.setValue(value);
         }
 
-        return string1 != null;
+        return value != null;
     }
 
     @Override
@@ -216,10 +216,10 @@ public class FxmlNameResolver implements XmlClassReferenceHandler {
 
     @Override
     public void handleConstantAttribute(Object object, ProgramClass programClass1, Object object1, ObservableHolder observableHolder) throws ZkmException, IOException {
-        String string = (String) observableHolder.getValue();
-        String string1 = this.fxmlUpdater.getRenamedFieldName(programClass1.getDottedClassName(), string);
-        if (!string1.equals(string)) {
-            observableHolder.setValue(string1);
+        String value = (String) observableHolder.getValue();
+        String renamedFieldName = this.fxmlUpdater.getRenamedFieldName(programClass1.getDottedClassName(), value);
+        if (!renamedFieldName.equals(value)) {
+            observableHolder.setValue(renamedFieldName);
         }
     }
 }

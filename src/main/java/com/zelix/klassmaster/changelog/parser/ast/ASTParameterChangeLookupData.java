@@ -12,20 +12,20 @@ public class ASTParameterChangeLookupData extends ChangeLogSimpleNode implements
     public String parameterChangeLookupData;
 
     @Override
-    public void setParsedName(Object object) {
-        this.parameterChangeLookupData = (String) object;
+    public void setParsedName(Object parsedName) {
+        this.parameterChangeLookupData = (String) parsedName;
     }
 
     @Override
     public void interpret(ChangeLogNode changeLogNode, int bd, int ba, int be, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         ChangeLogSimpleNode.getOpaqueStrings();
         int bb = this.jjtGetNumChildren();
-        int bc = 0;
+        int childrenElementIndex = 0;
 
-        while (bc < bb) {
+        while (childrenElementIndex < bb) {
             if (ba > 0) {
-                this.jjtGetChild(bc).interpret(this, 30872, 34067, 41973, abstractChangeLog);
-                bc++;
+                this.jjtGetChild(childrenElementIndex).interpret(this, 30872, 34067, 41973, abstractChangeLog);
+                childrenElementIndex++;
             }
         }
 

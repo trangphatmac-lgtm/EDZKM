@@ -40,14 +40,14 @@ public class LocalVariableTableAttribute extends LocalVariableTableBase {
                     if (localVariableSlot1 != null && !localVariableSlot1.isWideSecondHalf() && localVariableSlot1.isInserted()) {
                         ObservableHolder observableHolder = new ObservableHolder();
                         ObjectPair objectPair = methodFlowAnalyzer.findLocalVariableScope(i, observableHolder);
-                        String string = (String) observableHolder.getValue();
-                        if ((Integer) objectPair.getFirst() > -1 && (Integer) objectPair.getSecond() > -1 && string != null) {
+                        String value = (String) observableHolder.getValue();
+                        if ((Integer) objectPair.getFirst() > -1 && (Integer) objectPair.getSecond() > -1 && value != null) {
                             LocalVariableEntry localVariableEntry1 = new LocalVariableEntry(
                                     this,
                                     (Integer) objectPair.getFirst(),
                                     (Integer) objectPair.getSecond(),
                                     constantPool1.createUtf8Constant("a", list1),
-                                    constantPool1.createUtf8Constant(string, list1),
+                                    constantPool1.createUtf8Constant(value, list1),
                                     localVariableSlot1,
                                     listMultimap
                             );
@@ -61,9 +61,9 @@ public class LocalVariableTableAttribute extends LocalVariableTableBase {
             if (bl) {
                 ArrayList arrayList = new ArrayList(listMultimap1.getValueCount());
 
-                for (int i = 0; i < ba; i++) {
-                    if (listMultimap1.containsKey(i)) {
-                        Iterator iterator = listMultimap1.getValues(i).iterator();
+                for (int key = 0; key < ba; key++) {
+                    if (listMultimap1.containsKey(key)) {
+                        Iterator iterator = listMultimap1.getValues(key).iterator();
 
                         while (iterator.hasNext()) {
                             LocalVariableEntry localVariableEntry2 = (LocalVariableEntry) iterator.next();
@@ -88,15 +88,15 @@ public class LocalVariableTableAttribute extends LocalVariableTableBase {
 
     public LocalVariableTableAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             LocalVariableList localVariableList1,
             ListMultimap listMultimap,
             PrintWriter printWriter,
             ListMultimap listMultimap1
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, localVariableList1, listMultimap, printWriter, listMultimap1, invalidAttributeMessage);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, localVariableList1, listMultimap, printWriter, listMultimap1, invalidAttributeMessage);
     }
 
     static {

@@ -65,12 +65,12 @@ public class ProceedConfirmDialog extends OwnedFrameDialogBase implements Helper
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.okBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.okBtn) {
                 this.proceed();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
             }
         } catch (Throwable throwable) {
@@ -155,20 +155,12 @@ public class ProceedConfirmDialog extends OwnedFrameDialogBase implements Helper
         this.infoPane = new JEditorPane();
         this.infoPane.setEditable(false);
 
-        BevelBorderPanel bevelBorderPanel;
-        label15:
-        {
-            try {
-                this.infoPane.setPage(GuiResources.getHelpTopicUrl(string));
-            } catch (IOException iOException) {
-                this.infoPane.setText(iOException.toString() + " : " + string);
-                bevelBorderPanel = this.mainPnl;
-                break label15;
-            }
-
-            bevelBorderPanel = this.mainPnl;
+        try {
+            this.infoPane.setPage(GuiResources.getHelpTopicUrl(string));
+        } catch (IOException pageLoadException) {
+            this.infoPane.setText(pageLoadException.toString() + " : " + string);
         }
 
-        bevelBorderPanel.add(new ZkmScrollPane(this.infoPane), "Center");
+        this.mainPnl.add(new ZkmScrollPane(this.infoPane), "Center");
     }
 }

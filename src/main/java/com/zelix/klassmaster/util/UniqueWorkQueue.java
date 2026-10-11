@@ -21,19 +21,19 @@ public class UniqueWorkQueue {
         return this.count == 0;
     }
 
-    public boolean enqueue(Object object) {
-        if (!this.members.add(object)) {
+    public boolean enqueue(Object bufferElement) {
+        if (!this.members.add(bufferElement)) {
             return false;
         }
 
-        int ba = this.buffer.length;
-        if (this.count == ba) {
+        int lengthValue = this.buffer.length;
+        if (this.count == lengthValue) {
             this.grow();
-            ba = this.buffer.length;
+            lengthValue = this.buffer.length;
         }
 
-        this.buffer[this.tail] = object;
-        this.tail = (this.tail + 1) % ba;
+        this.buffer[this.tail] = bufferElement;
+        this.tail = (this.tail + 1) % lengthValue;
         this.count++;
         return true;
     }
@@ -49,35 +49,35 @@ public class UniqueWorkQueue {
     }
 
     public void grow() {
-        int ba = this.buffer.length;
-        Object[] objects = new Object[ba * 2];
+        int lengthValue = this.buffer.length;
+        Object[] bufferValue = new Object[lengthValue * 2];
 
-        for (int i = 0; i < this.count; i++) {
-            int bc = (this.head + i) % ba;
-            objects[i] = this.buffer[bc];
+        for (int bufferValueElementIndex = 0; bufferValueElementIndex < this.count; bufferValueElementIndex++) {
+            int bufferElementIndex = (this.head + bufferValueElementIndex) % lengthValue;
+            bufferValue[bufferValueElementIndex] = this.buffer[bufferElementIndex];
         }
 
         this.head = 0;
         this.tail = this.count;
-        this.buffer = objects;
+        this.buffer = bufferValue;
     }
 
     @Override
     public int hashCode() {
         int ba = 1;
-        int bb = this.buffer.length;
+        int lengthValue = this.buffer.length;
 
         for (int i = 0; i < this.count; i++) {
-            int bd = (this.head + i) % bb;
-            ba = 31 * ba + this.buffer[bd].hashCode();
+            int bufferElementIndex = (this.head + i) % lengthValue;
+            ba = 31 * ba + this.buffer[bufferElementIndex].hashCode();
         }
 
         return ba;
     }
 
     public void enqueueAll(Collection collection1) {
-        for (Object object : collection1) {
-            this.enqueue(object);
+        for (Object bufferElement : collection1) {
+            this.enqueue(bufferElement);
         }
     }
 
@@ -91,24 +91,24 @@ public class UniqueWorkQueue {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
+    public boolean equals(Object other) {
+        if (other == this) {
             return true;
         }
 
-        if (object instanceof UniqueWorkQueue) {
-            UniqueWorkQueue uniqueWorkQueue1 = (UniqueWorkQueue) object;
+        if (other instanceof UniqueWorkQueue) {
+            UniqueWorkQueue uniqueWorkQueue1 = (UniqueWorkQueue) other;
             if (this.count != uniqueWorkQueue1.count) {
                 return false;
             }
 
-            int ba = this.buffer.length;
-            int bb = uniqueWorkQueue1.buffer.length;
+            int lengthValue = this.buffer.length;
+            int lengthValue2 = uniqueWorkQueue1.buffer.length;
 
             for (int i = 0; i < this.count; i++) {
-                int bd = (this.head + i) % ba;
-                int be = (uniqueWorkQueue1.head + i) % bb;
-                if (!this.buffer[bd].equals(uniqueWorkQueue1.buffer[be])) {
+                int bufferElementIndex = (this.head + i) % lengthValue;
+                int bufferElementIndexValue = (uniqueWorkQueue1.head + i) % lengthValue2;
+                if (!this.buffer[bufferElementIndex].equals(uniqueWorkQueue1.buffer[bufferElementIndexValue])) {
                     return false;
                 }
             }
@@ -124,12 +124,12 @@ public class UniqueWorkQueue {
             throw new ZkmRuntimeException("Empty Queue");
         }
 
-        int ba = this.buffer.length;
-        Object object = this.buffer[this.head];
-        this.head = (this.head + 1) % ba;
+        int lengthValue = this.buffer.length;
+        Object bufferElement = this.buffer[this.head];
+        this.head = (this.head + 1) % lengthValue;
         this.count--;
-        this.members.remove(object);
-        return object;
+        this.members.remove(bufferElement);
+        return bufferElement;
     }
 
     public int size() {

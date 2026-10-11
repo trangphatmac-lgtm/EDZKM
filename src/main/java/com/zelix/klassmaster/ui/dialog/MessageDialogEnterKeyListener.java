@@ -8,11 +8,11 @@ public class MessageDialogEnterKeyListener extends KeyAdapter {
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        Object object = keyEvent.getSource();
+        Object source = keyEvent.getSource();
         if (keyEvent.getKeyCode() == 10) {
-            if (object == this.messageBoxDialog.okBtn) {
+            if (source == this.messageBoxDialog.okBtn) {
                 this.messageBoxDialog.closeDialog();
-            } else if (object == this.messageBoxDialog.copyBtn) {
+            } else if (source == this.messageBoxDialog.copyBtn) {
                 this.messageBoxDialog.copyMessageToClipboard();
             }
         }

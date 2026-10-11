@@ -19,8 +19,8 @@ public class PackageNamePattern implements PackagePatternSpec {
         return this.packageName.replace('/', '.') + '.';
     }
 
-    public PackageNamePattern(String string) {
-        this.packageName = string;
+    public PackageNamePattern(String packageNameArgument) {
+        this.packageName = packageNameArgument;
     }
 
     @Override

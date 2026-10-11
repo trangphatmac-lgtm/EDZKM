@@ -11,26 +11,26 @@ public class ChangeObservable extends ObservableSupport {
 
     @Override
     public final void notifyObservers(Object object, Object object1, Object object2) throws ZkmException, IOException {
-        int ba;
+        int observersSize;
         synchronized (this) {
             if (!this.hasChanged() || this.observers == null) {
                 return;
             }
 
-            ba = this.observers.size();
+            observersSize = this.observers.size();
             if (this.visitorSnapshot == null) {
-                this.visitorSnapshot = new NodeVisitor[ba];
-            } else if (ba > this.visitorSnapshot.length) {
-                this.visitorSnapshot = new NodeVisitor[ba];
+                this.visitorSnapshot = new NodeVisitor[observersSize];
+            } else if (observersSize > this.visitorSnapshot.length) {
+                this.visitorSnapshot = new NodeVisitor[observersSize];
             }
 
             this.visitorSnapshot = ((com.zelix.klassmaster.util.NodeVisitor[]) (this.observers.toArray(this.visitorSnapshot)));
             this.clearChanged();
         }
 
-        for (int i = ba - 1; i >= 0; i += -1) {
-            if (this.visitorSnapshot[i] != null) {
-                this.visitorSnapshot[i].handleObservedChange(this, object, object1, object2);
+        for (int visitorSnapshotElementIndex = observersSize - 1; visitorSnapshotElementIndex >= 0; visitorSnapshotElementIndex += -1) {
+            if (this.visitorSnapshot[visitorSnapshotElementIndex] != null) {
+                this.visitorSnapshot[visitorSnapshotElementIndex].handleObservedChange(this, object, object1, object2);
             }
         }
     }

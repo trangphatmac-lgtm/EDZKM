@@ -6,41 +6,18 @@ import com.zelix.klassmaster.classfile.insn.StringConstantNameRef;
 
 public class ClassDescriptorStringValue extends StringConstantNameRef {
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object otherArgument) {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        if (object != null) {
-            boolean bl1 = this.getClass().equals(object.getClass());
-            if (strictMergeDisabled) {
-                return bl1;
-            }
-
-            if (bl1) {
-                ClassDescriptorStringValue classDescriptorStringValue1 = (ClassDescriptorStringValue) object;
-                ClassDescriptorStringValue classDescriptorStringValue2 = this;
-                if (!strictMergeDisabled) {
-                    if (super.stringConstant != null) {
-                        ResolvedStringConstant resolvedStringConstant;
-                        if (!strictMergeDisabled) {
-                            if (classDescriptorStringValue1.stringConstant == null) {
-                                return false;
-                            }
-
-                            resolvedStringConstant = super.stringConstant;
-                        } else {
-                            resolvedStringConstant = classDescriptorStringValue1.stringConstant;
-                        }
-
-                        return resolvedStringConstant.equals(classDescriptorStringValue1.stringConstant);
-                    }
-
-                    classDescriptorStringValue2 = classDescriptorStringValue1;
-                }
-
-                return classDescriptorStringValue2.stringConstant == null;
-            }
+        if (otherArgument == null || !this.getClass().equals(otherArgument.getClass())) {
+            return false;
         }
-
-        return false;
+        if (strictMergeDisabled) {
+            return true;
+        }
+        ClassDescriptorStringValue other = (ClassDescriptorStringValue) otherArgument;
+        return super.stringConstant == null
+                ? other.stringConstant == null
+                : other.stringConstant != null && super.stringConstant.equals(other.stringConstant);
     }
 
     public ClassDescriptorStringValue(ResolvedStringConstant resolvedStringConstant) {
@@ -49,36 +26,28 @@ public class ClassDescriptorStringValue extends StringConstantNameRef {
 
     @Override
     public String getNormalizedName() {
-        String string = null;
+        String editableValue = null;
         if (super.stringConstant != null) {
-            string = super.stringConstant.getEditableValue();
-            int ba = string.lastIndexOf("[");
+            editableValue = super.stringConstant.getEditableValue();
+            int ba = editableValue.lastIndexOf("[");
             if (ba > -1) {
-                string = string.substring(ba + 1);
+                editableValue = editableValue.substring(ba + 1);
             }
 
-            if (string.endsWith(";")) {
-                string = string.substring(1, string.length() - 1);
+            if (editableValue.endsWith(";")) {
+                editableValue = editableValue.substring(1, editableValue.length() - 1);
             }
         }
 
-        return string;
+        return editableValue;
     }
 
     @Override
     public int hashCode() {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        ResolvedStringConstant resolvedStringConstant;
-        if (!strictMergeDisabled) {
-            if (super.stringConstant == null) {
-                return 0;
-            }
-
-            resolvedStringConstant = super.stringConstant;
-        } else {
-            resolvedStringConstant = super.stringConstant;
+        if (!strictMergeDisabled && super.stringConstant == null) {
+            return 0;
         }
-
-        return resolvedStringConstant.hashCode() + 1;
+        return super.stringConstant.hashCode() + 1;
     }
 }

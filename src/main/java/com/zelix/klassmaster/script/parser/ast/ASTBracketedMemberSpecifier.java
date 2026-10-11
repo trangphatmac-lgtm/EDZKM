@@ -11,10 +11,10 @@ public class ASTBracketedMemberSpecifier extends OrSpecifierNode implements Memb
     @Override
     public boolean hasMatchingMember(ClassFileBase classFileBase, ClassHierarchyQuery classHierarchyQuery) throws ZkmException, IOException {
         boolean bl = false;
-        int ba = this.children.length;
+        int lengthValue = this.children.length;
 
-        for (int i = 0; i < ba; i++) {
-            if (((MemberSpecifierMatcher) this.children[i]).hasMatchingMember(classFileBase, classHierarchyQuery)) {
+        for (int childrenElementIndex = 0; childrenElementIndex < lengthValue; childrenElementIndex++) {
+            if (((MemberSpecifierMatcher) this.children[childrenElementIndex]).hasMatchingMember(classFileBase, classHierarchyQuery)) {
                 bl = true;
                 break;
             }

@@ -116,12 +116,12 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
 
         dataOutputStream.writeByte(this.pathLength);
         if (this.pathLength > 0) {
-            int ba = 0;
-            int bb = ba;
+            int typePathElementIndex = 0;
+            int typePathElementIndexValue = typePathElementIndex;
 
-            for (int i = this.pathLength; bb < i; i = this.pathLength) {
-                this.typePath[ba].writeTo(dataOutputStream);
-                bb = ++ba;
+            for (int pathLengthValue = this.pathLength; typePathElementIndexValue < pathLengthValue; pathLengthValue = this.pathLength) {
+                this.typePath[typePathElementIndex].writeTo(dataOutputStream);
+                typePathElementIndexValue = ++typePathElementIndex;
             }
         }
     }
@@ -155,10 +155,10 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
                 case 11:
                 case 12:
                     LocalVarTargetEntry[] localVarTargetEntrys = this.localVarTargets;
-                    int ba = localVarTargetEntrys.length;
+                    int lengthValue = localVarTargetEntrys.length;
 
-                    for (int i = 0; i < ba; i++) {
-                        localVarTargetEntrys[i].registerLabelTargets(setMultiMap);
+                    for (int localVarTargetEntryIndex = 0; localVarTargetEntryIndex < lengthValue; localVarTargetEntryIndex++) {
+                        localVarTargetEntrys[localVarTargetEntryIndex].registerLabelTargets(setMultiMap);
                     }
                     break;
                 case 14:
@@ -223,64 +223,64 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
 
     @Override
     public int getByteLength() {
-        int ba = 1;
+        int byteLength = 1;
         switch (TypeAnnotationTargetSwitchMap.TARGET_TYPE_SWITCH[this.targetType.ordinal()]) {
             case 1:
             case 2:
-                ba++;
+                byteLength++;
                 break;
             case 3:
-                ba += 2;
+                byteLength += 2;
                 break;
             case 4:
             case 5:
-                ba++;
-                ba++;
+                byteLength++;
+                byteLength++;
             case 6:
             case 7:
             case 8:
             default:
                 break;
             case 9:
-                ba++;
+                byteLength++;
                 break;
             case 10:
-                ba += 2;
+                byteLength += 2;
                 break;
             case 11:
             case 12:
-                ba += 2;
-                ba += this.localVarTargets.length * 6;
+                byteLength += 2;
+                byteLength += this.localVarTargets.length * 6;
                 break;
             case 13:
-                ba += 2;
+                byteLength += 2;
                 break;
             case 14:
             case 15:
             case 16:
             case 17:
-                ba += 2;
+                byteLength += 2;
                 break;
             case 18:
             case 19:
             case 20:
             case 21:
             case 22:
-                ba += 3;
+                byteLength += 3;
         }
 
-        ba++;
+        byteLength++;
         if (this.pathLength > 0) {
-            int bb = 0;
+            int typePathElementIndex = 0;
             int bc = 0;
 
-            for (int i = this.pathLength; bc < i; i = this.pathLength) {
-                ba += this.typePath[bb].getEntrySize();
-                bc = ++bb;
+            for (int pathLengthValue = this.pathLength; bc < pathLengthValue; pathLengthValue = this.pathLength) {
+                byteLength += this.typePath[typePathElementIndex].getEntrySize();
+                bc = ++typePathElementIndex;
             }
         }
 
-        return ba;
+        return byteLength;
     }
 
     public boolean isThrowsTarget() {
@@ -332,10 +332,10 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
                 case 11:
                 case 12:
                     LocalVarTargetEntry[] localVarTargetEntrys = this.localVarTargets;
-                    int ba = localVarTargetEntrys.length;
+                    int lengthValue = localVarTargetEntrys.length;
 
-                    for (int i = 0; i < ba; i++) {
-                        if (localVarTargetEntrys[i].unlinkIfLabelRemoved(hashSet, setMultiMap)) {
+                    for (int localVarTargetEntryIndex = 0; localVarTargetEntryIndex < lengthValue; localVarTargetEntryIndex++) {
+                        if (localVarTargetEntrys[localVarTargetEntryIndex].unlinkIfLabelRemoved(hashSet, setMultiMap)) {
                             bl = true;
                         }
                     }
@@ -360,8 +360,8 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
         return bl;
     }
 
-    public void setTargetType(int ba) {
-        switch (ba) {
+    public void setTargetType(int targetTypeArgument) {
+        switch (targetTypeArgument) {
             case 0:
                 this.targetType = TypeAnnotationTargetType.CLASS_TYPE_PARAMETER;
                 break;
@@ -548,12 +548,12 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
 
         dataOutputStream.writeByte(this.pathLength);
         if (this.pathLength > 0) {
-            int ba = 0;
-            int bb = ba;
+            int typePathElementIndex = 0;
+            int typePathElementIndexValue = typePathElementIndex;
 
-            for (int i = this.pathLength; bb < i; i = this.pathLength) {
-                this.typePath[ba].writeTo(dataOutputStream);
-                bb = ++ba;
+            for (int pathLengthValue = this.pathLength; typePathElementIndexValue < pathLengthValue; pathLengthValue = this.pathLength) {
+                this.typePath[typePathElementIndex].writeTo(dataOutputStream);
+                typePathElementIndexValue = ++typePathElementIndex;
             }
         }
     }
@@ -561,10 +561,10 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
     public static boolean hasTypeArgumentStep(TypePathEntry[] typePathEntrys) {
         if (typePathEntrys != null && typePathEntrys.length != 0) {
             TypePathEntry[] typePathEntrys1 = typePathEntrys;
-            int ba = typePathEntrys1.length;
+            int lengthValue = typePathEntrys1.length;
 
-            for (int i = 0; i < ba; i++) {
-                if (typePathEntrys1[i].isTypeArgumentStep()) {
+            for (int typePathEntrys1ElementIndex = 0; typePathEntrys1ElementIndex < lengthValue; typePathEntrys1ElementIndex++) {
+                if (typePathEntrys1[typePathEntrys1ElementIndex].isTypeArgumentStep()) {
                     return true;
                 }
             }
@@ -614,14 +614,14 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
                 int ba = classFileInputStream.readUnsignedShort();
                 this.localVarTargets = new LocalVarTargetEntry[ba];
 
-                for (int i = 0; i < ba; i++) {
+                for (int localVarTargetIndex = 0; localVarTargetIndex < ba; localVarTargetIndex++) {
                     LocalVarTargetEntry localVarTargetEntry = new LocalVarTargetEntry(this);
                     localVarTargetEntry.setStartPc(classFileInputStream.readUnsignedShort());
                     localVarTargetEntry.setEndPc(localVarTargetEntry.getStartPc() + classFileInputStream.readUnsignedShort());
                     localVarTargetEntry.setLocalIndex(classFileInputStream.readUnsignedShort());
                     listMultimap.addValue(localVarTargetEntry.getStartPc(), localVarTargetEntry);
                     listMultimap.addValue(localVarTargetEntry.getEndPc(), localVarTargetEntry);
-                    this.localVarTargets[i] = localVarTargetEntry;
+                    this.localVarTargets[localVarTargetIndex] = localVarTargetEntry;
                 }
                 break;
             case 13:
@@ -647,16 +647,16 @@ public class TypeAnnotation extends ClassFileComponent implements AnnotationElem
         this.pathLength = classFileInputStream.readUnsignedByte();
         if (this.pathLength > 0) {
             this.typePath = new TypePathEntry[this.pathLength];
-            int bc = 0;
+            int typePathElementIndex = 0;
             int bd = 0;
 
-            for (int i = this.pathLength; bd < i; i = this.pathLength) {
-                this.typePath[bc] = new TypePathEntry(this, classFileInputStream);
-                if (!this.typePath[bc].isValid()) {
+            for (int pathLengthValue = this.pathLength; bd < pathLengthValue; pathLengthValue = this.pathLength) {
+                this.typePath[typePathElementIndex] = new TypePathEntry(this, classFileInputStream);
+                if (!this.typePath[typePathElementIndex].isValid()) {
                     this.valid = false;
                 }
 
-                bd = ++bc;
+                bd = ++typePathElementIndex;
             }
         }
     }

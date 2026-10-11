@@ -103,8 +103,8 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
     }
 
     public static void appendAndSeparatedStatement(String string, int ba, SyncIndexedSet syncIndexedSet, StringBuilder stringBuilder, boolean bl) {
-        int bb = ba;
-        bb = Math.max(bb, string.length() + 2);
+        int endIndex = ba;
+        endIndex = Math.max(endIndex, string.length() + 2);
         StringBuilder stringBuilder1;
         String string2;
         byte bf;
@@ -122,90 +122,72 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
             bf = 76;
         }
 
-        stringBuilder1.append(ZkmStringUtils.pad(string2, bf, bb - 1, 32));
-        int bc = 0;
-        int bd = bc;
+        stringBuilder1.append(ZkmStringUtils.pad(string2, bf, endIndex - 1, 32));
+        int elementIndex = 0;
+        int elementIndexValue = elementIndex;
 
-        for (int i = syncIndexedSet.size(); bd < i; i = syncIndexedSet.size()) {
-            String string1 = (String) syncIndexedSet.getElementAt(bc);
-            if (bc == 0) {
-                stringBuilder.append(string1);
+        for (int syncIndexedSetSize = syncIndexedSet.size(); elementIndexValue < syncIndexedSetSize; syncIndexedSetSize = syncIndexedSet.size()) {
+            String elementAt = (String) syncIndexedSet.getElementAt(elementIndex);
+            if (elementIndex == 0) {
+                stringBuilder.append(elementAt);
             } else {
-                stringBuilder.append(ZkmStringUtils.pad(" ", 82, bb - 1, 32));
-                stringBuilder.append(string1);
+                stringBuilder.append(ZkmStringUtils.pad(" ", 82, endIndex - 1, 32));
+                stringBuilder.append(elementAt);
             }
 
-            if (bc < syncIndexedSet.size() - 1) {
+            if (elementIndex < syncIndexedSet.size() - 1) {
                 stringBuilder.append(' ');
                 stringBuilder.append("and");
                 stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
 
-            bd = ++bc;
+            elementIndexValue = ++elementIndex;
         }
 
         stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-        stringBuilder.append(ZkmStringUtils.pad(";", 82, bb, 32));
+        stringBuilder.append(ZkmStringUtils.pad(";", 82, endIndex, 32));
         stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
         stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
     }
 
-    public static void appendQuotedListStatement(String string, String string1, int ba, SyncIndexedSet syncIndexedSet, StringBuilder stringBuilder) {
-        int bb = ba;
-        bb = Math.max(bb, string.length() + 2);
-        if (syncIndexedSet.size() > 0) {
-            stringBuilder.append(ZkmStringUtils.pad(string, 76, bb - 1, 32));
-            if (string1 != null) {
-                stringBuilder.append(string1);
-                stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
+    public static void appendQuotedListStatement(String statementName, String firstLineSuffix, int minimumWidth, SyncIndexedSet values, StringBuilder output) {
+        int statementWidth = minimumWidth;
+        statementWidth = Math.max(statementWidth, statementName.length() + 2);
+        if (values.size() > 0) {
+            output.append(ZkmStringUtils.pad(statementName, 76, statementWidth - 1, 32));
+            if (firstLineSuffix != null) {
+                output.append(firstLineSuffix);
+                output.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
 
-            int bc = 0;
-            int bd = 0;
+            int valueIndex = 0;
+            int currentIndex = 0;
 
-            for (int i = syncIndexedSet.size(); bd < i; i = syncIndexedSet.size()) {
-                String string2;
-                label29:
-                {
-                    string2 = (String) syncIndexedSet.getElementAt(bc);
-                    StringBuilder stringBuilder1;
-                    String string3;
-                    byte bf;
-                    if (bc == 0) {
-                        if (string1 == null) {
-                            stringBuilder.append("\"");
-                            break label29;
-                        }
-
-                        stringBuilder1 = stringBuilder;
-                        string3 = "\"";
-                        bf = 82;
-                    } else {
-                        stringBuilder1 = stringBuilder;
-                        string3 = "\"";
-                        bf = 82;
-                    }
-
-                    stringBuilder1.append(ZkmStringUtils.pad(string3, bf, bb, 32));
+            for (int valuesSize = values.size(); currentIndex < valuesSize; valuesSize = values.size()) {
+                String value = (String) values.getElementAt(valueIndex);
+                if (valueIndex == 0 && firstLineSuffix == null) {
+                    output.append("\"");
+                } else {
+                    output.append(ZkmStringUtils.pad("\"", 82, statementWidth, 32));
                 }
 
-                stringBuilder.append(string2);
-                stringBuilder.append("\"");
-                stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-                bd = ++bc;
+                output.append(value);
+                output.append("\"");
+                output.append(HiddenOptionFlags.LINE_SEPARATOR);
+                currentIndex = ++valueIndex;
             }
 
-            stringBuilder.append(ZkmStringUtils.pad(";", 82, bb, 32));
-            stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-            stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
+            output.append(ZkmStringUtils.pad(";", 82, statementWidth, 32));
+            output.append(HiddenOptionFlags.LINE_SEPARATOR);
+            output.append(HiddenOptionFlags.LINE_SEPARATOR);
         }
     }
 
-    public String findScriptStatement(String string, String string1) {
-        int ba = string1.indexOf(string);
+    public String findScriptStatement(String searchText, String string1) {
+        int ba = string1.indexOf(searchText);
 
-        while (ba > -1 && !this.isWholeWordAt(ba, string, string1)) {
-            ba = string1.indexOf(string, ba + 1);
+        while (ba > -1 && !this.isWholeWordAt(ba, searchText, string1)) {
+            ba = string1.indexOf(searchText, ba + 1);
         }
 
         if (ba > -1) {
@@ -234,26 +216,26 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
         int ba = this.classpathStatement.indexOf(34, 0);
 
-        boolean bl1;
+        boolean prependProguardClasspath;
         while (true) {
             if (ba > -1) {
-                int bb = this.classpathStatement.indexOf(34, ba + 1);
-                if (bb > -1) {
-                    syncIndexedSet.add(this.classpathStatement.substring(ba + 1, bb));
-                    ba = this.classpathStatement.indexOf(34, bb + 1);
+                int endIndex = this.classpathStatement.indexOf(34, ba + 1);
+                if (endIndex > -1) {
+                    syncIndexedSet.add(this.classpathStatement.substring(ba + 1, endIndex));
+                    ba = this.classpathStatement.indexOf(34, endIndex + 1);
                     continue;
                 }
 
                 this.logMessage("Error in using 'classpath' statement found in '" + this.templateScriptPath + "'. Unbalanced '\"' characters.");
-                bl1 = HiddenOptionFlags.PREPEND_PROGUARD_CLASSPATH;
+                prependProguardClasspath = HiddenOptionFlags.PREPEND_PROGUARD_CLASSPATH;
                 break;
             }
 
-            bl1 = HiddenOptionFlags.PREPEND_PROGUARD_CLASSPATH;
+            prependProguardClasspath = HiddenOptionFlags.PREPEND_PROGUARD_CLASSPATH;
             break;
         }
 
-        if (!bl1) {
+        if (!prependProguardClasspath) {
             this.classpathEntries.addAll(syncIndexedSet);
         } else {
             syncIndexedSet.addAll(this.classpathEntries);
@@ -267,25 +249,23 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
     }
 
     public boolean isWholeWordAt(int ba, String string, String string1) {
-        int bb = ba + string.length();
-        return string1.length() > bb && !Character.isWhitespace(string1.charAt(bb)) && string1.charAt(bb) != ';'
-                ? false
-                : ba <= 0 || Character.isWhitespace(string1.charAt(ba - 1)) || string1.charAt(ba - 1) == ';';
+        int characterIndex = ba + string.length();
+        return (!(string1.length() > characterIndex && !Character.isWhitespace(string1.charAt(characterIndex)) && string1.charAt(characterIndex) != ';') && (ba <= 0 || Character.isWhitespace(string1.charAt(ba - 1)) || string1.charAt(ba - 1) == ';'));
     }
 
     public void addIgnoreMissingReference(Object object) {
         this.ignoreMissingReferences.add(object);
     }
 
-    public void setObfuscationDictionary(String string) {
-        String string1 = string;
-        string1 = string1.trim();
-        if (this.obfuscationDictionary != null && !this.obfuscationDictionary.equals(string1)) {
-            this.logWarning("More than one value for ProGuard '-classobfuscationdictionary'. '" + string1 + "' replacing '" + this.obfuscationDictionary + "'.");
+    public void setObfuscationDictionary(String obfuscationDictionaryArgument) {
+        String obfuscationDictionaryValue = obfuscationDictionaryArgument;
+        obfuscationDictionaryValue = obfuscationDictionaryValue.trim();
+        if (this.obfuscationDictionary != null && !this.obfuscationDictionary.equals(obfuscationDictionaryValue)) {
+            this.logWarning("More than one value for ProGuard '-classobfuscationdictionary'. '" + obfuscationDictionaryValue + "' replacing '" + this.obfuscationDictionary + "'.");
         }
 
-        if (string1 != null && string1.length() > 0) {
-            this.obfuscationDictionary = string1;
+        if (obfuscationDictionaryValue != null && obfuscationDictionaryValue.length() > 0) {
+            this.obfuscationDictionary = obfuscationDictionaryValue;
         }
     }
 
@@ -293,14 +273,14 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         this.dontUseMixedCaseClassNames = true;
     }
 
-    public void setPrintMapping(String string) {
-        String string1 = string;
-        string1 = string1.trim();
-        if (this.printMappingFile != null && !this.printMappingFile.equals(string1)) {
-            this.logWarning("More than one value for ProGuard '-printmapping'. '" + string1 + "' replacing '" + this.printMappingFile + "'.");
+    public void setPrintMapping(String printMapping) {
+        String printMappingFileValue = printMapping;
+        printMappingFileValue = printMappingFileValue.trim();
+        if (this.printMappingFile != null && !this.printMappingFile.equals(printMappingFileValue)) {
+            this.logWarning("More than one value for ProGuard '-printmapping'. '" + printMappingFileValue + "' replacing '" + this.printMappingFile + "'.");
         }
 
-        this.printMappingFile = string1;
+        this.printMappingFile = printMappingFileValue;
     }
 
     public void addKeepAttributePattern(Object object) {
@@ -313,8 +293,8 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
                 : new File(string).getParentFile().getAbsolutePath();
     }
 
-    public void setBaseDirectory(String string) {
-        this.baseDirectory = string;
+    public void setBaseDirectory(String baseDirectoryArgument) {
+        this.baseDirectory = baseDirectoryArgument;
     }
 
     public String getProGuardLogDir() {
@@ -355,17 +335,17 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         this.targetPackageName = string;
     }
 
-    public void setClassObfuscationDictionary(String string) {
-        String string1 = string;
-        string1 = string1.trim();
-        if (this.classObfuscationDictionary != null && !this.classObfuscationDictionary.equals(string1)) {
+    public void setClassObfuscationDictionary(String classObfuscationDictionaryArgument) {
+        String classObfuscationDictionaryValue = classObfuscationDictionaryArgument;
+        classObfuscationDictionaryValue = classObfuscationDictionaryValue.trim();
+        if (this.classObfuscationDictionary != null && !this.classObfuscationDictionary.equals(classObfuscationDictionaryValue)) {
             this.logWarning(
-                    "More than one value for ProGuard '-classobfuscationdictionary'. '" + string1 + "' replacing '" + this.classObfuscationDictionary + "'."
+                    "More than one value for ProGuard '-classobfuscationdictionary'. '" + classObfuscationDictionaryValue + "' replacing '" + this.classObfuscationDictionary + "'."
             );
         }
 
-        if (string1 != null && string1.length() > 0) {
-            this.classObfuscationDictionary = string1;
+        if (classObfuscationDictionaryValue != null && classObfuscationDictionaryValue.length() > 0) {
+            this.classObfuscationDictionary = classObfuscationDictionaryValue;
         }
     }
 
@@ -407,15 +387,15 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
     }
 
-    public void setPrintSeeds(String string) {
-        String string1 = string;
-        string1 = string1.trim();
-        if (this.printSeedsFile != null && !this.printSeedsFile.equals(string1)) {
-            this.logWarning("More than one value for ProGuard '-printseeds'. '" + string1 + "' replacing '" + this.printSeedsFile + "'.");
+    public void setPrintSeeds(String printSeeds) {
+        String printSeedsFileValue = printSeeds;
+        printSeedsFileValue = printSeedsFileValue.trim();
+        if (this.printSeedsFile != null && !this.printSeedsFile.equals(printSeedsFileValue)) {
+            this.logWarning("More than one value for ProGuard '-printseeds'. '" + printSeedsFileValue + "' replacing '" + this.printSeedsFile + "'.");
         }
 
-        if (string1 != null && string1.length() > 0) {
-            this.printSeedsFile = string1;
+        if (printSeedsFileValue != null && printSeedsFileValue.length() > 0) {
+            this.printSeedsFile = printSeedsFileValue;
         }
 
         this.setVerbose();
@@ -437,18 +417,18 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
             file1 = ZkmFileUtils.USER_DIR_FILE;
         }
 
-        String string;
+        String absolutePath;
         if (this.outputArchives != null) {
             if (this.outputArchives.size() > 0) {
                 return this.getParentDirPath(file1, (String) this.outputArchives.getElementAt(0));
             }
 
-            string = file1.getAbsolutePath();
+            absolutePath = file1.getAbsolutePath();
         } else {
-            string = file1.getAbsolutePath();
+            absolutePath = file1.getAbsolutePath();
         }
 
-        return string;
+        return absolutePath;
     }
 
     public void setVerbose() {
@@ -467,75 +447,75 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         this.classpathEntries.addAll(set1);
     }
 
-    public void loadTemplateStatements(String string, String string1) {
-        this.templateScriptPath = string1;
+    public void loadTemplateStatements(String string, String templateScriptPathArgument) {
+        this.templateScriptPath = templateScriptPathArgument;
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = 0;
+        int exclusionStatementNameIndex = 0;
         int bb = 0;
 
-        for (String[] strings = ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES;
-             bb < strings.length;
-             strings = ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES
+        for (String[] exclusionStatementNames = ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES;
+             bb < exclusionStatementNames.length;
+             exclusionStatementNames = ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES
         ) {
             stringBuilder.append("'");
-            stringBuilder.append(ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES[ba]);
+            stringBuilder.append(ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES[exclusionStatementNameIndex]);
             stringBuilder.append("'");
-            if (ba < ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES.length - 2) {
+            if (exclusionStatementNameIndex < ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES.length - 2) {
                 stringBuilder.append(", ");
-            } else if (ba < ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES.length - 1) {
+            } else if (exclusionStatementNameIndex < ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES.length - 1) {
                 stringBuilder.append(" or ");
             }
 
-            bb = ++ba;
+            bb = ++exclusionStatementNameIndex;
         }
 
-        this.logMessage("Will examine contents of file '" + string1 + "' for possible " + stringBuilder.toString() + " statements.");
+        this.logMessage("Will examine contents of file '" + templateScriptPathArgument + "' for possible " + stringBuilder.toString() + " statements.");
 
-        for (String string2 : ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES) {
-            String string3 = this.findScriptStatement(string2, string);
+        for (String searchText : ExclusionStatementNames.EXCLUSION_STATEMENT_NAMES) {
+            String string3 = this.findScriptStatement(searchText, string);
             if (string3 != null) {
-                this.logMessage("Using '" + string2 + "' statement found in '" + string1 + "'");
-                if (string2.equals("classpath")) {
+                this.logMessage("Using '" + searchText + "' statement found in '" + templateScriptPathArgument + "'");
+                if (searchText.equals("classpath")) {
                     this.classpathStatement = string3;
-                } else if (string2.equals("ignoreMissingReferences")) {
+                } else if (searchText.equals("ignoreMissingReferences")) {
                     this.ignoreMissingReferencesStatement = string3;
-                } else if (string2.equals("removeMethodCallsInclude")) {
+                } else if (searchText.equals("removeMethodCallsInclude")) {
                     this.removeMethodCallsIncludeStatement = string3;
-                } else if (string2.equals("removeMethodCallsExclude")) {
+                } else if (searchText.equals("removeMethodCallsExclude")) {
                     this.removeMethodCallsExcludeStatement = string3;
-                } else if (string2.equals("trimExclude")) {
+                } else if (searchText.equals("trimExclude")) {
                     this.trimExcludeStatement = string3;
-                } else if (string2.equals("trimUnexclude")) {
+                } else if (searchText.equals("trimUnexclude")) {
                     this.trimUnexcludeStatement = string3;
-                } else if (string2.equals("trim")) {
+                } else if (searchText.equals("trim")) {
                     this.trimStatement = string3;
-                } else if (string2.equals("obfuscateFlowExclude")) {
+                } else if (searchText.equals("obfuscateFlowExclude")) {
                     this.obfuscateFlowExcludeStatement = string3;
-                } else if (string2.equals("obfuscateFlowUnexclude")) {
+                } else if (searchText.equals("obfuscateFlowUnexclude")) {
                     this.obfuscateFlowUnexcludeStatement = string3;
-                } else if (string2.equals("stringEncryptionExclude")) {
+                } else if (searchText.equals("stringEncryptionExclude")) {
                     this.stringEncryptionExcludeStatement = string3;
-                } else if (string2.equals("stringEncryptionUnexclude")) {
+                } else if (searchText.equals("stringEncryptionUnexclude")) {
                     this.stringEncryptionUnexcludeStatement = string3;
-                } else if (string2.equals("exclude")) {
+                } else if (searchText.equals("exclude")) {
                     this.excludeStatement = string3;
-                } else if (string2.equals("unexclude")) {
+                } else if (searchText.equals("unexclude")) {
                     this.unexcludeStatement = string3;
-                } else if (string2.equals("accessedByReflection")) {
+                } else if (searchText.equals("accessedByReflection")) {
                     this.accessedByReflectionStatement = string3;
-                } else if (string2.equals("accessedByReflectionExclude")) {
+                } else if (searchText.equals("accessedByReflectionExclude")) {
                     this.accessedByReflectionExcludeStatement = string3;
-                } else if (string2.equals("obfuscateReferencesInclude")) {
+                } else if (searchText.equals("obfuscateReferencesInclude")) {
                     this.obfuscateReferencesIncludeStatement = string3;
-                } else if (string2.equals("obfuscateReferencesExclude")) {
+                } else if (searchText.equals("obfuscateReferencesExclude")) {
                     this.obfuscateReferencesExcludeStatement = string3;
-                } else if (string2.equals("fixedClasses")) {
+                } else if (searchText.equals("fixedClasses")) {
                     this.fixedClassesStatement = string3;
-                } else if (string2.equals("methodParameterChangesInclude")) {
+                } else if (searchText.equals("methodParameterChangesInclude")) {
                     this.methodParamChangesIncludeStatement = string3;
-                } else if (string2.equals("methodParameterChangesExclude")) {
+                } else if (searchText.equals("methodParameterChangesExclude")) {
                     this.methodParamChangesExcludeStatement = string3;
-                } else if (string2.equals("obfuscate")) {
+                } else if (searchText.equals("obfuscate")) {
                     this.obfuscateStatement = string3;
                 }
             }
@@ -562,8 +542,8 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         try {
             printWriter = new PrintWriter(new FileWriter(file));
             printWriter.close();
-        } catch (final IOException ex) {
-            observableHolder2.setValue("ERROR: Couldn't create preliminary log file '" + parent.getAbsolutePath() + "' : '" + ex.getMessage() + "'");
+        } catch (final IOException ioException) {
+            observableHolder2.setValue("ERROR: Couldn't create preliminary log file '" + parent.getAbsolutePath() + "' : '" + ioException.getMessage() + "'");
             return false;
         } finally {
             if (printWriter != null) {
@@ -589,9 +569,9 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
                     && strings[i + 1].length() > 0
                     && strings[i + 1].charAt(0) != '-') {
                 String string1 = strings[i + 1];
-                String string2 = new File(string1).getParent();
-                if (string2 != null) {
-                    return string2;
+                String parentValue = new File(string1).getParent();
+                if (parentValue != null) {
+                    return parentValue;
                 }
             }
         }
@@ -701,8 +681,8 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         StringBuilder stringBuilder3 = stringBuilder;
         SyncIndexedSet syncIndexedSet = this.classpathEntries;
         Integer integer = statementNameWidth;
-        String string3 = string5;
-        appendQuotedListStatement(string3, integer, syncIndexedSet, stringBuilder3);
+        String statementNameValue = string5;
+        appendQuotedListStatement(statementNameValue, integer, syncIndexedSet, stringBuilder3);
         if (this.ignoreMissingReferencesStatement != null) {
             this.mergeTemplateStatement("ignoreMissingReferences", this.ignoreMissingReferencesStatement, this.ignoreMissingReferences, stringBuilder);
         }
@@ -712,12 +692,12 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         }
 
         appendMapStatement(statementNameWidth, this.openArchives, stringBuilder);
-        boolean bl2;
+        boolean translateProguardUnexcludes;
         if (this.removeMethodCallsIncludeStatement == null
                 && this.removeMethodCallsExcludeStatement == null
                 && this.removeMethodCallsIncludes.isEmpty()
                 && this.removeMethodCallsExcludes.isEmpty()) {
-            bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
+            translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
         } else {
             if (this.removeMethodCallsIncludeStatement != null) {
                 this.mergeTemplateStatement("removeMethodCallsInclude", this.removeMethodCallsIncludeStatement, this.removeMethodCallsIncludes, stringBuilder);
@@ -737,43 +717,29 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
 
             if (!this.dontOptimize) {
                 appendLineSeparatedStatement("removeMethodCalls", statementNameWidth, new SyncIndexedSet(), stringBuilder);
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
+                translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
             } else {
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
+                translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
             }
         }
 
-        label348:
-        {
-            if (bl2) {
-                if (this.trimExcludeStatement != null) {
-                    this.appendTemplateStatement("trimExclude", this.trimExcludeStatement, stringBuilder);
-                    bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
-                    break label348;
-                }
-
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
-            } else {
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
-            }
-
-            if (!bl2 && this.trimExcludeStatement != null) {
+        if (translateProguardUnexcludes && this.trimExcludeStatement != null) {
+            this.appendTemplateStatement("trimExclude", this.trimExcludeStatement, stringBuilder);
+        } else {
+            if (!HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES && this.trimExcludeStatement != null) {
                 this.mergeTemplateStatement("trimExclude", this.trimExcludeStatement, this.trimExcludes, stringBuilder);
             }
 
             if (this.trimExcludes.size() > 0 && this.dontShrink) {
                 this.trimExcludes.add("*.* + /*Exclude everything*/");
             }
-
             if (this.trimExcludes.size() > 0) {
                 appendAndSeparatedStatement("trimExclude", statementNameWidth, this.trimExcludes, stringBuilder);
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
-            } else {
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
             }
         }
+        translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
 
-        if (bl2 && this.trimUnexcludeStatement != null) {
+        if (translateProguardUnexcludes && this.trimUnexcludeStatement != null) {
             this.appendTemplateStatement("trimUnexclude", this.trimUnexcludeStatement, stringBuilder);
         } else if (!this.dontShrink) {
             if (!HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES && this.trimUnexcludeStatement != null) {
@@ -813,28 +779,28 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
 
         if (HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES && this.excludeStatement != null) {
             this.appendTemplateStatement("exclude", this.excludeStatement, stringBuilder);
-            bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
+            translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
         } else {
             if (this.dontObfuscate) {
                 this.excludes.add("*.^* + /*Exclude everything*/");
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
+                translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
             } else {
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
+                translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
             }
 
-            if (!bl2 && this.excludeStatement != null) {
+            if (!translateProguardUnexcludes && this.excludeStatement != null) {
                 this.mergeTemplateStatement("exclude", this.excludeStatement, this.excludes, stringBuilder);
             }
 
             if (this.excludes.size() > 0) {
                 appendAndSeparatedStatement("exclude", statementNameWidth, this.excludes, stringBuilder);
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
+                translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
             } else {
-                bl2 = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
+                translateProguardUnexcludes = HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES;
             }
         }
 
-        if (bl2 && this.unexcludeStatement != null) {
+        if (translateProguardUnexcludes && this.unexcludeStatement != null) {
             this.appendTemplateStatement("unexclude", this.unexcludeStatement, stringBuilder);
         } else if (!this.dontObfuscate) {
             if (!HiddenOptionFlags.TRANSLATE_PROGUARD_UNEXCLUDES && this.unexcludeStatement != null) {
@@ -874,10 +840,10 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
             this.appendTemplateStatement("methodParameterChangesExclude", this.methodParamChangesExcludeStatement, stringBuilder);
         }
 
-        String string4;
+        String statementNameValue2;
         if (this.obfuscateStatement != null) {
             this.appendTemplateStatement("obfuscate", this.obfuscateStatement, stringBuilder);
-            string4 = "saveAll";
+            statementNameValue2 = "saveAll";
         } else {
             if (this.applyMappingFile != null) {
                 this.obfuscateParameters.add("changeLogFileIn=\"" + this.applyMappingFile + "\"");
@@ -927,10 +893,10 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
             }
 
             appendLineSeparatedStatement("obfuscate", statementNameWidth, this.obfuscateParameters, stringBuilder);
-            string4 = "saveAll";
+            statementNameValue2 = "saveAll";
         }
 
-        appendQuotedListStatement(string4, "archiveCompression=all", statementNameWidth, this.outputArchives, stringBuilder);
+        appendQuotedListStatement(statementNameValue2, "archiveCompression=all", statementNameWidth, this.outputArchives, stringBuilder);
         return stringBuilder.toString();
     }
 
@@ -938,15 +904,15 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         return this.printUsageFile;
     }
 
-    public void setPrintUsage(String string) {
-        String string1 = string;
-        string1 = string1.trim();
-        if (this.printUsageFile != null && !this.printUsageFile.equals(string1)) {
-            this.logWarning("More than one value for ProGuard '-printusage'. '" + string1 + "' replacing '" + this.printUsageFile + "'.");
+    public void setPrintUsage(String printUsage) {
+        String printUsageFileValue = printUsage;
+        printUsageFileValue = printUsageFileValue.trim();
+        if (this.printUsageFile != null && !this.printUsageFile.equals(printUsageFileValue)) {
+            this.logWarning("More than one value for ProGuard '-printusage'. '" + printUsageFileValue + "' replacing '" + this.printUsageFile + "'.");
         }
 
-        if (string1 != null && string1.length() > 0) {
-            this.printUsageFile = string1;
+        if (printUsageFileValue != null && printUsageFileValue.length() > 0) {
+            this.printUsageFile = printUsageFileValue;
         }
     }
 
@@ -957,52 +923,52 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         }
 
         if (this.printSeedsFile != null) {
-            String string2 = new File(this.printSeedsFile).getParent();
-            if (string2 != null && string2.length() > 0) {
-                set1.add(string2);
+            String parentValue = new File(this.printSeedsFile).getParent();
+            if (parentValue != null && parentValue.length() > 0) {
+                set1.add(parentValue);
             }
 
-            return string2;
+            return parentValue;
         } else if (this.printMappingFile != null && this.printMappingFile.trim().length() > 0) {
-            String string1 = new File(this.printMappingFile).getParent();
-            if (string1 != null && string1.length() > 0) {
-                set1.add(string1);
+            String parentValue2 = new File(this.printMappingFile).getParent();
+            if (parentValue2 != null && parentValue2.length() > 0) {
+                set1.add(parentValue2);
             }
 
-            return string1;
+            return parentValue2;
         } else if (this.printUsageFile != null) {
-            String string = new File(this.printUsageFile).getParent();
-            if (string != null && string.length() > 0) {
-                set1.add(string);
+            String parentValue3 = new File(this.printUsageFile).getParent();
+            if (parentValue3 != null && parentValue3.length() > 0) {
+                set1.add(parentValue3);
             }
 
-            return string;
+            return parentValue3;
         } else {
             return null;
         }
     }
 
-    public void setApplyMapping(String string) {
-        String string1 = string;
-        string1 = string1.trim();
-        if (this.applyMappingFile != null && !this.applyMappingFile.equals(string1)) {
-            this.logWarning("More than one value for ProGuard '-applymapping'. '" + string1 + "' replacing '" + this.applyMappingFile + "'.");
+    public void setApplyMapping(String applyMapping) {
+        String applyMappingFileValue = applyMapping;
+        applyMappingFileValue = applyMappingFileValue.trim();
+        if (this.applyMappingFile != null && !this.applyMappingFile.equals(applyMappingFileValue)) {
+            this.logWarning("More than one value for ProGuard '-applymapping'. '" + applyMappingFileValue + "' replacing '" + this.applyMappingFile + "'.");
         }
 
-        this.applyMappingFile = string1;
+        this.applyMappingFile = applyMappingFileValue;
     }
 
-    public void setPackageObfuscationDictionary(String string) {
-        String string1 = string;
-        string1 = string1.trim();
-        if (this.packageObfuscationDictionary != null && !this.packageObfuscationDictionary.equals(string1)) {
+    public void setPackageObfuscationDictionary(String packageObfuscationDictionaryArgument) {
+        String packageObfuscationDictionaryValue = packageObfuscationDictionaryArgument;
+        packageObfuscationDictionaryValue = packageObfuscationDictionaryValue.trim();
+        if (this.packageObfuscationDictionary != null && !this.packageObfuscationDictionary.equals(packageObfuscationDictionaryValue)) {
             this.logWarning(
-                    "More than one value for ProGuard '-packageobfuscationdictionary'. '" + string1 + "' replacing '" + this.packageObfuscationDictionary + "'."
+                    "More than one value for ProGuard '-packageobfuscationdictionary'. '" + packageObfuscationDictionaryValue + "' replacing '" + this.packageObfuscationDictionary + "'."
             );
         }
 
-        if (string1 != null && string1.length() > 0) {
-            this.packageObfuscationDictionary = string1;
+        if (packageObfuscationDictionaryValue != null && packageObfuscationDictionaryValue.length() > 0) {
+            this.packageObfuscationDictionary = packageObfuscationDictionaryValue;
         }
     }
 
@@ -1141,31 +1107,31 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
     }
 
     public static void appendLineSeparatedStatement(String string, int ba, SyncIndexedSet syncIndexedSet, StringBuilder stringBuilder) {
-        int bb = ba;
-        bb = Math.max(bb, string.length() + 2);
-        stringBuilder.append(ZkmStringUtils.pad(string, 76, bb - 1, 32));
-        int bc = 0;
+        int endIndex = ba;
+        endIndex = Math.max(endIndex, string.length() + 2);
+        stringBuilder.append(ZkmStringUtils.pad(string, 76, endIndex - 1, 32));
+        int elementIndex = 0;
         int bd = 0;
 
-        for (int i = syncIndexedSet.size(); bd < i; i = syncIndexedSet.size()) {
-            String string1 = (String) syncIndexedSet.getElementAt(bc);
-            if (bc == 0) {
-                stringBuilder.append(string1);
+        for (int syncIndexedSetSize = syncIndexedSet.size(); bd < syncIndexedSetSize; syncIndexedSetSize = syncIndexedSet.size()) {
+            String elementAt = (String) syncIndexedSet.getElementAt(elementIndex);
+            if (elementIndex == 0) {
+                stringBuilder.append(elementAt);
             } else {
-                stringBuilder.append(ZkmStringUtils.pad(" ", 82, bb - 1, 32));
-                stringBuilder.append(string1);
+                stringBuilder.append(ZkmStringUtils.pad(" ", 82, endIndex - 1, 32));
+                stringBuilder.append(elementAt);
             }
 
-            if (bc < syncIndexedSet.size() - 1) {
+            if (elementIndex < syncIndexedSet.size() - 1) {
                 stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
 
-            bd = ++bc;
+            bd = ++elementIndex;
         }
 
         if (syncIndexedSet.size() > 0) {
             stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-            stringBuilder.append(ZkmStringUtils.pad(";", 82, bb, 32));
+            stringBuilder.append(ZkmStringUtils.pad(";", 82, endIndex, 32));
         } else {
             stringBuilder.append(";");
         }
@@ -1178,11 +1144,11 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         this.keepParameterNames = true;
     }
 
-    public static void appendQuotedListStatement(String string, int ba, SyncIndexedSet syncIndexedSet, StringBuilder stringBuilder) {
-        StringBuilder stringBuilder1 = stringBuilder;
-        SyncIndexedSet syncIndexedSet1 = syncIndexedSet;
-        Integer integer = ba;
-        appendQuotedListStatement(string, (String) null, integer, syncIndexedSet1, stringBuilder1);
+    public static void appendQuotedListStatement(String statementName, int minimumWidth, SyncIndexedSet values, StringBuilder output) {
+        StringBuilder stringBuilder1 = output;
+        SyncIndexedSet syncIndexedSet1 = values;
+        Integer integer = minimumWidth;
+        appendQuotedListStatement(statementName, (String) null, integer, syncIndexedSet1, stringBuilder1);
     }
 
     public static String resolveZkmLogDir(String string) {
@@ -1205,33 +1171,33 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
     }
 
     public static void appendMapStatement(int ba, Map map1, StringBuilder stringBuilder) {
-        int bb = ba;
-        bb = Math.max(bb, "open".length() + 2);
+        int endIndex = ba;
+        endIndex = Math.max(endIndex, "open".length() + 2);
         if (map1.size() > 0) {
-            stringBuilder.append(ZkmStringUtils.pad("open", 76, bb - 1, 32));
+            stringBuilder.append(ZkmStringUtils.pad("open", 76, endIndex - 1, 32));
             int bc = 0;
 
             for (Iterator iterator = map1.entrySet().iterator(); iterator.hasNext(); bc++) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
+                String key = (String) entry.getKey();
                 if (bc == 0) {
                     stringBuilder.append("\"");
                 } else {
-                    stringBuilder.append(ZkmStringUtils.pad("\"", 82, bb, 32));
+                    stringBuilder.append(ZkmStringUtils.pad("\"", 82, endIndex, 32));
                 }
 
-                stringBuilder.append(string);
+                stringBuilder.append(key);
                 stringBuilder.append("\"");
-                String string1 = (String) entry.getValue();
-                if (string1 != null && string1.length() > 0) {
+                String valueValue = (String) entry.getValue();
+                if (valueValue != null && valueValue.length() > 0) {
                     stringBuilder.append(" ");
-                    stringBuilder.append(string1);
+                    stringBuilder.append(valueValue);
                 }
 
                 stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
 
-            stringBuilder.append(ZkmStringUtils.pad(";", 82, bb, 32));
+            stringBuilder.append(ZkmStringUtils.pad(";", 82, endIndex, 32));
             stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
             stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
         }
@@ -1245,8 +1211,8 @@ public class ProGuardConfigTranslator extends AbstractMessageLog {
         this.excludes.add(object);
     }
 
-    public void addOpenArchive(Object object, Object object1) {
-        this.openArchives.put(object, object1);
+    public void addOpenArchive(Object key, Object valueArgument) {
+        this.openArchives.put(key, valueArgument);
     }
 
     public void addRemoveMethodCallsExclude(Object object) {

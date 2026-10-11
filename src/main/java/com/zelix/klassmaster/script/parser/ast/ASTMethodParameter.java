@@ -23,8 +23,8 @@ public class ASTMethodParameter extends ZkmScriptSimpleNode implements TypeTextH
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object1;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         ZkmScriptASTMethodArguments zkmScriptASTMethodArguments = (ZkmScriptASTMethodArguments) zkmScriptNode;
@@ -38,7 +38,7 @@ public class ASTMethodParameter extends ZkmScriptSimpleNode implements TypeTextH
     }
 
     @Override
-    public void setTypeText(Object object) {
-        this.typeName = (String) object;
+    public void setTypeText(Object typeText) {
+        this.typeName = (String) typeText;
     }
 }

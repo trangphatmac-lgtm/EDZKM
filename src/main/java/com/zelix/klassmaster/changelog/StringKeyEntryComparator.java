@@ -12,9 +12,9 @@ public class StringKeyEntryComparator implements Comparator {
     }
 
     public int compareEntries(Entry entry, Entry entry1) {
-        String string = (String) entry.getKey();
-        String string1 = (String) entry1.getKey();
-        return string.compareTo(string1);
+        String key = (String) entry.getKey();
+        String keyValue = (String) entry1.getKey();
+        return key.compareTo(keyValue);
     }
 
     public StringKeyEntryComparator(ChangeLogMapping changeLogMapping1) {

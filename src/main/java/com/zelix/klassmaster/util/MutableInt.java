@@ -5,6 +5,7 @@ import com.zelix.klassmaster.classfile.insn.IntCounter;
 import java.io.Serializable;
 
 public class MutableInt implements IntCounter, Comparable, Serializable {
+    /** value; the field name is retained for serialized settings compatibility. */
     private int Y;
 
     public int decrementAndGet() {
@@ -20,13 +21,13 @@ public class MutableInt implements IntCounter, Comparable, Serializable {
         }
     }
 
-    public void setValue(int ba) {
-        this.Y = ba;
+    public void setValue(int value) {
+        this.Y = value;
     }
 
     @Override
-    public boolean equals(Object object) {
-        return object != null && object instanceof MutableInt ? this.Y == ((MutableInt) object).Y : false;
+    public boolean equals(Object other) {
+        return ((other != null && other instanceof MutableInt) && (this.Y == ((MutableInt) other).Y));
     }
 
     @Override
@@ -40,8 +41,8 @@ public class MutableInt implements IntCounter, Comparable, Serializable {
         return this.Y;
     }
 
-    public MutableInt(int ba) {
-        this.Y = ba;
+    public MutableInt(int value) {
+        this.Y = value;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class MutableInt implements IntCounter, Comparable, Serializable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareValue((MutableInt) object);
+    public int compareTo(Object other) {
+        return this.compareValue((MutableInt) other);
     }
 }

@@ -40,14 +40,14 @@ public class OpenClassesTask implements Runnable {
             PrintWriter printWriter = null;
             try {
                 printWriter = new DedupPrintWriter(new FileWriter("ZKM_LoadLog.txt"));
-            } catch (final IOException ex) {
-                this.messageReporter.reportError("ERROR:", "Couldn't open ZKM_LoadLog.txt : " + ex.getClass().getName());
+            } catch (final IOException ioException) {
+                this.messageReporter.reportError("ERROR:", "Couldn't open ZKM_LoadLog.txt : " + ioException.getClass().getName());
             }
             PrintWriter printWriter2 = null;
             try {
                 printWriter2 = new PrintWriter(new FileWriter("ZKM_WarningLog.txt"), true);
-            } catch (final IOException ex2) {
-                this.messageReporter.reportError("ERROR:", "Couldn't open ZKM_WarningLog.txt : " + ex2.getClass().getName());
+            } catch (final IOException ioExceptionValue) {
+                this.messageReporter.reportError("ERROR:", "Couldn't open ZKM_WarningLog.txt : " + ioExceptionValue.getClass().getName());
             }
             final MutableInt mutableInt = new MutableInt(0);
             try {
@@ -55,8 +55,8 @@ public class OpenClassesTask implements Runnable {
                 if (!ZkmMainWindow.accessClassRepository(this.mainWindow).hasNoClassesOpened() && !ZkmMainWindow.accessClassRepository(this.mainWindow).hasProgramClasses()) {
                     this.messageReporter.reportErrorWithDetail("FATAL ERROR:", "No classes other than module-info opened", "No classes other than module-info opened. module-info classes are supported but they cannot be directly changed. Use the \"File | Open\" menu to also open your ordinary classes.");
                 }
-            } catch (final Throwable t) {
-                this.messageReporter.reportErrorWithDetail("FATAL ERROR:", "Unknown error : " + t.getClass().getName(), ZkmUtils.stackTraceToString(t));
+            } catch (final Throwable throwable) {
+                this.messageReporter.reportErrorWithDetail("FATAL ERROR:", "Unknown error : " + throwable.getClass().getName(), ZkmUtils.stackTraceToString(throwable));
             } finally {
                 if (printWriter != null) {
                     printWriter.close();
@@ -76,16 +76,16 @@ public class OpenClassesTask implements Runnable {
                 }
                 try {
                     bufferedReader2.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
-            } catch (final FileNotFoundException ex4) {
-            } catch (final IOException ex5) {
-                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this.mainWindow, "Error", "Error reading ZKM_LoadLog.txt : " + ex5.getClass().getName());
+            } catch (final FileNotFoundException fileNotFoundException) {
+            } catch (final IOException ioExceptionValue3) {
+                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this.mainWindow, "Error", "Error reading ZKM_LoadLog.txt : " + ioExceptionValue3.getClass().getName());
             } finally {
                 if (bufferedReader2 != null) {
                     try {
                         bufferedReader2.close();
-                    } catch (final IOException ex6) {
+                    } catch (final IOException ioExceptionValue4) {
                     }
                 }
             }
@@ -98,24 +98,24 @@ public class OpenClassesTask implements Runnable {
                 }
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex7) {
+                } catch (final IOException ioExceptionValue5) {
                 }
-            } catch (final FileNotFoundException ex8) {
-            } catch (final IOException ex9) {
-                final MessageBoxDialog messageBoxDialog2 = new MessageBoxDialog(this.mainWindow, "Error", "Error reading ZKM_WarningLog.txt : " + ex9.getClass().getName());
+            } catch (final FileNotFoundException fileNotFoundExceptionValue) {
+            } catch (final IOException ioExceptionValue6) {
+                final MessageBoxDialog messageBoxDialog2 = new MessageBoxDialog(this.mainWindow, "Error", "Error reading ZKM_WarningLog.txt : " + ioExceptionValue6.getClass().getName());
             } finally {
                 if (bufferedReader != null) {
                     try {
                         bufferedReader.close();
-                    } catch (final IOException ex10) {
+                    } catch (final IOException ioExceptionValue7) {
                     }
                 }
             }
             if (this.statusCallback != null && this.mainWindow.isVisible()) {
                 this.statusCallback.onDialogCancelled();
             }
-        } catch (final Throwable t2) {
-            throw ZkmUtils.<RuntimeException>sneakyThrow(t2);
+        } catch (final Throwable throwableValue) {
+            throw ZkmUtils.<RuntimeException>sneakyThrow(throwableValue);
         }
     }
 

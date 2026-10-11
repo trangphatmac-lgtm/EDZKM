@@ -30,8 +30,8 @@ public class LibraryOverrideCollector {
     public ClassRepository classRepository;
     public ClasspathClassLoader classpathLoader;
 
-    public Set getOverriddenMethods(Object object) {
-        Map map1 = this.overriddenMethodsByMethod.getInnerMap(object);
+    public Set getOverriddenMethods(Object key) {
+        Map map1 = this.overriddenMethodsByMethod.getInnerMap(key);
         return map1 != null ? ZkmUtils.createHashSetFrom(map1.keySet()) : ZkmUtils.createHashSet();
     }
 
@@ -42,29 +42,29 @@ public class LibraryOverrideCollector {
 
     public void collectLibrarySupertypeMethods(ClassFileBase classFileBase, HashSet hashSet, HashSet hashSet1, ListMultimap listMultimap) throws ZkmException, IOException {
         if (!classFileBase.getClassName().equals("java/lang/Object")) {
-            String string = classFileBase.getSuperclassName();
-            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
-            if ((classHierarchyNode == null || !classHierarchyNode.isProgramClass()) && !hashSet1.contains(string)) {
-                hashSet1.add(string);
+            String superclassName = classFileBase.getSuperclassName();
+            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(superclassName);
+            if ((classHierarchyNode == null || !classHierarchyNode.isProgramClass()) && !hashSet1.contains(superclassName)) {
+                hashSet1.add(superclassName);
                 String string1 = "looking for superclass of '" + classFileBase.getDottedClassName() + "' : '" + classFileBase.getLocationName() + "'";
-                ClasspathClassFile classpathClassFile = this.loadLibraryClass(string, string1);
+                ClasspathClassFile classpathClassFile = this.loadLibraryClass(superclassName, string1);
                 this.addLibraryMethodSignatures(classpathClassFile, hashSet, listMultimap);
                 this.collectLibrarySupertypeMethods(classpathClassFile, hashSet, hashSet1, listMultimap);
             }
 
-            String[] strings = classFileBase.getInterfaceNames();
+            String[] interfaceNames = classFileBase.getInterfaceNames();
 
-            for (int i = 0; i < strings.length; i++) {
-                String string2 = strings[i];
-                ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(string2);
-                if ((classHierarchyNode1 == null || !classHierarchyNode1.isProgramClass()) && !hashSet1.contains(string2)) {
-                    hashSet1.add(string2);
+            for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+                String interfaceName = interfaceNames[interfaceNameIndex];
+                ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(interfaceName);
+                if ((classHierarchyNode1 == null || !classHierarchyNode1.isProgramClass()) && !hashSet1.contains(interfaceName)) {
+                    hashSet1.add(interfaceName);
                     String string3 = "looking for interfaces implemented by '"
                             + classFileBase.getDottedClassName()
                             + "' : '"
                             + classFileBase.getLocationName()
                             + "'";
-                    ClasspathClassFile classpathClassFile1 = this.loadLibraryClass(string2, string3);
+                    ClasspathClassFile classpathClassFile1 = this.loadLibraryClass(interfaceName, string3);
                     HashSet hashSet2;
                     if (classFileBase.isProgramClass()) {
                         hashSet2 = ZkmUtils.createHashSet();
@@ -83,8 +83,8 @@ public class LibraryOverrideCollector {
         }
     }
 
-    public Enumeration enumerateOverridingMethods(Object object) {
-        Map map1 = this.overridingMethodsByMethod.getInnerMap(object);
+    public Enumeration enumerateOverridingMethods(Object key) {
+        Map map1 = this.overridingMethodsByMethod.getInnerMap(key);
         return map1 != null ? Collections.enumeration(map1.keySet()) : new EmptyEnumeration();
     }
 
@@ -147,8 +147,8 @@ public class LibraryOverrideCollector {
 
         MethodInfo[] methodInfos = programClass1.getMethodInfos();
 
-        for (int i = 0; i < methodInfos.length; i++) {
-            MethodInfo methodInfo3 = methodInfos[i];
+        for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+            MethodInfo methodInfo3 = methodInfos[methodInfoIndex];
             if (!methodInfo3.isStatic() && !methodInfo3.isStrictlyPrivate() && !methodInfo3.isConstructor()) {
                 MethodSignature methodSignature2 = methodInfo3.getSignature();
                 if (hashSet.contains(methodSignature2)) {
@@ -201,8 +201,8 @@ public class LibraryOverrideCollector {
             list1 = listMultimap.createDefaultList();
             LibraryMethod[] libraryMethods = classpathClassFile.getMethods();
 
-            for (int i = 0; i < libraryMethods.length; i++) {
-                LibraryMethod libraryMethod = libraryMethods[i];
+            for (int libraryMethodIndex = 0; libraryMethodIndex < libraryMethods.length; libraryMethodIndex++) {
+                LibraryMethod libraryMethod = libraryMethods[libraryMethodIndex];
                 if (!libraryMethod.isStatic() && !libraryMethod.isStrictlyPrivate() && !libraryMethod.isConstructor()) {
                     list1.add(libraryMethod.getSignature());
                 }
@@ -214,9 +214,9 @@ public class LibraryOverrideCollector {
         hashSet.addAll(list1);
     }
 
-    public ClasspathClassFile loadLibraryClass(String string, String string1) throws ZkmException, IOException {
+    public ClasspathClassFile loadLibraryClass(String key, String string1) throws ZkmException, IOException {
         try {
-            return this.classpathLoader.findClassFile(string, true, string1);
+            return this.classpathLoader.findClassFile(key, true, string1);
         } catch (ZkmClassNotFoundException zkmClassNotFoundException) {
             throw new ClassLoadFailureException(
                     "Class '" + ZkmUtils.slashesToDots(zkmClassNotFoundException.getClassName()) + "' not found while " + string1 + ". (2)"
@@ -232,8 +232,8 @@ public class LibraryOverrideCollector {
         ListMultimap listMultimap = new ListMultimap();
         List list1 = classHierarchy1.getTopProgramNodes();
 
-        for (int i = 0; i < list1.size(); i++) {
-            ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(elementIndex);
             HashSet hashSet = ZkmUtils.createHashSet();
             HashSet hashSet1 = ZkmUtils.createHashSet();
             TwoKeyMap twoKeyMap = new TwoKeyMap();

@@ -62,13 +62,13 @@ public class InvokeInterfaceInstruction extends ConstantRefInstruction {
     @Override
     public void printDisassembly(PrintWriter printWriter, StringBuilder stringBuilder) throws UnknownOpcodeException {
         StringBuilder stringBuilder1 = new StringBuilder(100);
-        String string = this.getMnemonic();
-        stringBuilder1.append(string + " " + this.constantEntry.getIndex() + " " + this.argSlotCount + " " + 0);
-        String string1 = Instruction.getDescriptionComment(this.opcode);
-        string1 = Instruction.formatDescription(string1, this.constantEntry.getValueString());
-        string1 = Instruction.formatDescription(string1, String.valueOf(this.argSlotCount));
-        if (string1.length() > 0) {
-            stringBuilder1.append("\t" + string1);
+        String mnemonic = this.getMnemonic();
+        stringBuilder1.append(mnemonic + " " + this.constantEntry.getIndex() + " " + this.argSlotCount + " " + 0);
+        String descriptionComment = Instruction.getDescriptionComment(this.opcode);
+        descriptionComment = Instruction.formatDescription(descriptionComment, this.constantEntry.getValueString());
+        descriptionComment = Instruction.formatDescription(descriptionComment, String.valueOf(this.argSlotCount));
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);

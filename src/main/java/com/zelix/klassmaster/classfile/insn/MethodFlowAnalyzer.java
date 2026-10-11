@@ -193,19 +193,19 @@ public class MethodFlowAnalyzer {
 
         this.parameterSlotCount = mutableInt.getValue();
         int bb = 0;
-        int bc = nonNullList.size();
+        int nonNullListSize = nonNullList.size();
         HashMap hashMap = ZkmUtils.createHashMap();
         ListMultimap listMultimap = new ListMultimap();
 
-        for (int i = 0; i < bc; i++) {
-            Instruction instruction1 = (Instruction) nonNullList.get(i);
+        for (int instructionIndexValue = 0; instructionIndexValue < nonNullListSize; instructionIndexValue++) {
+            Instruction instruction1 = (Instruction) nonNullList.get(instructionIndexValue);
             if (instruction1 instanceof JumpingInstruction) {
                 ((JumpingInstruction) instruction1).addSuccessorBlocks(hashMap, listMultimap, this.basicBlocks);
                 if (instruction1.isJsr()) {
                     this.hasSubroutineCalls = true;
                 }
             } else if (instruction1 instanceof LabelInstruction) {
-                ((LabelInstruction) instruction1).setInstructionIndex(i);
+                ((LabelInstruction) instruction1).setInstructionIndex(instructionIndexValue);
             }
         }
 
@@ -215,10 +215,10 @@ public class MethodFlowAnalyzer {
             this.tryCatchInfosByHandler = new ListMultimap(exceptionTableEntrys.length);
             int bf = 0;
 
-            for (int i = 0; i < exceptionTableEntrys.length; i++) {
-                LabelInstruction labelInstruction = exceptionTableEntrys[i].getLabel(ExceptionRangeField.START_PC);
-                LabelInstruction labelInstruction1 = exceptionTableEntrys[i].getLabel(ExceptionRangeField.END_PC);
-                LabelInstruction labelInstruction2 = exceptionTableEntrys[i].getLabel(ExceptionRangeField.HANDLER_PC);
+            for (int entryIndex = 0; entryIndex < exceptionTableEntrys.length; entryIndex++) {
+                LabelInstruction labelInstruction = exceptionTableEntrys[entryIndex].getLabel(ExceptionRangeField.START_PC);
+                LabelInstruction labelInstruction1 = exceptionTableEntrys[entryIndex].getLabel(ExceptionRangeField.END_PC);
+                LabelInstruction labelInstruction2 = exceptionTableEntrys[entryIndex].getLabel(ExceptionRangeField.HANDLER_PC);
                 BasicBlock basicBlock;
                 if ((basicBlock = (BasicBlock) hashMap.get(labelInstruction2)) == null) {
                     basicBlock = new BasicBlock();
@@ -231,26 +231,26 @@ public class MethodFlowAnalyzer {
                     basicBlock.setLabel("catchNode" + bf++);
                 }
 
-                tryCatchBlockInfos[i] = new TryCatchBlockInfo(
+                tryCatchBlockInfos[entryIndex] = new TryCatchBlockInfo(
                         this,
-                        i,
+                        entryIndex,
                         labelInstruction.getInstructionIndex(),
                         labelInstruction1.getInstructionIndex(),
                         labelInstruction2.getInstructionIndex(),
-                        exceptionTableEntrys[i].getCatchTypeName(),
-                        exceptionTableEntrys[i].isCatchAny(),
+                        exceptionTableEntrys[entryIndex].getCatchTypeName(),
+                        exceptionTableEntrys[entryIndex].isCatchAny(),
                         basicBlock,
-                        exceptionTableEntrys[i]
+                        exceptionTableEntrys[entryIndex]
                 );
-                this.tryCatchInfosByHandler.addValue(basicBlock, tryCatchBlockInfos[i]);
+                this.tryCatchInfosByHandler.addValue(basicBlock, tryCatchBlockInfos[entryIndex]);
             }
         } else {
             tryCatchBlockInfos = new TryCatchBlockInfo[0];
         }
 
-        int bg = 0;
+        int elementIndexValue2 = 0;
 
-        for (Instruction instruction4 = (Instruction) nonNullList.get(bg); instruction4.isLabel(); instruction4 = (Instruction) nonNullList.get(++bg)) {
+        for (Instruction instruction4 = (Instruction) nonNullList.get(elementIndexValue2); instruction4.isLabel(); instruction4 = (Instruction) nonNullList.get(++elementIndexValue2)) {
             BasicBlock basicBlock3 = (BasicBlock) hashMap.get(instruction4);
             if (basicBlock3 != null) {
                 this.entryBlock = basicBlock3;
@@ -268,18 +268,18 @@ public class MethodFlowAnalyzer {
         basicBlock4.setStartIndex(0);
         LinkedHashSet linkedHashSet = new LinkedHashSet();
 
-        for (int i = bg; i < bc; i++) {
-            Instruction instruction5 = (Instruction) nonNullList.get(i);
+        for (int elementIndexValue3 = elementIndexValue2; elementIndexValue3 < nonNullListSize; elementIndexValue3++) {
+            Instruction instruction5 = (Instruction) nonNullList.get(elementIndexValue3);
             if (instruction5 instanceof JumpingInstruction) {
-                basicBlock4.setEndIndex(i);
+                basicBlock4.setEndIndex(elementIndexValue3);
                 List list3 = listMultimap.getValues((JumpingInstruction) instruction5);
 
-                for (int j = 0; j < list3.size(); j++) {
-                    basicBlock4.addSuccessor((BasicBlock) list3.get(j));
+                for (int elementIndex = 0; elementIndex < list3.size(); elementIndex++) {
+                    basicBlock4.addSuccessor((BasicBlock) list3.get(elementIndex));
                 }
 
-                if (i + 1 < bc) {
-                    Instruction instruction3 = (Instruction) nonNullList.get(i + 1);
+                if (elementIndexValue3 + 1 < nonNullListSize) {
+                    Instruction instruction3 = (Instruction) nonNullList.get(elementIndexValue3 + 1);
                     BasicBlock basicBlock8;
                     if (!(instruction3 instanceof LabelInstruction) || (basicBlock8 = (BasicBlock) hashMap.get(instruction3)) == null) {
                         basicBlock8 = new BasicBlock();
@@ -290,7 +290,7 @@ public class MethodFlowAnalyzer {
                         basicBlock8.setLabel("node" + bb++);
                     }
 
-                    basicBlock8.setStartIndex(i + 1);
+                    basicBlock8.setStartIndex(elementIndexValue3 + 1);
                     if (instruction5.canFallThrough()) {
                         basicBlock4.addSuccessor(basicBlock8);
                     } else if (instruction5.isJsr()) {
@@ -305,9 +305,9 @@ public class MethodFlowAnalyzer {
             } else if (instruction5 instanceof LabelInstruction) {
                 BasicBlock basicBlock6 = (BasicBlock) hashMap.get(instruction5);
                 if (basicBlock6 != null && basicBlock4 != basicBlock6) {
-                    Instruction instruction6 = (Instruction) nonNullList.get(i - 1);
-                    basicBlock4.setEndIndex(i - 1);
-                    basicBlock6.setStartIndex(i);
+                    Instruction instruction6 = (Instruction) nonNullList.get(elementIndexValue3 - 1);
+                    basicBlock4.setEndIndex(elementIndexValue3 - 1);
+                    basicBlock6.setStartIndex(elementIndexValue3);
                     if (basicBlock6.getLabel() == null) {
                         basicBlock6.setLabel("node" + bb++);
                     }
@@ -319,9 +319,9 @@ public class MethodFlowAnalyzer {
                     basicBlock4 = basicBlock6;
                 }
             } else if (instruction5.isExit()) {
-                basicBlock4.setEndIndex(i);
-                if (i + 1 < bc) {
-                    Instruction instruction2 = (Instruction) nonNullList.get(i + 1);
+                basicBlock4.setEndIndex(elementIndexValue3);
+                if (elementIndexValue3 + 1 < nonNullListSize) {
+                    Instruction instruction2 = (Instruction) nonNullList.get(elementIndexValue3 + 1);
                     BasicBlock basicBlock1;
                     if (!(instruction2 instanceof LabelInstruction) || (basicBlock1 = (BasicBlock) hashMap.get(instruction2)) == null) {
                         basicBlock1 = new BasicBlock();
@@ -332,7 +332,7 @@ public class MethodFlowAnalyzer {
                         basicBlock1.setLabel("node" + bb++);
                     }
 
-                    basicBlock1.setStartIndex(i + 1);
+                    basicBlock1.setStartIndex(elementIndexValue3 + 1);
                     basicBlock4 = basicBlock1;
                 }
             }
@@ -341,19 +341,19 @@ public class MethodFlowAnalyzer {
         Collections.sort(this.catchHandlerBlocks);
         Collections.sort(this.basicBlocks);
 
-        for (int i = 0; i < this.basicBlocks.size(); i++) {
-            BasicBlock basicBlock5 = (BasicBlock) this.basicBlocks.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < this.basicBlocks.size(); elementIndexValue++) {
+            BasicBlock basicBlock5 = (BasicBlock) this.basicBlocks.get(elementIndexValue);
             if (basicBlock5.getStartIndex() > basicBlock5.getEndIndex()) {
-                if (i < this.basicBlocks.size() - 1) {
-                    BasicBlock basicBlock7 = (BasicBlock) this.basicBlocks.get(i + 1);
+                if (elementIndexValue < this.basicBlocks.size() - 1) {
+                    BasicBlock basicBlock7 = (BasicBlock) this.basicBlocks.get(elementIndexValue + 1);
                     basicBlock5.setEndIndex(basicBlock7.getStartIndex() - 1);
                 } else {
-                    basicBlock5.setEndIndex(bc - 1);
+                    basicBlock5.setEndIndex(nonNullListSize - 1);
                 }
             }
         }
 
-        TryCatchBlockInfo[][] tryCatchBlockInfos1 = new TryCatchBlockInfo[bc][];
+        TryCatchBlockInfo[][] tryCatchBlockInfos1 = new TryCatchBlockInfo[nonNullListSize][];
         if (this.catchHandlerBlocks.size() > 0) {
             this.handlerCoveredBlocks = new TwoKeyMap(this.catchHandlerBlocks.size());
             this.assignExceptionHandlers(tryCatchBlockInfos1, tryCatchBlockInfos);
@@ -401,7 +401,7 @@ public class MethodFlowAnalyzer {
             commonSuperTypeResolver1.clearThreadVersion();
         }
 
-        String string1 = "analyzing the control flow of method '"
+        String diagnosticContext = "analyzing the control flow of method '"
                 + methodBytecode1.getMethod().getOriginalNameWithParameters()
                 + "' in class '"
                 + methodBytecode1.getLocationName()
@@ -414,7 +414,7 @@ public class MethodFlowAnalyzer {
                     commonSuperTypeResolver1,
                     tryCatchBlockInfos1,
                     HiddenOptionFlags.STRICT_TRY_CATCH_ANALYSIS && !HiddenOptionFlags.LENIENT_TRY_CATCH_ANALYSIS,
-                    string1
+                    diagnosticContext
             );
         } catch (AssertionFailedException assertionFailedException1) {
             throw assertionFailedException1;
@@ -431,10 +431,10 @@ public class MethodFlowAnalyzer {
             }
         }
 
-        int bk = this.computeMaxStack();
+        int maxStackValue = this.computeMaxStack();
         int maxStack = ((CodeAttributeBody) methodBytecode1.getParent()).getMaxStack();
-        if (bk != maxStack) {
-            ((CodeAttributeBody) methodBytecode1.getParent()).setMaxStack(bk);
+        if (maxStackValue != maxStack) {
+            ((CodeAttributeBody) methodBytecode1.getParent()).setMaxStack(maxStackValue);
         }
 
         commonSuperTypeResolver1.clearThreadVersion();
@@ -442,11 +442,11 @@ public class MethodFlowAnalyzer {
 
     private void removeUnreachableBlocks(TwoKeyMap twoKeyMap) {
         if (this.basicBlocks.size() != 1) {
-            int ba = this.basicBlocks.size();
+            int basicBlocksSize = this.basicBlocks.size();
             ArrayList arrayList = null;
 
-            for (int i = 0; i < ba; i++) {
-                BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(i);
+            for (int elementIndex = 0; elementIndex < basicBlocksSize; elementIndex++) {
+                BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(elementIndex);
                 if (basicBlock.getLabel() == null) {
                     if (arrayList == null) {
                         arrayList = new ArrayList();
@@ -457,8 +457,8 @@ public class MethodFlowAnalyzer {
             }
 
             if (arrayList != null) {
-                for (int i = 0; i < arrayList.size(); i++) {
-                    this.basicBlocks.remove(arrayList.get(i));
+                for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+                    this.basicBlocks.remove(arrayList.get(elementIndexValue));
                 }
             }
 
@@ -466,17 +466,17 @@ public class MethodFlowAnalyzer {
             this.collectReachableBlocks(this.entryBlock, hashSet);
             UniqueWorkQueue uniqueWorkQueue = new UniqueWorkQueue();
 
-            for (int i = 0; i < this.catchHandlerBlocks.size(); i++) {
-                uniqueWorkQueue.enqueue(this.catchHandlerBlocks.get(i));
+            for (int elementIndexValue2 = 0; elementIndexValue2 < this.catchHandlerBlocks.size(); elementIndexValue2++) {
+                uniqueWorkQueue.enqueue(this.catchHandlerBlocks.get(elementIndexValue2));
             }
 
             boolean bl1 = true;
 
             while (!uniqueWorkQueue.isEmpty() && bl1) {
-                int bd = uniqueWorkQueue.size();
-                int be = hashSet.size();
+                int uniqueWorkQueueSize = uniqueWorkQueue.size();
+                int hashSetSize = hashSet.size();
 
-                for (int i = 0; i < bd; i++) {
+                for (int i = 0; i < uniqueWorkQueueSize; i++) {
                     BasicBlock basicBlock1 = (BasicBlock) uniqueWorkQueue.dequeue();
                     Map map1 = twoKeyMap.getInnerMap(basicBlock1);
                     boolean bl = false;
@@ -498,7 +498,7 @@ public class MethodFlowAnalyzer {
                     }
                 }
 
-                bl1 = be != hashSet.size();
+                bl1 = hashSetSize != hashSet.size();
             }
 
             while (!uniqueWorkQueue.isEmpty()) {
@@ -507,7 +507,7 @@ public class MethodFlowAnalyzer {
                 this.tryCatchInfosByHandler.removeKey(basicBlock3);
             }
 
-            if (ba > hashSet.size()) {
+            if (basicBlocksSize > hashSet.size()) {
                 this.basicBlocks.clear();
                 this.basicBlocks.addAll(hashSet);
                 Collections.sort(this.basicBlocks);
@@ -535,9 +535,9 @@ public class MethodFlowAnalyzer {
         return integers;
     }
 
-    public HashSet findDirectNestedLoops(Object object, Set set1, SetMultiMap setMultiMap, SetMultiMap setMultiMap1) {
+    public HashSet findDirectNestedLoops(Object key, Set set1, SetMultiMap setMultiMap, SetMultiMap setMultiMap1) {
         HashSet hashSet = ZkmUtils.createHashSet();
-        Set set2 = setMultiMap.getValues(object);
+        Set set2 = setMultiMap.getValues(key);
         if (set2 != null) {
             Iterator iterator = set2.iterator();
 
@@ -560,8 +560,8 @@ public class MethodFlowAnalyzer {
     public boolean isGetComponentTypeCall(ResolvedMethodRef resolvedMethodRef, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
         try {
             if (resolvedMethodRef.getSignatureString().equals("getComponentType()Ljava/lang/Class;")) {
-                String string = resolvedMethodRef.getReferencedClassName();
-                return string.equals("java/lang/Class") || classMemberLookup1.isSubclass(string, "java/lang/Class");
+                String referencedClassName = resolvedMethodRef.getReferencedClassName();
+                return referencedClassName.equals("java/lang/Class") || classMemberLookup1.isSubclass(referencedClassName, "java/lang/Class");
             } else {
                 return false;
             }
@@ -574,8 +574,8 @@ public class MethodFlowAnalyzer {
         return new PropertiesLoadTracker(this);
     }
 
-    public void traceFieldReadSource(ValueTraceFrame valueTraceFrame, int ba) throws IOException {
-        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(ba);
+    public void traceFieldReadSource(ValueTraceFrame valueTraceFrame, int elementIndex) throws IOException {
+        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(elementIndex);
         ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) constantRefInstruction.getConstantPoolEntry();
         AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) resolvedFieldRef.getResolvedMember();
         if (abstractFieldInfo != null && abstractFieldInfo.isProgramMember()) {
@@ -620,42 +620,42 @@ public class MethodFlowAnalyzer {
                 valueTraceFrame.results.addAll(hashSet);
             }
         } else {
-            String string = resolvedFieldRef.getReferencedClassName();
+            String referencedClassName = resolvedFieldRef.getReferencedClassName();
             if (resolvedFieldRef.getMemberName().equals("TYPE")) {
-                if (string.equals("java/lang/Integer")) {
+                if (referencedClassName.equals("java/lang/Integer")) {
                     valueTraceFrame.results.add(new LiteralStringValue("I"));
-                } else if (string.equals("java/lang/Byte")) {
+                } else if (referencedClassName.equals("java/lang/Byte")) {
                     valueTraceFrame.results.add(new LiteralStringValue("B"));
-                } else if (string.equals("java/lang/Character")) {
+                } else if (referencedClassName.equals("java/lang/Character")) {
                     valueTraceFrame.results.add(new LiteralStringValue("C"));
-                } else if (string.equals("java/lang/Short")) {
+                } else if (referencedClassName.equals("java/lang/Short")) {
                     valueTraceFrame.results.add(new LiteralStringValue("S"));
-                } else if (string.equals("java/lang/Long")) {
+                } else if (referencedClassName.equals("java/lang/Long")) {
                     valueTraceFrame.results.add(new LiteralStringValue("J"));
-                } else if (string.equals("java/lang/Float")) {
+                } else if (referencedClassName.equals("java/lang/Float")) {
                     valueTraceFrame.results.add(new LiteralStringValue("F"));
-                } else if (string.equals("java/lang/Double")) {
+                } else if (referencedClassName.equals("java/lang/Double")) {
                     valueTraceFrame.results.add(new LiteralStringValue("D"));
-                } else if (string.equals("java/lang/Boolean")) {
+                } else if (referencedClassName.equals("java/lang/Boolean")) {
                     valueTraceFrame.results.add(new LiteralStringValue("Z"));
-                } else if (string.equals("java/lang/Void")) {
+                } else if (referencedClassName.equals("java/lang/Void")) {
                     valueTraceFrame.results.add(new LiteralStringValue("V"));
                 } else {
-                    valueTraceFrame.results.add(new InstructionReasonNote(constantRefInstruction, "Source field is external: " + string + "." + "TYPE"));
+                    valueTraceFrame.results.add(new InstructionReasonNote(constantRefInstruction, "Source field is external: " + referencedClassName + "." + "TYPE"));
                 }
             } else {
                 valueTraceFrame.results
-                        .add(new InstructionReasonNote(constantRefInstruction, "Source field is external: " + string + "." + resolvedFieldRef.getMemberName()));
+                        .add(new InstructionReasonNote(constantRefInstruction, "Source field is external: " + referencedClassName + "." + resolvedFieldRef.getMemberName()));
             }
         }
     }
 
-    public boolean hasUninitializedThisAt(int ba) {
-        return this.frameStates[ba].hasUninitializedThis();
+    public boolean hasUninitializedThisAt(int frameStateIndex) {
+        return this.frameStates[frameStateIndex].hasUninitializedThis();
     }
 
-    public void traceFieldWriteUses(ValueTraceFrame valueTraceFrame, ValueFlowTracker valueFlowTracker, int ba) throws ZkmException, IOException {
-        ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) ((ConstantRefInstruction) this.instructions.get(ba)).getConstantPoolEntry();
+    public void traceFieldWriteUses(ValueTraceFrame valueTraceFrame, ValueFlowTracker valueFlowTracker, int elementIndexArgument) throws ZkmException, IOException {
+        ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) ((ConstantRefInstruction) this.instructions.get(elementIndexArgument)).getConstantPoolEntry();
         AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) resolvedFieldRef.getResolvedMember();
         HashSet hashSet;
         if (abstractFieldInfo != null) {
@@ -673,12 +673,12 @@ public class MethodFlowAnalyzer {
                                 if (methodBytecode1 == this.methodBytecode) {
                                     List list2 = listMultimap1.getValues(methodBytecode1);
 
-                                    for (int i = 0; i < list2.size(); i++) {
-                                        int be = (Integer) list2.get(i);
-                                        StackFrameState stackFrameState1 = this.frameStates[be];
+                                    for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
+                                        int frameStateIndex = (Integer) list2.get(elementIndex);
+                                        StackFrameState stackFrameState1 = this.frameStates[frameStateIndex];
                                         if (stackFrameState1 != null) {
                                             this.traceStackValueUses(
-                                                    valueTraceFrame, valueFlowTracker, this.getBlockContaining(be), be + 1, stackFrameState1.getStack().length - 1
+                                                    valueTraceFrame, valueFlowTracker, this.getBlockContaining(frameStateIndex), frameStateIndex + 1, stackFrameState1.getStack().length - 1
                                             );
                                         }
                                     }
@@ -689,16 +689,16 @@ public class MethodFlowAnalyzer {
                                         );
                                         List list1 = listMultimap1.getValues(methodBytecode1);
 
-                                        for (int i = 0; i < list1.size(); i++) {
-                                            int bc = (Integer) list1.get(i);
-                                            StackFrameState stackFrameState = methodFlowAnalyzer1.frameStates[bc];
+                                        for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+                                            int frameStateIndexValue = (Integer) list1.get(elementIndexValue);
+                                            StackFrameState stackFrameState = methodFlowAnalyzer1.frameStates[frameStateIndexValue];
                                             if (stackFrameState != null) {
                                                 ValueFlowTracker valueFlowTracker1 = valueFlowTracker.getTrackerFrom(methodFlowAnalyzer1);
                                                 methodFlowAnalyzer1.traceStackValueUses(
                                                         valueTraceFrame,
                                                         valueFlowTracker1,
-                                                        methodFlowAnalyzer1.getBlockContaining(bc),
-                                                        bc + 1,
+                                                        methodFlowAnalyzer1.getBlockContaining(frameStateIndexValue),
+                                                        frameStateIndexValue + 1,
                                                         stackFrameState.getStack().length - 1
                                                 );
                                             }
@@ -767,8 +767,8 @@ public class MethodFlowAnalyzer {
         }
     }
 
-    public boolean hasPendingPredecessor(int ba, TreeSet treeSet) {
-        BasicBlock basicBlock = this.getBlockContaining(ba);
+    public boolean hasPendingPredecessor(int blockByIndexCacheElementIndex, TreeSet treeSet) {
+        BasicBlock basicBlock = this.getBlockContaining(blockByIndexCacheElementIndex);
         if (basicBlock.hasPredecessors()) {
             Iterator iterator = basicBlock.getPredecessors().iterator();
 
@@ -784,19 +784,19 @@ public class MethodFlowAnalyzer {
     }
 
     public int computeShortestReturnPath() {
-        int ba = Integer.MAX_VALUE;
+        int maxValue = Integer.MAX_VALUE;
 
-        for (int i = 0; i < this.basicBlocks.size(); i++) {
-            BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(i);
+        for (int elementIndex = 0; elementIndex < this.basicBlocks.size(); elementIndex++) {
+            BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(elementIndex);
             if (((Instruction) this.instructions.get(basicBlock.getEndIndex())).isReturn()) {
                 int minDistanceFromEntry = basicBlock.getMinDistanceFromEntry();
-                if (minDistanceFromEntry < ba) {
-                    ba = minDistanceFromEntry;
+                if (minDistanceFromEntry < maxValue) {
+                    maxValue = minDistanceFromEntry;
                 }
             }
         }
 
-        return ba;
+        return maxValue;
     }
 
     public boolean findStackValueProducers(BasicBlock basicBlock, int ba, int bb, Set set1, Set set2) {
@@ -808,9 +808,9 @@ public class MethodFlowAnalyzer {
         boolean bl = false;
         int startIndex = basicBlock.getStartIndex();
 
-        for (int i = ba - 1; !bl && i >= startIndex; i += -1) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
-            StackFrameState stackFrameState = this.frameStates[i];
+        for (int frameStateIndex = ba - 1; !bl && frameStateIndex >= startIndex; frameStateIndex += -1) {
+            Instruction instruction1 = (Instruction) this.instructions.get(frameStateIndex);
+            StackFrameState stackFrameState = this.frameStates[frameStateIndex];
             if (instruction1.isStackManipulation()) {
                 VerifierType[] verifierTypes = stackFrameState.getStack();
                 if (instruction1.affectsStackSlot(verifierTypes, bc)) {
@@ -834,7 +834,7 @@ public class MethodFlowAnalyzer {
                 }
 
                 if (stackFrameState.getStackDepth() - 1 == bc && instruction1.pushesValue()) {
-                    set1.add(INTEGER_CACHE.valueOf(i));
+                    set1.add(INTEGER_CACHE.valueOf(frameStateIndex));
                     bl = true;
                 }
             }
@@ -843,8 +843,8 @@ public class MethodFlowAnalyzer {
         if (!bl) {
             List list1 = basicBlock.getPredecessors();
             if (list1 != null && list1.size() > 0) {
-                for (int i = 0; i < list1.size(); i++) {
-                    BasicBlock basicBlock1 = (BasicBlock) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    BasicBlock basicBlock1 = (BasicBlock) list1.get(elementIndex);
                     boolean bl1 = this.findStackValueProducers(basicBlock1, basicBlock1.getEndIndex() + 1, bc, set1, set2);
                     if (!bl1) {
                         return false;
@@ -863,9 +863,9 @@ public class MethodFlowAnalyzer {
             valueFlowTracker.markVisited(2, ba, bb);
             int endIndex = basicBlock.getEndIndex();
 
-            for (int i = ba; i < endIndex; i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                StackFrameState stackFrameState = this.frameStates[i];
+            for (int elementIndexValue2 = ba; elementIndexValue2 < endIndex; elementIndexValue2++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndexValue2);
+                StackFrameState stackFrameState = this.frameStates[elementIndexValue2];
                 bc = bb;
                 if (instruction1.isStoreTo(bc)) {
                     return;
@@ -873,21 +873,21 @@ public class MethodFlowAnalyzer {
 
                 if (instruction1.isLoadFrom(bb)) {
                     int bg = stackFrameState.getStack().length - 1;
-                    this.traceStackValueUses(valueTraceFrame, valueFlowTracker, basicBlock, i + 1, bg);
+                    this.traceStackValueUses(valueTraceFrame, valueFlowTracker, basicBlock, elementIndexValue2 + 1, bg);
                 }
             }
 
             List list1 = basicBlock.getSuccessorsCopy();
             if (list1 != null && list1.size() > 0) {
-                for (int i = 0; i < list1.size(); i++) {
-                    BasicBlock basicBlock1 = (BasicBlock) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    BasicBlock basicBlock1 = (BasicBlock) list1.get(elementIndex);
                     this.traceLocalVariableUses(valueTraceFrame, valueFlowTracker, basicBlock1, basicBlock1.getStartIndex(), bb);
                 }
             } else if (basicBlock.hasRetBlocks()) {
                 List list2 = basicBlock.getRetBlocks();
 
-                for (int i = 0; i < list2.size(); i++) {
-                    BasicBlock basicBlock2 = (BasicBlock) list2.get(i);
+                for (int elementIndexValue = 0; elementIndexValue < list2.size(); elementIndexValue++) {
+                    BasicBlock basicBlock2 = (BasicBlock) list2.get(elementIndexValue);
                     this.traceLocalVariableUses(valueTraceFrame, valueFlowTracker, basicBlock2, basicBlock2.getStartIndex(), bb);
                 }
             }
@@ -899,17 +899,17 @@ public class MethodFlowAnalyzer {
         int bc = this.basicBlocks.size() - 1;
 
         while (bb <= bc) {
-            int bd = (bb + bc) / 2;
-            BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(bd);
+            int elementIndex = (bb + bc) / 2;
+            BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(elementIndex);
             int startIndex = basicBlock.getStartIndex();
             if (ba < startIndex) {
-                bc = bd - 1;
+                bc = elementIndex - 1;
             } else {
                 if (ba <= startIndex) {
                     return basicBlock;
                 }
 
-                bb = bd + 1;
+                bb = elementIndex + 1;
             }
         }
 
@@ -943,9 +943,9 @@ public class MethodFlowAnalyzer {
     }
 
     public boolean hasFrameLabels() {
-        for (int i = 0; i < this.instructions.size(); i++) {
-            if (((Instruction) this.instructions.get(i)).isLabel()) {
-                LabelInstruction labelInstruction = (LabelInstruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < this.instructions.size(); elementIndex++) {
+            if (((Instruction) this.instructions.get(elementIndex)).isLabel()) {
+                LabelInstruction labelInstruction = (LabelInstruction) this.instructions.get(elementIndex);
                 if (labelInstruction.hasUsageBits(1) || labelInstruction.hasUsageBits(1024)) {
                     return true;
                 }
@@ -955,45 +955,45 @@ public class MethodFlowAnalyzer {
         return false;
     }
 
-    public void traceLocalThroughCatchHandler(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int ba) throws ZkmException, IOException {
+    public void traceLocalThroughCatchHandler(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int parameterIndexArgument) throws ZkmException, IOException {
         HashSet hashSet = ZkmUtils.createHashSet();
         List list1 = this.tryCatchInfosByHandler.getValues(basicBlock);
         BitSet bitSet = new BitSet(this.basicBlocks.size());
 
-        for (int i = 0; i < list1.size(); i++) {
-            TryCatchBlockInfo tryCatchBlockInfo = (TryCatchBlockInfo) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            TryCatchBlockInfo tryCatchBlockInfo = (TryCatchBlockInfo) list1.get(elementIndex);
             ExceptionTableEntry exceptionTableEntry1 = tryCatchBlockInfo.exceptionTableEntry;
             LabelInstruction labelInstruction = exceptionTableEntry1.getLabel(ExceptionRangeField.START_PC);
             LabelInstruction labelInstruction1 = exceptionTableEntry1.getLabel(ExceptionRangeField.END_PC);
             int instructionIndex = labelInstruction.getInstructionIndex();
-            int bd = labelInstruction1.getInstructionIndex();
+            int instructionIndexValue = labelInstruction1.getInstructionIndex();
             BasicBlock basicBlock1 = null;
             HashSet hashSet1 = ZkmUtils.createHashSet();
             Iterator iterator = this.basicBlocks.iterator();
 
             while (iterator.hasNext()) {
                 BasicBlock basicBlock2 = (BasicBlock) iterator.next();
-                if (basicBlock2.getStartIndex() >= instructionIndex && basicBlock2.getStartIndex() < bd) {
+                if (basicBlock2.getStartIndex() >= instructionIndex && basicBlock2.getStartIndex() < instructionIndexValue) {
                     hashSet1.add(basicBlock2);
                 } else if (basicBlock2.getStartIndex() < instructionIndex && basicBlock2.getEndIndex() >= instructionIndex) {
                     basicBlock1 = basicBlock2;
                 }
             }
 
-            for (int j = instructionIndex; j < bd; j++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(j);
-                if (instruction1.isStoreTo(ba)) {
-                    BasicBlock basicBlock3 = this.getBlockContaining(j);
-                    if (j > basicBlock3.getStartIndex()) {
-                        this.traceStackValueSource(valueTraceFrame, basicBlock3, j, this.frameStates[j].getStackDepth());
+            for (int instructionIndexValue2 = instructionIndex; instructionIndexValue2 < instructionIndexValue; instructionIndexValue2++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(instructionIndexValue2);
+                if (instruction1.isStoreTo(parameterIndexArgument)) {
+                    BasicBlock basicBlock3 = this.getBlockContaining(instructionIndexValue2);
+                    if (instructionIndexValue2 > basicBlock3.getStartIndex()) {
+                        this.traceStackValueSource(valueTraceFrame, basicBlock3, instructionIndexValue2, this.frameStates[instructionIndexValue2].getStackDepth());
                         return;
                     }
 
                     List list2 = basicBlock3.getPredecessors();
                     if (list2 != null && list2.size() > 0) {
-                        for (int k = 0; k < list2.size(); k++) {
-                            BasicBlock basicBlock4 = (BasicBlock) list2.get(k);
-                            this.traceStackValueSource(valueTraceFrame, basicBlock4, basicBlock4.getEndIndex() + 1, this.frameStates[j].getStackDepth());
+                        for (int elementIndexValue = 0; elementIndexValue < list2.size(); elementIndexValue++) {
+                            BasicBlock basicBlock4 = (BasicBlock) list2.get(elementIndexValue);
+                            this.traceStackValueSource(valueTraceFrame, basicBlock4, basicBlock4.getEndIndex() + 1, this.frameStates[instructionIndexValue2].getStackDepth());
                         }
 
                         return;
@@ -1001,39 +1001,26 @@ public class MethodFlowAnalyzer {
                 }
             }
 
-            Iterator iterator2;
-            label107:
             if (basicBlock1 != null) {
                 bitSet.clear();
-                HashSet hashSet2;
-                if (basicBlock != basicBlock1) {
-                    if (!basicBlock.canReach(basicBlock1, bitSet)) {
-                        this.traceLocalVariableSource(valueTraceFrame, basicBlock1, instructionIndex, ba);
-                        iterator2 = hashSet1.iterator();
-                        break label107;
-                    }
-
-                    hashSet2 = valueTraceFrame.results;
+                if (basicBlock != basicBlock1 && !basicBlock.canReach(basicBlock1, bitSet)) {
+                    this.traceLocalVariableSource(valueTraceFrame, basicBlock1, instructionIndex, parameterIndexArgument);
                 } else {
-                    hashSet2 = valueTraceFrame.results;
+                    valueTraceFrame.results.add(new InstructionReasonNote(
+                            (Instruction) this.instructions.get(basicBlock.getStartIndex()), "Loop through catch"));
                 }
-
-                hashSet2.add(new InstructionReasonNote((Instruction) this.instructions.get(basicBlock.getStartIndex()), "Loop through catch"));
-                iterator2 = hashSet1.iterator();
-            } else {
-                iterator2 = hashSet1.iterator();
             }
 
-            iterator = iterator2;
+            iterator = hashSet1.iterator();
 
             while (iterator.hasNext()) {
                 BasicBlock basicBlock6 = (BasicBlock) iterator.next();
                 int startIndex = basicBlock6.getStartIndex();
-                if (!((Instruction) this.instructions.get(startIndex)).isStoreTo(ba) && !StackFrameState.isTopOrMissing(this.frameStates[startIndex].getLocals()[ba])) {
+                if (!((Instruction) this.instructions.get(startIndex)).isStoreTo(parameterIndexArgument) && !StackFrameState.isTopOrMissing(this.frameStates[startIndex].getLocals()[parameterIndexArgument])) {
                     List list3 = basicBlock6.getPredecessors();
                     if (list3 != null && list3.size() > 0) {
-                        for (int j = 0; j < list3.size(); j++) {
-                            BasicBlock basicBlock7 = (BasicBlock) list3.get(j);
+                        for (int elementIndexValue2 = 0; elementIndexValue2 < list3.size(); elementIndexValue2++) {
+                            BasicBlock basicBlock7 = (BasicBlock) list3.get(elementIndexValue2);
                             if (!hashSet1.contains(basicBlock7) && (basicBlock1 == null || basicBlock7 != basicBlock1)) {
                                 hashSet.add(basicBlock7);
                             }
@@ -1051,7 +1038,7 @@ public class MethodFlowAnalyzer {
             HashSet hashSet3;
             if (basicBlock != basicBlock5) {
                 if (!basicBlock.canReach(basicBlock5, bitSet)) {
-                    this.traceLocalVariableSource(valueTraceFrame, basicBlock5, basicBlock5.getEndIndex() + 1, ba);
+                    this.traceLocalVariableSource(valueTraceFrame, basicBlock5, basicBlock5.getEndIndex() + 1, parameterIndexArgument);
                     continue;
                 }
 
@@ -1064,9 +1051,9 @@ public class MethodFlowAnalyzer {
         }
     }
 
-    public void traceStackValueSource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int ba, int bb) throws ZkmException, IOException {
-        int bc = bb;
-        Triple triple = new Triple(this.methodBytecode, INTEGER_CACHE.valueOf(ba), INTEGER_CACHE.valueOf(bc));
+    public void traceStackValueSource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int integerArgument, int bb) throws ZkmException, IOException {
+        int integerValue = bb;
+        Triple triple = new Triple(this.methodBytecode, INTEGER_CACHE.valueOf(integerArgument), INTEGER_CACHE.valueOf(integerValue));
         HashSet hashSet = (HashSet) valueTraceFrame.stackSourceCache.get(triple);
         byte bj;
         if (hashSet != null) {
@@ -1097,20 +1084,20 @@ public class MethodFlowAnalyzer {
             boolean bl = false;
             int startIndex = basicBlock.getStartIndex();
 
-            for (int i = ba - 1; !bl && i >= startIndex; i += -1) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                StackFrameState stackFrameState = this.frameStates[i];
+            for (int frameStateIndex = integerArgument - 1; !bl && frameStateIndex >= startIndex; frameStateIndex += -1) {
+                Instruction instruction1 = (Instruction) this.instructions.get(frameStateIndex);
+                StackFrameState stackFrameState = this.frameStates[frameStateIndex];
                 if (valueTraceFrame.argumentKind == ReflectionArgumentKind.OBJECT_TYPE) {
-                    String string = stackFrameState.getStack()[bc].getDescriptor();
-                    string = CommonSuperTypeResolver.stripClassDescriptor(string);
-                    valueTraceFrame.results.add(new TracedObjectType(instruction1, string));
+                    String descriptor = stackFrameState.getStack()[integerValue].getDescriptor();
+                    descriptor = CommonSuperTypeResolver.stripClassDescriptor(descriptor);
+                    valueTraceFrame.results.add(new TracedObjectType(instruction1, descriptor));
                     bl = true;
                     break;
                 }
 
                 if (instruction1.isStackManipulation()) {
-                    bc = instruction1.mapStackSlotBackward(stackFrameState.getStack(), bc);
-                } else if (stackFrameState.getStackDepth() - 1 == bc) {
+                    integerValue = instruction1.mapStackSlotBackward(stackFrameState.getStack(), integerValue);
+                } else if (stackFrameState.getStackDepth() - 1 == integerValue) {
                     if (instruction1.pushesValue()) {
                         switch (instruction1.getOpcode()) {
                             case 1:
@@ -1139,24 +1126,24 @@ public class MethodFlowAnalyzer {
                                 break;
                             case 178:
                             case 180:
-                                this.traceFieldReadSource(valueTraceFrame, i);
+                                this.traceFieldReadSource(valueTraceFrame, frameStateIndex);
                                 break;
                             case 182:
                             case 183:
                             case 184:
                             case 185:
-                                this.traceMethodCallSource(valueTraceFrame, basicBlock, i);
+                                this.traceMethodCallSource(valueTraceFrame, basicBlock, frameStateIndex);
                                 break;
                             case 187:
-                                this.traceNewInstanceSource(valueTraceFrame, basicBlock, i);
+                                this.traceNewInstanceSource(valueTraceFrame, basicBlock, frameStateIndex);
                                 break;
                             case 189:
-                                this.traceNewArraySource(valueTraceFrame, basicBlock, i);
+                                this.traceNewArraySource(valueTraceFrame, basicBlock, frameStateIndex);
                                 break;
                             case 255:
                                 LocalVariableInstruction localVariableInstruction = (LocalVariableInstruction) instruction1;
                                 if (localVariableInstruction.getAccessKind() == LocalVariableAccessKind.OBJECT_LOAD) {
-                                    this.traceLocalVariableSource(valueTraceFrame, basicBlock, i, localVariableInstruction.getLocalIndex());
+                                    this.traceLocalVariableSource(valueTraceFrame, basicBlock, frameStateIndex, localVariableInstruction.getLocalIndex());
                                 } else {
                                     valueTraceFrame.results.add(new InstructionReasonNote(instruction1, "Instruction not handled: " + valueTraceFrame.argumentKind));
                                 }
@@ -1176,9 +1163,9 @@ public class MethodFlowAnalyzer {
             if (!bl) {
                 List list1 = basicBlock.getPredecessors();
                 if (list1 != null && list1.size() > 0) {
-                    for (int i = 0; i < list1.size(); i++) {
-                        BasicBlock basicBlock1 = (BasicBlock) list1.get(i);
-                        this.traceStackValueSource(valueTraceFrame, basicBlock1, basicBlock1.getEndIndex() + 1, bc);
+                    for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                        BasicBlock basicBlock1 = (BasicBlock) list1.get(elementIndex);
+                        this.traceStackValueSource(valueTraceFrame, basicBlock1, basicBlock1.getEndIndex() + 1, integerValue);
                     }
                 } else {
                     Instruction instruction2 = (Instruction) this.instructions.get(startIndex);
@@ -1328,18 +1315,18 @@ public class MethodFlowAnalyzer {
         return arrayList1;
     }
 
-    private void o(int ba, int bb, TreeSet treeSet, boolean bl, String string) throws ZkmException, IOException {
-        Instruction instruction1 = (Instruction) this.instructions.get(bb);
+    private void propagateFrameToSuccessor(int predecessorIndex, int successorIndex, TreeSet pendingInstructionIndices, boolean verifyTypes, String diagnosticContext) throws ZkmException, IOException {
+        Instruction successorInstruction = (Instruction) this.instructions.get(successorIndex);
 
-        StackFrameState stackFrameState;
+        StackFrameState successorFrame;
         try {
             ObservableHolder observableHolder = new ObservableHolder();
-            StackFrameState stackFrameState2 = this.frameStates[ba];
-            CommonSuperTypeResolver commonSuperTypeResolver1 = this.superTypeResolver;
-            stackFrameState = instruction1.computeFrameAfter(stackFrameState2, bl, commonSuperTypeResolver1, string);
+            StackFrameState predecessorFrame = this.frameStates[predecessorIndex];
+            CommonSuperTypeResolver resolver = this.superTypeResolver;
+            successorFrame = successorInstruction.computeFrameAfter(predecessorFrame, verifyTypes, resolver, diagnosticContext);
             if (!observableHolder.isValueNull()) {
                 AssertionFailedException assertionFailedException = (AssertionFailedException) observableHolder.getValue();
-                if (!this.hasPendingPredecessor(ba, treeSet)) {
+                if (!this.hasPendingPredecessor(predecessorIndex, pendingInstructionIndices)) {
                     throw assertionFailedException;
                 }
             }
@@ -1351,15 +1338,15 @@ public class MethodFlowAnalyzer {
             throw assertionFailedException1;
         }
 
-        if (this.frameStates[bb] == null) {
-            this.frameStates[bb] = stackFrameState;
-            treeSet.add(INTEGER_CACHE.valueOf(bb));
+        if (this.frameStates[successorIndex] == null) {
+            this.frameStates[successorIndex] = successorFrame;
+            pendingInstructionIndices.add(INTEGER_CACHE.valueOf(successorIndex));
         } else {
-            BooleanFlag booleanFlag = new BooleanFlag();
-            StackFrameState stackFrameState1 = this.frameStates[bb].merge(this.superTypeResolver, stackFrameState, booleanFlag, string);
-            if (booleanFlag.getValue()) {
-                this.frameStates[bb] = stackFrameState1;
-                treeSet.add(INTEGER_CACHE.valueOf(bb));
+            BooleanFlag frameChanged = new BooleanFlag();
+            StackFrameState mergedFrame = this.frameStates[successorIndex].merge(this.superTypeResolver, successorFrame, frameChanged, diagnosticContext);
+            if (frameChanged.getValue()) {
+                this.frameStates[successorIndex] = mergedFrame;
+                pendingInstructionIndices.add(INTEGER_CACHE.valueOf(successorIndex));
             }
         }
     }
@@ -1373,23 +1360,23 @@ public class MethodFlowAnalyzer {
             int startIndex = basicBlock.getStartIndex();
             int endIndex = basicBlock.getEndIndex();
 
-            for (int i = startIndex; i <= endIndex; i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                TryCatchBlockInfo[] tryCatchBlockInfos2 = this.getActiveHandlersAt(i, tryCatchBlockInfos1);
+            for (int startIndexValue = startIndex; startIndexValue <= endIndex; startIndexValue++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(startIndexValue);
+                TryCatchBlockInfo[] tryCatchBlockInfos2 = this.getActiveHandlersAt(startIndexValue, tryCatchBlockInfos1);
 
-                for (int j = 0; j < tryCatchBlockInfos2.length; j++) {
-                    if (this.handlerCoveredBlocks.putValue(tryCatchBlockInfos2[j].handlerBlock, basicBlock, basicBlock) == null) {
-                        basicBlock.addExceptionHandler(tryCatchBlockInfos2[j].handlerBlock);
+                for (int tryCatchBlockInfos2ElementIndex = 0; tryCatchBlockInfos2ElementIndex < tryCatchBlockInfos2.length; tryCatchBlockInfos2ElementIndex++) {
+                    if (this.handlerCoveredBlocks.putValue(tryCatchBlockInfos2[tryCatchBlockInfos2ElementIndex].handlerBlock, basicBlock, basicBlock) == null) {
+                        basicBlock.addExceptionHandler(tryCatchBlockInfos2[tryCatchBlockInfos2ElementIndex].handlerBlock);
                     }
 
-                    if (i == tryCatchBlockInfos2[j].startIndex || i == startIndex || instruction1.isStore() || !arrayList.contains(tryCatchBlockInfos2[j])) {
-                        arrayList.add(tryCatchBlockInfos2[j]);
+                    if (startIndexValue == tryCatchBlockInfos2[tryCatchBlockInfos2ElementIndex].startIndex || startIndexValue == startIndex || instruction1.isStore() || !arrayList.contains(tryCatchBlockInfos2[tryCatchBlockInfos2ElementIndex])) {
+                        arrayList.add(tryCatchBlockInfos2[tryCatchBlockInfos2ElementIndex]);
                     }
                 }
 
                 if (arrayList.size() > 0) {
                     TryCatchBlockInfo[] tryCatchBlockInfos3 = new TryCatchBlockInfo[arrayList.size()];
-                    tryCatchBlockInfos[i] = ((com.zelix.klassmaster.classfile.insn.TryCatchBlockInfo[]) (arrayList.toArray(tryCatchBlockInfos3)));
+                    tryCatchBlockInfos[startIndexValue] = ((com.zelix.klassmaster.classfile.insn.TryCatchBlockInfo[]) (arrayList.toArray(tryCatchBlockInfos3)));
                     arrayList.clear();
                 }
             }
@@ -1425,21 +1412,21 @@ public class MethodFlowAnalyzer {
                     BasicBlock basicBlock2 = (BasicBlock) iterator1.next();
                     BasicBlock basicBlock3 = ((com.zelix.klassmaster.classfile.insn.BasicBlock) (hashMap.put(basicBlock2, basicBlock1)));
                     if (basicBlock3 != null) {
-                        boolean bl = (Boolean) twoKeyMap1.getValue(basicBlock1, basicBlock2);
-                        boolean bl1 = (Boolean) twoKeyMap1.getValue(basicBlock3, basicBlock2);
-                        if (bl1 && !bl) {
+                        boolean valueValue = (Boolean) twoKeyMap1.getValue(basicBlock1, basicBlock2);
+                        boolean valueValue2 = (Boolean) twoKeyMap1.getValue(basicBlock3, basicBlock2);
+                        if (valueValue2 && !valueValue) {
                             twoKeyMap.removeValue(basicBlock3, basicBlock2);
-                        } else if (!bl1 && bl) {
+                        } else if (!valueValue2 && valueValue) {
                             hashMap.put(basicBlock2, basicBlock3);
                             twoKeyMap.removeValue(basicBlock1, basicBlock2);
                         } else {
-                            if (bl1 && bl) {
+                            if (valueValue2 && valueValue) {
                                 throw new MethodAnalysisException(
                                         "Method '" + this.methodDescription + "' could not be analyzed (C). No action required.", this.methodDescription
                                 );
                             }
 
-                            if (!bl1 && !bl) {
+                            if (!valueValue2 && !valueValue) {
                                 ZkmAssert.assertTrue(false, new String[]{"Method '" + this.methodDescription + "' could not be analyzed (D)"});
                             }
                         }
@@ -1478,8 +1465,8 @@ public class MethodFlowAnalyzer {
 
             while (iterator1.hasNext()) {
                 BasicBlock basicBlock1 = (BasicBlock) iterator1.next();
-                int ba = this.getLastCoveredInstructionIndex(basicBlock1, basicBlock);
-                if (this.propagateLivenessBackward(basicBlock1, ba, (BitSet) bitSet.clone())) {
+                int lastCoveredInstructionIndex = this.getLastCoveredInstructionIndex(basicBlock1, basicBlock);
+                if (this.propagateLivenessBackward(basicBlock1, lastCoveredInstructionIndex, (BitSet) bitSet.clone())) {
                     bl = true;
                 }
             }
@@ -1525,28 +1512,28 @@ public class MethodFlowAnalyzer {
         return this.localLivenessConsistent;
     }
 
-    public BasicBlock getBlockContaining(int ba) {
+    public BasicBlock getBlockContaining(int blockByIndexCacheElementIndex) {
         if (this.blockByIndexCache == null) {
             this.blockByIndexCache = new BasicBlock[this.methodBytecode.getInstructionCount()];
-        } else if (this.blockByIndexCache[ba] != null) {
-            return this.blockByIndexCache[ba];
+        } else if (this.blockByIndexCache[blockByIndexCacheElementIndex] != null) {
+            return this.blockByIndexCache[blockByIndexCacheElementIndex];
         }
 
         int bb = 0;
         int bc = this.basicBlocks.size() - 1;
 
         while (bb <= bc) {
-            int bd = (bb + bc) / 2;
-            BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(bd);
-            if (ba < basicBlock.getStartIndex()) {
-                bc = bd - 1;
+            int elementIndex = (bb + bc) / 2;
+            BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(elementIndex);
+            if (blockByIndexCacheElementIndex < basicBlock.getStartIndex()) {
+                bc = elementIndex - 1;
             } else {
-                if (ba <= basicBlock.getEndIndex()) {
-                    this.blockByIndexCache[ba] = basicBlock;
+                if (blockByIndexCacheElementIndex <= basicBlock.getEndIndex()) {
+                    this.blockByIndexCache[blockByIndexCacheElementIndex] = basicBlock;
                     return basicBlock;
                 }
 
-                bb = bd + 1;
+                bb = elementIndex + 1;
             }
         }
 
@@ -1557,13 +1544,13 @@ public class MethodFlowAnalyzer {
         methodFlowAnalyzer.collectIntConstantSourcesFrom(list1, basicBlock, ba, bb, set1);
     }
 
-    public void traceNewInstanceSource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int ba) throws ZkmException, IOException {
-        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(ba);
-        String string = ((ResolvedClassConstant) constantRefInstruction.getConstantPoolEntry()).getClassName();
-        if (string.equals("java/util/Properties")) {
-            StackFrameState stackFrameState = this.frameStates[ba];
+    public void traceNewInstanceSource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int elementIndex) throws ZkmException, IOException {
+        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(elementIndex);
+        String className = ((ResolvedClassConstant) constantRefInstruction.getConstantPoolEntry()).getClassName();
+        if (className.equals("java/util/Properties")) {
+            StackFrameState stackFrameState = this.frameStates[elementIndex];
             PropertiesLoadTracker propertiesLoadTracker = this.createPropertiesLoadTracker();
-            this.traceStackValueUses(valueTraceFrame, propertiesLoadTracker, basicBlock, ba + 1, stackFrameState.getStack().length - 1);
+            this.traceStackValueUses(valueTraceFrame, propertiesLoadTracker, basicBlock, elementIndex + 1, stackFrameState.getStack().length - 1);
             HashSet hashSet = propertiesLoadTracker.getFileNameValues();
             HashSet hashSet1;
             if (hashSet.size() == 0) {
@@ -1575,46 +1562,46 @@ public class MethodFlowAnalyzer {
 
             hashSet1.addAll(hashSet);
         } else {
-            valueTraceFrame.results.add(new InstructionReasonNote(constantRefInstruction, "NEW instruction not handled with : " + string));
+            valueTraceFrame.results.add(new InstructionReasonNote(constantRefInstruction, "NEW instruction not handled with : " + className));
         }
     }
 
     public void traceStackValueUses(ValueTraceFrame valueTraceFrame, ValueFlowTracker valueFlowTracker, BasicBlock basicBlock, int ba, int bb) throws ZkmException, IOException {
-        int bc = bb;
-        int bd = bc;
+        int integerArrayElement = bb;
+        int integerArrayElementValue = integerArrayElement;
         int be = ba;
-        if (!valueFlowTracker.isVisited(1, be, bd)) {
-            valueFlowTracker.markVisited(1, ba, bc);
+        if (!valueFlowTracker.isVisited(1, be, integerArrayElementValue)) {
+            valueFlowTracker.markVisited(1, ba, integerArrayElement);
             boolean bl = false;
             int endIndex = basicBlock.getEndIndex();
 
-            for (int i = ba; !bl && i <= endIndex; i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                StackFrameState stackFrameState = this.frameStates[i];
+            for (int elementIndexValue2 = ba; !bl && elementIndexValue2 <= endIndex; elementIndexValue2++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndexValue2);
+                StackFrameState stackFrameState = this.frameStates[elementIndexValue2];
                 if (instruction1.isStackManipulation()) {
-                    int[] bh = instruction1.mapStackSlotForward(this.frameStates[i - 1].getStack(), stackFrameState.getStack(), bc);
-                    if (bh.length == 0) {
+                    int[] integerArray = instruction1.mapStackSlotForward(this.frameStates[elementIndexValue2 - 1].getStack(), stackFrameState.getStack(), integerArrayElement);
+                    if (integerArray.length == 0) {
                         bl = true;
-                    } else if (bh.length == 2) {
-                        this.traceStackValueUses(valueTraceFrame, valueFlowTracker, basicBlock, i + 1, bh[1]);
+                    } else if (integerArray.length == 2) {
+                        this.traceStackValueUses(valueTraceFrame, valueFlowTracker, basicBlock, elementIndexValue2 + 1, integerArray[1]);
                     }
 
-                    if (bh.length > 0) {
-                        bc = bh[0];
+                    if (integerArray.length > 0) {
+                        integerArrayElement = integerArray[0];
                     }
-                } else if (instruction1.consumesStackSlot(bc, stackFrameState.getStack().length)) {
-                    if (!valueFlowTracker.traceAtInstruction(valueTraceFrame, i, basicBlock)) {
+                } else if (instruction1.consumesStackSlot(integerArrayElement, stackFrameState.getStack().length)) {
+                    if (!valueFlowTracker.traceAtInstruction(valueTraceFrame, elementIndexValue2, basicBlock)) {
                         switch (instruction1.getOpcode()) {
                             case 179:
                             case 181:
-                                this.traceFieldWriteUses(valueTraceFrame, valueFlowTracker, i);
+                                this.traceFieldWriteUses(valueTraceFrame, valueFlowTracker, elementIndexValue2);
                                 break;
                             case 255:
                                 LocalVariableInstruction localVariableInstruction = (LocalVariableInstruction) instruction1;
                                 LocalVariableAccessKind localVariableAccessKind = localVariableInstruction.getAccessKind();
                                 localVariableInstruction.getAccessKind();
                                 if (localVariableAccessKind == LocalVariableAccessKind.OBJECT_STORE) {
-                                    this.traceLocalVariableUses(valueTraceFrame, valueFlowTracker, basicBlock, i + 1, localVariableInstruction.getLocalIndex());
+                                    this.traceLocalVariableUses(valueTraceFrame, valueFlowTracker, basicBlock, elementIndexValue2 + 1, localVariableInstruction.getLocalIndex());
                                 }
                         }
                     }
@@ -1626,16 +1613,16 @@ public class MethodFlowAnalyzer {
             if (!bl) {
                 List list1 = basicBlock.getSuccessorsCopy();
                 if (list1 != null && list1.size() > 0) {
-                    for (int i = 0; i < list1.size(); i++) {
-                        BasicBlock basicBlock1 = (BasicBlock) list1.get(i);
-                        this.traceStackValueUses(valueTraceFrame, valueFlowTracker, basicBlock1, basicBlock1.getStartIndex(), bc);
+                    for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                        BasicBlock basicBlock1 = (BasicBlock) list1.get(elementIndex);
+                        this.traceStackValueUses(valueTraceFrame, valueFlowTracker, basicBlock1, basicBlock1.getStartIndex(), integerArrayElement);
                     }
                 } else if (basicBlock.hasRetBlocks()) {
                     List list2 = basicBlock.getRetBlocks();
 
-                    for (int i = 0; i < list2.size(); i++) {
-                        BasicBlock basicBlock2 = (BasicBlock) list2.get(i);
-                        this.traceStackValueUses(valueTraceFrame, valueFlowTracker, basicBlock2, basicBlock2.getStartIndex(), bc);
+                    for (int elementIndexValue = 0; elementIndexValue < list2.size(); elementIndexValue++) {
+                        BasicBlock basicBlock2 = (BasicBlock) list2.get(elementIndexValue);
+                        this.traceStackValueUses(valueTraceFrame, valueFlowTracker, basicBlock2, basicBlock2.getStartIndex(), integerArrayElement);
                     }
                 } else {
                     Instruction instruction2 = (Instruction) this.instructions.get(endIndex);
@@ -1644,8 +1631,8 @@ public class MethodFlowAnalyzer {
         }
     }
 
-    public int getStackDepthAt(int ba) {
-        return this.frameStates[ba].getStackDepth();
+    public int getStackDepthAt(int frameStateIndex) {
+        return this.frameStates[frameStateIndex].getStackDepth();
     }
 
     public BasicBlock getBlock() {
@@ -1656,8 +1643,8 @@ public class MethodFlowAnalyzer {
         }
     }
 
-    public void traceLocalVariableSource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int ba, int bb) throws ZkmException, IOException {
-        Triple triple = new Triple(this.methodBytecode, INTEGER_CACHE.valueOf(ba), INTEGER_CACHE.valueOf(bb));
+    public void traceLocalVariableSource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int integerArgument, int parameterIndexArgument) throws ZkmException, IOException {
+        Triple triple = new Triple(this.methodBytecode, INTEGER_CACHE.valueOf(integerArgument), INTEGER_CACHE.valueOf(parameterIndexArgument));
         valueTraceFrame.visitCounts.add(triple);
         if (valueTraceFrame.visitCounts.getCount(triple) > 9) {
             valueTraceFrame.results.add(new InstructionReasonNote(null, "Possible loop"));
@@ -1665,7 +1652,7 @@ public class MethodFlowAnalyzer {
             HashSet hashSet = (HashSet) valueTraceFrame.localSourceCache.get(triple);
             int startIndex = basicBlock.getStartIndex();
             if (hashSet != null
-                    && ba - 1 >= startIndex
+                    && integerArgument - 1 >= startIndex
                     && valueTraceFrame.argumentKind != ReflectionArgumentKind.USER_DEFINED_METHOD_1
                     && valueTraceFrame.argumentKind != ReflectionArgumentKind.USER_DEFINED_METHOD_2) {
                 valueTraceFrame.results.addAll(hashSet);
@@ -1674,20 +1661,20 @@ public class MethodFlowAnalyzer {
                 hashSet = ZkmUtils.createHashSet(13);
                 HashSet hashSet1 = valueTraceFrame.swapResults(hashSet);
 
-                for (int i = ba - 1; i >= startIndex; i += -1) {
-                    Instruction instruction1 = (Instruction) this.instructions.get(i);
-                    StackFrameState stackFrameState = this.frameStates[i];
-                    if (instruction1.isStoreTo(bb)) {
-                        if (i > startIndex) {
-                            this.traceStackValueSource(valueTraceFrame, basicBlock, i, stackFrameState.getStackDepth());
+                for (int elementIndexValue2 = integerArgument - 1; elementIndexValue2 >= startIndex; elementIndexValue2 += -1) {
+                    Instruction instruction1 = (Instruction) this.instructions.get(elementIndexValue2);
+                    StackFrameState stackFrameState = this.frameStates[elementIndexValue2];
+                    if (instruction1.isStoreTo(parameterIndexArgument)) {
+                        if (elementIndexValue2 > startIndex) {
+                            this.traceStackValueSource(valueTraceFrame, basicBlock, elementIndexValue2, stackFrameState.getStackDepth());
                             bl = true;
                             break;
                         }
 
                         List list1 = basicBlock.getPredecessors();
                         if (list1 != null && list1.size() > 0) {
-                            for (int j = 0; j < list1.size(); j++) {
-                                BasicBlock basicBlock1 = (BasicBlock) list1.get(j);
+                            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                                BasicBlock basicBlock1 = (BasicBlock) list1.get(elementIndex);
                                 this.traceStackValueSource(valueTraceFrame, basicBlock1, basicBlock1.getEndIndex() + 1, stackFrameState.getStackDepth());
                             }
 
@@ -1700,24 +1687,24 @@ public class MethodFlowAnalyzer {
                 if (!bl) {
                     List list2 = basicBlock.getPredecessors();
                     if (list2 != null && list2.size() > 0) {
-                        for (int i = 0; i < list2.size(); i++) {
-                            BasicBlock basicBlock2 = (BasicBlock) list2.get(i);
-                            this.traceLocalVariableSource(valueTraceFrame, basicBlock2, basicBlock2.getEndIndex() + 1, bb);
+                        for (int elementIndexValue = 0; elementIndexValue < list2.size(); elementIndexValue++) {
+                            BasicBlock basicBlock2 = (BasicBlock) list2.get(elementIndexValue);
+                            this.traceLocalVariableSource(valueTraceFrame, basicBlock2, basicBlock2.getEndIndex() + 1, parameterIndexArgument);
                         }
                     } else if (basicBlock.isCatchBlock()) {
-                        this.traceLocalThroughCatchHandler(valueTraceFrame, basicBlock, bb);
+                        this.traceLocalThroughCatchHandler(valueTraceFrame, basicBlock, parameterIndexArgument);
                     } else if (basicBlock.isHeader()) {
-                        int bf;
+                        int parameterIndexValue;
                         if (valueTraceFrame.isStaticMethod) {
-                            bf = bb;
+                            parameterIndexValue = parameterIndexArgument;
                         } else {
-                            bf = bb - 1;
+                            parameterIndexValue = parameterIndexArgument - 1;
                         }
 
-                        if (bf < 0) {
+                        if (parameterIndexValue < 0) {
                             valueTraceFrame.results
                                     .add(new InstructionReasonNote((Instruction) this.instructions.get(startIndex), "Source object reference : " + this.methodDescription));
-                        } else if (bf < this.parameterSlotCount) {
+                        } else if (parameterIndexValue < this.parameterSlotCount) {
                             switch (ReflectionAnalysisSwitchMap.ARGUMENT_KIND_SWITCH[valueTraceFrame.argumentKind.ordinal()]) {
                                 case 1:
                                 case 2:
@@ -1726,7 +1713,7 @@ public class MethodFlowAnalyzer {
                                         valueTraceFrame.setComplete();
                                     }
 
-                                    this.traceParameterFromCallers(valueTraceFrame, bf);
+                                    this.traceParameterFromCallers(valueTraceFrame, parameterIndexValue);
                                     break;
                                 case 3:
                                 case 4:
@@ -1738,7 +1725,7 @@ public class MethodFlowAnalyzer {
                                             );
                                     break;
                                 case 5:
-                                    valueTraceFrame.results.add(new MethodParameterValue(bf, this.methodBytecode));
+                                    valueTraceFrame.results.add(new MethodParameterValue(parameterIndexValue, this.methodBytecode));
                             }
                         } else {
                             valueTraceFrame.results
@@ -1746,7 +1733,7 @@ public class MethodFlowAnalyzer {
                                             new InstructionReasonNote(
                                                     (Instruction) this.instructions.get(startIndex),
                                                     "Variable Uninitialized : "
-                                                            + bf
+                                                            + parameterIndexValue
                                                             + " "
                                                             + this.parameterSlotCount
                                                             + " "
@@ -1764,7 +1751,7 @@ public class MethodFlowAnalyzer {
 
                 hashSet = valueTraceFrame.swapResults(hashSet1);
                 hashSet1.addAll(hashSet);
-                if (ba - 1 >= startIndex
+                if (integerArgument - 1 >= startIndex
                         && valueTraceFrame.argumentKind != ReflectionArgumentKind.USER_DEFINED_METHOD_1
                         && valueTraceFrame.argumentKind != ReflectionArgumentKind.USER_DEFINED_METHOD_2) {
                     HashSet hashSet2 = ((java.util.HashSet) (valueTraceFrame.localSourceCache.put(triple, hashSet)));
@@ -1810,8 +1797,8 @@ public class MethodFlowAnalyzer {
     public void reorderSwitchSuccessors() {
         NonNullList nonNullList = new NonNullList(this.instructions);
 
-        for (int i = 0; i < this.basicBlocks.size(); i++) {
-            BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(i);
+        for (int elementIndex = 0; elementIndex < this.basicBlocks.size(); elementIndex++) {
+            BasicBlock basicBlock = (BasicBlock) this.basicBlocks.get(elementIndex);
             if (basicBlock.getLastInstruction(nonNullList) instanceof SwitchInstruction) {
                 basicBlock.sortSuccessors();
             }
@@ -1865,21 +1852,20 @@ public class MethodFlowAnalyzer {
         if (bl1) {
             Iterator iterator4 = this.naturalLoops.iterator();
 
-            label145:
-            while (iterator4.hasNext()) {
+            while (bl1 && iterator4.hasNext()) {
                 NaturalLoop naturalLoop1 = (NaturalLoop) iterator4.next();
                 BasicBlock basicBlock4 = naturalLoop1.getHeader();
                 BitSet bitSet4 = this.frameStates[basicBlock4.getStartIndex()].getLiveLocals();
                 Iterator iterator6 = naturalLoop1.getLatchBlocks().iterator();
 
-                while (iterator6.hasNext()) {
+                while (bl1 && iterator6.hasNext()) {
                     BasicBlock basicBlock5 = (BasicBlock) iterator6.next();
                     BitSet bitSet5 = this.frameStates[basicBlock5.getEndIndex()].getLiveLocals();
 
                     for (int i = 0; i < bitSet5.size(); i++) {
                         if (bitSet4.get(i) && !bitSet5.get(i)) {
                             bl1 = false;
-                            break label145;
+                            break;
                         }
                     }
                 }
@@ -1889,24 +1875,23 @@ public class MethodFlowAnalyzer {
         if (bl1) {
             Iterator iterator5 = this.catchHandlerBlocks.iterator();
 
-            label125:
-            while (iterator5.hasNext()) {
+            while (bl1 && iterator5.hasNext()) {
                 BasicBlock basicBlock3 = (BasicBlock) iterator5.next();
                 BitSet bitSet3 = this.frameStates[basicBlock3.getStartIndex()].getLiveLocals();
                 List list2 = this.tryCatchInfosByHandler.getValues(basicBlock3);
                 Iterator iterator7 = list2.iterator();
 
-                while (iterator7.hasNext()) {
+                while (bl1 && iterator7.hasNext()) {
                     TryCatchBlockInfo tryCatchBlockInfo = (TryCatchBlockInfo) iterator7.next();
 
-                    for (int i = tryCatchBlockInfo.startIndex; i < tryCatchBlockInfo.endIndex; i++) {
-                        if (this.frameStates[i] != null) {
-                            BitSet bitSet6 = this.frameStates[i].getLiveLocals();
+                    for (int startIndexValue = tryCatchBlockInfo.startIndex; bl1 && startIndexValue < tryCatchBlockInfo.endIndex; startIndexValue++) {
+                        if (this.frameStates[startIndexValue] != null) {
+                            BitSet bitSet6 = this.frameStates[startIndexValue].getLiveLocals();
 
                             for (int j = 0; j < bitSet3.size(); j++) {
                                 if (bitSet3.get(j) && !bitSet6.get(j)) {
                                     bl1 = false;
-                                    break label125;
+                                    break;
                                 }
                             }
                         }
@@ -1918,8 +1903,8 @@ public class MethodFlowAnalyzer {
         if (bl1 && !this.isStatic && !this.isConstructor) {
             boolean bl2 = true;
 
-            for (int i = 0; i < this.frameStates.length; i++) {
-                StackFrameState stackFrameState = this.frameStates[i];
+            for (int frameStateIndex = 0; frameStateIndex < this.frameStates.length; frameStateIndex++) {
+                StackFrameState stackFrameState = this.frameStates[frameStateIndex];
                 if (stackFrameState != null && !stackFrameState.getLocals()[0].isClassType()) {
                     bl2 = false;
                     break;
@@ -1948,7 +1933,7 @@ public class MethodFlowAnalyzer {
     }
 
     public CallArgumentValues traceReflectionCallArguments(
-            int ba,
+            int elementIndex,
             ReflectionApiMethod reflectionApiMethod,
             NestedMultiMap nestedMultiMap,
             NestedMultiMap nestedMultiMap1,
@@ -1962,9 +1947,9 @@ public class MethodFlowAnalyzer {
             Map map6
     ) throws ZkmException, IOException {
         CallArgumentValues callArgumentValues = new CallArgumentValues(reflectionApiMethod);
-        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(ba);
-        BasicBlock basicBlock = this.getBlockContaining(ba);
-        StackFrameState stackFrameState = this.frameStates[ba];
+        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(elementIndex);
+        BasicBlock basicBlock = this.getBlockContaining(elementIndex);
+        StackFrameState stackFrameState = this.frameStates[elementIndex];
         if (stackFrameState == null) {
             HashSet hashSet3 = ZkmUtils.createHashSet(5);
             hashSet3.add(new InstructionReasonNote(constantRefInstruction, "Appears in DEAD code. Can be ignored."));
@@ -1973,7 +1958,7 @@ public class MethodFlowAnalyzer {
         }
 
         int stackDepth = stackFrameState.getStackDepth();
-        boolean bl = this.methodBytecode.getMethod().isStatic();
+        boolean isStaticMethodValue = this.methodBytecode.getMethod().isStatic();
         if (reflectionApiMethod.isObjectNameLookup()) {
             HashSet hashSet = ZkmUtils.createHashSet(5);
             hashSet.add(new InstructionReasonNote(constantRefInstruction, "Analysis not yet implemented"));
@@ -1986,7 +1971,7 @@ public class MethodFlowAnalyzer {
                 ObservableHolder observableHolder = new ObservableHolder();
                 ObservableHolder observableHolder1 = new ObservableHolder();
                 ObservableHolder observableHolder2 = new ObservableHolder();
-                this.traceDeserializeLambdaArguments(ba, observableHolder, observableHolder1, observableHolder2);
+                this.traceDeserializeLambdaArguments(elementIndex, observableHolder, observableHolder1, observableHolder2);
                 hashSet4.add(observableHolder.getValue());
                 hashSet1.add(observableHolder1.getValue());
                 hashSet2.add(observableHolder2.getValue());
@@ -2031,14 +2016,14 @@ public class MethodFlowAnalyzer {
                         this.superTypeResolver,
                         classMemberLookup1,
                         map1,
-                        bl,
+                        isStaticMethodValue,
                         map2,
                         map3,
                         map4,
                         map5,
                         map6
                 );
-                this.traceStackValueSource(valueTraceFrame1, basicBlock, ba, bd);
+                this.traceStackValueSource(valueTraceFrame1, basicBlock, elementIndex, bd);
                 callArgumentValues.addArgumentValues(hashSet7);
                 if (!valueTraceFrame1.isComplete()) {
                     callArgumentValues.setValid();
@@ -2059,14 +2044,14 @@ public class MethodFlowAnalyzer {
                         this.superTypeResolver,
                         classMemberLookup1,
                         map1,
-                        bl,
+                        isStaticMethodValue,
                         map2,
                         map3,
                         map4,
                         map5,
                         map6
                 );
-                this.traceStackValueSource(valueTraceFrame, basicBlock, ba, bc);
+                this.traceStackValueSource(valueTraceFrame, basicBlock, elementIndex, bc);
                 callArgumentValues.addArgumentValues(hashSet6);
             }
         }
@@ -2077,10 +2062,10 @@ public class MethodFlowAnalyzer {
     public List findNaturalLoops() {
         this.assignBlockIndices();
         this.reorderSwitchSuccessors();
-        int ba = ZkmUtils.getPrimeCapacity(this.basicBlocks.size());
+        int primeCapacity = ZkmUtils.getPrimeCapacity(this.basicBlocks.size());
         TreeMap treeMap = new TreeMap();
-        HashSet hashSet = ZkmUtils.createHashSet(ba);
-        HashMap hashMap = ZkmUtils.createHashMap(ba);
+        HashSet hashSet = ZkmUtils.createHashSet(primeCapacity);
+        HashMap hashMap = ZkmUtils.createHashMap(primeCapacity);
         BitSet bitSet = new BitSet(this.basicBlocks.size());
         bitSet.set(this.entryBlock.getIndex());
         hashSet.add(this.entryBlock);
@@ -2089,8 +2074,8 @@ public class MethodFlowAnalyzer {
         new NonNullList(this.instructions);
         BasicBlock.findNaturalLoops(blockBitSet, treeMap, hashSet, hashMap);
 
-        for (int i = 0; i < this.catchHandlerBlocks.size(); i++) {
-            BasicBlock basicBlock = (BasicBlock) this.catchHandlerBlocks.get(i);
+        for (int elementIndex = 0; elementIndex < this.catchHandlerBlocks.size(); elementIndex++) {
+            BasicBlock basicBlock = (BasicBlock) this.catchHandlerBlocks.get(elementIndex);
             if (!hashSet.contains(basicBlock)) {
                 BitSet bitSet1 = new BitSet(this.basicBlocks.size());
                 hashSet.add(basicBlock);
@@ -2119,56 +2104,54 @@ public class MethodFlowAnalyzer {
         return arrayList;
     }
 
-    private TryCatchBlockInfo[] getActiveHandlersAt(int ba, TryCatchBlockInfo[] tryCatchBlockInfos) throws ZkmException, IOException {
-        ArrayList arrayList = new ArrayList();
-
-        label33:
-        for (int i = 0; i < tryCatchBlockInfos.length; i++) {
-            TryCatchBlockInfo tryCatchBlockInfo = tryCatchBlockInfos[i];
-            if (ba >= tryCatchBlockInfo.startIndex && ba < tryCatchBlockInfo.endIndex) {
-                for (int j = 0; j < arrayList.size(); j++) {
-                    TryCatchBlockInfo tryCatchBlockInfo1 = (TryCatchBlockInfo) arrayList.get(j);
-                    if (tryCatchBlockInfo.catchTypeDescriptor.equals(tryCatchBlockInfo1.catchTypeDescriptor)
-                            || this.hierarchyQuery
-                            .isSubclass(
-                                    tryCatchBlockInfo.catchTypeDescriptor.substring(1, tryCatchBlockInfo.catchTypeDescriptor.length() - 1),
-                                    tryCatchBlockInfo1.catchTypeDescriptor.substring(1, tryCatchBlockInfo1.catchTypeDescriptor.length() - 1)
-                            )) {
-                        continue label33;
+    private TryCatchBlockInfo[] getActiveHandlersAt(int instructionIndex, TryCatchBlockInfo[] handlers) throws ZkmException, IOException {
+        ArrayList activeHandlers = new ArrayList();
+        for (int handlerIndex = 0; handlerIndex < handlers.length; handlerIndex++) {
+            TryCatchBlockInfo handler = handlers[handlerIndex];
+            if (instructionIndex >= handler.startIndex && instructionIndex < handler.endIndex) {
+                boolean shadowed = false;
+                for (int earlierIndex = 0; earlierIndex < activeHandlers.size(); earlierIndex++) {
+                    TryCatchBlockInfo earlierHandler = (TryCatchBlockInfo) activeHandlers.get(earlierIndex);
+                    if (handler.catchTypeDescriptor.equals(earlierHandler.catchTypeDescriptor)
+                            || this.hierarchyQuery.isSubclass(
+                                    handler.catchTypeDescriptor.substring(1, handler.catchTypeDescriptor.length() - 1),
+                                    earlierHandler.catchTypeDescriptor.substring(1, earlierHandler.catchTypeDescriptor.length() - 1))) {
+                        shadowed = true;
+                        break;
                     }
                 }
-
-                arrayList.add(tryCatchBlockInfo);
+                if (!shadowed) {
+                    activeHandlers.add(handler);
+                }
             }
         }
-
-        TryCatchBlockInfo[] tryCatchBlockInfos1 = new TryCatchBlockInfo[arrayList.size()];
-        return ((com.zelix.klassmaster.classfile.insn.TryCatchBlockInfo[]) (arrayList.toArray(tryCatchBlockInfos1)));
+        TryCatchBlockInfo[] result = new TryCatchBlockInfo[activeHandlers.size()];
+        return (TryCatchBlockInfo[]) activeHandlers.toArray(result);
     }
 
-    public void traceNewArraySource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int ba) throws ZkmException, IOException {
-        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(ba);
-        if (ba > basicBlock.getStartIndex()) {
-            Instruction instruction1 = (Instruction) this.instructions.get(ba - 1);
-            int bb;
+    public void traceNewArraySource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int elementIndex) throws ZkmException, IOException {
+        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(elementIndex);
+        if (elementIndex > basicBlock.getStartIndex()) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex - 1);
+            int byteValue;
             switch (instruction1.getOpcode()) {
                 case 3:
-                    bb = 0;
+                    byteValue = 0;
                     break;
                 case 4:
-                    bb = 1;
+                    byteValue = 1;
                     break;
                 case 5:
-                    bb = 2;
+                    byteValue = 2;
                     break;
                 case 6:
-                    bb = 3;
+                    byteValue = 3;
                     break;
                 case 7:
-                    bb = 4;
+                    byteValue = 4;
                     break;
                 case 8:
-                    bb = 5;
+                    byteValue = 5;
                     break;
                 case 9:
                 case 10:
@@ -2182,28 +2165,28 @@ public class MethodFlowAnalyzer {
                             .add(new InstructionReasonNote(constantRefInstruction, "Instruction not handled 1) : " + instruction1 + " " + valueTraceFrame.argumentKind));
                     return;
                 case 16:
-                    bb = ((BipushInstruction) instruction1).getByteValue();
+                    byteValue = ((BipushInstruction) instruction1).getByteValue();
             }
 
-            StackFrameState stackFrameState = this.frameStates[ba];
-            if (bb > 0) {
+            StackFrameState stackFrameState = this.frameStates[elementIndex];
+            if (byteValue > 0) {
                 ArrayElementTracker arrayElementTracker = this.createArrayElementTracker();
-                this.traceStackValueUses(valueTraceFrame, arrayElementTracker, basicBlock, ba + 1, stackFrameState.getStack().length - 1);
-                TracedArrayValue tracedArrayValue = new TracedArrayValue(bb, arrayElementTracker.getWarnings());
+                this.traceStackValueUses(valueTraceFrame, arrayElementTracker, basicBlock, elementIndex + 1, stackFrameState.getStack().length - 1);
+                TracedArrayValue tracedArrayValue = new TracedArrayValue(byteValue, arrayElementTracker.getWarnings());
 
-                for (int i = 0; i < bb; i++) {
-                    HashSet hashSet = arrayElementTracker.getElementValues(i);
+                for (int integerValue = 0; integerValue < byteValue; integerValue++) {
+                    HashSet hashSet = arrayElementTracker.getElementValues(integerValue);
                     if (hashSet == null || hashSet.size() == 0) {
                         hashSet = ZkmUtils.createHashSet(3);
                         hashSet.add(new InstructionReasonNote(constantRefInstruction, arrayElementTracker.getWarnings().toString()));
                     }
 
-                    tracedArrayValue.setElementValues(i, hashSet);
+                    tracedArrayValue.setElementValues(integerValue, hashSet);
                 }
 
                 valueTraceFrame.results.add(tracedArrayValue);
             } else {
-                valueTraceFrame.results.add(new TracedArrayValue(bb));
+                valueTraceFrame.results.add(new TracedArrayValue(byteValue));
             }
         } else {
             valueTraceFrame.results.add(new InstructionReasonNote(constantRefInstruction, "Instruction not handled 2) : " + valueTraceFrame.argumentKind));
@@ -2214,8 +2197,8 @@ public class MethodFlowAnalyzer {
         return this.frameStates.clone();
     }
 
-    public FrameStateKey getFrameStateKey(int ba) {
-        return this.frameStates[ba] != null ? this.frameStates[ba].createKey() : null;
+    public FrameStateKey getFrameStateKey(int frameStateIndex) {
+        return this.frameStates[frameStateIndex] != null ? this.frameStates[frameStateIndex].createKey() : null;
     }
 
     public StackFrameState[] computeStackMapFrameStates() throws ZkmException, IOException {
@@ -2224,26 +2207,26 @@ public class MethodFlowAnalyzer {
         System.arraycopy(this.frameStates, 0, stackFrameStates, 0, this.frameStates.length);
         BooleanFlag booleanFlag = new BooleanFlag();
         Integer[] integers1 = integers;
-        int ba = integers1.length;
+        int lengthValue = integers1.length;
 
-        for (int i = 0; i < ba; i++) {
-            int bc = integers1[i];
-            if (((LabelInstruction) this.instructions.get(bc)).hasUsageBits(1024)) {
-                BasicBlock basicBlock = this.findBlockStartingAt(bc);
+        for (int integers1ElementIndex = 0; integers1ElementIndex < lengthValue; integers1ElementIndex++) {
+            int integers1Element = integers1[integers1ElementIndex];
+            if (((LabelInstruction) this.instructions.get(integers1Element)).hasUsageBits(1024)) {
+                BasicBlock basicBlock = this.findBlockStartingAt(integers1Element);
                 Iterator iterator = this.tryCatchInfosByHandler.getValues(basicBlock).iterator();
 
                 while (iterator.hasNext()) {
                     TryCatchBlockInfo tryCatchBlockInfo = (TryCatchBlockInfo) iterator.next();
                     Integer[] integers2 = integers;
-                    int bd = integers2.length;
+                    int lengthValue2 = integers2.length;
 
-                    for (int j = 0; j < bd; j++) {
-                        int bf = integers2[j];
-                        if (bf >= tryCatchBlockInfo.startIndex && bf < tryCatchBlockInfo.endIndex) {
+                    for (int integers2ElementIndex = 0; integers2ElementIndex < lengthValue2; integers2ElementIndex++) {
+                        int integers2Element = integers2[integers2ElementIndex];
+                        if (integers2Element >= tryCatchBlockInfo.startIndex && integers2Element < tryCatchBlockInfo.endIndex) {
                             StackFrameState.mergeLocals(
                                     this.superTypeResolver,
-                                    stackFrameStates[bc].getLocals(),
-                                    stackFrameStates[bf].getLocals(),
+                                    stackFrameStates[integers1Element].getLocals(),
+                                    stackFrameStates[integers2Element].getLocals(),
                                     false,
                                     booleanFlag,
                                     "Building special StackMapTable"
@@ -2268,15 +2251,15 @@ public class MethodFlowAnalyzer {
         while (iterator.hasNext()) {
             TryCatchBlockInfo tryCatchBlockInfo = (TryCatchBlockInfo) iterator.next();
             if (basicBlock.getStartIndex() < tryCatchBlockInfo.endIndex && basicBlock.getEndIndex() >= tryCatchBlockInfo.startIndex) {
-                int bb;
+                int startIndexValue;
                 if (tryCatchBlockInfo.endIndex > basicBlock.getEndIndex()) {
-                    bb = basicBlock.getEndIndex();
+                    startIndexValue = basicBlock.getEndIndex();
                 } else {
-                    bb = Math.max(0, tryCatchBlockInfo.endIndex - 1);
+                    startIndexValue = Math.max(0, tryCatchBlockInfo.endIndex - 1);
                 }
 
-                if (bb > startIndex) {
-                    startIndex = bb;
+                if (startIndexValue > startIndex) {
+                    startIndex = startIndexValue;
                 }
             }
         }
@@ -2294,18 +2277,18 @@ public class MethodFlowAnalyzer {
 
     public int computeMaxStack() {
         if (!this.closed && this.frameStates != null) {
-            int ba = 0;
+            int stackSlotCountValue = 0;
 
             for (StackFrameState stackFrameState : this.frameStates) {
                 if (stackFrameState != null) {
                     int stackSlotCount = stackFrameState.getStackSlotCount();
-                    if (stackSlotCount > ba) {
-                        ba = stackSlotCount;
+                    if (stackSlotCount > stackSlotCountValue) {
+                        stackSlotCountValue = stackSlotCount;
                     }
                 }
             }
 
-            return ba;
+            return stackSlotCountValue;
         } else {
             throw new IllegalStateException("Closed object");
         }
@@ -2352,11 +2335,11 @@ public class MethodFlowAnalyzer {
         }
 
         if (list1 != null) {
-            for (int i = 0; i < list1.size(); i++) {
-                String string1 = (String) list1.get(i);
-                verifierTypes[bb++] = VerifierType.forDescriptor(string1);
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String key = (String) list1.get(elementIndex);
+                verifierTypes[bb++] = VerifierType.forDescriptor(key);
                 mutableInt.incrementAndGet();
-                if (string1.equals("J") || string1.equals("D")) {
+                if (key.equals("J") || key.equals("D")) {
                     verifierTypes[bb++] = VerifierType.WIDE_SECOND_SLOT;
                     mutableInt.incrementAndGet();
                 }
@@ -2371,11 +2354,11 @@ public class MethodFlowAnalyzer {
     }
 
     public void traceDeserializeLambdaArguments(
-            int ba, ObservableHolder observableHolder, ObservableHolder observableHolder1, ObservableHolder observableHolder2
+            int elementIndex, ObservableHolder observableHolder, ObservableHolder observableHolder1, ObservableHolder observableHolder2
     ) throws ZkmException, IOException {
-        Instruction instruction1 = (Instruction) this.instructions.get(ba);
-        if (this.instructions.size() > ba + 1) {
-            Instruction instruction2 = (Instruction) this.instructions.get(ba + 1);
+        Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
+        if (this.instructions.size() > elementIndex + 1) {
+            Instruction instruction2 = (Instruction) this.instructions.get(elementIndex + 1);
             if (instruction2.isStringConstantLoad()) {
                 ResolvedStringConstant resolvedStringConstant;
                 if (instruction2.getOpcode() == 18) {
@@ -2387,13 +2370,13 @@ public class MethodFlowAnalyzer {
                 observableHolder.setValue(new StringConstantNameRef(resolvedStringConstant));
                 ResolvedStringConstant resolvedStringConstant1 = null;
 
-                for (int i = ba - 1; i > 0; i += -1) {
-                    Instruction instruction3 = (Instruction) this.instructions.get(i);
+                for (int elementIndexValue = elementIndex - 1; elementIndexValue > 0; elementIndexValue += -1) {
+                    Instruction instruction3 = (Instruction) this.instructions.get(elementIndexValue);
                     if (instruction3.getOpcode() == 182) {
                         ResolvedMethodRefConstant resolvedMethodRefConstant = (ResolvedMethodRefConstant) ((ConstantRefInstruction) instruction3)
                                 .getConstantPoolEntry();
                         if (resolvedMethodRefConstant.getMemberName().equals("getFunctionalInterfaceClass")) {
-                            Instruction instruction4 = (Instruction) this.instructions.get(i + 1);
+                            Instruction instruction4 = (Instruction) this.instructions.get(elementIndexValue + 1);
                             if (instruction4.isStringConstantLoad()) {
                                 if (instruction4.getOpcode() == 18) {
                                     resolvedStringConstant1 = (ResolvedStringConstant) ((LdcInstruction) instruction4).getConstantPoolEntry();
@@ -2409,16 +2392,16 @@ public class MethodFlowAnalyzer {
                 }
 
                 if (resolvedStringConstant1 != null) {
-                    int bc = this.instructions.size();
+                    int instructionsSize = this.instructions.size();
 
-                    for (int i = ba + 2; i < bc; i++) {
-                        Instruction instruction6 = (Instruction) this.instructions.get(i);
+                    for (int elementIndexValue2 = elementIndex + 2; elementIndexValue2 < instructionsSize; elementIndexValue2++) {
+                        Instruction instruction6 = (Instruction) this.instructions.get(elementIndexValue2);
                         if (instruction6.getOpcode() == 182
                                 && ((ResolvedMethodRefConstant) ((ConstantRefInstruction) instruction6).getConstantPoolEntry())
                                 .getMemberName()
                                 .equals("getFunctionalInterfaceMethodSignature")) {
-                            if (i + 1 < bc) {
-                                Instruction instruction5 = (Instruction) this.instructions.get(i + 1);
+                            if (elementIndexValue2 + 1 < instructionsSize) {
+                                Instruction instruction5 = (Instruction) this.instructions.get(elementIndexValue2 + 1);
                                 if (instruction5.isStringConstantLoad()) {
                                     ResolvedStringConstant resolvedStringConstant2;
                                     if (instruction5.getOpcode() == 18) {
@@ -2454,7 +2437,7 @@ public class MethodFlowAnalyzer {
             }
         } else {
             observableHolder.setValue(
-                    new InstructionReasonNote(instruction1, "Unexpected usage (G) : " + this.methodDescription + " : " + ba + " : " + this.instructions.size())
+                    new InstructionReasonNote(instruction1, "Unexpected usage (G) : " + this.methodDescription + " : " + elementIndex + " : " + this.instructions.size())
             );
             observableHolder1.setValue(new InstructionReasonNote(instruction1, "Unexpected usage (H) "));
             observableHolder2.setValue(new InstructionReasonNote(instruction1, "Unexpected usage (I) "));
@@ -2479,14 +2462,14 @@ public class MethodFlowAnalyzer {
                         );
                         List list1 = listMultimap.getValues(methodBytecode1);
 
-                        for (int i = 0; i < list1.size(); i++) {
-                            int bd = (Integer) list1.get(i);
-                            StackFrameState stackFrameState = methodFlowAnalyzer1.frameStates[bd];
+                        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                            int integerValue = (Integer) list1.get(elementIndex);
+                            StackFrameState stackFrameState = methodFlowAnalyzer1.frameStates[integerValue];
                             if (stackFrameState != null) {
                                 int be = stackFrameState.getStackDepth() + callStackOffset + methodInfo1.getParameterIndexForSlot(ba);
                                 ValueTraceFrame valueTraceFrame1 = new ValueTraceFrame(this, valueTraceFrame, methodBytecode1.getMethod().isStatic());
-                                BasicBlock basicBlock = methodFlowAnalyzer1.getBlockContaining(bd);
-                                methodFlowAnalyzer1.traceStackValueSource(valueTraceFrame1, basicBlock, bd, be);
+                                BasicBlock basicBlock = methodFlowAnalyzer1.getBlockContaining(integerValue);
+                                methodFlowAnalyzer1.traceStackValueSource(valueTraceFrame1, basicBlock, integerValue, be);
                             }
                         }
                     } catch (ZkmException zkmException) {
@@ -2515,9 +2498,9 @@ public class MethodFlowAnalyzer {
         StackMapEntry[] stackMapEntrys = new StackMapEntry[integers.length];
 
         for (int i = 0; i < integers.length; i++) {
-            int bb = integers[i];
-            LabelInstruction labelInstruction = (LabelInstruction) this.instructions.get(bb);
-            StackFrameState stackFrameState = this.frameStates[bb];
+            int integerValue = integers[i];
+            LabelInstruction labelInstruction = (LabelInstruction) this.instructions.get(integerValue);
+            StackFrameState stackFrameState = this.frameStates[integerValue];
             stackMapEntrys[i] = new StackMapEntry(stackMapAttribute, labelInstruction, stackFrameState, constantPool1, set1, list1, boolean1, hashMap, hashMap1);
         }
 
@@ -2528,8 +2511,8 @@ public class MethodFlowAnalyzer {
         return this.shortestReturnPathLength;
     }
 
-    public void traceMethodCallSource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int ba) throws ZkmException, IOException {
-        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(ba);
+    public void traceMethodCallSource(ValueTraceFrame valueTraceFrame, BasicBlock basicBlock, int callInstructionIndex) throws ZkmException, IOException {
+        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(callInstructionIndex);
         ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) constantRefInstruction.getConstantPoolEntry();
         switch (ReflectionAnalysisSwitchMap.ARGUMENT_KIND_SWITCH[valueTraceFrame.argumentKind.ordinal()]) {
             case 1:
@@ -2539,14 +2522,14 @@ public class MethodFlowAnalyzer {
                     } else {
                         HashSet hashSet1 = ZkmUtils.createHashSet(13);
                         HashSet hashSet4 = valueTraceFrame.swapResults(hashSet1);
-                        int stackDepth = this.frameStates[ba].getStackDepth();
-                        this.traceStackValueSource(valueTraceFrame, basicBlock, ba, stackDepth);
+                        int stackDepth = this.frameStates[callInstructionIndex].getStackDepth();
+                        this.traceStackValueSource(valueTraceFrame, basicBlock, callInstructionIndex, stackDepth);
                         HashSet hashSet7 = ZkmUtils.createHashSet(13);
                         valueTraceFrame.swapResults(hashSet7);
-                        this.traceStackValueSource(valueTraceFrame, basicBlock, ba, stackDepth + 1);
+                        this.traceStackValueSource(valueTraceFrame, basicBlock, callInstructionIndex, stackDepth + 1);
                         HashSet hashSet9 = ZkmUtils.createHashSet(13);
                         valueTraceFrame.swapResults(hashSet9);
-                        this.traceStackValueSource(valueTraceFrame, basicBlock, ba, --stackDepth);
+                        this.traceStackValueSource(valueTraceFrame, basicBlock, callInstructionIndex, --stackDepth);
                         hashSet4.add(new PropertyLookupValue(hashSet1, hashSet7, hashSet9));
                         valueTraceFrame.swapResults(hashSet4);
                     }
@@ -2556,11 +2539,11 @@ public class MethodFlowAnalyzer {
                     } else {
                         HashSet hashSet2 = ZkmUtils.createHashSet(13);
                         HashSet hashSet5 = valueTraceFrame.swapResults(hashSet2);
-                        int bf = this.frameStates[ba].getStackDepth();
-                        this.traceStackValueSource(valueTraceFrame, basicBlock, ba, bf);
+                        int stackDepthValue = this.frameStates[callInstructionIndex].getStackDepth();
+                        this.traceStackValueSource(valueTraceFrame, basicBlock, callInstructionIndex, stackDepthValue);
                         HashSet hashSet8 = ZkmUtils.createHashSet(13);
                         valueTraceFrame.swapResults(hashSet8);
-                        this.traceStackValueSource(valueTraceFrame, basicBlock, ba, --bf);
+                        this.traceStackValueSource(valueTraceFrame, basicBlock, callInstructionIndex, --stackDepthValue);
                         hashSet5.add(new PropertyLookupValue(hashSet2, hashSet8));
                         valueTraceFrame.swapResults(hashSet5);
                     }
@@ -2576,7 +2559,7 @@ public class MethodFlowAnalyzer {
             case 2:
             case 3:
                 if (valueTraceFrame.pendingReflectionCalls.containsKey(resolvedMethodRef)) {
-                    valueTraceFrame.results.add(new PendingReflectionValue(ba, this.methodBytecode));
+                    valueTraceFrame.results.add(new PendingReflectionValue(callInstructionIndex, this.methodBytecode));
                 } else {
                     AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) resolvedMethodRef.getResolvedMember();
                     if (abstractMethodInfo != null && abstractMethodInfo.isProgramMember()) {
@@ -2614,9 +2597,9 @@ public class MethodFlowAnalyzer {
                                 valueTraceFrame.results.add(new StringConstantNameRef(returnedNameSource.getStringConstant()));
                             } else if (returnedNameSource.isParameter()) {
                                 int parameterIndex = returnedNameSource.getParameterIndex();
-                                int bi = this.frameStates[ba].getStackDepth() + methodInfo1.getCallStackOffset() + methodInfo1.getParameterIndexForSlot(parameterIndex);
+                                int bi = this.frameStates[callInstructionIndex].getStackDepth() + methodInfo1.getCallStackOffset() + methodInfo1.getParameterIndexForSlot(parameterIndex);
                                 ValueTraceFrame valueTraceFrame3 = new ValueTraceFrame(this, valueTraceFrame, ReflectionArgumentKind.NORMAL);
-                                this.traceStackValueSource(valueTraceFrame3, basicBlock, ba, bi);
+                                this.traceStackValueSource(valueTraceFrame3, basicBlock, callInstructionIndex, bi);
                             } else if (returnedNameSource.hasFailureReason()) {
                                 valueTraceFrame.results
                                         .add(
@@ -2630,15 +2613,15 @@ public class MethodFlowAnalyzer {
                                 if (tracedArrayValue.hasSingleValuePerElement()) {
                                     ArrayList arrayList = tracedArrayValue.getFirstValues();
 
-                                    for (int i = 0; i < arrayList.size(); i++) {
-                                        TrackedValue trackedValue2 = (TrackedValue) arrayList.get(i);
+                                    for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                                        TrackedValue trackedValue2 = (TrackedValue) arrayList.get(elementIndex);
                                         if (trackedValue2 instanceof MethodParameterValue) {
                                             MethodParameterValue methodParameterValue1 = (MethodParameterValue) trackedValue2;
                                             if (methodParameterValue1.getMethodBytecode() == returnedNameSource.getMethodBytecode()) {
-                                                int bk = methodParameterValue1.getParameterIndex();
-                                                int bd = this.frameStates[ba].getStackDepth() + methodInfo1.getCallStackOffset() + methodInfo1.getParameterIndexForSlot(bk);
+                                                int parameterIndexValue = methodParameterValue1.getParameterIndex();
+                                                int bd = this.frameStates[callInstructionIndex].getStackDepth() + methodInfo1.getCallStackOffset() + methodInfo1.getParameterIndexForSlot(parameterIndexValue);
                                                 ValueTraceFrame valueTraceFrame2 = new ValueTraceFrame(this, valueTraceFrame, ReflectionArgumentKind.NORMAL);
-                                                this.traceStackValueSource(valueTraceFrame2, basicBlock, ba, bd);
+                                                this.traceStackValueSource(valueTraceFrame2, basicBlock, callInstructionIndex, bd);
                                             } else {
                                                 valueTraceFrame.results
                                                         .add(
@@ -2682,11 +2665,11 @@ public class MethodFlowAnalyzer {
                         HashSet hashSet10;
                         if (resolvedMethodRef.getReferencedClassName().equals("java/lang/Object")) {
                             if (resolvedMethodRef.getSignatureString().equals("getClass()Ljava/lang/Class;")) {
-                                if (ba > basicBlock.getStartIndex()) {
-                                    StackFrameState stackFrameState1 = this.frameStates[ba - 1];
-                                    String string = stackFrameState1.getStack()[this.frameStates[ba].getStackDepth() - 1].getDescriptor();
-                                    string = CommonSuperTypeResolver.stripClassDescriptor(string);
-                                    valueTraceFrame.results.add(new TracedObjectType(constantRefInstruction, string));
+                                if (callInstructionIndex > basicBlock.getStartIndex()) {
+                                    StackFrameState stackFrameState1 = this.frameStates[callInstructionIndex - 1];
+                                    String descriptor = stackFrameState1.getStack()[this.frameStates[callInstructionIndex].getStackDepth() - 1].getDescriptor();
+                                    descriptor = CommonSuperTypeResolver.stripClassDescriptor(descriptor);
+                                    valueTraceFrame.results.add(new TracedObjectType(constantRefInstruction, descriptor));
                                     break;
                                 }
 
@@ -2707,23 +2690,23 @@ public class MethodFlowAnalyzer {
                 if (reflectionApiMethod != null) {
                     List list1 = reflectionApiMethod.getParamDetails();
 
-                    for (int i = 0; i < list1.size(); i++) {
-                        ReflectionParamDetail reflectionParamDetail = (ReflectionParamDetail) list1.get(i);
+                    for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+                        ReflectionParamDetail reflectionParamDetail = (ReflectionParamDetail) list1.get(elementIndexValue);
                         if (reflectionParamDetail.isClassNameParam() || reflectionParamDetail.isClassOrPropertiesNameParam()) {
-                            StackFrameState stackFrameState = this.frameStates[ba];
+                            StackFrameState stackFrameState = this.frameStates[callInstructionIndex];
                             int bc = stackFrameState.getStackDepth() + reflectionApiMethod.getArgumentOffset() + reflectionParamDetail.getPosition();
                             ValueTraceFrame valueTraceFrame1 = new ValueTraceFrame(
                                     this, valueTraceFrame, ReflectionArgumentKind.USER_DEFINED_METHOD_2, valueTraceFrame.nestingLevel
                             );
-                            this.traceStackValueSource(valueTraceFrame1, basicBlock, ba, bc);
+                            this.traceStackValueSource(valueTraceFrame1, basicBlock, callInstructionIndex, bc);
                             return;
                         }
                     }
                 } else if (this.isGetComponentTypeCall(resolvedMethodRef, valueTraceFrame.memberLookup)) {
                     HashSet hashSet3 = ZkmUtils.createHashSet(13);
                     HashSet hashSet6 = valueTraceFrame.swapResults(hashSet3);
-                    int bg = this.frameStates[ba].getStackDepth() - 1;
-                    this.traceStackValueSource(valueTraceFrame, basicBlock, ba, bg);
+                    int bg = this.frameStates[callInstructionIndex].getStackDepth() - 1;
+                    this.traceStackValueSource(valueTraceFrame, basicBlock, callInstructionIndex, bg);
                     valueTraceFrame.swapResults(hashSet6);
                     if (hashSet3.size() == 0) {
                         hashSet6.add(new InstructionReasonNote(constantRefInstruction, "Unknown object for '" + resolvedMethodRef.getValueString() + "' call"));
@@ -2778,13 +2761,13 @@ public class MethodFlowAnalyzer {
 
     public HashSet traceFieldStoreValues(ValueTraceFrame valueTraceFrame, FieldInfo fieldInfo, List list1) throws ZkmException, IOException {
         HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(list1.size() + 2));
-        boolean bl = this.methodBytecode.getMethod().isStatic();
+        boolean isStaticMethodValue = this.methodBytecode.getMethod().isStatic();
 
-        for (int i = 0; i < list1.size(); i++) {
-            int bb = (Integer) list1.get(i);
-            BasicBlock basicBlock = this.getBlockContaining(bb);
-            if (this.frameStates[bb] != null) {
-                int bc = this.frameStates[bb].getStackDepth() + (fieldInfo.isStatic() ? 0 : 1);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            int integerValue = (Integer) list1.get(elementIndex);
+            BasicBlock basicBlock = this.getBlockContaining(integerValue);
+            if (this.frameStates[integerValue] != null) {
+                int bc = this.frameStates[integerValue].getStackDepth() + (fieldInfo.isStatic() ? 0 : 1);
                 ValueTraceFrame valueTraceFrame1 = new ValueTraceFrame(
                         this,
                         hashSet,
@@ -2796,7 +2779,7 @@ public class MethodFlowAnalyzer {
                         valueTraceFrame.superTypeResolver,
                         valueTraceFrame.memberLookup,
                         valueTraceFrame.pendingReflectionCalls,
-                        bl,
+                        isStaticMethodValue,
                         valueTraceFrame.returnedNameSourceCache,
                         valueTraceFrame.fieldValueCache,
                         valueTraceFrame.stackSourceCache,
@@ -2804,7 +2787,7 @@ public class MethodFlowAnalyzer {
                         valueTraceFrame.getNestingLevel() + 1,
                         valueTraceFrame.flowAnalyzerCache
                 );
-                this.traceStackValueSource(valueTraceFrame1, basicBlock, bb, bc);
+                this.traceStackValueSource(valueTraceFrame1, basicBlock, integerValue, bc);
             }
         }
 
@@ -2813,8 +2796,8 @@ public class MethodFlowAnalyzer {
 
     public void release() {
         if (!this.closed) {
-            for (int i = 0; i < this.basicBlocks.size(); i++) {
-                ((BasicBlock) this.basicBlocks.get(i)).clearLinks();
+            for (int elementIndex = 0; elementIndex < this.basicBlocks.size(); elementIndex++) {
+                ((BasicBlock) this.basicBlocks.get(elementIndex)).clearLinks();
             }
 
             this.instructions = null;
@@ -2839,47 +2822,47 @@ public class MethodFlowAnalyzer {
         }
     }
 
-    public ObjectPair findLocalVariableScope(int ba, ObservableHolder observableHolder) throws ZkmException, IOException {
-        int bb = -1;
-        int bc = -1;
-        String string = null;
+    public ObjectPair findLocalVariableScope(int localIndex, ObservableHolder observableHolder) throws ZkmException, IOException {
+        int firstValue = -1;
+        int second = -1;
+        String localTypeDescriptorValue = null;
         int bd = 0;
 
-        for (int i = 0; i < this.frameStates.length; i++) {
-            StackFrameState stackFrameState = this.frameStates[i];
-            if (stackFrameState != null && stackFrameState.isLocalOccupied(ba)) {
-                if (bb == -1) {
-                    bb = bd;
+        for (int elementIndex = 0; elementIndex < this.frameStates.length; elementIndex++) {
+            StackFrameState stackFrameState = this.frameStates[elementIndex];
+            if (stackFrameState != null && stackFrameState.isLocalOccupied(localIndex)) {
+                if (firstValue == -1) {
+                    firstValue = bd;
                 }
 
-                String string1 = stackFrameState.getLocalTypeDescriptor(ba);
-                if (string == null && string1 != null) {
-                    string = string1;
-                    observableHolder.setValue(string1);
-                } else if (string1 != null && !string1.equals(string)) {
+                String localTypeDescriptor = stackFrameState.getLocalTypeDescriptor(localIndex);
+                if (localTypeDescriptorValue == null && localTypeDescriptor != null) {
+                    localTypeDescriptorValue = localTypeDescriptor;
+                    observableHolder.setValue(localTypeDescriptor);
+                } else if (localTypeDescriptor != null && !localTypeDescriptor.equals(localTypeDescriptorValue)) {
                     break;
                 }
 
-                bc = bd;
+                second = bd;
             }
 
-            bd += ((Instruction) this.instructions.get(i)).getLength();
+            bd += ((Instruction) this.instructions.get(elementIndex)).getLength();
         }
 
-        return new ObjectPair(bb, bc);
+        return new ObjectPair(firstValue, second);
     }
 
     public ReturnedNameSource resolveReturnedNameSource(ValueTraceFrame valueTraceFrame) throws ZkmException, IOException {
         ReturnedNameSource returnedNameSource = null;
-        boolean bl = this.methodBytecode.getMethod().isStatic();
-        int ba = -1;
-        int bb = this.instructions.size();
+        boolean isStaticMethodValue = this.methodBytecode.getMethod().isStatic();
+        int elementIndexValue = -1;
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < bb; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.getOpcode() == 176) {
-                if (ba == -1) {
-                    ba = i;
+                if (elementIndexValue == -1) {
+                    elementIndexValue = elementIndex;
                 } else {
                     returnedNameSource = new ReturnedNameSource("Multiple ARETURNs", this.methodBytecode);
                 }
@@ -2887,9 +2870,9 @@ public class MethodFlowAnalyzer {
         }
 
         if (returnedNameSource == null) {
-            if (ba > -1) {
-                BasicBlock basicBlock = this.getBlockContaining(ba);
-                StackFrameState stackFrameState = this.frameStates[ba];
+            if (elementIndexValue > -1) {
+                BasicBlock basicBlock = this.getBlockContaining(elementIndexValue);
+                StackFrameState stackFrameState = this.frameStates[elementIndexValue];
                 int stackDepth = stackFrameState.getStackDepth();
                 HashSet hashSet = ZkmUtils.createHashSet(13);
                 ValueTraceFrame valueTraceFrame1 = new ValueTraceFrame(
@@ -2903,7 +2886,7 @@ public class MethodFlowAnalyzer {
                         valueTraceFrame.superTypeResolver,
                         valueTraceFrame.memberLookup,
                         valueTraceFrame.pendingReflectionCalls,
-                        bl,
+                        isStaticMethodValue,
                         valueTraceFrame.returnedNameSourceCache,
                         valueTraceFrame.fieldValueCache,
                         valueTraceFrame.stackSourceCache,
@@ -2911,7 +2894,7 @@ public class MethodFlowAnalyzer {
                         valueTraceFrame.getNestingLevel() + 1,
                         valueTraceFrame.flowAnalyzerCache
                 );
-                this.traceStackValueSource(valueTraceFrame1, basicBlock, ba, stackDepth);
+                this.traceStackValueSource(valueTraceFrame1, basicBlock, elementIndexValue, stackDepth);
                 if (hashSet.size() == 0) {
                     returnedNameSource = new ReturnedNameSource("No source found", this.methodBytecode);
                 } else if (hashSet.size() == 1) {
@@ -2965,13 +2948,13 @@ public class MethodFlowAnalyzer {
         return returnedNameSource;
     }
 
-    private void computeFrameStates(CommonSuperTypeResolver commonSuperTypeResolver1, TryCatchBlockInfo[][] tryCatchBlockInfos, boolean bl, String string) throws ZkmException, IOException {
-        int bc = this.instructions.size();
-        this.frameStates = new StackFrameState[bc];
+    private void computeFrameStates(CommonSuperTypeResolver commonSuperTypeResolver1, TryCatchBlockInfo[][] tryCatchBlockInfos, boolean verifyTypes, String diagnosticContext) throws ZkmException, IOException {
+        int instructionsSize = this.instructions.size();
+        this.frameStates = new StackFrameState[instructionsSize];
         StackFrameState stackFrameState = new StackFrameState(this.initialLocals);
         Instruction instruction1 = (Instruction) this.instructions.get(0);
         CommonSuperTypeResolver commonSuperTypeResolver2 = commonSuperTypeResolver1;
-        this.frameStates[0] = instruction1.computeFrameAfter(stackFrameState, bl, commonSuperTypeResolver2, string);
+        this.frameStates[0] = instruction1.computeFrameAfter(stackFrameState, verifyTypes, commonSuperTypeResolver2, diagnosticContext);
         TreeSet treeSet1 = new TreeSet();
         TreeSet treeSet2 = new TreeSet();
         UniqueWorkQueue uniqueWorkQueue = new UniqueWorkQueue();
@@ -2982,21 +2965,21 @@ public class MethodFlowAnalyzer {
 
         do {
             Integer integer;
-            int bd;
+            int integerValue;
             if (!treeSet1.isEmpty()) {
                 integer = (Integer) treeSet1.first();
-                bd = integer;
+                integerValue = integer;
                 treeSet1.remove(integer);
             } else if (!treeSet2.isEmpty()) {
                 integer = (Integer) treeSet2.first();
-                bd = integer;
+                integerValue = integer;
                 treeSet2.remove(integer);
             } else {
                 integer = (Integer) uniqueWorkQueue.dequeue();
-                bd = integer;
+                integerValue = integer;
             }
 
-            Instruction instruction2 = (Instruction) this.instructions.get(bd);
+            Instruction instruction2 = (Instruction) this.instructions.get(integerValue);
             if (instruction2 instanceof SwitchInstruction) {
                 List list1 = ((SwitchInstruction) instruction2).getTargetLabels();
                 Iterator iterator = list1.iterator();
@@ -3004,17 +2987,17 @@ public class MethodFlowAnalyzer {
                 while (iterator.hasNext()) {
                     LabelInstruction labelInstruction1 = (LabelInstruction) iterator.next();
                     int instructionIndex = labelInstruction1.getInstructionIndex();
-                    String string1 = string;
-                    boolean bl1 = bl;
+                    String diagnosticContextValue = diagnosticContext;
+                    boolean verifyTypesValue = verifyTypes;
                     TreeSet treeSet = treeSet1;
-                    int ba = instructionIndex;
-                    int bb = bd;
-                    this.o(bb, ba, treeSet, bl1, string1);
+                    int instructionIndexValue = instructionIndex;
+                    int predecessorIndex = integerValue;
+                    this.propagateFrameToSuccessor(predecessorIndex, instructionIndexValue, treeSet, verifyTypesValue, diagnosticContextValue);
                 }
             } else if (instruction2 instanceof BranchInstruction && !instruction2.isJsr()) {
                 LabelInstruction labelInstruction = ((BranchInstruction) instruction2).getTargetLabel();
-                int be = labelInstruction.getInstructionIndex();
-                this.o(bd, be, treeSet1, bl, string);
+                int instructionIndexValue2 = labelInstruction.getInstructionIndex();
+                this.propagateFrameToSuccessor(integerValue, instructionIndexValue2, treeSet1, verifyTypes, diagnosticContext);
             }
 
             if (instruction2.canFallThrough()) {
@@ -3022,23 +3005,23 @@ public class MethodFlowAnalyzer {
                     twoKeyMap.removeInnerMap(instruction2);
                 }
 
-                int bo = bd + 1;
-                String string2 = string;
-                boolean bl2 = bl;
+                int bo = integerValue + 1;
+                String diagnosticContextValue2 = diagnosticContext;
+                boolean verifyTypesValue2 = verifyTypes;
                 TreeSet treeSet3 = treeSet1;
-                int bg = bo;
-                int bh = bd;
-                this.o(bh, bg, treeSet3, bl2, string2);
+                int successorIndex = bo;
+                int predecessorIndexValue = integerValue;
+                this.propagateFrameToSuccessor(predecessorIndexValue, successorIndex, treeSet3, verifyTypesValue2, diagnosticContextValue2);
             }
 
-            TryCatchBlockInfo[] tryCatchBlockInfos1 = tryCatchBlockInfos[bd];
+            TryCatchBlockInfo[] tryCatchBlockInfos1 = tryCatchBlockInfos[integerValue];
             if (tryCatchBlockInfos1 != null) {
-                for (int i = 0; i < tryCatchBlockInfos1.length; i++) {
-                    int bj = tryCatchBlockInfos1[i].handlerIndex;
-                    SubroutineLocalsBitSet subroutineLocalsBitSet1 = this.frameStates[bd].getSubroutineLocals();
+                for (int tryCatchBlockInfos1ElementIndex = 0; tryCatchBlockInfos1ElementIndex < tryCatchBlockInfos1.length; tryCatchBlockInfos1ElementIndex++) {
+                    int handlerIndexValue = tryCatchBlockInfos1[tryCatchBlockInfos1ElementIndex].handlerIndex;
+                    SubroutineLocalsBitSet subroutineLocalsBitSet1 = this.frameStates[integerValue].getSubroutineLocals();
                     SubroutineLocalsBitSet subroutineLocalsBitSet = null;
-                    if (this.frameStates[bj] != null) {
-                        subroutineLocalsBitSet = this.frameStates[bj].getSubroutineLocals();
+                    if (this.frameStates[handlerIndexValue] != null) {
+                        subroutineLocalsBitSet = this.frameStates[handlerIndexValue].getSubroutineLocals();
                     }
 
                     StackFrameState stackFrameState1;
@@ -3046,7 +3029,7 @@ public class MethodFlowAnalyzer {
                             && (subroutineLocalsBitSet1 == null || subroutineLocalsBitSet == null || !subroutineLocalsBitSet1.isSameSubroutine(subroutineLocalsBitSet))) {
                         if (subroutineLocalsBitSet1 != null && subroutineLocalsBitSet != null && !subroutineLocalsBitSet1.isSameSubroutine(subroutineLocalsBitSet)) {
                             stackFrameState1 = StackFrameState.createWithSubroutineLocals(
-                                    this.frameStates[bd], this.frameStates[bj].getLocals(), subroutineLocalsBitSet, this.frameStates[bj].getHeldMonitors()
+                                    this.frameStates[integerValue], this.frameStates[handlerIndexValue].getLocals(), subroutineLocalsBitSet, this.frameStates[handlerIndexValue].getHeldMonitors()
                             );
                         } else {
                             if (subroutineLocalsBitSet1 == null || subroutineLocalsBitSet != null) {
@@ -3055,36 +3038,36 @@ public class MethodFlowAnalyzer {
                                 );
                             }
 
-                            if (this.frameStates[bj] != null) {
+                            if (this.frameStates[handlerIndexValue] != null) {
                                 stackFrameState1 = StackFrameState.createWithSubroutineLocals(
-                                        this.frameStates[bd], this.frameStates[bj].getLocals(), subroutineLocalsBitSet, this.frameStates[bj].getHeldMonitors()
+                                        this.frameStates[integerValue], this.frameStates[handlerIndexValue].getLocals(), subroutineLocalsBitSet, this.frameStates[handlerIndexValue].getHeldMonitors()
                                 );
                             } else {
-                                stackFrameState1 = this.frameStates[bd];
+                                stackFrameState1 = this.frameStates[integerValue];
                             }
                         }
                     } else {
-                        stackFrameState1 = this.frameStates[bd];
+                        stackFrameState1 = this.frameStates[integerValue];
                     }
 
                     StackFrameState stackFrameState2 = new StackFrameState(
-                            tryCatchBlockInfos1[i].catchTypeDescriptor,
+                            tryCatchBlockInfos1[tryCatchBlockInfos1ElementIndex].catchTypeDescriptor,
                             stackFrameState1.getLocals(),
                             stackFrameState1.getSubroutineLocals(),
-                            this.frameStates[bd].getHeldMonitors()
+                            this.frameStates[integerValue].getHeldMonitors()
                     );
-                    Instruction instruction3 = (Instruction) this.instructions.get(bj);
+                    Instruction instruction3 = (Instruction) this.instructions.get(handlerIndexValue);
                     CommonSuperTypeResolver commonSuperTypeResolver3 = commonSuperTypeResolver1;
-                    StackFrameState stackFrameState3 = instruction3.computeFrameAfter(stackFrameState2, bl, commonSuperTypeResolver3, string);
-                    if (this.frameStates[bj] == null) {
-                        this.frameStates[bj] = stackFrameState3;
-                        treeSet1.add(INTEGER_CACHE.valueOf(bj));
+                    StackFrameState stackFrameState3 = instruction3.computeFrameAfter(stackFrameState2, verifyTypes, commonSuperTypeResolver3, diagnosticContext);
+                    if (this.frameStates[handlerIndexValue] == null) {
+                        this.frameStates[handlerIndexValue] = stackFrameState3;
+                        treeSet1.add(INTEGER_CACHE.valueOf(handlerIndexValue));
                     } else {
                         BooleanFlag booleanFlag = new BooleanFlag();
-                        StackFrameState stackFrameState4 = this.frameStates[bj].merge(commonSuperTypeResolver1, stackFrameState3, booleanFlag, string);
+                        StackFrameState stackFrameState4 = this.frameStates[handlerIndexValue].merge(commonSuperTypeResolver1, stackFrameState3, booleanFlag, diagnosticContext);
                         if (booleanFlag.getValue()) {
-                            this.frameStates[bj] = stackFrameState4;
-                            treeSet1.add(INTEGER_CACHE.valueOf(bj));
+                            this.frameStates[handlerIndexValue] = stackFrameState4;
+                            treeSet1.add(INTEGER_CACHE.valueOf(handlerIndexValue));
                         }
                     }
                 }
@@ -3093,41 +3076,41 @@ public class MethodFlowAnalyzer {
             if (instruction2.isJsr()) {
                 BranchInstruction branchInstruction = (BranchInstruction) instruction2;
                 LabelInstruction labelInstruction2 = branchInstruction.getTargetLabel();
-                int bk = labelInstruction2.getInstructionIndex();
+                int instructionIndexValue3 = labelInstruction2.getInstructionIndex();
                 StackFrameState stackFrameState6 = new StackFrameState(
-                        this.frameStates[bd].getStack(),
-                        this.frameStates[bd].getLocals(),
+                        this.frameStates[integerValue].getStack(),
+                        this.frameStates[integerValue].getLocals(),
                         new SubroutineLocalsBitSet(labelInstruction2, this.maxLocals),
-                        this.frameStates[bd].getHeldMonitors()
+                        this.frameStates[integerValue].getHeldMonitors()
                 );
                 CommonSuperTypeResolver commonSuperTypeResolver4 = commonSuperTypeResolver1;
-                StackFrameState stackFrameState7 = labelInstruction2.computeFrameAfter(stackFrameState6, bl, commonSuperTypeResolver4, string);
-                if (this.frameStates[bk] == null) {
-                    this.frameStates[bk] = stackFrameState7;
-                    treeSet2.add(INTEGER_CACHE.valueOf(bk));
+                StackFrameState stackFrameState7 = labelInstruction2.computeFrameAfter(stackFrameState6, verifyTypes, commonSuperTypeResolver4, diagnosticContext);
+                if (this.frameStates[instructionIndexValue3] == null) {
+                    this.frameStates[instructionIndexValue3] = stackFrameState7;
+                    treeSet2.add(INTEGER_CACHE.valueOf(instructionIndexValue3));
                 } else {
-                    StackFrameState stackFrameState8 = this.frameStates[bk];
+                    StackFrameState stackFrameState8 = this.frameStates[instructionIndexValue3];
                     BooleanFlag booleanFlag1 = new BooleanFlag();
-                    StackFrameState stackFrameState10 = stackFrameState8.merge(commonSuperTypeResolver1, stackFrameState6, booleanFlag1, string);
+                    StackFrameState stackFrameState10 = stackFrameState8.merge(commonSuperTypeResolver1, stackFrameState6, booleanFlag1, diagnosticContext);
                     if (booleanFlag1.getValue()) {
-                        this.frameStates[bk] = stackFrameState10;
-                        treeSet2.add(INTEGER_CACHE.valueOf(bk));
+                        this.frameStates[instructionIndexValue3] = stackFrameState10;
+                        treeSet2.add(INTEGER_CACHE.valueOf(instructionIndexValue3));
                     }
                 }
             } else if (instruction2.isRet()) {
                 LocalVariableInstruction localVariableInstruction = (LocalVariableInstruction) instruction2;
                 boolean bl4 = this.retReturnTargets != null;
-                String[] strings = new String[]{this.methodDescription + " " + bd};
+                String[] strings = new String[]{this.methodDescription + " " + integerValue};
                 ZkmAssert.assertTrue(bl4, strings);
                 Iterator iterator1 = this.retReturnTargets.getInnerMap(localVariableInstruction).keySet().iterator();
                 boolean bl3 = false;
 
                 while (iterator1.hasNext()) {
                     Integer integer1 = (Integer) iterator1.next();
-                    int bm = integer1;
-                    int bn = bm - 1;
-                    if (this.frameStates[bn] == null) {
-                        BasicBlock basicBlock = this.getBlockContaining(bn);
+                    int integer1Value = integer1;
+                    int frameStateIndex = integer1Value - 1;
+                    if (this.frameStates[frameStateIndex] == null) {
+                        BasicBlock basicBlock = this.getBlockContaining(frameStateIndex);
                         if (hashSet1 == null) {
                             hashSet1 = ZkmUtils.createHashSetFrom(this.basicBlocks);
                         }
@@ -3138,19 +3121,19 @@ public class MethodFlowAnalyzer {
                         }
                     } else if (!twoKeyMap.containsKeys(localVariableInstruction, integer1)) {
                         StackFrameState stackFrameState9 = StackFrameState.createWithSubroutineLocals(
-                                this.frameStates[bd], this.frameStates[bn].getLocals(), this.frameStates[bn].getSubroutineLocals(), this.frameStates[bn].getHeldMonitors()
+                                this.frameStates[integerValue], this.frameStates[frameStateIndex].getLocals(), this.frameStates[frameStateIndex].getSubroutineLocals(), this.frameStates[frameStateIndex].getHeldMonitors()
                         );
-                        Instruction instruction4 = (Instruction) this.instructions.get(bm);
+                        Instruction instruction4 = (Instruction) this.instructions.get(integer1Value);
                         CommonSuperTypeResolver commonSuperTypeResolver5 = commonSuperTypeResolver1;
-                        StackFrameState stackFrameState11 = instruction4.computeFrameAfter(stackFrameState9, bl, commonSuperTypeResolver5, string);
+                        StackFrameState stackFrameState11 = instruction4.computeFrameAfter(stackFrameState9, verifyTypes, commonSuperTypeResolver5, diagnosticContext);
                         BooleanFlag booleanFlag2 = new BooleanFlag();
-                        if (this.frameStates[bm] == null) {
-                            this.frameStates[bm] = stackFrameState11;
+                        if (this.frameStates[integer1Value] == null) {
+                            this.frameStates[integer1Value] = stackFrameState11;
                             treeSet1.add(integer1);
                         } else {
-                            StackFrameState stackFrameState5 = this.frameStates[bm].merge(commonSuperTypeResolver1, stackFrameState11, booleanFlag2, string);
+                            StackFrameState stackFrameState5 = this.frameStates[integer1Value].merge(commonSuperTypeResolver1, stackFrameState11, booleanFlag2, diagnosticContext);
                             if (booleanFlag2.getValue()) {
-                                this.frameStates[bm] = stackFrameState5;
+                                this.frameStates[integer1Value] = stackFrameState5;
                                 treeSet1.add(integer1);
                             }
                         }
@@ -3187,16 +3170,16 @@ public class MethodFlowAnalyzer {
     }
 
     public void assignBlockIndices() {
-        for (int i = 0; i < this.basicBlocks.size(); i++) {
-            ((BasicBlock) this.basicBlocks.get(i)).setIndex(i);
+        for (int indexValue = 0; indexValue < this.basicBlocks.size(); indexValue++) {
+            ((BasicBlock) this.basicBlocks.get(indexValue)).setIndex(indexValue);
         }
     }
 
     public boolean isPropertiesMethodCall(ResolvedMethodRef resolvedMethodRef, Object object, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
         try {
             if (resolvedMethodRef.getSignatureString().equals(object)) {
-                String string = resolvedMethodRef.getReferencedClassName();
-                return string.equals("java/util/Properties") || classMemberLookup1.isSubclass(string, "java/util/Properties");
+                String referencedClassName = resolvedMethodRef.getReferencedClassName();
+                return referencedClassName.equals("java/util/Properties") || classMemberLookup1.isSubclass(referencedClassName, "java/util/Properties");
             } else {
                 return false;
             }
@@ -3207,25 +3190,25 @@ public class MethodFlowAnalyzer {
 
     public int[] findDeadCodeIndices() {
         ArrayList arrayList = new ArrayList();
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
         boolean bl = false;
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
-            if (this.frameStates[i] != null) {
+        for (int frameStateIndex = 0; frameStateIndex < instructionsSize; frameStateIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(frameStateIndex);
+            if (this.frameStates[frameStateIndex] != null) {
                 bl = false;
             } else {
                 boolean bl1 = false;
                 if (instruction1.isLabel()) {
                     LabelInstruction labelInstruction = (LabelInstruction) instruction1;
-                    if (i == ba - 1) {
+                    if (frameStateIndex == instructionsSize - 1) {
                         bl1 = true;
                     } else if (labelInstruction.hasUsageBits(512)) {
                         bl1 = true;
                     } else {
-                        for (int j = i + 1; j < ba; j++) {
-                            if (!((Instruction) this.instructions.get(j)).isLabel()) {
-                                if (this.frameStates[j] != null) {
+                        for (int elementIndexValue = frameStateIndex + 1; elementIndexValue < instructionsSize; elementIndexValue++) {
+                            if (!((Instruction) this.instructions.get(elementIndexValue)).isLabel()) {
+                                if (this.frameStates[elementIndexValue] != null) {
                                     bl1 = true;
                                 }
                                 break;
@@ -3235,37 +3218,36 @@ public class MethodFlowAnalyzer {
                 }
 
                 if (bl || !bl1) {
-                    arrayList.add(INTEGER_CACHE.valueOf(i));
+                    arrayList.add(INTEGER_CACHE.valueOf(frameStateIndex));
                     bl = true;
                 }
             }
         }
 
-        int[] bd = new int[arrayList.size()];
+        int[] integerArray = new int[arrayList.size()];
 
-        for (int i = 0; i < bd.length; i++) {
-            bd[i] = (Integer) arrayList.get(i);
+        for (int elementIndex = 0; elementIndex < integerArray.length; elementIndex++) {
+            integerArray[elementIndex] = (Integer) arrayList.get(elementIndex);
         }
 
-        return bd;
+        return integerArray;
     }
 
-    public boolean hasHeldMonitorsAt(int ba) {
-        if (this.frameStates != null && this.frameStates[ba] != null) {
-            Set set1 = this.frameStates[ba].getHeldMonitors();
+    public boolean hasHeldMonitorsAt(int frameStateIndex) {
+        if (this.frameStates != null && this.frameStates[frameStateIndex] != null) {
+            Set set1 = this.frameStates[frameStateIndex].getHeldMonitors();
             return set1 != null && set1.size() > 0;
         } else {
             return false;
         }
     }
 
-    private boolean propagateLivenessBackward(BasicBlock basicBlock, int ba, BitSet bitSet) {
+    private boolean propagateLivenessBackward(BasicBlock basicBlock, int startIndexArgument, BitSet bitSet) {
         boolean bl = false;
-        PendingBlockVisit pendingBlockVisit = new PendingBlockVisit(basicBlock, ba, bitSet);
+        PendingBlockVisit pendingBlockVisit = new PendingBlockVisit(basicBlock, startIndexArgument, bitSet);
         UniqueWorkQueue uniqueWorkQueue = null;
         boolean bl1 = true;
 
-        label72:
         while (bl1 || uniqueWorkQueue != null && !uniqueWorkQueue.isEmpty()) {
             if (!bl1) {
                 pendingBlockVisit = (PendingBlockVisit) uniqueWorkQueue.dequeue();
@@ -3273,21 +3255,22 @@ public class MethodFlowAnalyzer {
 
             bl1 = false;
             BasicBlock basicBlock1 = pendingBlockVisit.block;
-            int bb = pendingBlockVisit.startIndex;
+            int startIndexValue = pendingBlockVisit.startIndex;
             BitSet bitSet1 = pendingBlockVisit.liveLocals;
 
-            for (int i = bb; i >= basicBlock1.getStartIndex(); i += -1) {
-                StackFrameState stackFrameState = this.frameStates[i];
+            boolean livenessUnchanged = false;
+            for (int startIndexValue2 = startIndexValue; startIndexValue2 >= basicBlock1.getStartIndex(); startIndexValue2 += -1) {
+                StackFrameState stackFrameState = this.frameStates[startIndexValue2];
                 if (stackFrameState != null) {
-                    Instruction instruction1 = (Instruction) this.instructions.get(i);
+                    Instruction instruction1 = (Instruction) this.instructions.get(startIndexValue2);
 
-                    for (int j = 0; j < this.maxLocals; j++) {
-                        if (stackFrameState.isLocalDefined(j)) {
-                            if (instruction1.accessesLocal(j)) {
-                                bitSet1.set(j);
+                    for (int localIndex = 0; localIndex < this.maxLocals; localIndex++) {
+                        if (stackFrameState.isLocalDefined(localIndex)) {
+                            if (instruction1.accessesLocal(localIndex)) {
+                                bitSet1.set(localIndex);
                             }
                         } else {
-                            bitSet1.clear(j);
+                            bitSet1.clear(localIndex);
                         }
                     }
 
@@ -3296,11 +3279,16 @@ public class MethodFlowAnalyzer {
                     }
 
                     if (!stackFrameState.addLiveLocals(bitSet1)) {
-                        continue label72;
+                        livenessUnchanged = true;
+                        break;
                     }
 
                     bl = true;
                 }
+            }
+
+            if (livenessUnchanged) {
+                continue;
             }
 
             if (basicBlock1.hasPredecessors()) {
@@ -3327,9 +3315,9 @@ public class MethodFlowAnalyzer {
             boolean bl = false;
             int startIndex = basicBlock.getStartIndex();
 
-            for (int i = ba - 1; !bl && i >= startIndex; i += -1) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                StackFrameState stackFrameState = this.frameStates[i];
+            for (int elementIndexValue = ba - 1; !bl && elementIndexValue >= startIndex; elementIndexValue += -1) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndexValue);
+                StackFrameState stackFrameState = this.frameStates[elementIndexValue];
                 if (instruction1.isStackManipulation()) {
                     bc = instruction1.mapStackSlotBackward(stackFrameState.getStack(), bc);
                 } else if (stackFrameState.getStackDepth() - 1 == bc && instruction1.pushesValue()) {
@@ -3374,8 +3362,8 @@ public class MethodFlowAnalyzer {
             if (!bl) {
                 List list2 = basicBlock.getPredecessors();
                 if (list2 != null && list2.size() > 0) {
-                    for (int i = 0; i < list2.size(); i++) {
-                        BasicBlock basicBlock1 = (BasicBlock) list2.get(i);
+                    for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
+                        BasicBlock basicBlock1 = (BasicBlock) list2.get(elementIndex);
                         this.collectIntConstantSourcesFrom(list1, basicBlock1, basicBlock1.getEndIndex() + 1, bc, set1);
                     }
                 } else {

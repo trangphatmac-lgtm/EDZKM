@@ -21,50 +21,50 @@ public class MethodParametersAttribute extends ParsedAttributeBase {
     public void collectUsedConstants(char bc, int bd, UsedConstantsCollector usedConstantsCollector, char be) {
         usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
         if (super.valid) {
-            int ba = this.parameters.length;
+            int lengthValue = this.parameters.length;
 
-            for (int i = 0; i < ba; i++) {
-                this.parameters[i].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+            for (int parameterIndex = 0; parameterIndex < lengthValue; parameterIndex++) {
+                this.parameters[parameterIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
             }
         }
     }
 
     public MethodParametersAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             PrintWriter printWriter
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        byte[] bb = new byte[this.length];
-        classFileInputStream.read(bb);
-        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(bb, false);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
+        byte[] rawBytesValue = new byte[this.length];
+        classFileInputStream.read(rawBytesValue);
+        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(rawBytesValue, false);
 
         try {
             if (this.length >= 2) {
                 int bc = classFileInputStream1.readUnsignedByte();
                 this.parameters = new MethodParameterEntry[bc];
 
-                for (int i = 0; i < bc; i++) {
-                    this.parameters[i] = new MethodParameterEntry(this, classFileInputStream1, listMultimap);
-                    if (!this.parameters[i].isValid()) {
+                for (int parameterIndex = 0; parameterIndex < bc; parameterIndex++) {
+                    this.parameters[parameterIndex] = new MethodParameterEntry(this, classFileInputStream1, listMultimap);
+                    if (!this.parameters[parameterIndex].isValid()) {
                         super.valid = false;
-                        super.rawBytes = bb;
+                        super.rawBytes = rawBytesValue;
                         printWriter.println(
-                                "ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " (A) " + this.parameters[i].getErrorMessage()
+                                "ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " (A) " + this.parameters[parameterIndex].getErrorMessage()
                         );
                     }
                 }
             } else {
                 super.valid = false;
-                super.rawBytes = bb;
+                super.rawBytes = rawBytesValue;
                 printWriter.println("ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " : length=" + this.length);
             }
         } catch (IOException iOException) {
             super.valid = false;
-            super.rawBytes = bb;
+            super.rawBytes = rawBytesValue;
             printWriter.println("ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " is possibly corrupt : " + iOException);
         } finally {
             classFileInputStream1.close();
@@ -76,20 +76,20 @@ public class MethodParametersAttribute extends ParsedAttributeBase {
         changedMethodDescriptor.getAddedParamCount();
         MethodParameterEntry[] methodParameterEntrys = new MethodParameterEntry[paramCount];
         int[] paramIndices = changedMethodDescriptor.getParamIndices();
-        int bc = 0;
-        int bd = paramIndices[0];
+        int paramIndiceIndex = 0;
+        int paramIndice = paramIndices[0];
         int be = 0;
 
-        for (int i = 0; i < paramCount; i++) {
-            if (i == bd) {
-                methodParameterEntrys[i] = new MethodParameterEntry(this, abstractConstantPool, list1);
-                if (++bc < paramIndices.length) {
-                    bd = paramIndices[bc];
+        for (int methodParameterEntryIndex = 0; methodParameterEntryIndex < paramCount; methodParameterEntryIndex++) {
+            if (methodParameterEntryIndex == paramIndice) {
+                methodParameterEntrys[methodParameterEntryIndex] = new MethodParameterEntry(this, abstractConstantPool, list1);
+                if (++paramIndiceIndex < paramIndices.length) {
+                    paramIndice = paramIndices[paramIndiceIndex];
                 } else {
-                    bd = 32767;
+                    paramIndice = 32767;
                 }
             } else {
-                methodParameterEntrys[i] = this.parameters[be++];
+                methodParameterEntrys[methodParameterEntryIndex] = this.parameters[be++];
             }
         }
 
@@ -101,11 +101,11 @@ public class MethodParametersAttribute extends ParsedAttributeBase {
     public void write(DataOutputStream dataOutputStream) throws IOException {
         super.write(dataOutputStream);
         if (super.valid) {
-            int ba = this.parameters.length;
-            dataOutputStream.writeByte(ba);
+            int lengthValue = this.parameters.length;
+            dataOutputStream.writeByte(lengthValue);
 
-            for (int i = 0; i < ba; i++) {
-                this.parameters[i].writeTo(dataOutputStream);
+            for (int parameterIndex = 0; parameterIndex < lengthValue; parameterIndex++) {
+                this.parameters[parameterIndex].writeTo(dataOutputStream);
             }
         } else {
             dataOutputStream.write(super.rawBytes);
@@ -113,10 +113,10 @@ public class MethodParametersAttribute extends ParsedAttributeBase {
     }
 
     public void obfuscateNames() {
-        int ba = this.parameters.length;
+        int lengthValue = this.parameters.length;
 
-        for (int i = 0; i < ba; i++) {
-            this.parameters[i].obfuscateName();
+        for (int parameterIndex = 0; parameterIndex < lengthValue; parameterIndex++) {
+            this.parameters[parameterIndex].obfuscateName();
         }
     }
 
@@ -126,14 +126,14 @@ public class MethodParametersAttribute extends ParsedAttributeBase {
             return super.rawBytes.length;
         }
 
-        int ba = 1;
-        int bb = this.parameters.length;
+        int lengthValue = 1;
+        int lengthValue2 = this.parameters.length;
 
-        for (int i = 0; i < bb; i++) {
-            ba += this.parameters[i].getEntrySize();
+        for (int parameterIndex = 0; parameterIndex < lengthValue2; parameterIndex++) {
+            lengthValue += this.parameters[parameterIndex].getEntrySize();
         }
 
-        this.length = ba;
+        this.length = lengthValue;
         return this.length;
     }
 
@@ -148,11 +148,11 @@ public class MethodParametersAttribute extends ParsedAttributeBase {
         DataOutputStream dataOutputStream1 = dataOutputStream;
         super.writeRemapped(dataOutputStream1, map3, scriptEnvironment3);
         if (super.valid) {
-            int ba = this.parameters.length;
-            dataOutputStream.writeByte(ba);
+            int lengthValue = this.parameters.length;
+            dataOutputStream.writeByte(lengthValue);
 
-            for (int i = 0; i < ba; i++) {
-                this.parameters[i].writeRemapped(dataOutputStream, map1);
+            for (int parameterIndex = 0; parameterIndex < lengthValue; parameterIndex++) {
+                this.parameters[parameterIndex].writeRemapped(dataOutputStream, map1);
             }
         } else {
             dataOutputStream.write(super.rawBytes);

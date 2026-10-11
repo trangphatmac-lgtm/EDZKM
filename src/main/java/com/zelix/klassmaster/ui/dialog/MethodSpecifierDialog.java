@@ -16,57 +16,57 @@ public class MethodSpecifierDialog extends ExcludeParameterDialogBase {
     @Override
     public void buildTabs() {
         boolean bl3;
-        int bd;
+        int exclusionTypeValue;
         if (super.exclusionType == 1) {
             bl3 = true;
-            bd = super.exclusionType;
+            exclusionTypeValue = super.exclusionType;
         } else {
             bl3 = false;
-            bd = super.exclusionType;
+            exclusionTypeValue = super.exclusionType;
         }
 
-        int ba = bd;
+        int exclusionTypeValue2 = exclusionTypeValue;
         boolean bl = bl3;
         RenameFilterModel renameFilterModel = super.filterModel;
         MethodSpecifierDialog methodSpecifierDialog1 = this;
-        int bb = ba;
-        boolean bl1 = bl;
+        int exclusionTypeValue3 = exclusionTypeValue2;
+        boolean showHigherLevelOption = bl;
         RenameFilterModel renameFilterModel1 = renameFilterModel;
         MethodSpecifierDialog methodSpecifierDialog2 = methodSpecifierDialog1;
-        this.packagePanel = new PackageNameParamPanel(methodSpecifierDialog2, renameFilterModel1, bl1, bb);
+        this.packagePanel = new PackageNameParamPanel(methodSpecifierDialog2, renameFilterModel1, showHigherLevelOption, exclusionTypeValue3);
         if (super.exclusionType != 3) {
             bl3 = true;
-            bd = super.exclusionType;
+            exclusionTypeValue = super.exclusionType;
         } else {
             bl3 = false;
-            bd = super.exclusionType;
+            exclusionTypeValue = super.exclusionType;
         }
 
-        ba = bd;
+        exclusionTypeValue2 = exclusionTypeValue;
         bl = bl3;
         renameFilterModel = super.filterModel;
         methodSpecifierDialog1 = this;
-        int bc = ba;
-        boolean bl2 = bl;
+        int exclusionTypeValue4 = exclusionTypeValue2;
+        boolean showHigherLevelExclude = bl;
         RenameFilterModel renameFilterModel2 = renameFilterModel;
         MethodSpecifierDialog methodSpecifierDialog3 = methodSpecifierDialog1;
-        this.classPanel = new ClassSpecifierPanel(methodSpecifierDialog3, renameFilterModel2, bl2, bc);
+        this.classPanel = new ClassSpecifierPanel(methodSpecifierDialog3, renameFilterModel2, showHigherLevelExclude, exclusionTypeValue4);
         this.methodPanel = new MethodSpecifierPanel(this, super.filterModel, super.exclusionType);
         JTabbedPane jTabbedPane = super.tabbedPane;
         PackageNameParamPanel packageNameParamPanel1 = this.packagePanel;
-        String string = GuiResources.getTooltipText("CONTAINING_PACKAGE_PART_OF_PARAM");
+        String tooltipText = GuiResources.getTooltipText("CONTAINING_PACKAGE_PART_OF_PARAM");
         PackageNameParamPanel packageNameParamPanel = packageNameParamPanel1;
-        jTabbedPane.addTab("Containing package", (Icon) null, packageNameParamPanel, string);
+        jTabbedPane.addTab("Containing package", (Icon) null, packageNameParamPanel, tooltipText);
         jTabbedPane = super.tabbedPane;
         ExcludeParamTabPanel excludeParamTabPanel1 = this.classPanel;
-        String string1 = GuiResources.getTooltipText("CONTAINING_CLASS_PART_OF_PARAM");
+        String tooltipTextValue = GuiResources.getTooltipText("CONTAINING_CLASS_PART_OF_PARAM");
         ExcludeParamTabPanel excludeParamTabPanel = excludeParamTabPanel1;
-        jTabbedPane.addTab("Containing class", (Icon) null, excludeParamTabPanel, string1);
+        jTabbedPane.addTab("Containing class", (Icon) null, excludeParamTabPanel, tooltipTextValue);
         jTabbedPane = super.tabbedPane;
         MethodSpecifierPanel methodSpecifierPanel1 = this.methodPanel;
-        String string2 = GuiResources.getTooltipText("METHOD_PART_OF_PARAM");
+        String tooltipTextValue2 = GuiResources.getTooltipText("METHOD_PART_OF_PARAM");
         MethodSpecifierPanel methodSpecifierPanel = methodSpecifierPanel1;
-        jTabbedPane.addTab("Method", (Icon) null, methodSpecifierPanel, string2);
+        jTabbedPane.addTab("Method", (Icon) null, methodSpecifierPanel, tooltipTextValue2);
         super.tabbedPane.setSelectedComponent(this.methodPanel);
     }
 

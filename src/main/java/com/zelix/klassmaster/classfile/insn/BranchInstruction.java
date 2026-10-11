@@ -67,12 +67,12 @@ public class BranchInstruction extends Instruction implements JumpingInstruction
     @Override
     public void printDisassembly(PrintWriter printWriter, StringBuilder stringBuilder) throws UnknownOpcodeException {
         StringBuilder stringBuilder1 = new StringBuilder(100);
-        String string = this.getMnemonic();
-        stringBuilder1.append(string + " " + this.targetLabel.getLabelName());
-        String string1 = Instruction.getDescriptionComment(this.opcode);
-        string1 = Instruction.formatDescription(string1, this.targetLabel.getLabelName());
-        if (string1.length() > 0) {
-            stringBuilder1.append("\t" + string1);
+        String mnemonic = this.getMnemonic();
+        stringBuilder1.append(mnemonic + " " + this.targetLabel.getLabelName());
+        String descriptionComment = Instruction.getDescriptionComment(this.opcode);
+        descriptionComment = Instruction.formatDescription(descriptionComment, this.targetLabel.getLabelName());
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);
@@ -199,8 +199,8 @@ public class BranchInstruction extends Instruction implements JumpingInstruction
         }
     }
 
-    public BranchInstruction(int ba, LabelInstruction labelInstruction) {
-        super(ba);
+    public BranchInstruction(int opcodeArgument, LabelInstruction labelInstruction) {
+        super(opcodeArgument);
         this.bytecodeOffset = -1;
         this.targetLabel = labelInstruction;
     }
@@ -210,7 +210,7 @@ public class BranchInstruction extends Instruction implements JumpingInstruction
         TruncatedStringDisplay truncatedStringDisplay = new TruncatedStringDisplay((String) object);
         VerifierType[] verifierTypes = stackFrameState.getStack();
         VerifierType[] verifierTypes1 = stackFrameState.getLocals();
-        int ba = verifierTypes.length;
+        int lengthValue = verifierTypes.length;
         SubroutineLocalsBitSet subroutineLocalsBitSet = stackFrameState.getSubroutineLocals();
         Set set1 = stackFrameState.getHeldMonitors();
         switch (this.opcode) {
@@ -220,8 +220,8 @@ public class BranchInstruction extends Instruction implements JumpingInstruction
             case 156:
             case 157:
             case 158:
-                VerifierType[] verifierTypes5 = VerifierType.createArray(ba - 1);
-                System.arraycopy(verifierTypes, 0, verifierTypes5, 0, ba - 1);
+                VerifierType[] verifierTypes5 = VerifierType.createArray(lengthValue - 1);
+                System.arraycopy(verifierTypes, 0, verifierTypes5, 0, lengthValue - 1);
                 return new StackFrameState(verifierTypes5, verifierTypes1, subroutineLocalsBitSet, set1);
             case 159:
             case 160:
@@ -229,13 +229,13 @@ public class BranchInstruction extends Instruction implements JumpingInstruction
             case 162:
             case 163:
             case 164:
-                VerifierType[] verifierTypes4 = VerifierType.createArray(ba - 2);
-                System.arraycopy(verifierTypes, 0, verifierTypes4, 0, ba - 2);
+                VerifierType[] verifierTypes4 = VerifierType.createArray(lengthValue - 2);
+                System.arraycopy(verifierTypes, 0, verifierTypes4, 0, lengthValue - 2);
                 return new StackFrameState(verifierTypes4, verifierTypes1, subroutineLocalsBitSet, set1);
             case 165:
             case 166:
-                VerifierType[] verifierTypes3 = VerifierType.createArray(ba - 2);
-                System.arraycopy(verifierTypes, 0, verifierTypes3, 0, ba - 2);
+                VerifierType[] verifierTypes3 = VerifierType.createArray(lengthValue - 2);
+                System.arraycopy(verifierTypes, 0, verifierTypes3, 0, lengthValue - 2);
                 return new StackFrameState(verifierTypes3, verifierTypes1, subroutineLocalsBitSet, set1);
             case 167:
             case 168:
@@ -276,8 +276,8 @@ public class BranchInstruction extends Instruction implements JumpingInstruction
                 return null;
             case 198:
             case 199:
-                VerifierType[] verifierTypes2 = VerifierType.createArray(ba - 1);
-                System.arraycopy(verifierTypes, 0, verifierTypes2, 0, ba - 1);
+                VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue - 1);
+                System.arraycopy(verifierTypes, 0, verifierTypes2, 0, lengthValue - 1);
                 return new StackFrameState(verifierTypes2, verifierTypes1, subroutineLocalsBitSet, set1);
         }
     }
@@ -583,15 +583,15 @@ public class BranchInstruction extends Instruction implements JumpingInstruction
         listMultimap.addValue(this, basicBlock);
     }
 
-    public BranchInstruction(int ba, ClassFileInputStream classFileInputStream, int bytecodeOffset, ListMultimap listMultimap) throws IOException {
-        super(ba);
+    public BranchInstruction(int opcodeArgument, ClassFileInputStream classFileInputStream, int bytecodeOffset, ListMultimap listMultimap) throws IOException {
+        super(opcodeArgument);
         this.bytecodeOffset = bytecodeOffset;
-        int bc = this.readTargetOffset(classFileInputStream);
-        if (bc < 0) {
-            throw new ZkmRuntimeException("Bad offset : " + ba + " : " + bytecodeOffset + " : " + this.bytecodeOffset + " : " + bc);
+        int integerValue = this.readTargetOffset(classFileInputStream);
+        if (integerValue < 0) {
+            throw new ZkmRuntimeException("Bad offset : " + opcodeArgument + " : " + bytecodeOffset + " : " + this.bytecodeOffset + " : " + integerValue);
         }
 
-        listMultimap.addValue(Instruction.integerCache.valueOf(bc), this);
+        listMultimap.addValue(Instruction.integerCache.valueOf(integerValue), this);
     }
 
     public int getRelativeOffset() {

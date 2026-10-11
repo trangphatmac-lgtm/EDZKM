@@ -65,8 +65,8 @@ public class NestedAnnotationValue extends AnnotationElementValue {
         this.annotation.updateAfterClassRename(hashMap1, hashMap);
     }
 
-    public NestedAnnotationValue(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba);
+    public NestedAnnotationValue(ClassFileComponent classFileComponent, int tag, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, tag);
         this.annotation = AnnotationEntry.read(this, classFileInputStream, listMultimap);
         if (!this.annotation.isValid()) {
             this.setValid();

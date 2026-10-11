@@ -50,12 +50,12 @@ public class EnumElementValue extends AnnotationElementValue {
         IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1 = (IgnoreMissingReferencesSpec) object1;
         ClassResolver classResolver1 = (ClassResolver) object;
         MutableInt mutableInt = new MutableInt(0);
-        String string = ClassFileBase.extractClassName(this.typeNameConstant.getValue(), mutableInt);
-        if (string != null) {
+        String key = ClassFileBase.extractClassName(this.typeNameConstant.getValue(), mutableInt);
+        if (key != null) {
             ClassFileBase classFileBase = this.getOwningClass();
             Integer integer = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : null;
             this.enumClass = classResolver1.getVersionedClass(
-                    string, integer, "analyzing annotations in class '" + this.getDisplayLocationName() + "' (B)", ignoreMissingReferencesSpec1
+                    key, integer, "analyzing annotations in class '" + this.getDisplayLocationName() + "' (B)", ignoreMissingReferencesSpec1
             );
         }
 
@@ -173,27 +173,27 @@ public class EnumElementValue extends AnnotationElementValue {
         }
     }
 
-    public EnumElementValue(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba);
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+    public EnumElementValue(ClassFileComponent classFileComponent, int tagArgument, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, tagArgument);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry != null && constantPoolEntry instanceof ConstantUtf8) {
             this.typeNameConstant = (ConstantUtf8) constantPoolEntry;
             listMultimap.addValue(this.typeNameConstant, this);
-            int bc = classFileInputStream.readUnsignedShort();
-            constantPoolEntry = this.getConstantPoolEntry(bc);
+            int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+            constantPoolEntry = this.getConstantPoolEntry(constantPoolIndexValue);
             if (constantPoolEntry != null && constantPoolEntry instanceof ConstantUtf8) {
                 this.constNameConstant = (ConstantUtf8) constantPoolEntry;
                 listMultimap.addValue(this.constNameConstant, this);
             } else {
                 this.setValid();
                 this.setErrorMessage(
-                        "Invalid component enum value constant index : " + bc + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : "")
+                        "Invalid component enum value constant index : " + constantPoolIndexValue + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : "")
                 );
             }
         } else {
             this.setValid();
-            this.setErrorMessage("Invalid component enum name constant index : " + bb + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
+            this.setErrorMessage("Invalid component enum name constant index : " + constantPoolIndex + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
         }
     }
 

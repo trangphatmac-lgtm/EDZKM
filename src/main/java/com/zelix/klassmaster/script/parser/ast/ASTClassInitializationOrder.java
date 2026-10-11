@@ -18,8 +18,8 @@ public class ASTClassInitializationOrder extends ZkmScriptSimpleNode implements 
         ZkmScriptNode zkmScriptNode = (ZkmScriptNode) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         ASTClassInitializationOrderStatement aSTClassInitializationOrderStatement = (ASTClassInitializationOrderStatement) zkmScriptNode;
@@ -31,8 +31,8 @@ public class ASTClassInitializationOrder extends ZkmScriptSimpleNode implements 
     }
 
     @Override
-    public void setTypeText(Object object) {
-        String string = (String) object;
+    public void setTypeText(Object typeText) {
+        String string = (String) typeText;
         if (this.precedingClassName == null) {
             this.precedingClassName = string;
         } else {

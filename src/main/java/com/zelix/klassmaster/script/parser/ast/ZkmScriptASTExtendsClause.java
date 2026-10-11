@@ -21,8 +21,8 @@ public class ZkmScriptASTExtendsClause extends ZkmScriptSimpleNode implements Ty
         ZkmScriptNode zkmScriptNode = (ZkmScriptNode) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) zkmScriptNode;
@@ -31,8 +31,8 @@ public class ZkmScriptASTExtendsClause extends ZkmScriptSimpleNode implements Ty
         }
 
         if (ba > 1) {
-            for (int i = 0; i < ba; i++) {
-                ZkmScriptNode zkmScriptNode1 = this.jjtGetChild(i);
+            for (int childrenElementIndexValue = 0; childrenElementIndexValue < ba; childrenElementIndexValue++) {
+                ZkmScriptNode zkmScriptNode1 = this.jjtGetChild(childrenElementIndexValue);
                 if (zkmScriptNode1 instanceof ASTComplexAnnotationSpecifier) {
                     aSTRenameFilterParameter.setExtendsAnnotation((ASTComplexAnnotationSpecifier) zkmScriptNode1);
                 }
@@ -41,7 +41,7 @@ public class ZkmScriptASTExtendsClause extends ZkmScriptSimpleNode implements Ty
     }
 
     @Override
-    public void setTypeText(Object object) {
-        this.superclassName = (String) object;
+    public void setTypeText(Object typeText) {
+        this.superclassName = (String) typeText;
     }
 }

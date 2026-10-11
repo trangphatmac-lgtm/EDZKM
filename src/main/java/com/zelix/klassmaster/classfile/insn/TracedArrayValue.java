@@ -33,11 +33,11 @@ public class TracedArrayValue implements TrackedValue {
     }
 
     public void resolvePendingValues(HashMap hashMap, IntegerCache integerCache1, MethodBytecode methodBytecode1) {
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (HashSet[] hashSets = this.elementValues; bb < hashSets.length; hashSets = this.elementValues) {
-            HashSet hashSet = this.elementValues[ba];
+            HashSet hashSet = this.elementValues[elementValueIndex];
             Iterator iterator = ZkmUtils.copyHashSet(hashSet).iterator();
 
             while (iterator.hasNext()) {
@@ -54,7 +54,7 @@ public class TracedArrayValue implements TrackedValue {
                 }
             }
 
-            bb = ++ba;
+            bb = ++elementValueIndex;
         }
     }
 
@@ -64,11 +64,11 @@ public class TracedArrayValue implements TrackedValue {
             return false;
         }
 
-        int ba = 0;
-        int bb = ba;
+        int elementValueIndex = 0;
+        int elementValueIndexValue = elementValueIndex;
 
-        for (HashSet[] hashSets = this.elementValues; bb < hashSets.length; hashSets = this.elementValues) {
-            Iterator iterator = this.elementValues[ba].iterator();
+        for (HashSet[] hashSets = this.elementValues; elementValueIndexValue < hashSets.length; hashSets = this.elementValues) {
+            Iterator iterator = this.elementValues[elementValueIndex].iterator();
 
             while (iterator.hasNext()) {
                 if (!((TrackedValue) iterator.next()).isConstant()) {
@@ -76,7 +76,7 @@ public class TracedArrayValue implements TrackedValue {
                 }
             }
 
-            bb = ++ba;
+            elementValueIndexValue = ++elementValueIndex;
         }
 
         return true;
@@ -84,11 +84,11 @@ public class TracedArrayValue implements TrackedValue {
 
     public String formatElements(boolean bl) {
         StringBuffer stringBuffer = new StringBuffer();
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (HashSet[] hashSets = this.elementValues; bb < hashSets.length; hashSets = this.elementValues) {
-            HashSet hashSet = this.elementValues[ba];
+            HashSet hashSet = this.elementValues[elementValueIndex];
             stringBuffer.append("[");
             Iterator iterator = hashSet.iterator();
 
@@ -101,7 +101,7 @@ public class TracedArrayValue implements TrackedValue {
             }
 
             stringBuffer.append("]");
-            bb = ++ba;
+            bb = ++elementValueIndex;
         }
 
         return stringBuffer.toString();
@@ -109,18 +109,18 @@ public class TracedArrayValue implements TrackedValue {
 
     public ArrayList getAllValues() {
         ArrayList arrayList = new ArrayList();
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (HashSet[] hashSets = this.elementValues; bb < hashSets.length; hashSets = this.elementValues) {
-            Iterator iterator = this.elementValues[ba].iterator();
+            Iterator iterator = this.elementValues[elementValueIndex].iterator();
 
             while (iterator.hasNext()) {
                 TrackedValue trackedValue = (TrackedValue) iterator.next();
                 arrayList.add(trackedValue);
             }
 
-            bb = ++ba;
+            bb = ++elementValueIndex;
         }
 
         return arrayList;
@@ -128,18 +128,18 @@ public class TracedArrayValue implements TrackedValue {
 
     public ArrayList getFirstValues() {
         ArrayList arrayList = new ArrayList();
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (HashSet[] hashSets = this.elementValues; bb < hashSets.length; hashSets = this.elementValues) {
             TrackedValue trackedValue = null;
-            Iterator iterator = this.elementValues[ba].iterator();
+            Iterator iterator = this.elementValues[elementValueIndex].iterator();
             if (iterator.hasNext()) {
                 trackedValue = (TrackedValue) iterator.next();
             }
 
             arrayList.add(trackedValue);
-            bb = ++ba;
+            bb = ++elementValueIndex;
         }
 
         return arrayList;
@@ -175,14 +175,14 @@ public class TracedArrayValue implements TrackedValue {
             bc = ++bb;
         }
 
-        String[][] strings = new String[ba][hashSets.length];
+        String[][] valueCombinations = new String[ba][hashSets.length];
         MutableInt mutableInt = new MutableInt(0);
-        this.collectCombinations(strings, hashSets, mutableInt, 0, new String[hashSets.length]);
-        return strings;
+        this.collectCombinations(valueCombinations, hashSets, mutableInt, 0, new String[hashSets.length]);
+        return valueCombinations;
     }
 
-    public HashSet getElementValues(int ba) {
-        return this.elementValues[ba];
+    public HashSet getElementValues(int elementValueIndex) {
+        return this.elementValues[elementValueIndex];
     }
 
     @Override
@@ -190,28 +190,28 @@ public class TracedArrayValue implements TrackedValue {
         return this.formatElements(false);
     }
 
-    public void setElementValue(int ba, TrackedValue trackedValue) {
+    public void setElementValue(int elementValueIndex, TrackedValue trackedValue) {
         HashSet hashSet = ZkmUtils.createHashSet(3);
         hashSet.add(trackedValue);
-        this.elementValues[ba] = hashSet;
+        this.elementValues[elementValueIndex] = hashSet;
         if (trackedValue instanceof InstructionReasonNote) {
             this.failureReasons.add(((InstructionReasonNote) trackedValue).getReason());
         }
     }
 
     public boolean hasSingleValuePerElement() {
-        int ba = 0;
+        int elementValueIndex = 0;
         int bc = 0;
 
         for (HashSet[] hashSets = this.elementValues; bc < hashSets.length; hashSets = this.elementValues) {
-            HashSet hashSet = this.elementValues[ba];
-            int bb = hashSet.size();
-            if (bb == 0) {
+            HashSet hashSet = this.elementValues[elementValueIndex];
+            int hashSetSize = hashSet.size();
+            if (hashSetSize == 0) {
                 return false;
             }
 
-            if (bb > 1) {
-                String string = null;
+            if (hashSetSize > 1) {
+                String stringValueValue = null;
                 Iterator iterator = hashSet.iterator();
 
                 while (iterator.hasNext()) {
@@ -220,16 +220,16 @@ public class TracedArrayValue implements TrackedValue {
                         return false;
                     }
 
-                    String string1 = trackedValue.getStringValue();
-                    if (string == null) {
-                        string = string1;
-                    } else if (!string.equals(string1)) {
+                    String stringValue = trackedValue.getStringValue();
+                    if (stringValueValue == null) {
+                        stringValueValue = stringValue;
+                    } else if (!stringValueValue.equals(stringValue)) {
                         return false;
                     }
                 }
             }
 
-            bc = ++ba;
+            bc = ++elementValueIndex;
         }
 
         return true;
@@ -240,21 +240,21 @@ public class TracedArrayValue implements TrackedValue {
         return this.length == 1 && this.elementValues[0].size() == 1 && this.elementValues[0].iterator().next() instanceof NullReflectionValue;
     }
 
-    public void setElementValues(int ba, HashSet hashSet) {
-        this.elementValues[ba] = hashSet;
+    public void setElementValues(int elementValueIndex, HashSet hashSet) {
+        this.elementValues[elementValueIndex] = hashSet;
     }
 
-    public void collectCombinations(String[][] strings, HashSet[] hashSets, MutableInt mutableInt, int ba, String[] strings1) {
-        Iterator iterator = hashSets[ba].iterator();
+    public void collectCombinations(String[][] strings, HashSet[] hashSets, MutableInt mutableInt, int copyLength, String[] sourceArray) {
+        Iterator iterator = hashSets[copyLength].iterator();
 
         while (iterator.hasNext()) {
-            String[] strings2 = new String[strings1.length];
-            System.arraycopy(strings1, 0, strings2, 0, ba);
-            strings2[ba] = (String) iterator.next();
-            if (ba + 1 < strings1.length) {
-                this.collectCombinations(strings, hashSets, mutableInt, ba + 1, strings2);
+            String[] destinationArray = new String[sourceArray.length];
+            System.arraycopy(sourceArray, 0, destinationArray, 0, copyLength);
+            destinationArray[copyLength] = (String) iterator.next();
+            if (copyLength + 1 < sourceArray.length) {
+                this.collectCombinations(strings, hashSets, mutableInt, copyLength + 1, destinationArray);
             } else {
-                strings[mutableInt.getValue()] = strings2;
+                strings[mutableInt.getValue()] = destinationArray;
                 mutableInt.incrementAndGet();
             }
         }
@@ -277,12 +277,12 @@ public class TracedArrayValue implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeEnabled = StackFrameState.isStrictMergeEnabled();
-        boolean bl1 = object instanceof TracedArrayValue;
+        boolean bl1 = other instanceof TracedArrayValue;
         if (strictMergeEnabled) {
             if (bl1) {
-                TracedArrayValue tracedArrayValue1 = (TracedArrayValue) object;
+                TracedArrayValue tracedArrayValue1 = (TracedArrayValue) other;
                 TracedArrayValue tracedArrayValue2 = this;
                 if (strictMergeEnabled) {
                     if (this.elementValues != tracedArrayValue1.elementValues) {
@@ -321,11 +321,11 @@ public class TracedArrayValue implements TrackedValue {
 
     @Override
     public boolean isPending() {
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (HashSet[] hashSets = this.elementValues; bb < hashSets.length; hashSets = this.elementValues) {
-            Iterator iterator = this.elementValues[ba].iterator();
+            Iterator iterator = this.elementValues[elementValueIndex].iterator();
 
             while (iterator.hasNext()) {
                 if (((TrackedValue) iterator.next()).isPending()) {
@@ -333,7 +333,7 @@ public class TracedArrayValue implements TrackedValue {
                 }
             }
 
-            bb = ++ba;
+            bb = ++elementValueIndex;
         }
 
         return false;
@@ -350,18 +350,18 @@ public class TracedArrayValue implements TrackedValue {
 
             while (iterator.hasNext()) {
                 TrackedValue trackedValue = (TrackedValue) iterator.next();
-                String string = trackedValue.getStringValue();
-                treeSet.add(string != null ? string : NULL_TEXT);
+                String stringValue = trackedValue.getStringValue();
+                treeSet.add(stringValue != null ? stringValue : NULL_TEXT);
             }
 
-            int bb = treeSet.size();
+            int treeSetSize = treeSet.size();
             int bc = 0;
             Iterator iterator1 = treeSet.iterator();
 
             while (iterator1.hasNext()) {
                 String string1 = (String) iterator1.next();
                 stringBuilder.append(string1);
-                if (bc++ < bb) {
+                if (bc++ < treeSetSize) {
                     stringBuilder.append('!');
                 }
             }

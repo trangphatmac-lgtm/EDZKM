@@ -60,8 +60,8 @@ public class ConstantPool extends AbstractConstantPool {
     public ArrayList rawEntries = new ArrayList();
     public int baseEntryCount;
 
-    public ConstantInteger getOrAddIntegerConstant(int ba, List list1) {
-        return this.getOrAddIntegerConstant(ba, list1, true, false);
+    public ConstantInteger getOrAddIntegerConstant(int value, List list1) {
+        return this.getOrAddIntegerConstant(value, list1, true, false);
     }
 
     static {
@@ -100,20 +100,20 @@ public class ConstantPool extends AbstractConstantPool {
     }
 
     public ResolvedFieldRef getOrAddFieldRef(
-            String string, String string1, String string2, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1, Boolean boolean1
+            String value, String valueArgument, String valueArgument2, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1, Boolean boolean1
     ) throws ZkmException, IOException {
-        ResolvedFieldRef resolvedFieldRef = this.findFieldRef(string, string1, string2);
+        ResolvedFieldRef resolvedFieldRef = this.findFieldRef(value, valueArgument, valueArgument2);
         if (resolvedFieldRef != null) {
             return resolvedFieldRef;
         }
 
-        resolvedFieldRef = (ResolvedFieldRef) this.findPendingMemberRef(string, string1, string2, list1);
+        resolvedFieldRef = (ResolvedFieldRef) this.findPendingMemberRef(value, valueArgument, valueArgument2, list1);
         if (resolvedFieldRef != null) {
             return resolvedFieldRef;
         }
 
-        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(string, list1);
-        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(string1, string2, list1);
+        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(value, list1);
+        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(valueArgument, valueArgument2, list1);
         ResolvedFieldRef resolvedFieldRef1 = new ResolvedFieldRef(this, resolvedClassConstant, resolvedNameAndType, classMemberLookup1, classResolver1, boolean1);
         list1.add(resolvedFieldRef1);
         return resolvedFieldRef1;
@@ -156,14 +156,14 @@ public class ConstantPool extends AbstractConstantPool {
             }
         }
 
-        int bb = this.entries.length;
-        ArrayList arrayList = new ArrayList(bb);
+        int lengthValue = this.entries.length;
+        ArrayList arrayList = new ArrayList(lengthValue);
 
-        for (int i = 0; i < bb; i++) {
-            ConstantPoolEntry constantPoolEntry = this.entries[i];
+        for (int entryIndex = 0; entryIndex < lengthValue; entryIndex++) {
+            ConstantPoolEntry constantPoolEntry = this.entries[entryIndex];
             if (!(constantPoolEntry instanceof ConstantNullEntry) && set1.contains(constantPoolEntry)) {
                 if (constantPoolEntry.getSlotCount() == 2) {
-                    i++;
+                    entryIndex++;
                 }
             } else {
                 arrayList.add(constantPoolEntry);
@@ -178,38 +178,38 @@ public class ConstantPool extends AbstractConstantPool {
     public void resolveMemberRefTargets(
             Set set1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1
     ) throws ZkmException, IOException {
-        int ba = this.fieldRefs.size();
+        int fieldRefsSize = this.fieldRefs.size();
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.fieldRefs.get(i);
+        for (int elementIndex = 0; elementIndex < fieldRefsSize; elementIndex++) {
+            ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.fieldRefs.get(elementIndex);
             resolvedFieldRef.resolveMember(classMemberLookup1, classResolver1, ignoreMissingReferencesSpec1);
         }
 
-        int bc = this.methodRefs.size();
+        int methodRefsSize = this.methodRefs.size();
 
-        for (int i = 0; i < bc; i++) {
-            ResolvedMethodRefConstant resolvedMethodRefConstant = (ResolvedMethodRefConstant) this.methodRefs.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < methodRefsSize; elementIndexValue++) {
+            ResolvedMethodRefConstant resolvedMethodRefConstant = (ResolvedMethodRefConstant) this.methodRefs.get(elementIndexValue);
             resolvedMethodRefConstant.resolveMember(classMemberLookup1, classResolver1, ignoreMissingReferencesSpec1);
         }
 
-        int be = super.interfaceMethodRefs.size();
+        int interfaceMethodRefsSize = super.interfaceMethodRefs.size();
 
-        for (int i = 0; i < be; i++) {
-            ResolvedInterfaceMethodRef resolvedInterfaceMethodRef = (ResolvedInterfaceMethodRef) super.interfaceMethodRefs.get(i);
+        for (int elementIndexValue2 = 0; elementIndexValue2 < interfaceMethodRefsSize; elementIndexValue2++) {
+            ResolvedInterfaceMethodRef resolvedInterfaceMethodRef = (ResolvedInterfaceMethodRef) super.interfaceMethodRefs.get(elementIndexValue2);
             resolvedInterfaceMethodRef.resolveMember(classMemberLookup1, classResolver1, ignoreMissingReferencesSpec1);
         }
 
-        int bg = super.invokeDynamics.size();
+        int invokeDynamicsSize = super.invokeDynamics.size();
 
-        for (int i = 0; i < bg; i++) {
-            ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) super.invokeDynamics.get(i);
+        for (int elementIndexValue3 = 0; elementIndexValue3 < invokeDynamicsSize; elementIndexValue3++) {
+            ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) super.invokeDynamics.get(elementIndexValue3);
             resolvedInvokeDynamic.resolveTargetMethod(set1, classMemberLookup1, classResolver1, ignoreMissingReferencesSpec1);
         }
 
-        int bi = super.constantDynamics.size();
+        int constantDynamicsSize = super.constantDynamics.size();
 
-        for (int i = 0; i < bi; i++) {
-            ((ResolvedConstantDynamic) super.constantDynamics.get(i)).resolveTypeClass(classResolver1);
+        for (int elementIndexValue4 = 0; elementIndexValue4 < constantDynamicsSize; elementIndexValue4++) {
+            ((ResolvedConstantDynamic) super.constantDynamics.get(elementIndexValue4)).resolveTypeClass(classResolver1);
         }
     }
 
@@ -220,11 +220,11 @@ public class ConstantPool extends AbstractConstantPool {
         ListMultimap listMultimap = new ListMultimap(ba, 1);
         ArrayList arrayList = new ArrayList(Math.max(5, (int) (this.baseEntryCount * 0.7)));
 
-        for (int i = 0; i < this.utf8Constants.size(); i++) {
-            ConstantUtf8 constantUtf8 = (ConstantUtf8) this.utf8Constants.get(i);
+        for (int elementIndex = 0; elementIndex < this.utf8Constants.size(); elementIndex++) {
+            ConstantUtf8 constantUtf8 = (ConstantUtf8) this.utf8Constants.get(elementIndex);
             if (usedConstantsCollector.isUtf8Used(constantUtf8)) {
-                String string = constantUtf8.getConstantKey();
-                listMultimap.addValue(string, constantUtf8);
+                String constantKey = constantUtf8.getConstantKey();
+                listMultimap.addValue(constantKey, constantUtf8);
             } else {
                 constantPoolEntrys[constantUtf8.getIndex()] = null;
             }
@@ -233,11 +233,11 @@ public class ConstantPool extends AbstractConstantPool {
         this.mergeDuplicateEntries(listMultimap, arrayList, constantPoolEntrys, hashMap);
         ListMultimap listMultimap1 = new ListMultimap(Math.max(10, (this.getEntryCount() - this.baseEntryCount) / 4), 1);
 
-        for (int i = 0; i < this.nameAndTypes.size(); i++) {
-            ResolvedNameAndType resolvedNameAndType = (ResolvedNameAndType) this.nameAndTypes.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < this.nameAndTypes.size(); elementIndexValue++) {
+            ResolvedNameAndType resolvedNameAndType = (ResolvedNameAndType) this.nameAndTypes.get(elementIndexValue);
             if (usedConstantsCollector.isNameAndTypeUsed(resolvedNameAndType)) {
-                String string1 = resolvedNameAndType.getConstantKey();
-                listMultimap1.addValue(string1, resolvedNameAndType);
+                String constantKeyValue = resolvedNameAndType.getConstantKey();
+                listMultimap1.addValue(constantKeyValue, resolvedNameAndType);
             } else {
                 constantPoolEntrys[resolvedNameAndType.getIndex()] = null;
             }
@@ -246,11 +246,11 @@ public class ConstantPool extends AbstractConstantPool {
         this.mergeDuplicateEntries(listMultimap1, arrayList, constantPoolEntrys, hashMap);
         ListMultimap listMultimap2 = new ListMultimap(Math.max(10, (this.getEntryCount() - this.baseEntryCount) / 4), 1);
 
-        for (int i = 0; i < this.stringConstants.size(); i++) {
-            ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) this.stringConstants.get(i);
+        for (int elementIndexValue2 = 0; elementIndexValue2 < this.stringConstants.size(); elementIndexValue2++) {
+            ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) this.stringConstants.get(elementIndexValue2);
             if (usedConstantsCollector.isStringUsed(resolvedStringConstant)) {
-                String string2 = resolvedStringConstant.getConstantKey();
-                listMultimap2.addValue(string2, resolvedStringConstant);
+                String constantKeyValue2 = resolvedStringConstant.getConstantKey();
+                listMultimap2.addValue(constantKeyValue2, resolvedStringConstant);
             } else {
                 constantPoolEntrys[resolvedStringConstant.getIndex()] = null;
             }
@@ -258,44 +258,44 @@ public class ConstantPool extends AbstractConstantPool {
 
         this.mergeDuplicateEntries(listMultimap2, arrayList, constantPoolEntrys, hashMap);
         ListMultimap listMultimap3 = new ListMultimap(Math.max(10, (this.getEntryCount() - this.baseEntryCount) / 4), 1);
-        int bf = 0;
+        int elementIndexValue3 = 0;
         int bj = 0;
 
         for (ArrayList arrayList6 = super.invokeDynamics; bj < arrayList6.size(); arrayList6 = super.invokeDynamics) {
-            ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) super.invokeDynamics.get(bf);
+            ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) super.invokeDynamics.get(elementIndexValue3);
             if (usedConstantsCollector.isInvokeDynamicUsed(resolvedInvokeDynamic)) {
-                String string3 = resolvedInvokeDynamic.getConstantKey();
-                listMultimap3.addValue(string3, resolvedInvokeDynamic);
+                String constantKeyValue3 = resolvedInvokeDynamic.getConstantKey();
+                listMultimap3.addValue(constantKeyValue3, resolvedInvokeDynamic);
             } else {
                 constantPoolEntrys[resolvedInvokeDynamic.getIndex()] = null;
             }
 
-            bj = ++bf;
+            bj = ++elementIndexValue3;
         }
 
         this.mergeDuplicateEntries(listMultimap3, arrayList, constantPoolEntrys, hashMap);
         ListMultimap listMultimap4 = new ListMultimap(Math.max(10, (this.getEntryCount() - this.baseEntryCount) / 4), 1);
-        int bg = 0;
+        int elementIndexValue4 = 0;
         bj = 0;
 
         for (ArrayList arrayList4 = super.integerConstants; bj < arrayList4.size(); arrayList4 = super.integerConstants) {
-            ConstantInteger constantInteger = (ConstantInteger) super.integerConstants.get(bg);
+            ConstantInteger constantInteger = (ConstantInteger) super.integerConstants.get(elementIndexValue4);
             if (usedConstantsCollector.isIntegerUsed(constantInteger)) {
                 listMultimap4.addValue(constantInteger.getConstantKey(), constantInteger);
             } else {
                 constantPoolEntrys[constantInteger.getIndex()] = null;
             }
 
-            bj = ++bg;
+            bj = ++elementIndexValue4;
         }
 
         this.mergeDuplicateEntries(listMultimap4, arrayList, constantPoolEntrys, hashMap);
         ListMultimap listMultimap5 = new ListMultimap(Math.max(10, (this.getEntryCount() - this.baseEntryCount) / 4), 1);
-        int bh = 0;
+        int lengthValue = 0;
         bj = 0;
 
         for (ArrayList arrayList5 = super.longConstants; bj < arrayList5.size(); arrayList5 = super.longConstants) {
-            ConstantLong constantLong = (ConstantLong) super.longConstants.get(bh);
+            ConstantLong constantLong = (ConstantLong) super.longConstants.get(lengthValue);
             if (usedConstantsCollector.isLongUsed(constantLong)) {
                 listMultimap5.addValue(constantLong.getConstantKey(), constantLong);
             } else {
@@ -304,15 +304,15 @@ public class ConstantPool extends AbstractConstantPool {
                 constantPoolEntrys[index + 1] = null;
             }
 
-            bj = ++bh;
+            bj = ++lengthValue;
         }
 
         this.mergeDuplicateEntries(listMultimap5, arrayList, constantPoolEntrys, hashMap);
         this.clearUnusedEntries(usedConstantsCollector, constantPoolEntrys);
-        bh = constantPoolEntrys.length;
-        ArrayList arrayList1 = new ArrayList(bh);
-        boolean bl = HiddenOptionFlags.DONT_ADD_WATERMARK;
-        HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(bh));
+        lengthValue = constantPoolEntrys.length;
+        ArrayList arrayList1 = new ArrayList(lengthValue);
+        boolean dontAddWatermark = HiddenOptionFlags.DONT_ADD_WATERMARK;
+        HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(lengthValue));
         arrayList1.add(constantPoolEntrys[0]);
         hashSet.add(constantPoolEntrys[0]);
         SetMultiMap setMultiMap = new SetMultiMap(hashMap.size());
@@ -386,14 +386,14 @@ public class ConstantPool extends AbstractConstantPool {
         ArrayList arrayList2 = new ArrayList();
         ArrayList arrayList3 = new ArrayList();
 
-        for (int i = 0; i < bh; i++) {
-            ConstantPoolEntry constantPoolEntry6 = constantPoolEntrys[i];
+        for (int indexValue = 0; indexValue < lengthValue; indexValue++) {
+            ConstantPoolEntry constantPoolEntry6 = constantPoolEntrys[indexValue];
             if (constantPoolEntry6 != null) {
                 if (!hashSet.contains(constantPoolEntry6)) {
                     if (!HiddenOptionFlags.DONT_SHUFFLE_CONSTANT_POOL) {
                         if (constantPoolEntry6.getSlotCount() == 2) {
                             arrayList3.add(constantPoolEntry6);
-                            i++;
+                            indexValue++;
                         } else {
                             arrayList2.add(constantPoolEntry6);
                         }
@@ -401,15 +401,15 @@ public class ConstantPool extends AbstractConstantPool {
                         arrayList1.add(constantPoolEntry6);
                         hashSet.add(constantPoolEntry6);
                         if (constantPoolEntry6.getSlotCount() == 2) {
-                            ConstantNullEntry constantNullEntry1 = (ConstantNullEntry) constantPoolEntrys[++i];
+                            ConstantNullEntry constantNullEntry1 = (ConstantNullEntry) constantPoolEntrys[++indexValue];
                             arrayList1.add(constantNullEntry1);
                             hashSet.add(constantNullEntry1);
                         }
                     }
                 }
-            } else if (!bl) {
-                arrayList1.add(new ConstantUtf8(i, this, FILLER_UTF8_VALUE));
-                bl = true;
+            } else if (!dontAddWatermark) {
+                arrayList1.add(new ConstantUtf8(indexValue, this, FILLER_UTF8_VALUE));
+                dontAddWatermark = true;
             }
         }
 
@@ -494,8 +494,8 @@ public class ConstantPool extends AbstractConstantPool {
         } while (bl);
     }
 
-    public ConstantInteger getOrAddIntegerConstant_s_0(int ba, List list1) {
-        return this.getOrAddIntegerConstant(ba, list1);
+    public ConstantInteger getOrAddIntegerConstant_s_0(int value, List list1) {
+        return this.getOrAddIntegerConstant(value, list1);
     }
 
     public static boolean isIdentifierPath(String string) {
@@ -506,8 +506,8 @@ public class ConstantPool extends AbstractConstantPool {
 
             int ba = string.length();
 
-            for (int i = 1; i < ba; i++) {
-                char bc = string.charAt(i);
+            for (int characterIndex = 1; characterIndex < ba; characterIndex++) {
+                char bc = string.charAt(characterIndex);
                 if (bc != '/' && !Character.isJavaIdentifierPart(bc)) {
                     return false;
                 }
@@ -521,15 +521,15 @@ public class ConstantPool extends AbstractConstantPool {
 
     @Override
     public void renameThisClass(Object object) {
-        String string = (String) object;
-        String string1 = this.getClassName();
+        String className = (String) object;
+        String classNameValue = this.getClassName();
         HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(super.classesByName.size()));
         Iterator iterator = this.classConstants.iterator();
 
         while (iterator.hasNext()) {
             ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) iterator.next();
-            if (resolvedClassConstant.getClassName().equals(string1)) {
-                resolvedClassConstant.setClassName(string);
+            if (resolvedClassConstant.getClassName().equals(classNameValue)) {
+                resolvedClassConstant.setClassName(className);
             }
 
             hashMap.put(resolvedClassConstant.getClassName(), resolvedClassConstant);
@@ -553,14 +553,14 @@ public class ConstantPool extends AbstractConstantPool {
         }
     }
 
-    public int replaceStringConstantValue(Object object, String string) {
+    public int replaceStringConstantValue(Object object, String value) {
         int ba = 0;
         Iterator iterator = this.stringConstants.iterator();
 
         while (iterator.hasNext()) {
             ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) iterator.next();
             if (resolvedStringConstant.getEditableValue().equals(object)) {
-                resolvedStringConstant.getValueUtf8().setValue(string);
+                resolvedStringConstant.getValueUtf8().setValue(value);
                 ba++;
             }
         }
@@ -572,19 +572,19 @@ public class ConstantPool extends AbstractConstantPool {
         Enumeration enumeration = listMultimap.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            List list2 = listMultimap.getValues(string);
-            int ba = list2.size();
+            String key = (String) enumeration.nextElement();
+            List list2 = listMultimap.getValues(key);
+            int list2Size = list2.size();
             ArrayList arrayList = null;
-            if (ba > 1) {
-                arrayList = new ArrayList(ba - 1);
+            if (list2Size > 1) {
+                arrayList = new ArrayList(list2Size - 1);
             }
 
             ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) list2.get(0);
             list1.add(constantPoolEntry);
 
-            for (int i = 1; i < ba; i++) {
-                ConstantPoolEntry constantPoolEntry1 = (ConstantPoolEntry) list2.get(i);
+            for (int elementIndex = 1; elementIndex < list2Size; elementIndex++) {
+                ConstantPoolEntry constantPoolEntry1 = (ConstantPoolEntry) list2.get(elementIndex);
                 int index = constantPoolEntry1.getIndex();
                 constantPoolEntrys[index] = null;
                 map1.put(constantPoolEntry1, constantPoolEntry);
@@ -605,33 +605,33 @@ public class ConstantPool extends AbstractConstantPool {
     @Override
     public synchronized int appendEntries(List list1) {
         int ba = super.appendEntries(list1);
-        int bb = list1.size();
+        int list1Size = list1.size();
 
-        for (int i = 0; i < bb; i++) {
-            this.registerEntry((ConstantPoolEntry) list1.get(i));
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            this.registerEntry((ConstantPoolEntry) list1.get(elementIndex));
         }
 
         return ba;
     }
 
     public void collectReferencedProgramMembers(HashSet hashSet, HashSet hashSet1, HashSet hashSet2) {
-        int ba = this.classConstants.size();
+        int classConstantsSize = this.classConstants.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string = ((ResolvedClassConstant) this.classConstants.get(i)).getClassName();
-            String string1 = ClassFileBase.descriptorToClassName(string);
-            if (string1 != null) {
-                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string1);
+        for (int elementIndex = 0; elementIndex < classConstantsSize; elementIndex++) {
+            String className = ((ResolvedClassConstant) this.classConstants.get(elementIndex)).getClassName();
+            String key = ClassFileBase.descriptorToClassName(className);
+            if (key != null) {
+                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
                 if (programClass1 != null) {
                     hashSet.add(programClass1);
                 }
             }
         }
 
-        int be = this.fieldRefs.size();
+        int fieldRefsSize = this.fieldRefs.size();
 
-        for (int i = 0; i < be; i++) {
-            ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.fieldRefs.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < fieldRefsSize; elementIndexValue++) {
+            ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.fieldRefs.get(elementIndexValue);
             AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) resolvedFieldRef.getResolvedMember();
             if (abstractFieldInfo != null && abstractFieldInfo.isProgramMember()) {
                 hashSet1.add((FieldInfo) abstractFieldInfo);
@@ -643,10 +643,10 @@ public class ConstantPool extends AbstractConstantPool {
             }
         }
 
-        int bg = this.methodRefs.size();
+        int methodRefsSize = this.methodRefs.size();
 
-        for (int i = 0; i < bg; i++) {
-            ResolvedMethodRefConstant resolvedMethodRefConstant = (ResolvedMethodRefConstant) this.methodRefs.get(i);
+        for (int elementIndexValue2 = 0; elementIndexValue2 < methodRefsSize; elementIndexValue2++) {
+            ResolvedMethodRefConstant resolvedMethodRefConstant = (ResolvedMethodRefConstant) this.methodRefs.get(elementIndexValue2);
             AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) resolvedMethodRefConstant.getResolvedMember();
             if (abstractMethodInfo != null && abstractMethodInfo.isProgramMember()) {
                 hashSet2.add((MethodInfo) abstractMethodInfo);
@@ -654,15 +654,15 @@ public class ConstantPool extends AbstractConstantPool {
 
             List list1 = resolvedMethodRefConstant.getDescriptorProgramClasses();
 
-            for (int j = 0; j < list1.size(); j++) {
-                hashSet.add(list1.get(j));
+            for (int elementIndexValue3 = 0; elementIndexValue3 < list1.size(); elementIndexValue3++) {
+                hashSet.add(list1.get(elementIndexValue3));
             }
         }
 
-        int bi = super.interfaceMethodRefs.size();
+        int interfaceMethodRefsSize = super.interfaceMethodRefs.size();
 
-        for (int i = 0; i < bi; i++) {
-            ResolvedInterfaceMethodRef resolvedInterfaceMethodRef = (ResolvedInterfaceMethodRef) super.interfaceMethodRefs.get(i);
+        for (int elementIndexValue4 = 0; elementIndexValue4 < interfaceMethodRefsSize; elementIndexValue4++) {
+            ResolvedInterfaceMethodRef resolvedInterfaceMethodRef = (ResolvedInterfaceMethodRef) super.interfaceMethodRefs.get(elementIndexValue4);
             AbstractMethodInfo abstractMethodInfo1 = (AbstractMethodInfo) resolvedInterfaceMethodRef.getResolvedMember();
             if (abstractMethodInfo1 != null && abstractMethodInfo1.isProgramMember()) {
                 hashSet2.add((MethodInfo) abstractMethodInfo1);
@@ -670,56 +670,56 @@ public class ConstantPool extends AbstractConstantPool {
 
             List list2 = resolvedInterfaceMethodRef.getDescriptorProgramClasses();
 
-            for (int j = 0; j < list2.size(); j++) {
-                hashSet.add(list2.get(j));
+            for (int elementIndexValue5 = 0; elementIndexValue5 < list2.size(); elementIndexValue5++) {
+                hashSet.add(list2.get(elementIndexValue5));
             }
         }
     }
 
     public void remapResourceNameStrings(HashMap hashMap, HashSet hashSet, Set set1, HashMap hashMap1) {
         EnumerableMap enumerableMap = new EnumerableMap(hashMap1);
-        int ba = this.stringConstants.size();
+        int stringConstantsSize = this.stringConstants.size();
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) this.stringConstants.get(i);
+        for (int elementIndex = 0; elementIndex < stringConstantsSize; elementIndex++) {
+            ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) this.stringConstants.get(elementIndex);
             if (!hashSet.contains(resolvedStringConstant)) {
                 ConstantUtf8 constantUtf8 = resolvedStringConstant.getValueUtf8();
-                String string = constantUtf8.getValue();
-                int bc = string.length();
+                String value = constantUtf8.getValue();
+                int valueLength = value.length();
                 BooleanFlag booleanFlag = new BooleanFlag();
-                String string1 = ConstantPoolEntry.remapClassNameString(string, hashMap, booleanFlag);
-                if (!string1.equals(string)) {
-                    constantUtf8.setValue(string1);
+                String valueValue = ConstantPoolEntry.remapClassNameString(value, hashMap, booleanFlag);
+                if (!valueValue.equals(value)) {
+                    constantUtf8.setValue(valueValue);
                 } else if (!booleanFlag.getValue()) {
-                    String string2;
-                    if (string.startsWith("/") && bc > 0) {
-                        string2 = string.substring(1);
+                    String valueValue8;
+                    if (value.startsWith("/") && valueLength > 0) {
+                        valueValue8 = value.substring(1);
                     } else {
-                        string2 = string;
+                        valueValue8 = value;
                     }
 
-                    if (set1.contains(string2)) {
-                        String string7 = ResourcePathTranslator.renameResourceParentPath(string, enumerableMap);
-                        if (!string7.equals(string)) {
-                            constantUtf8.setValue(string7);
+                    if (set1.contains(valueValue8)) {
+                        String valueValue2 = ResourcePathTranslator.renameResourceParentPath(value, enumerableMap);
+                        if (!valueValue2.equals(value)) {
+                            constantUtf8.setValue(valueValue2);
                         }
                     } else {
-                        int bd = string.indexOf("/");
-                        int be = string.lastIndexOf("/");
-                        int bf = string.indexOf(".");
-                        if (bd > 0 && bf > 0 && be < bf && bf < bc - 1) {
+                        int bd = value.indexOf("/");
+                        int be = value.lastIndexOf("/");
+                        int bf = value.indexOf(".");
+                        if (bd > 0 && bf > 0 && be < bf && bf < valueLength - 1) {
                             ArrayList arrayList = new ArrayList();
                             ArrayList arrayList1 = new ArrayList();
-                            String string11 = this.getPackageName() + (string.charAt(string.length() - 1) == '/' ? "" : '/') + string;
+                            String suffix = this.getPackageName() + (value.charAt(value.length() - 1) == '/' ? "" : '/') + value;
                             Iterator iterator = set1.iterator();
 
                             while (iterator.hasNext()) {
                                 String string6 = (String) iterator.next();
-                                if (string6.endsWith(string11)) {
+                                if (string6.endsWith(suffix)) {
                                     arrayList.add(string6);
                                 }
 
-                                if (string6.endsWith(string)) {
+                                if (string6.endsWith(value)) {
                                     arrayList1.add(string6);
                                 }
                             }
@@ -736,37 +736,37 @@ public class ConstantPool extends AbstractConstantPool {
                             }
 
                             if (string12 != null) {
-                                String string13 = ResourcePathTranslator.translateRelativeReference(string12, string, enumerableMap);
-                                if (!string13.equals(string)) {
-                                    constantUtf8.setValue(string13);
+                                String valueValue3 = ResourcePathTranslator.translateRelativeReference(string12, value, enumerableMap);
+                                if (!valueValue3.equals(value)) {
+                                    constantUtf8.setValue(valueValue3);
                                 }
                             }
                         } else if (bf == -1) {
-                            if (bd > 0 && be < bc - 1 && ZkmStringUtils.countChar(string, '/') >= 2) {
-                                if (enumerableMap.containsKey(string)) {
-                                    String string3 = (String) enumerableMap.get(string);
-                                    if (string3 != null && !string.equals(string3)) {
-                                        constantUtf8.setValue(string3);
+                            if (bd > 0 && be < valueLength - 1 && ZkmStringUtils.countChar(value, '/') >= 2) {
+                                if (enumerableMap.containsKey(value)) {
+                                    String valueValue4 = (String) enumerableMap.get(value);
+                                    if (valueValue4 != null && !value.equals(valueValue4)) {
+                                        constantUtf8.setValue(valueValue4);
                                     }
                                 } else if (!HiddenOptionFlags.DONT_RENAME_SLASHED_STRINGS) {
-                                    String string8 = this.translateQualifiedName(string, enumerableMap, "/");
-                                    if (string8 != null && !string.equals(string8)) {
-                                        constantUtf8.setValue(string8);
+                                    String valueValue5 = this.translateQualifiedName(value, enumerableMap, "/");
+                                    if (valueValue5 != null && !value.equals(valueValue5)) {
+                                        constantUtf8.setValue(valueValue5);
                                     }
                                 }
                             }
-                        } else if (bd == -1 && bf > 0 && string.lastIndexOf(".") < bc - 1 && ZkmStringUtils.countChar(string, '.') >= 2) {
-                            String string9 = string.replace('.', '/');
-                            if (enumerableMap.containsKey(string9)) {
-                                String string4 = (String) enumerableMap.get(string9);
-                                if (string4 != null && !string9.equals(string4) && !HiddenOptionFlags.DONT_RENAME_DOTTED_STRINGS) {
-                                    String string5 = string4.replace('/', '.');
-                                    constantUtf8.setValue(string5);
+                        } else if (bd == -1 && bf > 0 && value.lastIndexOf(".") < valueLength - 1 && ZkmStringUtils.countChar(value, '.') >= 2) {
+                            String key = value.replace('.', '/');
+                            if (enumerableMap.containsKey(key)) {
+                                String string4 = (String) enumerableMap.get(key);
+                                if (string4 != null && !key.equals(string4) && !HiddenOptionFlags.DONT_RENAME_DOTTED_STRINGS) {
+                                    String valueValue6 = string4.replace('/', '.');
+                                    constantUtf8.setValue(valueValue6);
                                 }
                             } else if (HiddenOptionFlags.RENAME_PARTIAL_DOTTED_STRINGS) {
-                                String string10 = this.translateQualifiedName(string, enumerableMap, ".");
-                                if (string10 != null && !string.equals(string10)) {
-                                    constantUtf8.setValue(string10);
+                                String valueValue7 = this.translateQualifiedName(value, enumerableMap, ".");
+                                if (valueValue7 != null && !value.equals(valueValue7)) {
+                                    constantUtf8.setValue(valueValue7);
                                 }
                             }
                         }
@@ -863,37 +863,37 @@ public class ConstantPool extends AbstractConstantPool {
     }
 
     public void countReferencedProgramClasses(CountingBag countingBag) {
-        String string = this.classFile.getClassName();
-        int ba = this.classConstants.size();
+        String className = this.classFile.getClassName();
+        int classConstantsSize = this.classConstants.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string1 = ((ResolvedClassConstant) this.classConstants.get(i)).getClassName();
-            if (string1.startsWith("[")) {
-                string1 = ClassFileBase.descriptorToClassName(string1);
+        for (int elementIndex = 0; elementIndex < classConstantsSize; elementIndex++) {
+            String classNameValue = ((ResolvedClassConstant) this.classConstants.get(elementIndex)).getClassName();
+            if (classNameValue.startsWith("[")) {
+                classNameValue = ClassFileBase.descriptorToClassName(classNameValue);
             }
 
             ProgramClass programClass1;
-            if (string1 != null && !string1.equals(string) && (programClass1 = ClassHierarchyNode.findProgramClass(string1)) != null) {
+            if (classNameValue != null && !classNameValue.equals(className) && (programClass1 = ClassHierarchyNode.findProgramClass(classNameValue)) != null) {
                 countingBag.add(programClass1);
             }
         }
     }
 
     public ResolvedInterfaceMethodRef getOrAddInterfaceMethodRef(
-            String string, String string1, String string2, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1
+            String value, String valueArgument, String valueArgument2, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        ResolvedInterfaceMethodRef resolvedInterfaceMethodRef = this.findInterfaceMethodRef(string, string1, string2);
+        ResolvedInterfaceMethodRef resolvedInterfaceMethodRef = this.findInterfaceMethodRef(value, valueArgument, valueArgument2);
         if (resolvedInterfaceMethodRef != null) {
             return resolvedInterfaceMethodRef;
         }
 
-        resolvedInterfaceMethodRef = (ResolvedInterfaceMethodRef) this.findPendingMemberRef(string, string1, string2, list1);
+        resolvedInterfaceMethodRef = (ResolvedInterfaceMethodRef) this.findPendingMemberRef(value, valueArgument, valueArgument2, list1);
         if (resolvedInterfaceMethodRef != null) {
             return resolvedInterfaceMethodRef;
         }
 
-        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(string, list1);
-        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(string1, string2, list1);
+        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(value, list1);
+        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(valueArgument, valueArgument2, list1);
         ResolvedInterfaceMethodRef resolvedInterfaceMethodRef1 = new ResolvedInterfaceMethodRef(
                 this, resolvedClassConstant, resolvedNameAndType, classMemberLookup1, classResolver1
         );
@@ -910,30 +910,30 @@ public class ConstantPool extends AbstractConstantPool {
             ListMultimap listMultimap3
     ) throws ClassFileFormatException, IOException {
         super(programClass1);
-        int ba = classFileInputStream.readUnsignedShort();
-        this.baseEntryCount = ba;
-        this.entries = new ConstantPoolEntry[ba];
+        int baseEntryCountValue = classFileInputStream.readUnsignedShort();
+        this.baseEntryCount = baseEntryCountValue;
+        this.entries = new ConstantPoolEntry[baseEntryCountValue];
         ArrayList arrayList = new ArrayList();
         ArrayList arrayList1 = new ArrayList();
         ArrayList arrayList2 = new ArrayList();
-        this.utf8Constants = new ArrayList(Math.max(5, (int) (ba * 1.5)));
-        this.nameAndTypes = new ArrayList(Math.max(5, (int) (ba * 0.2)));
-        this.classConstants = new ArrayList(Math.max(5, (int) (ba * 0.09)));
-        super.classesByName = ZkmUtils.createHashMap(Math.max(5, (int) (ba * 0.09)));
-        this.stringConstants = new ArrayList(Math.max(5, (int) (ba * 0.05)));
-        super.integerConstants = new ArrayList(Math.max(5, (int) (ba * 0.01)));
-        super.longConstants = new ArrayList(Math.max(5, (int) (ba * 0.01)));
-        this.methodRefs = new ArrayList(Math.max(5, (int) (ba * 0.15)));
-        super.interfaceMethodRefs = new ArrayList(Math.max(5, (int) (ba * 0.15)));
-        this.fieldRefs = new ArrayList(Math.max(5, (int) (ba * 0.15)));
+        this.utf8Constants = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 1.5)));
+        this.nameAndTypes = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 0.2)));
+        this.classConstants = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 0.09)));
+        super.classesByName = ZkmUtils.createHashMap(Math.max(5, (int) (baseEntryCountValue * 0.09)));
+        this.stringConstants = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 0.05)));
+        super.integerConstants = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 0.01)));
+        super.longConstants = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 0.01)));
+        this.methodRefs = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 0.15)));
+        super.interfaceMethodRefs = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 0.15)));
+        this.fieldRefs = new ArrayList(Math.max(5, (int) (baseEntryCountValue * 0.15)));
         this.entries[0] = ConstantNullEntry.getSharedInstance(this);
-        int bb = 1;
+        int indexValue = 1;
 
-        while (bb < ba) {
-            ConstantPoolEntry constantPoolEntry = ConstantPoolEntry.readEntry(bb, classFileInputStream, this);
-            this.entries[bb++] = constantPoolEntry;
+        while (indexValue < baseEntryCountValue) {
+            ConstantPoolEntry constantPoolEntry = ConstantPoolEntry.readEntry(indexValue, classFileInputStream, this);
+            this.entries[indexValue++] = constantPoolEntry;
             if (constantPoolEntry.getSlotCount() == 2) {
-                this.entries[bb++] = ConstantNullEntry.getSharedInstance(this);
+                this.entries[indexValue++] = ConstantNullEntry.getSharedInstance(this);
             }
 
             ConstantPoolTag constantPoolTag = constantPoolEntry.getTag();
@@ -997,20 +997,20 @@ public class ConstantPool extends AbstractConstantPool {
     }
 
     public ResolvedMethodRefConstant getOrAddMethodRef(
-            String string, String string1, String string2, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1
+            String value, String valueArgument, String valueArgument2, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        ResolvedMethodRefConstant resolvedMethodRefConstant = this.findMethodRef(string, string1, string2);
+        ResolvedMethodRefConstant resolvedMethodRefConstant = this.findMethodRef(value, valueArgument, valueArgument2);
         if (resolvedMethodRefConstant != null) {
             return resolvedMethodRefConstant;
         }
 
-        resolvedMethodRefConstant = (ResolvedMethodRefConstant) this.findPendingMemberRef(string, string1, string2, list1);
+        resolvedMethodRefConstant = (ResolvedMethodRefConstant) this.findPendingMemberRef(value, valueArgument, valueArgument2, list1);
         if (resolvedMethodRefConstant != null) {
             return resolvedMethodRefConstant;
         }
 
-        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(string, list1);
-        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(string1, string2, list1);
+        ResolvedClassConstant resolvedClassConstant = this.getOrCreateClassConstant(value, list1);
+        ResolvedNameAndType resolvedNameAndType = this.createNameAndType(valueArgument, valueArgument2, list1);
         ResolvedMethodRefConstant resolvedMethodRefConstant1 = new ResolvedMethodRefConstant(
                 this, resolvedClassConstant, resolvedNameAndType, classMemberLookup1, classResolver1
         );
@@ -1052,18 +1052,18 @@ public class ConstantPool extends AbstractConstantPool {
     }
 
     public void remapDescriptorStrings(HashMap hashMap) {
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
         for (ArrayList arrayList = super.unreferencedUtf8s; bb < arrayList.size(); arrayList = super.unreferencedUtf8s) {
-            ConstantUtf8 constantUtf8 = (ConstantUtf8) super.unreferencedUtf8s.get(ba);
-            String string = constantUtf8.getValue();
-            String string1 = ConstantPoolEntry.remapDescriptorClassNames(string, hashMap);
-            if (!string1.equals(string)) {
-                constantUtf8.setValue(string1);
+            ConstantUtf8 constantUtf8 = (ConstantUtf8) super.unreferencedUtf8s.get(elementIndex);
+            String value = constantUtf8.getValue();
+            String valueValue = ConstantPoolEntry.remapDescriptorClassNames(value, hashMap);
+            if (!valueValue.equals(value)) {
+                constantUtf8.setValue(valueValue);
             }
 
-            bb = ++ba;
+            bb = ++elementIndex;
         }
 
         Iterator iterator = this.stringConstants.iterator();
@@ -1071,22 +1071,22 @@ public class ConstantPool extends AbstractConstantPool {
         while (iterator.hasNext()) {
             ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) iterator.next();
             ConstantUtf8 constantUtf81 = resolvedStringConstant.getValueUtf8();
-            String string3 = constantUtf81.getValue();
-            String string2 = ConstantPoolEntry.remapDescriptorClassNames(string3, hashMap);
-            if (!string2.equals(string3)) {
-                constantUtf81.setValue(string2);
+            String valueValue2 = constantUtf81.getValue();
+            String valueValue3 = ConstantPoolEntry.remapDescriptorClassNames(valueValue2, hashMap);
+            if (!valueValue3.equals(valueValue2)) {
+                constantUtf81.setValue(valueValue3);
             }
         }
     }
 
-    public int replaceIntegerValue(int ba) {
+    public int replaceIntegerValue(int value) {
         int bb = 0;
         Iterator iterator = super.integerConstants.iterator();
 
         while (iterator.hasNext()) {
             ConstantInteger constantInteger = (ConstantInteger) iterator.next();
             if (constantInteger.getValue() == Integer.MAX_VALUE) {
-                constantInteger.setValue(ba);
+                constantInteger.setValue(value);
                 bb++;
             }
         }
@@ -1094,8 +1094,8 @@ public class ConstantPool extends AbstractConstantPool {
         return bb;
     }
 
-    public ResolvedStringConstant addStringConstant(String string, List list1) {
-        return this.addStringConstant(string, list1, true);
+    public ResolvedStringConstant addStringConstant(String value, List list1) {
+        return this.addStringConstant(value, list1, true);
     }
 
     public NumericConstantEntry[] getLiteralConstants() {
@@ -1106,53 +1106,53 @@ public class ConstantPool extends AbstractConstantPool {
                 + this.stringConstants.size()];
         int ba = 0;
 
-        for (int i = 0; i < this.stringConstants.size(); i++) {
-            numericConstantEntrys[ba++] = (NumericConstantEntry) this.stringConstants.get(i);
+        for (int elementIndex = 0; elementIndex < this.stringConstants.size(); elementIndex++) {
+            numericConstantEntrys[ba++] = (NumericConstantEntry) this.stringConstants.get(elementIndex);
         }
 
-        for (int i = 0; i < super.integerConstants.size(); i++) {
-            numericConstantEntrys[ba++] = (NumericConstantEntry) super.integerConstants.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < super.integerConstants.size(); elementIndexValue++) {
+            numericConstantEntrys[ba++] = (NumericConstantEntry) super.integerConstants.get(elementIndexValue);
         }
 
-        int bd = 0;
-        int be = bd;
+        int elementIndexValue2 = 0;
+        int elementIndexValue3 = elementIndexValue2;
 
-        for (ArrayList arrayList = super.longConstants; be < arrayList.size(); arrayList = super.longConstants) {
-            numericConstantEntrys[ba++] = (NumericConstantEntry) super.longConstants.get(bd);
-            be = ++bd;
+        for (ArrayList arrayList = super.longConstants; elementIndexValue3 < arrayList.size(); arrayList = super.longConstants) {
+            numericConstantEntrys[ba++] = (NumericConstantEntry) super.longConstants.get(elementIndexValue2);
+            elementIndexValue3 = ++elementIndexValue2;
         }
 
-        bd = 0;
-        be = 0;
+        elementIndexValue2 = 0;
+        elementIndexValue3 = 0;
 
-        for (ArrayList arrayList1 = this.floatConstants; be < arrayList1.size(); arrayList1 = this.floatConstants) {
-            numericConstantEntrys[ba++] = (NumericConstantEntry) this.floatConstants.get(bd);
-            be = ++bd;
+        for (ArrayList arrayList1 = this.floatConstants; elementIndexValue3 < arrayList1.size(); arrayList1 = this.floatConstants) {
+            numericConstantEntrys[ba++] = (NumericConstantEntry) this.floatConstants.get(elementIndexValue2);
+            elementIndexValue3 = ++elementIndexValue2;
         }
 
-        bd = 0;
-        be = 0;
+        elementIndexValue2 = 0;
+        elementIndexValue3 = 0;
 
-        for (ArrayList arrayList2 = this.doubleConstants; be < arrayList2.size(); arrayList2 = this.doubleConstants) {
-            numericConstantEntrys[ba++] = (NumericConstantEntry) this.doubleConstants.get(bd);
-            be = ++bd;
+        for (ArrayList arrayList2 = this.doubleConstants; elementIndexValue3 < arrayList2.size(); arrayList2 = this.doubleConstants) {
+            numericConstantEntrys[ba++] = (NumericConstantEntry) this.doubleConstants.get(elementIndexValue2);
+            elementIndexValue3 = ++elementIndexValue2;
         }
 
         return numericConstantEntrys;
     }
 
     public ResolvedMethodRefConstant getOrAddUnboxMethodRef(String string, List list1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1) throws ZkmException, IOException {
-        String string1 = string;
-        switch (string1.charAt(0)) {
+        String key = string;
+        switch (key.charAt(0)) {
             case 'B':
             case 'C':
             case 'S':
-                string1 = "I";
+                key = "I";
             default:
-                String string2 = ConstantPoolEntry.getWrapperClassName(string1);
-                String string3 = (String) UNBOX_METHOD_NAMES.get(string1);
-                String string4 = (String) UNBOX_METHOD_DESCRIPTORS.get(string1);
-                return this.getOrAddMethodRef(string2, string3, string4, list1, classMemberLookup1, classResolver1);
+                String wrapperClassName = ConstantPoolEntry.getWrapperClassName(key);
+                String value = (String) UNBOX_METHOD_NAMES.get(key);
+                String valueValue = (String) UNBOX_METHOD_DESCRIPTORS.get(key);
+                return this.getOrAddMethodRef(wrapperClassName, value, valueValue, list1, classMemberLookup1, classResolver1);
         }
     }
 
@@ -1163,10 +1163,10 @@ public class ConstantPool extends AbstractConstantPool {
         while (iterator.hasNext()) {
             ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) iterator.next();
             if (!resolvedClassConstant.isArrayClass()) {
-                String string = resolvedClassConstant.getClassName();
+                String className = resolvedClassConstant.getClassName();
 
                 try {
-                    if (string.equals("java/lang/RuntimeException") || classHierarchyQuery.isSubclass(string, "java/lang/RuntimeException")) {
+                    if (className.equals("java/lang/RuntimeException") || classHierarchyQuery.isSubclass(className, "java/lang/RuntimeException")) {
                         arrayList.add(resolvedClassConstant);
                     }
                 } catch (ClassFileLoadException classFileLoadException) {
@@ -1180,44 +1180,44 @@ public class ConstantPool extends AbstractConstantPool {
     public void clearUnusedEntries(UsedConstantsCollector usedConstantsCollector, ConstantPoolEntry[] constantPoolEntrys) {
         ConstantPoolTag.getFlowKey();
 
-        for (int i = 0; i < constantPoolEntrys.length; i++) {
-            if (constantPoolEntrys[i] != null && !(constantPoolEntrys[i] instanceof ConstantNullEntry)) {
-                ConstantPoolEntry constantPoolEntry = constantPoolEntrys[i];
+        for (int constantPoolEntryIndex = 0; constantPoolEntryIndex < constantPoolEntrys.length; constantPoolEntryIndex++) {
+            if (constantPoolEntrys[constantPoolEntryIndex] != null && !(constantPoolEntrys[constantPoolEntryIndex] instanceof ConstantNullEntry)) {
+                ConstantPoolEntry constantPoolEntry = constantPoolEntrys[constantPoolEntryIndex];
                 if (!usedConstantsCollector.isUsed(constantPoolEntry)) {
-                    constantPoolEntrys[i] = null;
+                    constantPoolEntrys[constantPoolEntryIndex] = null;
                     if (constantPoolEntry.isLongOrDouble()) {
-                        ConstantPoolEntry constantPoolEntry1 = constantPoolEntrys[++i];
-                        constantPoolEntrys[i] = null;
+                        ConstantPoolEntry constantPoolEntry1 = constantPoolEntrys[++constantPoolEntryIndex];
+                        constantPoolEntrys[constantPoolEntryIndex] = null;
                     }
                 }
             }
         }
     }
 
-    public ResolvedStringConstant addStringConstant(String string, List list1, boolean bl) {
-        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this, string);
-        ResolvedStringConstant resolvedStringConstant = new ResolvedStringConstant(this, constantUtf8, bl);
+    public ResolvedStringConstant addStringConstant(String value, List list1, boolean fromClassFile) {
+        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this, value);
+        ResolvedStringConstant resolvedStringConstant = new ResolvedStringConstant(this, constantUtf8, fromClassFile);
         list1.add(constantUtf8);
         list1.add(resolvedStringConstant);
         return resolvedStringConstant;
     }
 
-    public ConstantLong getOrAddLongConstant(long ba, List list1) {
-        return this.getOrAddLongConstant(ba, list1, true, false);
+    public ConstantLong getOrAddLongConstant(long value, List list1) {
+        return this.getOrAddLongConstant(value, list1, true, false);
     }
 
-    public ConstantInteger getOrAddIntegerConstant(int ba, List list1, boolean bl, boolean bl1) {
+    public ConstantInteger getOrAddIntegerConstant(int value, List list1, boolean bl, boolean bl1) {
         if (bl) {
-            int bb = 0;
+            int elementIndex = 0;
             int bc = 0;
 
             for (ArrayList arrayList = super.integerConstants; bc < arrayList.size(); arrayList = super.integerConstants) {
-                ConstantInteger constantInteger = (ConstantInteger) super.integerConstants.get(bb);
-                if (!constantInteger.isInProgramPool() && constantInteger.hasValue(ba)) {
+                ConstantInteger constantInteger = (ConstantInteger) super.integerConstants.get(elementIndex);
+                if (!constantInteger.isInProgramPool() && constantInteger.hasValue(value)) {
                     return constantInteger;
                 }
 
-                bc = ++bb;
+                bc = ++elementIndex;
             }
 
             Iterator iterator = list1.iterator();
@@ -1226,7 +1226,7 @@ public class ConstantPool extends AbstractConstantPool {
                 ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) iterator.next();
                 if (constantPoolEntry instanceof ConstantInteger) {
                     ConstantInteger constantInteger1 = (ConstantInteger) constantPoolEntry;
-                    if (!constantInteger1.isInProgramPool() && constantInteger1.hasValue(ba)) {
+                    if (!constantInteger1.isInProgramPool() && constantInteger1.hasValue(value)) {
                         return constantInteger1;
                     }
                 }
@@ -1235,27 +1235,27 @@ public class ConstantPool extends AbstractConstantPool {
 
         ConstantInteger constantInteger2;
         if (bl1) {
-            constantInteger2 = new ConstantInteger(this, ba, true);
+            constantInteger2 = new ConstantInteger(this, value, true);
         } else {
-            constantInteger2 = new ConstantInteger(this, ba, false);
+            constantInteger2 = new ConstantInteger(this, value, false);
         }
 
         list1.add(constantInteger2);
         return constantInteger2;
     }
 
-    public ConstantLong getOrAddLongConstant(long ba, List list1, boolean bl, boolean bl1) {
+    public ConstantLong getOrAddLongConstant(long value, List list1, boolean bl, boolean bl1) {
         if (bl) {
-            int bb = 0;
+            int elementIndex = 0;
             int bc = 0;
 
             for (ArrayList arrayList = super.longConstants; bc < arrayList.size(); arrayList = super.longConstants) {
-                ConstantLong constantLong = (ConstantLong) super.longConstants.get(bb);
-                if (!constantLong.isInProgramPool() && constantLong.hasValue(ba)) {
+                ConstantLong constantLong = (ConstantLong) super.longConstants.get(elementIndex);
+                if (!constantLong.isInProgramPool() && constantLong.hasValue(value)) {
                     return constantLong;
                 }
 
-                bc = ++bb;
+                bc = ++elementIndex;
             }
 
             Iterator iterator = list1.iterator();
@@ -1264,7 +1264,7 @@ public class ConstantPool extends AbstractConstantPool {
                 ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) iterator.next();
                 if (constantPoolEntry instanceof ConstantLong) {
                     ConstantLong constantLong1 = (ConstantLong) constantPoolEntry;
-                    if (!constantLong1.isInProgramPool() && constantLong1.hasValue(ba)) {
+                    if (!constantLong1.isInProgramPool() && constantLong1.hasValue(value)) {
                         return constantLong1;
                     }
                 }
@@ -1273,9 +1273,9 @@ public class ConstantPool extends AbstractConstantPool {
 
         ConstantLong constantLong2;
         if (bl1) {
-            constantLong2 = new ConstantLong(this, ba, true);
+            constantLong2 = new ConstantLong(this, value, true);
         } else {
-            constantLong2 = new ConstantLong(this, ba, false);
+            constantLong2 = new ConstantLong(this, value, false);
         }
 
         list1.add(constantLong2);
@@ -1283,8 +1283,8 @@ public class ConstantPool extends AbstractConstantPool {
     }
 
     public void findReflectionApiCalls(Set set1, Map map1, ClassMemberLookup classMemberLookup1, MessageReporter messageReporter1) throws ZkmException, IOException {
-        for (int i = 0; i < this.methodRefs.size(); i++) {
-            ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) this.methodRefs.get(i);
+        for (int elementIndex = 0; elementIndex < this.methodRefs.size(); elementIndex++) {
+            ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) this.methodRefs.get(elementIndex);
 
             try {
                 ReflectionApiMethod reflectionApiMethod;
@@ -1309,11 +1309,11 @@ public class ConstantPool extends AbstractConstantPool {
             }
         }
 
-        int bb = 0;
+        int elementIndexValue = 0;
         int bc = 0;
 
         for (ArrayList arrayList = super.interfaceMethodRefs; bc < arrayList.size(); arrayList = super.interfaceMethodRefs) {
-            ResolvedMethodRef resolvedMethodRef1 = (ResolvedMethodRef) super.interfaceMethodRefs.get(bb);
+            ResolvedMethodRef resolvedMethodRef1 = (ResolvedMethodRef) super.interfaceMethodRefs.get(elementIndexValue);
 
             try {
                 ReflectionApiMethod reflectionApiMethod1;
@@ -1337,7 +1337,7 @@ public class ConstantPool extends AbstractConstantPool {
                 );
             }
 
-            bc = ++bb;
+            bc = ++elementIndexValue;
         }
     }
 
@@ -1355,19 +1355,19 @@ public class ConstantPool extends AbstractConstantPool {
         }
 
         super.classesByName = hashMap1;
-        int ba = this.nameAndTypes.size();
+        int nameAndTypesSize = this.nameAndTypes.size();
 
-        for (int i = 0; i < ba; i++) {
-            if (this.nameAndTypes.get(i) != null) {
-                ((ResolvedNameAndType) this.nameAndTypes.get(i)).remapDescriptor(hashMap);
+        for (int elementIndex = 0; elementIndex < nameAndTypesSize; elementIndex++) {
+            if (this.nameAndTypes.get(elementIndex) != null) {
+                ((ResolvedNameAndType) this.nameAndTypes.get(elementIndex)).remapDescriptor(hashMap);
             }
         }
 
-        int bb = this.methodTypeConstants.size();
+        int methodTypeConstantsSize = this.methodTypeConstants.size();
 
-        for (int i = 0; i < bb; i++) {
-            if (this.methodTypeConstants.get(i) != null) {
-                ((ResolvedMethodType) this.methodTypeConstants.get(i)).remapDescriptor(hashMap);
+        for (int elementIndexValue = 0; elementIndexValue < methodTypeConstantsSize; elementIndexValue++) {
+            if (this.methodTypeConstants.get(elementIndexValue) != null) {
+                ((ResolvedMethodType) this.methodTypeConstants.get(elementIndexValue)).remapDescriptor(hashMap);
             }
         }
 
@@ -1444,13 +1444,13 @@ public class ConstantPool extends AbstractConstantPool {
     }
 
     public void removeUnusedEntries(UsedConstantsCollector usedConstantsCollector) {
-        int ba = this.classConstants.size();
-        HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(ba));
-        ArrayList arrayList = new ArrayList(ba);
+        int classConstantsSize = this.classConstants.size();
+        HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(classConstantsSize));
+        ArrayList arrayList = new ArrayList(classConstantsSize);
         Set set1 = usedConstantsCollector.getUsedClasses();
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) this.classConstants.get(i);
+        for (int elementIndex = 0; elementIndex < classConstantsSize; elementIndex++) {
+            ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) this.classConstants.get(elementIndex);
             if (set1.contains(resolvedClassConstant)) {
                 arrayList.add(resolvedClassConstant);
                 hashMap.put(resolvedClassConstant.getClassName(), resolvedClassConstant);
@@ -1459,176 +1459,176 @@ public class ConstantPool extends AbstractConstantPool {
 
         super.classesByName = hashMap;
         this.classConstants = arrayList;
-        ba = this.utf8Constants.size();
+        classConstantsSize = this.utf8Constants.size();
         Set set2 = usedConstantsCollector.getUsedUtf8s();
-        ArrayList arrayList1 = new ArrayList(ba);
+        ArrayList arrayList1 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ConstantUtf8 constantUtf8 = (ConstantUtf8) this.utf8Constants.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < classConstantsSize; elementIndexValue++) {
+            ConstantUtf8 constantUtf8 = (ConstantUtf8) this.utf8Constants.get(elementIndexValue);
             if (set2.contains(constantUtf8)) {
                 arrayList1.add(constantUtf8);
             }
         }
 
         this.utf8Constants = arrayList1;
-        ba = this.nameAndTypes.size();
+        classConstantsSize = this.nameAndTypes.size();
         Set set3 = usedConstantsCollector.getUsedNameAndTypes();
-        ArrayList arrayList2 = new ArrayList(ba);
+        ArrayList arrayList2 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedNameAndType resolvedNameAndType = (ResolvedNameAndType) this.nameAndTypes.get(i);
+        for (int elementIndexValue2 = 0; elementIndexValue2 < classConstantsSize; elementIndexValue2++) {
+            ResolvedNameAndType resolvedNameAndType = (ResolvedNameAndType) this.nameAndTypes.get(elementIndexValue2);
             if (set3.contains(resolvedNameAndType)) {
                 arrayList2.add(resolvedNameAndType);
             }
         }
 
         this.nameAndTypes = arrayList2;
-        ba = this.fieldRefs.size();
+        classConstantsSize = this.fieldRefs.size();
         Set set4 = usedConstantsCollector.getUsedMemberRefs();
-        ArrayList arrayList3 = new ArrayList(ba);
+        ArrayList arrayList3 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.fieldRefs.get(i);
+        for (int elementIndexValue3 = 0; elementIndexValue3 < classConstantsSize; elementIndexValue3++) {
+            ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) this.fieldRefs.get(elementIndexValue3);
             if (set4.contains(resolvedFieldRef)) {
                 arrayList3.add(resolvedFieldRef);
             }
         }
 
         this.fieldRefs = arrayList3;
-        ba = this.methodRefs.size();
-        ArrayList arrayList4 = new ArrayList(ba);
+        classConstantsSize = this.methodRefs.size();
+        ArrayList arrayList4 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedMethodRefConstant resolvedMethodRefConstant = (ResolvedMethodRefConstant) this.methodRefs.get(i);
+        for (int elementIndexValue4 = 0; elementIndexValue4 < classConstantsSize; elementIndexValue4++) {
+            ResolvedMethodRefConstant resolvedMethodRefConstant = (ResolvedMethodRefConstant) this.methodRefs.get(elementIndexValue4);
             if (set4.contains(resolvedMethodRefConstant)) {
                 arrayList4.add(resolvedMethodRefConstant);
             }
         }
 
         this.methodRefs = arrayList4;
-        ba = super.interfaceMethodRefs.size();
-        ArrayList arrayList5 = new ArrayList(ba);
+        classConstantsSize = super.interfaceMethodRefs.size();
+        ArrayList arrayList5 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedInterfaceMethodRef resolvedInterfaceMethodRef = (ResolvedInterfaceMethodRef) super.interfaceMethodRefs.get(i);
+        for (int elementIndexValue5 = 0; elementIndexValue5 < classConstantsSize; elementIndexValue5++) {
+            ResolvedInterfaceMethodRef resolvedInterfaceMethodRef = (ResolvedInterfaceMethodRef) super.interfaceMethodRefs.get(elementIndexValue5);
             if (set4.contains(resolvedInterfaceMethodRef)) {
                 arrayList5.add(resolvedInterfaceMethodRef);
             }
         }
 
         super.interfaceMethodRefs = arrayList5;
-        ba = this.stringConstants.size();
+        classConstantsSize = this.stringConstants.size();
         Set set5 = usedConstantsCollector.getUsedLiterals();
-        ArrayList arrayList6 = new ArrayList(ba);
+        ArrayList arrayList6 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) this.stringConstants.get(i);
+        for (int elementIndexValue6 = 0; elementIndexValue6 < classConstantsSize; elementIndexValue6++) {
+            ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) this.stringConstants.get(elementIndexValue6);
             if (set5.contains(resolvedStringConstant)) {
                 arrayList6.add(resolvedStringConstant);
             }
         }
 
         this.stringConstants = arrayList6;
-        ba = super.integerConstants.size();
-        ArrayList arrayList7 = new ArrayList(ba);
+        classConstantsSize = super.integerConstants.size();
+        ArrayList arrayList7 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ConstantInteger constantInteger = (ConstantInteger) super.integerConstants.get(i);
+        for (int elementIndexValue7 = 0; elementIndexValue7 < classConstantsSize; elementIndexValue7++) {
+            ConstantInteger constantInteger = (ConstantInteger) super.integerConstants.get(elementIndexValue7);
             if (set5.contains(constantInteger)) {
                 arrayList7.add(constantInteger);
             }
         }
 
         super.integerConstants = arrayList7;
-        ba = super.longConstants.size();
-        ArrayList arrayList8 = new ArrayList(ba);
+        classConstantsSize = super.longConstants.size();
+        ArrayList arrayList8 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ConstantLong constantLong = (ConstantLong) super.longConstants.get(i);
+        for (int elementIndexValue8 = 0; elementIndexValue8 < classConstantsSize; elementIndexValue8++) {
+            ConstantLong constantLong = (ConstantLong) super.longConstants.get(elementIndexValue8);
             if (set5.contains(constantLong)) {
                 arrayList8.add(constantLong);
             }
         }
 
         super.longConstants = arrayList8;
-        ba = this.floatConstants.size();
-        ArrayList arrayList9 = new ArrayList(ba);
+        classConstantsSize = this.floatConstants.size();
+        ArrayList arrayList9 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ConstantFloat constantFloat = (ConstantFloat) this.floatConstants.get(i);
+        for (int elementIndexValue9 = 0; elementIndexValue9 < classConstantsSize; elementIndexValue9++) {
+            ConstantFloat constantFloat = (ConstantFloat) this.floatConstants.get(elementIndexValue9);
             if (set5.contains(constantFloat)) {
                 arrayList9.add(constantFloat);
             }
         }
 
         this.floatConstants = arrayList9;
-        ba = this.doubleConstants.size();
-        ArrayList arrayList10 = new ArrayList(ba);
+        classConstantsSize = this.doubleConstants.size();
+        ArrayList arrayList10 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ConstantDouble constantDouble = (ConstantDouble) this.doubleConstants.get(i);
+        for (int elementIndexValue10 = 0; elementIndexValue10 < classConstantsSize; elementIndexValue10++) {
+            ConstantDouble constantDouble = (ConstantDouble) this.doubleConstants.get(elementIndexValue10);
             if (set5.contains(constantDouble)) {
                 arrayList10.add(constantDouble);
             }
         }
 
         this.doubleConstants = arrayList10;
-        ba = super.constantDynamics.size();
+        classConstantsSize = super.constantDynamics.size();
         Set set6 = usedConstantsCollector.getUsedConstantDynamics();
-        ArrayList arrayList11 = new ArrayList(ba);
+        ArrayList arrayList11 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedConstantDynamic resolvedConstantDynamic = (ResolvedConstantDynamic) super.constantDynamics.get(i);
+        for (int elementIndexValue11 = 0; elementIndexValue11 < classConstantsSize; elementIndexValue11++) {
+            ResolvedConstantDynamic resolvedConstantDynamic = (ResolvedConstantDynamic) super.constantDynamics.get(elementIndexValue11);
             if (set6.contains(resolvedConstantDynamic)) {
                 arrayList11.add(resolvedConstantDynamic);
             }
         }
 
         super.constantDynamics = arrayList11;
-        ba = super.invokeDynamics.size();
+        classConstantsSize = super.invokeDynamics.size();
         Set set7 = usedConstantsCollector.getUsedInvokeDynamics();
-        ArrayList arrayList12 = new ArrayList(ba);
+        ArrayList arrayList12 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) super.invokeDynamics.get(i);
+        for (int elementIndexValue12 = 0; elementIndexValue12 < classConstantsSize; elementIndexValue12++) {
+            ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) super.invokeDynamics.get(elementIndexValue12);
             if (set7.contains(resolvedInvokeDynamic)) {
                 arrayList12.add(resolvedInvokeDynamic);
             }
         }
 
         super.invokeDynamics = arrayList12;
-        ba = this.methodTypeConstants.size();
+        classConstantsSize = this.methodTypeConstants.size();
         Set set8 = usedConstantsCollector.getUsedMethodTypes();
-        ArrayList arrayList13 = new ArrayList(ba);
+        ArrayList arrayList13 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedMethodType resolvedMethodType = (ResolvedMethodType) this.methodTypeConstants.get(i);
+        for (int elementIndexValue13 = 0; elementIndexValue13 < classConstantsSize; elementIndexValue13++) {
+            ResolvedMethodType resolvedMethodType = (ResolvedMethodType) this.methodTypeConstants.get(elementIndexValue13);
             if (set8.contains(resolvedMethodType)) {
                 arrayList13.add(resolvedMethodType);
             }
         }
 
         this.methodTypeConstants = arrayList13;
-        ba = this.methodHandleConstants.size();
+        classConstantsSize = this.methodHandleConstants.size();
         Set set9 = usedConstantsCollector.getUsedMethodHandles();
-        ArrayList arrayList14 = new ArrayList(ba);
+        ArrayList arrayList14 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < ba; i++) {
-            ResolvedMethodHandleConstant resolvedMethodHandleConstant = (ResolvedMethodHandleConstant) this.methodHandleConstants.get(i);
+        for (int elementIndexValue14 = 0; elementIndexValue14 < classConstantsSize; elementIndexValue14++) {
+            ResolvedMethodHandleConstant resolvedMethodHandleConstant = (ResolvedMethodHandleConstant) this.methodHandleConstants.get(elementIndexValue14);
             if (set9.contains(resolvedMethodHandleConstant)) {
                 arrayList14.add(resolvedMethodHandleConstant);
             }
         }
 
         this.methodHandleConstants = arrayList14;
-        int br = this.entries.length;
-        ArrayList arrayList15 = new ArrayList(ba);
+        int lengthValue = this.entries.length;
+        ArrayList arrayList15 = new ArrayList(classConstantsSize);
 
-        for (int i = 0; i < br; i++) {
-            ConstantPoolEntry constantPoolEntry = this.entries[i];
+        for (int entryIndex = 0; entryIndex < lengthValue; entryIndex++) {
+            ConstantPoolEntry constantPoolEntry = this.entries[entryIndex];
             if (!(constantPoolEntry instanceof ConstantNullEntry) && !usedConstantsCollector.isUsed(constantPoolEntry)) {
                 if (constantPoolEntry.getSlotCount() == 2) {
-                    i++;
+                    entryIndex++;
                 }
             } else {
                 arrayList15.add(constantPoolEntry);

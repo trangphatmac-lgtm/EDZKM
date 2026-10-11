@@ -15,34 +15,34 @@ public abstract class AndSpecifierNode extends ZkmScriptSimpleNode {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
     }
 
     public String getSpecText() {
         StringBuffer stringBuffer = new StringBuffer();
-        int ba = this.children.length;
-        if (ba > 1) {
+        int lengthValue = this.children.length;
+        if (lengthValue > 1) {
             stringBuffer.append('(');
         }
 
-        for (int i = 0; i < ba; i++) {
-            DescribableSpec describableSpec = (DescribableSpec) this.children[i];
+        for (int childrenElementIndex = 0; childrenElementIndex < lengthValue; childrenElementIndex++) {
+            DescribableSpec describableSpec = (DescribableSpec) this.children[childrenElementIndex];
             stringBuffer.append(describableSpec.getSpecText());
-            if (i < ba - 1) {
+            if (childrenElementIndex < lengthValue - 1) {
                 stringBuffer.append(AND_SEPARATOR);
             }
         }
 
-        if (ba > 1) {
+        if (lengthValue > 1) {
             stringBuffer.append(')');
         }
 
         return stringBuffer.toString();
     }
 
-    public AndSpecifierNode(int ba) {
-        super(ba);
+    public AndSpecifierNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 }

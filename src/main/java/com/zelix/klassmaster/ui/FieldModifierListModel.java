@@ -25,14 +25,14 @@ public class FieldModifierListModel extends MemberPropertiesPanel {
     }
 
     @Override
-    public void applyAccessFlags(int ba) throws ZkmException, IOException {
-        if ((ba & 16) != 0 && (ba & 64) != 0) {
+    public void applyAccessFlags(int accessFlags) throws ZkmException, IOException {
+        if ((accessFlags & 16) != 0 && (accessFlags & 64) != 0) {
             throw new InvalidEditException("An field cannot be final and volatile");
         }
 
-        if (!super.memberInfo.getOwningClass().isInterface() || (ba & 8) != 0 && (ba & 16) != 0 && (ba & 1) != 0) {
+        if (!super.memberInfo.getOwningClass().isInterface() || (accessFlags & 8) != 0 && (accessFlags & 16) != 0 && (accessFlags & 1) != 0) {
             synchronized (super.classRepository) {
-                super.memberInfo.setAccessFlags(ba);
+                super.memberInfo.setAccessFlags(accessFlags);
             }
         } else {
             throw new InvalidEditException("Fields in Interfaces must be public, static and final");
@@ -41,9 +41,9 @@ public class FieldModifierListModel extends MemberPropertiesPanel {
 
     @Override
     public void renameMember(Object object) throws ZkmException, IOException {
-        String string = (String) object;
+        String name = (String) object;
         synchronized (super.classRepository) {
-            super.classRepository.renameField((FieldInfo) super.memberInfo, string);
+            super.classRepository.renameField((FieldInfo) super.memberInfo, name);
         }
     }
 

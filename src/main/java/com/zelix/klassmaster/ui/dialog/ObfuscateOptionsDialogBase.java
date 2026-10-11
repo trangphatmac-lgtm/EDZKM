@@ -95,19 +95,19 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
             } else {
                 bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             }
-            final StringBuffer sb = new StringBuffer();
+            final StringBuffer stringBufferValue = new StringBuffer();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-                sb.append(HiddenOptionFlags.LINE_SEPARATOR);
+                stringBufferValue.append(line);
+                stringBufferValue.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
             this.closeInputChangeLogReader();
-            this.inputChangeLogReader = new StringReader(sb.toString());
+            this.inputChangeLogReader = new StringReader(stringBufferValue.toString());
             try {
                 bufferedReader.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
-        } catch (final IOException ex2) {
+        } catch (final IOException ioExceptionValue) {
             final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Error opening " + (String) o);
             this.logFileInTxt.selectAll();
             SwingUtils.requestFocusOnEdt(this.logFileInTxt);
@@ -116,7 +116,7 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
             }
         }
@@ -173,9 +173,7 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
                 } else if (this.clashesWithLogFile(file2.getAbsolutePath(), this.scriptEnvironment.getLogFileName(), "ZKM log", this.logFileOutTxt)) {
                     return false;
                 } else {
-                    return this.clashesWithLogFile(file2.getAbsolutePath(), this.scriptEnvironment.getTrimLogFileName(), "trim log", this.logFileOutTxt)
-                            ? false
-                            : this.openOutputChangeLog(string1);
+                    return (!(this.clashesWithLogFile(file2.getAbsolutePath(), this.scriptEnvironment.getTrimLogFileName(), "trim log", this.logFileOutTxt)) && (this.openOutputChangeLog(string1)));
                 }
             }
         } else {
@@ -199,10 +197,10 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
         String string = (String) object;
 
         try {
-            String string1 = AbstractChangeLog.getChangeLogEncoding();
-            if (string1 != null) {
-                this.changeLogWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(string), string1), 2048));
-                this.obfuscateOptions.v = string1;
+            String changeLogEncodingValue = AbstractChangeLog.getChangeLogEncoding();
+            if (changeLogEncodingValue != null) {
+                this.changeLogWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(string), changeLogEncodingValue), 2048));
+                this.obfuscateOptions.v = changeLogEncodingValue;
             } else {
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(string));
                 this.changeLogWriter = new PrintWriter(new BufferedWriter(outputStreamWriter, 2048));
@@ -298,11 +296,11 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
         constraintLayout1.parseConstraints(stringBuffer.toString());
     }
 
-    public void createButtons(String string) {
+    public void createButtons(String toolTipText) {
         this.previousBtn = new JButton("Previous");
         this.previousBtn.setToolTipText(GuiResources.getTooltipText("PREVIOUS_SCREEN"));
         this.okBtn = new JButton("OK");
-        this.okBtn.setToolTipText(string);
+        this.okBtn.setToolTipText(toolTipText);
         this.cancelBtn = new JButton("Cancel");
         this.cancelBtn.setToolTipText(GuiResources.getTooltipText("CANCEL_DIALOG"));
         this.helpBtn = new JButton("Help");
@@ -310,8 +308,8 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
     }
 
     public ObfuscateOptionsDialogBase(
-            String string,
-            String string1,
+            String title,
+            String toolTipText,
             ZkmMainWindow zkmMainWindow,
             ObfuscateOptions obfuscateOptions1,
             ExclusionWizardSettings exclusionWizardSettings,
@@ -324,7 +322,7 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
         this.scriptEnvironment = scriptEnvironment1;
         this.callback = dialogCallback1;
         this.setFont(this.dialogFont);
-        this.initComponents(string, string1);
+        this.initComponents(title, toolTipText);
         SwingUtils.requestFocusOnEdt(this.okBtn);
     }
 
@@ -350,9 +348,9 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
 
     public void saveOptions() {
         this.obfuscateOptions.c = this.changeLogInChk.isSelected();
-        String string = this.logFileInTxt.getText().trim();
-        if (string.length() > 0) {
-            ChangeLogInputFile changeLogInputFile = new ChangeLogInputFile(string);
+        String fileName = this.logFileInTxt.getText().trim();
+        if (fileName.length() > 0) {
+            ChangeLogInputFile changeLogInputFile = new ChangeLogInputFile(fileName);
             ObfuscateOptions obfuscateOptions1;
             if (this.obfuscateOptions.c) {
                 changeLogInputFile.setReader(this.inputChangeLogReader);
@@ -369,9 +367,9 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
 
         this.obfuscateOptions.d = this.changeLogOutChk.isSelected();
         if (this.obfuscateOptions.d && this.logFileOutTxt.getText().trim().length() > 0) {
-            this.obfuscateOptions.h = this.changeLogWriter;
+            this.obfuscateOptions.changeLogWriter = this.changeLogWriter;
         } else {
-            this.obfuscateOptions.h = null;
+            this.obfuscateOptions.changeLogWriter = null;
         }
 
         this.obfuscateOptions.f = this.logFileOutTxt.getText().trim();
@@ -421,13 +419,13 @@ public abstract class ObfuscateOptionsDialogBase extends EscapeClosableFrame imp
         }
     }
 
-    public void initComponents(String string, String string1) {
-        this.setTitle(string);
+    public void initComponents(String title, String toolTipText) {
+        this.setTitle(title);
         Container container1 = this.getContentPane();
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
         Dimension dimension = this.getMinimumLayoutSize();
-        this.createButtons(string1);
+        this.createButtons(toolTipText);
         this.changeLogInBrowseBtn.setToolTipText(GuiResources.getTooltipText("SELECT_CHANGE_LOG_IN"));
         this.changeLogOutBrowseBtn.setToolTipText(GuiResources.getTooltipText("SELECT_CHANGE_LOG_OUT"));
         ObfuscateOptionsWindowListener obfuscateOptionsWindowListener = new ObfuscateOptionsWindowListener(this);

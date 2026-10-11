@@ -48,25 +48,15 @@ public class TrimReportViewTask implements Runnable {
     public void run() {
         try {
             PrintWriter printWriter = null;
-            ZkmMainWindow zkmMainWindow = null;
-            Label_0093:
-            {
-                Label_0089:
-                {
-                    try {
-                        printWriter = new PrintWriter(new FileWriter("ZKM_TrimLog.txt"));
-                    } catch (final IOException ex) {
-                        if (this.statusCallback != null) {
-                            this.statusCallback.setStatus(null);
-                        }
-                        this.messageReporter.reportError("ERROR:", "Couldn't open ZKM_TrimLog.txt : " + ex.getClass().getName());
-                        break Label_0089;
-                    }
-                    zkmMainWindow = this.mainWindow;
-                    break Label_0093;
+            try {
+                printWriter = new PrintWriter(new FileWriter("ZKM_TrimLog.txt"));
+            } catch (IOException exception) {
+                if (this.statusCallback != null) {
+                    this.statusCallback.setStatus(null);
                 }
-                zkmMainWindow = this.mainWindow;
+                this.messageReporter.reportError("ERROR:", "Couldn't open ZKM_TrimLog.txt : " + exception.getClass().getName());
             }
+            ZkmMainWindow zkmMainWindow = this.mainWindow;
             ZkmMainWindow.accessClassRepository(zkmMainWindow).trim(this.trimOptions, this.trimExcludeStatements, null, null, null, printWriter, this.messageReporter, this.dialogCallback, this.statusCallback, this.scriptEnvironment);
             ZkmMainWindow.getSelectedItemHolder(this.mainWindow).setChangedAndNotify();
             final ProgramClass programClass = (ProgramClass) ZkmMainWindow.getSelectedClassHolder(this.mainWindow).getSelectedNode();
@@ -86,24 +76,24 @@ public class TrimReportViewTask implements Runnable {
                 }
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex2) {
+                } catch (final IOException ioException) {
                 }
-            } catch (final FileNotFoundException ex3) {
-            } catch (final IOException ex4) {
-                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this.mainWindow, "Error", "Error reading ZKM_TrimLog.txt : " + ex4.getClass().getName());
+            } catch (final FileNotFoundException fileNotFoundException) {
+            } catch (final IOException ioExceptionValue) {
+                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this.mainWindow, "Error", "Error reading ZKM_TrimLog.txt : " + ioExceptionValue.getClass().getName());
             } finally {
                 if (bufferedReader != null) {
                     try {
                         bufferedReader.close();
-                    } catch (final IOException ex5) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }
             if (this.statusCallback != null) {
                 this.statusCallback.onDialogCancelled();
             }
-        } catch (final Throwable t) {
-            throw ZkmUtils.<RuntimeException>sneakyThrow(t);
+        } catch (final Throwable throwable) {
+            throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
     }
 }

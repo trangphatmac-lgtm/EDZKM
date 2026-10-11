@@ -24,7 +24,7 @@ public class ProGuardMappingASTFieldNameChange extends ProGuardNameChangeNode im
     }
 
     @Override
-    public void applyMemberChange(String string, ProGuardMappingTranslator proGuardMappingTranslator) {
-        proGuardMappingTranslator.addFieldMapping(string, this.fieldType, super.oldName, super.newName);
+    public void applyMemberChange(String key, ProGuardMappingTranslator proGuardMappingTranslator) {
+        proGuardMappingTranslator.addFieldMapping(key, this.fieldType, super.oldName, super.newName);
     }
 }

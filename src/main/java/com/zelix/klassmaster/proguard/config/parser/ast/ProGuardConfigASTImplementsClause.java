@@ -18,8 +18,8 @@ public class ProGuardConfigASTImplementsClause extends ProGuardConfigSimpleNode 
     }
 
     @Override
-    public void setAnnotationName(String string) {
-        this.annotationName = string;
+    public void setAnnotationName(String annotationNameArgument) {
+        this.annotationName = annotationNameArgument;
     }
 
     public ProGuardConfigASTImplementsClause() {
@@ -30,8 +30,8 @@ public class ProGuardConfigASTImplementsClause extends ProGuardConfigSimpleNode 
     public final void translate(Object object1, Object object) throws ZkmException, IOException {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < this.jjtGetNumChildren(); childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
 
         ASTLbraceClause aSTLbraceClause = (ASTLbraceClause) this.jjtGetParent();

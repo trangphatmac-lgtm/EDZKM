@@ -14,15 +14,15 @@ public abstract class ParameterListStatementBase extends SummarizingStatementNod
     public abstract void printStartMessage(Object object);
 
     public void processParameters(int ba, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptNode zkmScriptNode = this.jjtGetChild(childrenElementIndex);
             this.parameters.add(zkmScriptNode);
             zkmScriptNode.execute(this, scriptEnvironment1);
         }
     }
 
-    public ParameterListStatementBase(int ba) {
-        super(ba);
+    public ParameterListStatementBase(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     @Override

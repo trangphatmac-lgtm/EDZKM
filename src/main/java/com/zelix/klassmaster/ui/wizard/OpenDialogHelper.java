@@ -98,9 +98,9 @@ public class OpenDialogHelper implements HelperDialogMarker {
             this.classesChanged = true;
         }
 
-        String string = (String) observableHolder.getValue();
-        if (string != null) {
-            this.userPreferences.setOpenClassesDirectory(string);
+        String value = (String) observableHolder.getValue();
+        if (value != null) {
+            this.userPreferences.setOpenClassesDirectory(value);
         }
 
         if (ba == 1) {

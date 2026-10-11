@@ -136,9 +136,9 @@ public class ASTObfuscateStatement extends ObfuscateStatementBase {
         obfuscateOptions1.o = 1;
         List list1 = super.parameterValues.getValues("obfuscateFlow");
         if (list1 != null && list1.size() > 0) {
-            String string = (String) list1.get(0);
-            if (string != null) {
-                obfuscateOptions1.o = ObfuscateOptions.parseFlowLevel(string);
+            String key = (String) list1.get(0);
+            if (key != null) {
+                obfuscateOptions1.o = ObfuscateOptions.parseFlowLevel(key);
             }
         }
     }
@@ -446,19 +446,19 @@ public class ASTObfuscateStatement extends ObfuscateStatementBase {
         List list11 = scriptEnvironment1.getParamObfuscationIncludeStatements();
         List list12 = scriptEnvironment1.getParamObfuscationExcludeStatements();
         boolean bl;
-        String string11;
+        String referenceObfuscationPackage;
         if (obfuscateOptions1.m == 1) {
             bl = true;
-            string11 = obfuscateOptions1.ai;
+            referenceObfuscationPackage = obfuscateOptions1.ai;
         } else {
             bl = false;
-            string11 = obfuscateOptions1.ai;
+            referenceObfuscationPackage = obfuscateOptions1.ai;
         }
 
         classRepository1.obfuscate(
                 obfuscateOptions1.g,
                 obfuscateOptions1.e,
-                obfuscateOptions1.h,
+                obfuscateOptions1.changeLogWriter,
                 obfuscateOptions1.f,
                 obfuscateOptions1.v,
                 list1,
@@ -510,7 +510,7 @@ public class ASTObfuscateStatement extends ObfuscateStatementBase {
                 obfuscateOptions1.D,
                 obfuscateOptions1.aj,
                 bl,
-                string11,
+                referenceObfuscationPackage,
                 obfuscateOptions1.j,
                 obfuscateOptions1.XN,
                 obfuscateOptions1.ar,
@@ -720,7 +720,7 @@ public class ASTObfuscateStatement extends ObfuscateStatementBase {
         }
 
         if (!obfuscateOptions1.A) {
-            int ba;
+            int referenceObfuscationMode;
             if (obfuscateOptions1.r == 1) {
                 obfuscateOptions1.r = 0;
                 scriptEnvironment1.logError(
@@ -734,12 +734,12 @@ public class ASTObfuscateStatement extends ObfuscateStatementBase {
                                 + "none"
                                 + "\"."
                 );
-                ba = obfuscateOptions1.aj;
+                referenceObfuscationMode = obfuscateOptions1.aj;
             } else {
-                ba = obfuscateOptions1.aj;
+                referenceObfuscationMode = obfuscateOptions1.aj;
             }
 
-            if (ba == 1) {
+            if (referenceObfuscationMode == 1) {
                 obfuscateOptions1.aj = 0;
                 scriptEnvironment1.logError(
                         "\"obfuscateReferences\" is set to \"normal\" while \"allClassesOpened\" is set to \"false\" in \""
@@ -870,15 +870,15 @@ public class ASTObfuscateStatement extends ObfuscateStatementBase {
     }
 
     public void readMixedCaseClassNamesOption(ObfuscateOptions obfuscateOptions1) {
-        obfuscateOptions1.F = MixedCaseNamesMode.d;
+        obfuscateOptions1.F = MixedCaseNamesMode.IF_IN_ARCHIVE;
         List list1 = super.parameterValues.getValues("mixedCaseClassNames");
         if (list1 != null && list1.size() > 0) {
             String string = (String) list1.get(0);
             if (string != null) {
                 if (string.equals("true")) {
-                    obfuscateOptions1.F = MixedCaseNamesMode.e;
+                    obfuscateOptions1.F = MixedCaseNamesMode.ALWAYS;
                 } else if (string.equals("false")) {
-                    obfuscateOptions1.F = MixedCaseNamesMode.a;
+                    obfuscateOptions1.F = MixedCaseNamesMode.NEVER;
                 }
             }
         }
@@ -980,9 +980,9 @@ public class ASTObfuscateStatement extends ObfuscateStatementBase {
         obfuscateOptions1.C = 1;
         List list1 = super.parameterValues.getValues("exceptionObfuscation");
         if (list1 != null && list1.size() > 0) {
-            String string = (String) list1.get(0);
-            if (string != null) {
-                obfuscateOptions1.C = ObfuscateOptions.parseExceptionLevel(string);
+            String key = (String) list1.get(0);
+            if (key != null) {
+                obfuscateOptions1.C = ObfuscateOptions.parseExceptionLevel(key);
             }
         }
     }
@@ -1038,14 +1038,14 @@ public class ASTObfuscateStatement extends ObfuscateStatementBase {
             if (string != null) {
                 obfuscateOptions1.s = true;
                 ObservableHolder observableHolder = new ObservableHolder();
-                String string1 = RootPackageNode.normalizePackageName(string, observableHolder);
+                String defaultCollapsedPackage = RootPackageNode.normalizePackageName(string, observableHolder);
                 if (!observableHolder.isValueNull()) {
                     scriptEnvironment1.logFatalError(
                             "Invalid 'collapsePackagesWithDefault' value '" + string + "' : \"" + (String) observableHolder.getValue() + "\""
                     );
-                    obfuscateOptions1.t = string1;
+                    obfuscateOptions1.t = defaultCollapsedPackage;
                 } else {
-                    obfuscateOptions1.t = string1;
+                    obfuscateOptions1.t = defaultCollapsedPackage;
                 }
             } else {
                 obfuscateOptions1.s = false;

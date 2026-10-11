@@ -278,7 +278,7 @@ public class LongConstantEncryptor {
         ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddMethodRef(
                 "java/lang/Thread", "currentThread", "()Ljava/lang/Thread;", list1, classMemberLookup1, classResolver1
         );
-        byte bb;
+        byte instancesByOpcodeElementIndex;
         if (this.targetClass.supportsJava5()) {
             arrayList.add(new ConstantRefInstruction(184, resolvedMethodRefConstant));
             if (this.targetClass.supportsJava19()) {
@@ -298,7 +298,7 @@ public class LongConstantEncryptor {
             );
             arrayList.add(new ConstantRefInstruction(184, resolvedMethodRefConstant15));
             arrayList1 = arrayList;
-            bb = 8;
+            instancesByOpcodeElementIndex = 8;
         } else {
             ResolvedClassConstant resolvedClassConstant6 = constantPool1.getOrCreateClassConstant("java/lang/Long", list1);
             arrayList.add(new TypeInstruction(resolvedClassConstant6));
@@ -314,10 +314,10 @@ public class LongConstantEncryptor {
             );
             arrayList.add(new ConstantRefInstruction(183, resolvedMethodRefConstant3));
             arrayList1 = arrayList;
-            bb = 8;
+            instancesByOpcodeElementIndex = 8;
         }
 
-        arrayList1.add(Instruction.createObjectStore(bb, localVariableList1, 12));
+        arrayList1.add(Instruction.createObjectStore(instancesByOpcodeElementIndex, localVariableList1, 12));
         arrayList.add(new ConstantRefInstruction(178, this.cipherCacheField));
         arrayList.add(Instruction.createObjectLoad(8, localVariableList1, 12));
         ResolvedInterfaceMethodRef resolvedInterfaceMethodRef1 = constantPool1.getOrAddInterfaceMethodRef(
@@ -511,7 +511,7 @@ public class LongConstantEncryptor {
             );
             arrayList.add(new ConstantRefInstruction(184, resolvedMethodRefConstant12));
             arrayList1 = arrayList;
-            bb = 83;
+            instancesByOpcodeElementIndex = 83;
         } else {
             ResolvedClassConstant resolvedClassConstant9 = constantPool1.getOrCreateClassConstant("java/lang/Long", list1);
             arrayList.add(new TypeInstruction(resolvedClassConstant9));
@@ -522,10 +522,10 @@ public class LongConstantEncryptor {
             );
             arrayList.add(new ConstantRefInstruction(183, resolvedMethodRefConstant13));
             arrayList1 = arrayList;
-            bb = 83;
+            instancesByOpcodeElementIndex = 83;
         }
 
-        arrayList1.add(SimpleInstruction.forOpcode(bb));
+        arrayList1.add(SimpleInstruction.forOpcode(instancesByOpcodeElementIndex));
         arrayList.add(labelInstruction2);
         arrayList.add(new ConstantRefInstruction(178, this.longCacheField));
         arrayList.add(Instruction.createIntLoad(3, localVariableList1, 12));
@@ -560,8 +560,8 @@ public class LongConstantEncryptor {
             LabelInstruction labelInstruction2 = (LabelInstruction) ((RankedValue) list3.get(0)).getValue();
             LabelInstruction[] labelInstructions = new LabelInstruction[list3.size() - 1];
 
-            for (int i = 1; i < list3.size(); i++) {
-                labelInstructions[i - 1] = (LabelInstruction) ((RankedValue) list3.get(i)).getValue();
+            for (int elementIndex = 1; elementIndex < list3.size(); elementIndex++) {
+                labelInstructions[elementIndex - 1] = (LabelInstruction) ((RankedValue) list3.get(elementIndex)).getValue();
             }
 
             arrayList.add(SimpleInstruction.forOpcode(91));
@@ -635,66 +635,49 @@ public class LongConstantEncryptor {
                 }
                 break;
             case 3:
-                label36:
                 {
                     long encryptionKey = obfuscatedReferenceSlot.getEncryptionKey();
                     ConstantPool constantPool3 = this.targetClass.getClassConstantPool();
                     int index = obfuscatedReferenceSlot.getIndex();
-                    int bn;
-                    long bo;
-                    long bp;
-                    if (long1 != null) {
-                        if (localVariableIndex1 != null) {
-                            int bj = index ^ (int) (encryptionKey & 32767L);
-                            Instruction.appendIntConstant(bj, list1, constantPool3, list2);
-                            list1.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), localVariableList1, 12));
-                            long bm = long1 ^ encryptionKey;
-                            list1.add(Instruction.createLongConstantLoad(bm, constantPool3, list2));
-                            list1.add(SimpleInstruction.forOpcode(131));
-                            break label36;
-                        }
-
-                        bn = index;
-                        bo = encryptionKey;
-                        bp = 32767L;
+                    int encryptedIndex = index ^ (int) (encryptionKey & 32767L);
+                    Instruction.appendIntConstant(encryptedIndex, list1, constantPool3, list2);
+                    if (long1 != null && localVariableIndex1 != null) {
+                        list1.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), localVariableList1, 12));
+                        long keyDifference = long1 ^ encryptionKey;
+                        list1.add(Instruction.createLongConstantLoad(keyDifference, constantPool3, list2));
+                        list1.add(SimpleInstruction.forOpcode(131));
                     } else {
-                        bn = index;
-                        bo = encryptionKey;
-                        bp = 32767L;
+                        Instruction.appendLongConstant(encryptionKey, list1, constantPool3, list2);
                     }
-
-                    int bk = bn ^ (int) (bo & bp);
-                    Instruction.appendIntConstant(bk, list1, constantPool3, list2);
-                    Instruction.appendLongConstant(encryptionKey, list1, constantPool3, list2);
                 }
 
                 list1.add(new ConstantRefInstruction(184, this.simpleLookupMethod));
                 break;
             case 4:
-                long be = obfuscatedReferenceSlot.getEncryptionKey();
+                long encryptionKeyValue = obfuscatedReferenceSlot.getEncryptionKey();
                 ConstantPool constantPool2 = this.targetClass.getClassConstantPool();
-                int bg = obfuscatedReferenceSlot.getIndex();
+                int indexValue = obfuscatedReferenceSlot.getIndex();
                 if (long1 != null && localVariableIndex1 != null) {
-                    int bi = bg ^ (int) (be & 32767L);
-                    Instruction.appendIntConstant(bi, list1, constantPool2, list2);
+                    int value = indexValue ^ (int) (encryptionKeyValue & 32767L);
+                    Instruction.appendIntConstant(value, list1, constantPool2, list2);
                     list1.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), localVariableList1, 12));
-                    long bl = long1 ^ be;
-                    list1.add(Instruction.createLongConstantLoad(bl, constantPool2, list2));
+                    long valueValue2 = long1 ^ encryptionKeyValue;
+                    list1.add(Instruction.createLongConstantLoad(valueValue2, constantPool2, list2));
                     list1.add(SimpleInstruction.forOpcode(131));
                 }
 
                 list1.add(new ConstantRefInstruction(184, obfuscatedReferenceSlot.getLookupMethod()));
                 break;
             case 5:
-                long ba = obfuscatedReferenceSlot.getEncryptionKey();
+                long encryptionKeyValue2 = obfuscatedReferenceSlot.getEncryptionKey();
                 ConstantPool constantPool1 = this.targetClass.getClassConstantPool();
-                int bb = obfuscatedReferenceSlot.getIndex();
+                int indexValue2 = obfuscatedReferenceSlot.getIndex();
                 if (long1 != null && localVariableIndex1 != null) {
-                    int bc = bb ^ (int) (ba & 32767L);
-                    Instruction.appendIntConstant(bc, list1, constantPool1, list2);
+                    int valueValue = indexValue2 ^ (int) (encryptionKeyValue2 & 32767L);
+                    Instruction.appendIntConstant(valueValue, list1, constantPool1, list2);
                     list1.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), localVariableList1, 12));
-                    long bd = long1 ^ ba;
-                    list1.add(Instruction.createLongConstantLoad(bd, constantPool1, list2));
+                    long valueValue3 = long1 ^ encryptionKeyValue2;
+                    list1.add(Instruction.createLongConstantLoad(valueValue3, constantPool1, list2));
                     list1.add(SimpleInstruction.forOpcode(131));
                 }
 
@@ -715,7 +698,7 @@ public class LongConstantEncryptor {
     ) throws ZkmException, IOException {
         int andIncrement = localVariableAllocator.getAndIncrement();
         localVariableAllocator.incrementAndGet();
-        int bc = localVariableAllocator.getAndIncrement();
+        int andIncrementValue = localVariableAllocator.getAndIncrement();
         ConstantPool constantPool1 = this.targetClass.getClassConstantPool();
         list1.add(Instruction.createLongStore(andIncrement, localVariableList1, 12));
         Instruction.appendIntConstant(8, list1, constantPool1, list2);
@@ -788,8 +771,8 @@ public class LongConstantEncryptor {
                 "javax/crypto/Cipher", "doFinal", "([B)[B", list2, classMemberLookup1, classResolver1
         );
         list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant));
-        list1.add(Instruction.createObjectStore(bc, localVariableList1, 12));
-        list1.add(Instruction.createObjectLoad(bc, localVariableList1, 12));
+        list1.add(Instruction.createObjectStore(andIncrementValue, localVariableList1, 12));
+        list1.add(Instruction.createObjectLoad(andIncrementValue, localVariableList1, 12));
         list1.add(SimpleInstruction.forOpcode(3));
         list1.add(SimpleInstruction.forOpcode(51));
         list1.add(SimpleInstruction.forOpcode(133));
@@ -797,7 +780,7 @@ public class LongConstantEncryptor {
         list1.add(SimpleInstruction.forOpcode(127));
         Instruction.appendIntConstant(56, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(121));
-        list1.add(Instruction.createObjectLoad(bc, localVariableList1, 12));
+        list1.add(Instruction.createObjectLoad(andIncrementValue, localVariableList1, 12));
         list1.add(SimpleInstruction.forOpcode(4));
         list1.add(SimpleInstruction.forOpcode(51));
         list1.add(SimpleInstruction.forOpcode(133));
@@ -806,7 +789,7 @@ public class LongConstantEncryptor {
         Instruction.appendIntConstant(48, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(121));
         list1.add(SimpleInstruction.forOpcode(129));
-        list1.add(Instruction.createObjectLoad(bc, localVariableList1, 12));
+        list1.add(Instruction.createObjectLoad(andIncrementValue, localVariableList1, 12));
         list1.add(SimpleInstruction.forOpcode(5));
         list1.add(SimpleInstruction.forOpcode(51));
         list1.add(SimpleInstruction.forOpcode(133));
@@ -815,7 +798,7 @@ public class LongConstantEncryptor {
         Instruction.appendIntConstant(40, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(121));
         list1.add(SimpleInstruction.forOpcode(129));
-        list1.add(Instruction.createObjectLoad(bc, localVariableList1, 12));
+        list1.add(Instruction.createObjectLoad(andIncrementValue, localVariableList1, 12));
         list1.add(SimpleInstruction.forOpcode(6));
         list1.add(SimpleInstruction.forOpcode(51));
         list1.add(SimpleInstruction.forOpcode(133));
@@ -824,7 +807,7 @@ public class LongConstantEncryptor {
         Instruction.appendIntConstant(32, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(121));
         list1.add(SimpleInstruction.forOpcode(129));
-        list1.add(Instruction.createObjectLoad(bc, localVariableList1, 12));
+        list1.add(Instruction.createObjectLoad(andIncrementValue, localVariableList1, 12));
         list1.add(SimpleInstruction.forOpcode(7));
         list1.add(SimpleInstruction.forOpcode(51));
         list1.add(SimpleInstruction.forOpcode(133));
@@ -833,7 +816,7 @@ public class LongConstantEncryptor {
         Instruction.appendIntConstant(24, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(121));
         list1.add(SimpleInstruction.forOpcode(129));
-        list1.add(Instruction.createObjectLoad(bc, localVariableList1, 12));
+        list1.add(Instruction.createObjectLoad(andIncrementValue, localVariableList1, 12));
         list1.add(SimpleInstruction.forOpcode(8));
         list1.add(SimpleInstruction.forOpcode(51));
         list1.add(SimpleInstruction.forOpcode(133));
@@ -842,7 +825,7 @@ public class LongConstantEncryptor {
         Instruction.appendIntConstant(16, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(121));
         list1.add(SimpleInstruction.forOpcode(129));
-        list1.add(Instruction.createObjectLoad(bc, localVariableList1, 12));
+        list1.add(Instruction.createObjectLoad(andIncrementValue, localVariableList1, 12));
         Instruction.appendIntConstant(6, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(51));
         list1.add(SimpleInstruction.forOpcode(133));
@@ -851,7 +834,7 @@ public class LongConstantEncryptor {
         Instruction.appendIntConstant(8, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(121));
         list1.add(SimpleInstruction.forOpcode(129));
-        list1.add(Instruction.createObjectLoad(bc, localVariableList1, 12));
+        list1.add(Instruction.createObjectLoad(andIncrementValue, localVariableList1, 12));
         Instruction.appendIntConstant(7, list1, constantPool1, list2);
         list1.add(SimpleInstruction.forOpcode(51));
         list1.add(SimpleInstruction.forOpcode(133));
@@ -968,12 +951,12 @@ public class LongConstantEncryptor {
             ListMultimap listMultimap
     ) {
         list1.add(new ConstantRefInstruction(20, constantLong));
-        int ba = mutableInt.incrementAndGet();
-        list1.add(Instruction.createIntPush(ba));
+        int rank = mutableInt.incrementAndGet();
+        list1.add(Instruction.createIntPush(rank));
         list1.add(new GotoInstruction(labelInstruction));
         LabelInstruction labelInstruction1 = new LabelInstruction(true, 1);
         list1.add(labelInstruction1);
-        listMultimap.addValue(labelInstruction, new RankedValue(ba, labelInstruction1));
+        listMultimap.addValue(labelInstruction, new RankedValue(rank, labelInstruction1));
         if (obfuscatedReferenceSlot.hasArrayField()) {
             list1.add(new ConstantRefInstruction(179, resolvedFieldRef));
         } else if (obfuscatedReferenceSlot.hasLocalVariable()) {
@@ -1000,20 +983,20 @@ public class LongConstantEncryptor {
             ClassMemberLookup classMemberLookup1,
             ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        int bb = observableHolders.length;
+        int lengthValue = observableHolders.length;
         List list3 = this.buildEncryptedStrings(observableHolders, setMultiMap, map1, set1, long1, bl, list2, this.targetClass.getClassConstantPool());
         ConstantPool constantPool1 = this.targetClass.getClassConstantPool();
         int andIncrement = localVariableAllocator.getAndIncrement();
-        int bd = localVariableAllocator.getAndIncrement();
-        int be = localVariableAllocator.getAndIncrement();
-        int bf = localVariableAllocator.getAndIncrement();
+        int andIncrementValue = localVariableAllocator.getAndIncrement();
+        int andIncrementValue2 = localVariableAllocator.getAndIncrement();
+        int andIncrementValue3 = localVariableAllocator.getAndIncrement();
         int bg = ba == -1 ? localVariableAllocator.getAndIncrement() : ba;
-        int bh = localVariableAllocator.getAndIncrement();
-        Instruction.appendIntConstant(bb, list1, constantPool1, list2);
+        int andIncrementValue4 = localVariableAllocator.getAndIncrement();
+        Instruction.appendIntConstant(lengthValue, list1, constantPool1, list2);
         list1.add(new NewArrayInstruction(11));
         list1.add(Instruction.createObjectStore(bg, localVariableList1, 12));
         list1.add(SimpleInstruction.forOpcode(3));
-        list1.add(Instruction.createIntStore(bd, localVariableList1, 12));
+        list1.add(Instruction.createIntStore(andIncrementValue, localVariableList1, 12));
         Iterator iterator = list3.iterator();
 
         while (iterator.hasNext()) {
@@ -1021,16 +1004,16 @@ public class LongConstantEncryptor {
             LabelInstruction labelInstruction1 = new LabelInstruction(true, 1);
             list1.add(new ConstantRefInstruction(19, resolvedStringConstant));
             list1.add(SimpleInstruction.forOpcode(89));
-            list1.add(Instruction.createObjectStore(be, localVariableList1, 12));
+            list1.add(Instruction.createObjectStore(andIncrementValue2, localVariableList1, 12));
             ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddMethodRef(
                     "java/lang/String", "length", "()I", list2, classMemberLookup1, classResolver1
             );
             list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant));
-            list1.add(Instruction.createIntStore(bf, localVariableList1, 12));
+            list1.add(Instruction.createIntStore(andIncrementValue3, localVariableList1, 12));
             list1.add(SimpleInstruction.forOpcode(3));
             list1.add(Instruction.createIntStore(andIncrement, localVariableList1, 12));
             list1.add(labelInstruction1);
-            list1.add(Instruction.createObjectLoad(be, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue2, localVariableList1, 12));
             list1.add(Instruction.createIntLoad(andIncrement, localVariableList1, 12));
             list1.add(Instruction.createIntIncrement(andIncrement, 8, localVariableList1, 12));
             list1.add(Instruction.createIntLoad(andIncrement, localVariableList1, 12));
@@ -1044,11 +1027,11 @@ public class LongConstantEncryptor {
                     "java/lang/String", "getBytes", "(Ljava/lang/String;)[B", list2, classMemberLookup1, classResolver1
             );
             list1.add(new ConstantRefInstruction(182, resolvedMethodRefConstant2));
-            list1.add(Instruction.createObjectStore(bh, localVariableList1, 12));
+            list1.add(Instruction.createObjectStore(andIncrementValue4, localVariableList1, 12));
             list1.add(Instruction.createObjectLoad(bg, localVariableList1, 12));
-            list1.add(Instruction.createIntLoad(bd, localVariableList1, 12));
-            list1.add(Instruction.createIntIncrement(bd, 1, localVariableList1, 12));
-            list1.add(Instruction.createObjectLoad(bh, localVariableList1, 12));
+            list1.add(Instruction.createIntLoad(andIncrementValue, localVariableList1, 12));
+            list1.add(Instruction.createIntIncrement(andIncrementValue, 1, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue4, localVariableList1, 12));
             list1.add(SimpleInstruction.forOpcode(3));
             list1.add(SimpleInstruction.forOpcode(51));
             list1.add(SimpleInstruction.forOpcode(133));
@@ -1056,7 +1039,7 @@ public class LongConstantEncryptor {
             list1.add(SimpleInstruction.forOpcode(127));
             list1.add(Instruction.createIntPush(56));
             list1.add(SimpleInstruction.forOpcode(121));
-            list1.add(Instruction.createObjectLoad(bh, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue4, localVariableList1, 12));
             list1.add(SimpleInstruction.forOpcode(4));
             list1.add(SimpleInstruction.forOpcode(51));
             list1.add(SimpleInstruction.forOpcode(133));
@@ -1065,7 +1048,7 @@ public class LongConstantEncryptor {
             list1.add(Instruction.createIntPush(48));
             list1.add(SimpleInstruction.forOpcode(121));
             list1.add(SimpleInstruction.forOpcode(129));
-            list1.add(Instruction.createObjectLoad(bh, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue4, localVariableList1, 12));
             list1.add(SimpleInstruction.forOpcode(5));
             list1.add(SimpleInstruction.forOpcode(51));
             list1.add(SimpleInstruction.forOpcode(133));
@@ -1074,7 +1057,7 @@ public class LongConstantEncryptor {
             list1.add(Instruction.createIntPush(40));
             list1.add(SimpleInstruction.forOpcode(121));
             list1.add(SimpleInstruction.forOpcode(129));
-            list1.add(Instruction.createObjectLoad(bh, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue4, localVariableList1, 12));
             list1.add(SimpleInstruction.forOpcode(6));
             list1.add(SimpleInstruction.forOpcode(51));
             list1.add(SimpleInstruction.forOpcode(133));
@@ -1083,7 +1066,7 @@ public class LongConstantEncryptor {
             list1.add(Instruction.createIntPush(32));
             list1.add(SimpleInstruction.forOpcode(121));
             list1.add(SimpleInstruction.forOpcode(129));
-            list1.add(Instruction.createObjectLoad(bh, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue4, localVariableList1, 12));
             list1.add(SimpleInstruction.forOpcode(7));
             list1.add(SimpleInstruction.forOpcode(51));
             list1.add(SimpleInstruction.forOpcode(133));
@@ -1092,7 +1075,7 @@ public class LongConstantEncryptor {
             list1.add(Instruction.createIntPush(24));
             list1.add(SimpleInstruction.forOpcode(121));
             list1.add(SimpleInstruction.forOpcode(129));
-            list1.add(Instruction.createObjectLoad(bh, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue4, localVariableList1, 12));
             list1.add(SimpleInstruction.forOpcode(8));
             list1.add(SimpleInstruction.forOpcode(51));
             list1.add(SimpleInstruction.forOpcode(133));
@@ -1101,7 +1084,7 @@ public class LongConstantEncryptor {
             list1.add(Instruction.createIntPush(16));
             list1.add(SimpleInstruction.forOpcode(121));
             list1.add(SimpleInstruction.forOpcode(129));
-            list1.add(Instruction.createObjectLoad(bh, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue4, localVariableList1, 12));
             list1.add(Instruction.createIntPush(6));
             list1.add(SimpleInstruction.forOpcode(51));
             list1.add(SimpleInstruction.forOpcode(133));
@@ -1110,29 +1093,29 @@ public class LongConstantEncryptor {
             list1.add(Instruction.createIntPush(8));
             list1.add(SimpleInstruction.forOpcode(121));
             list1.add(SimpleInstruction.forOpcode(129));
-            list1.add(Instruction.createObjectLoad(bh, localVariableList1, 12));
+            list1.add(Instruction.createObjectLoad(andIncrementValue4, localVariableList1, 12));
             list1.add(Instruction.createIntPush(7));
             list1.add(SimpleInstruction.forOpcode(51));
             list1.add(SimpleInstruction.forOpcode(133));
             Instruction.appendLongConstant(255L, list1, constantPool1, list2);
             list1.add(SimpleInstruction.forOpcode(127));
             list1.add(SimpleInstruction.forOpcode(129));
-            int bi = mutableInt.incrementAndGet();
-            list1.add(Instruction.createIntPush(bi));
+            int rank = mutableInt.incrementAndGet();
+            list1.add(Instruction.createIntPush(rank));
             list1.add(new GotoInstruction(labelInstruction));
             LabelInstruction labelInstruction2 = new LabelInstruction(true, 1);
             list1.add(labelInstruction2);
-            listMultimap.addValue(labelInstruction, new RankedValue(bi, labelInstruction2));
+            listMultimap.addValue(labelInstruction, new RankedValue(rank, labelInstruction2));
             list1.add(SimpleInstruction.forOpcode(80));
             list1.add(Instruction.createIntLoad(andIncrement, localVariableList1, 12));
-            list1.add(Instruction.createIntLoad(bf, localVariableList1, 12));
+            list1.add(Instruction.createIntLoad(andIncrementValue3, localVariableList1, 12));
             list1.add(new BranchInstruction(161, labelInstruction1));
         }
 
         if (resolvedFieldRef != null) {
             list1.add(Instruction.createObjectLoad(bg, localVariableList1, 12));
             list1.add(new ConstantRefInstruction(179, resolvedFieldRef));
-            Instruction.appendIntConstant(bb, list1, constantPool1, list2);
+            Instruction.appendIntConstant(lengthValue, list1, constantPool1, list2);
             ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant("java/lang/Long", list2);
             list1.add(new ConstantRefInstruction(189, resolvedClassConstant));
             list1.add(new ConstantRefInstruction(179, this.longCacheField));
@@ -1280,15 +1263,15 @@ public class LongConstantEncryptor {
             ObservableHolder[] observableHolders, SetMultiMap setMultiMap, Map map1, Set set1, Long long1, boolean bl, List list1, ConstantPool constantPool1
     ) throws ZkmProcessingException {
         ArrayList arrayList = new ArrayList();
-        int ba = observableHolders.length;
-        int bb = 0;
+        int lengthValue = observableHolders.length;
+        int observableHolderIndex = 0;
 
-        while (bb < ba) {
-            StringBuilder stringBuilder = new StringBuilder(ba * 4);
+        while (observableHolderIndex < lengthValue) {
+            StringBuilder stringBuilder = new StringBuilder(lengthValue * 4);
             int bc = 0;
 
-            while (bb < ba) {
-                ObservableHolder observableHolder = observableHolders[bb];
+            while (observableHolderIndex < lengthValue) {
+                ObservableHolder observableHolder = observableHolders[observableHolderIndex];
                 ObfuscatedReferenceSlot obfuscatedReferenceSlot = (ObfuscatedReferenceSlot) map1.get(observableHolder);
                 Iterator iterator = setMultiMap.getValues(observableHolder).iterator();
 
@@ -1298,69 +1281,56 @@ public class LongConstantEncryptor {
                 }
 
                 LongEncryptionStorageKind longEncryptionStorageKind = obfuscatedReferenceSlot.getStorageKind();
-                long bh = (Long) observableHolder.getValue();
-                short bd = 0;
+                long value = (Long) observableHolder.getValue();
+                short indexValue = 0;
                 if (longEncryptionStorageKind.equals(LongEncryptionStorageKind.LOOKUP_METHOD_AND_INDEX)) {
-                    long be = (Long) this.randomLongs.next();
-                    obfuscatedReferenceSlot.setEncryptionKey(be);
-                    bd = (short) (bb ^ this.indexXorKey);
-                    bh ^= be;
-                } else {
-                    label76:
-                    {
-                        Iterator iterator1;
-                        if (!longEncryptionStorageKind.equals(LongEncryptionStorageKind.LOOKUP_METHOD_AND_INDEX_DES)) {
-                            if (!longEncryptionStorageKind.equals(LongEncryptionStorageKind.INDY_ENTRY_AND_INDEX)) {
-                                break label76;
-                            }
-
-                            iterator1 = this.randomLongs;
-                        } else {
-                            iterator1 = this.randomLongs;
-                        }
-
-                        long bi = (Long) iterator1.next();
-                        obfuscatedReferenceSlot.setEncryptionKey(bi);
-                        bd = (short) (bb ^ this.indexXorKey);
-                        bh = this.desEncrypt(bh, bi);
-                    }
+                    long encryptionKeyValue = (Long) this.randomLongs.next();
+                    obfuscatedReferenceSlot.setEncryptionKey(encryptionKeyValue);
+                    indexValue = (short) (observableHolderIndex ^ this.indexXorKey);
+                    value ^= encryptionKeyValue;
+                } else if (longEncryptionStorageKind.equals(LongEncryptionStorageKind.LOOKUP_METHOD_AND_INDEX_DES)
+                        || longEncryptionStorageKind.equals(LongEncryptionStorageKind.INDY_ENTRY_AND_INDEX)) {
+                    long encryptionKeyValue2 = (Long) this.randomLongs.next();
+                    obfuscatedReferenceSlot.setEncryptionKey(encryptionKeyValue2);
+                    indexValue = (short) (observableHolderIndex ^ this.indexXorKey);
+                    value = this.desEncrypt(value, encryptionKeyValue2);
                 }
 
                 long bj;
                 if (long1 != null) {
                     if (bl) {
-                        bj = this.desEncrypt(bh, long1);
+                        bj = this.desEncrypt(value, long1);
                     } else {
-                        bj = bh ^ long1;
+                        bj = value ^ long1;
                     }
                 } else {
-                    bj = bh ^ this.classXorKey;
+                    bj = value ^ this.classXorKey;
                 }
 
-                byte[] bf = ByteConversionUtils.longToBytes(bj);
+                byte[] byteArray = ByteConversionUtils.longToBytes(bj);
 
                 String string;
                 try {
-                    string = new String(bf, "ISO-8859-1");
+                    string = new String(byteArray, "ISO-8859-1");
                 } catch (UnsupportedEncodingException unsupportedEncodingException) {
                     throw new ZkmProcessingException(unsupportedEncodingException.getMessage(), unsupportedEncodingException);
                 }
 
-                int bg = ZkmUtils.getModifiedUtf8Length(string);
-                if (bc > 0 && bc + bg > 32768) {
+                int modifiedUtf8Length = ZkmUtils.getModifiedUtf8Length(string);
+                if (bc > 0 && bc + modifiedUtf8Length > 32768) {
                     break;
                 }
 
-                bc += bg;
-                bb++;
+                bc += modifiedUtf8Length;
+                observableHolderIndex++;
                 stringBuilder.append(string);
                 if (longEncryptionStorageKind.equals(LongEncryptionStorageKind.LOOKUP_METHOD_AND_INDEX)
                         || longEncryptionStorageKind.equals(LongEncryptionStorageKind.LOOKUP_METHOD_AND_INDEX_DES)
                         || longEncryptionStorageKind.equals(LongEncryptionStorageKind.INDY_ENTRY_AND_INDEX)) {
-                    obfuscatedReferenceSlot.setIndex(bd);
+                    obfuscatedReferenceSlot.setIndex(indexValue);
                 }
 
-                if (arrayList.size() == 0 && ba > 3 && bb == ba - 2) {
+                if (arrayList.size() == 0 && lengthValue > 3 && observableHolderIndex == lengthValue - 2) {
                     break;
                 }
             }
@@ -1642,8 +1612,8 @@ public class LongConstantEncryptor {
                                     12
                             );
                     ResolvedMethodRef resolvedMethodRef1 = this.targetClass.addMethodRef(methodInfo3, list1);
-                    String string = String.valueOf((char) (97 + this.random.nextInt(26)));
-                    this.lookupInvokeDynamic = this.targetClass.createInvokeDynamic(string, "(IJ)J", resolvedMethodRef1, list1, constantPool1);
+                    String value = String.valueOf((char) (97 + this.random.nextInt(26)));
+                    this.lookupInvokeDynamic = this.targetClass.createInvokeDynamic(value, "(IJ)J", resolvedMethodRef1, list1, constantPool1);
                 }
             }
         } else if (resolvedFieldRef != null) {
@@ -1740,7 +1710,7 @@ public class LongConstantEncryptor {
         arrayList.add(new ConstantRefInstruction(178, this.longCacheField));
         arrayList.add(Instruction.createIntLoad(3, localVariableList1, 12));
         ArrayList arrayList1;
-        byte ba;
+        byte instancesByOpcodeElementIndex;
         if (this.targetClass.supportsJava5()) {
             arrayList.add(new ConstantRefInstruction(178, resolvedFieldRef));
             arrayList.add(Instruction.createIntLoad(3, localVariableList1, 12));
@@ -1752,7 +1722,7 @@ public class LongConstantEncryptor {
             );
             arrayList.add(new ConstantRefInstruction(184, resolvedMethodRefConstant));
             arrayList1 = arrayList;
-            ba = 83;
+            instancesByOpcodeElementIndex = 83;
         } else {
             ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant("java/lang/Long", list1);
             arrayList.add(new TypeInstruction(resolvedClassConstant));
@@ -1767,10 +1737,10 @@ public class LongConstantEncryptor {
             );
             arrayList.add(new ConstantRefInstruction(183, resolvedMethodRefConstant1));
             arrayList1 = arrayList;
-            ba = 83;
+            instancesByOpcodeElementIndex = 83;
         }
 
-        arrayList1.add(SimpleInstruction.forOpcode(ba));
+        arrayList1.add(SimpleInstruction.forOpcode(instancesByOpcodeElementIndex));
         arrayList.add(labelInstruction);
         arrayList.add(new ConstantRefInstruction(178, this.longCacheField));
         arrayList.add(Instruction.createIntLoad(3, localVariableList1, 12));
@@ -1783,10 +1753,10 @@ public class LongConstantEncryptor {
     }
 
     public long desTransform(long ba, long bb) throws ZkmProcessingException {
-        byte[] bc = ByteConversionUtils.longToBytes(bb);
+        byte[] byteArray = ByteConversionUtils.longToBytes(bb);
 
         try {
-            DESKeySpec dESKeySpec = new DESKeySpec(bc);
+            DESKeySpec dESKeySpec = new DESKeySpec(byteArray);
             if (this.secretKeyFactory == null) {
                 this.secretKeyFactory = SecretKeyFactory.getInstance("DES");
             }
@@ -1798,8 +1768,8 @@ public class LongConstantEncryptor {
 
             SecretKey secretKey = this.secretKeyFactory.generateSecret(dESKeySpec);
             this.desCipher.init(1, secretKey, this.zeroIv);
-            byte[] bd = ByteConversionUtils.longToBytes(ba);
-            return ByteConversionUtils.bytesToLong(this.desCipher.doFinal(bd));
+            byte[] byteArrayValue = ByteConversionUtils.longToBytes(ba);
+            return ByteConversionUtils.bytesToLong(this.desCipher.doFinal(byteArrayValue));
         } catch (Exception exception) {
             throw new ZkmProcessingException(exception.toString(), exception);
         }

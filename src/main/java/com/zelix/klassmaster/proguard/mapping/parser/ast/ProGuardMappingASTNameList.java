@@ -25,12 +25,12 @@ public class ProGuardMappingASTNameList extends ProGuardMappingSimpleNode implem
         ProGuardMappingNode proGuardMappingNode = (ProGuardMappingNode) object;
         super.translate(proGuardMappingNode, proGuardMappingTranslator);
         ProGuardMappingNameHolder proGuardMappingNameHolder = (ProGuardMappingNameHolder) proGuardMappingNode;
-        int ba = this.nameParts.size();
+        int namePartsSize = this.nameParts.size();
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < ba; i++) {
-            stringBuilder.append((String) this.nameParts.get(i));
-            if (i < ba - 1) {
+        for (int elementIndex = 0; elementIndex < namePartsSize; elementIndex++) {
+            stringBuilder.append((String) this.nameParts.get(elementIndex));
+            if (elementIndex < namePartsSize - 1) {
                 stringBuilder.append('.');
             }
         }

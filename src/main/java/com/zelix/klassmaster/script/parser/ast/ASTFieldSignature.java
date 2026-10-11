@@ -22,8 +22,8 @@ public class ASTFieldSignature extends ZkmScriptSimpleNode implements TypeTextHo
         MemberSpecifierHandler memberSpecifierHandler = (MemberSpecifierHandler) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         if (this.fieldSpecifier != null) {
@@ -40,7 +40,7 @@ public class ASTFieldSignature extends ZkmScriptSimpleNode implements TypeTextHo
     }
 
     @Override
-    public void setTypeText(Object object) {
-        this.fieldType = (String) object;
+    public void setTypeText(Object typeText) {
+        this.fieldType = (String) typeText;
     }
 }

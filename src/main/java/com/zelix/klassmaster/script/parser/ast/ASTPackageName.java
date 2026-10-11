@@ -22,13 +22,13 @@ public class ASTPackageName extends ZkmScriptSimpleNode implements QualifiedName
         StringBuilder stringBuilder = new StringBuilder();
         StringBuilder stringBuilder1 = new StringBuilder();
 
-        for (int i = 0; i < ba; i++) {
-            String string = ((ScriptValueNode) this.jjtGetChild(i)).getValue();
-            this.nameComponents.add(string);
-            stringBuilder.append(string);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            String value = ((ScriptValueNode) this.jjtGetChild(childrenElementIndex)).getValue();
+            this.nameComponents.add(value);
+            stringBuilder.append(value);
             stringBuilder.append(".");
-            stringBuilder1.append(string);
-            if (i < ba - 1) {
+            stringBuilder1.append(value);
+            if (childrenElementIndex < ba - 1) {
                 stringBuilder1.append("/");
             }
         }

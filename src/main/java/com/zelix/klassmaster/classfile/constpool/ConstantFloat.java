@@ -16,8 +16,8 @@ public class ConstantFloat extends NumericConstantEntry {
         return usedConstantsCollector.markUsed(this, object, object1);
     }
 
-    public ConstantFloat(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantFloat(int index, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(index, abstractConstantPool);
         this.value = classFileInputStream.readFloat();
     }
 
@@ -27,15 +27,15 @@ public class ConstantFloat extends NumericConstantEntry {
     }
 
     @Override
-    public void setValueFromString(String string) throws ZkmException, IOException {
-        float ba;
+    public void setValueFromString(String valueFromString) throws ZkmException, IOException {
+        float valueValue;
         try {
-            ba = Float.valueOf(string);
+            valueValue = Float.valueOf(valueFromString);
         } catch (NumberFormatException numberFormatException) {
-            throw new InvalidEditException(string + " is not a valid float");
+            throw new InvalidEditException(valueFromString + " is not a valid float");
         }
 
-        this.value = ba;
+        this.value = valueValue;
         this.notifyObservers();
     }
 

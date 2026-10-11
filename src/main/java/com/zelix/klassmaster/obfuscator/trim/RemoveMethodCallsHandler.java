@@ -117,37 +117,20 @@ public class RemoveMethodCallsHandler extends ContainedInSpecList {
         super(classRepository1, list1, list2, scriptEnvironment1);
         this.callersByMethod = listMultimap;
         if (classRepository1.hasProgramClasses()) {
-            label35:
-            {
-                Set set1 = this.callersByMethod.keySet();
-                int ba = ZkmUtils.getPrimeCapacity(set1.size());
-                super.unmatchedMethods = ZkmUtils.createHashSet(ba);
-                super.matchedMethods = ZkmUtils.createHashSet(ba);
-                this.removalCallers = new SetMultiMap(ba);
-                HashSet hashSet;
-                if (list1 != null && list1.size() != 0) {
-                    hashSet = super.unmatchedMethods;
-                } else if (list2 != null) {
-                    if (list2.size() > 0) {
-                        super.matchedMethods.addAll(set1);
-                        Iterator iterator = set1.iterator();
-
-                        while (true) {
-                            if (!iterator.hasNext()) {
-                                break label35;
-                            }
-
-                            AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) iterator.next();
-                            this.removalCallers.addValue(abstractMethodInfo, (MethodBytecode) null);
-                        }
-                    }
-
-                    hashSet = super.unmatchedMethods;
-                } else {
-                    hashSet = super.unmatchedMethods;
+            Set set1 = this.callersByMethod.keySet();
+            int initialCapacity = ZkmUtils.getPrimeCapacity(set1.size());
+            super.unmatchedMethods = ZkmUtils.createHashSet(initialCapacity);
+            super.matchedMethods = ZkmUtils.createHashSet(initialCapacity);
+            this.removalCallers = new SetMultiMap(initialCapacity);
+            if ((list1 == null || list1.size() == 0) && list2 != null && list2.size() > 0) {
+                super.matchedMethods.addAll(set1);
+                Iterator iterator = set1.iterator();
+                while (iterator.hasNext()) {
+                    AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) iterator.next();
+                    this.removalCallers.addValue(abstractMethodInfo, (MethodBytecode) null);
                 }
-
-                hashSet.addAll(set1);
+            } else {
+                super.unmatchedMethods.addAll(set1);
             }
 
             this.applyStatements();
@@ -161,8 +144,8 @@ public class RemoveMethodCallsHandler extends ContainedInSpecList {
         HashSet hashSet = ZkmUtils.createHashSet();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(i);
+        for (int elementIndex = 0; elementIndex < ba; elementIndex++) {
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -176,31 +159,31 @@ public class RemoveMethodCallsHandler extends ContainedInSpecList {
         if (super.scriptEnvironment.isVerbose() && arrayList.size() > 0) {
             super.logWriter.println("\tremoveMethodCallsInclude parameters:");
 
-            for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t" + arrayList.get(i));
+            for (int elementIndexValue = arrayList.size() - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                super.logWriter.println("\t\t" + arrayList.get(elementIndexValue));
             }
         }
 
-        for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) arrayList.get(i);
+        for (int elementIndexValue2 = arrayList.size() - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) arrayList.get(elementIndexValue2);
             if (this.validateParameter(aSTRenameFilterParameter2, "removeMethodCallsInclude")) {
                 this.warnHigherLevelSpec(aSTRenameFilterParameter2, "removeMethodCallsInclude");
                 aSTRenameFilterParameter2.applyRemoveMethodCallsInclusion(this);
             }
         }
 
-        int be;
+        int unexclusionStatementsSize;
         if (super.unexclusionStatements == null) {
-            be = 0;
+            unexclusionStatementsSize = 0;
         } else {
-            be = super.unexclusionStatements.size();
+            unexclusionStatementsSize = super.unexclusionStatements.size();
         }
 
         HashMap hashMap = ZkmUtils.createHashMap();
         Vector vector = new Vector();
 
-        for (int i = 0; i < be; i++) {
-            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(i);
+        for (int elementIndexValue3 = 0; elementIndexValue3 < unexclusionStatementsSize; elementIndexValue3++) {
+            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(elementIndexValue3);
             Enumeration enumeration1 = parameterListStatement1.getRenameFilterParameters();
 
             while (enumeration1.hasMoreElements()) {
@@ -215,13 +198,13 @@ public class RemoveMethodCallsHandler extends ContainedInSpecList {
         if (super.scriptEnvironment.isVerbose() && vector.size() > 0) {
             super.logWriter.println("\tremoveMethodCallsExclude parameters:");
 
-            for (int i = vector.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t\"" + vector.elementAt(i) + "\"");
+            for (int elementIndexValue4 = vector.size() - 1; elementIndexValue4 >= 0; elementIndexValue4 += -1) {
+                super.logWriter.println("\t\t\"" + vector.elementAt(elementIndexValue4) + "\"");
             }
         }
 
-        for (int i = vector.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) vector.elementAt(i);
+        for (int elementIndexValue5 = vector.size() - 1; elementIndexValue5 >= 0; elementIndexValue5 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) vector.elementAt(elementIndexValue5);
             if (this.validateParameter(aSTRenameFilterParameter3, "removeMethodCallsExclude")) {
                 this.warnHigherLevelSpec(aSTRenameFilterParameter3, "removeMethodCallsExclude");
                 aSTRenameFilterParameter3.applyRemoveMethodCallsExclusion(this);

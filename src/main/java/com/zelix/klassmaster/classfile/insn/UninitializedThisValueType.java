@@ -6,7 +6,7 @@ public class UninitializedThisValueType extends VerifierType {
         return false;
     }
 
-    public UninitializedThisValueType(String string) {
-        super(string);
+    public UninitializedThisValueType(String descriptor) {
+        super(descriptor);
     }
 }

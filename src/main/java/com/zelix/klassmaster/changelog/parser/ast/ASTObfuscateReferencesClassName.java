@@ -15,7 +15,7 @@ public class ASTObfuscateReferencesClassName extends ChangeLogEntryNode implemen
     public void applyToChangeLog(Object object) throws ZkmException, IOException {
         AbstractChangeLog abstractChangeLog = (AbstractChangeLog) object;
         AbstractChangeLog abstractChangeLog1;
-        String string;
+        String classNameValue;
         if (this.moduleName != null) {
             if (this.moduleName.length() > 0) {
                 abstractChangeLog.addModuleReferenceObfuscationClass(this.className, this.moduleName);
@@ -23,13 +23,13 @@ public class ASTObfuscateReferencesClassName extends ChangeLogEntryNode implemen
             }
 
             abstractChangeLog1 = abstractChangeLog;
-            string = this.className;
+            classNameValue = this.className;
         } else {
             abstractChangeLog1 = abstractChangeLog;
-            string = this.className;
+            classNameValue = this.className;
         }
 
-        abstractChangeLog1.setReferenceObfuscationClass(string);
+        abstractChangeLog1.setReferenceObfuscationClass(classNameValue);
     }
 
     @Override

@@ -42,19 +42,19 @@ public abstract class AbstractExclusionSpec implements ClassHierarchyQuery {
         }
 
         stringBuilder.append(abstractFieldInfo.getModifierString());
-        String string = abstractFieldInfo.getOriginalDescriptor();
-        if (string.length() == 1) {
-            stringBuilder.append(ConstantPoolEntry.getPrimitiveTypeName(string));
+        String originalDescriptor = abstractFieldInfo.getOriginalDescriptor();
+        if (originalDescriptor.length() == 1) {
+            stringBuilder.append(ConstantPoolEntry.getPrimitiveTypeName(originalDescriptor));
         } else {
-            stringBuilder.append(ZkmUtils.descriptorToJavaName(string));
+            stringBuilder.append(ZkmUtils.descriptorToJavaName(originalDescriptor));
         }
 
         stringBuilder.append(" ");
         stringBuilder.append(abstractFieldInfo.getOriginalMemberName());
         if (abstractFieldInfo.isRenamed() || abstractFieldInfo.isDescriptorChanged()) {
             stringBuilder.append(" (");
-            String string1 = abstractFieldInfo.getTypeName();
-            stringBuilder.append(string1);
+            String typeName = abstractFieldInfo.getTypeName();
+            stringBuilder.append(typeName);
             stringBuilder.append(" ");
             stringBuilder.append(abstractFieldInfo.getSourceName());
             stringBuilder.append(')');
@@ -78,13 +78,13 @@ public abstract class AbstractExclusionSpec implements ClassHierarchyQuery {
         ClassRepository classRepository1 = this.classRepository;
         Boolean boolean1 = bl;
         Integer integer1 = integer;
-        String string1 = string;
-        return classRepository1.getClassAnnotations(bl1, string1, integer1, boolean1);
+        String key = string;
+        return classRepository1.getClassAnnotations(bl1, key, integer1, boolean1);
     }
 
     @Override
-    public final boolean isSubclass(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.isSubclass(string, string1);
+    public final boolean isSubclass(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.isSubclass(key, keyArgument);
     }
 
     @Override
@@ -94,8 +94,8 @@ public abstract class AbstractExclusionSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean extendsAnnotatedClass(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.extendsAnnotatedClass(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean extendsAnnotatedClass(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.extendsAnnotatedClass(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     @Override
@@ -111,8 +111,8 @@ public abstract class AbstractExclusionSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsInterface(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.implementsInterface(string, string1);
+    public final boolean implementsInterface(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.implementsInterface(key, keyArgument);
     }
 
     @Override
@@ -140,8 +140,8 @@ public abstract class AbstractExclusionSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsAnnotatedInterface(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.implementsAnnotatedInterface(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean implementsAnnotatedInterface(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.implementsAnnotatedInterface(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     public static String getClassSimpleMatchName(ClassFileBase classFileBase) {
@@ -149,13 +149,13 @@ public abstract class AbstractExclusionSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsAnnotatedInterfaceByOriginalName(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.implementsAnnotatedInterfaceByOriginalName(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean implementsAnnotatedInterfaceByOriginalName(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.implementsAnnotatedInterfaceByOriginalName(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     @Override
-    public final boolean implementsInterfaceByOriginalName(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.implementsInterfaceByOriginalName(string, string1);
+    public final boolean implementsInterfaceByOriginalName(String keyArgument, String key) throws ZkmException, IOException {
+        return this.classRepository.implementsInterfaceByOriginalName(keyArgument, key);
     }
 
     public static String formatMethodWithModifiers(AbstractMethodInfo abstractMethodInfo, ClassHierarchyQuery classHierarchyQuery) throws IOException {
@@ -208,13 +208,13 @@ public abstract class AbstractExclusionSpec implements ClassHierarchyQuery {
 
     @Override
     public String getOriginalClassName(Object object) {
-        String string = (String) object;
-        return this.classRepository.getOriginalClassName(string);
+        String key = (String) object;
+        return this.classRepository.getOriginalClassName(key);
     }
 
     @Override
-    public final boolean extendsAnnotatedClassByOriginalName(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.extendsAnnotatedClassByOriginalName(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean extendsAnnotatedClassByOriginalName(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.extendsAnnotatedClassByOriginalName(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     public static final String formatClass(ClassFileBase classFileBase, ClassHierarchyQuery classHierarchyQuery, boolean bl) throws ZkmException, IOException {
@@ -248,7 +248,7 @@ public abstract class AbstractExclusionSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean isSubclassByOriginalName(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.isSubclassByOriginalName(string, string1);
+    public final boolean isSubclassByOriginalName(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.isSubclassByOriginalName(key, keyArgument);
     }
 }

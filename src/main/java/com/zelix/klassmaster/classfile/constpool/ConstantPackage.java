@@ -11,8 +11,8 @@ public class ConstantPackage extends ConstantPoolEntry implements ResolvableCons
     public static final ConstantPoolTag TAG = ConstantPoolTag.MODULE;
     public int nameIndex;
 
-    public ConstantPackage(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantPackage(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, abstractConstantPool);
         this.nameIndex = classFileInputStream.readUnsignedShort();
     }
 

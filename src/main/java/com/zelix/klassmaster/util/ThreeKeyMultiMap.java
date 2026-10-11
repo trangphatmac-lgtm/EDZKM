@@ -22,8 +22,8 @@ public class ThreeKeyMultiMap {
         this(ba, 10, 5, 5);
     }
 
-    public NestedMultiMap getNestedMultiMap(Object object) {
-        return (NestedMultiMap) this.map.get(object);
+    public NestedMultiMap getNestedMultiMap(Object key) {
+        return (NestedMultiMap) this.map.get(key);
     }
 
     public Enumeration keys() {
@@ -41,17 +41,17 @@ public class ThreeKeyMultiMap {
         }
     }
 
-    public synchronized boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public synchronized boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
     public ThreeKeyMultiMap(int ba, int bb, int bc) {
         this(75, 10, 5, 5);
     }
 
-    public synchronized boolean containsKeys(Object object, Object object1, Object object2) {
-        NestedMultiMap nestedMultiMap = (NestedMultiMap) this.map.get(object);
-        return nestedMultiMap == null ? false : nestedMultiMap.containsInnerKey(object1, object2);
+    public synchronized boolean containsKeys(Object key, Object keyArgument, Object keyArgument2) {
+        NestedMultiMap nestedMultiMap = (NestedMultiMap) this.map.get(key);
+        return (!(nestedMultiMap == null) && (nestedMultiMap.containsInnerKey(keyArgument, keyArgument2)));
     }
 
     public ThreeKeyMultiMap() {
@@ -70,25 +70,25 @@ public class ThreeKeyMultiMap {
         return Collections.unmodifiableSet(linkedHashSet);
     }
 
-    public synchronized void addValue(Object object, Object object1, Object object2, Object object3) {
-        NestedMultiMap nestedMultiMap = (NestedMultiMap) this.map.get(object);
+    public synchronized void addValue(Object key, Object keyArgument, Object keyArgument2, Object object3) {
+        NestedMultiMap nestedMultiMap = (NestedMultiMap) this.map.get(key);
         if (nestedMultiMap == null) {
             nestedMultiMap = new NestedMultiMap(this.nestedCapacity, this.innerCapacity, this.listCapacity, this.concurrent);
-            nestedMultiMap.addValue(object1, object2, object3);
-            this.map.put(object, nestedMultiMap);
+            nestedMultiMap.addValue(keyArgument, keyArgument2, object3);
+            this.map.put(key, nestedMultiMap);
         } else {
-            nestedMultiMap.addValue(object1, object2, object3);
+            nestedMultiMap.addValue(keyArgument, keyArgument2, object3);
         }
     }
 
-    public synchronized List getValues(Object object, Object object1, Object object2) {
-        NestedMultiMap nestedMultiMap = (NestedMultiMap) this.map.get(object);
+    public synchronized List getValues(Object key, Object keyArgument, Object keyArgument2) {
+        NestedMultiMap nestedMultiMap = (NestedMultiMap) this.map.get(key);
         if (nestedMultiMap == null) {
             return null;
         }
 
-        ListMultimap listMultimap = nestedMultiMap.getMultimap(object1);
-        return listMultimap == null ? null : listMultimap.getValues(object2);
+        ListMultimap listMultimap = nestedMultiMap.getMultimap(keyArgument);
+        return listMultimap == null ? null : listMultimap.getValues(keyArgument2);
     }
 
     public ThreeKeyMultiMap(int ba, int bb, int bc, int bd) {

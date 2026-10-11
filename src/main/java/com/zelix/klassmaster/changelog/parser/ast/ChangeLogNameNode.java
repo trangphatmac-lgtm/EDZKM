@@ -12,8 +12,8 @@ public abstract class ChangeLogNameNode extends ChangeLogSimpleNode implements C
     public String name;
 
     @Override
-    public void setParsedName(Object object) {
-        this.name = (String) object;
+    public void setParsedName(Object parsedName) {
+        this.name = (String) parsedName;
     }
 
     public abstract void passNameToParent(Object object);
@@ -24,20 +24,20 @@ public abstract class ChangeLogNameNode extends ChangeLogSimpleNode implements C
 
     @Override
     public final void interpret(ChangeLogNode changeLogNode, int bd, int ba, int be, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
-        String[] strings1 = ChangeLogSimpleNode.getOpaqueStrings();
+        String[] opaqueStrings = ChangeLogSimpleNode.getOpaqueStrings();
         int bb = this.jjtGetNumChildren();
-        String[] strings = strings1;
-        int bc = 0;
+        String[] opaqueStringsValue = opaqueStrings;
+        int childrenElementIndex = 0;
 
         while (true) {
-            if (bc < bb) {
+            if (childrenElementIndex < bb) {
                 if (ba >= 0) {
-                    this.jjtGetChild(bc).interpret(this, 30872, 34067, 41973, abstractChangeLog);
-                    bc++;
+                    this.jjtGetChild(childrenElementIndex).interpret(this, 30872, 34067, 41973, abstractChangeLog);
+                    childrenElementIndex++;
                     continue;
                 }
 
-                this.passNameToParent(strings[1]);
+                this.passNameToParent(opaqueStringsValue[1]);
                 break;
             }
 

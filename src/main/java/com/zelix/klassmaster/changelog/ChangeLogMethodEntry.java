@@ -14,26 +14,26 @@ public class ChangeLogMethodEntry {
         stringBuilder.append(' ');
         stringBuilder.append(this.methodName);
         stringBuilder.append('(');
-        int ba = 0;
+        int argumentTypeIndex = 0;
         int bb = 0;
 
-        for (String[] strings = this.argumentTypes; bb < strings.length; strings = this.argumentTypes) {
-            stringBuilder.append(this.argumentTypes[ba]);
-            if (ba < this.argumentTypes.length - 1) {
+        for (String[] argumentTypesValue = this.argumentTypes; bb < argumentTypesValue.length; argumentTypesValue = this.argumentTypes) {
+            stringBuilder.append(this.argumentTypes[argumentTypeIndex]);
+            if (argumentTypeIndex < this.argumentTypes.length - 1) {
                 stringBuilder.append(",");
             }
 
-            bb = ++ba;
+            bb = ++argumentTypeIndex;
         }
 
         stringBuilder.append(')');
         return stringBuilder.toString();
     }
 
-    public ChangeLogMethodEntry(ZKMChangeLog zKMChangeLog, String string, String string1, String[] strings) {
+    public ChangeLogMethodEntry(ZKMChangeLog zKMChangeLog, String returnTypeArgument, String methodNameArgument, String[] argumentTypesArgument) {
         this.changeLog = zKMChangeLog;
-        this.returnType = string;
-        this.methodName = string1;
-        this.argumentTypes = strings;
+        this.returnType = returnTypeArgument;
+        this.methodName = methodNameArgument;
+        this.argumentTypes = argumentTypesArgument;
     }
 }

@@ -58,42 +58,42 @@ public class ChangeLogSimpleCharStream {
         bufpos = -1;
     }
 
-    public static char[] GetSuffix(int ba) {
-        char[] bb = new char[ba];
-        if (bufpos + 1 >= ba) {
-            System.arraycopy(buffer, bufpos - ba + 1, bb, 0, ba);
+    public static char[] GetSuffix(int copyLength) {
+        char[] destinationArray = new char[copyLength];
+        if (bufpos + 1 >= copyLength) {
+            System.arraycopy(buffer, bufpos - copyLength + 1, destinationArray, 0, copyLength);
         } else {
-            System.arraycopy(buffer, bufsize - (ba - bufpos - 1), bb, 0, ba - bufpos - 1);
-            System.arraycopy(buffer, 0, bb, ba - bufpos - 1, bufpos + 1);
+            System.arraycopy(buffer, bufsize - (copyLength - bufpos - 1), destinationArray, 0, copyLength - bufpos - 1);
+            System.arraycopy(buffer, 0, destinationArray, copyLength - bufpos - 1, bufpos + 1);
         }
 
-        return bb;
+        return destinationArray;
     }
 
     public static void ExpandBuff(boolean bl) {
-        char[] ba = new char[bufsize + 2048];
-        int[] bb = new int[bufsize + 2048];
-        int[] bc = new int[bufsize + 2048];
+        char[] bufferValue = new char[bufsize + 2048];
+        int[] buflineValue = new int[bufsize + 2048];
+        int[] bufcolumnValue = new int[bufsize + 2048];
 
         try {
             if (bl) {
-                System.arraycopy(buffer, tokenBegin, ba, 0, bufsize - tokenBegin);
-                System.arraycopy(buffer, 0, ba, bufsize - tokenBegin, bufpos);
-                buffer = ba;
-                System.arraycopy(bufline, tokenBegin, bb, 0, bufsize - tokenBegin);
-                System.arraycopy(bufline, 0, bb, bufsize - tokenBegin, bufpos);
-                bufline = bb;
-                System.arraycopy(bufcolumn, tokenBegin, bc, 0, bufsize - tokenBegin);
-                System.arraycopy(bufcolumn, 0, bc, bufsize - tokenBegin, bufpos);
-                bufcolumn = bc;
+                System.arraycopy(buffer, tokenBegin, bufferValue, 0, bufsize - tokenBegin);
+                System.arraycopy(buffer, 0, bufferValue, bufsize - tokenBegin, bufpos);
+                buffer = bufferValue;
+                System.arraycopy(bufline, tokenBegin, buflineValue, 0, bufsize - tokenBegin);
+                System.arraycopy(bufline, 0, buflineValue, bufsize - tokenBegin, bufpos);
+                bufline = buflineValue;
+                System.arraycopy(bufcolumn, tokenBegin, bufcolumnValue, 0, bufsize - tokenBegin);
+                System.arraycopy(bufcolumn, 0, bufcolumnValue, bufsize - tokenBegin, bufpos);
+                bufcolumn = bufcolumnValue;
                 maxNextCharInd = bufpos = bufpos + (bufsize - tokenBegin);
             } else {
-                System.arraycopy(buffer, tokenBegin, ba, 0, bufsize - tokenBegin);
-                buffer = ba;
-                System.arraycopy(bufline, tokenBegin, bb, 0, bufsize - tokenBegin);
-                bufline = bb;
-                System.arraycopy(bufcolumn, tokenBegin, bc, 0, bufsize - tokenBegin);
-                bufcolumn = bc;
+                System.arraycopy(buffer, tokenBegin, bufferValue, 0, bufsize - tokenBegin);
+                buffer = bufferValue;
+                System.arraycopy(bufline, tokenBegin, buflineValue, 0, bufsize - tokenBegin);
+                bufline = buflineValue;
+                System.arraycopy(bufcolumn, tokenBegin, bufcolumnValue, 0, bufsize - tokenBegin);
+                bufcolumn = bufcolumnValue;
                 maxNextCharInd = bufpos = bufpos - tokenBegin;
             }
         } catch (Throwable throwable) {
@@ -113,17 +113,17 @@ public class ChangeLogSimpleCharStream {
         column++;
         if (prevCharIsLF) {
             prevCharIsLF = false;
-            int bc = line;
+            int lineValue = line;
             column = 1;
-            line = bc + 1;
+            line = lineValue + 1;
         } else if (prevCharIsCR) {
             prevCharIsCR = false;
             if (ba == '\n') {
                 prevCharIsLF = true;
             } else {
-                int bb = line;
+                int lineValue2 = line;
                 column = 1;
-                line = bb + 1;
+                line = lineValue2 + 1;
             }
         }
 
@@ -178,9 +178,9 @@ public class ChangeLogSimpleCharStream {
                 FillBuff();
             }
 
-            char ba = buffer[bufpos];
-            UpdateLineColumn(ba);
-            return ba;
+            char bufferElement = buffer[bufpos];
+            UpdateLineColumn(bufferElement);
+            return bufferElement;
         }
     }
 

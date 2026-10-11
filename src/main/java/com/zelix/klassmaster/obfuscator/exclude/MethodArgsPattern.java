@@ -8,9 +8,9 @@ public class MethodArgsPattern {
     public final String argsText;
     public final Pattern argsRegex;
 
-    public MethodArgsPattern(int argCount, String string, Pattern pattern1) {
+    public MethodArgsPattern(int argCount, String argsTextArgument, Pattern pattern1) {
         this.argCount = argCount;
-        this.argsText = string;
+        this.argsText = argsTextArgument;
         this.argsRegex = pattern1;
     }
 

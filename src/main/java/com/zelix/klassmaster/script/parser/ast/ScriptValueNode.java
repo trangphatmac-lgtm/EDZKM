@@ -8,12 +8,12 @@ import java.io.IOException;
 public abstract class ScriptValueNode extends ZkmScriptSimpleNode {
     public String value;
 
-    public final void setValue(String string) {
-        this.value = string;
+    public final void setValue(String valueArgument) {
+        this.value = valueArgument;
     }
 
-    public ScriptValueNode(int ba) {
-        super(ba);
+    public ScriptValueNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     @Override

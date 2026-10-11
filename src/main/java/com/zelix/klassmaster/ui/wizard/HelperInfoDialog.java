@@ -106,27 +106,19 @@ public class HelperInfoDialog extends OwnedFrameDialogBase implements HelperDial
         this.infoPane = new JEditorPane();
         this.infoPane.setEditable(false);
 
-        BevelBorderPanel bevelBorderPanel;
-        label15:
-        {
-            try {
-                this.infoPane.setPage(GuiResources.getHelpTopicUrl(string));
-            } catch (IOException iOException) {
-                this.infoPane.setText(iOException.toString() + " : " + string);
-                bevelBorderPanel = this.mainPnl;
-                break label15;
-            }
-
-            bevelBorderPanel = this.mainPnl;
+        try {
+            this.infoPane.setPage(GuiResources.getHelpTopicUrl(string));
+        } catch (IOException pageLoadException) {
+            this.infoPane.setText(pageLoadException.toString() + " : " + string);
         }
 
-        bevelBorderPanel.add(new ZkmScrollPane(this.infoPane), "Center");
+        this.mainPnl.add(new ZkmScrollPane(this.infoPane), "Center");
     }
 
     @Override
     public void buildContents(Object object, Object object1, Object object2, Object object3, Object object4, Object object5) {
         String string = (String) object;
-        String string1 = (String) object1;
+        String toolTipText = (String) object1;
         String string2 = (String) object2;
         int ba = (Integer) object3;
         int bb = (Integer) object4;
@@ -136,7 +128,7 @@ public class HelperInfoDialog extends OwnedFrameDialogBase implements HelperDial
         this.previousBtn = new JButton("Previous");
         this.previousBtn.setToolTipText(GuiResources.getTooltipText("PREVIOUS_SCREEN"));
         this.okBtn = new JButton(string);
-        this.okBtn.setToolTipText(string1);
+        this.okBtn.setToolTipText(toolTipText);
         this.cancelBtn = new JButton("Cancel");
         this.cancelBtn.setToolTipText(GuiResources.getTooltipText("CANCEL_DIALOG"));
         this.previousBtn.addActionListener(this);
@@ -159,12 +151,12 @@ public class HelperInfoDialog extends OwnedFrameDialogBase implements HelperDial
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.previousBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.previousBtn) {
                 this.goPrevious();
-            } else if (object == this.okBtn) {
+            } else if (source == this.okBtn) {
                 this.goNext();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
             }
         } catch (Throwable throwable) {

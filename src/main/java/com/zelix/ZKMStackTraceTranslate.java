@@ -29,8 +29,8 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
         this(strings, null);
     }
 
-    public String getTranslatedStackTrace(String string, boolean bl) {
-        return this.getTranslatedStackTrace(string, bl, 2);
+    public String getTranslatedStackTrace(String stackTraceText, boolean analyzeBytecode) {
+        return this.getTranslatedStackTrace(stackTraceText, analyzeBytecode, 2);
     }
 
     public ZKMStackTraceTranslate(String string) {
@@ -58,11 +58,11 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
                                     + JvmVersionMessages.LINE_SEPARATOR
                     );
         } catch (NoClassDefFoundError noClassDefFoundError) {
-            String string = System.getProperty("java.class.path");
-            if (string != null) {
-                if (string.indexOf("ZKMTranslate.jar") == -1) {
+            String property = System.getProperty("java.class.path");
+            if (property != null) {
+                if (property.indexOf("ZKMTranslate.jar") == -1) {
                     System.err.println("Startup Error. (Check that ZKMTranslate.jar is in classpath) (1)");
-                } else if (isTranslateJarOnClasspath(string)) {
+                } else if (isTranslateJarOnClasspath(property)) {
                     System.err
                             .println(
                                     JvmVersionMessages.LINE_SEPARATOR
@@ -77,7 +77,7 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
                 System.err.println("Startup Error. (Check that ZKMTranslate.jar is in classpath) (2)");
             }
 
-            System.err.println("Classpath is: \"" + string + "\"");
+            System.err.println("Classpath is: \"" + property + "\"");
         } catch (InvocationTargetException invocationTargetException) {
             Throwable throwable = invocationTargetException.getTargetException();
             System.err
@@ -108,69 +108,69 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
         }
     }
 
-    public String getOldClassName(String string) {
+    public String getOldClassName(String key) {
         try {
-            String string1;
+            String oldClassName;
             try {
-                string1 = this.translator.translateClassName(string);
+                oldClassName = this.translator.translateClassName(key);
             } catch (ZkmException zkmException) {
-                string1 = "ZKM ERROR (2): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
+                oldClassName = "ZKM ERROR (2): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
             }
 
-            return string1;
+            return oldClassName;
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
     }
 
-    public String getTranslatedStackTrace(String string, boolean bl, int ba) {
+    public String getTranslatedStackTrace(String stackTraceText, boolean analyzeBytecode, int argumentFormat) {
         try {
-            String string1;
+            String translatedStackTrace;
             try {
-                string1 = this.translator.translate(string, bl, ba);
+                translatedStackTrace = this.translator.translate(stackTraceText, analyzeBytecode, argumentFormat);
             } catch (ZkmException zkmException) {
                 String string2 = null;
                 if (this.classpathErrorPaths != null && this.classpathErrorPaths.size() > 0) {
                     string2 = ZkmUtils.toQuotedListString(ZkmUtils.describeTempFileNames(this.classpathErrorPaths));
                 }
 
-                string1 = "ZKM ERROR (1): \""
+                translatedStackTrace = "ZKM ERROR (1): \""
                         + zkmException.getMessage()
                         + "\""
                         + JvmVersionMessages.LINE_SEPARATOR
                         + (string2 != null ? "Initial classpath paths in error : " + string2 + ZkmAssert.lineSeparator : "");
             }
 
-            return string1;
+            return translatedStackTrace;
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
     }
 
-    public String getOldMethodName(String string, String string1) {
+    public String getOldMethodName(String key, String string1) {
         try {
             try {
                 string1 = string1.trim();
-                int ba = string1.indexOf(" ");
-                if (ba <= -1) {
+                int endIndex = string1.indexOf(" ");
+                if (endIndex <= -1) {
                     return "'" + string1 + "' is not a valid method signature (3)";
                 }
 
-                String string2 = string1.substring(0, ba);
-                String string3 = string1.substring(ba + 1);
+                String keyArgument2 = string1.substring(0, endIndex);
+                String string3 = string1.substring(endIndex + 1);
                 string3 = string3.trim();
                 int bb = string3.indexOf("(");
                 if (bb <= 0) {
                     return "'" + string1 + "' is not a valid method signature (2)";
                 }
 
-                String string4 = string3.substring(0, bb);
-                int bc = string3.indexOf(")", bb);
-                if (bc <= -1) {
+                String keyValue = string3.substring(0, bb);
+                int endIndexValue = string3.indexOf(")", bb);
+                if (endIndexValue <= -1) {
                     return "'" + string1 + "' is not a valid method signature (1)";
                 }
 
-                String string5 = string3.substring(bb + 1, bc);
+                String string5 = string3.substring(bb + 1, endIndexValue);
                 ArrayList arrayList = new ArrayList();
                 StringTokenizer stringTokenizer = new StringTokenizer(string5, ",");
 
@@ -180,7 +180,7 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
 
                 String[] strings = new String[arrayList.size()];
                 strings = ((java.lang.String[]) (arrayList.toArray(strings)));
-                return this.translator.getOriginalMethodName(string, string4, strings, string2);
+                return this.translator.getOriginalMethodName(key, keyValue, strings, keyArgument2);
             } catch (ZkmException zkmException) {
                 return "ZKM ERROR (5): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
             }
@@ -228,10 +228,10 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
         this.translator = new StackTraceTranslator(this.changeLogFileNames, (ZkmClasspath) object);
     }
 
-    public String getOldMethodName(String string, String string1, String[] strings, String string2) {
+    public String getOldMethodName(String key, String keyArgument, String[] strings, String keyArgument2) {
         try {
             try {
-                return this.translator.getOriginalMethodName(string, string1, strings, string2);
+                return this.translator.getOriginalMethodName(key, keyArgument, strings, keyArgument2);
             } catch (ZkmException zkmException) {
                 return "ZKM ERROR (4): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
             }
@@ -240,30 +240,30 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
         }
     }
 
-    public String getOldMethodSignatures(String string, String string1) {
+    public String getOldMethodSignatures(String string, String key) {
         try {
-            String string2;
+            String oldMethodSignatures;
             try {
-                String[] strings = this.translator.getOriginalMethodSignatures(string, string1);
+                String[] originalMethodSignatures = this.translator.getOriginalMethodSignatures(string, key);
                 StringBuffer stringBuffer = new StringBuffer();
                 stringBuffer.append("[");
 
-                for (int i = 0; i < strings.length; i++) {
-                    stringBuffer.append(strings[i]);
-                    if (i < strings.length - 2) {
+                for (int originalMethodSignatureIndex = 0; originalMethodSignatureIndex < originalMethodSignatures.length; originalMethodSignatureIndex++) {
+                    stringBuffer.append(originalMethodSignatures[originalMethodSignatureIndex]);
+                    if (originalMethodSignatureIndex < originalMethodSignatures.length - 2) {
                         stringBuffer.append(", ");
-                    } else if (i < strings.length - 1) {
+                    } else if (originalMethodSignatureIndex < originalMethodSignatures.length - 1) {
                         stringBuffer.append(" or ");
                     }
                 }
 
                 stringBuffer.append("]");
-                string2 = stringBuffer.toString();
+                oldMethodSignatures = stringBuffer.toString();
             } catch (ZkmException zkmException) {
-                string2 = "ZKM ERROR (3): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
+                oldMethodSignatures = "ZKM ERROR (3): \"" + zkmException.getMessage() + "\"" + JvmVersionMessages.LINE_SEPARATOR;
             }
 
-            return string2;
+            return oldMethodSignatures;
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
@@ -283,7 +283,7 @@ public class ZKMStackTraceTranslate extends JvmVersionMessages {
         this.mandatoryContruction(strings, null);
     }
 
-    public String getTranslatedStackTrace(String string) {
-        return this.getTranslatedStackTrace(string, true, 2);
+    public String getTranslatedStackTrace(String stackTraceText) {
+        return this.getTranslatedStackTrace(stackTraceText, true, 2);
     }
 }

@@ -15,16 +15,16 @@ public class ChangeLogASTInput extends ChangeLogSimpleNode {
     @Override
     public void interpret(ChangeLogNode changeLogNode, int bd, int ba, int be, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int bb = this.jjtGetNumChildren();
-        int bc = 0;
+        int childrenElementIndex = 0;
 
         while (true) {
-            if (bc < bb) {
-                this.jjtGetChild(bc).interpret(this, 30872, 34067, 41973, abstractChangeLog);
+            if (childrenElementIndex < bb) {
+                this.jjtGetChild(childrenElementIndex).interpret(this, 30872, 34067, 41973, abstractChangeLog);
             } else if (ba >= 0) {
                 return;
             }
 
-            bc++;
+            childrenElementIndex++;
         }
     }
 }

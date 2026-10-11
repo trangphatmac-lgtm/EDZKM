@@ -15,18 +15,18 @@ public class ObfuscateDialogButtonListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.obfuscateOptionsDialog.changeLogInBrowseBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.obfuscateOptionsDialog.changeLogInBrowseBtn) {
                 ObfuscateOptionsDialogBase.accessBrowseInputChangeLog(this.obfuscateOptionsDialog);
-            } else if (object == this.obfuscateOptionsDialog.changeLogOutBrowseBtn) {
+            } else if (source == this.obfuscateOptionsDialog.changeLogOutBrowseBtn) {
                 ObfuscateOptionsDialogBase.accessBrowseOutputChangeLog(this.obfuscateOptionsDialog);
-            } else if (object == this.obfuscateOptionsDialog.previousBtn) {
+            } else if (source == this.obfuscateOptionsDialog.previousBtn) {
                 this.obfuscateOptionsDialog.goPrevious();
-            } else if (object == this.obfuscateOptionsDialog.okBtn) {
+            } else if (source == this.obfuscateOptionsDialog.okBtn) {
                 this.obfuscateOptionsDialog.acceptOptions();
-            } else if (object == this.obfuscateOptionsDialog.cancelBtn) {
+            } else if (source == this.obfuscateOptionsDialog.cancelBtn) {
                 this.obfuscateOptionsDialog.cancelOptions();
-            } else if (object == this.obfuscateOptionsDialog.helpBtn) {
+            } else if (source == this.obfuscateOptionsDialog.helpBtn) {
                 this.obfuscateOptionsDialog.showHelp();
             }
         } catch (Throwable throwable) {

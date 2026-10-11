@@ -59,11 +59,11 @@ public class ParameterKeyGenerator {
     public final RootKeyNode rootNode;
 
     public void generateInitialNodes(List list1, int ba, boolean bl) {
-        boolean bl2 = false;
+        boolean largeParameterKeys = false;
         this.initialNodes = new ArrayList(this.initialNodeCount);
         this.allKeyNodes = new ArrayList(this.keyCount);
-        int[] bb = MethodParameterChanger.createBitPermutation(this.random);
-        this.addLayout(bb);
+        int[] layoutValue = MethodParameterChanger.createBitPermutation(this.random);
+        this.addLayout(layoutValue);
         list1.add(this.getCurrentLayout().clone());
         int bc = 64 * (ba < 3010 ? 1 : 4);
         boolean bl1 = false;
@@ -77,23 +77,23 @@ public class ParameterKeyGenerator {
         int bn = 0;
         int bq = bn;
 
-        for (int i = this.initialNodeCount; bq < i; i = this.initialNodeCount) {
+        for (int initialNodeCountValue = this.initialNodeCount; bq < initialNodeCountValue; initialNodeCountValue = this.initialNodeCount) {
             int bh = this.random.nextInt(256);
             MutablePair mutablePair = null;
             int bg;
-            long bo;
+            long mixedKeyValue;
             if (this.initialNodes.size() > 1 && this.random.nextInt(bc) == 0) {
-                int bi = this.random.nextInt(this.initialNodes.size());
-                LongKeyNode longKeyNode = (LongKeyNode) this.initialNodes.get(bi);
+                int elementIndex = this.random.nextInt(this.initialNodes.size());
+                LongKeyNode longKeyNode = (LongKeyNode) this.initialNodes.get(elementIndex);
                 mutablePair = new MutablePair(longKeyNode);
-                bo = longKeyNode.getMixedKey();
+                mixedKeyValue = longKeyNode.getMixedKey();
                 bg = longKeyNode.hashCode();
             } else {
-                bo = this.nextMiddleValue();
+                mixedKeyValue = this.nextMiddleValue();
                 bg = this.random.nextInt(256);
             }
 
-            LongKeyNode longKeyNode1 = new LongKeyNode(bh, bo, bg, this.getCurrentLayout(), this.nodesByLayout, this.layouts);
+            LongKeyNode longKeyNode1 = new LongKeyNode(bh, mixedKeyValue, bg, this.getCurrentLayout(), this.nodesByLayout, this.layouts);
             list1.add(longKeyNode1.getCurrentKey());
             this.initialNodes.add(longKeyNode1);
             if (mutablePair != null) {
@@ -101,56 +101,43 @@ public class ParameterKeyGenerator {
                 this.sharedKeyPairs.add(mutablePair);
             }
 
-            label117:
-            {
-                List list2 = this.nodesByLayout.getValues(bb);
-                int bj = list2 != null ? this.nodesByLayout.getValues(bb).size() : 0;
-                if (bj < 64 || this.random.nextInt(128) != 0) {
-                    if (bj <= 153) {
-                        bl2 = HiddenOptionFlags.LARGE_PARAMETER_KEYS;
-                        break label117;
-                    }
-
-                    if (this.random.nextInt(32) != 0) {
-                        bl2 = HiddenOptionFlags.LARGE_PARAMETER_KEYS;
-                        break label117;
-                    }
-                }
-
-                int[] bk = bb.clone();
-                bb = bk;
-                this.addLayout(bb);
+            List list2 = this.nodesByLayout.getValues(layoutValue);
+            int layoutNodeCount = list2 != null ? this.nodesByLayout.getValues(layoutValue).size() : 0;
+            if (!(layoutNodeCount < 64 || this.random.nextInt(128) != 0)
+                    || layoutNodeCount > 153 && this.random.nextInt(32) == 0) {
+                layoutValue = layoutValue.clone();
+                this.addLayout(layoutValue);
                 list1.add(this.getCurrentLayout().clone());
-                bl2 = HiddenOptionFlags.LARGE_PARAMETER_KEYS;
             }
+            largeParameterKeys = HiddenOptionFlags.LARGE_PARAMETER_KEYS;
 
-            if (bl2 && bl && !bl1 && bn >= bd) {
+            if (largeParameterKeys && bl && !bl1 && bn >= bd) {
                 bl1 = true;
-                long[] bp = new long[100];
-                int bm = 0;
+                long[] longArray = new long[100];
+                int elementIndexValue = 0;
                 Iterator iterator = list1.iterator();
 
                 while (iterator.hasNext()) {
                     if (iterator.next() instanceof Long) {
-                        LongKeyNode longKeyNode2 = (LongKeyNode) this.initialNodes.get(bm);
-                        bp[bm] = ((LongKeyNode) this.initialNodes.get(bm)).extractBits();
-                        bm++;
+                        LongKeyNode longKeyNode2 = (LongKeyNode) this.initialNodes.get(elementIndexValue);
+                        longArray[elementIndexValue] = ((LongKeyNode) this.initialNodes.get(elementIndexValue)).extractBits();
+                        elementIndexValue++;
                     }
 
-                    if (bm > 99) {
+                    if (elementIndexValue > 99) {
                         break;
                     }
                 }
 
-                list1.add(bp);
+                list1.add(longArray);
             }
 
             bq = ++bn;
         }
 
         this.allKeyNodes.addAll(this.initialNodes);
-        bb = MethodParameterChanger.createBitPermutation(this.random);
-        this.addLayout(bb);
+        layoutValue = MethodParameterChanger.createBitPermutation(this.random);
+        this.addLayout(layoutValue);
         list1.add(this.getCurrentLayout().clone());
         sortNodes(this.allKeyNodes);
         bn = 0;
@@ -161,11 +148,11 @@ public class ParameterKeyGenerator {
         }
     }
 
-    public long encodeIndexKey(int ba) {
+    public long encodeIndexKey(int nodeIndex) {
         int[] currentLayout = this.getCurrentLayout();
         int bc = 64 - this.indexBitOffset;
         long bd = (Long) indexRandoms.next();
-        return MethodParameterChanger.composeIndexKey(ba, bc, bd, currentLayout);
+        return MethodParameterChanger.composeIndexKey(nodeIndex, bc, bd, currentLayout);
     }
 
     public int[] getCurrentLayout() {
@@ -234,21 +221,21 @@ public class ParameterKeyGenerator {
 
         while (iterator1.hasNext()) {
             Entry entry1 = (Entry) iterator1.next();
-            String string = (String) entry1.getKey();
+            String key = (String) entry1.getKey();
             List list1 = (List) entry1.getValue();
-            int ba = list1.size();
-            if (ba > 1) {
+            int list1Size = list1.size();
+            if (list1Size > 1) {
                 identityHashSet4.clear();
                 LongKeyNode longKeyNode = null;
 
-                for (int i = 0; i < ba; i++) {
-                    ObjectPair objectPair = (ObjectPair) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                    ObjectPair objectPair = (ObjectPair) list1.get(elementIndex);
                     LongKeyNode longKeyNode1 = (LongKeyNode) objectPair.getFirst();
-                    if (i == 0) {
+                    if (elementIndex == 0) {
                         longKeyNode = longKeyNode1;
                     }
 
-                    if (i > 0 && longKeyNode1 != longKeyNode) {
+                    if (elementIndex > 0 && longKeyNode1 != longKeyNode) {
                         identityHashSet3.add(longKeyNode1);
                     }
 
@@ -267,9 +254,9 @@ public class ParameterKeyGenerator {
         Iterator iterator2 = this.layouts.iterator();
 
         while (iterator2.hasNext()) {
-            int[] bd = (int[]) iterator2.next();
-            List list2 = this.nodesByLayout.getValues(bd);
-            stringBuilder.append("#" + bc++ + " (" + System.identityHashCode(bd) + ")\t" + list2.size());
+            int[] keyValue = (int[]) iterator2.next();
+            List list2 = this.nodesByLayout.getValues(keyValue);
+            stringBuilder.append("#" + bc++ + " (" + System.identityHashCode(keyValue) + ")\t" + list2.size());
             stringBuilder.append(ZkmAssert.lineSeparator);
         }
 
@@ -278,8 +265,8 @@ public class ParameterKeyGenerator {
         iterator2 = this.layouts.iterator();
 
         while (iterator2.hasNext()) {
-            int[] be = (int[]) iterator2.next();
-            List list3 = this.nodesByLayout.getValues(be);
+            int[] keyValue2 = (int[]) iterator2.next();
+            List list3 = this.nodesByLayout.getValues(keyValue2);
             boolean bl = false;
             boolean bl1 = false;
             Iterator iterator6 = list3.iterator();
@@ -304,9 +291,9 @@ public class ParameterKeyGenerator {
             }
 
             if (bl && !bl1) {
-                this.sourceOnlyLayouts.add(be);
+                this.sourceOnlyLayouts.add(keyValue2);
             } else if (!bl && bl1) {
-                this.targetOnlyLayouts.add(be);
+                this.targetOnlyLayouts.add(keyValue2);
             }
         }
     }
@@ -315,7 +302,7 @@ public class ParameterKeyGenerator {
         return this.indexBitOffset;
     }
 
-    public boolean isLayoutValid(int[] ba, List list1, Set set1) {
+    public boolean isLayoutValid(int[] bitShifts, List list1, Set set1) {
         boolean bl = true;
         HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(list1.size()));
         Iterator iterator = list1.iterator();
@@ -324,8 +311,8 @@ public class ParameterKeyGenerator {
             LongKeyNode longKeyNode = (LongKeyNode) iterator.next();
             long mixedKey = longKeyNode.getMixedKey();
             long currentKey = longKeyNode.getCurrentKey();
-            long bd = MethodParameterChanger.extractPermutedBits(currentKey, 8, 55, ba);
-            long be = MethodParameterChanger.extractLowPermutedBits(currentKey, 56, ba);
+            long bd = MethodParameterChanger.extractPermutedBits(currentKey, 8, 55, bitShifts);
+            long be = MethodParameterChanger.extractLowPermutedBits(currentKey, 56, bitShifts);
             boolean bl1 = this.targetNodes.contains(longKeyNode);
             boolean bl2 = this.sourceNodes.contains(longKeyNode);
             if (bl2) {
@@ -389,16 +376,16 @@ public class ParameterKeyGenerator {
         IdentityHashSet identityHashSet = new IdentityHashSet(this.sourceNodes.size());
         IdentityHashSet identityHashSet1 = new IdentityHashSet(this.targetNodes.size());
         IdentityMapWrapper identityMapWrapper = new IdentityMapWrapper(ZkmUtils.getPrimeCapacity(list2.size()));
-        int[] ba = MethodParameterChanger.createBitPermutation(this.random);
-        this.addLayout(ba);
+        int[] layoutValue = MethodParameterChanger.createBitPermutation(this.random);
+        this.addLayout(layoutValue);
         observableHolder.setValue(this.getCurrentLayout().clone());
         this.initialized = true;
         this.assignNodePairs(identityHashSet, identityHashSet1, list2, identityMapWrapper);
         this.buildKeyChains(identityHashSet, identityHashSet1, list1, list2, identityMapWrapper, list6, list7, list8);
         int[] currentLayout = this.getCurrentLayout();
-        int[] bc = new int[currentLayout.length];
-        System.arraycopy(currentLayout, 0, bc, 0, currentLayout.length);
-        observableHolder1.setValue(bc);
+        int[] valueValue = new int[currentLayout.length];
+        System.arraycopy(currentLayout, 0, valueValue, 0, currentLayout.length);
+        observableHolder1.setValue(valueValue);
     }
 
     public int getMergeSortDepthLimit() {
@@ -407,132 +394,107 @@ public class ParameterKeyGenerator {
 
     public void linkFalseDependents(MethodParamChangeNode methodParamChangeNode, List list1) {
         List list2 = methodParamChangeNode.getFalseDependents();
-        int ba = list2.size();
-        if (ba != 0) {
-            if (ba > 1) {
+        int list2Size = list2.size();
+        if (list2Size != 0) {
+            if (list2Size > 1) {
                 list2 = new ArrayList(list2);
                 ZkmUtils.shuffleList(list2, this.random);
             }
 
             LongKeyNode longKeyNode = methodParamChangeNode.getSecondKeyNode();
-            ArrayList arrayList = new ArrayList(ba + 1);
+            ArrayList arrayList = new ArrayList(list2Size + 1);
             arrayList.add(new ObjectPair(methodParamChangeNode, longKeyNode));
 
-            for (int i = 0; i < ba; i++) {
-                MethodParamChangeNode methodParamChangeNode1 = (MethodParamChangeNode) list2.get(i);
+            for (int elementIndex = 0; elementIndex < list2Size; elementIndex++) {
+                MethodParamChangeNode methodParamChangeNode1 = (MethodParamChangeNode) list2.get(elementIndex);
                 LongKeyNode longKeyNode1 = methodParamChangeNode1.getFirstKeyNode();
                 longKeyNode.appendToChain(longKeyNode1);
-                long bc = this.encodeIndexKey(longKeyNode.getIndex());
-                long bd = this.encodeIndexKey(longKeyNode1.getIndex());
-                list1.add(new MutablePair(bc, bd));
+                long key = this.encodeIndexKey(longKeyNode.getIndex());
+                long valueValue = this.encodeIndexKey(longKeyNode1.getIndex());
+                list1.add(new MutablePair(key, valueValue));
                 arrayList.add(new ObjectPair(methodParamChangeNode1, longKeyNode1));
                 longKeyNode = longKeyNode1;
             }
         }
     }
 
-    public void relayoutGroups(List list1) {
+    public void relayoutGroups(List outputEntries) {
         sortNodes(this.allKeyNodes);
         this.pendingLayoutNodes = new IdentityHashSet(this.allKeyNodes.size());
-        int ba = 0;
-        Iterator iterator = this.allKeyNodes.iterator();
+        int nextNodeIndex = 0;
+        Iterator allNodes = this.allKeyNodes.iterator();
 
-        while (iterator.hasNext()) {
-            LongKeyNode longKeyNode = (LongKeyNode) iterator.next();
-            longKeyNode.setIndex(ba++);
-            this.pendingLayoutNodes.add(longKeyNode);
+        while (allNodes.hasNext()) {
+            LongKeyNode keyNode = (LongKeyNode) allNodes.next();
+            keyNode.setIndex(nextNodeIndex++);
+            this.pendingLayoutNodes.add(keyNode);
         }
 
-        HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(this.sourceNodes.size()));
-        Iterator iterator1 = this.sourceNodes.iterator();
+        HashSet usedLowKeys = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(this.sourceNodes.size()));
+        Iterator sourceNodeIterator = this.sourceNodes.iterator();
 
-        while (iterator1.hasNext()) {
-            LongKeyNode longKeyNode1 = (LongKeyNode) iterator1.next();
-            hashSet.add(longKeyNode1.getLow56Bits());
+        while (sourceNodeIterator.hasNext()) {
+            LongKeyNode sourceNode = (LongKeyNode) sourceNodeIterator.next();
+            usedLowKeys.add(sourceNode.getLow56Bits());
         }
 
-        ArrayList arrayList1 = new ArrayList(this.layouts);
-        ArrayList arrayList2 = new ArrayList(arrayList1);
-        int bb = arrayList1.size();
-        ArrayList arrayList = new ArrayList(bb * 3);
-        int bc = 0;
+        ArrayList availableLayouts = new ArrayList(this.layouts);
+        ArrayList unselectedLayouts = new ArrayList(availableLayouts);
+        int layoutCount = availableLayouts.size();
+        ArrayList selectedLayoutNodes = new ArrayList(layoutCount * 3);
+        int selectionCount = 0;
 
-        label59:
-        while (true) {
-            int bd;
-            if (bc <= bb * 2) {
-                bd = this.random.nextInt(bb);
+        do {
+            int layoutIndex;
+            if (selectionCount <= layoutCount * 2) {
+                layoutIndex = this.random.nextInt(layoutCount);
             } else {
-                Random random2 = this.random;
-
-                while (true) {
-                    bd = random2.nextInt(bb);
-                    if (arrayList2.contains(arrayList1.get(bd))) {
-                        if (!this.random.nextBoolean()) {
-                            break;
-                        }
-
-                        random2 = this.random;
-                    } else {
-                        random2 = this.random;
-                    }
-                }
+                do {
+                    layoutIndex = this.random.nextInt(layoutCount);
+                } while (!unselectedLayouts.contains(availableLayouts.get(layoutIndex)) || this.random.nextBoolean());
             }
 
-            int[] be = (int[]) arrayList1.get(bd);
-            List list2 = this.nodesByLayout.getValues(be);
-            LongKeyNode longKeyNode2 = null;
-            Random random1 = this.random;
+            int[] layout = (int[]) availableLayouts.get(layoutIndex);
+            List layoutNodes = this.nodesByLayout.getValues(layout);
+            LongKeyNode selectedNode;
+            do {
+                int nodeIndex = this.random.nextInt(layoutNodes.size());
+                selectedNode = (LongKeyNode) layoutNodes.get(nodeIndex);
+            } while (selectedNode.getIndex() >= this.keyCount);
 
-            while (true) {
-                int bf = random1.nextInt(list2.size());
-                LongKeyNode longKeyNode3 = (LongKeyNode) list2.get(bf);
-                if (longKeyNode3.getIndex() < this.keyCount) {
-                    longKeyNode2 = longKeyNode3;
-                }
+            selectedLayoutNodes.add(new ObjectPair(layout, selectedNode));
+            unselectedLayouts.remove(layout);
+            selectionCount++;
+        } while (!unselectedLayouts.isEmpty());
 
-                if (longKeyNode2 != null) {
-                    arrayList.add(new ObjectPair(be, longKeyNode2));
-                    arrayList2.remove(be);
-                    bc++;
-                    if (arrayList2.isEmpty()) {
-                        break label59;
-                    }
-                    break;
-                }
+        int selectionSize = selectedLayoutNodes.size();
 
-                random1 = this.random;
-            }
-        }
-
-        int bg = arrayList.size();
-
-        for (int i = 0; i < bg; i++) {
-            ObjectPair objectPair = (ObjectPair) arrayList.get(i);
-            this.relayoutGroup((int[]) objectPair.getFirst(), (LongKeyNode) objectPair.getSecond(), hashSet, list1);
+        for (int elementIndex = 0; elementIndex < selectionSize; elementIndex++) {
+            ObjectPair layoutNode = (ObjectPair) selectedLayoutNodes.get(elementIndex);
+            this.relayoutGroup((int[]) layoutNode.getFirst(), (LongKeyNode) layoutNode.getSecond(), usedLowKeys, outputEntries);
         }
     }
 
-    public void addLayout(Object object) {
-        this.bitLayouts.add(object);
+    public void addLayout(Object layout) {
+        this.bitLayouts.add(layout);
     }
 
-    public void relayoutGroup(int[] ba, LongKeyNode longKeyNode, Set set1, List list1) {
-        List list2 = this.nodesByLayout.getValues(ba);
-        int[] bb = null;
+    public void relayoutGroup(int[] key, LongKeyNode longKeyNode, Set set1, List list1) {
+        List list2 = this.nodesByLayout.getValues(key);
+        int[] sourceArray = null;
         int bc = -1;
-        if (this.targetOnlyLayouts.contains(ba)) {
+        if (this.targetOnlyLayouts.contains(key)) {
             while (++bc <= 8192) {
-                bb = MethodParameterChanger.createBitPermutation(this.random);
-                if (this.isLayoutValid(bb, list2, set1)) {
+                sourceArray = MethodParameterChanger.createBitPermutation(this.random);
+                if (this.isLayoutValid(sourceArray, list2, set1)) {
                     break;
                 }
             }
         } else {
             while (++bc <= 8192) {
-                bb = ba.clone();
-                MethodParameterChanger.reshufflePermutation(bb, this.random);
-                if (this.isLayoutValid(bb, list2, set1)) {
+                sourceArray = key.clone();
+                MethodParameterChanger.reshufflePermutation(sourceArray, this.random);
+                if (this.isLayoutValid(sourceArray, list2, set1)) {
                     break;
                 }
             }
@@ -542,7 +504,7 @@ public class ParameterKeyGenerator {
             int index = longKeyNode.getIndex();
             long be = this.encodeIndexKey(index);
             list1.add(be);
-            list1.add(bb.clone());
+            list1.add(sourceArray.clone());
             HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(list2.size()));
             Iterator iterator = list2.iterator();
 
@@ -553,7 +515,7 @@ public class ParameterKeyGenerator {
                 }
             }
 
-            longKeyNode.copyBitLayout(bb);
+            longKeyNode.copyBitLayout(sourceArray);
             HashSet hashSet1 = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(list2.size()));
             Iterator iterator1 = list2.iterator();
 
@@ -595,8 +557,8 @@ public class ParameterKeyGenerator {
         return MethodParameterChanger.composeKey(bc, bd, bb, currentLayout);
     }
 
-    public static void sortNodes(List list1) {
-        mergeSort(0, list1.size() - 1, list1, new ArrayList(list1), 0);
+    public static void sortNodes(List nodes) {
+        mergeSort(0, nodes.size() - 1, nodes, new ArrayList(nodes), 0);
     }
 
     public static int computeKeyCount(int ba, MutableInt mutableInt) {
@@ -659,8 +621,8 @@ public class ParameterKeyGenerator {
 
     public void assignNodePairs(Set set1, Set set2, List list1, IdentityMapWrapper identityMapWrapper) {
         Map map1 = this.rootNode.getKeyChainMap();
-        int ba = list1.size();
-        ArrayList arrayList = new ArrayList(ba);
+        int list1Size = list1.size();
+        ArrayList arrayList = new ArrayList(list1Size);
         this.usedMiddleValues = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(this.sourceNodes.size()));
         ArrayList arrayList1 = new ArrayList(this.sourceNodes.size());
         Iterator iterator = this.sourceNodes.iterator();
@@ -676,10 +638,10 @@ public class ParameterKeyGenerator {
         do {
             ZkmAssert.assertTrue(
                     !arrayList1.isEmpty(),
-                    new String[]{"Insufficient entries : " + this.sourceNodes.size() + " : " + ba + " : " + arrayList.size() + " : " + this.pendingLayoutNodes.size()}
+                    new String[]{"Insufficient entries : " + this.sourceNodes.size() + " : " + list1Size + " : " + arrayList.size() + " : " + this.pendingLayoutNodes.size()}
             );
-            int bd = this.random.nextInt(arrayList1.size());
-            LongKeyNode longKeyNode1 = (LongKeyNode) arrayList1.remove(bd);
+            int elementIndex = this.random.nextInt(arrayList1.size());
+            LongKeyNode longKeyNode1 = (LongKeyNode) arrayList1.remove(elementIndex);
             if (!this.pendingLayoutNodes.contains(longKeyNode1) && !this.targetNodes.contains(longKeyNode1)) {
                 EncryptionKeyChain encryptionKeyChain = (EncryptionKeyChain) map1.get(longKeyNode1);
                 if (encryptionKeyChain.isKeyed()) {
@@ -692,7 +654,7 @@ public class ParameterKeyGenerator {
                     }
                 }
             }
-        } while (arrayList.size() < ba);
+        } while (arrayList.size() < list1Size);
 
         int be = 0;
         HashSet hashSet = ZkmUtils.createHashSet();
@@ -712,9 +674,9 @@ public class ParameterKeyGenerator {
 
             LongKeyNode longKeyNode3 = (LongKeyNode) mutablePair.getKey();
             LongKeyNode longKeyNode4 = (LongKeyNode) mutablePair.getValue();
-            long bb = this.deriveKey(longKeyNode3);
-            long bc = this.generateUniqueKey();
-            methodParamChangeNode.setKeys(longKeyNode3, longKeyNode4, bb, bc);
+            long primaryKey = this.deriveKey(longKeyNode3);
+            long secondaryKey = this.generateUniqueKey();
+            methodParamChangeNode.setKeys(longKeyNode3, longKeyNode4, primaryKey, secondaryKey);
             identityMapWrapper.put(longKeyNode4, methodParamChangeNode);
         }
 
@@ -745,20 +707,20 @@ public class ParameterKeyGenerator {
         return MethodParameterChanger.composeKey(this.random.nextInt(256), mixedKey, bc, currentLayout);
     }
 
-    public EncryptionKeyChain getOrCreateNode(long ba, BooleanFlag booleanFlag) {
+    public EncryptionKeyChain getOrCreateNode(long valueArgument, BooleanFlag booleanFlag) {
         int[] currentLayout = this.getCurrentLayout();
-        int bc = (int) MethodParameterChanger.extractPermutedBits(ba, this.indexBitOffset, 63, currentLayout);
-        if (bc < this.initialNodes.size()) {
-            return (EncryptionKeyChain) this.allKeyNodes.get(bc);
+        int elementIndex = (int) MethodParameterChanger.extractPermutedBits(valueArgument, this.indexBitOffset, 63, currentLayout);
+        if (elementIndex < this.initialNodes.size()) {
+            return (EncryptionKeyChain) this.allKeyNodes.get(elementIndex);
         }
 
         if (this.allKeyNodes.size() % 128 == 0) {
-            int[] bd = currentLayout.clone();
-            currentLayout = bd;
+            int[] currentLayoutValue = currentLayout.clone();
+            currentLayout = currentLayoutValue;
             this.addLayout(currentLayout);
         }
 
-        LongKeyNode longKeyNode = new LongKeyNode(ba, this.getCurrentLayout(), this.nodesByLayout, this.layouts);
+        LongKeyNode longKeyNode = new LongKeyNode(valueArgument, this.getCurrentLayout(), this.nodesByLayout, this.layouts);
         longKeyNode.setIndex(this.allKeyNodes.size());
         this.allKeyNodes.add(longKeyNode);
         if (this.allKeyNodes.size() >= this.keyCount - 1) {
@@ -769,30 +731,30 @@ public class ParameterKeyGenerator {
     }
 
     public static void merge(int ba, int bb, int bc, List list1, List list2) {
-        int bd = ba;
-        int be = bd;
-        int bf = bb + 1;
+        int elementIndex = ba;
+        int elementIndexValue = elementIndex;
+        int elementIndexValue2 = bb + 1;
 
-        for (int i = bd; i <= bc; i++) {
-            list2.set(i, list1.get(i));
+        for (int elementIndexValue3 = elementIndex; elementIndexValue3 <= bc; elementIndexValue3++) {
+            list2.set(elementIndexValue3, list1.get(elementIndexValue3));
         }
 
-        while (be <= bb && bf <= bc) {
+        while (elementIndexValue <= bb && elementIndexValue2 <= bc) {
             LongKeyNode longKeyNode;
-            if (((LongKeyNode) list2.get(be)).isOrderedBefore((EncryptionKeyChain) list2.get(bf))) {
-                longKeyNode = (LongKeyNode) list2.get(be++);
+            if (((LongKeyNode) list2.get(elementIndexValue)).isOrderedBefore((EncryptionKeyChain) list2.get(elementIndexValue2))) {
+                longKeyNode = (LongKeyNode) list2.get(elementIndexValue++);
             } else {
-                longKeyNode = (LongKeyNode) list2.get(bf++);
+                longKeyNode = (LongKeyNode) list2.get(elementIndexValue2++);
             }
 
-            list1.set(bd, longKeyNode);
-            bd++;
+            list1.set(elementIndex, longKeyNode);
+            elementIndex++;
         }
 
-        while (be <= bb) {
-            list1.set(bd, list2.get(be));
-            bd++;
-            be++;
+        while (elementIndexValue <= bb) {
+            list1.set(elementIndex, list2.get(elementIndexValue));
+            elementIndex++;
+            elementIndexValue++;
         }
     }
 
@@ -809,32 +771,32 @@ public class ParameterKeyGenerator {
         }
     }
 
-    public static int computeMergeSortDepth(int ba) {
+    public static int computeMergeSortDepth(int nodeCount) {
         byte bc;
-        if (ba > 14336) {
+        if (nodeCount > 14336) {
             if (!HiddenOptionFlags.NO_PARAMETER_KEY_SIZE_LIMIT) {
-                if (ba <= 16384) {
+                if (nodeCount <= 16384) {
                     return 12;
                 }
 
-                if (ba <= 20480) {
+                if (nodeCount <= 20480) {
                     return 10;
                 }
 
-                if (ba <= 24576) {
+                if (nodeCount <= 24576) {
                     return 8;
                 }
 
-                if (ba <= 28672) {
+                if (nodeCount <= 28672) {
                     return 6;
                 }
 
-                if (ba <= 32768) {
+                if (nodeCount <= 32768) {
                     return 4;
                 }
 
                 byte bb;
-                if (ba <= 35840) {
+                if (nodeCount <= 35840) {
                     bb = 2;
                 } else {
                     bb = 1;
@@ -853,24 +815,24 @@ public class ParameterKeyGenerator {
 
     public void linkDependents(MethodParamChangeNode methodParamChangeNode, List list1, List list2, Set set1, Set set2) {
         List list3 = methodParamChangeNode.getDependents();
-        int ba = list3.size();
-        if (ba != 0) {
-            if (ba > 1) {
+        int list3Size = list3.size();
+        if (list3Size != 0) {
+            if (list3Size > 1) {
                 list3 = new ArrayList(list3);
                 ZkmUtils.shuffleList(list3, this.random);
             }
 
             LongKeyNode longKeyNode = methodParamChangeNode.getSecondKeyNode();
-            ArrayList arrayList = new ArrayList(ba + 1);
+            ArrayList arrayList = new ArrayList(list3Size + 1);
             arrayList.add(new ObjectPair(methodParamChangeNode, longKeyNode));
 
-            for (int i = 0; i < ba; i++) {
-                MethodParamChangeNode methodParamChangeNode1 = (MethodParamChangeNode) list3.get(i);
+            for (int elementIndex = 0; elementIndex < list3Size; elementIndex++) {
+                MethodParamChangeNode methodParamChangeNode1 = (MethodParamChangeNode) list3.get(elementIndex);
                 LongKeyNode longKeyNode1 = methodParamChangeNode1.getFirstKeyNode();
                 longKeyNode.appendToChain(longKeyNode1);
-                long bc = this.encodeIndexKey(longKeyNode.getIndex());
-                long bd = this.encodeIndexKey(longKeyNode1.getIndex());
-                list1.add(new MutablePair(bc, bd));
+                long key = this.encodeIndexKey(longKeyNode.getIndex());
+                long valueValue = this.encodeIndexKey(longKeyNode1.getIndex());
+                list1.add(new MutablePair(key, valueValue));
                 arrayList.add(new ObjectPair(methodParamChangeNode1, longKeyNode1));
                 longKeyNode = longKeyNode1;
             }
@@ -882,32 +844,32 @@ public class ParameterKeyGenerator {
             long currentKey = longKeyNode4.getCurrentKey();
             int[] bitLayout = longKeyNode4.getBitLayout();
             Random random1 = this.random;
-            long bn = computeXorMask(randomKey, currentKey, bitLayout, mutableLong, (Set) null, random1);
-            longKeyNode4.setXorMask(bn);
+            long xorMask = computeXorMask(randomKey, currentKey, bitLayout, mutableLong, (Set) null, random1);
+            longKeyNode4.setXorMask(xorMask);
             set2.add(longKeyNode4);
-            long be = this.encodeIndexKey(longKeyNode4.getIndex());
-            list2.add(new MutablePair(be, bn));
-            int bf = arrayList.size();
+            long keyValue = this.encodeIndexKey(longKeyNode4.getIndex());
+            list2.add(new MutablePair(keyValue, xorMask));
+            int arrayListSize = arrayList.size();
 
-            for (int i = 1; i < bf; i++) {
-                ObjectPair objectPair = (ObjectPair) arrayList.get(i);
+            for (int elementIndexValue = 1; elementIndexValue < arrayListSize; elementIndexValue++) {
+                ObjectPair objectPair = (ObjectPair) arrayList.get(elementIndexValue);
                 MethodParamChangeNode methodParamChangeNode2 = (MethodParamChangeNode) objectPair.getFirst();
                 LongKeyNode longKeyNode2 = (LongKeyNode) objectPair.getSecond();
-                long bh = computeXorMask(randomKey, longKeyNode2.getCurrentKey(), longKeyNode2.getBitLayout(), mutableLong, set1, this.random);
-                longKeyNode2.setXorMask(bh);
+                long xorMaskValue = computeXorMask(randomKey, longKeyNode2.getCurrentKey(), longKeyNode2.getBitLayout(), mutableLong, set1, this.random);
+                longKeyNode2.setXorMask(xorMaskValue);
                 set2.add(longKeyNode2);
-                long bi = this.encodeIndexKey(longKeyNode2.getIndex());
+                long keyValue2 = this.encodeIndexKey(longKeyNode2.getIndex());
                 longKeyNode2.addKey(mutableLong.getValue());
-                list2.add(new MutablePair(bi, bh));
-                long bj = this.deriveKey(longKeyNode2);
-                methodParamChangeNode2.replacePrimaryKey(bj);
+                list2.add(new MutablePair(keyValue2, xorMaskValue));
+                long primaryKey = this.deriveKey(longKeyNode2);
+                methodParamChangeNode2.replacePrimaryKey(primaryKey);
                 if (!methodParamChangeNode2.hasKeyField()) {
                     LongKeyNode longKeyNode3 = methodParamChangeNode2.getSecondKeyNode();
-                    long bk = methodParamChangeNode2.getRandomKey();
-                    longKeyNode3.setXorMask(bk);
+                    long randomKeyValue = methodParamChangeNode2.getRandomKey();
+                    longKeyNode3.setXorMask(randomKeyValue);
                     set2.add(longKeyNode3);
-                    long bl = this.encodeIndexKey(longKeyNode3.getIndex());
-                    list2.add(new MutablePair(bl, bk));
+                    long keyValue3 = this.encodeIndexKey(longKeyNode3.getIndex());
+                    list2.add(new MutablePair(keyValue3, randomKeyValue));
                 }
             }
 
@@ -939,8 +901,8 @@ public class ParameterKeyGenerator {
 
         while (iterator1.hasNext()) {
             MethodParamChangeNode methodParamChangeNode = (MethodParamChangeNode) iterator1.next();
-            long bb = ofLong.next();
-            methodParamChangeNode.setRandomKey(bb);
+            long randomKeyValue = ofLong.next();
+            methodParamChangeNode.setRandomKey(randomKeyValue);
         }
 
         Map map1 = this.rootNode.getKeyChainMap();
@@ -975,112 +937,91 @@ public class ParameterKeyGenerator {
         while (iterator4.hasNext()) {
             LongKeyNode longKeyNode2 = (LongKeyNode) iterator4.next();
             if (!identityHashSet1.contains(longKeyNode2)) {
-                long bc;
+                long randomKeyValue2;
                 if (identityMapWrapper.containsKey(longKeyNode2)) {
-                    bc = ((MethodParamChangeNode) identityMapWrapper.get(longKeyNode2)).getRandomKey();
+                    randomKeyValue2 = ((MethodParamChangeNode) identityMapWrapper.get(longKeyNode2)).getRandomKey();
                 } else {
-                    bc = (Long) this.randomLongs.next();
+                    randomKeyValue2 = (Long) this.randomLongs.next();
                 }
 
                 long currentKey = longKeyNode2.getCurrentKey();
                 int[] bitLayout = longKeyNode2.getBitLayout();
                 Random random1 = this.random;
-                long be = computeXorMask(bc, currentKey, bitLayout, mutableLong, (Set) null, random1);
-                longKeyNode2.setXorMask(be);
-                long bf = this.encodeIndexKey(longKeyNode2.getIndex());
-                list4.add(new MutablePair(bf, be));
+                long xorMask = computeXorMask(randomKeyValue2, currentKey, bitLayout, mutableLong, (Set) null, random1);
+                longKeyNode2.setXorMask(xorMask);
+                long key = this.encodeIndexKey(longKeyNode2.getIndex());
+                list4.add(new MutablePair(key, xorMask));
                 identityHashSet1.add(longKeyNode2);
             }
         }
 
         this.collectExtraPairs(set1, set2, identityHashSet, list5);
         int bk = Math.min(this.keyCount, this.allKeyNodes.size() - 1);
-        List list6;
-        Random random4;
         if (!HiddenOptionFlags.SIMPLE_PARAMETER_KEYS) {
             byte bl;
-            int br;
+            int minLinkCountValue;
             if (list3.size() < 1000) {
                 bl = 4;
-                br = this.minLinkCount;
+                minLinkCountValue = this.minLinkCount;
             } else if (list3.size() < 2000) {
                 bl = 2;
-                br = this.minLinkCount;
+                minLinkCountValue = this.minLinkCount;
             } else {
                 bl = 1;
-                br = this.minLinkCount;
+                minLinkCountValue = this.minLinkCount;
             }
 
-            int bm = Math.max(br, Math.min(map1.size() / 2, list3.size() * bl));
+            int bm = Math.max(minLinkCountValue, Math.min(map1.size() / 2, list3.size() * bl));
             int bd = 0;
 
-            label97:
-            while (true) {
-                int bn = -1;
-                LongKeyNode longKeyNode3 = null;
-                int bo = 0;
-                Random random2 = this.random;
-
-                while (true) {
-                    int bg = random2.nextInt(bk + 1);
-                    LongKeyNode longKeyNode4 = (LongKeyNode) this.allKeyNodes.get(bg);
-                    if (!identityHashSet.contains(longKeyNode4) && !longKeyNode4.hasSuccessorIn(identityHashSet)) {
-                        bn = bg;
-                        longKeyNode3 = longKeyNode4;
+            do {
+                int sourceIndex = -1;
+                LongKeyNode sourceNode = null;
+                int sourceAttempts = 0;
+                boolean attemptsExhausted = false;
+                while (sourceIndex == -1) {
+                    int candidateIndex = this.random.nextInt(bk + 1);
+                    LongKeyNode candidate = (LongKeyNode) this.allKeyNodes.get(candidateIndex);
+                    if (!identityHashSet.contains(candidate) && !candidate.hasSuccessorIn(identityHashSet)) {
+                        sourceIndex = candidateIndex;
+                        sourceNode = candidate;
                     }
-
-                    if (bo++ > bk * 10) {
-                        list6 = list3;
-                        random4 = this.random;
-                        break label97;
+                    if (sourceAttempts++ > bk * 10) {
+                        attemptsExhausted = true;
+                        break;
                     }
-
-                    if (bn != -1) {
-                        bg = -1;
-                        longKeyNode4 = null;
-                        int bh = 0;
-                        Random random3 = this.random;
-
-                        while (true) {
-                            int bi = random3.nextInt(bk + 1);
-                            LongKeyNode longKeyNode5 = (LongKeyNode) this.allKeyNodes.get(bi);
-                            if (longKeyNode5 != longKeyNode3 && !longKeyNode5.hasPrevious() && !longKeyNode5.hasSuccessor(longKeyNode3)) {
-                                bg = bi;
-                                longKeyNode4 = longKeyNode5;
-                            }
-
-                            if (bh++ > bk * 10) {
-                                list6 = list3;
-                                random4 = this.random;
-                                break label97;
-                            }
-
-                            if (bg != -1) {
-                                longKeyNode3.appendToChain(longKeyNode4);
-                                long bp = this.encodeIndexKey(bn);
-                                long bj = this.encodeIndexKey(bg);
-                                list3.add(new MutablePair(bp, bj));
-                                if (++bd >= bm) {
-                                    list6 = list3;
-                                    random4 = this.random;
-                                    break label97;
-                                }
-                                continue label97;
-                            }
-
-                            random3 = this.random;
-                        }
-                    }
-
-                    random2 = this.random;
                 }
-            }
-        } else {
-            list6 = list3;
-            random4 = this.random;
+                if (attemptsExhausted) {
+                    break;
+                }
+
+                int targetIndex = -1;
+                LongKeyNode targetNode = null;
+                int targetAttempts = 0;
+                while (targetIndex == -1) {
+                    int candidateIndex = this.random.nextInt(bk + 1);
+                    LongKeyNode candidate = (LongKeyNode) this.allKeyNodes.get(candidateIndex);
+                    if (candidate != sourceNode && !candidate.hasPrevious() && !candidate.hasSuccessor(sourceNode)) {
+                        targetIndex = candidateIndex;
+                        targetNode = candidate;
+                    }
+                    if (targetAttempts++ > bk * 10) {
+                        attemptsExhausted = true;
+                        break;
+                    }
+                }
+                if (attemptsExhausted) {
+                    break;
+                }
+
+                sourceNode.appendToChain(targetNode);
+                long sourceKey = this.encodeIndexKey(sourceIndex);
+                long targetKey = this.encodeIndexKey(targetIndex);
+                list3.add(new MutablePair(sourceKey, targetKey));
+            } while (++bd < bm);
         }
 
-        ZkmUtils.shuffleList(list6, random4);
+        ZkmUtils.shuffleList(list3, this.random);
         ZkmUtils.shuffleList(list4, this.random);
     }
 
@@ -1098,10 +1039,10 @@ public class ParameterKeyGenerator {
                         && !set3.contains(encryptionKeyChain)
                         && !this.sourceNodes.contains(encryptionKeyChain)) {
                     LongKeyNode longKeyNode1 = (LongKeyNode) encryptionKeyChain;
-                    long bb = this.deriveKey(longKeyNode);
-                    long bc = this.generateUniqueKey();
-                    long bd = this.generateUniqueKey();
-                    list1.add(new NodePairKeys(longKeyNode, longKeyNode1, bb, bc, bd));
+                    long long1Value = this.deriveKey(longKeyNode);
+                    long long2Value = this.generateUniqueKey();
+                    long long3 = this.generateUniqueKey();
+                    list1.add(new NodePairKeys(longKeyNode, longKeyNode1, long1Value, long2Value, long3));
                     set1.add(longKeyNode);
                     set2.add(longKeyNode1);
                     set3.add(longKeyNode);
@@ -1116,27 +1057,27 @@ public class ParameterKeyGenerator {
         }
     }
 
-    public static long computeXorMask(long ba, long bb, int[] bc, MutableLong mutableLong, Set set1, Random random1) {
-        long bd = MethodParameterChanger.permuteAllBits(bb, bc) & 72057594037927935L;
-        long be = MethodParameterChanger.permuteBits(ba, bc);
+    public static long computeXorMask(long valueArgument, long valueArgument2, int[] bitShifts, MutableLong mutableLong, Set set1, Random random1) {
+        long bd = MethodParameterChanger.permuteAllBits(valueArgument2, bitShifts) & 72057594037927935L;
+        long be = MethodParameterChanger.permuteBits(valueArgument, bitShifts);
         long bf = be & 72057594037927935L;
         long bg = be >>> 8 & 281474976710655L;
         long bh = be & 255L;
         OfLong ofLong = random1.longs(0L, 72057594037927936L).iterator();
 
         long bi;
-        long bj;
+        long valueValue;
         long bk;
         do {
             bk = ofLong.next();
-            bj = bk << 8 | bh;
-            long bl = bj & 72057594037927935L;
+            valueValue = bk << 8 | bh;
+            long bl = valueValue & 72057594037927935L;
             bi = bd ^ bf ^ bl;
         } while ((bk & 281474976710655L ^ bg) == 0L || set1 != null && set1.contains(bi));
 
-        bk = MethodParameterChanger.permuteBits(bj, bc);
-        long bm = bb ^ ba ^ bk;
-        mutableLong.setValue(bm);
+        bk = MethodParameterChanger.permuteBits(valueValue, bitShifts);
+        long valueValue2 = valueArgument2 ^ valueArgument ^ bk;
+        mutableLong.setValue(valueValue2);
         if (set1 != null) {
             set1.remove(bd);
             set1.add(bi);

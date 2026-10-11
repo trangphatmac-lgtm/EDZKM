@@ -179,13 +179,13 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
     public void collectFlowObfuscationCandidates(ListMultimap listMultimap) throws ZkmProcessingException {
         if (!this.isInterface()) {
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodBytecode methodBytecode1 = this.methods[i].getBytecode();
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodBytecode methodBytecode1 = this.methods[methodIndex].getBytecode();
                 if (methodBytecode1 != null) {
-                    int shortestPathLength = this.methods[i].getShortestPathLength();
+                    int shortestPathLength = this.methods[methodIndex].getShortestPathLength();
                     if (shortestPathLength == -1) {
-                        float bc = 1.0F - (float) (1.0 / methodBytecode1.getCodeLength());
-                        WeightedObject weightedObject = new WeightedObject(bc, methodBytecode1);
+                        float weight = 1.0F - (float) (1.0 / methodBytecode1.getCodeLength());
+                        WeightedObject weightedObject = new WeightedObject(weight, methodBytecode1);
                         listMultimap.addValue(this, weightedObject);
                     } else if (shortestPathLength < Integer.MAX_VALUE) {
                         WeightedObject weightedObject1 = new WeightedObject(shortestPathLength, methodBytecode1);
@@ -196,17 +196,17 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         }
     }
 
-    public ClassPropertyNode getPropertyNode(int ba) {
-        return (ClassPropertyNode) propertyNodes.elementAt(ba);
+    public ClassPropertyNode getPropertyNode(int elementIndex) {
+        return (ClassPropertyNode) propertyNodes.elementAt(elementIndex);
     }
 
     public FieldInfo createUniquelyNamedStaticField(
-            String string, int ba, boolean bl, InheritedMemberAnalyzer inheritedMemberAnalyzer, ClassMemberLookup classMemberLookup1, int bb
+            String descriptor, int ba, boolean bl, InheritedMemberAnalyzer inheritedMemberAnalyzer, ClassMemberLookup classMemberLookup1, int bb
     ) throws ZkmException, IOException {
         synchronized (inheritedMemberAnalyzer.getFieldCreationLock()) {
-            String string1 = this.generateUniqueFieldName(classMemberLookup1.getNewFieldNames(), string, inheritedMemberAnalyzer);
+            String string1 = this.generateUniqueFieldName(classMemberLookup1.getNewFieldNames(), descriptor, inheritedMemberAnalyzer);
             Integer integer = bb;
-            return this.createStaticField(string1, string, ba, bl, inheritedMemberAnalyzer, classMemberLookup1, integer);
+            return this.createStaticField(string1, descriptor, ba, bl, inheritedMemberAnalyzer, classMemberLookup1, integer);
         }
     }
 
@@ -251,8 +251,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
 
                 if (list4.size() != 0 || pairMultiMap1.getKeyCount() != 0) {
-                    int bh = Integer.MAX_VALUE;
-                    int bi = Integer.MAX_VALUE;
+                    int maxValue = Integer.MAX_VALUE;
+                    int maxValueValue = Integer.MAX_VALUE;
                     HashSet hashSet = ZkmUtils.createHashSet();
                     HashSet hashSet1 = ZkmUtils.createHashSet();
                     SetMultiMap setMultiMap = new SetMultiMap();
@@ -282,8 +282,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     hashSet4.addAll(arrayList);
                     int bd = methodInfo1 == null ? 0 : methodInfo1.getLocalVariableCount();
                     hashSet1.size();
-                    int ba = hashSet4.size();
-                    boolean bl11 = false;
+                    int hashSet4Size = hashSet4.size();
+                    boolean boolean1Value = false;
                     JsrGotoKind jsrGotoKind;
                     if (bl10) {
                         if (!bl && hashSet.size() == 0) {
@@ -293,31 +293,16 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                         if (bl2) {
                             jsrGotoKind = JsrGotoKind.GOTO;
                         } else {
-                            label287:
-                            {
-                                JsrGotoKind jsrGotoKind1;
-                                if (ba <= 5000) {
-                                    if (bd <= 50) {
-                                        jsrGotoKind = JsrGotoKind.JSR;
-                                        break label287;
-                                    }
-
-                                    jsrGotoKind1 = JsrGotoKind.GOTO;
-                                } else {
-                                    jsrGotoKind1 = JsrGotoKind.GOTO;
-                                }
-
-                                jsrGotoKind = jsrGotoKind1;
-                            }
+                            jsrGotoKind = hashSet4Size <= 5000 && bd <= 50 ? JsrGotoKind.JSR : JsrGotoKind.GOTO;
                         }
                     } else {
                         if (!bl) {
-                            bl11 = true;
+                            boolean1Value = true;
                         }
 
                         if (bl2) {
                             jsrGotoKind = JsrGotoKind.GOTO;
-                        } else if (ba <= 5000 && bd <= 50) {
+                        } else if (hashSet4Size <= 5000 && bd <= 50) {
                             jsrGotoKind = JsrGotoKind.JSR;
                         } else {
                             jsrGotoKind = JsrGotoKind.GOTO;
@@ -362,14 +347,14 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     }
 
                     if (bl13 && resolvedFieldRef1 == null) {
-                        String string;
+                        String descriptor;
                         if (setMultiMap.getKeyCount() == 1) {
-                            string = "Ljava/lang/String;";
+                            descriptor = "Ljava/lang/String;";
                         } else {
-                            string = "[Ljava/lang/String;";
+                            descriptor = "[Ljava/lang/String;";
                         }
 
-                        FieldInfo fieldInfo1 = this.createUniquelyNamedStaticField(string, bl10 ? 4 : 1, true, inheritedMemberAnalyzer, classMemberLookup1, 1);
+                        FieldInfo fieldInfo1 = this.createUniquelyNamedStaticField(descriptor, bl10 ? 4 : 1, true, inheritedMemberAnalyzer, classMemberLookup1, 1);
                         resolvedFieldRef1 = this.constantPool
                                 .getOrAddFieldRef(
                                         this.getClassName(), fieldInfo1.getSourceName(), fieldInfo1.getDescriptor(), arrayList1, classMemberLookup1, classResolver1, true
@@ -387,7 +372,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     }
 
                     boolean bl15 = bl1 && resolvedFieldRef1 != null && bl12;
-                    boolean bl16 = methodParameterChanger != null && methodParameterChanger.canKeyStringEncryption(methodInfo1) && !bl11;
+                    boolean bl16 = methodParameterChanger != null && methodParameterChanger.canKeyStringEncryption(methodInfo1) && !boolean1Value;
                     boolean bl17 = bl15 && bl16 && StringEncryptor.canUseIndyStrings(this);
                     boolean bl14 = bl4 && !bl16;
                     boolean bl18 = methodParameterChanger != null;
@@ -410,7 +395,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             classMemberLookup1,
                             classResolver1,
                             arrayList1,
-                            bl11,
+                            boolean1Value,
                             boolean1,
                             boolean2,
                             boolean3,
@@ -439,9 +424,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             observableHolders,
                             localVariableAllocator
                     );
-                    int bb = -1;
+                    int andIncrementValue = -1;
                     if (!bl13) {
-                        bb = localVariableAllocator.getAndIncrement();
+                        andIncrementValue = localVariableAllocator.getAndIncrement();
                     }
 
                     HashMap hashMap3 = ZkmUtils.createHashMap();
@@ -454,7 +439,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     ObservableHolder observableHolder2 = new ObservableHolder();
                     Long long1 = null;
                     LocalVariableIndex localVariableIndex1 = null;
-                    if (methodParameterChanger != null && (bl15 && ba > 0 || bl16)) {
+                    if (methodParameterChanger != null && (bl15 && hashSet4Size > 0 || bl16)) {
                         long1 = map1 != null ? (Long) map1.get(methodInfo1) : null;
                         localVariableIndex1 = map2 != null ? (LocalVariableIndex) map2.get(methodInfo1) : null;
                         if (long1 == null) {
@@ -474,7 +459,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                                 arrayList2,
                                 resolvedFieldRef1,
                                 stringEncryptor.getStringArrayFieldRef(),
-                                bb,
+                                andIncrementValue,
                                 observableHolders,
                                 setMultiMap,
                                 hashMap2,
@@ -592,13 +577,13 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     );
                     int be = localVariableAllocator.getValue() - bd;
                     ArrayList arrayList5 = new ArrayList();
-                    int bf = bd;
-                    bh = bf;
+                    int maxValueValue2 = bd;
+                    maxValue = maxValueValue2;
 
-                    for (int i = localVariableAllocator.getValue(); bh < i; i = localVariableAllocator.getValue()) {
-                        arrayList5.add(bf);
-                        bf += 1;
-                        bh = bf;
+                    for (int valueValue = localVariableAllocator.getValue(); maxValue < valueValue; valueValue = localVariableAllocator.getValue()) {
+                        arrayList5.add(maxValueValue2);
+                        maxValueValue2 += 1;
+                        maxValue = maxValueValue2;
                     }
 
                     LabelInstruction labelInstruction1 = new LabelInstruction(4096);
@@ -642,36 +627,36 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof SourceFileAttribute) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof SourceFileAttribute) {
                 if (!trimOptions1.a) {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
-            } else if (this.attributes[i] instanceof DeprecatedAttribute) {
+            } else if (this.attributes[attributeIndex] instanceof DeprecatedAttribute) {
                 if (!trimOptions1.b) {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
-            } else if (this.attributes[i] instanceof ReferencingAttribute) {
-                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[i];
+            } else if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[attributeIndex];
                 if (trimOptions1.d) {
                     if (trimProcessor1.hasAnnotationRetainedClasses() && !referencingAttribute.trimAnnotations(trimProcessor1, scriptEnvironment1, printWriter)) {
-                        arrayList.add(this.attributes[i]);
+                        arrayList.add(this.attributes[attributeIndex]);
                     }
                 } else {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
-            } else if (this.attributes[i] instanceof RecordAttribute) {
+            } else if (this.attributes[attributeIndex] instanceof RecordAttribute) {
                 if (trimOptions1.d) {
-                    RecordAttribute recordAttribute = (RecordAttribute) this.attributes[i];
+                    RecordAttribute recordAttribute = (RecordAttribute) this.attributes[attributeIndex];
                     recordAttribute.trimComponentAttributes(trimProcessor1, scriptEnvironment1, printWriter);
                 }
-            } else if (this.attributes[i] instanceof SourceDebugExtensionAttribute) {
+            } else if (this.attributes[attributeIndex] instanceof SourceDebugExtensionAttribute) {
                 if (!trimOptions1.f) {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
-            } else if (this.attributes[i] instanceof UnknownAttribute) {
+            } else if (this.attributes[attributeIndex] instanceof UnknownAttribute) {
                 if (trimOptions1.c) {
-                    UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[i];
+                    UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[attributeIndex];
                     if (scriptEnvironment1.isVerbose()) {
                         printWriter1.println(
                                 "\tDeleting unknown attribute '" + unknownAttribute.getAttributeName() + "' in class " + ClassFileBase.toDottedName(this.getClassName())
@@ -682,10 +667,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             "Deleting unknown attribute '" + unknownAttribute.getAttributeName() + "' in class " + ClassFileBase.toDottedName(this.getClassName())
                     );
                 } else {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
             } else {
-                arrayList.add(this.attributes[i]);
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
@@ -694,12 +679,12 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             this.attributeCount = this.attributes.length;
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].trimAttributes(trimProcessor1, trimOptions1, scriptEnvironment1, printWriter);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].trimAttributes(trimProcessor1, trimOptions1, scriptEnvironment1, printWriter);
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].trimAttributes(trimProcessor1, trimOptions1, scriptEnvironment1, printWriter);
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].trimAttributes(trimProcessor1, trimOptions1, scriptEnvironment1, printWriter);
         }
     }
 
@@ -757,8 +742,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void registerMethods(ClassMemberLookup classMemberLookup1) {
-        for (int i = 0; i < this.methodCount; i++) {
-            classMemberLookup1.registerMethod(this.methods[i], this);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            classMemberLookup1.registerMethod(this.methods[methodIndex], this);
         }
     }
 
@@ -874,10 +859,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public MethodInfo createUniquelyNamedStaticMethod(
-            String string,
+            String valueArgument,
             ArrayList arrayList,
-            int ba,
-            int bb,
+            int maxStack,
+            int maxLocals,
             int bc,
             LocalVariableList localVariableList1,
             ExceptionHandlerSpec[] exceptionHandlerSpecs,
@@ -885,12 +870,12 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
             ClassMemberLookup classMemberLookup1,
-            int bd
+            int creationKind
     ) throws ZkmProcessingException {
         synchronized (inheritedMemberAnalyzer.getMethodCreationLock()) {
-            String string2 = this.generateUniqueMethodName(classMemberLookup1.getNewMethodNames(), string, inheritedMemberAnalyzer, true);
+            String valueValue = this.generateUniqueMethodName(classMemberLookup1.getNewMethodNames(), valueArgument, inheritedMemberAnalyzer, true);
             return this.createStaticMethod(
-                    string2, string, arrayList, ba, bb, bc, localVariableList1, exceptionHandlerSpecs, string1, list1, inheritedMemberAnalyzer, classMemberLookup1, bd
+                    valueValue, valueArgument, arrayList, maxStack, maxLocals, bc, localVariableList1, exceptionHandlerSpecs, string1, list1, inheritedMemberAnalyzer, classMemberLookup1, creationKind
             );
         }
     }
@@ -974,16 +959,16 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         }
 
         ConstantLong constantLong = this.constantPool.getOrAddLongConstant(-1L, list2);
-        long bc;
+        long valueValue;
         if (bl) {
-            bc = longConstantEncryptor.desEncrypt(ba, long1);
+            valueValue = longConstantEncryptor.desEncrypt(ba, long1);
         } else if (long1 != null) {
-            bc = ba ^ long1;
+            valueValue = ba ^ long1;
         } else {
-            bc = ba ^ longConstantEncryptor.getClassXorKey();
+            valueValue = ba ^ longConstantEncryptor.getClassXorKey();
         }
 
-        constantLong.setValue(bc);
+        constantLong.setValue(valueValue);
         longConstantEncryptor.emitEncryptedConstantLoad(
                 localVariableList1, list1, resolvedFieldRef, constantLong, obfuscatedReferenceSlot, labelInstruction, mutableInt, listMultimap
         );
@@ -1027,22 +1012,22 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                         set1, classMemberLookup1, classResolver1, scriptEnvironment1 == null ? null : scriptEnvironment1.getIgnoreMissingReferencesSpec()
                 );
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
-            } else if (this.attributes[i] instanceof EnclosingMethodAttribute) {
-                ((EnclosingMethodAttribute) this.attributes[i]).resolveEnclosingMethod(classResolver1);
-            } else if (this.attributes[i] instanceof RecordAttribute) {
-                ((RecordAttribute) this.attributes[i]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+            } else if (this.attributes[attributeIndex] instanceof EnclosingMethodAttribute) {
+                ((EnclosingMethodAttribute) this.attributes[attributeIndex]).resolveEnclosingMethod(classResolver1);
+            } else if (this.attributes[attributeIndex] instanceof RecordAttribute) {
+                ((RecordAttribute) this.attributes[attributeIndex]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
             }
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].resolveAttributeReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].resolveAttributeReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].resolveAttributeReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].resolveAttributeReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
         }
     }
 
@@ -1061,8 +1046,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         boolean bl4 = false;
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.methodCount; i++) {
-            MethodInfo methodInfo1 = this.methods[i];
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            MethodInfo methodInfo1 = this.methods[methodIndex];
             List list1 = listMultimap.getValues(methodInfo1);
             if (list1 != null && list1.size() > 0) {
                 boolean bl5 = methodInfo1.applyAutoReflectionHandling(
@@ -1094,15 +1079,15 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     public void pruneBootstrapMethods(Set set1) {
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof BootstrapMethodsAttribute) {
-                BootstrapMethodsAttribute bootstrapMethodsAttribute1 = (BootstrapMethodsAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof BootstrapMethodsAttribute) {
+                BootstrapMethodsAttribute bootstrapMethodsAttribute1 = (BootstrapMethodsAttribute) this.attributes[attributeIndex];
                 bootstrapMethodsAttribute1.retainEntries(set1);
                 if (!bootstrapMethodsAttribute1.isEmpty()) {
                     arrayList.add(bootstrapMethodsAttribute1);
                 }
             } else {
-                arrayList.add(this.attributes[i]);
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
@@ -1117,11 +1102,11 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             InnerClassesAttribute innerClassesAttribute = null;
             EnclosingMethodAttribute enclosingMethodAttribute = null;
 
-            for (int i = 0; i < this.attributeCount; i++) {
-                if (this.attributes[i] instanceof InnerClassesAttribute) {
-                    innerClassesAttribute = (InnerClassesAttribute) this.attributes[i];
-                } else if (this.attributes[i] instanceof EnclosingMethodAttribute) {
-                    enclosingMethodAttribute = (EnclosingMethodAttribute) this.attributes[i];
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                if (this.attributes[attributeIndex] instanceof InnerClassesAttribute) {
+                    innerClassesAttribute = (InnerClassesAttribute) this.attributes[attributeIndex];
+                } else if (this.attributes[attributeIndex] instanceof EnclosingMethodAttribute) {
+                    enclosingMethodAttribute = (EnclosingMethodAttribute) this.attributes[attributeIndex];
                 }
             }
 
@@ -1142,21 +1127,21 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 bl1 = true;
                 this.clearInnerClassInfo();
 
-                for (int i = 0; i < this.methodCount; i++) {
-                    this.methods[i].clearSynthetic();
+                for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                    this.methods[methodIndex].clearSynthetic();
                 }
 
-                for (int i = 0; i < this.fieldCount; i++) {
-                    this.fields[i].clearSynthetic();
+                for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+                    this.fields[fieldIndex].clearSynthetic();
                 }
             }
 
             if (bl || bl1) {
                 ArrayList arrayList = new ArrayList(this.attributeCount);
 
-                for (int i = 0; i < this.attributeCount; i++) {
-                    if ((this.attributes[i] != innerClassesAttribute || !bl) && (this.attributes[i] != enclosingMethodAttribute || !bl1)) {
-                        arrayList.add(this.attributes[i]);
+                for (int attributeIndexValue = 0; attributeIndexValue < this.attributeCount; attributeIndexValue++) {
+                    if ((this.attributes[attributeIndexValue] != innerClassesAttribute || !bl) && (this.attributes[attributeIndexValue] != enclosingMethodAttribute || !bl1)) {
+                        arrayList.add(this.attributes[attributeIndexValue]);
                     }
                 }
 
@@ -1166,12 +1151,12 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         }
     }
 
-    public ClassFileBase findInheritedFieldReferrer(Object object) {
+    public ClassFileBase findInheritedFieldReferrer(Object key) {
         if (this.inheritedFieldReferrers == null) {
             return null;
         }
 
-        Set set1 = this.inheritedFieldReferrers.getValues(object);
+        Set set1 = this.inheritedFieldReferrers.getValues(key);
         return set1 != null ? (ClassFileBase) set1.iterator().next() : null;
     }
 
@@ -1179,19 +1164,19 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             CommonSuperTypeResolver commonSuperTypeResolver1, ClassHierarchyQuery classHierarchyQuery, ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
         MethodInfo[] methodInfos = this.methods;
-        int ba = methodInfos.length;
+        int lengthValue = methodInfos.length;
 
-        for (int i = 0; i < ba; i++) {
-            methodInfos[i].analyzeFlow(commonSuperTypeResolver1, classHierarchyQuery, scriptEnvironment1);
+        for (int methodInfoIndex = 0; methodInfoIndex < lengthValue; methodInfoIndex++) {
+            methodInfos[methodInfoIndex].analyzeFlow(commonSuperTypeResolver1, classHierarchyQuery, scriptEnvironment1);
         }
     }
 
-    public void setMethodsCreationKind(int ba) {
+    public void setMethodsCreationKind(int methodsCreationKind) {
         MethodInfo[] methodInfos = this.methods;
-        int bb = methodInfos.length;
+        int lengthValue = methodInfos.length;
 
-        for (int i = 0; i < bb; i++) {
-            methodInfos[i].setCreationKind(ba);
+        for (int methodInfoIndex = 0; methodInfoIndex < lengthValue; methodInfoIndex++) {
+            methodInfos[methodInfoIndex].setCreationKind(methodsCreationKind);
         }
 
         this.constantPool.clearOriginalStringFlags();
@@ -1232,11 +1217,11 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
             while (iterator1.hasNext()) {
                 ResolvedStringConstant resolvedStringConstant1 = (ResolvedStringConstant) iterator1.next();
-                String string = resolvedStringConstant1.getValueString();
-                ObservableHolder observableHolder = (ObservableHolder) hashMap.get(string);
+                String valueString = resolvedStringConstant1.getValueString();
+                ObservableHolder observableHolder = (ObservableHolder) hashMap.get(valueString);
                 if (observableHolder == null) {
-                    observableHolder = new ObservableHolder(string);
-                    hashMap.put(string, new ObservableHolder(string));
+                    observableHolder = new ObservableHolder(valueString);
+                    hashMap.put(valueString, new ObservableHolder(valueString));
                 }
 
                 setMultiMap.addValue(observableHolder, resolvedStringConstant1);
@@ -1249,19 +1234,19 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         while (iterator.hasNext()) {
             ObjectPair objectPair1 = (ObjectPair) iterator.next();
             ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) objectPair1.getFirst();
-            String string1 = resolvedStringConstant.getValueString();
+            String valueStringValue = resolvedStringConstant.getValueString();
             ObservableHolder observableHolder1;
             if (bl) {
-                observableHolder1 = (ObservableHolder) hashMap1.get(string1);
+                observableHolder1 = (ObservableHolder) hashMap1.get(valueStringValue);
                 if (observableHolder1 == null) {
-                    observableHolder1 = new ObservableHolder(string1);
-                    hashMap1.put(string1, observableHolder1);
+                    observableHolder1 = new ObservableHolder(valueStringValue);
+                    hashMap1.put(valueStringValue, observableHolder1);
                 }
             } else {
-                observableHolder1 = (ObservableHolder) hashMap.get(string1);
+                observableHolder1 = (ObservableHolder) hashMap.get(valueStringValue);
                 if (observableHolder1 == null) {
-                    observableHolder1 = new ObservableHolder(string1);
-                    hashMap.put(string1, new ObservableHolder(string1));
+                    observableHolder1 = new ObservableHolder(valueStringValue);
+                    hashMap.put(valueStringValue, new ObservableHolder(valueStringValue));
                 }
             }
 
@@ -1273,8 +1258,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void removeMethodParametersAttributes() {
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].removeMethodParametersAttribute();
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].removeMethodParametersAttribute();
         }
     }
 
@@ -1297,8 +1282,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             boolean bl2,
             Map map1,
             Map map2,
-            int[] ba,
-            int[] bb,
+            int[] integerArray,
+            int[] integerArrayArgument,
             Map map3,
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
@@ -1336,20 +1321,20 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             string3 = "[Ljava/lang/Object;";
         }
 
-        String string = string3;
-        FieldInfo fieldInfo = this.createUniquelyNamedStaticField(string, this.isInterface() ? 4 : 1, true, inheritedMemberAnalyzer, classRepository1, 4);
-        String string1 = fieldInfo.getSourceName();
+        String descriptor = string3;
+        FieldInfo fieldInfo = this.createUniquelyNamedStaticField(descriptor, this.isInterface() ? 4 : 1, true, inheritedMemberAnalyzer, classRepository1, 4);
+        String sourceName = fieldInfo.getSourceName();
         ResolvedFieldRef resolvedFieldRef = this.constantPool
-                .getOrAddFieldRef(this.getClassName(), string1, fieldInfo.getDescriptor(), list1, classRepository1, classResolver1, true);
+                .getOrAddFieldRef(this.getClassName(), sourceName, fieldInfo.getDescriptor(), list1, classRepository1, classResolver1, true);
         FieldInfo fieldInfo1 = this.createUniquelyNamedStaticField(
                 "[Ljava/lang/String;", this.isInterface() ? 4 : 1, true, inheritedMemberAnalyzer, classRepository1, 4
         );
-        String string2 = fieldInfo1.getSourceName();
+        String sourceNameValue = fieldInfo1.getSourceName();
         ResolvedFieldRef resolvedFieldRef1 = this.constantPool
-                .getOrAddFieldRef(this.getClassName(), string2, fieldInfo1.getDescriptor(), list1, classRepository1, classResolver1, true);
+                .getOrAddFieldRef(this.getClassName(), sourceNameValue, fieldInfo1.getDescriptor(), list1, classRepository1, classResolver1, true);
         ConstantPool constantPool1 = this.getClassConstantPool();
         ResolvedMethodRef resolvedMethodRef = referenceObfuscator.createIndexDecoderMethod(
-                this, resolvedFieldRef, resolvedFieldRef1, ba, inheritedMemberAnalyzer, classRepository1, classResolver1, list1, constantPool1
+                this, resolvedFieldRef, resolvedFieldRef1, integerArray, inheritedMemberAnalyzer, classRepository1, classResolver1, list1, constantPool1
         );
         referenceObfuscator.buildReferenceTableInit(
                 this,
@@ -1358,7 +1343,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 methodInfo1,
                 map1,
                 map2,
-                ba,
+                integerArray,
                 map3,
                 inheritedMemberAnalyzer,
                 methodKeyInjector,
@@ -1425,7 +1410,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ResolvedMethodRef resolvedMethodRef6 = referenceObfuscator.createMethodHandleResolverMethod(
                     bl,
                     this,
-                    bb,
+                    integerArrayArgument,
                     (ResolvedMethodRef) observableHolder.getValue(),
                     (ResolvedMethodRef) observableHolder1.getValue(),
                     inheritedMemberAnalyzer,
@@ -1464,31 +1449,31 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             StaticInitCalleeAnalyzer staticInitCalleeAnalyzer1,
             Random random1
     ) throws ZkmException, IOException {
-        int bb = ba;
+        int integerValue = ba;
         if (!this.isInterface() || this.supportsJava8()) {
             PrintWriter printWriter = scriptEnvironment1.getLogWriter();
             ArrayList arrayList = new ArrayList(7);
             boolean bl2 = !bl;
             if (flowObfuscationExclusions == null || !flowObfuscationExclusions.isClassExcluded(this)) {
                 if (this.zkmAnnotationValues != null && this.zkmAnnotationValues.hasValue("obfuscateFlow")) {
-                    String string = this.zkmAnnotationValues.getValue("obfuscateFlow");
-                    int bc = ObfuscateOptions.parseFlowLevel(string);
-                    if (bb != bc) {
-                        String string1 = ObfuscateOptions.getFlowLevelName(bb);
-                        bb = bc;
+                    String valueValue = this.zkmAnnotationValues.getValue("obfuscateFlow");
+                    int integerValue2 = ObfuscateOptions.parseFlowLevel(valueValue);
+                    if (integerValue != integerValue2) {
+                        String flowLevelName = ObfuscateOptions.getFlowLevelName(integerValue);
+                        integerValue = integerValue2;
                         if (scriptEnvironment1.isVerbose()) {
                             printWriter.println(
                                     "Overriding Flow Obfuscation setting in class '"
                                             + AbstractExclusionSpec.formatClass(this, classHierarchyQuery, true)
                                             + "' : '"
-                                            + string1
+                                            + flowLevelName
                                             + "' changed to '"
-                                            + string
+                                            + valueValue
                                             + "'"
                             );
                         }
 
-                        if (bb == 0) {
+                        if (integerValue == 0) {
                             return;
                         }
                     }
@@ -1501,7 +1486,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
 
                 Arrays.sort(rankedValues);
-                int bg = Integer.MAX_VALUE;
+                int maxValue = Integer.MAX_VALUE;
                 int bh = 0;
 
                 for (int i = rankedValues.length - 1; i >= 0; i += -1) {
@@ -1511,7 +1496,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             && !flowObfuscationManager.isGeneratedMethod(methodInfo1)) {
                         try {
                             int be = methodInfo1.obfuscateFlow(
-                                    listMultimap, commonSuperTypeResolver1, scriptEnvironment1, classHierarchyQuery, bb, bl, bl1, map1, false, random1
+                                    listMultimap, commonSuperTypeResolver1, scriptEnvironment1, classHierarchyQuery, integerValue, bl, bl1, map1, false, random1
                             );
                             bh += be;
                             if (scriptEnvironment1.isVerbose() && be > 0) {
@@ -1673,9 +1658,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public MethodInfo createUniquelyNamedPublicStaticMethod(
-            String string,
+            String valueArgument,
             ArrayList arrayList,
-            int ba,
+            int maxLocals,
             LocalVariableList localVariableList1,
             ExceptionHandlerSpec[] exceptionHandlerSpecs,
             List list1,
@@ -1683,7 +1668,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ClassMemberLookup classMemberLookup1
     ) throws ZkmProcessingException {
         return this.createUniquelyNamedStaticMethod(
-                string, arrayList, 1, ba, 4, localVariableList1, exceptionHandlerSpecs, "Flow Obfuscation", list1, inheritedMemberAnalyzer, classMemberLookup1, 2
+                valueArgument, arrayList, 1, maxLocals, 4, localVariableList1, exceptionHandlerSpecs, "Flow Obfuscation", list1, inheritedMemberAnalyzer, classMemberLookup1, 2
         );
     }
 
@@ -1692,55 +1677,55 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         ArrayList arrayList = new ArrayList(this.attributeCount);
         InnerClassesAttribute innerClassesAttribute = null;
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof InnerClassesAttribute) {
-                innerClassesAttribute = (InnerClassesAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof InnerClassesAttribute) {
+                innerClassesAttribute = (InnerClassesAttribute) this.attributes[attributeIndex];
                 ba = innerClassesAttribute.removeTrimmedEntries(trimProcessor1);
             } else {
-                arrayList.add(this.attributes[i]);
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
         if (ba == 0 && innerClassesAttribute != null) {
-            int bc = arrayList.size();
-            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[bc])));
-            this.attributeCount = bc;
+            int attributeCountValue = arrayList.size();
+            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[attributeCountValue])));
+            this.attributeCount = attributeCountValue;
             super.innerClassesTrimPending = false;
             super.innerClassesRemovalPending = false;
             this.clearInnerClassInfo();
         }
     }
 
-    public String generateUniqueFieldName(List list1, String string, InheritedMemberAnalyzer inheritedMemberAnalyzer, String string1) {
+    public String generateUniqueFieldName(List list1, String descriptor, InheritedMemberAnalyzer inheritedMemberAnalyzer, String prefix) {
         ArrayList arrayList = list1 != null ? new ArrayList(list1) : null;
-        IndexedNameGenerator indexedNameGenerator = new IndexedNameGenerator(string1);
+        IndexedNameGenerator indexedNameGenerator = new IndexedNameGenerator(prefix);
         int ba = 0;
         HashSet hashSet = null;
         HashSet hashSet1 = null;
         Set set1 = inheritedMemberAnalyzer.getVisibleFieldNames(this);
 
-        String string2;
+        String nameAt;
         boolean bl;
         do {
             bl = false;
 
             do {
                 if (arrayList != null && !arrayList.isEmpty()) {
-                    string2 = (String) arrayList.remove(0);
+                    nameAt = (String) arrayList.remove(0);
                 } else {
-                    string2 = indexedNameGenerator.getNameAt(ba++);
+                    nameAt = indexedNameGenerator.getNameAt(ba++);
                 }
-            } while (string2 == null);
+            } while (nameAt == null);
 
-            FieldSignature fieldSignature = new FieldSignature(string2, string);
-            if (set1.contains(string2)) {
+            FieldSignature fieldSignature = new FieldSignature(nameAt, descriptor);
+            if (set1.contains(nameAt)) {
                 bl = true;
             } else {
                 if (hashSet == null) {
                     hashSet = ZkmUtils.createHashSet();
 
-                    for (int i = 0; i < this.fieldCount; i++) {
-                        FieldSignature fieldSignature1 = new FieldSignature(this.fields[i].getOriginalMemberName(), this.fields[i].getDescriptor());
+                    for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+                        FieldSignature fieldSignature1 = new FieldSignature(this.fields[fieldIndex].getOriginalMemberName(), this.fields[fieldIndex].getDescriptor());
                         hashSet.add(fieldSignature1);
                     }
                 }
@@ -1757,18 +1742,18 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
                     while (iterator.hasNext()) {
                         AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) iterator.next();
-                        String string3 = abstractFieldInfo.getSourceName();
-                        hashSet1.add(string3);
+                        String sourceName = abstractFieldInfo.getSourceName();
+                        hashSet1.add(sourceName);
                     }
                 }
 
-                if (hashSet1.contains(string2)) {
+                if (hashSet1.contains(nameAt)) {
                     bl = true;
                 }
             }
         } while (bl);
 
-        return string2;
+        return nameAt;
     }
 
     public boolean hasZkmMethodAnnotations() {
@@ -1776,10 +1761,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public MethodInfo createPublicStaticMethod(
-            String string,
-            String string1,
+            String valueArgument,
+            String valueArgument2,
             ArrayList arrayList,
-            int ba,
+            int maxLocals,
             LocalVariableList localVariableList1,
             ExceptionHandlerSpec[] exceptionHandlerSpecs,
             List list1,
@@ -1787,11 +1772,11 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ClassMemberLookup classMemberLookup1
     ) throws ZkmProcessingException {
         return this.createStaticMethod(
-                string,
-                string1,
+                valueArgument,
+                valueArgument2,
                 arrayList,
                 1,
-                ba,
+                maxLocals,
                 4,
                 localVariableList1,
                 exceptionHandlerSpecs,
@@ -1803,8 +1788,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         );
     }
 
-    public void setAccessFlags(int ba) throws ZkmException, IOException {
-        this.accessFlags.setFlags(ba);
+    public void setAccessFlags(int accessFlagsArgument) throws ZkmException, IOException {
+        this.accessFlags.setFlags(accessFlagsArgument);
         this.setChanged();
         this.notifyObservers(new MutableInt(1), this, null);
     }
@@ -1821,11 +1806,11 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     public void rebuildStackMapTables(CommonSuperTypeResolver commonSuperTypeResolver1, ClassHierarchyQuery classHierarchyQuery) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.methodCount; i++) {
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
             try {
-                this.methods[i].rebuildStackMapTable(commonSuperTypeResolver1, classHierarchyQuery, this.constantPool, arrayList);
+                this.methods[methodIndex].rebuildStackMapTable(commonSuperTypeResolver1, classHierarchyQuery, this.constantPool, arrayList);
             } catch (StackAnalysisException stackAnalysisException) {
-                throw new ZkmProcessingException(this.getLocationName() + " " + this.methods[i].toDisplayString() + " : " + stackAnalysisException.getMessage());
+                throw new ZkmProcessingException(this.getLocationName() + " " + this.methods[methodIndex].toDisplayString() + " : " + stackAnalysisException.getMessage());
             }
         }
 
@@ -1854,27 +1839,12 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         HashMap hashMap1 = ZkmUtils.createHashMap();
         ArrayList arrayList = new ArrayList(this.methodCount);
 
-        for (int i = 0; i < this.methodCount; i++) {
-            arrayList.add(this.methods[i]);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            arrayList.add(this.methods[methodIndex]);
         }
 
-        label27:
-        {
-            ArrayList arrayList1;
-            short bc;
-            if (!bl1) {
-                if (!HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
-                    break label27;
-                }
-
-                arrayList1 = arrayList;
-                bc = 512;
-            } else {
-                arrayList1 = arrayList;
-                bc = 512;
-            }
-
-            ZkmUtils.shuffleList(arrayList1, ZkmUtils.createRandom(bc));
+        if (bl1 || HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
+            ZkmUtils.shuffleList(arrayList, ZkmUtils.createRandom(512));
         }
 
         Iterator iterator = arrayList.iterator();
@@ -1988,7 +1958,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             Map map2,
             Map map3,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
-            int[] ba,
+            int[] integerArray,
             Map map4,
             ResolvedMethodRef resolvedMethodRef,
             ResolvedMethodRef resolvedMethodRef1,
@@ -2004,7 +1974,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ReferenceObfuscator referenceObfuscator,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        int[] bb = ba;
+        int[] integerArrayValue = integerArray;
         Map map8 = map1;
         Map map7 = map4;
         boolean bl1 = false;
@@ -2026,22 +1996,22 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 map8 = referenceObfuscator.assignMemberRefIndices(
                         bl2, booleanFlag, booleanFlag1, listMultimap, map9.size(), hashSet, booleanFlag2, booleanFlag3, classRepository1
                 );
-                int[] bc = referenceObfuscator.shuffleKeyBitPositions();
-                bb = referenceObfuscator.pickRandomLetters();
+                int[] integerArrayValue2 = referenceObfuscator.shuffleKeyBitPositions();
+                integerArrayValue = referenceObfuscator.pickRandomLetters();
                 map7 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(map9.size() + map8.size()));
                 boolean value = booleanFlag.getValue();
-                boolean bl4 = booleanFlag1.getValue();
+                boolean valueValue = booleanFlag1.getValue();
                 MethodKeyInjector methodKeyInjector = (MethodKeyInjector) null;
                 booleanFlag2.getValue();
                 Boolean boolean1 = booleanFlag3.getValue();
                 this.createReferenceObfuscationSupport(
                         bl,
                         value,
-                        bl4,
+                        valueValue,
                         map9,
                         map8,
-                        bc,
-                        bb,
+                        integerArrayValue2,
+                        integerArrayValue,
                         map7,
                         arrayList,
                         inheritedMemberAnalyzer,
@@ -2109,8 +2079,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ListMultimap listMultimap2 = new ListMultimap();
             HashMap hashMap = ZkmUtils.createHashMap();
 
-            for (int i = 0; i < this.methodCount; i += 1) {
-                MethodInfo methodInfo1 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex += 1) {
+                MethodInfo methodInfo1 = this.methods[methodIndex];
                 LocalVariableIndex localVariableIndex1 = map6 != null ? (LocalVariableIndex) map6.get(methodInfo1) : null;
                 Long long1 = localVariableIndex1 != null ? (Long) map5.get(methodInfo1) : null;
                 MethodBytecode methodBytecode1 = methodInfo1.getBytecode();
@@ -2127,7 +2097,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             (ResolvedMethodRef) observableHolder1.getValue(),
                             twoKeyMap.getInnerMap(programClass2),
                             (ResolvedMethodRef) observableHolder2.getValue(),
-                            bb,
+                            integerArrayValue,
                             hashMap,
                             observableHolder3,
                             long1,
@@ -2186,7 +2156,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
                         while (iterator3.hasNext()) {
                             ClassMemberRef classMemberRef2 = (ClassMemberRef) iterator3.next();
-                            int be = nestedMultiMap.getValues(classMemberRef2, methodBytecode2).size();
+                            int valuesSize = nestedMultiMap.getValues(classMemberRef2, methodBytecode2).size();
                             String string;
                             if (classMemberRef2.isField()) {
                                 AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) classMemberRef2.getMember();
@@ -2198,9 +2168,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
                             printWriter.println(
                                     "\t\t\t"
-                                            + be
+                                            + valuesSize
                                             + " reference"
-                                            + (be > 1 ? "s" : "")
+                                            + (valuesSize > 1 ? "s" : "")
                                             + " to "
                                             + (classMemberRef2.isField() ? "field" : "method")
                                             + " '"
@@ -2210,7 +2180,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                                             + "'"
                                             + ""
                             );
-                            mutableInt2.addAndGet(be);
+                            mutableInt2.addAndGet(valuesSize);
                         }
                     }
                 }
@@ -2227,9 +2197,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ListenerRegistry listenerRegistry1,
             PrintWriter printWriter,
             ThreeKeyMultiMap threeKeyMultiMap,
-            int ba
+            int creationKind
     ) throws ZkmException, IOException {
-        super(inputFileLocation, classFileInputStream.getDigest(), ba);
+        super(inputFileLocation, classFileInputStream.getDigest(), creationKind);
         observableHolder.setValue("Opening " + inputFileLocation.getName());
         this.statusHolder = observableHolder;
         this.listenerRegistry = listenerRegistry1;
@@ -2250,24 +2220,24 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             int bb = classFileInputStream.readUnsignedShort();
             int bc = classFileInputStream.readUnsignedShort();
             super.interfaceCount = classFileInputStream.readUnsignedShort();
-            int[] bd = new int[super.interfaceCount];
-            int be = 0;
+            int[] integerArray = new int[super.interfaceCount];
+            int integerArrayElementIndex = 0;
             int bj = 0;
 
-            for (int i = super.interfaceCount; bj < i; i = super.interfaceCount) {
-                bd[be] = classFileInputStream.readUnsignedShort();
-                bj = ++be;
+            for (int interfaceCountValue = super.interfaceCount; bj < interfaceCountValue; interfaceCountValue = super.interfaceCount) {
+                integerArray[integerArrayElementIndex] = classFileInputStream.readUnsignedShort();
+                bj = ++integerArrayElementIndex;
             }
 
             ListMultimap listMultimap8 = listMultimap5;
-            int[] bf = bd;
+            int[] integerArrayValue = integerArray;
             Integer integer = bc;
-            this.readClassConstants(bb, integer, bf, listMultimap8);
+            this.readClassConstants(bb, integer, integerArrayValue, listMultimap8);
             this.fieldCount = classFileInputStream.readUnsignedShort();
             this.fields = new FieldInfo[this.fieldCount];
 
-            for (int i = 0; i < this.fieldCount; i++) {
-                this.fields[i] = new FieldInfo(
+            for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+                this.fields[fieldIndex] = new FieldInfo(
                         this,
                         classFileInputStream,
                         listMultimap,
@@ -2280,14 +2250,14 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                         printWriter,
                         threeKeyMultiMap
                 );
-                this.fields[i].addObserver(this);
+                this.fields[fieldIndex].addObserver(this);
             }
 
             this.methodCount = classFileInputStream.readUnsignedShort();
             this.methods = new MethodInfo[this.methodCount];
 
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i] = new MethodInfo(
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex] = new MethodInfo(
                         this,
                         classFileInputStream,
                         listMultimap,
@@ -2301,14 +2271,14 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                         printWriter,
                         threeKeyMultiMap
                 );
-                this.methods[i].addObserver(this);
-                if (this.methods[i].isVarargs() && this.methods[i].getParameterTypes().size() == 0) {
-                    this.methods[i].setVarargs();
+                this.methods[methodIndex].addObserver(this);
+                if (this.methods[methodIndex].isVarargs() && this.methods[methodIndex].getParameterTypes().size() == 0) {
+                    this.methods[methodIndex].setVarargs();
                     printWriter.println(
                             "ERROR: Method '"
-                                    + this.methods[i].toOriginalDisplayString()
+                                    + this.methods[methodIndex].toOriginalDisplayString()
                                     + "' in class '"
-                                    + this.methods[i].getDisplayLocationName()
+                                    + this.methods[methodIndex].getDisplayLocationName()
                                     + "' has its ACC_VARARGS flag set yet it has no parameters. This could result in unpredictable behaviour so clearing ACC_VARARGS flag."
                     );
                 }
@@ -2317,8 +2287,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             this.attributeCount = classFileInputStream.readUnsignedShort();
             this.attributes = new Attribute[this.attributeCount];
 
-            for (int i = 0; i < this.attributeCount; i++) {
-                this.attributes[i] = Attribute.readAttribute(
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                this.attributes[attributeIndex] = Attribute.readAttribute(
                         this,
                         classFileInputStream,
                         listMultimap,
@@ -2333,15 +2303,15 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                         (ListMultimap) null,
                         threeKeyMultiMap
                 );
-                if (this.attributes[i] instanceof BootstrapMethodsAttribute) {
-                    this.constantPool.linkBootstrapMethods((BootstrapMethodsAttribute) this.attributes[i]);
+                if (this.attributes[attributeIndex] instanceof BootstrapMethodsAttribute) {
+                    this.constantPool.linkBootstrapMethods((BootstrapMethodsAttribute) this.attributes[attributeIndex]);
                 }
             }
 
             try {
-                be = classFileInputStream.readUnsignedByte();
+                integerArrayElementIndex = classFileInputStream.readUnsignedByte();
                 throw new ClassFileFormatException(
-                        "Extra byte at the end of class file " + be + " in '" + inputFileLocation.getQualifiedName() + "' : File is probably corrupt (AZ)"
+                        "Extra byte at the end of class file " + integerArrayElementIndex + " in '" + inputFileLocation.getQualifiedName() + "' : File is probably corrupt (AZ)"
                 );
             } catch (EOFException eOFException) {
             } catch (IOException iOException1) {
@@ -2372,8 +2342,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void obfuscateMethodParameterNames() {
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].obfuscateParameterNames();
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].obfuscateParameterNames();
         }
     }
 
@@ -2382,22 +2352,22 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         boolean bl = (Boolean) object;
         this.constantPool.resolveMethodRefs(scriptEnvironment1, classMemberLookup1);
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyMethodRenames();
-            } else if (this.attributes[i] instanceof EnclosingMethodAttribute) {
-                ((EnclosingMethodAttribute) this.attributes[i]).updateAfterMethodRename();
-            } else if (this.attributes[i] instanceof RecordAttribute) {
-                ((RecordAttribute) this.attributes[i]).applyMethodRenames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyMethodRenames();
+            } else if (this.attributes[attributeIndex] instanceof EnclosingMethodAttribute) {
+                ((EnclosingMethodAttribute) this.attributes[attributeIndex]).updateAfterMethodRename();
+            } else if (this.attributes[attributeIndex] instanceof RecordAttribute) {
+                ((RecordAttribute) this.attributes[attributeIndex]).applyMethodRenames();
             }
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].updateAttributesAfterMethodRename();
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].updateAttributesAfterMethodRename();
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].updateAttributesAfterMethodRename(scriptEnvironment1, bl);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].updateAttributesAfterMethodRename(scriptEnvironment1, bl);
         }
     }
 
@@ -2419,31 +2389,31 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             FlowObfuscationExclusions flowObfuscationExclusions,
             Random random1
     ) throws ZkmException, IOException {
-        int bb = ba;
+        int integerValue = ba;
         if (!this.isInterface() || this.supportsJava8()) {
             if (!this.isGenerated()) {
                 PrintWriter printWriter = scriptEnvironment1.getLogWriter();
                 ArrayList arrayList = new ArrayList(7);
                 if (flowObfuscationExclusions == null || !flowObfuscationExclusions.isClassExcluded(this)) {
                     if (this.zkmAnnotationValues != null && this.zkmAnnotationValues.hasValue("obfuscateFlow")) {
-                        String string = this.zkmAnnotationValues.getValue("obfuscateFlow");
-                        int bc = ObfuscateOptions.parseFlowLevel(string);
-                        if (bb != bc) {
-                            String string1 = ObfuscateOptions.getFlowLevelName(bb);
-                            bb = bc;
+                        String valueValue = this.zkmAnnotationValues.getValue("obfuscateFlow");
+                        int integerValue2 = ObfuscateOptions.parseFlowLevel(valueValue);
+                        if (integerValue != integerValue2) {
+                            String flowLevelName = ObfuscateOptions.getFlowLevelName(integerValue);
+                            integerValue = integerValue2;
                             if (scriptEnvironment1.isVerbose()) {
                                 printWriter.println(
                                         "Overriding Method Parameter Changing's Flow Obfuscation setting in class '"
                                                 + AbstractExclusionSpec.formatClass(this, classHierarchyQuery, true)
                                                 + "' : '"
-                                                + string1
+                                                + flowLevelName
                                                 + "' changed to '"
-                                                + string
+                                                + valueValue
                                                 + "'"
                                 );
                             }
 
-                            if (bb == 0) {
+                            if (integerValue == 0) {
                                 return;
                             }
                         }
@@ -2456,17 +2426,17 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     }
 
                     Arrays.sort(rankedValues);
-                    int bg = Integer.MAX_VALUE;
+                    int maxValue = Integer.MAX_VALUE;
                     int bh = 0;
 
-                    for (int i = rankedValues.length - 1; i >= 0; i += -1) {
-                        MethodInfo methodInfo1 = (MethodInfo) rankedValues[i].getValue();
+                    for (int rankedValueIndex = rankedValues.length - 1; rankedValueIndex >= 0; rankedValueIndex += -1) {
+                        MethodInfo methodInfo1 = (MethodInfo) rankedValues[rankedValueIndex].getValue();
                         if (!methodInfo1.isManufactured()
                                 && !methodInfo1.isStaticInitializer()
                                 && (flowObfuscationExclusions == null || !flowObfuscationExclusions.isMethodExcluded(methodInfo1))) {
                             try {
                                 int be = methodInfo1.obfuscateFlow(
-                                        listMultimap, commonSuperTypeResolver1, scriptEnvironment1, classHierarchyQuery, bb, bl, bl1, map1, true, random1
+                                        listMultimap, commonSuperTypeResolver1, scriptEnvironment1, classHierarchyQuery, integerValue, bl, bl1, map1, true, random1
                                 );
                                 bh += be;
                             } catch (MethodAnalysisException methodAnalysisException) {
@@ -2487,8 +2457,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void collectFixedClassReferences(HashSet hashSet, HashSet hashSet1, HashSet hashSet2, HashSet hashSet3) throws ZkmProcessingException {
-        for (int i = 0; i < this.attributes.length; i++) {
-            Attribute attribute = this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            Attribute attribute = this.attributes[attributeIndex];
             if (attribute instanceof SignatureAttribute) {
                 ((SignatureAttribute) attribute).collectReferencedClasses(hashSet1);
             } else if (attribute instanceof ReferencingAttribute) {
@@ -2510,9 +2480,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     public void removeFields(EnumerableMap enumerableMap) {
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.fields.length; i++) {
-            if (!enumerableMap.containsKey(this.fields[i])) {
-                arrayList.add(this.fields[i]);
+        for (int fieldIndex = 0; fieldIndex < this.fields.length; fieldIndex++) {
+            if (!enumerableMap.containsKey(this.fields[fieldIndex])) {
+                arrayList.add(this.fields[fieldIndex]);
             }
         }
 
@@ -2521,16 +2491,16 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void collectMethodCallSites(ListMultimap listMultimap) {
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].collectMethodCallSites(listMultimap);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].collectMethodCallSites(listMultimap);
         }
     }
 
     public final void collectCallGraph(SetMultiMap setMultiMap, Set set1) {
         MethodInfo[] methodInfos = this.getMethodInfos();
 
-        for (int i = 0; i < this.methodCount; i++) {
-            methodInfos[i].collectCallGraph(setMultiMap, set1);
+        for (int methodInfoIndex = 0; methodInfoIndex < this.methodCount; methodInfoIndex++) {
+            methodInfos[methodInfoIndex].collectCallGraph(setMultiMap, set1);
         }
     }
 
@@ -2542,35 +2512,35 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         if (super.innerClassesTrimPending || super.innerClassesRemovalPending) {
             Vector vector = new Vector(this.attributeCount);
 
-            for (int i = 0; i < this.attributeCount; i++) {
-                if (!(this.attributes[i] instanceof InnerClassesAttribute) && !(this.attributes[i] instanceof EnclosingMethodAttribute)) {
-                    vector.addElement(this.attributes[i]);
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                if (!(this.attributes[attributeIndex] instanceof InnerClassesAttribute) && !(this.attributes[attributeIndex] instanceof EnclosingMethodAttribute)) {
+                    vector.addElement(this.attributes[attributeIndex]);
                 }
             }
 
-            int bc = vector.size();
-            if (bc >= this.attributeCount) {
+            int attributeCountValue = vector.size();
+            if (attributeCountValue >= this.attributeCount) {
                 super.innerClassesTrimPending = false;
             } else {
-                this.attributes = new Attribute[bc];
+                this.attributes = new Attribute[attributeCountValue];
 
-                for (int i = 0; i < bc; i++) {
-                    this.attributes[i] = (Attribute) vector.elementAt(i);
+                for (int elementIndex = 0; elementIndex < attributeCountValue; elementIndex++) {
+                    this.attributes[elementIndex] = (Attribute) vector.elementAt(elementIndex);
                 }
 
-                this.attributeCount = bc;
+                this.attributeCount = attributeCountValue;
                 super.innerClassesTrimPending = false;
             }
 
             super.innerClassesRemovalPending = false;
             this.clearInnerClassInfo();
 
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i].clearSynthetic();
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex].clearSynthetic();
             }
 
-            for (int i = 0; i < this.fieldCount; i++) {
-                this.fields[i].clearSynthetic();
+            for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+                this.fields[fieldIndex].clearSynthetic();
             }
         }
 
@@ -2590,16 +2560,16 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             }
         }
 
-        int ba = 0;
-        int bb = ba;
+        int interfaceIndex = 0;
+        int interfaceIndexValue = interfaceIndex;
 
-        for (ClassConstantBase[] classConstantBases = super.interfaces; bb < classConstantBases.length; classConstantBases = super.interfaces) {
-            if (super.interfaces[ba] == resolvedClassConstant) {
-                super.interfaces[ba] = resolvedClassConstant1;
+        for (ClassConstantBase[] classConstantBases = super.interfaces; interfaceIndexValue < classConstantBases.length; classConstantBases = super.interfaces) {
+            if (super.interfaces[interfaceIndex] == resolvedClassConstant) {
+                super.interfaces[interfaceIndex] = resolvedClassConstant1;
                 break;
             }
 
-            bb = ++ba;
+            interfaceIndexValue = ++interfaceIndex;
         }
     }
 
@@ -2620,16 +2590,16 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     public ListMultimap collectLineNumbers(IntegerCache integerCache1) {
         ArrayList arrayList = new ArrayList(Math.max(10, (int) (this.constantPool.getEntryCount() * 0.25)));
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].collectLineNumberEntries(arrayList);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].collectLineNumberEntries(arrayList);
         }
 
-        int bc = arrayList.size();
-        ListMultimap listMultimap = new ListMultimap(bc, 1);
-        HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(bc));
+        int arrayListSize = arrayList.size();
+        ListMultimap listMultimap = new ListMultimap(arrayListSize, 1);
+        HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(arrayListSize));
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            LineNumberEntry lineNumberEntry = (LineNumberEntry) arrayList.get(i);
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            LineNumberEntry lineNumberEntry = (LineNumberEntry) arrayList.get(elementIndex);
             Integer integer = integerCache1.valueOf(lineNumberEntry.getLineNumber());
             if (hashSet.add(integer)) {
                 listMultimap.addValue(integer, integer);
@@ -2648,16 +2618,16 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         if (bl2) {
             this.removeLocalVariableTables();
         } else {
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i].trimLocalVariableTables(bl, bl1);
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex].trimLocalVariableTables(bl, bl1);
             }
         }
     }
 
     public void removeStackMaps() {
         if (this.hasStackMaps()) {
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i].removeStackMaps();
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex].removeStackMaps();
             }
 
             this.setHasStackMaps(false);
@@ -2665,11 +2635,11 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public MethodInfo createMethod(
-            String string,
-            String string1,
+            String valueArgument,
+            String valueArgument2,
             ArrayList arrayList,
-            int ba,
-            int bb,
+            int maxStack,
+            int maxLocals,
             int bc,
             boolean bl,
             LocalVariableList localVariableList1,
@@ -2678,19 +2648,19 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
             ClassMemberLookup classMemberLookup1,
-            int bd
+            int creationKind
     ) throws ZkmProcessingException {
         ConstantPool constantPool1 = this.getClassConstantPool();
         MethodBytecode methodBytecode1 = new MethodBytecode(arrayList, localVariableList1, string2);
-        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, constantPool1, string);
+        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, constantPool1, valueArgument);
         list1.add(constantUtf8);
-        ConstantUtf8 constantUtf81 = new ConstantUtf8(0, constantPool1, string1);
+        ConstantUtf8 constantUtf81 = new ConstantUtf8(0, constantPool1, valueArgument2);
         list1.add(constantUtf81);
         ConstantUtf8 constantUtf82 = new ConstantUtf8(0, constantPool1, "Code");
         list1.add(constantUtf82);
-        CodeAttributeBody codeAttributeBody = new CodeAttributeBody(constantUtf82, ba, bb, methodBytecode1, exceptionHandlerSpecs);
+        CodeAttributeBody codeAttributeBody = new CodeAttributeBody(constantUtf82, maxStack, maxLocals, methodBytecode1, exceptionHandlerSpecs);
         Attribute[] attributes1 = new Attribute[]{codeAttributeBody};
-        MethodInfo methodInfo1 = new MethodInfo(this, constantUtf8, constantUtf81, attributes1, bd);
+        MethodInfo methodInfo1 = new MethodInfo(this, constantUtf8, constantUtf81, attributes1, creationKind);
         switch (bc) {
             case 1:
                 methodInfo1.makePrivate();
@@ -2724,15 +2694,15 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ClassHierarchyQuery classHierarchyQuery,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        for (int i = 0; i < this.methodCount; i++) {
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
             try {
-                this.methods[i].collectObfuscatableReferences(twoKeySetMultiMap, referenceObfuscator, commonSuperTypeResolver1, classHierarchyQuery);
+                this.methods[methodIndex].collectObfuscatableReferences(twoKeySetMultiMap, referenceObfuscator, commonSuperTypeResolver1, classHierarchyQuery);
             } catch (MethodAnalysisException methodAnalysisException) {
                 scriptEnvironment1.logMessage(methodAnalysisException.getMessage() + " : " + this.getDisplayLocationName());
             } catch (StackAnalysisException stackAnalysisException) {
                 throw new ZkmProcessingException(
                         "Method '"
-                                + this.methods[i].getNameWithParameters((HashMap) null)
+                                + this.methods[methodIndex].getNameWithParameters((HashMap) null)
                                 + "' in class '"
                                 + this.getDisplayLocationName()
                                 + "' appears to be invalid (7) : '"
@@ -2744,8 +2714,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void collectClassAttributeReferences(HashSet hashSet, HashSet hashSet1, HashSet hashSet2, HashSet hashSet3) throws ZkmProcessingException {
-        for (int i = 0; i < this.attributes.length; i++) {
-            Attribute attribute = this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            Attribute attribute = this.attributes[attributeIndex];
             if (attribute instanceof SignatureAttribute) {
                 ((SignatureAttribute) attribute).collectReferencedClasses(hashSet1);
             } else if (attribute instanceof ReferencingAttribute) {
@@ -2798,29 +2768,29 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         boolean bl = true;
         ArrayList arrayList = new ArrayList(this.attributeCount);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof NestHostAttribute) {
-                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(((NestHostAttribute) this.attributes[i]).getHostClassName());
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof NestHostAttribute) {
+                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(((NestHostAttribute) this.attributes[attributeIndex]).getHostClassName());
                 if (programClass2 != null && trimProcessor1.isClassOrOuterExcluded(programClass2)) {
                     break;
                 }
 
                 bl = false;
             } else {
-                arrayList.add(this.attributes[i]);
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
         if (!bl) {
-            int bb = arrayList.size();
-            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[bb])));
-            this.attributeCount = bb;
+            int attributeCountValue = arrayList.size();
+            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[attributeCountValue])));
+            this.attributeCount = attributeCountValue;
         }
     }
 
-    public ResolvedInvokeDynamic createInvokeDynamic(String string, String string1, ResolvedMethodRef resolvedMethodRef, List list1, ConstantPool constantPool1) {
+    public ResolvedInvokeDynamic createInvokeDynamic(String valueArgument, String valueArgument2, ResolvedMethodRef resolvedMethodRef, List list1, ConstantPool constantPool1) {
         BootstrapMethodsAttribute bootstrapMethodsAttribute1 = this.getOrCreateBootstrapMethodsAttribute(list1);
-        ResolvedNameAndType resolvedNameAndType = constantPool1.createNameAndType(string, string1, list1);
+        ResolvedNameAndType resolvedNameAndType = constantPool1.createNameAndType(valueArgument, valueArgument2, list1);
         ResolvedMethodHandleConstant resolvedMethodHandleConstant = constantPool1.getOrAddMethodHandle(
                 MethodHandleRefKind.REF_INVOKE_STATIC, resolvedMethodRef, list1
         );
@@ -2834,15 +2804,15 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     public ListMultimap scrambleLineNumbers(IntegerCache integerCache1, ListMultimap listMultimap, Random random1) {
         ArrayList arrayList = new ArrayList(Math.max(10, (int) (this.constantPool.getEntryCount() * 0.25)));
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].collectLineNumberEntries(arrayList);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].collectLineNumberEntries(arrayList);
         }
 
-        int bg = arrayList.size();
+        int arrayListSize = arrayList.size();
         int bb = 0;
-        ListMultimap listMultimap1 = new ListMultimap(bg, 2);
+        ListMultimap listMultimap1 = new ListMultimap(arrayListSize, 2);
         ArrayList arrayList1 = new ArrayList();
-        ArrayList arrayList2 = new ArrayList(bg);
+        ArrayList arrayList2 = new ArrayList(arrayListSize);
         if (listMultimap != null) {
             int keyCount = listMultimap.getKeyCount();
             ListMultimap listMultimap2 = new ListMultimap(keyCount);
@@ -2861,16 +2831,16 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             Iterator iterator2 = arrayList3.iterator();
             int bj = (Integer) iterator2.next();
 
-            for (int i = 0; i < bh; i++) {
-                if (i < bj) {
-                    arrayList1.add(integerCache1.valueOf(i));
-                } else if (i == bj && iterator2.hasNext()) {
+            for (int integerValue = 0; integerValue < bh; integerValue++) {
+                if (integerValue < bj) {
+                    arrayList1.add(integerCache1.valueOf(integerValue));
+                } else if (integerValue == bj && iterator2.hasNext()) {
                     bj = (Integer) iterator2.next();
                 }
             }
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                LineNumberEntry lineNumberEntry = (LineNumberEntry) arrayList.get(i);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                LineNumberEntry lineNumberEntry = (LineNumberEntry) arrayList.get(elementIndex);
                 int lineNumber = lineNumberEntry.getLineNumber();
                 Integer integer1 = integerCache1.valueOf(lineNumber);
                 List list2 = listMultimap2.getValues(integer1);
@@ -2878,9 +2848,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     Integer integer2 = (Integer) list2.get(0);
                     lineNumberEntry.setLineNumber(integer2);
                     listMultimap1.addValue(integer1, integer2);
-                    int bf = integer2;
-                    if (bf > bb) {
-                        bb = bf;
+                    int integer2Value = integer2;
+                    if (integer2Value > bb) {
+                        bb = integer2Value;
                     }
 
                     listMultimap2.removeValue(integer1, integer2);
@@ -2904,18 +2874,18 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
         while (iterator1.hasNext()) {
             LineNumberEntry lineNumberEntry1 = (LineNumberEntry) iterator1.next();
-            int bi = lineNumberEntry1.getLineNumber();
+            int lineNumberValue = lineNumberEntry1.getLineNumber();
             if (iterator.hasNext()) {
                 Integer integer3 = (Integer) iterator.next();
-                int bk = integer3;
-                lineNumberEntry1.setLineNumber(bk);
-                listMultimap1.addValue(integerCache1.valueOf(bi), integer3);
-                if (bk > bb) {
-                    bb = bk;
+                int integer3Value = integer3;
+                lineNumberEntry1.setLineNumber(integer3Value);
+                listMultimap1.addValue(integerCache1.valueOf(lineNumberValue), integer3);
+                if (integer3Value > bb) {
+                    bb = integer3Value;
                 }
             } else {
                 lineNumberEntry1.setLineNumber(++bb);
-                listMultimap1.addValue(integerCache1.valueOf(bi), integerCache1.valueOf(bb));
+                listMultimap1.addValue(integerCache1.valueOf(lineNumberValue), integerCache1.valueOf(bb));
             }
         }
 
@@ -2957,19 +2927,19 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         if (ba == 1) {
             ArrayList arrayList = new ArrayList(this.attributes.length);
 
-            for (int i = 0; i < this.attributes.length; i++) {
-                if (!(this.attributes[i] instanceof SignatureAttribute)) {
-                    if (this.attributes[i] instanceof TypeAnnotationsAttribute) {
-                        TypeAnnotationsAttribute typeAnnotationsAttribute = (TypeAnnotationsAttribute) this.attributes[i];
+            for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+                if (!(this.attributes[attributeIndex] instanceof SignatureAttribute)) {
+                    if (this.attributes[attributeIndex] instanceof TypeAnnotationsAttribute) {
+                        TypeAnnotationsAttribute typeAnnotationsAttribute = (TypeAnnotationsAttribute) this.attributes[attributeIndex];
                         typeAnnotationsAttribute.removeSignatureDependentAnnotations();
                         if (!typeAnnotationsAttribute.isEmpty()) {
-                            arrayList.add(this.attributes[i]);
-                        } else if (this.attributes[i] instanceof RecordAttribute) {
-                            ((RecordAttribute) this.attributes[i]).removeSignatureAttributes();
-                            arrayList.add(this.attributes[i]);
+                            arrayList.add(this.attributes[attributeIndex]);
+                        } else if (this.attributes[attributeIndex] instanceof RecordAttribute) {
+                            ((RecordAttribute) this.attributes[attributeIndex]).removeSignatureAttributes();
+                            arrayList.add(this.attributes[attributeIndex]);
                         }
                     } else {
-                        arrayList.add(this.attributes[i]);
+                        arrayList.add(this.attributes[attributeIndex]);
                     }
                 }
             }
@@ -2980,12 +2950,12 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 this.attributeCount = this.attributes.length;
             }
 
-            for (int i = 0; i < this.fieldCount; i++) {
-                this.fields[i].stripGenericInfo(ba);
+            for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+                this.fields[fieldIndex].stripGenericInfo(ba);
             }
 
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i].removeGenericSignatures(ba);
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex].removeGenericSignatures(ba);
             }
         }
     }
@@ -2994,32 +2964,32 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         this.constantPool.countReferencedProgramClasses(countingBag);
     }
 
-    public void renameClass(String string, HashMap hashMap, HashMap hashMap1) throws ZkmException, IOException {
-        String string1 = this.getClassName();
-        this.getClassConstantPool().renameThisClass(string);
-        this.className = string;
+    public void renameClass(String classNameArgument, HashMap hashMap, HashMap hashMap1) throws ZkmException, IOException {
+        String classNameValue = this.getClassName();
+        this.getClassConstantPool().renameThisClass(classNameArgument);
+        this.className = classNameArgument;
         super.lowerCaseClassName = this.className.toLowerCase();
-        int ba = 0;
+        int attributeIndex = 0;
 
         while (true) {
-            if (ba >= this.attributeCount) {
+            if (attributeIndex >= this.attributeCount) {
                 this.setChanged();
                 break;
             }
 
-            if (this.attributes[ba] instanceof SourceFileAttribute) {
-                ((SourceFileAttribute) this.attributes[ba]).sourceFileName.setValue(this.getSimpleName() + ".java");
+            if (this.attributes[attributeIndex] instanceof SourceFileAttribute) {
+                ((SourceFileAttribute) this.attributes[attributeIndex]).sourceFileName.setValue(this.getSimpleName() + ".java");
                 this.setChanged();
                 break;
             }
 
-            ba++;
+            attributeIndex++;
         }
 
         this.notifyObservers(new MutableInt(0), this, null);
-        hashMap.put(string, string1);
-        hashMap1.put(string1, string);
-        ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string1);
+        hashMap.put(classNameArgument, classNameValue);
+        hashMap1.put(classNameValue, classNameArgument);
+        ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(classNameValue);
         classHierarchyNode.renameEnclosedClassReferences(hashMap, hashMap1);
     }
 
@@ -3092,7 +3062,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ObservableHolder[] observableHolders,
             LocalVariableAllocator localVariableAllocator
     ) {
-        int ba = 0;
+        int observableHolderIndex = 0;
         Iterator iterator = setMultiMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
@@ -3103,24 +3073,24 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             if (encryptedValueLocation == null) {
                 if (resolvedFieldRef != null) {
                     if (bl) {
-                        observableHolders[ba] = observableHolder;
+                        observableHolders[observableHolderIndex] = observableHolder;
                         if (resolvedInvokeDynamic != null) {
-                            int bb = ba++;
+                            int index = observableHolderIndex++;
                             ResolvedInvokeDynamic resolvedInvokeDynamic1 = resolvedInvokeDynamic;
-                            encryptedValueLocation = new EncryptedValueLocation(resolvedInvokeDynamic1, bb);
+                            encryptedValueLocation = new EncryptedValueLocation(resolvedInvokeDynamic1, index);
                         } else if (resolvedMethodRef != null) {
                             if (bl1) {
-                                int bc = ba++;
-                                encryptedValueLocation = new EncryptedValueLocation(bc, resolvedMethodRef);
+                                int indexValue = observableHolderIndex++;
+                                encryptedValueLocation = new EncryptedValueLocation(indexValue, resolvedMethodRef);
                             } else {
-                                int bd = ba++;
+                                int indexValue2 = observableHolderIndex++;
                                 ResolvedMethodRef resolvedMethodRef1 = resolvedMethodRef;
-                                encryptedValueLocation = new EncryptedValueLocation(resolvedMethodRef1, bd);
+                                encryptedValueLocation = new EncryptedValueLocation(resolvedMethodRef1, indexValue2);
                             }
                         } else {
-                            int be = ba++;
+                            int indexValue3 = observableHolderIndex++;
                             ResolvedFieldRef resolvedFieldRef1 = resolvedFieldRef;
-                            encryptedValueLocation = new EncryptedValueLocation(resolvedFieldRef1, be);
+                            encryptedValueLocation = new EncryptedValueLocation(resolvedFieldRef1, indexValue3);
                         }
                     } else {
                         encryptedValueLocation = new EncryptedValueLocation(resolvedFieldRef, -1);
@@ -3129,13 +3099,13 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     map1.put(observableHolder, encryptedValueLocation);
                 } else {
                     if (bl) {
-                        observableHolders[ba] = observableHolder;
+                        observableHolders[observableHolderIndex] = observableHolder;
                     }
 
                     int value = localVariableAllocator.getValue();
-                    int bf = bl ? ba++ : -1;
-                    int bg = value;
-                    encryptedValueLocation = new EncryptedValueLocation(bg, bf);
+                    int indexValue4 = bl ? observableHolderIndex++ : -1;
+                    int valueValue = value;
+                    encryptedValueLocation = new EncryptedValueLocation(valueValue, indexValue4);
                     map1.put(observableHolder, encryptedValueLocation);
                 }
             }
@@ -3175,8 +3145,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
             }
 
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodInfo methodInfo2 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodInfo methodInfo2 = this.methods[methodIndex];
                 if (methodInfo2.hasLongConstants() && (methodInfo2.isConstructor() || methodInfo2.isStaticInitializer())) {
                     methodInfo2.collectExcludedFieldLongs(hashSet, longEncryptionExclusionHandler);
                 }
@@ -3217,8 +3187,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         HashMap hashMap1 = ZkmUtils.createHashMap();
         ArrayList arrayList = new ArrayList(this.methodCount);
 
-        for (int i = 0; i < this.methodCount; i++) {
-            MethodInfo methodInfo1 = this.methods[i];
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            MethodInfo methodInfo1 = this.methods[methodIndex];
             arrayList.add(methodInfo1);
             if (set1 == null || !set1.contains(methodInfo1)) {
                 MethodSignature methodSignature1 = methodInfo1.getSignature();
@@ -3229,23 +3199,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             }
         }
 
-        label54:
-        {
-            ArrayList arrayList1;
-            short bb;
-            if (!bl1) {
-                if (!HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
-                    break label54;
-                }
-
-                arrayList1 = arrayList;
-                bb = 512;
-            } else {
-                arrayList1 = arrayList;
-                bb = 512;
-            }
-
-            ZkmUtils.shuffleList(arrayList1, ZkmUtils.createRandom(bb));
+        if (bl1 || HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
+            ZkmUtils.shuffleList(arrayList, ZkmUtils.createRandom(512));
         }
 
         if (changeLogMapping1 != null && changeLogMapping1.hasParameterChangeData()) {
@@ -3258,10 +3213,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     this.getClassName();
                     boolean bl7 = this.isInterface();
                     Map map2 = map1;
-                    boolean bl2 = bl;
+                    boolean includeReturnTypeInConflicts = bl;
                     HashMap hashMap2 = hashMap1;
                     HashMap hashMap3 = hashMap;
-                    boolean bl3 = bl7;
+                    boolean reserveOverrideGroup = bl7;
                     ClassHierarchyNode classHierarchyNode1 = classHierarchyNode;
                     SetMultiMap setMultiMap1 = setMultiMap;
                     MethodOverrideAnalyzer methodOverrideAnalyzer1 = methodOverrideAnalyzer;
@@ -3275,10 +3230,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             methodOverrideAnalyzer1,
                             setMultiMap1,
                             classHierarchyNode1,
-                            bl3,
+                            reserveOverrideGroup,
                             hashMap3,
                             hashMap2,
-                            bl2,
+                            includeReturnTypeInConflicts,
                             map2
                     );
                     iterator.remove();
@@ -3294,10 +3249,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 this.getClassName();
                 boolean bl6 = this.isInterface();
                 Map map3 = map1;
-                boolean bl4 = bl;
+                boolean includeReturnTypeInConflictsValue = bl;
                 HashMap hashMap4 = hashMap1;
                 HashMap hashMap5 = hashMap;
-                boolean bl5 = bl6;
+                boolean reserveOverrideGroupValue = bl6;
                 ClassHierarchyNode classHierarchyNode2 = classHierarchyNode;
                 SetMultiMap setMultiMap2 = setMultiMap;
                 MethodOverrideAnalyzer methodOverrideAnalyzer2 = methodOverrideAnalyzer;
@@ -3311,10 +3266,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                         methodOverrideAnalyzer2,
                         setMultiMap2,
                         classHierarchyNode2,
-                        bl5,
+                        reserveOverrideGroupValue,
                         hashMap5,
                         hashMap4,
-                        bl4,
+                        includeReturnTypeInConflictsValue,
                         map3
                 );
             }
@@ -3359,8 +3314,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void collectStringConstantFields(PairMultiMap pairMultiMap, ListMultimap listMultimap, Set set1) {
-        for (int i = 0; i < this.fields.length; i++) {
-            FieldInfo fieldInfo = this.fields[i];
+        for (int fieldIndex = 0; fieldIndex < this.fields.length; fieldIndex++) {
+            FieldInfo fieldInfo = this.fields[fieldIndex];
             if (fieldInfo.isStringType()) {
                 ConstantValueAttribute constantValueAttribute = fieldInfo.getConstantValueAttribute();
                 if (constantValueAttribute != null) {
@@ -3380,8 +3335,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     public void collectParameterChangeFlowCandidates(
             Set set1, FlowObfuscationExclusions flowObfuscationExclusions, MethodParameterExclusions methodParameterExclusions
     ) {
-        for (int i = 0; i < this.methodCount; i++) {
-            MethodInfo methodInfo1 = this.methods[i];
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            MethodInfo methodInfo1 = this.methods[methodIndex];
             if (!methodInfo1.isManufactured()
                     && !methodInfo1.isStaticInitializer()
                     && (flowObfuscationExclusions == null || !flowObfuscationExclusions.isMethodExcluded(methodInfo1))
@@ -3460,7 +3415,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         }
 
         DataOutputStream dataOutputStream2;
-        int bh;
+        int interfaceCountValue;
         if (this.superClassConstant != null) {
             ConstantPoolEntry constantPoolEntry2 = (ConstantPoolEntry) map1.get(this.superClassConstant);
             if (constantPoolEntry2 != null) {
@@ -3470,26 +3425,26 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             }
 
             dataOutputStream2 = dataOutputStream;
-            bh = super.interfaceCount;
+            interfaceCountValue = super.interfaceCount;
         } else {
             dataOutputStream.writeShort(0);
             dataOutputStream2 = dataOutputStream;
-            bh = super.interfaceCount;
+            interfaceCountValue = super.interfaceCount;
         }
 
-        dataOutputStream2.writeShort(bh);
-        int bb = 0;
+        dataOutputStream2.writeShort(interfaceCountValue);
+        int interfaceIndex = 0;
         int bf = 0;
 
-        for (int i = super.interfaceCount; bf < i; i = super.interfaceCount) {
-            ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) map1.get(super.interfaces[bb]);
+        for (int interfaceCountValue2 = super.interfaceCount; bf < interfaceCountValue2; interfaceCountValue2 = super.interfaceCount) {
+            ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) map1.get(super.interfaces[interfaceIndex]);
             if (constantPoolEntry != null) {
                 dataOutputStream.writeShort(constantPoolEntry.getIndex());
             } else {
-                dataOutputStream.writeShort(super.interfaces[bb].getIndex());
+                dataOutputStream.writeShort(super.interfaces[interfaceIndex].getIndex());
             }
 
-            bf = ++bb;
+            bf = ++interfaceIndex;
         }
 
         if (this.fieldCount > 65535) {
@@ -3499,8 +3454,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
         dataOutputStream.writeShort(this.fieldCount);
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].write(dataOutputStream, map1, scriptEnvironment1);
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].write(dataOutputStream, map1, scriptEnvironment1);
         }
 
         if (this.methodCount > 65535) {
@@ -3510,15 +3465,15 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
         dataOutputStream.writeShort(this.methodCount);
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].write(dataOutputStream, map1, scriptEnvironment1);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].write(dataOutputStream, map1, scriptEnvironment1);
         }
 
         dataOutputStream.writeShort(this.attributeCount);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof UnknownAttribute && this.attributes[i].getLength() > 0) {
-                UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof UnknownAttribute && this.attributes[attributeIndex].getLength() > 0) {
+                UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[attributeIndex];
                 if (unknownAttribute.isCommonAcrossClasses()) {
                     scriptEnvironment1.logWarning(
                             "Classes contain unknown attribute '"
@@ -3536,7 +3491,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
             }
 
-            Attribute attribute = this.attributes[i];
+            Attribute attribute = this.attributes[attributeIndex];
             Map map2 = map1;
             ScriptEnvironment scriptEnvironment2 = scriptEnvironment1;
             Map map3 = map2;
@@ -3549,13 +3504,13 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         this.statusHolder.setValue(" ");
     }
 
-    public int replaceIntegerConstant(int ba) {
-        return this.constantPool.replaceIntegerValue(ba);
+    public int replaceIntegerConstant(int valueArgument) {
+        return this.constantPool.replaceIntegerValue(valueArgument);
     }
 
     public void obfuscateLocalVariableNames() {
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].obfuscateLocalVariableNames();
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].obfuscateLocalVariableNames();
         }
     }
 
@@ -3575,8 +3530,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         if (!this.isInterface() || this.supportsJava8()) {
             ArrayList arrayList = new ArrayList(7);
 
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodInfo methodInfo1 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodInfo methodInfo1 = this.methods[methodIndex];
 
                 try {
                     methodInfo1.applyOpaquePredicateFlow(
@@ -3597,7 +3552,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 } catch (StackAnalysisException stackAnalysisException) {
                     throw new ZkmProcessingException(
                             "Method '"
-                                    + this.methods[i].getOriginalNameWithParameters()
+                                    + this.methods[methodIndex].getOriginalNameWithParameters()
                                     + "' in class '"
                                     + this.getDisplayLocationName()
                                     + "' appears to be invalid (8) : '"
@@ -3628,8 +3583,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void indexMemberReferences(NestedMultiMap nestedMultiMap, NestedMultiMap nestedMultiMap1, NestedMultiMap nestedMultiMap2, IntegerCache integerCache1) {
-        for (int i = 0; i < this.methods.length; i++) {
-            this.methods[i].indexMemberReferences(nestedMultiMap, nestedMultiMap1, nestedMultiMap2, integerCache1);
+        for (int methodIndex = 0; methodIndex < this.methods.length; methodIndex++) {
+            this.methods[methodIndex].indexMemberReferences(nestedMultiMap, nestedMultiMap1, nestedMultiMap2, integerCache1);
         }
     }
 
@@ -3664,9 +3619,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         if (set1.contains(this)) {
             boolean bl1 = false;
 
-            for (int i = 0; i < this.methodCount; i++) {
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
                 try {
-                    ListMultimap listMultimap2 = this.methods[i]
+                    ListMultimap listMultimap2 = this.methods[methodIndex]
                             .analyzeReflectionCalls(
                                     map1,
                                     classpathClassLoader1,
@@ -3701,17 +3656,17 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             bl1 = true;
                         }
 
-                        printWriter.write(string + "in method " + this.methods[i].buildDeclaration(false) + HiddenOptionFlags.LINE_SEPARATOR);
+                        printWriter.write(string + "in method " + this.methods[methodIndex].buildDeclaration(false) + HiddenOptionFlags.LINE_SEPARATOR);
                         Enumeration enumeration = listMultimap2.keys();
 
                         while (enumeration.hasMoreElements()) {
                             ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) enumeration.nextElement();
                             List list2 = listMultimap2.getValues(resolvedMethodRef);
 
-                            for (int j = 0; j < list2.size(); j++) {
+                            for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
                                 String string1;
                                 if (bl) {
-                                    string1 = " " + (String) list2.get(j);
+                                    string1 = " " + (String) list2.get(elementIndex);
                                 } else {
                                     string1 = "";
                                 }
@@ -3724,7 +3679,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 } catch (StackAnalysisException stackAnalysisException) {
                     throw new ZkmProcessingException(
                             "Method '"
-                                    + this.methods[i].getNameWithParameters((HashMap) null)
+                                    + this.methods[methodIndex].getNameWithParameters((HashMap) null)
                                     + "' in class '"
                                     + this.getDisplayLocationName()
                                     + "' appears to be invalid (1) : '"
@@ -3738,7 +3693,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             "ERROR: ",
                             "Possible invalid class '" + this.getLocationName() + "'",
                             "Unexpected error while analyzing method '"
-                                    + this.methods[i].getNameWithParameters((HashMap) null)
+                                    + this.methods[methodIndex].getNameWithParameters((HashMap) null)
                                     + "' in class '"
                                     + this.getDottedClassName()
                                     + "' ("
@@ -3782,9 +3737,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public String getSourceFileName() {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof SourceFileAttribute) {
-                return ((SourceFileAttribute) this.attributes[i]).sourceFileName.getValue();
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof SourceFileAttribute) {
+                return ((SourceFileAttribute) this.attributes[attributeIndex]).sourceFileName.getValue();
             }
         }
 
@@ -3792,8 +3747,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void propagateDebugAttributeFlags(Map map1) {
-        for (int i = 0; i < this.methodCount; i++) {
-            MethodInfo methodInfo1 = this.methods[i];
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            MethodInfo methodInfo1 = this.methods[methodIndex];
             AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) ZkmUtils.mapOrSelf(methodInfo1, map1);
             if (methodInfo1.hasLocalVariableTable() && abstractMethodInfo.isProgramMember()) {
                 abstractMethodInfo.setHadLocalVariableTable(true);
@@ -3820,40 +3775,40 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         Set set1 = this.collectExcludedStringConstants(stringEncryptionExclusionSpec, commonSuperTypeResolver1, classHierarchyQuery, scriptEnvironment1);
         this.collectStringConstantFields(pairMultiMap, listMultimap, set1);
 
-        for (int i = 0; i < this.methods.length; i++) {
-            if (bl || !this.methods[i].isManufactured()) {
-                this.methods[i].collectEncryptableStrings(multiMapTable, set1);
+        for (int methodIndex = 0; methodIndex < this.methods.length; methodIndex++) {
+            if (bl || !this.methods[methodIndex].isManufactured()) {
+                this.methods[methodIndex].collectEncryptableStrings(multiMapTable, set1);
             }
         }
     }
 
     @Override
-    public ConstantPoolEntry getConstantPoolEntry(int ba) {
-        return this.constantPool.getConstantPoolEntry(ba);
+    public ConstantPoolEntry getConstantPoolEntry(int entryIndex) {
+        return this.constantPool.getConstantPoolEntry(entryIndex);
     }
 
-    public void renamePackagePrefix(String string, String string1, HashMap hashMap, HashMap hashMap1) throws ZkmException, IOException {
-        String string2 = this.getClassName();
-        if (string2.startsWith(string1)) {
-            String string3 = string2.substring(string1.length());
-            String string4 = string + string3;
-            this.renameClass(string4, hashMap, hashMap1);
+    public void renamePackagePrefix(String string, String prefix, HashMap hashMap, HashMap hashMap1) throws ZkmException, IOException {
+        String classNameValue = this.getClassName();
+        if (classNameValue.startsWith(prefix)) {
+            String string3 = classNameValue.substring(prefix.length());
+            String classNameValue2 = string + string3;
+            this.renameClass(classNameValue2, hashMap, hashMap1);
         }
     }
 
     public void collectAttributeReferencedClasses(Set set1) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).collectReferencedClasses(set1);
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).collectReferencedClasses(set1);
             }
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].collectAttributeReferences(set1);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].collectAttributeReferences(set1);
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].collectAttributeReferences(set1);
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].collectAttributeReferences(set1);
         }
     }
 
@@ -3873,8 +3828,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
             }
 
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodInfo methodInfo2 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodInfo methodInfo2 = this.methods[methodIndex];
                 if (methodInfo2.hasIntegerConstants() && (methodInfo2.isConstructor() || methodInfo2.isStaticInitializer())) {
                     methodInfo2.collectExcludedFieldIntegers(hashSet, integerEncryptionExclusions);
                 }
@@ -3895,7 +3850,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         return hashSet;
     }
 
-    public FieldInfo addSerialVersionUidField(long ba, InheritedMemberAnalyzer inheritedMemberAnalyzer, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
+    public FieldInfo addSerialVersionUidField(long valueArgument, InheritedMemberAnalyzer inheritedMemberAnalyzer, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList(4);
         ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this.constantPool, "serialVersionUID");
         arrayList.add(constantUtf8);
@@ -3903,7 +3858,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         arrayList.add(constantUtf81);
         ConstantUtf8 constantUtf82 = new ConstantUtf8(0, this.constantPool, "ConstantValue");
         arrayList.add(constantUtf82);
-        ConstantLong constantLong = new ConstantLong(this.constantPool, ba);
+        ConstantLong constantLong = new ConstantLong(this.constantPool, valueArgument);
         arrayList.add(constantLong);
         ConstantValueAttribute constantValueAttribute = new ConstantValueAttribute(this, constantUtf82, constantLong);
         Attribute[] attributes1 = new Attribute[]{constantValueAttribute};
@@ -3971,16 +3926,16 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
 
         ConstantLong constantLong = this.constantPool.getOrAddLongConstant(-1L, list2);
         long bd = integerConstantEncryptor.toRandomizedLong(ba);
-        long bc;
+        long valueValue;
         if (bl) {
-            bc = integerConstantEncryptor.desEncrypt(bd, long1);
+            valueValue = integerConstantEncryptor.desEncrypt(bd, long1);
         } else if (long1 != null) {
-            bc = bd ^ long1;
+            valueValue = bd ^ long1;
         } else {
-            bc = bd ^ integerConstantEncryptor.getClassKey();
+            valueValue = bd ^ integerConstantEncryptor.getClassKey();
         }
 
-        constantLong.setValue(bc);
+        constantLong.setValue(valueValue);
         integerConstantEncryptor.emitEncryptedValueSlot(
                 localVariableList1, list1, resolvedFieldRef, constantLong, encryptedValueLocation, labelInstruction, mutableInt, listMultimap
         );
@@ -4078,19 +4033,19 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         ArrayList arrayList = new ArrayList(this.attributeCount);
         NestMembersAttribute nestMembersAttribute = null;
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof NestMembersAttribute) {
-                nestMembersAttribute = (NestMembersAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof NestMembersAttribute) {
+                nestMembersAttribute = (NestMembersAttribute) this.attributes[attributeIndex];
                 ba = nestMembersAttribute.removeTrimmedMembers(trimProcessor1);
             } else {
-                arrayList.add(this.attributes[i]);
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
         if (ba == 0 && nestMembersAttribute != null) {
-            int bc = arrayList.size();
-            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[bc])));
-            this.attributeCount = bc;
+            int attributeCountValue = arrayList.size();
+            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[attributeCountValue])));
+            this.attributeCount = attributeCountValue;
         }
     }
 
@@ -4132,8 +4087,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             }
 
             if (list4.size() != 0 || pairMultiMap1.getKeyCount() != 0) {
-                int bh = Integer.MAX_VALUE;
-                int bi = Integer.MAX_VALUE;
+                int maxValue = Integer.MAX_VALUE;
+                int maxValueValue = Integer.MAX_VALUE;
                 HashSet hashSet = ZkmUtils.createHashSet();
                 HashSet hashSet1 = ZkmUtils.createHashSet();
                 SetMultiMap setMultiMap = new SetMultiMap();
@@ -4184,14 +4139,14 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     }
 
                     if (bl2) {
-                        String string;
+                        String descriptor;
                         if (setMultiMap.getKeyCount() == 1) {
-                            string = "J";
+                            descriptor = "J";
                         } else {
-                            string = "[J";
+                            descriptor = "[J";
                         }
 
-                        FieldInfo fieldInfo = this.createUniquelyNamedStaticField(string, bl ? 4 : 1, true, inheritedMemberAnalyzer, classMemberLookup1, 1);
+                        FieldInfo fieldInfo = this.createUniquelyNamedStaticField(descriptor, bl ? 4 : 1, true, inheritedMemberAnalyzer, classMemberLookup1, 1);
                         resolvedFieldRef = this.constantPool
                                 .getOrAddFieldRef(
                                         this.getClassName(), fieldInfo.getSourceName(), fieldInfo.getDescriptor(), arrayList1, classMemberLookup1, classResolver1, true
@@ -4518,66 +4473,66 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             list1.addAll(arrayList);
         }
 
-        String string1 = resolvedStringConstant.getEditableValue();
-        String string;
+        String editableValue = resolvedStringConstant.getEditableValue();
+        String valueFromString;
         if (bl1) {
-            string = stringEncryptor.desEncrypt(string1, long1);
+            valueFromString = stringEncryptor.desEncrypt(editableValue, long1);
         } else {
-            int[] bb;
+            int[] xorKeys;
             if (!observableHolder.isValueNull()) {
-                bb = stringEncryptor.deriveXorKeys((Integer) observableHolder.getValue());
+                xorKeys = stringEncryptor.deriveXorKeys((Integer) observableHolder.getValue());
             } else {
-                bb = stringEncryptor.getXorKeys();
+                xorKeys = stringEncryptor.getXorKeys();
             }
 
-            string = StringEncryptor.xorWithKeys(string1, bb);
+            valueFromString = StringEncryptor.xorWithKeys(editableValue, xorKeys);
         }
 
-        if (string.length() > 65000) {
-            byte[] bc = ZkmUtils.toModifiedUtf8(string);
-            if (bc.length > 65535) {
-                byte[] bd = ZkmUtils.toModifiedUtf8(string1);
+        if (valueFromString.length() > 65000) {
+            byte[] byteArray = ZkmUtils.toModifiedUtf8(valueFromString);
+            if (byteArray.length > 65535) {
+                byte[] byteArrayValue = ZkmUtils.toModifiedUtf8(editableValue);
                 throw new ZkmProcessingException(
                         "String too large to be String encrypted in class '"
                                 + this.getDisplayLocationName()
                                 + "'. Original String length "
-                                + bd.length
+                                + byteArrayValue.length
                                 + ". Encrypted String length "
-                                + bc.length
+                                + byteArray.length
                                 + " Consider excluding the class from String Encryption. First 50 characters of original String are '"
-                                + ZkmUtils.escapeJavaString(string1.substring(0, 50))
+                                + ZkmUtils.escapeJavaString(editableValue.substring(0, 50))
                                 + "'"
                 );
             }
         }
 
-        resolvedStringConstant.setValueFromString(string);
+        resolvedStringConstant.setValueFromString(valueFromString);
         set1.add(resolvedStringConstant);
     }
 
     public String getImplementsClause() {
-        String string;
+        String implementsClause;
         if (super.interfaceCount == 0) {
-            string = "";
+            implementsClause = "";
         } else {
-            string = "implements ";
-            int ba = 0;
+            implementsClause = "implements ";
+            int interfaceIndex = 0;
             int bb = 0;
 
-            for (int i = super.interfaceCount; bb < i; i = super.interfaceCount) {
-                string = string + super.interfaces[ba].getDottedClassName();
-                string = string + (ba < super.interfaceCount - 1 ? ", " : " ");
-                bb = ++ba;
+            for (int interfaceCountValue = super.interfaceCount; bb < interfaceCountValue; interfaceCountValue = super.interfaceCount) {
+                implementsClause = implementsClause + super.interfaces[interfaceIndex].getDottedClassName();
+                implementsClause = implementsClause + (interfaceIndex < super.interfaceCount - 1 ? ", " : " ");
+                bb = ++interfaceIndex;
             }
         }
 
-        return string;
+        return implementsClause;
     }
 
-    public void renameFieldsWithPrefix(String string, String string1, TwoKeyMap twoKeyMap, ClassRepository classRepository1) throws ZkmException, IOException {
-        for (int i = 0; i < this.fieldCount; i++) {
-            if (this.fields[i].getSourceName().startsWith(string)) {
-                this.fields[i].replaceNamePrefix(string, string1, twoKeyMap, this, classRepository1);
+    public void renameFieldsWithPrefix(String prefix, String string1, TwoKeyMap twoKeyMap, ClassRepository classRepository1) throws ZkmException, IOException {
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            if (this.fields[fieldIndex].getSourceName().startsWith(prefix)) {
+                this.fields[fieldIndex].replaceNamePrefix(prefix, string1, twoKeyMap, this, classRepository1);
             }
         }
     }
@@ -4647,8 +4602,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             FieldInfo fieldInfo1 = (FieldInfo) iterator.next();
             boolean bl = false;
 
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodInfo methodInfo1 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodInfo methodInfo1 = this.methods[methodIndex];
                 if (methodInfo1.isConstructor() && methodInfo1.storesToField(fieldInfo1)) {
                     bl = true;
                     break;
@@ -4662,8 +4617,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void collectIntegerConstantFields(PairMultiMap pairMultiMap, PairMultiMap pairMultiMap1, Set set1) {
-        for (int i = 0; i < this.fields.length; i++) {
-            FieldInfo fieldInfo = this.fields[i];
+        for (int fieldIndex = 0; fieldIndex < this.fields.length; fieldIndex++) {
+            FieldInfo fieldInfo = this.fields[fieldIndex];
             if (fieldInfo.isIntCompatibleType()) {
                 ConstantValueAttribute constantValueAttribute = fieldInfo.getConstantValueAttribute();
                 if (constantValueAttribute != null) {
@@ -4700,8 +4655,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             FieldInfo fieldInfo1 = (FieldInfo) ((ObjectPair) iterator.next()).getSecond();
             boolean bl = false;
 
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodInfo methodInfo1 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodInfo methodInfo1 = this.methods[methodIndex];
                 if (methodInfo1.isConstructor() && methodInfo1.storesToField(fieldInfo1)) {
                     bl = true;
                     break;
@@ -4715,8 +4670,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void registerFields(ClassMemberLookup classMemberLookup1) {
-        for (int i = 0; i < this.fieldCount; i++) {
-            classMemberLookup1.registerField(this, this.fields[i]);
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            classMemberLookup1.registerField(this, this.fields[fieldIndex]);
         }
     }
 
@@ -4729,9 +4684,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public BootstrapMethodsAttribute getOrCreateBootstrapMethodsAttribute(List list1) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof BootstrapMethodsAttribute) {
-                return (BootstrapMethodsAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof BootstrapMethodsAttribute) {
+                return (BootstrapMethodsAttribute) this.attributes[attributeIndex];
             }
         }
 
@@ -4750,12 +4705,12 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         this.constantPool.findReflectionApiCalls(set1, map1, classMemberLookup1, messageReporter1);
     }
 
-    public final void addInheritedMethodReferrer(Object object, Object object1) {
+    public final void addInheritedMethodReferrer(Object key, Object object1) {
         if (this.inheritedMethodReferrers == null) {
             this.inheritedMethodReferrers = new SetMultiMap(10, 5);
         }
 
-        this.inheritedMethodReferrers.addValue(object, object1);
+        this.inheritedMethodReferrers.addValue(key, object1);
     }
 
     public void collectEncryptableIntegers(
@@ -4771,10 +4726,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         ArrayList arrayList = new ArrayList();
         ConstantPool constantPool1 = this.getClassConstantPool();
 
-        for (int i = 0; i < this.methods.length; i++) {
-            if ((integerEncryptionExclusions == null || !integerEncryptionExclusions.isMethodExcluded(this.methods[i]))
-                    && (bl || !this.methods[i].isManufactured())) {
-                this.methods[i].collectEncryptableIntegers(multiMapTable, set1, integerEncryptionExclusions, bl1, arrayList, constantPool1);
+        for (int methodIndex = 0; methodIndex < this.methods.length; methodIndex++) {
+            if ((integerEncryptionExclusions == null || !integerEncryptionExclusions.isMethodExcluded(this.methods[methodIndex]))
+                    && (bl || !this.methods[methodIndex].isManufactured())) {
+                this.methods[methodIndex].collectEncryptableIntegers(multiMapTable, set1, integerEncryptionExclusions, bl1, arrayList, constantPool1);
             }
         }
 
@@ -4783,9 +4738,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         }
     }
 
-    public String generateUniqueMethodName(List list1, String string, InheritedMemberAnalyzer inheritedMemberAnalyzer, boolean bl, String string1) {
+    public String generateUniqueMethodName(List list1, String string, InheritedMemberAnalyzer inheritedMemberAnalyzer, boolean bl, String prefix) {
         ArrayList arrayList = list1 != null ? new ArrayList(list1) : null;
-        IndexedNameGenerator indexedNameGenerator = new IndexedNameGenerator(string1);
+        IndexedNameGenerator indexedNameGenerator = new IndexedNameGenerator(prefix);
         int ba = 0;
         HashSet hashSet = null;
         HashSet hashSet1;
@@ -4795,27 +4750,27 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             hashSet1 = ZkmUtils.createHashSetFrom(inheritedMemberAnalyzer.getVisibleMethodSignatures(this));
         }
 
-        String string2;
+        String nameAt;
         boolean bl1;
         do {
             bl1 = false;
 
             do {
                 if (arrayList != null && !arrayList.isEmpty()) {
-                    string2 = (String) arrayList.remove(0);
+                    nameAt = (String) arrayList.remove(0);
                 } else {
-                    string2 = indexedNameGenerator.getNameAt(ba++);
+                    nameAt = indexedNameGenerator.getNameAt(ba++);
                 }
-            } while (string2 == null);
+            } while (nameAt == null);
 
-            MethodSignature methodSignature1 = new MethodSignature(string2, string);
+            MethodSignature methodSignature1 = new MethodSignature(nameAt, string);
             FieldNameTypeSignature fieldNameTypeSignature = methodSignature1.getNameTypeSignature();
             if ((!bl || !hashSet1.contains(fieldNameTypeSignature)) && (!bl || !hashSet1.contains(methodSignature1))) {
                 if (hashSet == null) {
                     hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(this.methodCount));
 
-                    for (int i = 0; i < this.methodCount; i++) {
-                        MethodSignature methodSignature2 = new MethodSignature(this.methods[i].getOriginalMemberName(), this.methods[i].getDescriptor());
+                    for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                        MethodSignature methodSignature2 = new MethodSignature(this.methods[methodIndex].getOriginalMemberName(), this.methods[methodIndex].getDescriptor());
                         hashSet.add(methodSignature2);
                     }
                 }
@@ -4828,28 +4783,28 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             }
         } while (bl1);
 
-        return string2;
+        return nameAt;
     }
 
-    public Enumeration enumerateInheritedFieldReferrers(Object object) {
+    public Enumeration enumerateInheritedFieldReferrers(Object key) {
         if (this.inheritedFieldReferrers == null) {
             return new EmptyEnumeration();
         }
 
-        Set set1 = this.inheritedFieldReferrers.getValues(object);
+        Set set1 = this.inheritedFieldReferrers.getValues(key);
         return set1 != null ? Collections.enumeration(set1) : new EmptyEnumeration();
     }
 
     public void collectReferencedClasses(HashSet hashSet, HashSet hashSet1, HashSet hashSet2) throws ZkmProcessingException {
         this.collectClassAttributeReferences(hashSet, hashSet, hashSet1, hashSet2);
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            FieldInfo fieldInfo = this.fields[i];
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            FieldInfo fieldInfo = this.fields[fieldIndex];
             fieldInfo.collectSignatureTypeReferences(hashSet, hashSet, hashSet1, hashSet2);
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            MethodInfo methodInfo1 = this.methods[i];
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            MethodInfo methodInfo1 = this.methods[methodIndex];
             methodInfo1.collectSignatureTypeReferences(hashSet, hashSet, hashSet1, hashSet2);
         }
 
@@ -4861,9 +4816,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     ) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.methodCount; i++) {
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
             try {
-                this.methods[i].rebuildStackMap(commonSuperTypeResolver1, classHierarchyQuery, this.constantPool, arrayList);
+                this.methods[methodIndex].rebuildStackMap(commonSuperTypeResolver1, classHierarchyQuery, this.constantPool, arrayList);
             } catch (MethodAnalysisException methodAnalysisException) {
                 scriptEnvironment1.logWarning(
                         "Couldn't update preverification in '"
@@ -4895,8 +4850,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void markAllMethodsModified() {
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].setCodeModified();
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].setCodeModified();
         }
     }
 
@@ -4945,8 +4900,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             }
 
             if (list5.size() != 0 || pairMultiMap1.getKeyCount() != 0) {
-                int bh = Integer.MAX_VALUE;
-                int bi = Integer.MAX_VALUE;
+                int maxValue = Integer.MAX_VALUE;
+                int maxValueValue = Integer.MAX_VALUE;
                 HashSet hashSet = ZkmUtils.createHashSet();
                 HashSet hashSet1 = ZkmUtils.createHashSet();
                 SetMultiMap setMultiMap = new SetMultiMap();
@@ -4997,14 +4952,14 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     }
 
                     if (bl2) {
-                        String string;
+                        String descriptor;
                         if (setMultiMap.getKeyCount() == 1) {
-                            string = "J";
+                            descriptor = "J";
                         } else {
-                            string = "[J";
+                            descriptor = "[J";
                         }
 
-                        FieldInfo fieldInfo = this.createUniquelyNamedStaticField(string, bl ? 4 : 1, true, inheritedMemberAnalyzer, classMemberLookup1, 1);
+                        FieldInfo fieldInfo = this.createUniquelyNamedStaticField(descriptor, bl ? 4 : 1, true, inheritedMemberAnalyzer, classMemberLookup1, 1);
                         resolvedFieldRef = this.constantPool
                                 .getOrAddFieldRef(
                                         this.getClassName(), fieldInfo.getSourceName(), fieldInfo.getDescriptor(), arrayList1, classMemberLookup1, classResolver1, true
@@ -5254,19 +5209,19 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         ArrayList arrayList = new ArrayList(this.attributeCount);
         PermittedSubclassesAttribute permittedSubclassesAttribute = null;
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof PermittedSubclassesAttribute) {
-                permittedSubclassesAttribute = (PermittedSubclassesAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof PermittedSubclassesAttribute) {
+                permittedSubclassesAttribute = (PermittedSubclassesAttribute) this.attributes[attributeIndex];
                 ba = permittedSubclassesAttribute.removeTrimmedSubclasses(trimProcessor1);
             } else {
-                arrayList.add(this.attributes[i]);
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
         if (ba == 0 && permittedSubclassesAttribute != null) {
-            int bc = arrayList.size();
-            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[bc])));
-            this.attributeCount = bc;
+            int attributeCountValue = arrayList.size();
+            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[attributeCountValue])));
+            this.attributeCount = attributeCountValue;
             super.permittedSubclassesPresent = false;
         }
     }
@@ -5299,15 +5254,15 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         if (bl2) {
             this.removeMethodParametersAttributes();
         } else {
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i].trimMethodParametersAttribute(bl, bl1);
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex].trimMethodParametersAttribute(bl, bl1);
             }
         }
     }
 
     public void collectLongConstantFields(PairMultiMap pairMultiMap, PairMultiMap pairMultiMap1, Set set1) {
-        for (int i = 0; i < this.fields.length; i++) {
-            FieldInfo fieldInfo = this.fields[i];
+        for (int fieldIndex = 0; fieldIndex < this.fields.length; fieldIndex++) {
+            FieldInfo fieldInfo = this.fields[fieldIndex];
             if (fieldInfo.isLongType()) {
                 ConstantValueAttribute constantValueAttribute = fieldInfo.getConstantValueAttribute();
                 if (constantValueAttribute != null) {
@@ -5334,9 +5289,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     ) throws ZkmException, IOException {
         boolean bl1 = false;
 
-        for (int i = 0; i < this.methodCount; i++) {
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
             try {
-                if (this.methods[i].removeDeadCode(commonSuperTypeResolver1, classMemberLookup1, bl, scriptEnvironment1)) {
+                if (this.methods[methodIndex].removeDeadCode(commonSuperTypeResolver1, classMemberLookup1, bl, scriptEnvironment1)) {
                     bl1 = true;
                 }
             } catch (MethodAnalysisException methodAnalysisException) {
@@ -5351,7 +5306,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             } catch (StackAnalysisException stackAnalysisException) {
                 throw new ZkmProcessingException(
                         "Method '"
-                                + this.methods[i].getNameWithParameters((HashMap) null)
+                                + this.methods[methodIndex].getNameWithParameters((HashMap) null)
                                 + "' in class '"
                                 + this.getDisplayLocationName()
                                 + "' appears to be invalid (6) : '"
@@ -5582,8 +5537,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         ArrayList arrayList = new ArrayList();
 
         try {
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i]
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex]
                         .expandStringConcatInvokes(bootstrapMethodIndex1, constantPool1, hashMap, listMultimap, arrayList, commonSuperTypeResolver1, classHierarchyQuery);
             }
         } catch (StackAnalysisException stackAnalysisException) {
@@ -5629,10 +5584,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         ArrayList arrayList = new ArrayList();
         ConstantPool constantPool1 = this.getClassConstantPool();
 
-        for (int i = 0; i < this.methods.length; i++) {
-            if ((longEncryptionExclusionHandler == null || !longEncryptionExclusionHandler.isMethodExcluded(this.methods[i]))
-                    && !this.methods[i].isManufactured()) {
-                this.methods[i].collectEncryptableLongs(multiMapTable, set1, longEncryptionExclusionHandler, arrayList, constantPool1);
+        for (int methodIndex = 0; methodIndex < this.methods.length; methodIndex++) {
+            if ((longEncryptionExclusionHandler == null || !longEncryptionExclusionHandler.isMethodExcluded(this.methods[methodIndex]))
+                    && !this.methods[methodIndex].isManufactured()) {
+                this.methods[methodIndex].collectEncryptableLongs(multiMapTable, set1, longEncryptionExclusionHandler, arrayList, constantPool1);
             }
         }
 
@@ -5641,8 +5596,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         }
     }
 
-    public int replaceStringConstant(String string, String string1) {
-        return this.constantPool.replaceStringConstantValue(string, string1);
+    public int replaceStringConstant(String string, String valueArgument) {
+        return this.constantPool.replaceStringConstantValue(string, valueArgument);
     }
 
     public void setZkmAnnotationValues(AnnotationValueMap annotationValueMap) {
@@ -5664,14 +5619,14 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         return this.createStaticField(string, string1, ba, false, inheritedMemberAnalyzer, classMemberLookup1, integer);
     }
 
-    public String generateUniqueFieldName(List list1, String string, InheritedMemberAnalyzer inheritedMemberAnalyzer) {
-        return this.generateUniqueFieldName(list1, string, inheritedMemberAnalyzer, (String) null);
+    public String generateUniqueFieldName(List list1, String descriptor, InheritedMemberAnalyzer inheritedMemberAnalyzer) {
+        return this.generateUniqueFieldName(list1, descriptor, inheritedMemberAnalyzer, (String) null);
     }
 
     public void collectBootstrapMethodHandleTargets(Set set1) {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof BootstrapMethodsAttribute) {
-                ((BootstrapMethodsAttribute) this.attributes[i]).collectMethodHandleTargets(set1);
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof BootstrapMethodsAttribute) {
+                ((BootstrapMethodsAttribute) this.attributes[attributeIndex]).collectMethodHandleTargets(set1);
             }
         }
     }
@@ -5685,31 +5640,31 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     public void updateFieldReferences(ScriptEnvironment scriptEnvironment1, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
         this.constantPool.resolveFieldRefs(scriptEnvironment1, classMemberLookup1);
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyFieldRenames();
-            } else if (this.attributes[i] instanceof RecordAttribute) {
-                ((RecordAttribute) this.attributes[i]).applyFieldRenames();
-            } else if (this.attributes[i] instanceof BootstrapMethodsAttribute) {
-                ((BootstrapMethodsAttribute) this.attributes[i]).updateRecordObjectMethodsNames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyFieldRenames();
+            } else if (this.attributes[attributeIndex] instanceof RecordAttribute) {
+                ((RecordAttribute) this.attributes[attributeIndex]).applyFieldRenames();
+            } else if (this.attributes[attributeIndex] instanceof BootstrapMethodsAttribute) {
+                ((BootstrapMethodsAttribute) this.attributes[attributeIndex]).updateRecordObjectMethodsNames();
             }
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].updateAttributesAfterFieldRename();
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].updateAttributesAfterFieldRename();
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].updateAttributesAfterFieldRename();
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].updateAttributesAfterFieldRename();
         }
     }
 
     public MethodInfo createStaticMethod(
-            String string,
-            String string1,
+            String valueArgument,
+            String valueArgument2,
             ArrayList arrayList,
-            int ba,
-            int bb,
+            int maxStack,
+            int maxLocals,
             int bc,
             LocalVariableList localVariableList1,
             ExceptionHandlerSpec[] exceptionHandlerSpecs,
@@ -5717,14 +5672,14 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
             ClassMemberLookup classMemberLookup1,
-            int bd
+            int creationKind
     ) throws ZkmProcessingException {
         return this.createMethod(
-                string,
-                string1,
+                valueArgument,
+                valueArgument2,
                 arrayList,
-                ba,
-                bb,
+                maxStack,
+                maxLocals,
                 bc,
                 true,
                 localVariableList1,
@@ -5733,7 +5688,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 list1,
                 inheritedMemberAnalyzer,
                 classMemberLookup1,
-                bd
+                creationKind
         );
     }
 
@@ -5743,24 +5698,12 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ClassHierarchyQuery classHierarchyQuery,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        label74:
-        if (this.supportsJava9()) {
-            boolean bl;
-            if (stringEncryptionExclusionSpec != null) {
-                if (stringEncryptionExclusionSpec.isClassExcluded(this)) {
-                    break label74;
-                }
-
-                bl = HiddenOptionFlags.SKIP_BOOTSTRAP_METHOD_PROCESSING;
-            } else {
-                bl = HiddenOptionFlags.SKIP_BOOTSTRAP_METHOD_PROCESSING;
-            }
-
-            if (!bl) {
-                BootstrapMethodIndex bootstrapMethodIndex1 = this.getBootstrapMethodIndex();
-                if (bootstrapMethodIndex1 != null) {
-                    this.expandStringConcatenations(bootstrapMethodIndex1, commonSuperTypeResolver1, classHierarchyQuery, scriptEnvironment1);
-                }
+        if (this.supportsJava9()
+                && (stringEncryptionExclusionSpec == null || !stringEncryptionExclusionSpec.isClassExcluded(this))
+                && !HiddenOptionFlags.SKIP_BOOTSTRAP_METHOD_PROCESSING) {
+            BootstrapMethodIndex bootstrapMethods = this.getBootstrapMethodIndex();
+            if (bootstrapMethods != null) {
+                this.expandStringConcatenations(bootstrapMethods, commonSuperTypeResolver1, classHierarchyQuery, scriptEnvironment1);
             }
         }
 
@@ -5779,8 +5722,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
             }
 
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodInfo methodInfo2 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodInfo methodInfo2 = this.methods[methodIndex];
                 if (methodInfo2.hasStringConstants() && (methodInfo2.isConstructor() || methodInfo2.isStaticInitializer())) {
                     methodInfo2.collectExcludedFieldStrings(hashSet, stringEncryptionExclusionSpec);
                 }
@@ -5821,32 +5764,32 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         boolean bl2 = bl;
         ArrayList arrayList = new ArrayList();
         PairValueMap pairValueMap = new PairValueMap();
-        boolean bl3;
+        boolean flowExcludesExceptionObfuscation;
         if (exceptionObfuscationExclusions != null) {
             if (exceptionObfuscationExclusions.isClassExcluded(this)) {
                 return;
             }
 
-            bl3 = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
+            flowExcludesExceptionObfuscation = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
         } else {
-            bl3 = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
+            flowExcludesExceptionObfuscation = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
         }
 
-        if (!bl3 || flowObfuscationExclusions == null || !flowObfuscationExclusions.isClassExcluded(this)) {
+        if (!flowExcludesExceptionObfuscation || flowObfuscationExclusions == null || !flowObfuscationExclusions.isClassExcluded(this)) {
             if (this.zkmAnnotationValues != null && this.zkmAnnotationValues.hasValue("exceptionObfuscation")) {
-                String string = this.zkmAnnotationValues.getValue("exceptionObfuscation");
-                int ba = ObfuscateOptions.parseExceptionLevel(string);
+                String valueValue = this.zkmAnnotationValues.getValue("exceptionObfuscation");
+                int ba = ObfuscateOptions.parseExceptionLevel(valueValue);
                 if (ba != (bl2 ? 2 : 1)) {
-                    String string1 = ObfuscateOptions.getExceptionLevelName(bl2 ? 2 : 1);
+                    String exceptionLevelName = ObfuscateOptions.getExceptionLevelName(bl2 ? 2 : 1);
                     if (scriptEnvironment1.isVerbose()) {
                         scriptEnvironment1.getLogWriter()
                                 .println(
                                         "Overriding Exception Obfuscation setting in class '"
                                                 + AbstractExclusionSpec.formatClass(this, classHierarchyQuery, true)
                                                 + "' : '"
-                                                + string1
+                                                + exceptionLevelName
                                                 + "' changed to '"
-                                                + string
+                                                + valueValue
                                                 + "'"
                                 );
                     }
@@ -5863,22 +5806,22 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
             }
 
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodInfo methodInfo1 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodInfo methodInfo1 = this.methods[methodIndex];
 
                 try {
-                    if (!this.methods[i].isManufactured()) {
+                    if (!this.methods[methodIndex].isManufactured()) {
                         if (exceptionObfuscationExclusions != null) {
                             if (exceptionObfuscationExclusions.isMethodExcluded(methodInfo1)) {
                                 continue;
                             }
 
-                            bl3 = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
+                            flowExcludesExceptionObfuscation = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
                         } else {
-                            bl3 = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
+                            flowExcludesExceptionObfuscation = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
                         }
 
-                        if (!bl3 || flowObfuscationExclusions == null || !flowObfuscationExclusions.isMethodExcluded(methodInfo1)) {
+                        if (!flowExcludesExceptionObfuscation || flowObfuscationExclusions == null || !flowObfuscationExclusions.isMethodExcluded(methodInfo1)) {
                             List list2 = this.constantPool.findSubclassConstants(classHierarchyQuery);
                             methodInfo1.analyzeExceptionObfuscation(
                                     commonSuperTypeResolver1,
@@ -5897,7 +5840,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 } catch (MethodAnalysisException methodAnalysisException) {
                     scriptEnvironment1.logMessage(
                             "Couldn't fully process method '"
-                                    + this.methods[i].getNameWithParameters((HashMap) null)
+                                    + this.methods[methodIndex].getNameWithParameters((HashMap) null)
                                     + "' in class '"
                                     + this.getLocationName()
                                     + "' : "
@@ -5906,7 +5849,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 } catch (StackAnalysisException stackAnalysisException) {
                     throw new ZkmProcessingException(
                             "Method '"
-                                    + this.methods[i].getNameWithParameters((HashMap) null)
+                                    + this.methods[methodIndex].getNameWithParameters((HashMap) null)
                                     + "' in class '"
                                     + this.getDisplayLocationName()
                                     + "' appears to be invalid (5) : '"
@@ -6043,28 +5986,28 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                         ClassFileBase classFileBase1 = abstractFieldInfo.getOwningClass();
                         ClassFileBase classFileBase2 = this.findInheritedFieldReferrer(abstractFieldInfo);
 
-                        for (int i = 0; i < this.fieldCount; i++) {
-                            twoKeyMap2.putValue(classFileBase1, this.fields[i], classFileBase2);
+                        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+                            twoKeyMap2.putValue(classFileBase1, this.fields[fieldIndex], classFileBase2);
                         }
                     }
                 }
             }
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            String string7 = this.fields[i].getSourceName();
-            FieldSignature fieldSignature2 = this.fields[i].getSignature();
-            if (map2 != null && map2.containsKey(this.fields[i])) {
+        for (int fieldIndexValue = 0; fieldIndexValue < this.fieldCount; fieldIndexValue++) {
+            String sourceName = this.fields[fieldIndexValue].getSourceName();
+            FieldSignature fieldSignature2 = this.fields[fieldIndexValue].getSignature();
+            if (map2 != null && map2.containsKey(this.fields[fieldIndexValue])) {
                 if (hashMap2 == null) {
                     hashMap2 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(this.fieldCount));
                 }
 
-                String string8 = (String) map2.get(this.fields[i]);
-                if (string8.equals(string7)) {
-                    hashMap3.put(string7, this.fields[i]);
-                    map1.put(string7, this.fields[i]);
-                    listMultimap1.addValue(this.fields[i].getDescriptorKey(), string7);
-                    hashMap2.put(this.fields[i], string7);
+                String nameValue2 = (String) map2.get(this.fields[fieldIndexValue]);
+                if (nameValue2.equals(sourceName)) {
+                    hashMap3.put(sourceName, this.fields[fieldIndexValue]);
+                    map1.put(sourceName, this.fields[fieldIndexValue]);
+                    listMultimap1.addValue(this.fields[fieldIndexValue].getDescriptorKey(), sourceName);
+                    hashMap2.put(this.fields[fieldIndexValue], sourceName);
                 } else {
                     boolean bl1 = true;
                     enumeration = this.enumerateInheritedReferencedFields();
@@ -6074,44 +6017,44 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                             ClassFileBase classFileBase3 = abstractFieldInfo1.getOwningClass();
                             ClassFileBase classFileBase4 = this.findInheritedFieldReferrer(abstractFieldInfo1);
                             String string = (String) hashMap1.get(abstractFieldInfo1);
-                            if (string != null && string.equals(string8)) {
+                            if (string != null && string.equals(nameValue2)) {
                                 bl1 = false;
                                 String string1 = ClassFileBase.toDottedName((String) ZkmUtils.mapOrSelf(this.getClassName(), hashMap));
                                 String string2 = ClassFileBase.toDottedName((String) ZkmUtils.mapOrSelf(classFileBase4.getClassName(), hashMap));
                                 String string3 = ClassFileBase.toDottedName((String) ZkmUtils.mapOrSelf(classFileBase3.getClassName(), hashMap));
                                 FieldSignature fieldSignature = (FieldSignature) twoKeyMap1.getValue(classFileBase3.getClassName(), abstractFieldInfo1.getSignature());
-                                String string4;
+                                String name;
                                 if (fieldSignature != null) {
-                                    string4 = fieldSignature.getName();
+                                    name = fieldSignature.getName();
                                 } else {
-                                    string4 = string8;
+                                    name = nameValue2;
                                 }
 
                                 changeLogMapping1.logWarning(
                                         "Field '"
-                                                + string7
+                                                + sourceName
                                                 + "' in class '"
                                                 + string1
                                                 + "' could not be renamed to '"
-                                                + string8
+                                                + nameValue2
                                                 + "' because symbolic references to field '"
                                                 + string3
                                                 + "."
-                                                + string4
+                                                + name
                                                 + "' appear as '"
                                                 + string2
                                                 + "."
-                                                + string4
+                                                + name
                                                 + "' and '"
                                                 + string3
                                                 + "."
-                                                + string4
+                                                + name
                                                 + "' is renamed to '"
-                                                + string8
+                                                + nameValue2
                                                 + "'. You may need to distribute this application as a whole. (G)"
                                 );
                                 changeLogMapping1.removeFieldMapping(this.getClassName(), fieldSignature2);
-                                String string14 = (String) map2.remove(this.fields[i]);
+                                String string14 = (String) map2.remove(this.fields[fieldIndexValue]);
                                 break;
                             }
                         }
@@ -6127,41 +6070,41 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                                 FieldInfo fieldInfo1 = (FieldInfo) entry.getKey();
                                 ProgramClass programClass2 = fieldInfo1.getProgramClass();
                                 String string9 = (String) hashMap1.get(fieldInfo1);
-                                if (string9 != null && string9.equals(string8)) {
+                                if (string9 != null && string9.equals(nameValue2)) {
                                     bl1 = false;
                                     String string10 = ClassFileBase.toDottedName((String) ZkmUtils.mapOrSelf(this.getClassName(), hashMap));
-                                    String string11 = programClass2.getClassName();
-                                    String string12 = ClassFileBase.toDottedName((String) ZkmUtils.mapOrSelf(string11, hashMap));
-                                    FieldSignature fieldSignature1 = (FieldSignature) twoKeyMap1.getValue(string11, fieldInfo1.getSignature());
-                                    String string5;
+                                    String classNameValue = programClass2.getClassName();
+                                    String string12 = ClassFileBase.toDottedName((String) ZkmUtils.mapOrSelf(classNameValue, hashMap));
+                                    FieldSignature fieldSignature1 = (FieldSignature) twoKeyMap1.getValue(classNameValue, fieldInfo1.getSignature());
+                                    String nameValue;
                                     if (fieldSignature1 != null) {
-                                        string5 = fieldSignature1.getName();
+                                        nameValue = fieldSignature1.getName();
                                     } else {
-                                        string5 = string8;
+                                        nameValue = nameValue2;
                                     }
 
                                     String string6 = ClassFileBase.toDottedName((String) ZkmUtils.mapOrSelf(((ProgramClass) entry.getValue()).getClassName(), hashMap));
                                     changeLogMapping1.logWarning(
                                             "Field '"
-                                                    + string7
+                                                    + sourceName
                                                     + "' in class '"
                                                     + string10
                                                     + "' could not be renamed to '"
-                                                    + string8
+                                                    + nameValue2
                                                     + "' because symbolic references to it appearing as '"
                                                     + string6
                                                     + "."
-                                                    + string7
+                                                    + sourceName
                                                     + "' could be masked by references to field '"
                                                     + string12
                                                     + "."
-                                                    + string5
+                                                    + nameValue
                                                     + "' which is renamed to '"
-                                                    + string8
+                                                    + nameValue2
                                                     + "'. You may need to distribute this application as a whole. (H)"
                                     );
                                     changeLogMapping1.removeFieldMapping(this.getClassName(), fieldSignature2);
-                                    String string13 = (String) map2.remove(this.fields[i]);
+                                    String string13 = (String) map2.remove(this.fields[fieldIndexValue]);
                                     break;
                                 }
                             }
@@ -6169,32 +6112,32 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     }
 
                     if (bl1) {
-                        hashMap3.put(string8, this.fields[i]);
-                        map1.put(string8, this.fields[i]);
-                        listMultimap1.addValue(this.fields[i].getDescriptorKey(), string8);
-                        hashMap2.put(this.fields[i], string8);
+                        hashMap3.put(nameValue2, this.fields[fieldIndexValue]);
+                        map1.put(nameValue2, this.fields[fieldIndexValue]);
+                        listMultimap1.addValue(this.fields[fieldIndexValue].getDescriptorKey(), nameValue2);
+                        hashMap2.put(this.fields[fieldIndexValue], nameValue2);
                     }
                 }
-            } else if (nameExclusionSet.isFieldExcluded(this.fields[i])) {
-                hashMap3.put(string7, this.fields[i]);
-                map1.put(string7, this.fields[i]);
-                listMultimap1.addValue(this.fields[i].getDescriptorKey(), string7);
+            } else if (nameExclusionSet.isFieldExcluded(this.fields[fieldIndexValue])) {
+                hashMap3.put(sourceName, this.fields[fieldIndexValue]);
+                map1.put(sourceName, this.fields[fieldIndexValue]);
+                listMultimap1.addValue(this.fields[fieldIndexValue].getDescriptorKey(), sourceName);
             }
         }
 
         ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(this.getClassName());
         ArrayList arrayList = new ArrayList(this.fieldCount);
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            arrayList.add(this.fields[i]);
+        for (int fieldIndexValue2 = 0; fieldIndexValue2 < this.fieldCount; fieldIndexValue2++) {
+            arrayList.add(this.fields[fieldIndexValue2]);
         }
 
         if (bl || HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
             ZkmUtils.shuffleList(arrayList, ZkmUtils.createRandom(256));
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            FieldInfo fieldInfo = (FieldInfo) arrayList.get(i);
+        for (int elementIndex = 0; elementIndex < this.fieldCount; elementIndex++) {
+            FieldInfo fieldInfo = (FieldInfo) arrayList.get(elementIndex);
             fieldInfo.assignNewName(
                     classHierarchyNode,
                     fieldNameAssigner,
@@ -6231,7 +6174,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ObservableHolder[] observableHolders,
             LocalVariableAllocator localVariableAllocator
     ) {
-        int ba = 0;
+        int observableHolderIndex = 0;
         Iterator iterator = setMultiMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
@@ -6242,26 +6185,26 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             if (obfuscatedReferenceSlot == null) {
                 if (resolvedFieldRef != null) {
                     if (bl) {
-                        observableHolders[ba] = observableHolder;
+                        observableHolders[observableHolderIndex] = observableHolder;
                         if (resolvedInvokeDynamic != null) {
-                            int bb = ba++;
+                            int index = observableHolderIndex++;
                             ResolvedInvokeDynamic resolvedInvokeDynamic1 = resolvedInvokeDynamic;
-                            obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(resolvedInvokeDynamic1, bb);
+                            obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(resolvedInvokeDynamic1, index);
                         } else if (resolvedMethodRef != null) {
                             if (bl1) {
-                                int bi = ba++;
+                                int bi = observableHolderIndex++;
                                 ResolvedMethodRef resolvedMethodRef1 = resolvedMethodRef;
-                                int bc = bi;
-                                obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(bc, resolvedMethodRef1);
+                                int indexValue = bi;
+                                obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(indexValue, resolvedMethodRef1);
                             } else {
-                                int bd = ba++;
+                                int indexValue2 = observableHolderIndex++;
                                 ResolvedMethodRef resolvedMethodRef2 = resolvedMethodRef;
-                                obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(resolvedMethodRef2, bd);
+                                obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(resolvedMethodRef2, indexValue2);
                             }
                         } else {
-                            int be = ba++;
+                            int indexValue3 = observableHolderIndex++;
                             ResolvedFieldRef resolvedFieldRef1 = resolvedFieldRef;
-                            obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(resolvedFieldRef1, be);
+                            obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(resolvedFieldRef1, indexValue3);
                         }
                     } else {
                         obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(resolvedFieldRef, -1);
@@ -6270,13 +6213,13 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     map1.put(observableHolder, obfuscatedReferenceSlot);
                 } else {
                     if (bl) {
-                        observableHolders[ba] = observableHolder;
+                        observableHolders[observableHolderIndex] = observableHolder;
                     }
 
                     int value = localVariableAllocator.getValue();
-                    int bf = bl ? ba++ : -1;
-                    int bg = value;
-                    obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(bg, bf);
+                    int indexValue4 = bl ? observableHolderIndex++ : -1;
+                    int valueValue = value;
+                    obfuscatedReferenceSlot = new ObfuscatedReferenceSlot(valueValue, indexValue4);
                     map1.put(observableHolder, obfuscatedReferenceSlot);
                 }
             }
@@ -6300,12 +6243,12 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         }
     }
 
-    public ClassFileBase findInheritedMethodReferrer(Object object) {
+    public ClassFileBase findInheritedMethodReferrer(Object key) {
         if (this.inheritedMethodReferrers == null) {
             return null;
         }
 
-        Set set1 = this.inheritedMethodReferrers.getValues(object);
+        Set set1 = this.inheritedMethodReferrers.getValues(key);
         return set1 != null ? (ClassFileBase) set1.iterator().next() : null;
     }
 
@@ -6328,8 +6271,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             FieldInfo fieldInfo1 = (FieldInfo) ((ObjectPair) iterator.next()).getSecond();
             boolean bl = false;
 
-            for (int i = 0; i < this.methodCount; i++) {
-                MethodInfo methodInfo1 = this.methods[i];
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                MethodInfo methodInfo1 = this.methods[methodIndex];
                 if (methodInfo1.isConstructor() && methodInfo1.storesToField(fieldInfo1)) {
                     bl = true;
                     break;
@@ -6346,8 +6289,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         Iterator iterator = this.constantPool.findSubclassConstants(classHierarchyQuery).iterator();
 
         while (iterator.hasNext()) {
-            String string = ((ResolvedClassConstant) iterator.next()).getClassName();
-            countingBag.add(string);
+            String classNameValue = ((ResolvedClassConstant) iterator.next()).getClassName();
+            countingBag.add(classNameValue);
         }
     }
 
@@ -6369,10 +6312,10 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         stringBuffer.append(this.getExtendsClause() + this.getImplementsClause() + " {");
         stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            if (this.fields[i].isValid()) {
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            if (this.fields[fieldIndex].isValid()) {
                 stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
-                Enumeration enumeration1 = this.fields[i].enumerateAnnotationTypes();
+                Enumeration enumeration1 = this.fields[fieldIndex].enumerateAnnotationTypes();
 
                 while (enumeration1.hasMoreElements()) {
                     stringBuffer.append("   ");
@@ -6382,18 +6325,18 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
 
                 stringBuffer.append("   ");
-                stringBuffer.append(this.fields[i].getModifierString());
-                stringBuffer.append(ConstantPoolEntry.descriptorToJavaType(this.fields[i].getDescriptor()));
+                stringBuffer.append(this.fields[fieldIndex].getModifierString());
+                stringBuffer.append(ConstantPoolEntry.descriptorToJavaType(this.fields[fieldIndex].getDescriptor()));
                 stringBuffer.append(" ");
-                stringBuffer.append(this.fields[i].getSourceName());
+                stringBuffer.append(this.fields[fieldIndex].getSourceName());
                 stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            if (this.methods[i].isValid()) {
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            if (this.methods[methodIndex].isValid()) {
                 stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
-                Enumeration enumeration2 = this.methods[i].enumerateAnnotationTypes();
+                Enumeration enumeration2 = this.methods[methodIndex].enumerateAnnotationTypes();
 
                 while (enumeration2.hasMoreElements()) {
                     stringBuffer.append("   ");
@@ -6403,8 +6346,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                 }
 
                 stringBuffer.append("   ");
-                stringBuffer.append(this.methods[i].buildDeclaration(false));
-                stringBuffer.append(this.methods[i].getThrowsClause());
+                stringBuffer.append(this.methods[methodIndex].buildDeclaration(false));
+                stringBuffer.append(this.methods[methodIndex].getThrowsClause());
                 stringBuffer.append(';');
                 stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
@@ -6420,9 +6363,9 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     ) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.methodCount; i++) {
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
             try {
-                this.methods[i].updateLocalVariableTypes(this.constantPool, arrayList, commonSuperTypeResolver1, classHierarchyQuery);
+                this.methods[methodIndex].updateLocalVariableTypes(this.constantPool, arrayList, commonSuperTypeResolver1, classHierarchyQuery);
             } catch (MethodAnalysisException methodAnalysisException) {
                 scriptEnvironment1.logWarning(
                         "Method could not be analyzed in class '"
@@ -6433,7 +6376,7 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                         true
                 );
             } catch (StackAnalysisException stackAnalysisException) {
-                throw new ZkmProcessingException(this.getLocationName() + " " + this.methods[i].toDisplayString() + " : " + stackAnalysisException.getMessage());
+                throw new ZkmProcessingException(this.getLocationName() + " " + this.methods[methodIndex].toDisplayString() + " : " + stackAnalysisException.getMessage());
             }
         }
 
@@ -6454,37 +6397,37 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
             ObservableHolder[] observableHolders,
             LocalVariableAllocator localVariableAllocator
     ) {
-        int ba = 0;
+        int observableHolderIndex = 0;
         Iterator iterator = setMultiMap.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
             ObservableHolder observableHolder = (ObservableHolder) entry.getKey();
-            String string = (String) observableHolder.getValue();
+            String valueValue = (String) observableHolder.getValue();
             EncryptedStringLocation encryptedStringLocation = (EncryptedStringLocation) map1.get(observableHolder);
             if (encryptedStringLocation == null) {
                 if (resolvedFieldRef != null) {
                     if (bl) {
-                        observableHolders[ba] = observableHolder;
+                        observableHolders[observableHolderIndex] = observableHolder;
                         if (resolvedInvokeDynamic != null) {
-                            int bb = ba++;
+                            int stringIndex = observableHolderIndex++;
                             ResolvedInvokeDynamic resolvedInvokeDynamic1 = resolvedInvokeDynamic;
-                            encryptedStringLocation = new EncryptedStringLocation(resolvedInvokeDynamic1, bb);
+                            encryptedStringLocation = new EncryptedStringLocation(resolvedInvokeDynamic1, stringIndex);
                         } else if (resolvedMethodRef != null) {
                             if (bl1) {
-                                int bh = ba++;
+                                int bh = observableHolderIndex++;
                                 ResolvedMethodRef resolvedMethodRef1 = resolvedMethodRef;
-                                int bc = bh;
-                                encryptedStringLocation = new EncryptedStringLocation(bc, resolvedMethodRef1);
+                                int stringIndexValue = bh;
+                                encryptedStringLocation = new EncryptedStringLocation(stringIndexValue, resolvedMethodRef1);
                             } else {
-                                int bd = ba++;
+                                int stringIndexValue2 = observableHolderIndex++;
                                 ResolvedMethodRef resolvedMethodRef2 = resolvedMethodRef;
-                                encryptedStringLocation = new EncryptedStringLocation(resolvedMethodRef2, bd);
+                                encryptedStringLocation = new EncryptedStringLocation(resolvedMethodRef2, stringIndexValue2);
                             }
                         } else {
-                            int be = ba++;
+                            int stringIndexValue3 = observableHolderIndex++;
                             ResolvedFieldRef resolvedFieldRef1 = resolvedFieldRef;
-                            encryptedStringLocation = new EncryptedStringLocation(resolvedFieldRef1, be);
+                            encryptedStringLocation = new EncryptedStringLocation(resolvedFieldRef1, stringIndexValue3);
                         }
                     } else {
                         encryptedStringLocation = new EncryptedStringLocation(resolvedFieldRef, -1);
@@ -6493,13 +6436,13 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
                     map1.put(observableHolder, encryptedStringLocation);
                 } else {
                     if (bl) {
-                        observableHolders[ba] = observableHolder;
+                        observableHolders[observableHolderIndex] = observableHolder;
                     }
 
                     int value = localVariableAllocator.getValue();
-                    int bf = bl ? ba++ : -1;
-                    int bg = value;
-                    encryptedStringLocation = new EncryptedStringLocation(bg, bf);
+                    int stringIndexValue4 = bl ? observableHolderIndex++ : -1;
+                    int valueValue2 = value;
+                    encryptedStringLocation = new EncryptedStringLocation(valueValue2, stringIndexValue4);
                     map1.put(observableHolder, encryptedStringLocation);
                 }
             }
@@ -6524,8 +6467,8 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     public void removeLocalVariableTables() {
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].removeLocalVariableTables();
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].removeLocalVariableTables();
         }
     }
 
@@ -6544,18 +6487,18 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         Set set1 = (Set) object1;
         this.constantPool.applyClassRenames(hashMap, messageReporter1);
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].remapClassNames(ba, bb, hashMap1, hashMap);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].remapClassNames(ba, bb, hashMap1, hashMap);
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].remapClassNames(ba, bb, hashMap1, hashMap);
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].remapClassNames(ba, bb, hashMap1, hashMap);
         }
 
         this.trimInnerClassesAttribute();
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            Attribute attribute = this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            Attribute attribute = this.attributes[attributeIndex];
             HashMap hashMap3 = hashMap;
             HashMap hashMap2 = hashMap1;
             Integer integer = bb;
@@ -6567,53 +6510,40 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
     }
 
     @Override
-    public void collectUsedConstants(char ba, int bb, UsedConstantsCollector usedConstantsCollector, char bc) {
-        ProgramClass programClass2;
-        label65:
-        {
-            VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-            this.accessFlags.collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
-            if (super.thisClassConstant != null) {
-                programClass2 = this;
-                if (bb <= 0) {
-                    break label65;
-                }
-
-                if (!super.thisClassConstant.isUnresolved()) {
-                    ((ResolvedClassConstant) super.thisClassConstant).registerUsage(usedConstantsCollector, this, ClassReferenceRole.THIS_CLASS);
-                }
-            }
-
-            programClass2 = this;
+    public void collectUsedConstants(char controlTag, int controlSeed, UsedConstantsCollector collector, char controlMode) {
+        ClassFileComponent.getFlowGuardNodes();
+        this.accessFlags.collectUsedConstants('\u0000', 1103830477, collector, '鞍');
+        if (super.thisClassConstant != null && controlSeed > 0 && !super.thisClassConstant.isUnresolved()) {
+            ((ResolvedClassConstant) super.thisClassConstant).registerUsage(collector, this, ClassReferenceRole.THIS_CLASS);
         }
 
-        if (programClass2.superClassConstant != null && !this.superClassConstant.isUnresolved()) {
-            ((ResolvedClassConstant) this.superClassConstant).registerUsage(usedConstantsCollector, this, ClassReferenceRole.SUPER_CLASS);
+        if (this.superClassConstant != null && !this.superClassConstant.isUnresolved()) {
+            ((ResolvedClassConstant) this.superClassConstant).registerUsage(collector, this, ClassReferenceRole.SUPER_CLASS);
         }
 
-        for (ClassConstantBase classConstantBase : super.interfaces) {
-            if (ba >= 0 && !classConstantBase.isUnresolved()) {
-                ((ResolvedClassConstant) classConstantBase).registerUsage(usedConstantsCollector, this, ClassReferenceRole.INTERFACE_ENTRY);
+        for (ClassConstantBase interfaceClass : super.interfaces) {
+            if (!interfaceClass.isUnresolved()) {
+                ((ResolvedClassConstant) interfaceClass).registerUsage(collector, this, ClassReferenceRole.INTERFACE_ENTRY);
             }
         }
 
         for (Attribute attribute : this.attributes) {
-            attribute.collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+            attribute.collectUsedConstants('\u0000', 1103830477, collector, '鞍');
         }
 
         for (FieldInfo fieldInfo : this.fields) {
-            fieldInfo.collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+            fieldInfo.collectUsedConstants('\u0000', 1103830477, collector, '鞍');
         }
 
-        for (MethodInfo methodInfo1 : this.methods) {
-            methodInfo1.collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+        for (MethodInfo method : this.methods) {
+            method.collectUsedConstants('\u0000', 1103830477, collector, '鞍');
         }
     }
 
     public void removeLineNumberTables() {
         if (this.hasLineNumberTables()) {
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i].removeLineNumberTable();
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex].removeLineNumberTable();
             }
 
             this.setHasLineNumberTables(false);
@@ -6632,20 +6562,20 @@ public class ProgramClass extends ClassFileBase implements NodeVisitor, ClassCha
         }
     }
 
-    public final void addInheritedFieldReferrer(Object object, Object object1) {
+    public final void addInheritedFieldReferrer(Object key, Object object1) {
         if (this.inheritedFieldReferrers == null) {
             this.inheritedFieldReferrers = new SetMultiMap(10, 5);
         }
 
-        this.inheritedFieldReferrers.addValue(object, object1);
+        this.inheritedFieldReferrers.addValue(key, object1);
     }
 
     public void removeMethods(EnumerableMap enumerableMap) {
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.methods.length; i++) {
-            if (!enumerableMap.containsKey(this.methods[i])) {
-                arrayList.add(this.methods[i]);
+        for (int methodIndex = 0; methodIndex < this.methods.length; methodIndex++) {
+            if (!enumerableMap.containsKey(this.methods[methodIndex])) {
+                arrayList.add(this.methods[methodIndex]);
             }
         }
 

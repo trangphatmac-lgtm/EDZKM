@@ -119,8 +119,8 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
                 break;
             default:
                 ExclusionWizardSettings exclusionWizardSettings1 = (ExclusionWizardSettings) super.wizardSettings;
-                String string = (String) this.excludedPackageComboBox.getSelectedItem() + ".";
-                exclusionWizardSettings1.setPackageSelection(true, string);
+                String selectedPackageName = (String) this.excludedPackageComboBox.getSelectedItem() + ".";
+                exclusionWizardSettings1.setPackageSelection(true, selectedPackageName);
         }
     }
 
@@ -140,22 +140,22 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
             List list1 = this.rootPackage.getAllPackagePaths();
             Collections.sort(list1, CaseInsensitiveComparator.getInstance());
 
-            for (int i = 0; i < list1.size(); i++) {
-                String string = ((String) list1.get(i)).replace('/', '.');
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String string = ((String) list1.get(elementIndex)).replace('/', '.');
                 this.excludedPackageComboBox.addItem(string);
             }
 
             if (((ExclusionWizardSettings) super.wizardSettings).isPackageSelected() && super.wizardSettings.isSaved()) {
-                String string3 = ((ExclusionWizardSettings) super.wizardSettings).getSelectedPackageName();
-                if (string3.equals("*.")) {
+                String selectedPackageName = ((ExclusionWizardSettings) super.wizardSettings).getSelectedPackageName();
+                if (selectedPackageName.equals("*.")) {
                     this.excludedPackageComboBox.setSelectedIndex(1);
                 } else {
-                    String string4 = string3.substring(0, string3.length() - 1);
-                    int bb = this.packageComboModel.getIndexOf(string4);
-                    if (bb > -1) {
-                        this.excludedPackageComboBox.setSelectedIndex(bb);
+                    String string4 = selectedPackageName.substring(0, selectedPackageName.length() - 1);
+                    int indexOf = this.packageComboModel.getIndexOf(string4);
+                    if (indexOf > -1) {
+                        this.excludedPackageComboBox.setSelectedIndex(indexOf);
                     } else {
-                        this.removeParameter(string3);
+                        this.removeParameter(selectedPackageName);
                         this.excludedPackageComboBox.setSelectedIndex(0);
                     }
                 }
@@ -175,9 +175,9 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
             string5 = "Don't change main class name:";
         }
 
-        String string2 = GuiResources.getTooltipText("EXCLUDE_MAIN_CLASS_NAME_LIST");
+        String tooltipText = GuiResources.getTooltipText("EXCLUDE_MAIN_CLASS_NAME_LIST");
         String string1 = string5;
-        packageExclusionWizardDialog1.buildMainClassSelector(container2, string1, string2);
+        packageExclusionWizardDialog1.buildMainClassSelector(container2, string1, tooltipText);
         this.excludedPackageComboBox.addItemListener(this);
         this.excludedPackageComboBox.setToolTipText(GuiResources.getTooltipText("EXCLUDE_PACKAGE_NAMES_LIST"));
     }
@@ -193,7 +193,7 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
     }
 
     public PackageExclusionWizardDialog(
-            String string,
+            String title,
             ZkmMainWindow zkmMainWindow,
             ExclusionWizardSettings exclusionWizardSettings,
             RootPackageNode rootPackageNode1,
@@ -203,7 +203,7 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
     ) throws ZkmException, IOException {
         super(zkmMainWindow, list1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1, 1);
         this.rootPackage = rootPackageNode1;
-        this.initComponents(string);
+        this.initComponents(title);
         SwingUtils.requestFocusOnEdt(super.okBtn);
     }
 
@@ -226,8 +226,8 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
                     return;
                 }
 
-                int ba = this.packageComboModel.getIndexOf(itemEvent.getItem());
-                switch (ba) {
+                int indexOf = this.packageComboModel.getIndexOf(itemEvent.getItem());
+                switch (indexOf) {
                     case -1:
                     case 0:
                         break;
@@ -241,12 +241,12 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
                         }
                         break;
                     default:
-                        String string = (String) this.packageComboModel.getElementAt(ba) + ".";
+                        String key = (String) this.packageComboModel.getElementAt(indexOf) + ".";
                         if (itemEvent.getStateChange() == 1) {
-                            this.addParameter(string);
+                            this.addParameter(key);
                         } else {
                             this.suppressComboEvents = true;
-                            this.removeParameter(string);
+                            this.removeParameter(key);
                             this.suppressComboEvents = false;
                         }
                 }
@@ -325,8 +325,8 @@ public abstract class PackageExclusionWizardDialog extends ExclusionWizardDialog
     @Override
     public String getMainClassParameter(ClassListEntry classListEntry) {
         if (classListEntry != null) {
-            String string = classListEntry.getClassName();
-            return this.buildMainClassParameter(string, classListEntry.isApplication());
+            String className = classListEntry.getClassName();
+            return this.buildMainClassParameter(className, classListEntry.isApplication());
         } else {
             return null;
         }

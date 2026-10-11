@@ -94,24 +94,24 @@ public abstract class ResolvedDynamicRef extends ResolvedDynamicConstantBase imp
         return this.bootstrapMethod;
     }
 
-    public ResolvedDynamicRef(int ba, AbstractConstantPool abstractConstantPool, int bootstrapMethodIndex, ResolvedNameAndType resolvedNameAndType) {
-        super(ba, abstractConstantPool);
+    public ResolvedDynamicRef(int index, AbstractConstantPool abstractConstantPool, int bootstrapMethodIndex, ResolvedNameAndType resolvedNameAndType) {
+        super(index, abstractConstantPool);
         this.bootstrapMethodIndex = bootstrapMethodIndex;
         this.nameAndType = resolvedNameAndType;
     }
 
     public boolean setBootstrapMethod(BootstrapMethodEntry bootstrapMethodEntry) {
-        boolean bl = false;
+        boolean bootstrapMethodValue = false;
         if (this.bootstrapMethod == null || this.bootstrapMethod != bootstrapMethodEntry) {
-            bl = true;
+            bootstrapMethodValue = true;
         }
 
         this.bootstrapMethod = bootstrapMethodEntry;
-        return bl;
+        return bootstrapMethodValue;
     }
 
-    public ResolvedDynamicRef(int ba, ResolvedNameAndType resolvedNameAndType, ResolvedInvokeDynamic resolvedInvokeDynamic) {
-        super(ba, resolvedInvokeDynamic.constantPool);
+    public ResolvedDynamicRef(int index, ResolvedNameAndType resolvedNameAndType, ResolvedInvokeDynamic resolvedInvokeDynamic) {
+        super(index, resolvedInvokeDynamic.constantPool);
         this.nameAndType = resolvedNameAndType;
         this.bootstrapMethod = resolvedInvokeDynamic.getBootstrapMethod();
         this.bootstrapMethodIndex = this.bootstrapMethod.getIndex();

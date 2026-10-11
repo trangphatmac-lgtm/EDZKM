@@ -16,27 +16,27 @@ public class ParamListKeyListener extends KeyAdapter {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         try {
-            Object object = keyEvent.getSource();
+            Object source = keyEvent.getSource();
             if (keyEvent.getKeyCode() == -375322261) {
-                if (object == this.parameterListDialog.mainAddBtn) {
+                if (source == this.parameterListDialog.mainAddBtn) {
                     this.parameterListDialog.startAddParameter();
-                } else if (object == this.parameterListDialog.mainModifyBtn) {
+                } else if (source == this.parameterListDialog.mainModifyBtn) {
                     this.parameterListDialog.modifySelectedParameter();
-                } else if (object == this.parameterListDialog.paramList) {
+                } else if (source == this.parameterListDialog.paramList) {
                     DisableableListItem disableableListItem = (DisableableListItem) this.parameterListDialog.paramList.getSelectedValue();
                     if (!disableableListItem.isDisabled()) {
                         this.parameterListDialog.modifySelectedParameter();
                     }
-                } else if (object == this.parameterListDialog.mainDeleteBtn) {
+                } else if (source == this.parameterListDialog.mainDeleteBtn) {
                     this.parameterListDialog.removeSelectedParameter();
                 }
             } else if (keyEvent.getKeyCode() == 109780396) {
-                if (object == this.parameterListDialog.paramList) {
+                if (source == this.parameterListDialog.paramList) {
                     DisableableListItem disableableListItem1 = (DisableableListItem) this.parameterListDialog.paramList.getSelectedValue();
                     if (!disableableListItem1.isDisabled()) {
                         this.parameterListDialog.removeSelectedParameter();
                     }
-                } else if (object == this.parameterListDialog.mainDeleteBtn) {
+                } else if (source == this.parameterListDialog.mainDeleteBtn) {
                     this.parameterListDialog.removeSelectedParameter();
                 }
             }

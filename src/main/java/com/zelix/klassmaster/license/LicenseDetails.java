@@ -4,7 +4,7 @@ public class LicenseDetails extends TemplateTextBase {
     private final String[] licenseFields;
 
     public LicenseDetails() {
-        String[] strings = new String[]{
+        String[] licenseFieldsValue = new String[]{
                 "License No.:                                         ",
                 "none                                                 ",
                 "License Type:                                        ",
@@ -16,7 +16,7 @@ public class LicenseDetails extends TemplateTextBase {
                 "Not used                                             ",
                 "Not used                                             "
         };
-        this.licenseFields = strings;
+        this.licenseFields = licenseFieldsValue;
     }
 
     public String getEncodedEvaluationPeriod() {
@@ -39,7 +39,7 @@ public class LicenseDetails extends TemplateTextBase {
         return "f3dgFIbD6N1QU";
     }
 
-    public String getRawLicenseField(int ba) {
-        return this.licenseFields[ba];
+    public String getRawLicenseField(int licenseFieldIndex) {
+        return this.licenseFields[licenseFieldIndex];
     }
 }

@@ -12,23 +12,23 @@ import javax.swing.JButton;
 
 public class BuildHelperObfuscateOptionsDialog extends ObfuscateOptionsDialog {
     public BuildHelperObfuscateOptionsDialog(
-            String string,
-            String string1,
+            String title,
+            String toolTipText,
             ZkmMainWindow zkmMainWindow,
             ObfuscateOptions obfuscateOptions1,
             ExclusionWizardSettings exclusionWizardSettings,
             ScriptEnvironment scriptEnvironment1,
             DialogCallback dialogCallback1
     ) {
-        super(string, string1, zkmMainWindow, obfuscateOptions1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1);
+        super(title, toolTipText, zkmMainWindow, obfuscateOptions1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1);
     }
 
     @Override
-    public void createButtons(String string) {
+    public void createButtons(String toolTipText) {
         super.previousBtn = new JButton("Previous");
         super.previousBtn.setToolTipText(GuiResources.getTooltipText("PREVIOUS_SCREEN"));
         super.okBtn = new JButton("Next");
-        super.okBtn.setToolTipText(string);
+        super.okBtn.setToolTipText(toolTipText);
         super.cancelBtn = new JButton("Cancel");
         super.cancelBtn.setToolTipText(GuiResources.getTooltipText("CANCEL_DIALOG"));
         super.helpBtn = new JButton("Help");

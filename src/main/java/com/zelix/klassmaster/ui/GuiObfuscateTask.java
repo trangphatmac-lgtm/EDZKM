@@ -62,7 +62,7 @@ public class GuiObfuscateTask implements Runnable {
             classRepository1.obfuscate(
                     changeLogInputFiles,
                     this.obfuscateOptions.e,
-                    this.obfuscateOptions.h,
+                    this.obfuscateOptions.changeLogWriter,
                     this.obfuscateOptions.f,
                     this.obfuscateOptions.v,
                     this.excludeStatements,
@@ -134,8 +134,8 @@ public class GuiObfuscateTask implements Runnable {
                     this.scriptEnvironment
             );
             ZkmMainWindow zkmMainWindow;
-            if (this.obfuscateOptions.h != null) {
-                this.obfuscateOptions.h.close();
+            if (this.obfuscateOptions.changeLogWriter != null) {
+                this.obfuscateOptions.changeLogWriter.close();
                 zkmMainWindow = this.mainWindow;
             } else {
                 zkmMainWindow = this.mainWindow;

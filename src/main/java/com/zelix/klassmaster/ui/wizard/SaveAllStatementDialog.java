@@ -73,9 +73,9 @@ public class SaveAllStatementDialog extends SaveClassesDialog implements HelperD
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object instanceof JButton) {
-                JButton jButton = (JButton) object;
+            Object source = actionEvent.getSource();
+            if (source instanceof JButton) {
+                JButton jButton = (JButton) source;
                 if (jButton == this.previousBtn) {
                     this.goPrevious();
                 } else if (jButton == super.okBtn) {
@@ -91,8 +91,8 @@ public class SaveAllStatementDialog extends SaveClassesDialog implements HelperD
         }
     }
 
-    public SaveAllStatementDialog(JFrame jFrame, String string, String string1, DialogCallback dialogCallback1) {
-        super(jFrame, "ZKM Script Helper - \"saveAll\" Statement", "Next", string, string1, dialogCallback1);
+    public SaveAllStatementDialog(JFrame jFrame, String string, String initialDirectory, DialogCallback dialogCallback1) {
+        super(jFrame, "ZKM Script Helper - \"saveAll\" Statement", "Next", string, initialDirectory, dialogCallback1);
     }
 
     public void goPrevious() throws ZkmException, IOException {
@@ -103,12 +103,12 @@ public class SaveAllStatementDialog extends SaveClassesDialog implements HelperD
     }
 
     @Override
-    public void createButtons(String string, String string1, ConstraintLayout constraintLayout1, Container container1) {
+    public void createButtons(String string, String toolTipText, ConstraintLayout constraintLayout1, Container container1) {
         this.previousBtn = new JButton("Previous");
         this.previousBtn.setToolTipText(GuiResources.getTooltipText("PREVIOUS_SCREEN"));
         container1.add(this.previousBtn, "previousBtn");
         super.okBtn = new JButton(string);
-        super.okBtn.setToolTipText(string1);
+        super.okBtn.setToolTipText(toolTipText);
         container1.add(super.okBtn, "okBtn");
         super.okBtn.setEnabled(false);
         super.cancelBtn = new JButton("Cancel");

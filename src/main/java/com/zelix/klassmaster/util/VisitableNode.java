@@ -16,8 +16,8 @@ public abstract class VisitableNode implements ObservableModel {
         return staticIntArray;
     }
 
-    public static void setStaticIntArray(int[] ba) {
-        staticIntArray = ba;
+    public static void setStaticIntArray(int[] staticIntArrayArgument) {
+        staticIntArray = staticIntArrayArgument;
     }
 
     @Override

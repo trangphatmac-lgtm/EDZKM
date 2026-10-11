@@ -119,18 +119,18 @@ public class ReflectionAccessMatcher extends ExclusionHandlerBase {
     }
 
     public final void applyAccessStatements() throws ZkmException, IOException {
-        int ba;
+        int exclusionStatementsSize;
         if (super.exclusionStatements == null) {
-            ba = 0;
+            exclusionStatementsSize = 0;
         } else {
-            ba = super.exclusionStatements.size();
+            exclusionStatementsSize = super.exclusionStatements.size();
         }
 
         HashMap hashMap = ZkmUtils.createHashMap();
         Vector vector = new Vector();
 
-        for (int i = 0; i < ba; i++) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(i);
+        for (int elementIndex = 0; elementIndex < exclusionStatementsSize; elementIndex++) {
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -145,13 +145,13 @@ public class ReflectionAccessMatcher extends ExclusionHandlerBase {
         if (super.scriptEnvironment.isVerbose() && vector.size() > 0) {
             super.logWriter.println("\taccessedByReflection parameters:");
 
-            for (int i = vector.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t" + vector.elementAt(i));
+            for (int elementIndexValue = vector.size() - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                super.logWriter.println("\t\t" + vector.elementAt(elementIndexValue));
             }
         }
 
-        for (int i = vector.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) vector.elementAt(i);
+        for (int elementIndexValue2 = vector.size() - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) vector.elementAt(elementIndexValue2);
             if (!aSTRenameFilterParameter2.isClassSpecifier() && !aSTRenameFilterParameter2.isMethodSpecifier() && !aSTRenameFilterParameter2.isFieldSpecifier()) {
                 super.scriptEnvironment
                         .logWarning(
@@ -191,18 +191,18 @@ public class ReflectionAccessMatcher extends ExclusionHandlerBase {
             }
         }
 
-        int be;
+        int unexclusionStatementsSize;
         if (super.unexclusionStatements == null) {
-            be = 0;
+            unexclusionStatementsSize = 0;
         } else {
-            be = super.unexclusionStatements.size();
+            unexclusionStatementsSize = super.unexclusionStatements.size();
         }
 
         HashMap hashMap1 = ZkmUtils.createHashMap();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < be; i++) {
-            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(i);
+        for (int elementIndexValue3 = 0; elementIndexValue3 < unexclusionStatementsSize; elementIndexValue3++) {
+            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(elementIndexValue3);
             Enumeration enumeration1 = parameterListStatement1.getRenameFilterParameters();
 
             while (enumeration1.hasMoreElements()) {
@@ -217,13 +217,13 @@ public class ReflectionAccessMatcher extends ExclusionHandlerBase {
         if (super.scriptEnvironment.isVerbose() && arrayList.size() > 0) {
             super.logWriter.println("\taccessedByReflectionExclude parameters:");
 
-            for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t\"" + arrayList.get(i) + "\"");
+            for (int elementIndexValue4 = arrayList.size() - 1; elementIndexValue4 >= 0; elementIndexValue4 += -1) {
+                super.logWriter.println("\t\t\"" + arrayList.get(elementIndexValue4) + "\"");
             }
         }
 
-        for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) arrayList.get(i);
+        for (int elementIndexValue5 = arrayList.size() - 1; elementIndexValue5 >= 0; elementIndexValue5 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) arrayList.get(elementIndexValue5);
             if (!aSTRenameFilterParameter3.isClassSpecifier() && !aSTRenameFilterParameter3.isMethodSpecifier() && !aSTRenameFilterParameter3.isFieldSpecifier()) {
                 super.scriptEnvironment
                         .logWarning(

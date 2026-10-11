@@ -33,8 +33,8 @@ public class ReadOnlyMultiMapView implements MultiMap {
     }
 
     @Override
-    public List getValues(Object object) {
-        List list1 = this.delegate.getValues(object);
+    public List getValues(Object key) {
+        List list1 = this.delegate.getValues(key);
         return list1 != null ? new ArrayList(list1) : null;
     }
 
@@ -49,8 +49,8 @@ public class ReadOnlyMultiMapView implements MultiMap {
     }
 
     @Override
-    public boolean containsKey(Object object) {
-        return this.delegate.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.delegate.containsKey(key);
     }
 
     @Override
@@ -74,8 +74,8 @@ public class ReadOnlyMultiMapView implements MultiMap {
     }
 
     @Override
-    public boolean containsValue(Object object, Object object1) {
-        return this.delegate.containsValue(object, object1);
+    public boolean containsValue(Object key, Object object1) {
+        return this.delegate.containsValue(key, object1);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ReadOnlyMultiMapView implements MultiMap {
     }
 
     @Override
-    public Enumeration valuesOf(Object object) {
-        return this.delegate.valuesOf(object);
+    public Enumeration valuesOf(Object key) {
+        return this.delegate.valuesOf(key);
     }
 }

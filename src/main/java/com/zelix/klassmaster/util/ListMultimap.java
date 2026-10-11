@@ -24,13 +24,13 @@ public class ListMultimap implements MultiMap {
     private final boolean concurrent;
     public Map map;
 
-    public List putValues(Object object, Object object1) {
+    public List putValues(Object key, Object value) {
         if (this.cachedValueEnumeration != null) {
             MultiMapValueEnumeration.invalidateEnumeration(this.cachedValueEnumeration);
             this.cachedValueEnumeration = null;
         }
 
-        return (List) this.map.put(object, object1);
+        return (List) this.map.put(key, value);
     }
 
     @Override
@@ -57,13 +57,13 @@ public class ListMultimap implements MultiMap {
     }
 
     @Override
-    public List removeKey(Object object) {
+    public List removeKey(Object key) {
         if (this.cachedValueEnumeration != null) {
             MultiMapValueEnumeration.invalidateEnumeration(this.cachedValueEnumeration);
             this.cachedValueEnumeration = null;
         }
 
-        return (List) this.map.remove(object);
+        return (List) this.map.remove(key);
     }
 
     @Override
@@ -71,8 +71,8 @@ public class ListMultimap implements MultiMap {
         return Collections.enumeration(this.map.keySet());
     }
 
-    public ListMultimap(int ba, int bb) {
-        this(false, ba, bb, false);
+    public ListMultimap(int ba, int initialListCapacityArgument) {
+        this(false, ba, initialListCapacityArgument, false);
     }
 
     public boolean isConcurrent() {
@@ -89,13 +89,13 @@ public class ListMultimap implements MultiMap {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            Object object = entry.getKey();
+            Object key = entry.getKey();
             List list1 = (List) entry.getValue();
-            List list2 = (List) this.map.get(object);
+            List list2 = (List) this.map.get(key);
             if (list2 == null) {
                 list2 = this.createDefaultList();
                 list2.addAll(list1);
-                this.map.put(object, list2);
+                this.map.put(key, list2);
             } else {
                 list2.addAll(list1);
             }
@@ -106,20 +106,20 @@ public class ListMultimap implements MultiMap {
         this(false, ba, 5, false);
     }
 
-    public void prependValues(Object object, Collection collection1) {
-        this.insertValues(object, collection1, true);
+    public void prependValues(Object key, Collection collection1) {
+        this.insertValues(key, collection1, true);
     }
 
-    private void insertValues(Object object, Collection collection1, boolean bl) {
+    private void insertValues(Object key, Collection collection1, boolean bl) {
         if (this.cachedValueEnumeration != null) {
             MultiMapValueEnumeration.invalidateEnumeration(this.cachedValueEnumeration);
             this.cachedValueEnumeration = null;
         }
 
-        List list1 = (List) this.map.get(object);
+        List list1 = (List) this.map.get(key);
         if (list1 == null) {
             list1 = this.createList(Math.max(this.initialListCapacity, collection1.size()));
-            this.map.put(object, list1);
+            this.map.put(key, list1);
         }
 
         if (bl) {
@@ -159,42 +159,42 @@ public class ListMultimap implements MultiMap {
     }
 
     @Override
-    public Enumeration valuesOf(Object object) {
+    public Enumeration valuesOf(Object key) {
         List list1;
-        return (list1 = (List) this.map.get(object)) == null ? null : Collections.enumeration(list1);
+        return (list1 = (List) this.map.get(key)) == null ? null : Collections.enumeration(list1);
     }
 
     @Override
-    public boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
-    public ListMultimap(int ba, int bb, boolean bl) {
-        this(false, ba, 5, bl);
+    public ListMultimap(int ba, int bb, boolean concurrentArgument) {
+        this(false, ba, 5, concurrentArgument);
     }
 
-    public void appendValues(Object object, Collection collection1) {
-        this.insertValues(object, collection1, false);
+    public void appendValues(Object key, Collection collection1) {
+        this.insertValues(key, collection1, false);
     }
 
     @Override
-    public void addValue(Object object, Object object1) {
+    public void addValue(Object key, Object object1) {
         if (this.cachedValueEnumeration != null) {
             MultiMapValueEnumeration.invalidateEnumeration(this.cachedValueEnumeration);
             this.cachedValueEnumeration = null;
         }
 
-        List list1 = (List) this.map.get(object);
+        List list1 = (List) this.map.get(key);
         if (list1 == null) {
             list1 = this.createList(this.initialListCapacity);
-            this.map.put(object, list1);
+            this.map.put(key, list1);
         }
 
         list1.add(object1);
     }
 
-    public ListMultimap(boolean bl) {
-        this(false, 75, 5, bl);
+    public ListMultimap(boolean concurrentArgument) {
+        this(false, 75, 5, concurrentArgument);
     }
 
     @Override
@@ -229,13 +229,13 @@ public class ListMultimap implements MultiMap {
         this.initialListCapacity = initialListCapacity;
         this.identityKeys = identityKeys;
         this.concurrent = concurrent;
-        int bc = ZkmUtils.getPrimeCapacity(ba);
+        int primeCapacity = ZkmUtils.getPrimeCapacity(ba);
         if (concurrent) {
-            this.map = new ConcurrentHashMap(bc);
+            this.map = new ConcurrentHashMap(primeCapacity);
         } else if (identityKeys) {
-            this.map = new IdentityHashMap(bc);
+            this.map = new IdentityHashMap(primeCapacity);
         } else {
-            this.map = ZkmUtils.createHashMap(bc);
+            this.map = ZkmUtils.createHashMap(primeCapacity);
         }
     }
 
@@ -247,13 +247,13 @@ public class ListMultimap implements MultiMap {
         this.concurrent = listMultimap1.concurrent;
         this.identityKeys = listMultimap1.identityKeys;
         this.initialListCapacity = listMultimap1.initialListCapacity;
-        int ba = ZkmUtils.getPrimeCapacity(listMultimap1.map.size());
+        int primeCapacity = ZkmUtils.getPrimeCapacity(listMultimap1.map.size());
         if (this.concurrent) {
-            this.map = new ConcurrentHashMap(ba);
+            this.map = new ConcurrentHashMap(primeCapacity);
         } else if (this.identityKeys) {
-            this.map = new IdentityHashMap(ba);
+            this.map = new IdentityHashMap(primeCapacity);
         } else {
-            this.map = ZkmUtils.createHashMap(ba);
+            this.map = ZkmUtils.createHashMap(primeCapacity);
         }
 
         Iterator iterator = listMultimap1.map.entrySet().iterator();
@@ -273,9 +273,9 @@ public class ListMultimap implements MultiMap {
     }
 
     @Override
-    public boolean containsValue(Object object, Object object1) {
-        List list1 = (List) this.map.get(object);
-        return list1 == null ? false : list1.contains(object1);
+    public boolean containsValue(Object key, Object object1) {
+        List list1 = (List) this.map.get(key);
+        return (!(list1 == null) && (list1.contains(object1)));
     }
 
     @Override
@@ -288,31 +288,31 @@ public class ListMultimap implements MultiMap {
     }
 
     @Override
-    public List getValues(Object object) {
-        return (List) this.map.get(object);
+    public List getValues(Object key) {
+        return (List) this.map.get(key);
     }
 
     @Override
     public int getValueCount() {
-        int ba = 0;
+        int valueCount = 0;
         Iterator iterator = this.map.values().iterator();
 
         while (iterator.hasNext()) {
             List list1 = (List) iterator.next();
-            ba += list1.size();
+            valueCount += list1.size();
         }
 
-        return ba;
+        return valueCount;
     }
 
     @Override
-    public boolean removeValue(Object object, Object object1) {
+    public boolean removeValue(Object key, Object object1) {
         if (this.cachedValueEnumeration != null) {
             MultiMapValueEnumeration.invalidateEnumeration(this.cachedValueEnumeration);
             this.cachedValueEnumeration = null;
         }
 
-        List list1 = (List) this.map.get(object);
+        List list1 = (List) this.map.get(key);
         if (list1 == null) {
             return false;
         }
@@ -328,13 +328,13 @@ public class ListMultimap implements MultiMap {
         }
 
         if (list1.size() == 0) {
-            this.map.remove(object);
+            this.map.remove(key);
         }
 
         return bl;
     }
 
-    public ListMultimap(int ba, boolean bl) {
-        this(false, ba, 5, bl);
+    public ListMultimap(int ba, boolean concurrentArgument) {
+        this(false, ba, 5, concurrentArgument);
     }
 }

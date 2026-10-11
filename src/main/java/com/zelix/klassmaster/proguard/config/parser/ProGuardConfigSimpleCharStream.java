@@ -32,34 +32,34 @@ public class ProGuardConfigSimpleCharStream {
             if (ba == 10) {
                 this.prevCharIsLF = true;
             } else {
-                int bb = this.line;
+                int lineValue = this.line;
                 this.column = 1;
-                this.line = bb + 1;
+                this.line = lineValue + 1;
             }
         }
 
-        int[] bc;
+        int[] buflineValue;
         switch (ba) {
             case 9:
                 this.column--;
                 this.column = this.column + (this.tabSize - this.column % this.tabSize);
-                bc = this.bufline;
+                buflineValue = this.bufline;
                 break;
             case 10:
                 this.prevCharIsLF = true;
-                bc = this.bufline;
+                buflineValue = this.bufline;
                 break;
             case 11:
             case 12:
             default:
-                bc = this.bufline;
+                buflineValue = this.bufline;
                 break;
             case 13:
                 this.prevCharIsCR = true;
-                bc = this.bufline;
+                buflineValue = this.bufline;
         }
 
-        bc[this.bufpos] = this.line;
+        buflineValue[this.bufpos] = this.line;
         this.bufcolumn[this.bufpos] = this.column;
     }
 
@@ -125,36 +125,36 @@ public class ProGuardConfigSimpleCharStream {
                 this.FillBuff();
             }
 
-            char ba = this.buffer[this.bufpos];
-            this.UpdateLineColumn(ba);
-            return ba;
+            char bufferElement = this.buffer[this.bufpos];
+            this.UpdateLineColumn(bufferElement);
+            return bufferElement;
         }
     }
 
     public void ExpandBuff(boolean bl) {
-        char[] ba = new char[this.bufsize + 2048];
-        int[] bb = new int[this.bufsize + 2048];
-        int[] bc = new int[this.bufsize + 2048];
+        char[] bufferValue = new char[this.bufsize + 2048];
+        int[] buflineValue = new int[this.bufsize + 2048];
+        int[] bufcolumnValue = new int[this.bufsize + 2048];
 
         try {
             if (bl) {
-                System.arraycopy(this.buffer, this.tokenBegin, ba, 0, this.bufsize - this.tokenBegin);
-                System.arraycopy(this.buffer, 0, ba, this.bufsize - this.tokenBegin, this.bufpos);
-                this.buffer = ba;
-                System.arraycopy(this.bufline, this.tokenBegin, bb, 0, this.bufsize - this.tokenBegin);
-                System.arraycopy(this.bufline, 0, bb, this.bufsize - this.tokenBegin, this.bufpos);
-                this.bufline = bb;
-                System.arraycopy(this.bufcolumn, this.tokenBegin, bc, 0, this.bufsize - this.tokenBegin);
-                System.arraycopy(this.bufcolumn, 0, bc, this.bufsize - this.tokenBegin, this.bufpos);
-                this.bufcolumn = bc;
+                System.arraycopy(this.buffer, this.tokenBegin, bufferValue, 0, this.bufsize - this.tokenBegin);
+                System.arraycopy(this.buffer, 0, bufferValue, this.bufsize - this.tokenBegin, this.bufpos);
+                this.buffer = bufferValue;
+                System.arraycopy(this.bufline, this.tokenBegin, buflineValue, 0, this.bufsize - this.tokenBegin);
+                System.arraycopy(this.bufline, 0, buflineValue, this.bufsize - this.tokenBegin, this.bufpos);
+                this.bufline = buflineValue;
+                System.arraycopy(this.bufcolumn, this.tokenBegin, bufcolumnValue, 0, this.bufsize - this.tokenBegin);
+                System.arraycopy(this.bufcolumn, 0, bufcolumnValue, this.bufsize - this.tokenBegin, this.bufpos);
+                this.bufcolumn = bufcolumnValue;
                 this.maxNextCharInd = this.bufpos = this.bufpos + (this.bufsize - this.tokenBegin);
             } else {
-                System.arraycopy(this.buffer, this.tokenBegin, ba, 0, this.bufsize - this.tokenBegin);
-                this.buffer = ba;
-                System.arraycopy(this.bufline, this.tokenBegin, bb, 0, this.bufsize - this.tokenBegin);
-                this.bufline = bb;
-                System.arraycopy(this.bufcolumn, this.tokenBegin, bc, 0, this.bufsize - this.tokenBegin);
-                this.bufcolumn = bc;
+                System.arraycopy(this.buffer, this.tokenBegin, bufferValue, 0, this.bufsize - this.tokenBegin);
+                this.buffer = bufferValue;
+                System.arraycopy(this.bufline, this.tokenBegin, buflineValue, 0, this.bufsize - this.tokenBegin);
+                this.bufline = buflineValue;
+                System.arraycopy(this.bufcolumn, this.tokenBegin, bufcolumnValue, 0, this.bufsize - this.tokenBegin);
+                this.bufcolumn = bufcolumnValue;
                 this.maxNextCharInd = this.bufpos = this.bufpos - this.tokenBegin;
             }
         } catch (Throwable throwable) {

@@ -18,8 +18,8 @@ public class ASTPackageFlowObfuscationData extends FlowObfuscationDataNode {
         }
     }
 
-    public void setPackageName(String string) {
-        this.packageName = string;
+    public void setPackageName(String packageNameArgument) {
+        this.packageName = packageNameArgument;
     }
 
     public ASTPackageFlowObfuscationData() {

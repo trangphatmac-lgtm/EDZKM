@@ -89,9 +89,9 @@ public abstract class AbstractHelperWizard implements HelperDialogMarker {
     public final String buildEquivalentScript(String string, InputFileLocation[] inputFileLocations) {
         StringBuilder stringBuilder = new StringBuilder(1000);
         stringBuilder.append(AbstractMessageLog.buildGeneratedByHeader(string));
-        String string1 = this.classpath.getClasspath();
-        if (string1 != null && string1.length() > 0) {
-            StringTokenizer stringTokenizer = new StringTokenizer(string1, SystemEnvironmentConstants.PATH_SEPARATOR_String);
+        String classpathValue = this.classpath.getClasspath();
+        if (classpathValue != null && classpathValue.length() > 0) {
+            StringTokenizer stringTokenizer = new StringTokenizer(classpathValue, SystemEnvironmentConstants.PATH_SEPARATOR_String);
             int ba = stringTokenizer.countTokens();
 
             for (int i = 0; i < ba; i++) {
@@ -118,13 +118,13 @@ public abstract class AbstractHelperWizard implements HelperDialogMarker {
                 bl = true;
             }
 
-            for (int i = 0; i < inputFileLocations.length; i++) {
+            for (int inputFileLocationIndex = 0; inputFileLocationIndex < inputFileLocations.length; inputFileLocationIndex++) {
                 if (bl) {
                     stringBuilder.append(continuationIndent);
                 }
 
-                stringBuilder.append("\"" + inputFileLocations[i].getName() + "\"");
-                if (i < inputFileLocations.length - 1) {
+                stringBuilder.append("\"" + inputFileLocations[inputFileLocationIndex].getName() + "\"");
+                if (inputFileLocationIndex < inputFileLocations.length - 1) {
                     stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
                 } else {
                     stringBuilder.append(";" + HiddenOptionFlags.LINE_SEPARATOR);
@@ -150,13 +150,13 @@ public abstract class AbstractHelperWizard implements HelperDialogMarker {
             arrayList.add("deleteUnknownAttributes=" + this.trimOptions.c);
             stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR + ZkmStringUtils.pad("trim", 76, 12, 32));
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                if (i > 0) {
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                if (elementIndex > 0) {
                     stringBuilder.append(continuationIndent);
                 }
 
-                stringBuilder.append((String) arrayList.get(i));
-                if (i < arrayList.size() - 1) {
+                stringBuilder.append((String) arrayList.get(elementIndex));
+                if (elementIndex < arrayList.size() - 1) {
                     stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
                 }
             }
@@ -388,13 +388,13 @@ public abstract class AbstractHelperWizard implements HelperDialogMarker {
 
             stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR + ZkmStringUtils.pad("obfuscate", 76, 12, 32));
 
-            for (int i = 0; i < arrayList1.size(); i++) {
-                if (i > 0) {
+            for (int elementIndexValue = 0; elementIndexValue < arrayList1.size(); elementIndexValue++) {
+                if (elementIndexValue > 0) {
                     stringBuilder.append(continuationIndent);
                 }
 
-                stringBuilder.append((String) arrayList1.get(i));
-                if (i < arrayList1.size() - 1) {
+                stringBuilder.append((String) arrayList1.get(elementIndexValue));
+                if (elementIndexValue < arrayList1.size() - 1) {
                     stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
                 }
             }

@@ -32,24 +32,24 @@ public class IndexedValueRelation implements SetValuedMap {
     }
 
     @Override
-    public boolean containsKey(Object object) {
-        return this.valueBitsByKey.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.valueBitsByKey.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(Object object, Object object1) {
-        Integer integer = (Integer) this.indexByValue.get(object1);
+    public boolean containsValue(Object key, Object keyArgument) {
+        Integer integer = (Integer) this.indexByValue.get(keyArgument);
         if (integer == null) {
-            throw new IllegalArgumentException("Value '" + object1 + "' doesn't exist in value array (C)");
+            throw new IllegalArgumentException("Value '" + keyArgument + "' doesn't exist in value array (C)");
         }
 
-        BitSet bitSet = (BitSet) this.valueBitsByKey.get(object);
-        return bitSet == null ? false : bitSet.get(integer);
+        BitSet bitSet = (BitSet) this.valueBitsByKey.get(key);
+        return (!(bitSet == null) && (bitSet.get(integer)));
     }
 
     @Override
-    public List getValueList(Object object) {
-        BitSet bitSet = (BitSet) this.valueBitsByKey.get(object);
+    public List getValueList(Object key) {
+        BitSet bitSet = (BitSet) this.valueBitsByKey.get(key);
         if (bitSet == null) {
             return null;
         }
@@ -63,9 +63,9 @@ public class IndexedValueRelation implements SetValuedMap {
         int ba = bitSet.cardinality();
         int bb = 0;
 
-        for (int i = 0; i < this.valueCount; i++) {
-            if (bitSet.get(i)) {
-                collection1.add(this.values[i]);
+        for (int valueIndex = 0; valueIndex < this.valueCount; valueIndex++) {
+            if (bitSet.get(valueIndex)) {
+                collection1.add(this.values[valueIndex]);
                 bb++;
             }
 
@@ -78,30 +78,30 @@ public class IndexedValueRelation implements SetValuedMap {
     }
 
     @Override
-    public boolean removeValue(Object object, Object object1) {
-        Integer integer = (Integer) this.indexByValue.get(object1);
+    public boolean removeValue(Object key, Object keyArgument) {
+        Integer integer = (Integer) this.indexByValue.get(keyArgument);
         if (integer == null) {
-            throw new IllegalArgumentException("Value '" + object1 + "' doesn't exist in value array (B)");
+            throw new IllegalArgumentException("Value '" + keyArgument + "' doesn't exist in value array (B)");
         }
 
-        BitSet bitSet = (BitSet) this.valueBitsByKey.get(object);
+        BitSet bitSet = (BitSet) this.valueBitsByKey.get(key);
         if (bitSet == null) {
             return false;
         }
 
-        int ba = integer;
-        boolean bl = bitSet.get(ba);
-        bitSet.clear(ba);
+        int integerValue = integer;
+        boolean bl = bitSet.get(integerValue);
+        bitSet.clear(integerValue);
         if (bitSet.cardinality() == 0) {
-            this.valueBitsByKey.remove(object);
+            this.valueBitsByKey.remove(key);
         }
 
         return bl;
     }
 
     @Override
-    public Set removeKey(Object object) {
-        BitSet bitSet = (BitSet) this.valueBitsByKey.remove(object);
+    public Set removeKey(Object key) {
+        BitSet bitSet = (BitSet) this.valueBitsByKey.remove(key);
         if (bitSet == null) {
             return null;
         }
@@ -117,30 +117,30 @@ public class IndexedValueRelation implements SetValuedMap {
     }
 
     @Override
-    public void retainValues(Object[] objects) {
-        int ba = objects.length;
-        HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(ba));
+    public void retainValues(Object[] valuesArgument) {
+        int lengthValue = valuesArgument.length;
+        HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(lengthValue));
 
-        for (int i = 0; i < ba; i++) {
-            Object object = objects[i];
-            hashMap.put(object, integerCache.valueOf(i));
+        for (int integerValue = 0; integerValue < lengthValue; integerValue++) {
+            Object key = valuesArgument[integerValue];
+            hashMap.put(key, integerCache.valueOf(integerValue));
         }
 
         HashMap hashMap1 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(this.valueBitsByKey.size()));
-        int bd = this.values.length;
+        int lengthValue2 = this.values.length;
         Iterator iterator = this.valueBitsByKey.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            Object object1 = entry.getKey();
+            Object keyValue = entry.getKey();
             BitSet bitSet = (BitSet) entry.getValue();
-            BitSet bitSet1 = new BitSet(objects.length);
-            hashMap1.put(object1, bitSet1);
+            BitSet bitSet1 = new BitSet(valuesArgument.length);
+            hashMap1.put(keyValue, bitSet1);
 
-            for (int i = 0; i < bd; i++) {
-                if (bitSet.get(i)) {
-                    Object object2 = this.values[i];
-                    Integer integer = (Integer) hashMap.get(object2);
+            for (int valueIndex = 0; valueIndex < lengthValue2; valueIndex++) {
+                if (bitSet.get(valueIndex)) {
+                    Object valueValue = this.values[valueIndex];
+                    Integer integer = (Integer) hashMap.get(valueValue);
                     if (integer != null) {
                         bitSet1.set(integer);
                     }
@@ -149,11 +149,11 @@ public class IndexedValueRelation implements SetValuedMap {
         }
 
         if (this.ownsValueArray) {
-            this.values = new Object[ba];
-            System.arraycopy(objects, 0, this.values, 0, ba);
+            this.values = new Object[lengthValue];
+            System.arraycopy(valuesArgument, 0, this.values, 0, lengthValue);
             this.valueBitsByKey = hashMap1;
         } else {
-            this.values = objects;
+            this.values = valuesArgument;
             this.valueBitsByKey = hashMap1;
         }
 
@@ -177,11 +177,11 @@ public class IndexedValueRelation implements SetValuedMap {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            Object object = entry.getKey();
+            Object key = entry.getKey();
             BitSet bitSet = (BitSet) entry.getValue();
-            BitSet bitSet1 = (BitSet) this.valueBitsByKey.get(object);
+            BitSet bitSet1 = (BitSet) this.valueBitsByKey.get(key);
             if (bitSet1 == null) {
-                this.valueBitsByKey.put(object, (BitSet) bitSet.clone());
+                this.valueBitsByKey.put(key, (BitSet) bitSet.clone());
             } else {
                 bitSet1.or(bitSet);
             }
@@ -189,8 +189,8 @@ public class IndexedValueRelation implements SetValuedMap {
     }
 
     @Override
-    public Set getValues(Object object) {
-        BitSet bitSet = (BitSet) this.valueBitsByKey.get(object);
+    public Set getValues(Object key) {
+        BitSet bitSet = (BitSet) this.valueBitsByKey.get(key);
         if (bitSet == null) {
             return null;
         }
@@ -200,8 +200,8 @@ public class IndexedValueRelation implements SetValuedMap {
         return hashSet;
     }
 
-    public IndexedValueRelation(Object[] objects, int ba) {
-        this(objects, ba, true);
+    public IndexedValueRelation(Object[] valuesArgument, int ba) {
+        this(valuesArgument, ba, true);
     }
 
     @Override
@@ -214,41 +214,41 @@ public class IndexedValueRelation implements SetValuedMap {
         return Collections.enumeration(this.valueBitsByKey.keySet());
     }
 
-    public IndexedValueRelation(Object[] objects, int ba, boolean ownsValueArray) {
+    public IndexedValueRelation(Object[] valuesArgument, int ba, boolean ownsValueArray) {
         if (ownsValueArray) {
-            this.values = new Object[objects.length];
-            System.arraycopy(objects, 0, this.values, 0, objects.length);
+            this.values = new Object[valuesArgument.length];
+            System.arraycopy(valuesArgument, 0, this.values, 0, valuesArgument.length);
         } else {
-            this.values = objects;
+            this.values = valuesArgument;
         }
 
         this.valueBitsByKey = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(ba));
         this.indexByValue = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(this.values.length));
         this.valueCount = this.values.length;
 
-        for (int i = 0; i < this.valueCount; i++) {
-            this.indexByValue.put(this.values[i], integerCache.valueOf(i));
+        for (int integerValue = 0; integerValue < this.valueCount; integerValue++) {
+            this.indexByValue.put(this.values[integerValue], integerCache.valueOf(integerValue));
         }
 
         this.ownsValueArray = ownsValueArray;
     }
 
     @Override
-    public boolean addValue(Object object, Object object1) {
-        Integer integer = (Integer) this.indexByValue.get(object1);
+    public boolean addValue(Object key, Object keyArgument) {
+        Integer integer = (Integer) this.indexByValue.get(keyArgument);
         if (integer == null) {
-            throw new IllegalArgumentException("Value '" + object1 + "' doesn't exist in value array (A)");
+            throw new IllegalArgumentException("Value '" + keyArgument + "' doesn't exist in value array (A)");
         }
 
-        BitSet bitSet = (BitSet) this.valueBitsByKey.get(object);
+        BitSet bitSet = (BitSet) this.valueBitsByKey.get(key);
         if (bitSet == null) {
             bitSet = new BitSet(this.valueCount);
-            this.valueBitsByKey.put(object, bitSet);
+            this.valueBitsByKey.put(key, bitSet);
         }
 
-        int ba = integer;
-        boolean bl = bitSet.get(ba);
-        bitSet.set(ba);
+        int integerValue = integer;
+        boolean bl = bitSet.get(integerValue);
+        bitSet.set(integerValue);
         return bl;
     }
 }

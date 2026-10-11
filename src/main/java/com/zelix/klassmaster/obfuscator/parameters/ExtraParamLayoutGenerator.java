@@ -41,134 +41,134 @@ public class ExtraParamLayoutGenerator {
             {'C', 'C', 'I'}
     };
 
-    public static boolean isFullyShiftedLeft(ChangedMethodDescriptor changedMethodDescriptor) {
-        if (changedMethodDescriptor != null) {
-            int ba = changedMethodDescriptor.getAddedParamCount() - 1;
-            return changedMethodDescriptor.getLastParam().getIndex() == ba;
+    public static boolean isFullyShiftedLeft(ChangedMethodDescriptor layout) {
+        if (layout != null) {
+            int lastAddedParameterIndex = layout.getAddedParamCount() - 1;
+            return layout.getLastParam().getIndex() == lastAddedParameterIndex;
         } else {
             return false;
         }
     }
 
     public static ChangedMethodDescriptor nextLayoutShiftingLeft(
-            List list1, String string, char[] ba, ChangedMethodDescriptor changedMethodDescriptor, boolean bl, boolean bl1
+            List parameterDescriptors, String returnDescriptor, char[] addedParameterTypes, ChangedMethodDescriptor previousLayout, boolean preserveVarargs, boolean firstLayout
     ) {
-        int bb = list1.size();
-        int bc = ba.length;
-        int[] bd = new int[bc];
-        if (!bl1) {
-            bd = changedMethodDescriptor.getParamIndices();
+        int originalParameterCount = parameterDescriptors.size();
+        int addedParameterCount = addedParameterTypes.length;
+        int[] parameterIndices = new int[addedParameterCount];
+        if (!firstLayout) {
+            parameterIndices = previousLayout.getParamIndices();
 
-            for (int i = 0; i < bc; i++) {
-                if (bd[i] != i) {
-                    bd[i]--;
+            for (int parameterIndiceIndex = 0; parameterIndiceIndex < addedParameterCount; parameterIndiceIndex++) {
+                if (parameterIndices[parameterIndiceIndex] != parameterIndiceIndex) {
+                    parameterIndices[parameterIndiceIndex]--;
 
-                    for (int j = i - 1; j >= 0; j += -1) {
-                        bd[j] = bd[j + 1] - 1;
+                    for (int parameterIndiceIndexValue = parameterIndiceIndex - 1; parameterIndiceIndexValue >= 0; parameterIndiceIndexValue += -1) {
+                        parameterIndices[parameterIndiceIndexValue] = parameterIndices[parameterIndiceIndexValue + 1] - 1;
                     }
                     break;
                 }
             }
         } else {
-            for (int i = 0; i < bc; i++) {
-                bd[i] = bb + i - (bl ? 1 : 0);
+            for (int parameterIndiceIndexValue2 = 0; parameterIndiceIndexValue2 < addedParameterCount; parameterIndiceIndexValue2++) {
+                parameterIndices[parameterIndiceIndexValue2] = originalParameterCount + parameterIndiceIndexValue2 - (preserveVarargs ? 1 : 0);
             }
         }
 
-        return new ChangedMethodDescriptor(list1, string, ba, bd);
+        return new ChangedMethodDescriptor(parameterDescriptors, returnDescriptor, addedParameterTypes, parameterIndices);
     }
 
-    public ChangedMethodDescriptor nextLayout(boolean bl, List list1, String string, char[] ba, ChangedMethodDescriptor changedMethodDescriptor, boolean bl1) {
-        boolean bl2 = changedMethodDescriptor == null;
-        boolean bl3;
-        if (!HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT && !bl) {
-            bl3 = isFullyShiftedLeft(changedMethodDescriptor);
+    public ChangedMethodDescriptor nextLayout(boolean preserveLambdaArguments, List parameterDescriptors, String returnDescriptor, char[] addedParameterTypes, ChangedMethodDescriptor previousLayout, boolean preserveVarargs) {
+        boolean firstLayout = previousLayout == null;
+        boolean exhausted;
+        if (!HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT && !preserveLambdaArguments) {
+            exhausted = isFullyShiftedLeft(previousLayout);
         } else {
-            bl3 = isFullyShiftedRight(list1, changedMethodDescriptor, bl1);
+            exhausted = isFullyShiftedRight(parameterDescriptors, previousLayout, preserveVarargs);
         }
 
-        if (bl3) {
+        if (exhausted) {
             return null;
         }
 
-        ChangedMethodDescriptor changedMethodDescriptor1;
-        if (!HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT && !bl) {
-            changedMethodDescriptor1 = nextLayoutShiftingLeft(list1, string, ba, changedMethodDescriptor, bl1, bl2);
+        ChangedMethodDescriptor nextLayout;
+        if (!HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT && !preserveLambdaArguments) {
+            nextLayout = nextLayoutShiftingLeft(parameterDescriptors, returnDescriptor, addedParameterTypes, previousLayout, preserveVarargs, firstLayout);
         } else {
-            changedMethodDescriptor1 = nextLayoutShiftingRight(list1, string, ba, changedMethodDescriptor, bl1, bl2);
+            nextLayout = nextLayoutShiftingRight(parameterDescriptors, returnDescriptor, addedParameterTypes, previousLayout, preserveVarargs, firstLayout);
         }
 
-        return changedMethodDescriptor1;
+        return nextLayout;
     }
 
-    public static boolean isFullyShiftedRight(List list1, ChangedMethodDescriptor changedMethodDescriptor, boolean bl) {
-        return changedMethodDescriptor != null ? changedMethodDescriptor.getFirstParam().getIndex() >= list1.size() - (bl ? 1 : 0) : false;
+    public static boolean isFullyShiftedRight(List parameterDescriptors, ChangedMethodDescriptor layout, boolean preserveVarargs) {
+        return ((layout != null) && (layout.getFirstParam().getIndex() >= parameterDescriptors.size() - (preserveVarargs ? 1 : 0)));
     }
 
     public static ChangedMethodDescriptor nextLayoutShiftingRight(
-            List list1, String string, char[] ba, ChangedMethodDescriptor changedMethodDescriptor, boolean bl, boolean bl1
+            List parameterDescriptors, String returnDescriptor, char[] addedParameterTypes, ChangedMethodDescriptor previousLayout, boolean preserveVarargs, boolean firstLayout
     ) {
-        int bb = list1.size();
-        int bc = ba.length;
-        int[] bd = new int[bc];
-        if (!bl1) {
-            bd = changedMethodDescriptor.getParamIndices();
-            int be = bb + bc;
+        int originalParameterCount = parameterDescriptors.size();
+        int addedParameterCount = addedParameterTypes.length;
+        int[] parameterIndices = new int[addedParameterCount];
+        if (!firstLayout) {
+            parameterIndices = previousLayout.getParamIndices();
+            int totalParameterCount = originalParameterCount + addedParameterCount;
 
-            for (int i = bc - 1; i >= 0; i += -1) {
-                if (bd[i] < be - bc + i - (bl ? 1 : 0)) {
-                    bd[i]++;
+            for (int parameterIndiceIndex = addedParameterCount - 1; parameterIndiceIndex >= 0; parameterIndiceIndex += -1) {
+                if (parameterIndices[parameterIndiceIndex] < totalParameterCount - addedParameterCount + parameterIndiceIndex - (preserveVarargs ? 1 : 0)) {
+                    parameterIndices[parameterIndiceIndex]++;
 
-                    for (int j = i + 1; j < bc; j++) {
-                        bd[j] = bd[j - 1] + 1;
+                    for (int parameterIndiceIndexValue = parameterIndiceIndex + 1; parameterIndiceIndexValue < addedParameterCount; parameterIndiceIndexValue++) {
+                        parameterIndices[parameterIndiceIndexValue] = parameterIndices[parameterIndiceIndexValue - 1] + 1;
                     }
                     break;
                 }
             }
         } else {
-            int bh = 0;
+            int addedParameterIndex = 0;
 
-            while (bh < bc) {
-                bd[bh] = bh++;
+            while (addedParameterIndex < addedParameterCount) {
+                parameterIndices[addedParameterIndex] = addedParameterIndex++;
             }
         }
 
-        return new ChangedMethodDescriptor(list1, string, ba, bd);
+        return new ChangedMethodDescriptor(parameterDescriptors, returnDescriptor, addedParameterTypes, parameterIndices);
     }
 
     public ChangedMethodDescriptor nextLayoutWithTypes(
-            boolean bl, List list1, String string, MutableInt mutableInt, ChangedMethodDescriptor changedMethodDescriptor, boolean bl1, char[][] ba
+            boolean preserveLambdaArguments, List parameterDescriptors, String returnDescriptor, MutableInt typeLayoutIndex, ChangedMethodDescriptor previousLayout, boolean preserveVarargs, char[][] typeLayouts
     ) {
-        char[] bb = ba[mutableInt.getValue()];
-        boolean bl2 = changedMethodDescriptor == null;
-        boolean bl3;
-        if (!HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT && !bl) {
-            bl3 = isFullyShiftedLeft(changedMethodDescriptor);
+        char[] addedParameterTypes = typeLayouts[typeLayoutIndex.getValue()];
+        boolean firstLayout = previousLayout == null;
+        boolean exhausted;
+        if (!HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT && !preserveLambdaArguments) {
+            exhausted = isFullyShiftedLeft(previousLayout);
         } else {
-            bl3 = isFullyShiftedRight(list1, changedMethodDescriptor, bl1);
+            exhausted = isFullyShiftedRight(parameterDescriptors, previousLayout, preserveVarargs);
         }
 
-        boolean bl4;
-        if (bl3) {
-            mutableInt.incrementAndGet();
-            if (mutableInt.getValue() >= ba.length) {
+        boolean regenerateLayouts;
+        if (exhausted) {
+            typeLayoutIndex.incrementAndGet();
+            if (typeLayoutIndex.getValue() >= typeLayouts.length) {
                 return null;
             }
 
-            bb = ba[mutableInt.getValue()];
-            bl2 = true;
-            bl4 = HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT;
+            addedParameterTypes = typeLayouts[typeLayoutIndex.getValue()];
+            firstLayout = true;
+            regenerateLayouts = HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT;
         } else {
-            bl4 = HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT;
+            regenerateLayouts = HiddenOptionFlags.ALWAYS_REGENERATE_PARAM_LAYOUT;
         }
 
-        ChangedMethodDescriptor changedMethodDescriptor1;
-        if (!bl4 && !bl) {
-            changedMethodDescriptor1 = nextLayoutShiftingLeft(list1, string, bb, changedMethodDescriptor, bl1, bl2);
+        ChangedMethodDescriptor nextLayout;
+        if (!regenerateLayouts && !preserveLambdaArguments) {
+            nextLayout = nextLayoutShiftingLeft(parameterDescriptors, returnDescriptor, addedParameterTypes, previousLayout, preserveVarargs, firstLayout);
         } else {
-            changedMethodDescriptor1 = nextLayoutShiftingRight(list1, string, bb, changedMethodDescriptor, bl1, bl2);
+            nextLayout = nextLayoutShiftingRight(parameterDescriptors, returnDescriptor, addedParameterTypes, previousLayout, preserveVarargs, firstLayout);
         }
 
-        return changedMethodDescriptor1;
+        return nextLayout;
     }
 }

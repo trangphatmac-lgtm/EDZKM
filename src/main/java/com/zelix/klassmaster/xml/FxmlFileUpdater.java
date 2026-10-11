@@ -100,9 +100,9 @@ public class FxmlFileUpdater extends BeanPropertyXmlHandler {
     }
 
     public void processElement(XmlElementNode xmlElementNode) throws ZkmException, IOException {
-        String string = xmlElementNode.getTagName();
-        String string1 = this.getOpenElementName(1);
-        if (string1 == null) {
+        String tagName = xmlElementNode.getTagName();
+        String openElementName = this.getOpenElementName(1);
+        if (openElementName == null) {
             this.detectFxNamespacePrefix(xmlElementNode);
             ObservableHolder observableHolder = new ObservableHolder();
             String string2 = this.findControllerClassName(xmlElementNode, observableHolder);
@@ -116,79 +116,56 @@ public class FxmlFileUpdater extends BeanPropertyXmlHandler {
         }
 
         ClassFileBase classFileBase = null;
-        int ba = string.indexOf(46);
-        int bb = string.lastIndexOf(46);
-        if (string.startsWith(this.fxNamespacePrefix)) {
-            String string3 = string.substring(string.indexOf(58) + 1);
+        int endIndex = tagName.indexOf(46);
+        int bb = tagName.lastIndexOf(46);
+        if (tagName.startsWith(this.fxNamespacePrefix)) {
+            String string3 = tagName.substring(tagName.indexOf(58) + 1);
             if (string3.equals("root")) {
                 ObservableHolder observableHolder2 = xmlElementNode.getAttributeValue("type");
                 if (observableHolder2 != null) {
-                    String string4 = (String) observableHolder2.getValue();
-                    if (string4 != null && string4.length() > 0) {
-                        if (string4.indexOf(46) > 0) {
-                            classFileBase = this.resolveClass(string4);
+                    String value = (String) observableHolder2.getValue();
+                    if (value != null && value.length() > 0) {
+                        if (value.indexOf(46) > 0) {
+                            classFileBase = this.resolveClass(value);
                         } else {
-                            classFileBase = this.resolveImportedClass(string4);
+                            classFileBase = this.resolveImportedClass(value);
                         }
                     }
                 }
-            } else {
-                label127:
-                {
-                    XmlElementNode xmlElementNode2;
-                    String string12;
-                    if (!string3.equals("reference")) {
-                        if (!string3.equals("copy")) {
-                            if (string3.equals("script")) {
-                                this.referenceHandler
-                                        .reportWarning(
-                                                "WARNING:", "FXML file '" + super.resourceName + "' contains the '" + string + "' tag. Its contents will not be changed."
-                                        );
-                            } else if (string3.equals("include")) {
-                            }
-                            break label127;
-                        }
-
-                        xmlElementNode2 = xmlElementNode;
-                        long bd = 24856730383790L;
-                        string12 = "source";
-                    } else {
-                        xmlElementNode2 = xmlElementNode;
-                        long bc = 24856730383790L;
-                        string12 = "source";
-                    }
-
-                    String string6 = string12;
-                    ObservableHolder observableHolder3 = xmlElementNode2.getAttributeValue(string6);
-                    String string10 = (String) observableHolder3.getValue();
-                    if (string10 != null && string10.length() > 0) {
-                        XmlElementNode xmlElementNode1 = (XmlElementNode) this.elementsById.get(string10);
-                        if (xmlElementNode1 != null) {
-                            classFileBase = (ClassFileBase) this.elementClasses.get(xmlElementNode1);
-                        }
+            } else if (string3.equals("reference") || string3.equals("copy")) {
+                ObservableHolder sourceAttribute = xmlElementNode.getAttributeValue("source");
+                String sourceId = (String) sourceAttribute.getValue();
+                if (sourceId != null && sourceId.length() > 0) {
+                    XmlElementNode sourceElement = (XmlElementNode) this.elementsById.get(sourceId);
+                    if (sourceElement != null) {
+                        classFileBase = (ClassFileBase) this.elementClasses.get(sourceElement);
                     }
                 }
+            } else if (string3.equals("script")) {
+                this.referenceHandler.reportWarning(
+                        "WARNING:", "FXML file '" + super.resourceName + "' contains the '" + tagName + "' tag. Its contents will not be changed."
+                );
             }
-        } else if (ba > 0 && bb < string.length() - 1) {
-            if (Character.isUpperCase(string.charAt(0)) && ba == bb && Character.isLowerCase(string.charAt(ba + 1))) {
-                String string7 = string.substring(0, ba);
+        } else if (endIndex > 0 && bb < tagName.length() - 1) {
+            if (Character.isUpperCase(tagName.charAt(0)) && endIndex == bb && Character.isLowerCase(tagName.charAt(endIndex + 1))) {
+                String string7 = tagName.substring(0, endIndex);
                 classFileBase = this.resolveImportedClass(string7);
                 if (classFileBase != null && classFileBase.isProgramClass()) {
-                    String string8 = string.substring(ba + 1);
+                    String string8 = tagName.substring(endIndex + 1);
                     this.referenceHandler.handleStaticPropertyTag(xmlElementNode, (ProgramClass) classFileBase, string7, string8);
                 }
             } else {
-                classFileBase = this.resolveClass(string);
+                classFileBase = this.resolveClass(tagName);
                 if (classFileBase != null && classFileBase.isProgramClass()) {
                     this.referenceHandler.handleQualifiedClassTag(xmlElementNode, (ProgramClass) classFileBase);
                 }
             }
-        } else if (Character.isUpperCase(string.charAt(0))) {
-            classFileBase = this.resolveImportedClass(string);
+        } else if (Character.isUpperCase(tagName.charAt(0))) {
+            classFileBase = this.resolveImportedClass(tagName);
             if (classFileBase != null && classFileBase.isProgramClass()) {
                 this.referenceHandler.handleSimpleClassTag(xmlElementNode, (ProgramClass) classFileBase);
             }
-        } else if (string1 != null) {
+        } else if (openElementName != null) {
             ClassFileBase classFileBase1 = this.findEnclosingElementClass();
             if (classFileBase1 != null && classFileBase1.isProgramClass()) {
                 this.referenceHandler.handlePropertyTag(xmlElementNode, (ProgramClass) classFileBase1);
@@ -204,36 +181,36 @@ public class FxmlFileUpdater extends BeanPropertyXmlHandler {
             Enumeration enumeration = xmlElementNode.getAttributeNames();
 
             while (enumeration.hasMoreElements()) {
-                String string9 = (String) enumeration.nextElement();
-                ObservableHolder observableHolder4 = xmlElementNode.getAttributeValue(string9);
-                String string11 = (String) observableHolder4.getValue();
-                if (string9.startsWith(this.fxNamespacePrefix)) {
-                    String string5 = string9.substring(string9.indexOf(58) + 1);
-                    if (string5.equals("id")) {
-                        this.elementsById.put(string5, xmlElementNode);
+                String keyValue = (String) enumeration.nextElement();
+                ObservableHolder observableHolder4 = xmlElementNode.getAttributeValue(keyValue);
+                String valueValue = (String) observableHolder4.getValue();
+                if (keyValue.startsWith(this.fxNamespacePrefix)) {
+                    String key = keyValue.substring(keyValue.indexOf(58) + 1);
+                    if (key.equals("id")) {
+                        this.elementsById.put(key, xmlElementNode);
                         if (classFileBase != null) {
-                            this.processIdAttribute(xmlElementNode, classFileBase, string9, string11, observableHolder4);
+                            this.processIdAttribute(xmlElementNode, classFileBase, keyValue, valueValue, observableHolder4);
                         }
-                    } else if (string5.equals("constant")) {
+                    } else if (key.equals("constant")) {
                         if (classFileBase.isProgramClass()) {
-                            this.referenceHandler.handleConstantAttribute(xmlElementNode, (ProgramClass) classFileBase, string9, observableHolder4);
+                            this.referenceHandler.handleConstantAttribute(xmlElementNode, (ProgramClass) classFileBase, keyValue, observableHolder4);
                         }
-                    } else if (string5.equals("factory") && classFileBase.isProgramClass()) {
-                        this.referenceHandler.handleFactoryAttribute(xmlElementNode, (ProgramClass) classFileBase, string9, observableHolder4);
+                    } else if (key.equals("factory") && classFileBase.isProgramClass()) {
+                        this.referenceHandler.handleFactoryAttribute(xmlElementNode, (ProgramClass) classFileBase, keyValue, observableHolder4);
                     }
-                } else if (string9.indexOf(46) > -1) {
-                    this.processStaticPropertyAttribute(xmlElementNode, string9);
+                } else if (keyValue.indexOf(46) > -1) {
+                    this.processStaticPropertyAttribute(xmlElementNode, keyValue);
                 } else {
                     if (classFileBase.isProgramClass()) {
-                        this.referenceHandler.handlePropertyAttribute(xmlElementNode, (ProgramClass) classFileBase, string9);
+                        this.referenceHandler.handlePropertyAttribute(xmlElementNode, (ProgramClass) classFileBase, keyValue);
                     }
 
-                    if (string11.length() > 1) {
-                        if (string11.charAt(0) == '#') {
-                            this.processEventHandlerAttribute(xmlElementNode, string9, string11, observableHolder4);
-                        } else if (string11.charAt(0) == '@') {
-                            this.referenceHandler.handleResourceLocation(string11, observableHolder4);
-                        } else if (string11.charAt(0) == '$') {
+                    if (valueValue.length() > 1) {
+                        if (valueValue.charAt(0) == '#') {
+                            this.processEventHandlerAttribute(xmlElementNode, keyValue, valueValue, observableHolder4);
+                        } else if (valueValue.charAt(0) == '@') {
+                            this.referenceHandler.handleResourceLocation(valueValue, observableHolder4);
+                        } else if (valueValue.charAt(0) == '$') {
                         }
                     }
                 }
@@ -262,9 +239,9 @@ public class FxmlFileUpdater extends BeanPropertyXmlHandler {
 
     public void processStaticPropertyAttribute(XmlElementNode xmlElementNode, String string) throws ZkmException, IOException {
         int ba = string.indexOf(46);
-        int bb = string.lastIndexOf(46);
-        if (ba > 0 && bb < string.length() - 1) {
-            String string1 = string.substring(0, bb);
+        int endIndex = string.lastIndexOf(46);
+        if (ba > 0 && endIndex < string.length() - 1) {
+            String string1 = string.substring(0, endIndex);
             ClassFileBase classFileBase;
             if (string1.indexOf(46) == -1) {
                 classFileBase = this.resolveImportedClass(string1);
@@ -273,7 +250,7 @@ public class FxmlFileUpdater extends BeanPropertyXmlHandler {
             }
 
             if (classFileBase != null && classFileBase.isProgramClass()) {
-                String string2 = string.substring(bb + 1);
+                String string2 = string.substring(endIndex + 1);
                 this.referenceHandler.handleStaticPropertyAttribute(xmlElementNode, (ProgramClass) classFileBase, string, string1, string2);
             }
         }
@@ -283,22 +260,22 @@ public class FxmlFileUpdater extends BeanPropertyXmlHandler {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("import");
         stringBuilder.append(' ');
-        String string1 = string.substring("import".length()).trim();
-        if (string1.indexOf(42) > -1) {
-            int ba = string1.lastIndexOf(46);
-            this.wildcardImportPackages.add(string1.substring(0, ba + 1).replace('.', '/'));
+        String renamedClassName = string.substring("import".length()).trim();
+        if (renamedClassName.indexOf(42) > -1) {
+            int endIndex = renamedClassName.lastIndexOf(46);
+            this.wildcardImportPackages.add(renamedClassName.substring(0, endIndex + 1).replace('.', '/'));
             if (bl) {
-                String string2 = this.renameDirectoryPath(string1.substring(0, ba));
-                string1 = string2 + ".*";
+                String string2 = this.renameDirectoryPath(renamedClassName.substring(0, endIndex));
+                renamedClassName = string2 + ".*";
             }
         } else {
-            this.importedClassNames.add(string1.replace('.', '/'));
+            this.importedClassNames.add(renamedClassName.replace('.', '/'));
             if (bl) {
-                string1 = this.getRenamedClassName(string1);
+                renamedClassName = this.getRenamedClassName(renamedClassName);
             }
         }
 
-        stringBuilder.append(string1);
+        stringBuilder.append(renamedClassName);
         return stringBuilder.toString();
     }
 
@@ -311,14 +288,14 @@ public class FxmlFileUpdater extends BeanPropertyXmlHandler {
     }
 
     public String findControllerClassName(XmlElementNode xmlElementNode, ObservableHolder observableHolder) throws ZkmException, IOException {
-        String string = this.fxNamespacePrefix + "controller";
-        observableHolder.setValue(string);
+        String value = this.fxNamespacePrefix + "controller";
+        observableHolder.setValue(value);
         Enumeration enumeration = xmlElementNode.getAttributeNames();
 
         while (enumeration.hasMoreElements()) {
-            String string1 = (String) enumeration.nextElement();
-            if (string1.equals(string)) {
-                return (String) xmlElementNode.getAttributeValue(string1).getValue();
+            String key = (String) enumeration.nextElement();
+            if (key.equals(value)) {
+                return (String) xmlElementNode.getAttributeValue(key).getValue();
             }
         }
 
@@ -385,11 +362,11 @@ public class FxmlFileUpdater extends BeanPropertyXmlHandler {
         Enumeration enumeration = xmlElementNode.getAttributeNames();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            if (string.startsWith("xmlns")) {
-                int ba = string.indexOf(58);
-                if (ba > 0 && ba < string.length() - 1 && ((String) xmlElementNode.getAttributeValue(string).getValue()).equalsIgnoreCase("http://javafx.com/fxml")) {
-                    this.fxNamespacePrefix = string.substring(ba + 1) + ':';
+            String key = (String) enumeration.nextElement();
+            if (key.startsWith("xmlns")) {
+                int ba = key.indexOf(58);
+                if (ba > 0 && ba < key.length() - 1 && ((String) xmlElementNode.getAttributeValue(key).getValue()).equalsIgnoreCase("http://javafx.com/fxml")) {
+                    this.fxNamespacePrefix = key.substring(ba + 1) + ':';
                     bl = true;
                 }
             }

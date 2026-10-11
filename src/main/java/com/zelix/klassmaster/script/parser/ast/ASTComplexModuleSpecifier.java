@@ -26,13 +26,13 @@ public class ASTComplexModuleSpecifier extends NameMatchingSpecifierNode {
     public String getSpecText() {
         int flowControlKey = ZkmScriptSimpleNode.getFlowControlKey();
         StringBuilder stringBuilder = new StringBuilder();
-        String string = ((QualifiedNameMatcher) this.jjtGetChild(0)).getSpecText();
+        String specText = ((QualifiedNameMatcher) this.jjtGetChild(0)).getSpecText();
         if (flowControlKey != 0) {
-            stringBuilder = stringBuilder.append(string);
-            string = this.excludesModuleName ? "^" : "";
+            stringBuilder = stringBuilder.append(specText);
+            specText = this.excludesModuleName ? "^" : "";
         }
 
-        return stringBuilder.append(string).toString();
+        return stringBuilder.append(specText).toString();
     }
 
     public void setExcludesModuleName() {
@@ -65,6 +65,6 @@ public class ASTComplexModuleSpecifier extends NameMatchingSpecifierNode {
     @Override
     public boolean isLiteralName() {
         QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) this.jjtGetChild(0);
-        return qualifiedNameMatcher instanceof NameMatchingSpecifierNode ? ((NameMatchingSpecifierNode) qualifiedNameMatcher).isLiteralName() : false;
+        return ((qualifiedNameMatcher instanceof NameMatchingSpecifierNode) && (((NameMatchingSpecifierNode) qualifiedNameMatcher).isLiteralName()));
     }
 }

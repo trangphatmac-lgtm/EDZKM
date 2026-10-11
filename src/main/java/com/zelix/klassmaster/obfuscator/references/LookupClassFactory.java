@@ -66,14 +66,14 @@ public class LookupClassFactory {
             stringBuilder.append('\'');
             List list1 = listMultimap.getValues(programClass1);
             if (list1 != null) {
-                for (int i = 0; i < list1.size(); i++) {
-                    SourceArchive sourceArchive1 = (SourceArchive) list1.get(i);
-                    if (i == 0) {
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    SourceArchive sourceArchive1 = (SourceArchive) list1.get(elementIndex);
+                    if (elementIndex == 0) {
                         stringBuilder.append(" in module" + (list1.size() > 1 ? "s '" : " '"));
                     }
 
                     stringBuilder.append(sourceArchive1.getModuleName());
-                    if (i < list1.size() - 1) {
+                    if (elementIndex < list1.size() - 1) {
                         stringBuilder.append("', ");
                     } else {
                         stringBuilder.append('\'');
@@ -121,13 +121,13 @@ public class LookupClassFactory {
         Iterator iterator = set1.iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
+            String key = (String) iterator.next();
             LookupClassOption lookupClassOption1 = lookupClassOption;
             Integer integer1 = bb;
             Integer integer = 30276;
-            ProgramClass programClass2 = syntheticClassFactory.createSyntheticClass(string, ba, integer, integer1, lookupClassOption1);
+            ProgramClass programClass2 = syntheticClassFactory.createSyntheticClass(key, ba, integer, integer1, lookupClassOption1);
             programClass1 = classRepository1.addClass(programClass2);
-            hashMap.put(string, programClass2);
+            hashMap.put(key, programClass2);
             set2.add(programClass2);
             if (programClass2.supportsJava6()) {
                 programClass2.markAllMethodsModified();
@@ -140,8 +140,8 @@ public class LookupClassFactory {
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
                 ProgramClass programClass5 = (ProgramClass) entry.getKey();
-                String string1 = (String) entry.getValue();
-                ProgramClass programClass3 = (ProgramClass) hashMap.get(string1);
+                String value = (String) entry.getValue();
+                ProgramClass programClass3 = (ProgramClass) hashMap.get(value);
                 map3.put(programClass5, programClass3);
             }
 
@@ -150,8 +150,8 @@ public class LookupClassFactory {
             while (iterator.hasNext()) {
                 Entry entry1 = (Entry) iterator.next();
                 SourceArchive sourceArchive1 = (SourceArchive) entry1.getKey();
-                String string2 = (String) entry1.getValue();
-                ProgramClass programClass6 = (ProgramClass) hashMap.get(string2);
+                String valueValue = (String) entry1.getValue();
+                ProgramClass programClass6 = (ProgramClass) hashMap.get(valueValue);
                 map2.put(sourceArchive1, programClass6);
             }
 
@@ -170,22 +170,22 @@ public class LookupClassFactory {
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
             SourceArchive sourceArchive1 = (SourceArchive) entry.getKey();
-            String string = (String) map1.get(sourceArchive1);
+            String value = (String) map1.get(sourceArchive1);
             Iterator iterator1 = ((List) entry.getValue()).iterator();
 
             while (iterator1.hasNext()) {
                 ProgramClass programClass1 = (ProgramClass) iterator1.next();
-                map2.put(programClass1, string);
+                map2.put(programClass1, value);
             }
         }
 
         if (!set1.isEmpty()) {
-            String string1 = (String) observableHolder.getValue();
+            String valueValue = (String) observableHolder.getValue();
             Iterator iterator2 = set1.iterator();
 
             while (iterator2.hasNext()) {
                 ProgramClass programClass2 = (ProgramClass) iterator2.next();
-                map2.put(programClass2, string1);
+                map2.put(programClass2, valueValue);
             }
         }
     }
@@ -256,12 +256,12 @@ public class LookupClassFactory {
             ClasspathClassLoader classpathClassLoader1,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        String string4 = null;
+        String keyValue = null;
         if (string2 != null && string2.length() > 0) {
-            String string6 = ZkmUtils.dotsToSlashes(string2);
-            String string5 = (String) enumerableMap.get(string6);
-            if (string5 != null) {
-                string4 = string5;
+            String key = ZkmUtils.dotsToSlashes(string2);
+            String keyValue2 = (String) enumerableMap.get(key);
+            if (keyValue2 != null) {
+                keyValue = keyValue2;
             } else {
                 scriptEnvironment1.logWarning(
                         "Package '" + string2 + "' specified in '" + string1 + "' parameter but the package does not exist.  Another package will be used."
@@ -282,9 +282,9 @@ public class LookupClassFactory {
             EnumerableMap enumerableMap4 = enumerableMap1;
             EnumerableMap enumerableMap3 = enumerableMap;
             Set set6 = set1;
-            String string10 = generateLookupClassName(
+            String value = generateLookupClassName(
                     string,
-                    string4,
+                    keyValue,
                     (Collection) null,
                     set6,
                     enumerableMap3,
@@ -297,14 +297,14 @@ public class LookupClassFactory {
                     list2,
                     boolean2
             );
-            hashSet.add(string10);
-            observableHolder.setValue(string10);
+            hashSet.add(value);
+            observableHolder.setValue(value);
             Iterator iterator2 = set1.iterator();
 
             while (iterator2.hasNext()) {
                 ProgramClass programClass1 = (ProgramClass) iterator2.next();
                 if (!programClass1.isGenerated()) {
-                    map2.put(programClass1, string10);
+                    map2.put(programClass1, value);
                 }
             }
 
@@ -318,7 +318,7 @@ public class LookupClassFactory {
                 if (!map1.containsKey(sourceArchive1)) {
                     checkCommonPackage(sourceArchive1, setMultiMap, setMultiMap1);
                     if (!map1.containsKey(sourceArchive1)) {
-                        String string7 = null;
+                        String valueValue = null;
                         if (setMultiMap.containsKey(sourceArchive1)) {
                             Set set5 = setMultiMap.getValues(sourceArchive1);
                             Iterator iterator1 = set5.iterator();
@@ -326,9 +326,9 @@ public class LookupClassFactory {
                             while (iterator1.hasNext()) {
                                 SourceArchive sourceArchive2 = (SourceArchive) iterator1.next();
                                 if (map1.containsKey(sourceArchive2)) {
-                                    string7 = (String) map1.get(sourceArchive2);
+                                    valueValue = (String) map1.get(sourceArchive2);
                                     ZkmAssert.assertTrue(
-                                            setMultiMap1.getValues(sourceArchive1).contains(ClassFileBase.getPackagePath(string7)),
+                                            setMultiMap1.getValues(sourceArchive1).contains(ClassFileBase.getPackagePath(valueValue)),
                                             new String[]{"No common package names : '" + sourceArchive1.getModuleName() + "' and '" + sourceArchive2.getModuleName() + "'"}
                                     );
                                     break;
@@ -336,13 +336,13 @@ public class LookupClassFactory {
                             }
                         }
 
-                        if (string7 == null) {
+                        if (valueValue == null) {
                             Set set10 = setMultiMap1.getValues(sourceArchive1);
                             Collection collection1 = (Collection) entry.getValue();
                             Boolean boolean3 = bl1;
-                            string7 = generateLookupClassName(
+                            valueValue = generateLookupClassName(
                                     string,
-                                    string4,
+                                    keyValue,
                                     set10,
                                     collection1,
                                     enumerableMap,
@@ -357,7 +357,7 @@ public class LookupClassFactory {
                             );
                         }
 
-                        map1.put(sourceArchive1, string7);
+                        map1.put(sourceArchive1, valueValue);
                     }
                 }
             }
@@ -384,8 +384,8 @@ public class LookupClassFactory {
                     }
                 }
 
-                String string12 = string11;
-                if (string12 == null) {
+                String valueValue2 = string11;
+                if (valueValue2 == null) {
                     Boolean boolean5 = bl1;
                     List list3 = list1;
                     ClasspathClassLoader classpathClassLoader3 = classpathClassLoader1;
@@ -396,9 +396,9 @@ public class LookupClassFactory {
                     EnumerableMap enumerableMap7 = enumerableMap1;
                     EnumerableMap enumerableMap6 = enumerableMap;
                     Set set8 = set3;
-                    string12 = generateLookupClassName(
+                    valueValue2 = generateLookupClassName(
                             string,
-                            string4,
+                            keyValue,
                             (Collection) null,
                             set8,
                             enumerableMap6,
@@ -411,15 +411,15 @@ public class LookupClassFactory {
                             list3,
                             boolean5
                     );
-                    hashSet.add(string12);
+                    hashSet.add(valueValue2);
                 }
 
-                observableHolder.setValue(string12);
+                observableHolder.setValue(valueValue2);
                 Iterator iterator4 = set3.iterator();
 
                 while (iterator4.hasNext()) {
                     ProgramClass programClass3 = (ProgramClass) iterator4.next();
-                    map2.put(programClass3, string12);
+                    map2.put(programClass3, valueValue2);
                 }
             }
 
@@ -428,14 +428,14 @@ public class LookupClassFactory {
             while (iterator.hasNext()) {
                 Entry entry1 = (Entry) iterator.next();
                 SourceArchive sourceArchive4 = (SourceArchive) entry1.getKey();
-                String string13 = (String) map1.get(sourceArchive4);
-                hashSet.add(string13);
+                String valueValue3 = (String) map1.get(sourceArchive4);
+                hashSet.add(valueValue3);
                 Iterator iterator5 = ((List) entry1.getValue()).iterator();
 
                 while (iterator5.hasNext()) {
                     ProgramClass programClass4 = (ProgramClass) iterator5.next();
                     if (!programClass4.isGenerated()) {
-                        map2.put(programClass4, string13);
+                        map2.put(programClass4, valueValue3);
                     }
                 }
             }
@@ -447,8 +447,8 @@ public class LookupClassFactory {
     public static String validateChangeLogLookupName(
             String string, String string1, String string2, String string3, String string4, Set set1, ChangeLogMapping changeLogMapping1, EnumerableMap enumerableMap
     ) throws IOException {
-        String string5 = ZkmUtils.dotsToSlashes(string1);
-        if (enumerableMap.containsKey(string5)) {
+        String key = ZkmUtils.dotsToSlashes(string1);
+        if (enumerableMap.containsKey(key)) {
             changeLogMapping1.logError(
                     "The class '"
                             + string1
@@ -459,8 +459,8 @@ public class LookupClassFactory {
             return null;
         }
 
-        if (ClassHierarchyNode.findNode(string5) != null) {
-            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string5);
+        if (ClassHierarchyNode.findNode(key) != null) {
+            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
             changeLogMapping1.logError(
                     "The class '"
                             + string1
@@ -474,15 +474,15 @@ public class LookupClassFactory {
             return null;
         }
 
-        String string6 = ClassFileBase.getPackagePath(string5);
+        String packagePath = ClassFileBase.getPackagePath(key);
         if (string3 != null) {
-            String string7 = ZkmUtils.dotsToSlashes(string3);
-            String string8 = changeLogMapping1.getNewPackageName(string7);
-            if (string8 == null && changeLogMapping1.hasPackageMapping(string7)) {
-                string8 = string7;
+            String newPackageNameValue = ZkmUtils.dotsToSlashes(string3);
+            String newPackageName = changeLogMapping1.getNewPackageName(newPackageNameValue);
+            if (newPackageName == null && changeLogMapping1.hasPackageMapping(newPackageNameValue)) {
+                newPackageName = newPackageNameValue;
             }
 
-            if (string8 == null || !string8.equals(string6)) {
+            if (newPackageName == null || !newPackageName.equals(packagePath)) {
                 String string9 = "'"
                         + string2
                         + "' parameter in 'obfuscate' statement specifies package name '"
@@ -492,13 +492,13 @@ public class LookupClassFactory {
                         + "' contains a '"
                         + string
                         + "' clause specifying package name '"
-                        + ZkmUtils.slashesToDots(string6)
+                        + ZkmUtils.slashesToDots(packagePath)
                         + "' which will be used.";
                 changeLogMapping1.logWarning(string9);
             }
         }
 
-        if (!set1.contains(string6)) {
+        if (!set1.contains(packagePath)) {
             String string10 = ZkmUtils.toQuotedListString(set1);
             changeLogMapping1.logError(
                     "The class '"
@@ -513,34 +513,34 @@ public class LookupClassFactory {
             );
             return null;
         } else {
-            return string5;
+            return key;
         }
     }
 
     public static void findMinClassVersion(MutableInt mutableInt, MutableInt mutableInt1, ClassFileBase[] classFileBases, Integer integer) {
-        int ba = Integer.MAX_VALUE;
-        int bb = Integer.MAX_VALUE;
+        int maxValue = Integer.MAX_VALUE;
+        int maxValueValue = Integer.MAX_VALUE;
 
         for (ClassFileBase classFileBase : classFileBases) {
             int majorVersion = classFileBase.getMajorVersion();
-            if (majorVersion < ba) {
-                ba = majorVersion;
-                bb = classFileBase.getMinorVersion();
-            } else if (majorVersion == ba && classFileBase.getMinorVersion() < bb) {
-                bb = classFileBase.getMinorVersion();
+            if (majorVersion < maxValue) {
+                maxValue = majorVersion;
+                maxValueValue = classFileBase.getMinorVersion();
+            } else if (majorVersion == maxValue && classFileBase.getMinorVersion() < maxValueValue) {
+                maxValueValue = classFileBase.getMinorVersion();
             }
         }
 
         if (integer != null) {
-            int bd = JavaRuntimeVersion.toClassMajorVersion(integer);
-            if (bd > ba) {
-                ba = bd;
-                bb = 0;
+            int maxValueValue2 = JavaRuntimeVersion.toClassMajorVersion(integer);
+            if (maxValueValue2 > maxValue) {
+                maxValue = maxValueValue2;
+                maxValueValue = 0;
             }
         }
 
-        mutableInt.setValue(ba);
-        mutableInt1.setValue(bb);
+        mutableInt.setValue(maxValue);
+        mutableInt1.setValue(maxValueValue);
     }
 
     public static Set partitionClassesByModule(Set set1, Set set2, Set set3, Set set4) throws ZkmClassNotFoundException {
@@ -636,14 +636,14 @@ public class LookupClassFactory {
             stringBuilder.append('\'');
             List list1 = listMultimap.getValues(objectTriple);
             if (list1 != null) {
-                for (int i = 0; i < list1.size(); i++) {
-                    SourceArchive sourceArchive1 = (SourceArchive) list1.get(i);
-                    if (i == 0) {
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    SourceArchive sourceArchive1 = (SourceArchive) list1.get(elementIndex);
+                    if (elementIndex == 0) {
                         stringBuilder.append(" in module" + (list1.size() > 1 ? "s '" : " '"));
                     }
 
                     stringBuilder.append(sourceArchive1.getModuleName());
-                    if (i < list1.size() - 1) {
+                    if (elementIndex < list1.size() - 1) {
                         stringBuilder.append("', ");
                     } else {
                         stringBuilder.append('\'');
@@ -661,7 +661,7 @@ public class LookupClassFactory {
 
     public static String generateLookupClassName(
             String string,
-            String string1,
+            String keyArgument,
             Collection collection1,
             Collection collection2,
             EnumerableMap enumerableMap,
@@ -686,26 +686,26 @@ public class LookupClassFactory {
             return string;
         }
 
-        String string8 = null;
-        if (string1 != null && hashSet.contains(string1)) {
-            string8 = string1;
+        String keyValue = null;
+        if (keyArgument != null && hashSet.contains(keyArgument)) {
+            keyValue = keyArgument;
         }
 
-        int bb = collection2.size();
-        if (string8 == null) {
+        int collection2Size = collection2.size();
+        if (keyValue == null) {
             HashSet hashSet1 = null;
             if (collection1 != null) {
                 hashSet1 = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(collection1.size()));
                 Iterator iterator1 = collection1.iterator();
 
                 while (iterator1.hasNext()) {
-                    String string4 = (String) iterator1.next();
-                    String string5 = (String) ZkmUtils.mapOrSelf(string4, enumerableMap);
+                    String keyValue2 = (String) iterator1.next();
+                    String string5 = (String) ZkmUtils.mapOrSelf(keyValue2, enumerableMap);
                     hashSet1.add(string5);
                 }
             }
 
-            CountingBag countingBag = new CountingBag(bb);
+            CountingBag countingBag = new CountingBag(collection2Size);
             Iterator iterator3 = collection2.iterator();
 
             while (iterator3.hasNext()) {
@@ -731,31 +731,31 @@ public class LookupClassFactory {
 
             while (iterator2.hasNext()) {
                 ProgramClass programClass2 = (ProgramClass) iterator2.next();
-                String string6 = programClass2.getPackagePath();
-                countingBag1.add(string6);
-                int ba = countingBag1.getCount(string6) + countingBag.getCount(programClass2) - 1;
-                String string3 = string6;
-                countingBag1.addCount(string3, ba);
+                String packagePath = programClass2.getPackagePath();
+                countingBag1.add(packagePath);
+                int value = countingBag1.getCount(packagePath) + countingBag.getCount(programClass2) - 1;
+                String packagePathValue = packagePath;
+                countingBag1.addCount(packagePathValue, value);
                 if (programClass2.isPublic()) {
-                    countingBag2.add(string6);
-                    ba = countingBag2.getCount(string6) + countingBag.getCount(programClass2) - 1;
-                    string3 = string6;
-                    countingBag2.addCount(string3, ba);
+                    countingBag2.add(packagePath);
+                    value = countingBag2.getCount(packagePath) + countingBag.getCount(programClass2) - 1;
+                    packagePathValue = packagePath;
+                    countingBag2.addCount(packagePathValue, value);
                 }
             }
 
             List list2 = countingBag2.getSortedByCount();
             if (list2.size() > 0) {
-                string8 = (String) list2.get(0);
+                keyValue = (String) list2.get(0);
             } else {
                 List list3 = countingBag1.getSortedByCount();
                 if (list3.size() > 0) {
-                    string8 = (String) list3.get(0);
+                    keyValue = (String) list3.get(0);
                 }
             }
 
-            if (string8 == null) {
-                string8 = "";
+            if (keyValue == null) {
+                keyValue = "";
             }
         }
 
@@ -767,34 +767,34 @@ public class LookupClassFactory {
         while (iterator4.hasNext()) {
             ProgramClass programClass5 = (ProgramClass) iterator4.next();
             twoKeyMap.putValue(programClass5.getPackagePath(), programClass5.getSimpleName(), programClass5);
-            String string9 = programClass5.getLowerCaseName();
-            hashSet2.add(string9);
-            hashSet3.add(ClassFileBase.stripPackage(string9));
+            String lowerCaseName = programClass5.getLowerCaseName();
+            hashSet2.add(lowerCaseName);
+            hashSet3.add(ClassFileBase.stripPackage(lowerCaseName));
         }
 
-        Map map1 = twoKeyMap.getInnerMap(string8);
+        Map map1 = twoKeyMap.getInnerMap(keyValue);
         SequentialNameGenerator sequentialNameGenerator = new SequentialNameGenerator(
                 SequentialNameGenerator.LOWER_UNDERSCORE_CHARS, SequentialNameGenerator.LOWER_DIGIT_UNDERSCORE_CHARS, list1, boolean1
         );
-        String string10 = null;
+        String keyValue4 = null;
 
         do {
-            String string11 = sequentialNameGenerator.nextPrefixedName(string2);
-            String string7 = (string8.length() > 0 ? string8 + '/' : "") + string11;
-            if ((!bl || !hashSet3.contains(string11))
-                    && !set1.contains(string7)
-                    && (enumerableMap1 == null || !enumerableMap1.containsKey(string7))
-                    && (enumerableMap2 == null || !enumerableMap2.containsKey(string7))
-                    && (map1 == null || !map1.containsKey(string11))
-                    && !hashSet2.contains(string7.toLowerCase())
-                    && ClassHierarchyNode.findClassFile(string7) == null
-                    && classpathClassLoader1.findClassFileQuietly(string7) == null) {
-                string10 = string7;
+            String key = sequentialNameGenerator.nextPrefixedName(string2);
+            String keyValue3 = (keyValue.length() > 0 ? keyValue + '/' : "") + key;
+            if ((!bl || !hashSet3.contains(key))
+                    && !set1.contains(keyValue3)
+                    && (enumerableMap1 == null || !enumerableMap1.containsKey(keyValue3))
+                    && (enumerableMap2 == null || !enumerableMap2.containsKey(keyValue3))
+                    && (map1 == null || !map1.containsKey(key))
+                    && !hashSet2.contains(keyValue3.toLowerCase())
+                    && ClassHierarchyNode.findClassFile(keyValue3) == null
+                    && classpathClassLoader1.findClassFileQuietly(keyValue3) == null) {
+                keyValue4 = keyValue3;
             }
-        } while (string10 == null);
+        } while (keyValue4 == null);
 
-        set1.add(string10);
-        return string10;
+        set1.add(keyValue4);
+        return keyValue4;
     }
 
     public static void computeCommonPackages(SetMultiMap setMultiMap, SetMultiMap setMultiMap1, SetMultiMap setMultiMap2) {
@@ -809,8 +809,8 @@ public class LookupClassFactory {
             Iterator iterator1 = set1.iterator();
 
             while (iterator1.hasNext()) {
-                String string = (String) iterator1.next();
-                setMultiMap3.addValue(string, sourceArchive1);
+                String key = (String) iterator1.next();
+                setMultiMap3.addValue(key, sourceArchive1);
             }
         }
 

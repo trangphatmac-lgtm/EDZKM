@@ -92,7 +92,7 @@ public class ValueTraceFrame {
     public ValueTraceFrame(
             MethodFlowAnalyzer methodFlowAnalyzer,
             HashSet hashSet,
-            boolean bl,
+            boolean isArrayArgumentArgument,
             ReflectionArgumentKind reflectionArgumentKind,
             NestedMultiMap nestedMultiMap,
             NestedMultiMap nestedMultiMap1,
@@ -100,7 +100,7 @@ public class ValueTraceFrame {
             CommonSuperTypeResolver commonSuperTypeResolver1,
             ClassMemberLookup classMemberLookup1,
             Map map1,
-            boolean bl1,
+            boolean isStaticMethodArgument,
             Map map2,
             Map map3,
             Map map4,
@@ -110,7 +110,7 @@ public class ValueTraceFrame {
         this(
                 methodFlowAnalyzer,
                 hashSet,
-                bl,
+                isArrayArgumentArgument,
                 reflectionArgumentKind,
                 nestedMultiMap,
                 nestedMultiMap1,
@@ -118,7 +118,7 @@ public class ValueTraceFrame {
                 commonSuperTypeResolver1,
                 classMemberLookup1,
                 map1,
-                bl1,
+                isStaticMethodArgument,
                 map2,
                 map3,
                 map4,
@@ -185,8 +185,8 @@ public class ValueTraceFrame {
         this(methodFlowAnalyzer, valueTraceFrame1, reflectionArgumentKind, valueTraceFrame1.nestingLevel + 1);
     }
 
-    public ValueTraceFrame(MethodFlowAnalyzer methodFlowAnalyzer, ValueTraceFrame valueTraceFrame1, ReflectionArgumentKind reflectionArgumentKind, int ba) {
-        this(methodFlowAnalyzer, valueTraceFrame1, reflectionArgumentKind, ba, false);
+    public ValueTraceFrame(MethodFlowAnalyzer methodFlowAnalyzer, ValueTraceFrame valueTraceFrame1, ReflectionArgumentKind reflectionArgumentKind, int nestingLevelArgument) {
+        this(methodFlowAnalyzer, valueTraceFrame1, reflectionArgumentKind, nestingLevelArgument, false);
     }
 
     public boolean enterMethod(Object object) {

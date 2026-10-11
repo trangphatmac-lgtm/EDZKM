@@ -10,12 +10,12 @@ public class MainWindowErrorReporter extends GuiMessageReporter {
     public final ZkmMainWindow mainWindow;
 
     @Override
-    public void reportErrorWithDetail(Object object, String string, String string1) throws ZkmException, IOException {
+    public void reportErrorWithDetail(Object object, String string, String details) throws ZkmException, IOException {
         String string2 = (String) object;
-        super.reportErrorWithDetail(string2, string, string1);
+        super.reportErrorWithDetail(string2, string, details);
         String string3 = string2 + this.getSeparatorFor(string2) + string;
         ZkmMainWindow.getLogWriter(this.mainWindow).println(string3);
-        ZkmMainWindow.getLogWriter(this.mainWindow).println(string1);
+        ZkmMainWindow.getLogWriter(this.mainWindow).println(details);
         ZkmMainWindow.getLogWriter(this.mainWindow).flush();
         this.mainWindow.closeFrame();
     }

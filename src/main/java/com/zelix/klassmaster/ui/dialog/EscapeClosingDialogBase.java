@@ -31,34 +31,19 @@ public abstract class EscapeClosingDialogBase extends JDialog {
         this.showCenteredWithOffset(0, 0, false);
     }
 
-    public final void showCenteredWithOffset(int ba, int bb, boolean bl) {
-        label17:
-        {
-            Dimension dimension = this.getSize();
-            Toolkit toolkit;
-            if (bl) {
-                if (this.ownerFrame_JFrame.isVisible()) {
-                    Point point = this.ownerFrame_JFrame.getLocationOnScreen();
-                    Dimension dimension1 = this.ownerFrame_JFrame.getSize();
-                    int bc = dimension1.width / 2 - dimension.width / 2 + point.x;
-                    int bd = dimension1.height / 2 - dimension.height / 2 + point.y;
-                    bc = Math.max(0, bc) + ba;
-                    bd = Math.max(0, bd) + bb;
-                    this.setLocation(bc, bd);
-                    break label17;
-                }
-
-                toolkit = Toolkit.getDefaultToolkit();
-            } else {
-                toolkit = Toolkit.getDefaultToolkit();
-            }
-
-            Dimension dimension2 = toolkit.getScreenSize();
-            int be = dimension2.width / 2 - dimension.width / 2;
-            int bf = dimension2.height / 2 - dimension.height / 2;
-            be = Math.max(0, be) + ba;
-            bf = Math.max(0, bf) + bb;
-            this.setLocation(be, bf);
+    public final void showCenteredWithOffset(int xOffset, int yOffset, boolean relativeToOwner) {
+        Dimension dialogSize = this.getSize();
+        if (relativeToOwner && this.ownerFrame_JFrame.isVisible()) {
+            Point ownerLocation = this.ownerFrame_JFrame.getLocationOnScreen();
+            Dimension ownerSize = this.ownerFrame_JFrame.getSize();
+            int x = ownerSize.width / 2 - dialogSize.width / 2 + ownerLocation.x;
+            int y = ownerSize.height / 2 - dialogSize.height / 2 + ownerLocation.y;
+            this.setLocation(Math.max(0, x) + xOffset, Math.max(0, y) + yOffset);
+        } else {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            int x = screenSize.width / 2 - dialogSize.width / 2;
+            int y = screenSize.height / 2 - dialogSize.height / 2;
+            this.setLocation(Math.max(0, x) + xOffset, Math.max(0, y) + yOffset);
         }
 
         SwingUtils.setVisibleOnEdt(this);

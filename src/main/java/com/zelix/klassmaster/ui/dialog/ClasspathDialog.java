@@ -56,10 +56,10 @@ public class ClasspathDialog extends PathListDialog {
                 stringBuilder.append(file1.getAbsolutePath());
             }
 
-            String string1 = this.classpath.getClasspath();
+            String classpathValue = this.classpath.getClasspath();
             this.classpath.setClasspath(stringBuilder.toString());
             if (!this.classpath.locateRuntimeClasses(new ObservableHolder(), new ObservableHolder())) {
-                this.classpath.setClasspath(string1);
+                this.classpath.setClasspath(classpathValue);
                 this.classpath.locateRuntimeClasses(new ObservableHolder(), new ObservableHolder());
                 SwingUtils.createMessageDialog(
                         this,
@@ -93,12 +93,12 @@ public class ClasspathDialog extends PathListDialog {
             }
         }
 
-        String string = stringBuilder.toString();
-        String string1 = this.classpath.getClasspath();
-        if (string1.equals(string) || this.validateClasspath(string, super.pathListModel.elements())) {
-            if (!string1.equals(string)) {
-                this.saveClasspathPreference(string);
-                this.classpath.setClasspath(string);
+        String classpathValue = stringBuilder.toString();
+        String classpathValue2 = this.classpath.getClasspath();
+        if (classpathValue2.equals(classpathValue) || this.validateClasspath(classpathValue, super.pathListModel.elements())) {
+            if (!classpathValue2.equals(classpathValue)) {
+                this.saveClasspathPreference(classpathValue);
+                this.classpath.setClasspath(classpathValue);
                 this.classpath.locateRuntimeClasses(new ObservableHolder(), new ObservableHolder());
                 super.closedByButton = true;
             } else {
@@ -113,32 +113,32 @@ public class ClasspathDialog extends PathListDialog {
     @Override
     public void browseToAddPath() {
         ZkmFileFilter[] zkmFileFilters = new ZkmFileFilter[]{new ArchiveAndFolderFileFilter()};
-        String string = this.lastDirectory.getAbsolutePath();
+        String absolutePath = this.lastDirectory.getAbsolutePath();
         FileSelector fileSelector1 = new FileSelector(this.lastDirectory, true, 3, zkmFileFilters, false);
         if (fileSelector1.showOpenDialog(this, "Classpath") == 1) {
-            if (!string.equals(fileSelector1.getCurrentDirectory().getAbsolutePath())) {
+            if (!absolutePath.equals(fileSelector1.getCurrentDirectory().getAbsolutePath())) {
                 this.lastDirectory = fileSelector1.getCurrentDirectory();
             }
 
             File[] files = fileSelector1.getSelectedFiles();
 
-            for (int i = 0; i < files.length; i++) {
-                File file1 = files[i];
-                String string1 = file1.getAbsolutePath();
+            for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+                File file1 = files[fileIndex];
+                String absolutePathValue = file1.getAbsolutePath();
                 if (!file1.exists()) {
-                    new MessageBoxDialog(this, "File Error", "'" + string1 + "' does not exist");
+                    new MessageBoxDialog(this, "File Error", "'" + absolutePathValue + "' does not exist");
                     break;
                 }
 
-                if (this.addPath(string1)) {
+                if (this.addPath(absolutePathValue)) {
                     this.updateButtonStates();
                 }
             }
         }
     }
 
-    public void saveClasspathPreference(String string) {
-        this.userPreferences.setClasspath(string);
+    public void saveClasspathPreference(String classpathArgument) {
+        this.userPreferences.setClasspath(classpathArgument);
         this.userPreferences.savePreferences();
     }
 
@@ -148,7 +148,7 @@ public class ClasspathDialog extends PathListDialog {
         List list1 = (List) object;
         String string = (String) object1;
         String string1 = (String) object2;
-        String string2 = (String) object3;
+        String toolTipText = (String) object3;
         Container container1 = this.getContentPane();
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
@@ -163,8 +163,8 @@ public class ClasspathDialog extends PathListDialog {
             Iterator iterator = list1.iterator();
 
             while (iterator.hasNext()) {
-                String string3 = (String) iterator.next();
-                this.addPath(string3);
+                String key = (String) iterator.next();
+                this.addPath(key);
             }
         }
 
@@ -198,7 +198,7 @@ public class ClasspathDialog extends PathListDialog {
         StringBuffer stringBuffer = new StringBuffer(
                 "layout.minWidth=btnWidth*6+25;layout.minHeight=250;listPnl.top=5;listPnl.left=5;listPnl.right=container.right-5;listPnl.bottom=container.bottom-btnHeight-20;"
         );
-        this.createMainButtons(string1, string2, stringBuffer, container1);
+        this.createMainButtons(string1, toolTipText, stringBuffer, container1);
         constraintLayout1.parseConstraints(stringBuffer.toString());
         this.setIconImage(KlassMaster.getLogoImage(this));
         SwingUtils.packOnEdt(this);

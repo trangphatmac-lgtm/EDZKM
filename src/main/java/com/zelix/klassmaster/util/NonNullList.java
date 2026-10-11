@@ -127,8 +127,8 @@ public class NonNullList implements List {
     }
 
     @Override
-    public Object get(int ba) {
-        return this.delegate.get(ba);
+    public Object get(int elementIndex) {
+        return this.delegate.get(elementIndex);
     }
 
     @Override

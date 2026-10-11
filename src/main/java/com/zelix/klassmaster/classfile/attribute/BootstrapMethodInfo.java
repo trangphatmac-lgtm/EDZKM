@@ -47,8 +47,8 @@ public class BootstrapMethodInfo {
         System.arraycopy(constantPoolEntrys, 1, this.constantArguments, 0, this.constantArguments.length);
     }
 
-    public void setRewrittenRecipe(String string) {
-        this.rewrittenRecipe = string;
+    public void setRewrittenRecipe(String rewrittenRecipeArgument) {
+        this.rewrittenRecipe = rewrittenRecipeArgument;
     }
 
     public void addRecipePart(Object object) {

@@ -184,7 +184,7 @@ public class XmlResourceProcessor {
             int ba,
             int bb,
             int bc,
-            String string1,
+            String resourceNameArgument,
             boolean bl
     ) throws ZkmException, IOException {
         String string2;
@@ -198,15 +198,15 @@ public class XmlResourceProcessor {
         PushbackReader pushbackReader = new PushbackReader(new BufferedReader(new InputStreamReader(inputStream1, string2)), 7);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         this.contentHandler = xmlContentHandler;
-        this.resourceName = string1;
+        this.resourceName = resourceNameArgument;
         PrintWriter printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(byteArrayOutputStream, string2)));
         ArrayList arrayList = new ArrayList();
         this.parse(pushbackReader, arrayList, printWriter, bl);
         this.flushOutput(arrayList, printWriter);
         printWriter.close();
-        byte[] bd = byteArrayOutputStream.toByteArray();
-        bd = prependByteOrderMark(bd, bb, bc);
-        outputStream.write(bd);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        byteArray = prependByteOrderMark(byteArray, bb, bc);
+        outputStream.write(byteArray);
         outputStream.flush();
     }
 
@@ -215,12 +215,11 @@ public class XmlResourceProcessor {
         int ba = 0;
 
         while (ba != -1 && (ba = pushbackReader.read()) != -1) {
-            char bb = (char) ba;
-            boolean bl2 = bb == ' ' || bb == '\t' || bb == '\n' || bb == '\r';
-            label490:
+            char quoteCharValue = (char) ba;
+            boolean bl2 = quoteCharValue == ' ' || quoteCharValue == '\t' || quoteCharValue == '\n' || quoteCharValue == '\r';
             switch (this.parserState) {
                 case 1:
-                    if (bb == '<') {
+                    if (quoteCharValue == '<') {
                         this.hasNonWhitespaceText = false;
                         String string = this.characterData.toString();
                         if (string.length() > 0) {
@@ -231,19 +230,19 @@ public class XmlResourceProcessor {
                         if (list1 != null) {
                             list1.add(this.pendingWhitespace.toString());
                             this.pendingWhitespace.setLength(0);
-                            list1.add(ASCII_CHAR_STRINGS[bb]);
+                            list1.add(ASCII_CHAR_STRINGS[quoteCharValue]);
                         }
 
                         if ((ba = pushbackReader.read()) != -1) {
-                            char bn = (char) ba;
-                            if (bn == '!') {
+                            char asciiCharStringIndex = (char) ba;
+                            if (asciiCharStringIndex == '!') {
                                 if (list1 != null) {
-                                    list1.add(ASCII_CHAR_STRINGS[bn]);
+                                    list1.add(ASCII_CHAR_STRINGS[asciiCharStringIndex]);
                                 }
 
                                 if ((ba = pushbackReader.read()) != -1) {
-                                    char bd = (char) ba;
-                                    if (bd == '-') {
+                                    char asciiCharStringIndexValue = (char) ba;
+                                    if (asciiCharStringIndexValue == '-') {
                                         if ((ba = pushbackReader.read()) != -1) {
                                             char be = (char) ba;
                                             if (be == '-') {
@@ -264,13 +263,13 @@ public class XmlResourceProcessor {
                                                 }
                                             } else {
                                                 pushbackReader.unread(be);
-                                                pushbackReader.unread(bd);
+                                                pushbackReader.unread(asciiCharStringIndexValue);
                                                 this.setParserState(3);
                                             }
                                         } else if (list1 != null) {
-                                            list1.add(ASCII_CHAR_STRINGS[bd]);
+                                            list1.add(ASCII_CHAR_STRINGS[asciiCharStringIndexValue]);
                                         }
-                                    } else if (bd == '[') {
+                                    } else if (asciiCharStringIndexValue == '[') {
                                         if ((ba = pushbackReader.read()) != -1) {
                                             char bp = (char) ba;
                                             if (bp == 'C') {
@@ -311,7 +310,7 @@ public class XmlResourceProcessor {
                                                                                         pushbackReader.unread(bf);
                                                                                         pushbackReader.unread(br);
                                                                                         pushbackReader.unread(bp);
-                                                                                        pushbackReader.unread(bd);
+                                                                                        pushbackReader.unread(asciiCharStringIndexValue);
                                                                                         this.setParserState(3);
                                                                                     }
                                                                                 } else if (list1 != null) {
@@ -323,7 +322,7 @@ public class XmlResourceProcessor {
                                                                                 pushbackReader.unread(bf);
                                                                                 pushbackReader.unread(br);
                                                                                 pushbackReader.unread(bp);
-                                                                                pushbackReader.unread(bd);
+                                                                                pushbackReader.unread(asciiCharStringIndexValue);
                                                                                 this.setParserState(3);
                                                                             }
                                                                         } else if (list1 != null) {
@@ -334,7 +333,7 @@ public class XmlResourceProcessor {
                                                                         pushbackReader.unread(bf);
                                                                         pushbackReader.unread(br);
                                                                         pushbackReader.unread(bp);
-                                                                        pushbackReader.unread(bd);
+                                                                        pushbackReader.unread(asciiCharStringIndexValue);
                                                                         this.setParserState(3);
                                                                     }
                                                                 } else if (list1 != null) {
@@ -344,7 +343,7 @@ public class XmlResourceProcessor {
                                                                 pushbackReader.unread(bf);
                                                                 pushbackReader.unread(br);
                                                                 pushbackReader.unread(bp);
-                                                                pushbackReader.unread(bd);
+                                                                pushbackReader.unread(asciiCharStringIndexValue);
                                                                 this.setParserState(3);
                                                             }
                                                         } else if (list1 != null) {
@@ -353,7 +352,7 @@ public class XmlResourceProcessor {
                                                     } else {
                                                         pushbackReader.unread(br);
                                                         pushbackReader.unread(bp);
-                                                        pushbackReader.unread(bd);
+                                                        pushbackReader.unread(asciiCharStringIndexValue);
                                                         this.setParserState(3);
                                                     }
                                                 } else if (list1 != null) {
@@ -361,13 +360,13 @@ public class XmlResourceProcessor {
                                                 }
                                             } else {
                                                 pushbackReader.unread(bp);
-                                                pushbackReader.unread(bd);
+                                                pushbackReader.unread(asciiCharStringIndexValue);
                                                 this.setParserState(3);
                                             }
                                         } else if (list1 != null) {
-                                            list1.add(bd);
+                                            list1.add(asciiCharStringIndexValue);
                                         }
-                                    } else if (bd == 'D') {
+                                    } else if (asciiCharStringIndexValue == 'D') {
                                         if ((ba = pushbackReader.read()) != -1) {
                                             char bq = (char) ba;
                                             if (bq == 'O') {
@@ -398,7 +397,7 @@ public class XmlResourceProcessor {
                                                                                         pushbackReader.unread(bt);
                                                                                         pushbackReader.unread(bs);
                                                                                         pushbackReader.unread(bq);
-                                                                                        pushbackReader.unread(bd);
+                                                                                        pushbackReader.unread(asciiCharStringIndexValue);
                                                                                         this.setParserState(3);
                                                                                     }
                                                                                 } else if (list1 != null) {
@@ -410,7 +409,7 @@ public class XmlResourceProcessor {
                                                                                 pushbackReader.unread(bt);
                                                                                 pushbackReader.unread(bs);
                                                                                 pushbackReader.unread(bq);
-                                                                                pushbackReader.unread(bd);
+                                                                                pushbackReader.unread(asciiCharStringIndexValue);
                                                                                 this.setParserState(3);
                                                                             }
                                                                         } else if (list1 != null) {
@@ -421,7 +420,7 @@ public class XmlResourceProcessor {
                                                                         pushbackReader.unread(bt);
                                                                         pushbackReader.unread(bs);
                                                                         pushbackReader.unread(bq);
-                                                                        pushbackReader.unread(bd);
+                                                                        pushbackReader.unread(asciiCharStringIndexValue);
                                                                         this.setParserState(3);
                                                                     }
                                                                 } else if (list1 != null) {
@@ -431,7 +430,7 @@ public class XmlResourceProcessor {
                                                                 pushbackReader.unread(bt);
                                                                 pushbackReader.unread(bs);
                                                                 pushbackReader.unread(bq);
-                                                                pushbackReader.unread(bd);
+                                                                pushbackReader.unread(asciiCharStringIndexValue);
                                                                 this.setParserState(3);
                                                             }
                                                         } else if (list1 != null) {
@@ -440,7 +439,7 @@ public class XmlResourceProcessor {
                                                     } else {
                                                         pushbackReader.unread(bs);
                                                         pushbackReader.unread(bq);
-                                                        pushbackReader.unread(bd);
+                                                        pushbackReader.unread(asciiCharStringIndexValue);
                                                         this.setParserState(3);
                                                     }
                                                 } else if (list1 != null) {
@@ -448,28 +447,28 @@ public class XmlResourceProcessor {
                                                 }
                                             } else {
                                                 pushbackReader.unread(bq);
-                                                pushbackReader.unread(bd);
+                                                pushbackReader.unread(asciiCharStringIndexValue);
                                                 this.setParserState(3);
                                             }
                                         } else if (list1 != null) {
-                                            list1.add(ASCII_CHAR_STRINGS[bd]);
+                                            list1.add(ASCII_CHAR_STRINGS[asciiCharStringIndexValue]);
                                         }
                                     } else {
-                                        pushbackReader.unread(bd);
+                                        pushbackReader.unread(asciiCharStringIndexValue);
                                         this.setParserState(3);
                                     }
                                 }
-                            } else if (bn == '?') {
+                            } else if (asciiCharStringIndex == '?') {
                                 if (list1 != null) {
-                                    list1.add(ASCII_CHAR_STRINGS[bn]);
+                                    list1.add(ASCII_CHAR_STRINGS[asciiCharStringIndex]);
                                 }
 
                                 this.setParserState(2);
-                            } else if (bn == '/') {
+                            } else if (asciiCharStringIndex == '/') {
                                 XmlResourceProcessor xmlResourceProcessor2;
                                 byte ch;
                                 if (list1 != null) {
-                                    list1.add(ASCII_CHAR_STRINGS[bn]);
+                                    list1.add(ASCII_CHAR_STRINGS[asciiCharStringIndex]);
                                     xmlResourceProcessor2 = this;
                                     long cf = 85343572972665L;
                                     ch = 8;
@@ -482,18 +481,18 @@ public class XmlResourceProcessor {
                                 Integer integer1 = Integer.valueOf(ch);
                                 xmlResourceProcessor2.setParserState(integer1);
                             } else {
-                                pushbackReader.unread(bn);
+                                pushbackReader.unread(asciiCharStringIndex);
                                 this.setParserState(7);
                             }
                         }
                     } else if (bl2) {
                         if (!this.hasNonWhitespaceText) {
                             if (list1 != null) {
-                                list1.add(ASCII_CHAR_STRINGS[bb]);
+                                list1.add(ASCII_CHAR_STRINGS[quoteCharValue]);
                             }
                         } else {
                             StringBuffer stringBuffer = new StringBuffer();
-                            stringBuffer.append(bb);
+                            stringBuffer.append(quoteCharValue);
 
                             do {
                                 ba = pushbackReader.read();
@@ -508,7 +507,7 @@ public class XmlResourceProcessor {
                                             stringBuffer.append(bo);
                                             this.characterData.append(stringBuffer);
                                         }
-                                        break label490;
+                                        break;
                                     }
 
                                     stringBuffer.append(bo);
@@ -519,11 +518,11 @@ public class XmlResourceProcessor {
                         }
                     } else {
                         this.hasNonWhitespaceText = true;
-                        this.characterData.append(bb);
+                        this.characterData.append(quoteCharValue);
                     }
                     break;
                 case 2:
-                    if (bb == '?') {
+                    if (quoteCharValue == '?') {
                         if ((ba = pushbackReader.read()) != -1) {
                             char bm = (char) ba;
                             if (bm == '>') {
@@ -534,77 +533,77 @@ public class XmlResourceProcessor {
 
                                 this.setParserState(1);
                             } else {
-                                this.processingInstruction.append(bb);
+                                this.processingInstruction.append(quoteCharValue);
                                 pushbackReader.unread(bm);
                             }
                         }
                     } else {
-                        this.processingInstruction.append(bb);
+                        this.processingInstruction.append(quoteCharValue);
                     }
                     break;
                 case 3:
-                    char bz;
+                    char quoteCharValue2;
                     byte cc;
                     if (list1 != null) {
-                        list1.add(bb < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[bb] : bb);
-                        bz = bb;
+                        list1.add(quoteCharValue < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[quoteCharValue] : quoteCharValue);
+                        quoteCharValue2 = quoteCharValue;
                         cc = 62;
                     } else {
-                        bz = bb;
+                        quoteCharValue2 = quoteCharValue;
                         cc = 62;
                     }
 
-                    if (bz == cc) {
+                    if (quoteCharValue2 == cc) {
                         this.setParserState(1);
                     }
                     break;
                 case 4:
-                    char by;
+                    char quoteCharValue3;
                     byte cb;
                     if (list1 != null) {
-                        list1.add(bb < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[bb] : bb);
-                        by = bb;
+                        list1.add(quoteCharValue < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[quoteCharValue] : quoteCharValue);
+                        quoteCharValue3 = quoteCharValue;
                         cb = 62;
                     } else {
-                        by = bb;
+                        quoteCharValue3 = quoteCharValue;
                         cb = 62;
                     }
 
-                    if (by == cb) {
+                    if (quoteCharValue3 == cb) {
                         this.setParserState(1);
-                    } else if (bb == '[') {
+                    } else if (quoteCharValue == '[') {
                         this.setParserState(5);
                     }
                     break;
                 case 5:
                     if (list1 != null) {
-                        list1.add(bb < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[bb] : bb);
+                        list1.add(quoteCharValue < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[quoteCharValue] : quoteCharValue);
                     }
 
-                    if (this.isQuoteChar(bb)) {
+                    if (this.isQuoteChar(quoteCharValue)) {
                         bl1 = !bl1;
                         if (bl1) {
-                            this.quoteChar = bb;
+                            this.quoteChar = quoteCharValue;
                         }
-                    } else if (!bl1 && bb == ']') {
+                    } else if (!bl1 && quoteCharValue == ']') {
                         this.setParserState(4);
                     }
                     break;
                 case 6:
-                    char bx;
+                    char quoteCharValue4;
                     byte ca;
                     if (list1 != null) {
-                        list1.add(bb < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[bb] : bb);
-                        bx = bb;
+                        list1.add(quoteCharValue < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[quoteCharValue] : quoteCharValue);
+                        quoteCharValue4 = quoteCharValue;
                         ca = 93;
                     } else {
-                        bx = bb;
+                        quoteCharValue4 = quoteCharValue;
                         ca = 93;
                     }
 
-                    if (bx == ca && (ba = pushbackReader.read()) != -1) {
-                        char bk = (char) ba;
-                        if (bk == ']') {
+                    if (quoteCharValue4 == ca && (ba = pushbackReader.read()) != -1) {
+                        char asciiCharStringIndexValue2 = (char) ba;
+                        if (asciiCharStringIndexValue2 == ']') {
                             if ((ba = pushbackReader.read()) != -1) {
                                 char bc = (char) ba;
                                 if (bc == '>') {
@@ -615,39 +614,39 @@ public class XmlResourceProcessor {
                                     this.setParserState(1);
                                 } else {
                                     pushbackReader.unread(bc);
-                                    pushbackReader.unread(bk);
+                                    pushbackReader.unread(asciiCharStringIndexValue2);
                                 }
                             } else if (list1 != null) {
-                                list1.add(bk < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[bk] : bk);
+                                list1.add(asciiCharStringIndexValue2 < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[asciiCharStringIndexValue2] : asciiCharStringIndexValue2);
                             }
                         } else {
-                            pushbackReader.unread(bk);
+                            pushbackReader.unread(asciiCharStringIndexValue2);
                         }
                     }
                     break;
                 case 7:
-                    char ci;
+                    char quoteCharValue5;
                     byte cj;
-                    if (this.isQuoteChar(bb)) {
+                    if (this.isQuoteChar(quoteCharValue)) {
                         bl1 = !bl1;
                         if (bl1) {
-                            this.quoteChar = bb;
-                            ci = bb;
+                            this.quoteChar = quoteCharValue;
+                            quoteCharValue5 = quoteCharValue;
                             cj = 62;
                         } else {
-                            ci = bb;
+                            quoteCharValue5 = quoteCharValue;
                             cj = 62;
                         }
                     } else {
-                        ci = bb;
+                        quoteCharValue5 = quoteCharValue;
                         cj = 62;
                     }
 
-                    if (ci == cj) {
+                    if (quoteCharValue5 == cj) {
                         if (!bl1) {
                             switch (this.attributeState) {
                                 case 1:
-                                    this.tokenBuffer.append(bb);
+                                    this.tokenBuffer.append(quoteCharValue);
                                     this.currentElement.addRawText(this.tokenBuffer.toString());
                                     this.tokenBuffer.setLength(0);
                                     break;
@@ -659,7 +658,7 @@ public class XmlResourceProcessor {
                                     }
 
                                     this.tokenBuffer.setLength(0);
-                                    this.tokenBuffer.append(bb);
+                                    this.tokenBuffer.append(quoteCharValue);
                                     this.currentElement.addRawText(this.tokenBuffer.toString());
                                     this.tokenBuffer.setLength(0);
                             }
@@ -669,20 +668,20 @@ public class XmlResourceProcessor {
                             break;
                         }
 
-                        ci = bb;
+                        quoteCharValue5 = quoteCharValue;
                         cj = 47;
                     } else {
-                        ci = bb;
+                        quoteCharValue5 = quoteCharValue;
                         cj = 47;
                     }
 
-                    if (ci == cj && !bl1) {
+                    if (quoteCharValue5 == cj && !bl1) {
                         if ((ba = pushbackReader.read()) != -1) {
                             char bj = (char) ba;
                             if (bj == '>') {
                                 switch (this.attributeState) {
                                     case 1:
-                                        this.tokenBuffer.append(bb);
+                                        this.tokenBuffer.append(quoteCharValue);
                                         this.tokenBuffer.append(bj);
                                         this.currentElement.addRawText(this.tokenBuffer.toString());
                                         this.tokenBuffer.setLength(0);
@@ -695,7 +694,7 @@ public class XmlResourceProcessor {
                                         }
 
                                         this.tokenBuffer.setLength(0);
-                                        this.tokenBuffer.append(bb);
+                                        this.tokenBuffer.append(quoteCharValue);
                                         this.tokenBuffer.append(bj);
                                         this.currentElement.addRawText(this.tokenBuffer.toString());
                                         this.tokenBuffer.setLength(0);
@@ -704,21 +703,21 @@ public class XmlResourceProcessor {
                                 this.dispatchTag(3, list1, printWriter);
                                 this.setParserState(1);
                             } else {
-                                this.tokenBuffer.append(bb);
+                                this.tokenBuffer.append(quoteCharValue);
                                 pushbackReader.unread(bj);
                             }
                         }
                     } else {
                         switch (this.attributeState) {
                             case 1:
-                                if (!bl2 && bb != '=' && bb != this.quoteChar) {
+                                if (!bl2 && quoteCharValue != '=' && quoteCharValue != this.quoteChar) {
                                     this.currentElement.addRawText(this.tokenBuffer.toString());
                                     this.tokenBuffer.setLength(0);
-                                    this.tokenBuffer.append(bb);
+                                    this.tokenBuffer.append(quoteCharValue);
                                     this.attributeState = 2;
                                 } else {
-                                    this.tokenBuffer.append(bb);
-                                    if (bb == this.quoteChar) {
+                                    this.tokenBuffer.append(quoteCharValue);
+                                    if (quoteCharValue == this.quoteChar) {
                                         this.currentElement.addRawText(this.tokenBuffer.toString());
                                         this.tokenBuffer.setLength(0);
                                         this.attributeState = 3;
@@ -726,8 +725,8 @@ public class XmlResourceProcessor {
                                 }
                                 break;
                             case 2:
-                                if (!bl2 && bb != '=') {
-                                    this.tokenBuffer.append(bb);
+                                if (!bl2 && quoteCharValue != '=') {
+                                    this.tokenBuffer.append(quoteCharValue);
                                     break;
                                 }
 
@@ -738,17 +737,17 @@ public class XmlResourceProcessor {
                                 }
 
                                 this.tokenBuffer.setLength(0);
-                                this.tokenBuffer.append(bb);
+                                this.tokenBuffer.append(quoteCharValue);
                                 this.attributeState = 1;
                                 break;
                             case 3:
-                                if (bb == this.quoteChar) {
+                                if (quoteCharValue == this.quoteChar) {
                                     this.currentElement.addAttributeValue(this.tokenBuffer.toString());
                                     this.tokenBuffer.setLength(0);
-                                    this.tokenBuffer.append(bb);
+                                    this.tokenBuffer.append(quoteCharValue);
                                     this.attributeState = 1;
                                 } else {
-                                    this.tokenBuffer.append(bb);
+                                    this.tokenBuffer.append(quoteCharValue);
                                 }
                         }
 
@@ -761,7 +760,7 @@ public class XmlResourceProcessor {
                     }
                     break;
                 case 8:
-                    if (bb == '>') {
+                    if (quoteCharValue == '>') {
                         this.dispatchTag(2, list1, printWriter);
                         if (list1 != null) {
                             if (this.pendingWhitespace.length() > 0) {
@@ -769,7 +768,7 @@ public class XmlResourceProcessor {
                                 this.pendingWhitespace.setLength(0);
                             }
 
-                            list1.add(bb < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[bb] : bb);
+                            list1.add(quoteCharValue < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[quoteCharValue] : quoteCharValue);
                         }
 
                         this.setParserState(1);
@@ -781,20 +780,20 @@ public class XmlResourceProcessor {
 
                         if (list1 != null) {
                             if (this.tagNameStarted) {
-                                this.pendingWhitespace.append(bb);
+                                this.pendingWhitespace.append(quoteCharValue);
                             } else {
-                                list1.add(bb < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[bb] : bb);
+                                list1.add(quoteCharValue < ASCII_CHAR_STRINGS.length ? ASCII_CHAR_STRINGS[quoteCharValue] : quoteCharValue);
                             }
                         }
-                    } else if (bb == '<') {
+                    } else if (quoteCharValue == '<') {
                         StringBuilder stringBuilder = new StringBuilder();
-                        stringBuilder.append(bb);
+                        stringBuilder.append(quoteCharValue);
                         this.readComment(stringBuilder, pushbackReader);
                         this.pendingWhitespace.append(stringBuilder.toString());
                     } else {
                         this.tagNameStarted = true;
                         if (!this.tagNameComplete) {
-                            this.tagNameBuffer.append(bb);
+                            this.tagNameBuffer.append(quoteCharValue);
                         }
                     }
             }
@@ -812,9 +811,9 @@ public class XmlResourceProcessor {
     }
 
     public static String readFileContent(File file1, ObservableHolder observableHolder, MutableInt mutableInt, MutableInt mutableInt1, MutableInt mutableInt2) throws ZkmException, IOException {
-        String string = detectEncoding(new FileInputStream(file1), mutableInt, mutableInt1, mutableInt2);
-        observableHolder.setValue(string);
-        return ZkmFileUtils.readFileAsString(file1, string);
+        String value = detectEncoding(new FileInputStream(file1), mutableInt, mutableInt1, mutableInt2);
+        observableHolder.setValue(value);
+        return ZkmFileUtils.readFileAsString(file1, value);
     }
 
     public void handleProcessingInstruction(StringBuilder stringBuilder, List list1) {
@@ -830,20 +829,20 @@ public class XmlResourceProcessor {
         mutableInt.setValue(0);
         mutableInt2.setValue(Integer.MAX_VALUE);
         String string = "UTF-8";
-        byte[] ba = new byte[4];
-        int bb = ZkmFileUtils.readFully(pushbackInputStream, ba);
+        byte[] byteArray = new byte[4];
+        int bb = ZkmFileUtils.readFully(pushbackInputStream, byteArray);
         if (bb == -1) {
             bb = 0;
-            pushbackInputStream.unread(ba);
+            pushbackInputStream.unread(byteArray);
         } else {
-            pushbackInputStream.unread(ba);
+            pushbackInputStream.unread(byteArray);
         }
 
         if (bb > 1) {
-            int bc = ba[0] & 255;
-            int bd = ba[1] & 255;
-            int be = ba[2] & 255;
-            int bf = ba[3] & 255;
+            int bc = byteArray[0] & 255;
+            int bd = byteArray[1] & 255;
+            int be = byteArray[2] & 255;
+            int bf = byteArray[3] & 255;
             if (bc != 60 || bd != 63 || be != 120 || bf != 109) {
                 if (bc == 239 && bd == 187 && be == 191) {
                     mutableInt1.setValue(3);
@@ -916,7 +915,7 @@ public class XmlResourceProcessor {
     }
 
     public XmlResourceProcessor(
-            InputStream inputStream1, XmlContentHandler xmlContentHandler, String string, int ba, Map map1, Map map2, Map map3, TwoKeyMap twoKeyMap, String string1
+            InputStream inputStream1, XmlContentHandler xmlContentHandler, String string, int ba, Map map1, Map map2, Map map3, TwoKeyMap twoKeyMap, String resourceNameArgument
     ) throws ZkmException, IOException {
         String string2;
         if (string == null) {
@@ -928,7 +927,7 @@ public class XmlResourceProcessor {
         ZkmFileUtils.readBytes(inputStream1, ba);
         PushbackReader pushbackReader = new PushbackReader(new BufferedReader(new InputStreamReader(inputStream1, string2)), 7);
         this.contentHandler = xmlContentHandler;
-        this.resourceName = string1;
+        this.resourceName = resourceNameArgument;
         this.classReferences = map1;
         this.fieldReferences = map2;
         this.methodReferences = map3;
@@ -962,9 +961,9 @@ public class XmlResourceProcessor {
     public static String readZipEntryContent(
             ZipFile zipFile1, ZipEntry zipEntry1, ObservableHolder observableHolder, MutableInt mutableInt, MutableInt mutableInt1, MutableInt mutableInt2
     ) throws ZkmException, IOException {
-        String string = detectEncoding(zipFile1.getInputStream(zipEntry1), mutableInt, mutableInt1, mutableInt2);
-        observableHolder.setValue(string);
-        return ZkmFileUtils.readEntryAsString(zipFile1, zipEntry1, string);
+        String value = detectEncoding(zipFile1.getInputStream(zipEntry1), mutableInt, mutableInt1, mutableInt2);
+        observableHolder.setValue(value);
+        return ZkmFileUtils.readEntryAsString(zipFile1, zipEntry1, value);
     }
 
     public void dispatchTag(int ba, List list1, PrintWriter printWriter) throws ZkmException, IOException {
@@ -982,86 +981,86 @@ public class XmlResourceProcessor {
         }
     }
 
-    public static byte[] prependByteOrderMark(byte[] ba, int bb, int bc) {
-        byte[] bd = ba;
+    public static byte[] prependByteOrderMark(byte[] byteArray, int bb, int bc) {
+        byte[] sourceArray = byteArray;
         if (bb > 0) {
             switch (bb) {
                 case 2:
-                    if (bd.length < 2 || bd[0] != -2 && bd[0] != -1) {
-                        byte[] bg = new byte[2];
+                    if (sourceArray.length < 2 || sourceArray[0] != -2 && sourceArray[0] != -1) {
+                        byte[] byteArrayValue = new byte[2];
                         if (bc == 1) {
-                            bg[0] = -2;
-                            bg[1] = -1;
+                            byteArrayValue[0] = -2;
+                            byteArrayValue[1] = -1;
                         } else if (bc == 0) {
-                            bg[0] = -1;
-                            bg[1] = -2;
+                            byteArrayValue[0] = -1;
+                            byteArrayValue[1] = -2;
                         }
 
-                        byte[] bf = new byte[bd.length + 2];
-                        bf[0] = bg[0];
-                        bf[1] = bg[1];
-                        System.arraycopy(bd, 0, bf, 2, bd.length);
-                        bd = bf;
+                        byte[] destinationArray = new byte[sourceArray.length + 2];
+                        destinationArray[0] = byteArrayValue[0];
+                        destinationArray[1] = byteArrayValue[1];
+                        System.arraycopy(sourceArray, 0, destinationArray, 2, sourceArray.length);
+                        sourceArray = destinationArray;
                     }
                     break;
                 case 3:
-                    if (bd.length < 3 || bd[0] != -17) {
-                        byte[] be = new byte[bd.length + 3];
-                        be[0] = -17;
-                        be[1] = -69;
-                        be[2] = -65;
-                        System.arraycopy(bd, 0, be, 3, bd.length);
-                        bd = be;
+                    if (sourceArray.length < 3 || sourceArray[0] != -17) {
+                        byte[] destinationArrayValue = new byte[sourceArray.length + 3];
+                        destinationArrayValue[0] = -17;
+                        destinationArrayValue[1] = -69;
+                        destinationArrayValue[2] = -65;
+                        System.arraycopy(sourceArray, 0, destinationArrayValue, 3, sourceArray.length);
+                        sourceArray = destinationArrayValue;
                     }
             }
         }
 
-        return bd;
+        return sourceArray;
     }
 
-    public static String detectEncoding(final InputStream in, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3) {
+    public static String detectEncoding(final InputStream inputStream, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3) {
         String detectByteOrderMark = null;
         String trim = null;
         PushbackReader pushbackReader = null;
-        final PushbackInputStream in2 = new PushbackInputStream(in, 4);
+        final PushbackInputStream pushbackInputStreamValue = new PushbackInputStream(inputStream, 4);
         try {
             int n = 1;
-            final StringBuffer sb = new StringBuffer();
-            detectByteOrderMark = detectByteOrderMark(in2, mutableInt, mutableInt2, mutableInt3);
-            ZkmFileUtils.readBytes(in2, mutableInt.getValue());
-            pushbackReader = new PushbackReader(new BufferedReader(new InputStreamReader(in2, detectByteOrderMark)), 7);
+            final StringBuffer stringBufferValue = new StringBuffer();
+            detectByteOrderMark = detectByteOrderMark(pushbackInputStreamValue, mutableInt, mutableInt2, mutableInt3);
+            ZkmFileUtils.readBytes(pushbackInputStreamValue, mutableInt.getValue());
+            pushbackReader = new PushbackReader(new BufferedReader(new InputStreamReader(pushbackInputStreamValue, detectByteOrderMark)), 7);
             int read;
             while ((read = pushbackReader.read()) != -1) {
-                final char c = (char) read;
-                if (c != ' ' && c != '\t' && c != '\n') {
-                    if (c == '\r') {
+                final char readValue = (char) read;
+                if (readValue != ' ' && readValue != '\t' && readValue != '\n') {
+                    if (readValue == '\r') {
                         continue;
                     }
                     if (n != 0) {
                         n = 0;
                         final int read2;
-                        if (c == '<' && (read2 = pushbackReader.read()) != -1 && (char) read2 == '?') {
+                        if (readValue == '<' && (read2 = pushbackReader.read()) != -1 && (char) read2 == '?') {
                             continue;
                         }
                         break;
-                    } else if (c == '?') {
+                    } else if (readValue == '?') {
                         final int read3;
                         if ((read3 = pushbackReader.read()) != -1) {
-                            final char c2 = (char) read3;
-                            if (c2 == '>') {
+                            final char read3Value = (char) read3;
+                            if (read3Value == '>') {
                                 break;
                             }
-                            pushbackReader.unread(c2);
-                            sb.append(c);
+                            pushbackReader.unread(read3Value);
+                            stringBufferValue.append(readValue);
                         } else {
-                            sb.append(c);
+                            stringBufferValue.append(readValue);
                         }
                     } else {
-                        sb.append(c);
+                        stringBufferValue.append(readValue);
                     }
                 }
             }
-            final String string = sb.toString();
+            final String string = stringBufferValue.toString();
             final int index = string.indexOf("encoding=\"");
             if (index > -1) {
                 final int n2 = index + "encoding=\"".length();
@@ -1077,19 +1076,19 @@ public class XmlResourceProcessor {
             }
             try {
                 pushbackReader.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
-        } catch (final IOException ex2) {
+        } catch (final IOException ioExceptionValue) {
         } finally {
             if (pushbackReader != null) {
                 try {
                     pushbackReader.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
-            } else if (in != null) {
+            } else if (inputStream != null) {
                 try {
-                    in.close();
-                } catch (final IOException ex4) {
+                    inputStream.close();
+                } catch (final IOException ioExceptionValue3) {
                 }
             }
         }

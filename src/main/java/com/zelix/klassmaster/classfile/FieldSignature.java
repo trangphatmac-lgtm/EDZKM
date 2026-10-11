@@ -8,12 +8,12 @@ public class FieldSignature {
     private final int hash;
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof FieldSignature)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof FieldSignature)) {
             return false;
         }
 
-        FieldSignature fieldSignature1 = (FieldSignature) object;
+        FieldSignature fieldSignature1 = (FieldSignature) other;
         return this.hash == fieldSignature1.hash && this.name.equals(fieldSignature1.name) && this.descriptor.equals(fieldSignature1.descriptor);
     }
 
@@ -21,10 +21,10 @@ public class FieldSignature {
         return this.name;
     }
 
-    public FieldSignature(String string, String string1) {
-        this.name = string;
-        this.descriptor = string1;
-        this.hash = string.hashCode() ^ string1.hashCode();
+    public FieldSignature(String nameArgument, String descriptorArgument) {
+        this.name = nameArgument;
+        this.descriptor = descriptorArgument;
+        this.hash = nameArgument.hashCode() ^ descriptorArgument.hashCode();
     }
 
     @Override
@@ -45,9 +45,9 @@ public class FieldSignature {
         return MethodSignature.descriptorToJavaType(this.descriptor, map1) + " " + this.name;
     }
 
-    private FieldSignature(String string, String string1, int hash) {
-        this.name = string;
-        this.descriptor = string1;
+    private FieldSignature(String nameArgument, String descriptorArgument, int hash) {
+        this.name = nameArgument;
+        this.descriptor = descriptorArgument;
         this.hash = hash;
     }
 

@@ -28,12 +28,12 @@ public class SameFrame extends StackMapTableFrame {
         super(classFileComponent);
         this.frameType = frameType;
         IntegerCache integerCache1 = IntegerCache.getInstance();
-        int bb = this.frameType;
+        int offsetValue = this.frameType;
         int value = mutableInt.getValue();
         if (value == -1) {
-            this.offset = bb;
+            this.offset = offsetValue;
         } else {
-            this.offset = value + 1 + bb;
+            this.offset = value + 1 + offsetValue;
         }
 
         mutableInt.setValue(this.offset);

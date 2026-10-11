@@ -78,12 +78,12 @@ public class HelpViewerDialog extends EscapeClosableFrame implements ActionListe
     }
 
     public void updateNavigationButtons() {
-        int ba = this.history.size();
-        if (ba <= 1) {
+        int historySize = this.history.size();
+        if (historySize <= 1) {
             this.backBtn.setEnabled(false);
             this.forwardBtn.setEnabled(false);
         } else {
-            if (this.historyOffset < ba - 1) {
+            if (this.historyOffset < historySize - 1) {
                 this.backBtn.setEnabled(true);
             } else {
                 this.backBtn.setEnabled(false);
@@ -217,9 +217,9 @@ public class HelpViewerDialog extends EscapeClosableFrame implements ActionListe
     }
 
     public void goBack() {
-        int ba = this.history.size();
-        if (this.historyOffset < ba) {
-            URL uRL = (URL) this.history.get(ba - 2 - this.historyOffset);
+        int historySize = this.history.size();
+        if (this.historyOffset < historySize) {
+            URL uRL = (URL) this.history.get(historySize - 2 - this.historyOffset);
 
             try {
                 this.editorPane.setPage(uRL);
@@ -239,9 +239,9 @@ public class HelpViewerDialog extends EscapeClosableFrame implements ActionListe
             try {
                 uRL = hyperlinkEvent.getURL();
                 if (IS_IBM_JVM) {
-                    long ba = System.currentTimeMillis();
-                    long bb = ba - this.lastLinkClickTime;
-                    this.lastLinkClickTime = ba;
+                    long lastLinkClickTimeValue = System.currentTimeMillis();
+                    long bb = lastLinkClickTimeValue - this.lastLinkClickTime;
+                    this.lastLinkClickTime = lastLinkClickTimeValue;
                     if (bb < 500L) {
                         return;
                     }
@@ -251,7 +251,7 @@ public class HelpViewerDialog extends EscapeClosableFrame implements ActionListe
                 int bc = 0;
                 int bd = 0;
 
-                for (int i = this.historyOffset; bd < i; i = this.historyOffset) {
+                for (int historyOffsetValue = this.historyOffset; bd < historyOffsetValue; historyOffsetValue = this.historyOffset) {
                     this.history.removeElementAt(this.history.size() - 1);
                     bd = ++bc;
                 }
@@ -266,9 +266,9 @@ public class HelpViewerDialog extends EscapeClosableFrame implements ActionListe
     }
 
     public void goForward() {
-        int ba = this.history.size();
+        int historySize = this.history.size();
         if (this.historyOffset > 0) {
-            URL uRL = (URL) this.history.get(ba - this.historyOffset);
+            URL uRL = (URL) this.history.get(historySize - this.historyOffset);
 
             try {
                 this.editorPane.setPage(uRL);

@@ -49,16 +49,16 @@ public class ZkmClasspath extends ChangeObservable {
     public String classpath;
     public Integer releaseVersion;
 
-    public static FileSystem openJrtFileSystem(String string) {
+    public static FileSystem openJrtFileSystem(String value) {
         FileSystem fileSystem = null;
 
         try {
             if (JavaRuntimeVersion.isRuntimeAtLeastJava9()) {
                 HashMap hashMap = ZkmUtils.createHashMap(13);
-                hashMap.put("java.home", string);
+                hashMap.put("java.home", value);
                 fileSystem = FileSystems.newFileSystem(URI.create("jrt:/"), hashMap);
             } else {
-                URL uRL = Paths.get(string, "lib", "jrt-fs.jar").toUri().toURL();
+                URL uRL = Paths.get(value, "lib", "jrt-fs.jar").toUri().toURL();
                 URLClassLoader uRLClassLoader = new URLClassLoader(new URL[]{uRL});
                 fileSystem = FileSystems.newFileSystem(URI.create("jrt:/"), Collections.emptyMap(), uRLClassLoader);
             }
@@ -103,11 +103,11 @@ public class ZkmClasspath extends ChangeObservable {
         StringTokenizer stringTokenizer = new StringTokenizer(string, SystemEnvironmentConstants.PATH_SEPARATOR_String);
 
         while (stringTokenizer.hasMoreTokens()) {
-            String string1 = stringTokenizer.nextToken();
-            stringBuilder.append(string1);
-            if (TempFileManager.isZkmTempFilePath(string1)) {
+            String key = stringTokenizer.nextToken();
+            stringBuilder.append(key);
+            if (TempFileManager.isZkmTempFilePath(key)) {
                 stringBuilder.append('(');
-                stringBuilder.append(TempFileManager.getOriginalName(string1));
+                stringBuilder.append(TempFileManager.getOriginalName(key));
                 stringBuilder.append(')');
             }
 
@@ -125,9 +125,9 @@ public class ZkmClasspath extends ChangeObservable {
             return null;
         }
 
-        String string1 = ClassFileBase.getPackagePath(string);
-        if (string1 != null && string1.length() > 0) {
-            Set set1 = this.moduleDirsByPackage.getValues(string1);
+        String packagePath = ClassFileBase.getPackagePath(string);
+        if (packagePath != null && packagePath.length() > 0) {
+            Set set1 = this.moduleDirsByPackage.getValues(packagePath);
             if (set1 == null) {
                 return null;
             }
@@ -178,14 +178,14 @@ public class ZkmClasspath extends ChangeObservable {
     }
 
     public static String findRuntimeLibrary() {
-        String string = null;
+        String absolutePath = null;
         if (SystemEnvironmentConstants.BOOT_CLASS_PATH != null
                 && SystemEnvironmentConstants.BOOT_CLASS_PATH.length() > 0
                 && containsRuntimeClasses(SystemEnvironmentConstants.BOOT_CLASS_PATH)) {
-            string = filterExistingPaths(SystemEnvironmentConstants.BOOT_CLASS_PATH);
+            absolutePath = filterExistingPaths(SystemEnvironmentConstants.BOOT_CLASS_PATH);
         }
 
-        if (string == null && SystemEnvironmentConstants.JAVA_HOME != null && SystemEnvironmentConstants.JAVA_HOME.length() > 0) {
+        if (absolutePath == null && SystemEnvironmentConstants.JAVA_HOME != null && SystemEnvironmentConstants.JAVA_HOME.length() > 0) {
             File file1 = new File(SystemEnvironmentConstants.JAVA_HOME);
             if (file1.exists() && file1.isDirectory()) {
                 String string1 = file1.getAbsolutePath() + SystemEnvironmentConstants.FILE_SEPARATOR + "lib";
@@ -193,35 +193,29 @@ public class ZkmClasspath extends ChangeObservable {
                 if (file2.exists() && file2.isDirectory()) {
                     File file3 = new File(file2, "rt.jar");
                     if (isRuntimeArchive(file3)) {
-                        string = file3.getAbsolutePath();
+                        absolutePath = file3.getAbsolutePath();
                     } else {
                         File file4 = new File(file2, "classes.zip");
                         if (isRuntimeArchive(file4)) {
-                            string = file4.getAbsolutePath();
+                            absolutePath = file4.getAbsolutePath();
                         }
                     }
                 }
             }
         }
 
-        return string;
+        return absolutePath;
     }
 
     public void closeJrtFileSystem() {
         if (this.jrtFileSystem != null) {
-            label19:
             if (this.ownsJrtFileSystem) {
                 try {
                     this.jrtFileSystem.close();
-                } catch (IOException iOException) {
-                    this.jrtFileSystem = null;
-                    break label19;
+                } catch (IOException ignored) {
                 }
-
-                this.jrtFileSystem = null;
-            } else {
-                this.jrtFileSystem = null;
             }
+            this.jrtFileSystem = null;
 
             this.moduleDirsByPackage = null;
             this.jrtAvailable = false;
@@ -260,7 +254,7 @@ public class ZkmClasspath extends ChangeObservable {
     }
 
     public String prependClasspath(String string) throws ZkmException, IOException {
-        String string1 = this.classpath;
+        String classpathValue = this.classpath;
         StringBuilder stringBuilder = new StringBuilder(expandClasspath(string));
         if (stringBuilder.length() > 0 && stringBuilder.charAt(stringBuilder.length() - 1) != SystemEnvironmentConstants.PATH_SEPARATOR_CHAR) {
             stringBuilder.append(SystemEnvironmentConstants.PATH_SEPARATOR_CHAR);
@@ -270,7 +264,7 @@ public class ZkmClasspath extends ChangeObservable {
         this.classpath = stringBuilder.toString();
         this.setChanged();
         this.notifyObservers(this.classpath, null, null);
-        return string1;
+        return classpathValue;
     }
 
     public static boolean isRuntimeArchive(File file1) {
@@ -283,9 +277,9 @@ public class ZkmClasspath extends ChangeObservable {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path)) {
             for (Path path2 : directoryStream) {
                 for (Path path3 : Files.newDirectoryStream(path2)) {
-                    String string = path2.getFileName().toString().replace('.', '/');
+                    String key = path2.getFileName().toString().replace('.', '/');
                     String string2 = "/modules/" + path3.getFileName().toString();
-                    this.moduleDirsByPackage.addValue(string, string2);
+                    this.moduleDirsByPackage.addValue(key, string2);
                 }
             }
         } catch (IOException | DirectoryIteratorException exception) {
@@ -306,12 +300,12 @@ public class ZkmClasspath extends ChangeObservable {
         return this.releaseVersion;
     }
 
-    public String setClasspath(String string) throws ZkmException, IOException {
-        String string1 = this.classpath;
-        this.classpath = expandClasspath(string);
+    public String setClasspath(String classpathArgument) throws ZkmException, IOException {
+        String classpathValue = this.classpath;
+        this.classpath = expandClasspath(classpathArgument);
         this.setChanged();
         this.notifyObservers(this.classpath, null, null);
-        return string1;
+        return classpathValue;
     }
 
     public static boolean hasManifestDerivedPath(Set set1) {
@@ -335,31 +329,31 @@ public class ZkmClasspath extends ChangeObservable {
         List list1 = ClassPathResolver.parseClasspath(string, hashSet, file1, messageReporter1);
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < list1.size(); i++) {
-            Object object = list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            Object object = list1.get(elementIndex);
             boolean bl = false;
             if (object instanceof File) {
-                stringBuilder.append(((File) list1.get(i)).getAbsolutePath());
+                stringBuilder.append(((File) list1.get(elementIndex)).getAbsolutePath());
                 bl = true;
             } else {
-                ArchiveZipFile archiveZipFile = (ArchiveZipFile) list1.get(i);
+                ArchiveZipFile archiveZipFile = (ArchiveZipFile) list1.get(elementIndex);
                 if (!TempFileManager.isZkmTempFilePath(archiveZipFile.getName())) {
                     stringBuilder.append(archiveZipFile.getName());
                     bl = true;
                 }
             }
 
-            if (i + 1 < list1.size() && bl) {
+            if (elementIndex + 1 < list1.size() && bl) {
                 stringBuilder.append(SystemEnvironmentConstants.PATH_SEPARATOR_String);
             }
         }
 
-        for (int i = 0; i < list1.size(); i++) {
-            Object object1 = list1.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+            Object object1 = list1.get(elementIndexValue);
             if (object1 instanceof ArchiveZipFile) {
                 try {
                     com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                    ((ArchiveZipFile) list1.get(i)).close();
+                    ((ArchiveZipFile) list1.get(elementIndexValue)).close();
                 } catch (IOException iOException) {
                 }
             }
@@ -376,7 +370,7 @@ public class ZkmClasspath extends ChangeObservable {
 
     public static String describeInvalidPaths(Set set1) {
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = set1.size();
+        int set1Size = set1.size();
         int bb = 0;
 
         for (Iterator iterator = set1.iterator(); iterator.hasNext(); bb++) {
@@ -384,9 +378,9 @@ public class ZkmClasspath extends ChangeObservable {
             stringBuilder.append("\"");
             stringBuilder.append(string);
             stringBuilder.append("\"");
-            if (bb + 2 < ba) {
+            if (bb + 2 < set1Size) {
                 stringBuilder.append(", ");
-            } else if (bb + 1 < ba) {
+            } else if (bb + 1 < set1Size) {
                 stringBuilder.append(" and ");
             }
         }
@@ -437,25 +431,25 @@ public class ZkmClasspath extends ChangeObservable {
         }
 
         if (!bl && JavaRuntimeVersion.isRuntimeAtLeastJava8()) {
-            String string = this.findJavaHome();
-            if (string != null) {
-                this.jrtFileSystem = openJrtFileSystem(string);
+            String valueValue = this.findJavaHome();
+            if (valueValue != null) {
+                this.jrtFileSystem = openJrtFileSystem(valueValue);
                 if (this.jrtFileSystem != null) {
                     bl = this.indexJrtPackages();
                     this.jrtAvailable = bl;
                     this.ownsJrtFileSystem = true;
                     if (this.jrtAvailable) {
-                        observableHolder.setValue(string + SystemEnvironmentConstants.FILE_SEPARATOR + JRT_FS_JAR_PATH);
+                        observableHolder.setValue(valueValue + SystemEnvironmentConstants.FILE_SEPARATOR + JRT_FS_JAR_PATH);
                     }
                 }
             }
         }
 
         if (!bl) {
-            String string1 = findRuntimeLibrary();
-            if (string1 != null) {
-                this.appendClasspath(string1);
-                observableHolder1.setValue(string1);
+            String value = findRuntimeLibrary();
+            if (value != null) {
+                this.appendClasspath(value);
+                observableHolder1.setValue(value);
                 bl = true;
             }
         }
@@ -477,23 +471,23 @@ public class ZkmClasspath extends ChangeObservable {
     }
 
     public String findJavaHome() {
-        String string = null;
-        String string1 = JRT_FS_JAR_PATH;
+        String absolutePath = null;
+        String jrtFsJarPath = JRT_FS_JAR_PATH;
 
         for (String string2 : this.classpath.split(SystemEnvironmentConstants.PATH_SEPARATOR_String)) {
-            if (ZkmFileUtils.caseSensitiveFileSystem ? string2.endsWith(string1) : string2.toLowerCase().endsWith(string1)) {
+            if (ZkmFileUtils.caseSensitiveFileSystem ? string2.endsWith(jrtFsJarPath) : string2.toLowerCase().endsWith(jrtFsJarPath)) {
                 File file1 = new File(string2);
                 if (file1.exists() && !file1.isDirectory()) {
                     File file2 = file1.getParentFile().getParentFile();
                     if (file2 != null) {
-                        string = file2.getAbsolutePath();
+                        absolutePath = file2.getAbsolutePath();
                         break;
                     }
                 }
             }
         }
 
-        return string;
+        return absolutePath;
     }
 
     public static boolean isRuntimeArchivePath(String string) {
@@ -504,46 +498,31 @@ public class ZkmClasspath extends ChangeObservable {
         List list1 = ClassPathResolver.parseClasspath(string, set1);
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < list1.size(); i++) {
-            Object object = list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            Object object = list1.get(elementIndex);
             boolean bl = false;
             if (object instanceof File) {
-                stringBuilder.append(((File) list1.get(i)).getAbsolutePath());
+                stringBuilder.append(((File) list1.get(elementIndex)).getAbsolutePath());
                 bl = true;
             } else {
-                label43:
-                {
-                    ArchiveZipFile archiveZipFile = (ArchiveZipFile) list1.get(i);
-                    StringBuilder stringBuilder1;
-                    String string1;
-                    if (!HiddenOptionFlags.ALLOW_TEMP_FILES_IN_CLASSPATH) {
-                        if (TempFileManager.isZkmTempFilePath(archiveZipFile.getName())) {
-                            break label43;
-                        }
-
-                        stringBuilder1 = stringBuilder;
-                        string1 = archiveZipFile.getName();
-                    } else {
-                        stringBuilder1 = stringBuilder;
-                        string1 = archiveZipFile.getName();
-                    }
-
-                    stringBuilder1.append(string1);
+                ArchiveZipFile archive = (ArchiveZipFile) list1.get(elementIndex);
+                if (HiddenOptionFlags.ALLOW_TEMP_FILES_IN_CLASSPATH || !TempFileManager.isZkmTempFilePath(archive.getName())) {
+                    stringBuilder.append(archive.getName());
                     bl = true;
                 }
             }
 
-            if (i + 1 < list1.size() && bl) {
+            if (elementIndex + 1 < list1.size() && bl) {
                 stringBuilder.append(SystemEnvironmentConstants.PATH_SEPARATOR_CHAR);
             }
         }
 
-        for (int i = 0; i < list1.size(); i++) {
-            Object object1 = list1.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+            Object object1 = list1.get(elementIndexValue);
             if (object1 instanceof ArchiveZipFile) {
                 try {
                     com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                    ((ArchiveZipFile) list1.get(i)).close();
+                    ((ArchiveZipFile) list1.get(elementIndexValue)).close();
                 } catch (IOException iOException) {
                 }
             }
@@ -562,7 +541,7 @@ public class ZkmClasspath extends ChangeObservable {
     }
 
     public String appendClasspath(String string) throws ZkmException, IOException {
-        String string1 = this.classpath;
+        String classpathValue = this.classpath;
         StringBuilder stringBuilder = new StringBuilder(this.classpath);
         if (stringBuilder.length() > 0 && stringBuilder.charAt(stringBuilder.length() - 1) != SystemEnvironmentConstants.PATH_SEPARATOR_CHAR) {
             stringBuilder.append(SystemEnvironmentConstants.PATH_SEPARATOR_CHAR);
@@ -572,6 +551,6 @@ public class ZkmClasspath extends ChangeObservable {
         this.classpath = stringBuilder.toString();
         this.setChanged();
         this.notifyObservers(this.classpath, null, null);
-        return string1;
+        return classpathValue;
     }
 }

@@ -12,8 +12,8 @@ public class ZkmScriptASTMemberModifier extends ZkmScriptSimpleNode {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object1;
         ASTMemberModifierHelper aSTMemberModifierHelper = (ASTMemberModifierHelper) this.jjtGetChild(0);
         aSTMemberModifierHelper.execute(this, scriptEnvironment1);
-        String string = aSTMemberModifierHelper.getValue();
-        ((ASTRenameFilterParameter) object).addMemberModifier(string);
+        String value = aSTMemberModifierHelper.getValue();
+        ((ASTRenameFilterParameter) object).addMemberModifier(value);
     }
 
     public ZkmScriptASTMemberModifier() {

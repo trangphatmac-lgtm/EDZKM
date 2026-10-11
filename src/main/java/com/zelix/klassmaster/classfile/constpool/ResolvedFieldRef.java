@@ -37,7 +37,7 @@ public class ResolvedFieldRef extends ResolvedMemberRef {
                 classMemberLookup1, classResolver1, observableHolder, observableHolder1, observableHolder2, ignoreMissingReferencesSpec1
         );
         ClassFileBase classFileBase = (ClassFileBase) observableHolder1.getValue();
-        String string = (String) observableHolder.getValue();
+        String value = (String) observableHolder.getValue();
         Set set1 = (Set) observableHolder2.getValue();
         if (set1 != null && this.resolvedMember != null) {
             Iterator iterator = set1.iterator();
@@ -67,24 +67,24 @@ public class ResolvedFieldRef extends ResolvedMemberRef {
     ) throws ZkmException, IOException {
         AbstractFieldInfo abstractFieldInfo = null;
         FieldSignature fieldSignature = new FieldSignature(this.getMemberName(), this.getDescriptor());
-        String string = this.getReferencedClassName();
-        String string1 = string;
+        String referencedClassName = this.getReferencedClassName();
+        String superclassName = referencedClassName;
         ClassFileBase classFileBase = null;
         HashSet hashSet = null;
-        if (string1.startsWith("[")) {
-            string1 = "java/lang/Object";
+        if (superclassName.startsWith("[")) {
+            superclassName = "java/lang/Object";
         }
 
         String string2 = "looking for field '"
                 + fieldSignature.formatDeclaration((Map) null)
                 + "' in class '"
-                + ZkmUtils.slashesToDots(string)
+                + ZkmUtils.slashesToDots(referencedClassName)
                 + "' which is referenced in class '"
                 + this.getOwnerFilePath()
                 + "'";
         ClassFileBase classFileBase1 = this.constantPool.getClassFile();
         Integer integer = classFileBase1.hasReleaseVersion() ? classFileBase1.getReleaseVersion() : null;
-        ClassFileBase classFileBase2 = classResolver1.getVersionedClass(string1, integer, string2, ignoreMissingReferencesSpec1);
+        ClassFileBase classFileBase2 = classResolver1.getVersionedClass(superclassName, integer, string2, ignoreMissingReferencesSpec1);
 
         while (abstractFieldInfo == null && classFileBase2 != null) {
             abstractFieldInfo = this.findFieldInClass(classFileBase2, fieldSignature, classMemberLookup1);
@@ -105,24 +105,24 @@ public class ResolvedFieldRef extends ResolvedMemberRef {
                 break;
             }
 
-            string1 = classFileBase2.getSuperclassName();
-            if (string1 == null) {
+            superclassName = classFileBase2.getSuperclassName();
+            if (superclassName == null) {
                 break;
             }
 
             Integer integer1 = classFileBase2.hasReleaseVersion() ? classFileBase2.getReleaseVersion() : integer;
-            classFileBase2 = classResolver1.getVersionedClass(string1, integer1, string2, ignoreMissingReferencesSpec1);
+            classFileBase2 = classResolver1.getVersionedClass(superclassName, integer1, string2, ignoreMissingReferencesSpec1);
         }
 
-        observableHolder.setValue(string1);
+        observableHolder.setValue(superclassName);
         observableHolder1.setValue(classFileBase);
         observableHolder2.setValue(hashSet);
         return abstractFieldInfo;
     }
 
     public String getStackFieldType() {
-        String string = this.nameAndType.getDescriptor();
-        return !string.equals("B") && !string.equals("C") && !string.equals("S") && !string.equals("Z") ? string : "I";
+        String descriptor = this.nameAndType.getDescriptor();
+        return !descriptor.equals("B") && !descriptor.equals("C") && !descriptor.equals("S") && !descriptor.equals("Z") ? descriptor : "I";
     }
 
     @Override
@@ -131,8 +131,8 @@ public class ResolvedFieldRef extends ResolvedMemberRef {
     }
 
     public ProgramClass getFieldTypeProgramClass() {
-        String string = ClassFileBase.extractClassName(this.getDescriptor());
-        return string != null ? ClassHierarchyNode.findProgramClass(string) : null;
+        String key = ClassFileBase.extractClassName(this.getDescriptor());
+        return key != null ? ClassHierarchyNode.findProgramClass(key) : null;
     }
 
     public ResolvedFieldRef(
@@ -165,11 +165,11 @@ public class ResolvedFieldRef extends ResolvedMemberRef {
             String string,
             IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1
     ) throws ZkmException, IOException {
-        String[] strings = classFileBase.getInterfaceNames();
+        String[] interfaceNames = classFileBase.getInterfaceNames();
         Integer integer1 = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : integer;
 
-        for (int i = 0; i < strings.length; i++) {
-            ClassFileBase classFileBase1 = classResolver1.getVersionedClass(strings[i], integer1, string, ignoreMissingReferencesSpec1);
+        for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+            ClassFileBase classFileBase1 = classResolver1.getVersionedClass(interfaceNames[interfaceNameIndex], integer1, string, ignoreMissingReferencesSpec1);
             if (classFileBase1 != null) {
                 AbstractFieldInfo abstractFieldInfo = this.findFieldInClass(classFileBase1, fieldSignature, classMemberLookup1);
                 if (abstractFieldInfo != null) {

@@ -19,34 +19,34 @@ public class ListenerRegistry {
         this(false);
     }
 
-    public NodeVisitor removeObserver(ObservableModel observableModel1, NodeVisitor nodeVisitor, Object object) {
+    public NodeVisitor removeObserver(ObservableModel observableModel1, NodeVisitor nodeVisitor, Object key) {
         observableModel1.removeObserver(nodeVisitor);
-        return (NodeVisitor) this.observersByKey.removeValue(object, observableModel1);
+        return (NodeVisitor) this.observersByKey.removeValue(key, observableModel1);
     }
 
-    public void removeObserversForKey(Object object) {
-        Map map1 = this.observersByKey.getInnerMap(object);
+    public void removeObserversForKey(Object key) {
+        Map map1 = this.observersByKey.getInnerMap(key);
         if (map1 != null) {
             Iterator iterator = ZkmUtils.createHashSetFrom(map1.keySet()).iterator();
 
             while (iterator.hasNext()) {
                 ObservableModel observableModel1 = (ObservableModel) iterator.next();
                 NodeVisitor nodeVisitor = (NodeVisitor) map1.get(observableModel1);
-                this.removeObserver(observableModel1, nodeVisitor, object);
+                this.removeObserver(observableModel1, nodeVisitor, key);
             }
         }
     }
 
-    public ListenerRegistry(boolean bl) {
-        this.observersByKey = new TwoKeyMap(bl);
+    public ListenerRegistry(boolean concurrent) {
+        this.observersByKey = new TwoKeyMap(concurrent);
     }
 
     public void addDefaultObserver(VisitableNode visitableNode, NodeVisitor nodeVisitor) {
         this.addObserver(visitableNode, nodeVisitor, DEFAULT_KEY);
     }
 
-    public void addObserver(ObservableModel observableModel1, NodeVisitor nodeVisitor, Object object) {
+    public void addObserver(ObservableModel observableModel1, NodeVisitor nodeVisitor, Object key) {
         observableModel1.addObserver(nodeVisitor);
-        this.observersByKey.putValue(object, observableModel1, nodeVisitor);
+        this.observersByKey.putValue(key, observableModel1, nodeVisitor);
     }
 }

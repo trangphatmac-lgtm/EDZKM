@@ -26,29 +26,29 @@ public class ProGuardMappingSimpleCharStream {
     }
 
     public static void ExpandBuff(boolean bl) {
-        char[] ba = new char[bufsize + 2048];
-        int[] bb = new int[bufsize + 2048];
-        int[] bc = new int[bufsize + 2048];
+        char[] bufferValue = new char[bufsize + 2048];
+        int[] buflineValue = new int[bufsize + 2048];
+        int[] bufcolumnValue = new int[bufsize + 2048];
 
         try {
             if (bl) {
-                System.arraycopy(buffer, tokenBegin, ba, 0, bufsize - tokenBegin);
-                System.arraycopy(buffer, 0, ba, bufsize - tokenBegin, bufpos);
-                buffer = ba;
-                System.arraycopy(bufline, tokenBegin, bb, 0, bufsize - tokenBegin);
-                System.arraycopy(bufline, 0, bb, bufsize - tokenBegin, bufpos);
-                bufline = bb;
-                System.arraycopy(bufcolumn, tokenBegin, bc, 0, bufsize - tokenBegin);
-                System.arraycopy(bufcolumn, 0, bc, bufsize - tokenBegin, bufpos);
-                bufcolumn = bc;
+                System.arraycopy(buffer, tokenBegin, bufferValue, 0, bufsize - tokenBegin);
+                System.arraycopy(buffer, 0, bufferValue, bufsize - tokenBegin, bufpos);
+                buffer = bufferValue;
+                System.arraycopy(bufline, tokenBegin, buflineValue, 0, bufsize - tokenBegin);
+                System.arraycopy(bufline, 0, buflineValue, bufsize - tokenBegin, bufpos);
+                bufline = buflineValue;
+                System.arraycopy(bufcolumn, tokenBegin, bufcolumnValue, 0, bufsize - tokenBegin);
+                System.arraycopy(bufcolumn, 0, bufcolumnValue, bufsize - tokenBegin, bufpos);
+                bufcolumn = bufcolumnValue;
                 maxNextCharInd = bufpos = bufpos + (bufsize - tokenBegin);
             } else {
-                System.arraycopy(buffer, tokenBegin, ba, 0, bufsize - tokenBegin);
-                buffer = ba;
-                System.arraycopy(bufline, tokenBegin, bb, 0, bufsize - tokenBegin);
-                bufline = bb;
-                System.arraycopy(bufcolumn, tokenBegin, bc, 0, bufsize - tokenBegin);
-                bufcolumn = bc;
+                System.arraycopy(buffer, tokenBegin, bufferValue, 0, bufsize - tokenBegin);
+                buffer = bufferValue;
+                System.arraycopy(bufline, tokenBegin, buflineValue, 0, bufsize - tokenBegin);
+                bufline = buflineValue;
+                System.arraycopy(bufcolumn, tokenBegin, bufcolumnValue, 0, bufsize - tokenBegin);
+                bufcolumn = bufcolumnValue;
                 maxNextCharInd = bufpos = bufpos - tokenBegin;
             }
         } catch (Throwable throwable) {
@@ -73,17 +73,17 @@ public class ProGuardMappingSimpleCharStream {
 
             return buffer[bufpos];
         } else {
-            char[] bb;
+            char[] bufferValue;
             if (++bufpos >= maxNextCharInd) {
                 FillBuff();
-                bb = buffer;
+                bufferValue = buffer;
             } else {
-                bb = buffer;
+                bufferValue = buffer;
             }
 
-            char ba = bb[bufpos];
-            UpdateLineColumn(ba);
-            return ba;
+            char bufferElement = bufferValue[bufpos];
+            UpdateLineColumn(bufferElement);
+            return bufferElement;
         }
     }
 
@@ -91,16 +91,16 @@ public class ProGuardMappingSimpleCharStream {
         this.ReInit_v2(reader1);
     }
 
-    public static char[] GetSuffix(int ba) {
-        char[] bb = new char[ba];
-        if (bufpos + 1 >= ba) {
-            System.arraycopy(buffer, bufpos - ba + 1, bb, 0, ba);
+    public static char[] GetSuffix(int copyLength) {
+        char[] destinationArray = new char[copyLength];
+        if (bufpos + 1 >= copyLength) {
+            System.arraycopy(buffer, bufpos - copyLength + 1, destinationArray, 0, copyLength);
         } else {
-            System.arraycopy(buffer, bufsize - (ba - bufpos - 1), bb, 0, ba - bufpos - 1);
-            System.arraycopy(buffer, 0, bb, ba - bufpos - 1, bufpos + 1);
+            System.arraycopy(buffer, bufsize - (copyLength - bufpos - 1), destinationArray, 0, copyLength - bufpos - 1);
+            System.arraycopy(buffer, 0, destinationArray, copyLength - bufpos - 1, bufpos + 1);
         }
 
-        return bb;
+        return destinationArray;
     }
 
     public static int getEndColumn() {
@@ -114,32 +114,19 @@ public class ProGuardMappingSimpleCharStream {
         return ba;
     }
 
-    public void ReInit_v2(Reader reader1) {
-        int ba;
-        label16:
-        {
-            inputStream = reader1;
-            line = 1;
-            column = 1 - 1;
-            if (buffer != null) {
-                if (4096 == buffer.length) {
-                    ba = ((prevCharIsCR = false) ? 1 : 0);
-                    break label16;
-                }
-
-                ba = bufsize = 4096;
-            } else {
-                ba = bufsize = 4096;
-            }
-
-            available = ba;
+    public void ReInit_v2(Reader reader) {
+        inputStream = reader;
+        line = 1;
+        column = 0;
+        if (buffer == null || buffer.length != 4096) {
+            bufsize = 4096;
+            available = bufsize;
             buffer = new char[4096];
             bufline = new int[4096];
             bufcolumn = new int[4096];
-            ba = ((prevCharIsCR = false) ? 1 : 0);
         }
-
-        prevCharIsLF = ba != 0;
+        prevCharIsCR = false;
+        prevCharIsLF = false;
         maxNextCharInd = 0;
         inBuf = 0;
         tokenBegin = 0;
@@ -227,42 +214,42 @@ public class ProGuardMappingSimpleCharStream {
         column++;
         if (prevCharIsLF) {
             prevCharIsLF = false;
-            int bd = line;
+            int lineValue = line;
             column = 1;
-            line = bd + 1;
+            line = lineValue + 1;
         } else if (prevCharIsCR) {
             prevCharIsCR = false;
             if (ba == 10) {
                 prevCharIsLF = true;
             } else {
-                int bb = line;
+                int lineValue2 = line;
                 column = 1;
-                line = bb + 1;
+                line = lineValue2 + 1;
             }
         }
 
-        int[] bc;
+        int[] buflineValue;
         switch (ba) {
             case 9:
                 column--;
                 column = column + (tabSize - column % tabSize);
-                bc = bufline;
+                buflineValue = bufline;
                 break;
             case 10:
                 prevCharIsLF = true;
-                bc = bufline;
+                buflineValue = bufline;
                 break;
             case 11:
             case 12:
             default:
-                bc = bufline;
+                buflineValue = bufline;
                 break;
             case 13:
                 prevCharIsCR = true;
-                bc = bufline;
+                buflineValue = bufline;
         }
 
-        bc[bufpos] = line;
+        buflineValue[bufpos] = line;
         bufcolumn[bufpos] = column;
     }
 }

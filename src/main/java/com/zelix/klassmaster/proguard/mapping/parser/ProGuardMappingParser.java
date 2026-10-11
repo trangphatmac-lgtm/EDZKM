@@ -136,36 +136,36 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
 
     public static ProGuardMappingParseException generateParseException() {
         jj_expentries.clear();
-        boolean[] bl = new boolean[31];
+        boolean[] booleanArray = new boolean[31];
         if (jj_kind >= 0) {
-            bl[jj_kind] = true;
+            booleanArray[jj_kind] = true;
             jj_kind = -1;
         }
 
         int ba = 0;
-        int bg = ba;
+        int booleanArrayElementIndexValue = ba;
 
-        for (byte bh = 15; bg < bh; bh = 15) {
+        for (byte bh = 15; booleanArrayElementIndexValue < bh; bh = 15) {
             if (jj_la1[ba] == jj_gen) {
-                int bb = 0;
-                bg = bb;
+                int booleanArrayElementIndex = 0;
+                booleanArrayElementIndexValue = booleanArrayElementIndex;
 
-                for (byte bf = 32; bg < bf; bf = 32) {
-                    if ((jj_la1_0[ba] & 1 << bb) != 0) {
-                        bl[bb] = true;
+                for (byte bf = 32; booleanArrayElementIndexValue < bf; bf = 32) {
+                    if ((jj_la1_0[ba] & 1 << booleanArrayElementIndex) != 0) {
+                        booleanArray[booleanArrayElementIndex] = true;
                     }
 
-                    bg = ++bb;
+                    booleanArrayElementIndexValue = ++booleanArrayElementIndex;
                 }
             }
 
-            bg = ++ba;
+            booleanArrayElementIndexValue = ++ba;
         }
 
-        for (int i = 0; i < 31; i++) {
-            if (bl[i]) {
+        for (int jj_expentryElement = 0; jj_expentryElement < 31; jj_expentryElement++) {
+            if (booleanArray[jj_expentryElement]) {
                 jj_expentry = new int[1];
-                jj_expentry[0] = i;
+                jj_expentry[0] = jj_expentryElement;
                 jj_expentries.add(jj_expentry);
             }
         }
@@ -173,16 +173,16 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         jj_endpos = 0;
         jj_rescan_token();
         jj_add_error_token(0, 0);
-        int[][] bd = new int[jj_expentries.size()][];
-        int be = 0;
-        bg = 0;
+        int[][] expectedTokenSequences = new int[jj_expentries.size()][];
+        int elementIndex = 0;
+        booleanArrayElementIndexValue = 0;
 
-        for (List list1 = jj_expentries; bg < list1.size(); list1 = jj_expentries) {
-            bd[be] = (int[]) jj_expentries.get(be);
-            bg = ++be;
+        for (List list1 = jj_expentries; booleanArrayElementIndexValue < list1.size(); list1 = jj_expentries) {
+            expectedTokenSequences[elementIndex] = (int[]) jj_expentries.get(elementIndex);
+            booleanArrayElementIndexValue = ++elementIndex;
         }
 
-        return new ProGuardMappingParseException(token, bd, ProGuardMappingConstants.TOKEN_IMAGE);
+        return new ProGuardMappingParseException(token, expectedTokenSequences, ProGuardMappingConstants.TOKEN_IMAGE);
     }
 
     public static final void ClassNameChange() throws ProGuardMappingParseException {
@@ -218,17 +218,17 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
     public static void jj_rescan_token() {
         jj_rescan = true;
 
-        for (int i = 0; i < 2; i++) {
+        for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < 2; jj_2_rtnIndex++) {
             try {
-                ProGuardMappingParserJJCalls proGuardMappingParserJJCalls = jj_2_rtns[i];
-                int bb = proGuardMappingParserJJCalls.gen;
+                ProGuardMappingParserJJCalls proGuardMappingParserJJCalls = jj_2_rtns[jj_2_rtnIndex];
+                int genValue = proGuardMappingParserJJCalls.gen;
 
                 while (true) {
                     ProGuardMappingParserJJCalls proGuardMappingParserJJCalls1;
-                    if (bb > jj_gen) {
+                    if (genValue > jj_gen) {
                         jj_la = proGuardMappingParserJJCalls.arg;
                         jj_lastpos = jj_scanpos = proGuardMappingParserJJCalls.first;
-                        switch (i) {
+                        switch (jj_2_rtnIndex) {
                             case 0:
                                 jj_3R_1();
                                 proGuardMappingParserJJCalls1 = proGuardMappingParserJJCalls.next;
@@ -249,7 +249,7 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
                         break;
                     }
 
-                    bb = proGuardMappingParserJJCalls.gen;
+                    genValue = proGuardMappingParserJJCalls.gen;
                 }
             } catch (ProGuardMappingParserLookaheadSuccess proGuardMappingParserLookaheadSuccess) {
             }
@@ -262,7 +262,7 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         if (jj_3R_6()) {
             return true;
         } else {
-            return jj_3R_2() ? true : jj_scan_token(LPAREN);
+            return ((jj_3R_2()) || (jj_scan_token(LPAREN)));
         }
     }
 
@@ -299,53 +299,42 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
     }
 
     public static boolean jj_3R_7() {
-        return jj_scan_token(LBRACKET) ? true : jj_scan_token(RBRACKET);
+        return ((jj_scan_token(LBRACKET)) || (jj_scan_token(RBRACKET)));
     }
 
     public static boolean jj_3R_8() {
         return jj_scan_token(NAME);
     }
 
-    public static void jj_add_error_token(int ba, int bb) {
-        if (bb < 100) {
-            if (bb == jj_endpos + 1) {
-                jj_lasttokens[jj_endpos++] = ba;
+    public static void jj_add_error_token(int tokenKind, int endPosition) {
+        if (endPosition < 100) {
+            if (endPosition == jj_endpos + 1) {
+                jj_lasttokens[jj_endpos++] = tokenKind;
             } else if (jj_endpos != 0) {
                 jj_expentry = new int[jj_endpos];
-                int bc = 0;
-                int bh = bc;
+                int tokenIndex = 0;
+                int copyCursor = tokenIndex;
 
-                for (int i = jj_endpos; bh < i; i = jj_endpos) {
-                    jj_expentry[bc] = jj_lasttokens[bc];
-                    bh = ++bc;
+                for (int jj_endposValue = jj_endpos; copyCursor < jj_endposValue; jj_endposValue = jj_endpos) {
+                    jj_expentry[tokenIndex] = jj_lasttokens[tokenIndex];
+                    copyCursor = ++tokenIndex;
                 }
 
-                Iterator iterator = jj_expentries.iterator();
+                Iterator expectedSequences = jj_expentries.iterator();
 
-                label45:
-                while (iterator.hasNext()) {
-                    int[] bd = (int[]) iterator.next();
-                    if (bd.length == jj_expentry.length) {
-                        int be = 0;
-                        bh = be;
-
-                        for (int[] bg = jj_expentry; bh < bg.length; bg = jj_expentry) {
-                            if (bd[be] != jj_expentry[be]) {
-                                continue label45;
-                            }
-
-                            bh = ++be;
-                        }
-
+                while (expectedSequences.hasNext()) {
+                    int[] expectedTokens = (int[]) expectedSequences.next();
+                    if (expectedTokens.length == jj_expentry.length
+                            && java.util.Arrays.equals(expectedTokens, jj_expentry)) {
                         jj_expentries.add(jj_expentry);
                         break;
                     }
                 }
 
-                if (bb != 0) {
-                    int[] bf = jj_lasttokens;
-                    jj_endpos = bb;
-                    bf[bb - 1] = ba;
+                if (endPosition != 0) {
+                    int[] lastTokens = jj_lasttokens;
+                    jj_endpos = endPosition;
+                    lastTokens[endPosition - 1] = tokenKind;
                 }
             }
         }
@@ -400,36 +389,18 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         try {
             ProGuardMappingParser.Type();
             ProGuardMappingToken proGuardMappingToken = nextToken;
-            block10:
-            while (true) {
-                switch (proGuardMappingToken.m) {
-                    case 20: {
-                        break;
-                    }
-                    default: {
-                        ProGuardMappingParser.jj_la1[11] = jj_gen;
-                        break block10;
-                    }
-                }
+            while (proGuardMappingToken.m == DOT) {
                 ProGuardMappingParser.jj_consume_token(20);
                 ProGuardMappingParser.Type();
                 proGuardMappingToken = nextToken;
             }
+            ProGuardMappingParser.jj_la1[11] = jj_gen;
             ProGuardMappingToken proGuardMappingToken2 = nextToken;
-            block11:
-            while (true) {
-                switch (proGuardMappingToken2.m) {
-                    case 16: {
-                        break;
-                    }
-                    default: {
-                        ProGuardMappingParser.jj_la1[12] = jj_gen;
-                        break block11;
-                    }
-                }
+            while (proGuardMappingToken2.m == LBRACKET) {
                 ProGuardMappingParser.ArrayLevel();
                 proGuardMappingToken2 = nextToken;
             }
+            ProGuardMappingParser.jj_la1[12] = jj_gen;
             jjtree.closeNodeScope(proGuardMappingASTQualifiedType);
             return;
         } catch (Throwable throwable) {
@@ -462,8 +433,7 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
             Integer n;
             ProGuardMappingParser.ClassNameChange();
             ProGuardMappingToken proGuardMappingToken = nextToken;
-            block25:
-            while (true) {
+            do {
                 switch (proGuardMappingToken.m) {
                     case 12: {
                         ProGuardMappingParser.jj_consume_token(12);
@@ -479,23 +449,15 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
                         throw new ProGuardMappingParseException();
                     }
                 }
-                switch (ProGuardMappingParser.nextToken.m) {
-                    case 12:
-                    case 13: {
-                        proGuardMappingToken = nextToken;
-                        continue block25;
-                    }
-                }
-                break;
-            }
+                proGuardMappingToken = nextToken;
+            } while (proGuardMappingToken.m == LF || proGuardMappingToken.m == CR);
             ProGuardMappingParser.jj_la1[3] = jj_gen;
             long l = 102863502202123L;
-            int n2 = Integer.MAX_VALUE;
-            while (ProGuardMappingParser.jj_2_2(n = Integer.valueOf(n2))) {
+            int maxValue = Integer.MAX_VALUE;
+            while (ProGuardMappingParser.jj_2_2(n = Integer.valueOf(maxValue))) {
                 ProGuardMappingParser.FieldNameChange();
                 ProGuardMappingToken proGuardMappingToken2 = nextToken;
-                block27:
-                while (true) {
+                do {
                     switch (proGuardMappingToken2.m) {
                         case 12: {
                             ProGuardMappingParser.jj_consume_token(12);
@@ -511,18 +473,11 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
                             throw new ProGuardMappingParseException();
                         }
                     }
-                    switch (ProGuardMappingParser.nextToken.m) {
-                        case 12:
-                        case 13: {
-                            proGuardMappingToken2 = nextToken;
-                            continue block27;
-                        }
-                    }
-                    break;
-                }
+                    proGuardMappingToken2 = nextToken;
+                } while (proGuardMappingToken2.m == LF || proGuardMappingToken2.m == CR);
                 ProGuardMappingParser.jj_la1[5] = jj_gen;
                 l = 102863502202123L;
-                n2 = Integer.MAX_VALUE;
+                maxValue = Integer.MAX_VALUE;
             }
         } catch (Throwable throwable) {
             try {
@@ -546,8 +501,7 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
             }
             ProGuardMappingParser.MethodNameChange();
             ProGuardMappingToken proGuardMappingToken = nextToken;
-            block29:
-            while (true) {
+            do {
                 switch (proGuardMappingToken.m) {
                     case 12: {
                         ProGuardMappingParser.jj_consume_token(12);
@@ -563,20 +517,13 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
                         throw new ProGuardMappingParseException();
                     }
                 }
-                switch (ProGuardMappingParser.nextToken.m) {
-                    case 12:
-                    case 13: {
-                        proGuardMappingToken = nextToken;
-                        continue block29;
-                    }
-                }
-                break;
-            }
+                proGuardMappingToken = nextToken;
+            } while (proGuardMappingToken.m == LF || proGuardMappingToken.m == CR);
             ProGuardMappingParser.jj_la1[7] = jj_gen;
         }
     }
 
-    public static boolean jj_scan_token(int ba) {
+    public static boolean jj_scan_token(int tokenKindArgument) {
         if (jj_scanpos == jj_lastpos) {
             jj_la--;
             if (jj_scanpos.U == null) {
@@ -590,15 +537,15 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
 
         ProGuardMappingToken proGuardMappingToken1;
         if (jj_rescan) {
-            int bb = 0;
+            int endPositionValue = 0;
 
             ProGuardMappingToken proGuardMappingToken;
             for (proGuardMappingToken = token; proGuardMappingToken != null && proGuardMappingToken != jj_scanpos; proGuardMappingToken = proGuardMappingToken.U) {
-                bb++;
+                endPositionValue++;
             }
 
             if (proGuardMappingToken != null) {
-                jj_add_error_token(ba, bb);
+                jj_add_error_token(tokenKindArgument, endPositionValue);
                 proGuardMappingToken1 = jj_scanpos;
             } else {
                 proGuardMappingToken1 = jj_scanpos;
@@ -607,7 +554,7 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
             proGuardMappingToken1 = jj_scanpos;
         }
 
-        if (proGuardMappingToken1.m != ba) {
+        if (proGuardMappingToken1.m != tokenKindArgument) {
             return true;
         } else if (jj_la == 0 && jj_scanpos == jj_lastpos) {
             throw jj_ls;
@@ -758,25 +705,19 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         boolean bl = true;
         jjtree.openNodeScope(proGuardMappingASTMethodSignature);
         try {
-            int n;
-            block10:
-            {
-                ProGuardMappingParser.MethodName();
-                ProGuardMappingParser.jj_consume_token(14);
-                switch (ProGuardMappingParser.nextToken.m) {
-                    case 30: {
-                        ProGuardMappingParser.MethodArguments();
-                        break;
-                    }
-                    default: {
-                        ProGuardMappingParser.jj_la1[9] = jj_gen;
-                        n = 15;
-                        break block10;
-                    }
+            ProGuardMappingParser.MethodName();
+            ProGuardMappingParser.jj_consume_token(14);
+            switch (ProGuardMappingParser.nextToken.m) {
+                case 30: {
+                    ProGuardMappingParser.MethodArguments();
+                    break;
                 }
-                n = 15;
+                default: {
+                    ProGuardMappingParser.jj_la1[9] = jj_gen;
+
+                }
             }
-            ProGuardMappingParser.jj_consume_token(n);
+            ProGuardMappingParser.jj_consume_token(15);
             jjtree.closeNodeScope(proGuardMappingASTMethodSignature);
         } catch (Throwable throwable) {
             try {
@@ -825,15 +766,15 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         }
     }
 
-    public static boolean jj_2_2(int ba) {
-        jj_la = ba;
+    public static boolean jj_2_2(int jj_laArgument) {
+        jj_la = jj_laArgument;
         jj_lastpos = jj_scanpos = token;
 
         try {
             return !jj_3R_1();
         } catch (ProGuardMappingParserLookaheadSuccess proGuardMappingParserLookaheadSuccess) {
         } finally {
-            jj_save(0, ba);
+            jj_save(0, jj_laArgument);
         }
 
         return true;
@@ -975,21 +916,12 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         try {
             ProGuardMappingParser.QualifiedType();
             ProGuardMappingToken proGuardMappingToken = nextToken;
-            block7:
-            while (true) {
-                switch (proGuardMappingToken.m) {
-                    case 18: {
-                        break;
-                    }
-                    default: {
-                        ProGuardMappingParser.jj_la1[10] = jj_gen;
-                        break block7;
-                    }
-                }
+            while (proGuardMappingToken.m == COMMA) {
                 ProGuardMappingParser.jj_consume_token(18);
                 ProGuardMappingParser.QualifiedType();
                 proGuardMappingToken = nextToken;
             }
+            ProGuardMappingParser.jj_la1[10] = jj_gen;
             jjtree.closeNodeScope(proGuardMappingASTMethodArguments);
             return;
         } catch (Throwable throwable) {
@@ -1013,7 +945,7 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         return jj_scan_token(CLINIT);
     }
 
-    public static ProGuardMappingToken jj_consume_token(int ba) throws ProGuardMappingParseException {
+    public static ProGuardMappingToken jj_consume_token(int jj_kindArgument) throws ProGuardMappingParseException {
         ProGuardMappingToken proGuardMappingToken = token;
         if ((token = nextToken).U != null) {
             nextToken = nextToken.U;
@@ -1021,10 +953,10 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
             nextToken = nextToken.U = ProGuardMappingTokenManager.getNextToken();
         }
 
-        if (token.m != ba) {
+        if (token.m != jj_kindArgument) {
             nextToken = token;
             token = proGuardMappingToken;
-            jj_kind = ba;
+            jj_kind = jj_kindArgument;
             throw generateParseException();
         }
 
@@ -1032,8 +964,8 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         if (++jj_gc > 100) {
             jj_gc = 0;
 
-            for (int i = 0; i < jj_2_rtns.length; i++) {
-                ProGuardMappingParserJJCalls proGuardMappingParserJJCalls = jj_2_rtns[i];
+            for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < jj_2_rtns.length; jj_2_rtnIndex++) {
+                ProGuardMappingParserJJCalls proGuardMappingParserJJCalls = jj_2_rtns[jj_2_rtnIndex];
 
                 while (proGuardMappingParserJJCalls != null) {
                     ProGuardMappingParserJJCalls proGuardMappingParserJJCalls1;
@@ -1052,10 +984,10 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         return token;
     }
 
-    public static void jj_save(int ba, int bb) {
-        ProGuardMappingParserJJCalls proGuardMappingParserJJCalls = jj_2_rtns[ba];
+    public static void jj_save(int jj_2_rtnIndex, int bb) {
+        ProGuardMappingParserJJCalls proGuardMappingParserJJCalls = jj_2_rtns[jj_2_rtnIndex];
 
-        for (int i = proGuardMappingParserJJCalls.gen; i > jj_gen; i = proGuardMappingParserJJCalls.gen) {
+        for (int genValue = proGuardMappingParserJJCalls.gen; genValue > jj_gen; genValue = proGuardMappingParserJJCalls.gen) {
             if (proGuardMappingParserJJCalls.next == null) {
                 proGuardMappingParserJJCalls = proGuardMappingParserJJCalls.next = new ProGuardMappingParserJJCalls();
                 break;
@@ -1081,21 +1013,12 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         try {
             ProGuardMappingParser.Name();
             ProGuardMappingToken proGuardMappingToken = nextToken;
-            block7:
-            while (true) {
-                switch (proGuardMappingToken.m) {
-                    case 20: {
-                        break;
-                    }
-                    default: {
-                        ProGuardMappingParser.jj_la1[8] = jj_gen;
-                        break block7;
-                    }
-                }
+            while (proGuardMappingToken.m == DOT) {
                 ProGuardMappingParser.jj_consume_token(20);
                 ProGuardMappingParser.Name();
                 proGuardMappingToken = nextToken;
             }
+            ProGuardMappingParser.jj_la1[8] = jj_gen;
             jjtree.closeNodeScope(proGuardMappingASTNameList);
             return;
         } catch (Throwable throwable) {
@@ -1200,16 +1123,16 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         token.U = nextToken = ProGuardMappingTokenManager.getNextToken();
         jjtree.reset();
         jj_gen = 0;
-        int ba = 0;
+        int jj_la1ElementIndex = 0;
         int bc = 0;
 
         for (byte bd = 15; bc < bd; bd = 15) {
-            jj_la1[ba] = -1;
-            bc = ++ba;
+            jj_la1[jj_la1ElementIndex] = -1;
+            bc = ++jj_la1ElementIndex;
         }
 
-        for (int i = 0; i < jj_2_rtns.length; i++) {
-            jj_2_rtns[i] = new ProGuardMappingParserJJCalls();
+        for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < jj_2_rtns.length; jj_2_rtnIndex++) {
+            jj_2_rtns[jj_2_rtnIndex] = new ProGuardMappingParserJJCalls();
         }
     }
 
@@ -1218,7 +1141,7 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
     }
 
     public static boolean jj_3_2() {
-        return jj_scan_token(DOT) ? true : jj_3R_5();
+        return ((jj_scan_token(DOT)) || (jj_3R_5()));
     }
 
     public ProGuardMappingParser(Reader reader1) {
@@ -1233,16 +1156,16 @@ public class ProGuardMappingParser implements ProGuardMappingTreeConstants, ProG
         token = new ProGuardMappingToken();
         token.U = nextToken = ProGuardMappingTokenManager.getNextToken();
         jj_gen = 0;
-        int ba = 0;
+        int jj_la1ElementIndex = 0;
         int bc = 0;
 
         for (byte bd = 15; bc < bd; bd = 15) {
-            jj_la1[ba] = -1;
-            bc = ++ba;
+            jj_la1[jj_la1ElementIndex] = -1;
+            bc = ++jj_la1ElementIndex;
         }
 
-        for (int i = 0; i < jj_2_rtns.length; i++) {
-            jj_2_rtns[i] = new ProGuardMappingParserJJCalls();
+        for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < jj_2_rtns.length; jj_2_rtnIndex++) {
+            jj_2_rtns[jj_2_rtnIndex] = new ProGuardMappingParserJJCalls();
         }
     }
 }

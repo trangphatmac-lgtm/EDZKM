@@ -64,30 +64,30 @@ public class ClassConstantValue implements TrackedValue {
 
     @Override
     public String getNormalizedName() {
-        String string = this.getStringValue();
-        if (string == null) {
+        String stringValue = this.getStringValue();
+        if (stringValue == null) {
             return null;
         }
 
-        int ba = string.lastIndexOf((int) arrayPrefixChar);
+        int ba = stringValue.lastIndexOf((int) arrayPrefixChar);
         if (ba > -1) {
-            string = string.substring(ba + 1);
+            stringValue = stringValue.substring(ba + 1);
         }
 
-        if (string.endsWith(";")) {
-            string = string.substring(1, string.length() - 1);
+        if (stringValue.endsWith(";")) {
+            stringValue = stringValue.substring(1, stringValue.length() - 1);
         }
 
-        return string;
+        return stringValue;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        boolean bl1 = object instanceof ClassConstantValue;
+        boolean bl1 = other instanceof ClassConstantValue;
         if (!strictMergeDisabled) {
             if (bl1) {
-                ClassConstantValue classConstantValue1 = (ClassConstantValue) object;
+                ClassConstantValue classConstantValue1 = (ClassConstantValue) other;
                 ClassConstantValue classConstantValue2 = this;
                 if (!strictMergeDisabled) {
                     if (this.classConstant != null) {

@@ -29,9 +29,9 @@ public class ZKMProGuardTranslate extends ProGuardTranslateConstants {
                         return;
                     }
 
-                    String string = ProGuardInputTranslator.translateToZkmScript(ZkmFileUtils.readFileAsString(file1), new Properties());
+                    String text = ProGuardInputTranslator.translateToZkmScript(ZkmFileUtils.readFileAsString(file1), new Properties());
                     ObservableHolder observableHolder = new ObservableHolder();
-                    ZkmFileUtils.writeStringToFile(string, file2, observableHolder);
+                    ZkmFileUtils.writeStringToFile(text, file2, observableHolder);
                     if (observableHolder.isValueNull()) {
                         System.out.println("Translated contents of '" + file1.getAbsolutePath() + "' written to '" + file2.getAbsolutePath() + "'");
                     } else {
@@ -56,9 +56,9 @@ public class ZKMProGuardTranslate extends ProGuardTranslateConstants {
         TempFileManager.deleteStaleTempFiles();
     }
 
-    public String getTranslatedStackTrace(String string) {
+    public String getTranslatedStackTrace(String text) {
         try {
-            return ProGuardInputTranslator.translateToZkmScript(string, new Properties());
+            return ProGuardInputTranslator.translateToZkmScript(text, new Properties());
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }

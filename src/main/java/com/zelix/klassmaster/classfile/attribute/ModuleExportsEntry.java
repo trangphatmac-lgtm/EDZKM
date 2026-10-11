@@ -34,11 +34,11 @@ public class ModuleExportsEntry extends ClassFileComponent {
 
     public ModuleExportsEntry(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream) throws ClassFileFormatException, IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(ba);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry == null) {
             throw new ClassFileFormatException(
-                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + ba + " : File is probably corrupt (P)"
+                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + constantPoolIndex + " : File is probably corrupt (P)"
             );
         }
 
@@ -46,7 +46,7 @@ public class ModuleExportsEntry extends ClassFileComponent {
             throw new ClassFileFormatException(
                     classFileComponent.getOwningClass().getLocationName()
                             + " : Invalid attribute : "
-                            + ba
+                            + constantPoolIndex
                             + " : '"
                             + constantPoolEntry.getClass().getName()
                             + "' : File is probably corrupt (Q)"
@@ -58,14 +58,14 @@ public class ModuleExportsEntry extends ClassFileComponent {
         int bb = classFileInputStream.readUnsignedShort();
         this.exportsTo = new ResolvedConstantModule[bb];
 
-        for (int i = 0; i < bb; i++) {
-            int bd = classFileInputStream.readUnsignedShort();
-            constantPoolEntry = classFileComponent.getConstantPoolEntry(bd);
+        for (int exportsToElementIndex = 0; exportsToElementIndex < bb; exportsToElementIndex++) {
+            int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+            constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndexValue);
             if (constantPoolEntry == null) {
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Illegal constant pool index in attribute : "
-                                + bd
+                                + constantPoolIndexValue
                                 + " : File is probably corrupt (R)"
                 );
             }
@@ -74,14 +74,14 @@ public class ModuleExportsEntry extends ClassFileComponent {
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Invalid attribute : "
-                                + bd
+                                + constantPoolIndexValue
                                 + " : '"
                                 + constantPoolEntry.getClass().getName()
                                 + "' : File is probably corrupt (S)"
                 );
             }
 
-            this.exportsTo[i] = (ResolvedConstantModule) constantPoolEntry;
+            this.exportsTo[exportsToElementIndex] = (ResolvedConstantModule) constantPoolEntry;
         }
 
         if (!ZkmUtils.allUnique(this.exportsTo)) {
@@ -89,16 +89,16 @@ public class ModuleExportsEntry extends ClassFileComponent {
             stringBuilder.append("Invalid 'Module' attribute in class '");
             stringBuilder.append(this.getLocationName());
             stringBuilder.append("' : Duplicate 'export to' module names : ");
-            int be = 0;
+            int exportsToElementIndexValue = 0;
             int bf = 0;
 
             for (ResolvedConstantModule[] resolvedConstantModules = this.exportsTo; bf < resolvedConstantModules.length; resolvedConstantModules = this.exportsTo) {
-                stringBuilder.append(this.exportsTo[be].getValueString());
-                if (be < this.exportsTo.length - 1) {
+                stringBuilder.append(this.exportsTo[exportsToElementIndexValue].getValueString());
+                if (exportsToElementIndexValue < this.exportsTo.length - 1) {
                     stringBuilder.append(", ");
                 }
 
-                bf = ++be;
+                bf = ++exportsToElementIndexValue;
             }
 
             ZkmAssert.assertTrue(false, new String[]{stringBuilder.toString()});

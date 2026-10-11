@@ -27,108 +27,91 @@ public class EnclosingMethodAttribute extends ParsedAttributeBase implements Nam
     public ResolvedNameAndType methodNameAndType;
 
     @Override
-    public void write(DataOutputStream dataOutputStream) throws IOException {
-        super.write(dataOutputStream);
+    public void write(DataOutputStream output) throws IOException {
+        super.write(output);
         if (super.valid) {
-            dataOutputStream.writeShort(this.enclosingClassConstant.getIndex());
-            dataOutputStream.writeShort(this.methodNameAndType == null ? 0 : this.methodNameAndType.getIndex());
+            output.writeShort(this.enclosingClassConstant.getIndex());
+            output.writeShort(this.methodNameAndType == null ? 0 : this.methodNameAndType.getIndex());
         } else {
-            dataOutputStream.write(super.rawBytes);
+            output.write(super.rawBytes);
         }
     }
 
     @Override
-    public void replaceClassConstant(ResolvedClassConstant resolvedClassConstant, ResolvedClassConstant resolvedClassConstant1) {
-        if (this.enclosingClassConstant == resolvedClassConstant) {
-            this.enclosingClassConstant = resolvedClassConstant1;
+    public void replaceClassConstant(ResolvedClassConstant previousConstant, ResolvedClassConstant replacementConstant) {
+        if (this.enclosingClassConstant == previousConstant) {
+            this.enclosingClassConstant = replacementConstant;
         }
     }
 
     @Override
-    public ResolvedNameAndType replaceNameAndType(ResolvedNameAndType resolvedNameAndType) {
-        ResolvedNameAndType resolvedNameAndType1 = this.methodNameAndType;
-        this.methodNameAndType = resolvedNameAndType;
-        return resolvedNameAndType1;
+    public ResolvedNameAndType replaceNameAndType(ResolvedNameAndType replacementNameAndType) {
+        ResolvedNameAndType previousNameAndType = this.methodNameAndType;
+        this.methodNameAndType = replacementNameAndType;
+        return previousNameAndType;
     }
 
     public EnclosingMethodAttribute(
-            ClassFileComponent classFileComponent,
-            int ba,
-            String string,
-            ClassFileInputStream classFileInputStream,
-            ListMultimap listMultimap,
-            ListMultimap listMultimap1,
-            ListMultimap listMultimap2,
-            PrintWriter printWriter
+            ClassFileComponent parent,
+            int nameIndex,
+            String attributeName,
+            ClassFileInputStream input,
+            ListMultimap attributeReferences,
+            ListMultimap methodReferences,
+            ListMultimap classReferences,
+            PrintWriter diagnostics
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        byte[] bb = new byte[this.length];
-        classFileInputStream.read(bb);
-        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(bb, false);
+        super(parent, nameIndex, attributeName, input, attributeReferences);
+        byte[] attributeBytes = new byte[this.length];
+        input.read(attributeBytes);
+        ClassFileInputStream attributeInput = ClassFileInputStream.fromBytes(attributeBytes, false);
         if (this.length == 4) {
-            int bd;
-            label51:
-            {
-                int bc = classFileInputStream1.readUnsignedShort();
-                bd = classFileInputStream1.readUnsignedShort();
-                ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bc);
-                if (constantPoolEntry != null) {
-                    if (constantPoolEntry instanceof ResolvedClassConstant) {
-                        this.enclosingClassConstant = (ResolvedClassConstant) constantPoolEntry;
-                        listMultimap2.addValue(this.enclosingClassConstant, this);
-                        break label51;
-                    }
-
-                    super.valid = false;
-                } else {
-                    super.valid = false;
-                }
-
-                printWriter.println(
+            int classIndex = attributeInput.readUnsignedShort();
+            int methodIndex = attributeInput.readUnsignedShort();
+            ConstantPoolEntry classEntry = this.getConstantPoolEntry(classIndex);
+            if (classEntry instanceof ResolvedClassConstant) {
+                this.enclosingClassConstant = (ResolvedClassConstant) classEntry;
+                classReferences.addValue(this.enclosingClassConstant, this);
+            } else {
+                super.valid = false;
+                diagnostics.println(
                         "ERROR: "
                                 + this.getLocationName()
                                 + " : "
                                 + "Invalid EnclosingMethod Attribute"
                                 + " (A) : index="
-                                + bc
-                                + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : "")
+                                + classIndex
+                                + (classEntry != null ? " : tag=" + classEntry.getTag() : "")
                 );
             }
 
-            label39:
-            if (bd > 0) {
-                ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(bd);
-                if (constantPoolEntry1 != null) {
-                    if (constantPoolEntry1 instanceof ResolvedNameAndType) {
-                        this.methodNameAndType = (ResolvedNameAndType) constantPoolEntry1;
-                        listMultimap1.addValue(this.methodNameAndType, this);
-                        ((ClassFileBase) classFileComponent).markHasEnclosingMethod();
-                        break label39;
-                    }
-
-                    super.valid = false;
+            if (methodIndex > 0) {
+                ConstantPoolEntry methodEntry = this.getConstantPoolEntry(methodIndex);
+                if (methodEntry instanceof ResolvedNameAndType) {
+                    this.methodNameAndType = (ResolvedNameAndType) methodEntry;
+                    methodReferences.addValue(this.methodNameAndType, this);
+                    ((ClassFileBase) parent).markHasEnclosingMethod();
                 } else {
                     super.valid = false;
+                    diagnostics.println(
+                            "ERROR: "
+                                    + this.getLocationName()
+                                    + " : "
+                                    + "Invalid EnclosingMethod Attribute"
+                                    + " (B) : index="
+                                    + methodIndex
+                                    + (methodEntry != null ? " : tag=" + methodEntry.getTag() : "")
+                    );
                 }
-
-                printWriter.println(
-                        "ERROR: "
-                                + this.getLocationName()
-                                + " : "
-                                + "Invalid EnclosingMethod Attribute"
-                                + " (B) : index="
-                                + bd
-                                + (constantPoolEntry1 != null ? " : tag=" + constantPoolEntry1.getTag() : "")
-                );
             }
 
             if (!super.valid) {
-                super.rawBytes = bb;
+                super.rawBytes = attributeBytes;
             }
         } else {
             super.valid = false;
-            super.rawBytes = bb;
-            printWriter.println("ERROR: " + this.getLocationName() + " : " + "Invalid EnclosingMethod Attribute" + " (C) : length=" + this.length);
+            super.rawBytes = attributeBytes;
+            diagnostics.println("ERROR: " + this.getLocationName() + " : " + "Invalid EnclosingMethod Attribute" + " (C) : length=" + this.length);
         }
     }
 
@@ -149,67 +132,56 @@ public class EnclosingMethodAttribute extends ParsedAttributeBase implements Nam
     }
 
     @Override
-    public void writeRemapped(DataOutputStream dataOutputStream, Object object, Object object1) throws IOException {
-        Map map1 = (Map) object;
-        ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object1;
-        ScriptEnvironment scriptEnvironment2 = scriptEnvironment1;
-        Map map2 = map1;
-        ScriptEnvironment scriptEnvironment3 = scriptEnvironment2;
-        Map map3 = map2;
-        DataOutputStream dataOutputStream1 = dataOutputStream;
-        super.writeRemapped(dataOutputStream1, map3, scriptEnvironment3);
+    public void writeRemapped(DataOutputStream output, Object constantMapping, Object environment) throws IOException {
+        Map remappedConstants = (Map) constantMapping;
+        ScriptEnvironment scriptEnvironment = (ScriptEnvironment) environment;
+        super.writeRemapped(output, remappedConstants, scriptEnvironment);
         if (super.valid) {
-            ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) map1.get(this.enclosingClassConstant);
-            if (resolvedClassConstant != null) {
-                dataOutputStream.writeShort(resolvedClassConstant.getIndex());
+            ResolvedClassConstant remappedClass = (ResolvedClassConstant) remappedConstants.get(this.enclosingClassConstant);
+            if (remappedClass != null) {
+                output.writeShort(remappedClass.getIndex());
             } else {
-                dataOutputStream.writeShort(this.enclosingClassConstant.getIndex());
+                output.writeShort(this.enclosingClassConstant.getIndex());
             }
 
             if (this.methodNameAndType == null) {
-                dataOutputStream.writeShort(0);
+                output.writeShort(0);
             } else {
-                ResolvedNameAndType resolvedNameAndType = (ResolvedNameAndType) map1.get(this.methodNameAndType);
-                if (resolvedNameAndType != null) {
-                    dataOutputStream.writeShort(resolvedNameAndType.getIndex());
+                ResolvedNameAndType remappedMethod = (ResolvedNameAndType) remappedConstants.get(this.methodNameAndType);
+                if (remappedMethod != null) {
+                    output.writeShort(remappedMethod.getIndex());
                 } else {
-                    dataOutputStream.writeShort(this.methodNameAndType.getIndex());
+                    output.writeShort(this.methodNameAndType.getIndex());
                 }
             }
         } else {
-            dataOutputStream.write(super.rawBytes);
+            output.write(super.rawBytes);
         }
     }
 
     @Override
-    public void collectUsedConstants(char ba, int bb, UsedConstantsCollector usedConstantsCollector, char bc) {
+    public void collectUsedConstants(char controlTag, int controlSeed, UsedConstantsCollector collector, char controlMode) {
         ClassFileComponent.getFlowGuardNodes();
-        usedConstantsCollector.markUsed(this.nameConstant, this, this);
+        collector.markUsed(this.nameConstant, this, this);
         if (super.valid) {
-            EnclosingMethodAttribute enclosingMethodAttribute1 = this;
-            if (ba >= 0) {
-                if (this.enclosingClassConstant != null) {
-                    this.enclosingClassConstant.registerUsage(usedConstantsCollector, this, this);
-                }
-
-                enclosingMethodAttribute1 = this;
+            if (this.enclosingClassConstant != null) {
+                this.enclosingClassConstant.registerUsage(collector, this, this);
             }
-
-            if (enclosingMethodAttribute1.methodNameAndType != null) {
-                this.methodNameAndType.registerUsage(usedConstantsCollector, this, this);
+            if (this.methodNameAndType != null) {
+                this.methodNameAndType.registerUsage(collector, this, this);
             }
         }
     }
 
-    public void resolveEnclosingMethod(ClassResolver classResolver1) throws ZkmException, IOException {
+    public void resolveEnclosingMethod(ClassResolver resolver) throws ZkmException, IOException {
         if (super.valid) {
-            ClassFileBase classFileBase = this.getOwningClass();
-            Integer integer = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : null;
-            classFileBase = classResolver1.getVersionedClass(
-                    this.enclosingClassConstant.getClassName(), integer, "analyzing enclosing method in class '" + this.getDisplayLocationName() + "' (A)"
+            ClassFileBase enclosingClass = this.getOwningClass();
+            Integer releaseVersion = enclosingClass.hasReleaseVersion() ? enclosingClass.getReleaseVersion() : null;
+            enclosingClass = resolver.getVersionedClass(
+                    this.enclosingClassConstant.getClassName(), releaseVersion, "analyzing enclosing method in class '" + this.getDisplayLocationName() + "' (A)"
             );
-            if (classFileBase != null && this.methodNameAndType != null) {
-                this.enclosingMethod = classFileBase.findMethod(new MethodSignature(this.methodNameAndType.getName(), this.methodNameAndType.getDescriptor()));
+            if (enclosingClass != null && this.methodNameAndType != null) {
+                this.enclosingMethod = enclosingClass.findMethod(new MethodSignature(this.methodNameAndType.getName(), this.methodNameAndType.getDescriptor()));
             }
         }
     }

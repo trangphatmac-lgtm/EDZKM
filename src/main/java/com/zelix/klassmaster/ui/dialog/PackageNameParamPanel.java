@@ -26,8 +26,8 @@ public class PackageNameParamPanel extends ExcludeParamTabPanel implements Focus
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = actionEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
@@ -64,8 +64,8 @@ public class PackageNameParamPanel extends ExcludeParamTabPanel implements Focus
         }
     }
 
-    public PackageNameParamPanel(JFrame jFrame, RenameFilterModel renameFilterModel, boolean showHigherLevelOption, int ba) {
-        super(jFrame, renameFilterModel, ba);
+    public PackageNameParamPanel(JFrame jFrame, RenameFilterModel renameFilterModel, boolean showHigherLevelOption, int exclusionTypeArgument) {
+        super(jFrame, renameFilterModel, exclusionTypeArgument);
         this.showHigherLevelOption = showHigherLevelOption;
         this.buildPanel();
     }
@@ -74,8 +74,8 @@ public class PackageNameParamPanel extends ExcludeParamTabPanel implements Focus
     public void focusLost(FocusEvent focusEvent) {
         try {
             super.hintLabel.setText(" ");
-            Object object = focusEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = focusEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }

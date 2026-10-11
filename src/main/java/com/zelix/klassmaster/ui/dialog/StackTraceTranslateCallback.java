@@ -10,10 +10,10 @@ import java.util.List;
 public class StackTraceTranslateCallback extends CallbackAdapter {
     public final StackTraceTranslateDialog translateDialog;
 
-    public void onChangeLogsSelected(List list1, String string) {
-        if (list1 != null && string != null) {
+    public void onChangeLogsSelected(List list1, String text) {
+        if (list1 != null && text != null) {
             StackTraceTranslateDialog.accessSetChangeLogFiles(this.translateDialog, new ArrayList(list1));
-            StackTraceTranslateDialog.accessLogFileNameField(this.translateDialog).setText(string);
+            StackTraceTranslateDialog.accessLogFileNameField(this.translateDialog).setText(text);
             StackTraceTranslateDialog.accessLogFileNameField(this.translateDialog).setCaretPosition(0);
         }
     }

@@ -14,10 +14,10 @@ public class FileNameChangeListener implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getPropertyName().equals(FILE_NAME_CHANGED)) {
-            String string = (String) propertyChangeEvent.getNewValue();
+            String newValue = (String) propertyChangeEvent.getNewValue();
             FileSelector fileSelector1;
-            if (string != null) {
-                if (string.length() != 0) {
+            if (newValue != null) {
+                if (newValue.length() != 0) {
                     FileSelector.getApproveButton(this.fileSelector).setEnabled(true);
                     return;
                 }

@@ -9,8 +9,8 @@ public class WildcardStringMatcher implements DescriptorMatcher {
     public static final DescriptorMatcher MATCH_ALL = new WildcardStringMatcher("*");
     public final String pattern;
 
-    public WildcardStringMatcher(String string) {
-        this.pattern = string;
+    public WildcardStringMatcher(String patternArgument) {
+        this.pattern = patternArgument;
     }
 
     @Override

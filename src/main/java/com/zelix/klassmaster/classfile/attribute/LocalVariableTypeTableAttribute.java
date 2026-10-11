@@ -13,15 +13,15 @@ public class LocalVariableTypeTableAttribute extends LocalVariableTableBase {
 
     public LocalVariableTypeTableAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             LocalVariableList localVariableList1,
             ListMultimap listMultimap,
             PrintWriter printWriter,
             ListMultimap listMultimap1
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, localVariableList1, listMultimap, printWriter, listMultimap1, INVALID_ATTRIBUTE_MESSAGE);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, localVariableList1, listMultimap, printWriter, listMultimap1, INVALID_ATTRIBUTE_MESSAGE);
     }
 
     @Override

@@ -28,9 +28,9 @@ import java.util.Map;
 
 public class FieldInfo extends AbstractFieldInfo {
     public boolean isIntCompatibleType() {
-        String string = this.descriptorConstant.getValue();
-        if (string.length() == 1) {
-            switch (string.charAt(0)) {
+        String value = this.descriptorConstant.getValue();
+        if (value.length() == 1) {
+            switch (value.charAt(0)) {
                 case 'B':
                 case 'C':
                 case 'I':
@@ -57,16 +57,16 @@ public class FieldInfo extends AbstractFieldInfo {
         if (ba == 1) {
             ArrayList arrayList = new ArrayList(this.attributes.length);
 
-            for (int i = 0; i < this.attributes.length; i++) {
-                if (!(this.attributes[i] instanceof SignatureAttribute)) {
-                    if (this.attributes[i] instanceof TypeAnnotationsAttribute) {
-                        TypeAnnotationsAttribute typeAnnotationsAttribute = (TypeAnnotationsAttribute) this.attributes[i];
+            for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+                if (!(this.attributes[attributeIndex] instanceof SignatureAttribute)) {
+                    if (this.attributes[attributeIndex] instanceof TypeAnnotationsAttribute) {
+                        TypeAnnotationsAttribute typeAnnotationsAttribute = (TypeAnnotationsAttribute) this.attributes[attributeIndex];
                         typeAnnotationsAttribute.removeSignatureDependentAnnotations();
                         if (!typeAnnotationsAttribute.isEmpty()) {
-                            arrayList.add(this.attributes[i]);
+                            arrayList.add(this.attributes[attributeIndex]);
                         }
                     } else {
-                        arrayList.add(this.attributes[i]);
+                        arrayList.add(this.attributes[attributeIndex]);
                     }
                 }
             }
@@ -93,7 +93,7 @@ public class FieldInfo extends AbstractFieldInfo {
             ListMultimap listMultimap1,
             Map map2,
             Map map3,
-            String string,
+            String key,
             NameExclusionSet nameExclusionSet,
             Map map4,
             HashMap hashMap,
@@ -102,39 +102,39 @@ public class FieldInfo extends AbstractFieldInfo {
             TwoKeyMap twoKeyMap2,
             Map map5
     ) throws ZkmException, IOException {
-        String string1 = this.getSourceName();
+        String sourceName = this.getSourceName();
         this.getTypeName();
-        String string2;
+        String nameValue;
         if (nameExclusionSet.isFieldExcluded(this)) {
-            string2 = string1;
+            nameValue = sourceName;
         } else if (map3 != null && map3.containsKey(this)) {
-            string2 = (String) map3.get(this);
+            nameValue = (String) map3.get(this);
         } else if (map5.containsKey(this)) {
-            string2 = (String) map5.get(this);
-            map1.put(string2, this);
-            map2.put(string2, this);
-            listMultimap1.addValue(this.getDescriptorKey(), string2);
+            nameValue = (String) map5.get(this);
+            map1.put(nameValue, this);
+            map2.put(nameValue, this);
+            listMultimap1.addValue(this.getDescriptorKey(), nameValue);
         } else {
-            String string3 = this.getDescriptorKey();
-            string2 = fieldNameAssigner.assignFieldName(
-                    classHierarchyNode, this, string1, string3, map1, listMultimap, listMultimap1, map2, this.isSynthetic(), map4, hashMap, setMultiMap, twoKeyMap2
+            String descriptorKey = this.getDescriptorKey();
+            nameValue = fieldNameAssigner.assignFieldName(
+                    classHierarchyNode, this, sourceName, descriptorKey, map1, listMultimap, listMultimap1, map2, this.isSynthetic(), map4, hashMap, setMultiMap, twoKeyMap2
             );
         }
 
-        if (string2 == null) {
-            string2 = string1;
+        if (nameValue == null) {
+            nameValue = sourceName;
         }
 
-        FieldSignature fieldSignature2 = new FieldSignature(string1, this.getDescriptor());
-        FieldSignature fieldSignature = new FieldSignature(string2, this.getDescriptor());
-        FieldSignature fieldSignature3 = (FieldSignature) twoKeyMap.putValue(string, fieldSignature2, fieldSignature);
-        FieldSignature fieldSignature1 = (FieldSignature) twoKeyMap1.putValue(string, fieldSignature, fieldSignature2);
+        FieldSignature fieldSignature2 = new FieldSignature(sourceName, this.getDescriptor());
+        FieldSignature fieldSignature = new FieldSignature(nameValue, this.getDescriptor());
+        FieldSignature fieldSignature3 = (FieldSignature) twoKeyMap.putValue(key, fieldSignature2, fieldSignature);
+        FieldSignature fieldSignature1 = (FieldSignature) twoKeyMap1.putValue(key, fieldSignature, fieldSignature2);
         if (fieldSignature1 != null) {
             ZkmAssert.assertTrue(
                     false,
                     new String[]{
                             "Duplicate field name in class "
-                                    + ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(string, hashMap1))
+                                    + ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(key, hashMap1))
                                     + ". Both "
                                     + fieldSignature2.getName()
                                     + " and "
@@ -146,84 +146,37 @@ public class FieldInfo extends AbstractFieldInfo {
             );
         }
 
-        hashMap.put(this, string2);
-        if (!string2.equals(string1)) {
-            this.setName(string2);
+        hashMap.put(this, nameValue);
+        if (!nameValue.equals(sourceName)) {
+            this.setName(nameValue);
         }
     }
 
-    public static String toIndefiniteArticleName(String string) {
-        int ba;
-        String string6;
-        String string7;
-        if ((ba = string.lastIndexOf("/")) != -1) {
-            String string1 = string.substring(ba + 1);
-            long bd = 1520020032836L;
-            string6 = string1;
-            string7 = "[]";
+    public static String toIndefiniteArticleName(String className) {
+        int packageSeparator = className.lastIndexOf("/");
+        String simpleName = packageSeparator != -1 ? className.substring(packageSeparator + 1) : className;
+        String descriptiveName = ZkmStringUtils.replaceAll(simpleName, "[]", "Array");
+        StringBuilder name = new StringBuilder();
+        char initial = Character.toUpperCase(descriptiveName.charAt(0));
+        if (initial == 'A' || initial == 'E' || initial == 'I' || initial == 'O' || initial == 'U') {
+            name.append("an");
         } else {
-            String string4 = string;
-            long bc = 1520020032836L;
-            string6 = string4;
-            string7 = "[]";
+            name.append("a");
         }
-
-        char bb;
-        String string5;
-        StringBuilder stringBuilder;
-        label31:
-        {
-            String string3 = string7;
-            String string2 = string6;
-            string5 = ZkmStringUtils.replaceAll(string2, string3, "Array");
-            stringBuilder = new StringBuilder();
-            bb = Character.toUpperCase(string5.charAt(0));
-            StringBuilder stringBuilder1;
-            if (bb != 'A') {
-                if (bb != 'E') {
-                    if (bb != 'I') {
-                        if (bb != 'O') {
-                            if (bb != 'U') {
-                                stringBuilder = stringBuilder.append("a");
-                                break label31;
-                            }
-
-                            stringBuilder1 = stringBuilder;
-                            string6 = "an";
-                        } else {
-                            stringBuilder1 = stringBuilder;
-                            string6 = "an";
-                        }
-                    } else {
-                        stringBuilder1 = stringBuilder;
-                        string6 = "an";
-                    }
-                } else {
-                    stringBuilder1 = stringBuilder;
-                    string6 = "an";
-                }
-            } else {
-                stringBuilder1 = stringBuilder;
-                string6 = "an";
-            }
-
-            stringBuilder = stringBuilder1.append(string6);
-        }
-
-        stringBuilder.append(bb + string5.substring(1));
-        return stringBuilder.toString();
+        name.append(initial + descriptiveName.substring(1));
+        return name.toString();
     }
 
     public void replaceNamePrefix(String string, String string1, TwoKeyMap twoKeyMap, ProgramClass programClass1, ClassRepository classRepository1) throws ZkmException, IOException {
-        String string2 = this.getClassName();
-        String string3 = this.getSourceName();
-        String string4 = string3.substring(string.length());
-        String string5 = string1 + string4;
-        if (classRepository1.hasFieldNamed(string2, string5)) {
+        String classNameValue = this.getClassName();
+        String sourceName = this.getSourceName();
+        String string4 = sourceName.substring(string.length());
+        String nameValue = string1 + string4;
+        if (classRepository1.hasFieldNamed(classNameValue, nameValue)) {
             StringBuffer stringBuffer = new StringBuffer();
             if (string4.length() > 0) {
-                for (int i = string4.length() - 1; i >= 0; i += -1) {
-                    char bb = string4.charAt(i);
+                for (int characterIndex = string4.length() - 1; characterIndex >= 0; characterIndex += -1) {
+                    char bb = string4.charAt(characterIndex);
                     if (Character.isDigit(bb)) {
                         char bc = bb;
                         stringBuffer.insert(0, bc);
@@ -231,7 +184,7 @@ public class FieldInfo extends AbstractFieldInfo {
                 }
             }
 
-            String string6 = string5.substring(0, string5.length() - stringBuffer.length());
+            String string6 = nameValue.substring(0, nameValue.length() - stringBuffer.length());
             int bd = -1;
             if (stringBuffer.length() > 0) {
                 try {
@@ -241,13 +194,13 @@ public class FieldInfo extends AbstractFieldInfo {
             }
 
             do {
-                string5 = string6 + ++bd;
-            } while (classRepository1.hasFieldNamed(string2, string5));
+                nameValue = string6 + ++bd;
+            } while (classRepository1.hasFieldNamed(classNameValue, nameValue));
         }
 
-        this.setName(string5);
-        classRepository1.reindexRenamedField(programClass1, this, string3);
-        twoKeyMap.putValue(string2, string3, string5);
+        this.setName(nameValue);
+        classRepository1.reindexRenamedField(programClass1, this, sourceName);
+        twoKeyMap.putValue(classNameValue, sourceName, nameValue);
     }
 
     public FieldInfo(
@@ -266,10 +219,10 @@ public class FieldInfo extends AbstractFieldInfo {
         super(classFileComponent, classFileInputStream, listMultimap, printWriter);
         this.attributes = new Attribute[this.attributeCount];
 
-        for (int i = 0; i < this.attributes.length; i++) {
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
             Object object = null;
             PrintWriter printWriter1 = printWriter;
-            this.attributes[i] = Attribute.readAttribute(
+            this.attributes[attributeIndex] = Attribute.readAttribute(
                     this,
                     classFileInputStream,
                     listMultimap,
@@ -303,17 +256,17 @@ public class FieldInfo extends AbstractFieldInfo {
         return (ProgramClass) this.getParent();
     }
 
-    public FieldInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, int ba) {
-        super(classFileBase, constantUtf8, constantUtf81, attributes1, ba);
+    public FieldInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, int creationKind) {
+        super(classFileBase, constantUtf8, constantUtf81, attributes1, creationKind);
 
-        for (int i = 0; i < attributes1.length; i++) {
-            attributes1[i].setParent(this);
+        for (int attributes1ElementIndex = 0; attributes1ElementIndex < attributes1.length; attributes1ElementIndex++) {
+            attributes1[attributes1ElementIndex].setParent(this);
         }
     }
 
     public ProgramClass getTypeProgramClass() {
-        String string = ClassFileBase.extractClassName(this.getDescriptor());
-        return string != null ? ClassHierarchyNode.findProgramClass(string) : null;
+        String key = ClassFileBase.extractClassName(this.getDescriptor());
+        return key != null ? ClassHierarchyNode.findProgramClass(key) : null;
     }
 
     @Override
@@ -326,11 +279,11 @@ public class FieldInfo extends AbstractFieldInfo {
         Attribute[] attributes1 = new Attribute[this.attributes.length - 1];
         int ba = 0;
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ConstantValueAttribute) {
-                constantValueAttribute = (ConstantValueAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ConstantValueAttribute) {
+                constantValueAttribute = (ConstantValueAttribute) this.attributes[attributeIndex];
             } else if (ba < attributes1.length) {
-                attributes1[ba++] = this.attributes[i];
+                attributes1[ba++] = this.attributes[attributeIndex];
             }
         }
 
@@ -345,9 +298,9 @@ public class FieldInfo extends AbstractFieldInfo {
 
     @Override
     public ConstantValueAttribute getConstantValueAttribute() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ConstantValueAttribute) {
-                return (ConstantValueAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ConstantValueAttribute) {
+                return (ConstantValueAttribute) this.attributes[attributeIndex];
             }
         }
 

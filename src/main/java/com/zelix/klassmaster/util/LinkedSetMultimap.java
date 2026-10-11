@@ -15,8 +15,8 @@ public class LinkedSetMultimap extends SetMultiMap {
 
     @Override
     public SetMultiMap deepCopy() {
-        int ba = this.map.size();
-        LinkedSetMultimap linkedSetMultimap1 = new LinkedSetMultimap(ba * 2 + 1);
+        int mapSize = this.map.size();
+        LinkedSetMultimap linkedSetMultimap1 = new LinkedSetMultimap(mapSize * 2 + 1);
         Iterator iterator = this.map.entrySet().iterator();
 
         while (iterator.hasNext()) {

@@ -11,12 +11,12 @@ public class ExcludeDialogActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.dialog.okBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.dialog.okBtn) {
                 this.dialog.acceptParameters();
-            } else if (object == this.dialog.cancelBtn) {
+            } else if (source == this.dialog.cancelBtn) {
                 this.dialog.cancelDialog();
-            } else if (object == this.dialog.helpBtn) {
+            } else if (source == this.dialog.helpBtn) {
                 this.dialog.showHelp();
             }
         } catch (Throwable throwable) {

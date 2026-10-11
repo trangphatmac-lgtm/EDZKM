@@ -16,15 +16,15 @@ public class ObjectTriple {
             ba = 0 ^ this.first.hashCode();
         }
 
-        Object object;
+        Object thirdValue;
         if (this.second != null) {
             ba ^= this.second.hashCode();
-            object = this.third;
+            thirdValue = this.third;
         } else {
-            object = this.third;
+            thirdValue = this.third;
         }
 
-        if (object != null) {
+        if (thirdValue != null) {
             ba ^= this.third.hashCode();
         }
 
@@ -57,10 +57,10 @@ public class ObjectTriple {
         return object1;
     }
 
-    public Object setSecond(Object object) {
-        Object object1 = this.second;
-        this.second = object;
-        return object1;
+    public Object setSecond(Object secondArgument) {
+        Object secondValue = this.second;
+        this.second = secondArgument;
+        return secondValue;
     }
 
     public Object getAt(int ba) {
@@ -77,12 +77,12 @@ public class ObjectTriple {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof ObjectTriple)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof ObjectTriple)) {
             return false;
         }
 
-        ObjectTriple objectTriple1 = (ObjectTriple) object;
+        ObjectTriple objectTriple1 = (ObjectTriple) other;
         return (this.first == null && objectTriple1.first == null || this.first != null && objectTriple1.first != null && this.first.equals(objectTriple1.first))
                 && (
                 this.second == null && objectTriple1.second == null
@@ -91,19 +91,19 @@ public class ObjectTriple {
                 && (this.third == null && objectTriple1.third == null || this.third != null && objectTriple1.third != null && this.third.equals(objectTriple1.third));
     }
 
-    public Object setThird(Object object) {
-        Object object1 = this.third;
-        this.third = object;
-        return object1;
+    public Object setThird(Object thirdArgument) {
+        Object thirdValue = this.third;
+        this.third = thirdArgument;
+        return thirdValue;
     }
 
     public Object getFirst() {
         return this.first;
     }
 
-    public ObjectTriple(Object object, Object object1, Object object2) {
-        this.first = object;
-        this.second = object1;
-        this.third = object2;
+    public ObjectTriple(Object firstArgument, Object secondArgument, Object thirdArgument) {
+        this.first = firstArgument;
+        this.second = secondArgument;
+        this.third = thirdArgument;
     }
 }

@@ -10,14 +10,14 @@ public class MethodNameAndArgs implements Comparable {
         return this.methodName;
     }
 
-    public MethodNameAndArgs(String string, String[] strings) {
-        this.methodName = string;
-        this.argumentTypes = strings;
+    public MethodNameAndArgs(String methodNameArgument, String[] argumentTypesArgument) {
+        this.methodName = methodNameArgument;
+        this.argumentTypes = argumentTypesArgument;
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByDescription((MethodNameAndArgs) object);
+    public int compareTo(Object other) {
+        return this.compareByDescription((MethodNameAndArgs) other);
     }
 
     public int compareByDescription(MethodNameAndArgs methodNameAndArgs1) {
@@ -33,16 +33,16 @@ public class MethodNameAndArgs implements Comparable {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(this.methodName + "(");
             if (this.argumentTypes != null) {
-                int ba = 0;
+                int argumentTypeIndex = 0;
                 int bb = 0;
 
-                for (String[] strings = this.argumentTypes; bb < strings.length; strings = this.argumentTypes) {
-                    stringBuffer.append(this.argumentTypes[ba]);
-                    if (ba < this.argumentTypes.length - 1) {
+                for (String[] argumentTypesValue = this.argumentTypes; bb < argumentTypesValue.length; argumentTypesValue = this.argumentTypes) {
+                    stringBuffer.append(this.argumentTypes[argumentTypeIndex]);
+                    if (argumentTypeIndex < this.argumentTypes.length - 1) {
                         stringBuffer.append(",");
                     }
 
-                    bb = ++ba;
+                    bb = ++argumentTypeIndex;
                 }
             } else {
                 stringBuffer.append(UNKNOWN_ARGS);

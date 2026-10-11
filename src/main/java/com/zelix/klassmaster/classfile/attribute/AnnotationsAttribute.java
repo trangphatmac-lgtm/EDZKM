@@ -26,12 +26,12 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
     @Override
     public void collectReferencedMembers(Set set1, Set set2, Set set3, Set set4) {
         if (super.valid) {
-            int ba = 0;
-            int bb = ba;
+            int annotationIndex = 0;
+            int annotationIndexValue = annotationIndex;
 
-            for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].collectReferencedMembers(set1, set2, set3, set4);
-                bb = ++ba;
+            for (AnnotationEntry[] annotationEntrys = this.annotations; annotationIndexValue < annotationEntrys.length; annotationEntrys = this.annotations) {
+                this.annotations[annotationIndex].collectReferencedMembers(set1, set2, set3, set4);
+                annotationIndexValue = ++annotationIndex;
             }
         }
     }
@@ -40,12 +40,12 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
     public void collectUsedConstants(char bc, int bd, UsedConstantsCollector usedConstantsCollector, char be) {
         usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
         if (super.valid) {
-            int ba = 0;
-            int bb = ba;
+            int annotationIndex = 0;
+            int annotationIndexValue = annotationIndex;
 
-            for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
-                bb = ++ba;
+            for (AnnotationEntry[] annotationEntrys = this.annotations; annotationIndexValue < annotationEntrys.length; annotationEntrys = this.annotations) {
+                this.annotations[annotationIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+                annotationIndexValue = ++annotationIndex;
             }
         }
     }
@@ -55,16 +55,16 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
             return new String[0];
         }
 
-        String[] strings = new String[this.annotations.length];
+        String[] annotationTypeNames = new String[this.annotations.length];
         int ba = 0;
         int bb = 0;
 
         for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-            strings[ba] = this.annotations[ba].getTypeName();
+            annotationTypeNames[ba] = this.annotations[ba].getTypeName();
             bb = ++ba;
         }
 
-        return strings;
+        return annotationTypeNames;
     }
 
     @Override
@@ -72,12 +72,12 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
         HashMap hashMap = (HashMap) object1;
         HashMap hashMap1 = (HashMap) object;
         if (super.valid) {
-            int ba = 0;
-            int bb = ba;
+            int annotationIndex = 0;
+            int annotationIndexValue = annotationIndex;
 
-            for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].updateAfterClassRename(hashMap1, hashMap);
-                bb = ++ba;
+            for (AnnotationEntry[] annotationEntrys = this.annotations; annotationIndexValue < annotationEntrys.length; annotationEntrys = this.annotations) {
+                this.annotations[annotationIndex].updateAfterClassRename(hashMap1, hashMap);
+                annotationIndexValue = ++annotationIndex;
             }
         }
     }
@@ -88,25 +88,25 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
             return super.rawBytes.length;
         }
 
-        int ba = 2;
+        int lengthValue = 2;
 
         for (AnnotationEntry annotationEntry : this.annotations) {
-            ba += annotationEntry.getByteLength();
+            lengthValue += annotationEntry.getByteLength();
         }
 
-        this.length = ba;
-        return ba;
+        this.length = lengthValue;
+        return lengthValue;
     }
 
     @Override
     public void collectReferencedClasses(Set set1) {
         if (super.valid) {
-            int ba = 0;
-            int bb = ba;
+            int annotationIndex = 0;
+            int annotationIndexValue = annotationIndex;
 
-            for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].collectReferencedClasses(set1);
-                bb = ++ba;
+            for (AnnotationEntry[] annotationEntrys = this.annotations; annotationIndexValue < annotationEntrys.length; annotationEntrys = this.annotations) {
+                this.annotations[annotationIndex].collectReferencedClasses(set1);
+                annotationIndexValue = ++annotationIndex;
             }
         }
     }
@@ -114,12 +114,12 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
     @Override
     public void resolveReferences(ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
         if (super.valid) {
-            int ba = 0;
-            int bb = ba;
+            int annotationIndex = 0;
+            int annotationIndexValue = annotationIndex;
 
-            for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
-                bb = ++ba;
+            for (AnnotationEntry[] annotationEntrys = this.annotations; annotationIndexValue < annotationEntrys.length; annotationEntrys = this.annotations) {
+                this.annotations[annotationIndex].resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+                annotationIndexValue = ++annotationIndex;
             }
         }
     }
@@ -136,12 +136,12 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
         super.writeRemapped(dataOutputStream1, map3, scriptEnvironment3);
         if (super.valid) {
             dataOutputStream.writeShort(this.annotations.length);
-            int ba = 0;
+            int annotationIndex = 0;
             int bb = 0;
 
             for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].writeRemapped(dataOutputStream, map1, scriptEnvironment1);
-                bb = ++ba;
+                this.annotations[annotationIndex].writeRemapped(dataOutputStream, map1, scriptEnvironment1);
+                bb = ++annotationIndex;
             }
         } else {
             dataOutputStream.write(super.rawBytes);
@@ -153,12 +153,12 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
         super.write(dataOutputStream);
         if (super.valid) {
             dataOutputStream.writeShort(this.annotations.length);
-            int ba = 0;
+            int annotationIndex = 0;
             int bb = 0;
 
             for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].write(15571, dataOutputStream, 54846, 41447);
-                bb = ++ba;
+                this.annotations[annotationIndex].write(15571, dataOutputStream, 54846, 41447);
+                bb = ++annotationIndex;
             }
         } else {
             dataOutputStream.write(super.rawBytes);
@@ -168,12 +168,12 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
     @Override
     public void applyMethodRenames() {
         if (super.valid) {
-            int ba = 0;
-            int bb = ba;
+            int annotationIndex = 0;
+            int annotationIndexValue = annotationIndex;
 
-            for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].updateAfterMethodRename();
-                bb = ++ba;
+            for (AnnotationEntry[] annotationEntrys = this.annotations; annotationIndexValue < annotationEntrys.length; annotationEntrys = this.annotations) {
+                this.annotations[annotationIndex].updateAfterMethodRename();
+                annotationIndexValue = ++annotationIndex;
             }
         }
     }
@@ -185,47 +185,47 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
     @Override
     public void applyFieldRenames() {
         if (super.valid) {
-            int ba = 0;
-            int bb = ba;
+            int annotationIndex = 0;
+            int annotationIndexValue = annotationIndex;
 
-            for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
-                this.annotations[ba].updateAfterFieldRename();
-                bb = ++ba;
+            for (AnnotationEntry[] annotationEntrys = this.annotations; annotationIndexValue < annotationEntrys.length; annotationEntrys = this.annotations) {
+                this.annotations[annotationIndex].updateAfterFieldRename();
+                annotationIndexValue = ++annotationIndex;
             }
         }
     }
 
     public AnnotationsAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             PrintWriter printWriter,
             String string1
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        byte[] bb = new byte[this.length];
-        classFileInputStream.read(bb);
-        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(bb, false);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
+        byte[] rawBytesValue = new byte[this.length];
+        classFileInputStream.read(rawBytesValue);
+        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(rawBytesValue, false);
 
         try {
             if (this.length >= 2) {
                 int bc = classFileInputStream1.readUnsignedShort();
                 this.annotations = new AnnotationEntry[bc];
 
-                for (int i = 0; i < bc; i++) {
-                    this.annotations[i] = AnnotationEntry.read(this, classFileInputStream1, listMultimap);
-                    if (!this.annotations[i].isValid()) {
+                for (int annotationIndex = 0; annotationIndex < bc; annotationIndex++) {
+                    this.annotations[annotationIndex] = AnnotationEntry.read(this, classFileInputStream1, listMultimap);
+                    if (!this.annotations[annotationIndex].isValid()) {
                         super.valid = false;
-                        super.rawBytes = bb;
+                        super.rawBytes = rawBytesValue;
                         StringBuilder stringBuilder = new StringBuilder()
                                 .append("ERROR: ")
                                 .append(this.getLocationName())
                                 .append(" : ")
                                 .append(string1)
                                 .append(" (C) ");
-                        AnnotationEntry annotationEntry = this.annotations[i];
+                        AnnotationEntry annotationEntry = this.annotations[annotationIndex];
                         Integer integer1 = 9539;
                         Integer integer = 761259100;
                         printWriter.println(stringBuilder.append(annotationEntry.getErrorMessage(0, integer, integer1)).toString());
@@ -233,12 +233,12 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
                 }
             } else {
                 super.valid = false;
-                super.rawBytes = bb;
+                super.rawBytes = rawBytesValue;
                 printWriter.println("ERROR: " + this.getLocationName() + " : " + string1 + " (D) : length=" + this.length);
             }
         } catch (IOException iOException) {
             super.valid = false;
-            super.rawBytes = bb;
+            super.rawBytes = rawBytesValue;
             printWriter.println("ERROR: " + this.getLocationName() + " : " + string1 + " is possibly corrupt : " + iOException);
         } finally {
             classFileInputStream1.close();
@@ -247,22 +247,22 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
 
     public AnnotationEntry findAnnotation(String string, boolean bl) {
         if (super.valid) {
-            int ba = 0;
-            int bb = ba;
+            int annotationIndex = 0;
+            int annotationIndexValue = annotationIndex;
 
-            for (AnnotationEntry[] annotationEntrys = this.annotations; bb < annotationEntrys.length; annotationEntrys = this.annotations) {
+            for (AnnotationEntry[] annotationEntrys = this.annotations; annotationIndexValue < annotationEntrys.length; annotationEntrys = this.annotations) {
                 String string1;
                 if (bl) {
-                    string1 = this.annotations[ba].getResolvedTypeName();
+                    string1 = this.annotations[annotationIndex].getResolvedTypeName();
                 } else {
-                    string1 = this.annotations[ba].getTypeName();
+                    string1 = this.annotations[annotationIndex].getTypeName();
                 }
 
                 if (string.equals(string1)) {
-                    return this.annotations[ba];
+                    return this.annotations[annotationIndex];
                 }
 
-                bb = ++ba;
+                annotationIndexValue = ++annotationIndex;
             }
         }
 
@@ -277,11 +277,11 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
             boolean bl = false;
             boolean bl1 = true;
             ArrayList arrayList = new ArrayList();
-            int ba = 0;
+            int annotationIndex = 0;
             int bb = 0;
 
             for (AnnotationEntry[] annotationEntrys1 = this.annotations; bb < annotationEntrys1.length; annotationEntrys1 = this.annotations) {
-                AnnotationEntry annotationEntry = this.annotations[ba];
+                AnnotationEntry annotationEntry = this.annotations[annotationIndex];
                 ClassFileBase classFileBase = annotationEntry.getAnnotationClass();
                 if (trimProcessor1.isAnnotationRetained(classFileBase)) {
                     arrayList.add(annotationEntry);
@@ -309,7 +309,7 @@ public abstract class AnnotationsAttribute extends AnnotationAttributeBase {
                     this.annotations = ((com.zelix.klassmaster.classfile.attribute.AnnotationEntry[]) (arrayList.toArray(annotationEntrys)));
                 }
 
-                bb = ++ba;
+                bb = ++annotationIndex;
             }
 
             return bl1;

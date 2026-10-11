@@ -24,8 +24,8 @@ public class FlowObfuscationGroup {
         return this.classGrouping.getIntersection();
     }
 
-    public OpaquePredicateField getPackageField(Object object) {
-        return (OpaquePredicateField) this.packageFields.get(object);
+    public OpaquePredicateField getPackageField(Object key) {
+        return (OpaquePredicateField) this.packageFields.get(key);
     }
 
     public void setGroupField(OpaquePredicateField opaquePredicateField) {
@@ -57,16 +57,16 @@ public class FlowObfuscationGroup {
         return this.groupField;
     }
 
-    public void putPackageField(Object object, Object object1) {
-        this.packageFields.put(object, object1);
+    public void putPackageField(Object key, Object value) {
+        this.packageFields.put(key, value);
     }
 
     public void collectPackageNames() {
         Iterator iterator = this.memberClasses.iterator();
 
         while (iterator.hasNext()) {
-            String string = ((ClassFileBase) iterator.next()).getPackagePath();
-            this.packageNames.add(string);
+            String packagePath = ((ClassFileBase) iterator.next()).getPackagePath();
+            this.packageNames.add(packagePath);
         }
     }
 

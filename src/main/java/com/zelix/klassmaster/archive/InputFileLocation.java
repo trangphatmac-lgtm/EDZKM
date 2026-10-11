@@ -53,8 +53,8 @@ public class InputFileLocation {
     }
 
     @Override
-    public boolean equals(Object object) {
-        return object instanceof InputFileLocation ? this.getLocationKey().equals(((InputFileLocation) object).getLocationKey()) : false;
+    public boolean equals(Object other) {
+        return ((other instanceof InputFileLocation) && (this.getLocationKey().equals(((InputFileLocation) other).getLocationKey())));
     }
 
     public InputFileLocation(String string, File file1) {
@@ -113,9 +113,9 @@ public class InputFileLocation {
 
     public String getQualifiedName() {
         StringBuilder stringBuilder = new StringBuilder();
-        String string = this.getArchivePath();
-        if (string != null) {
-            stringBuilder.append(string);
+        String archivePath = this.getArchivePath();
+        if (archivePath != null) {
+            stringBuilder.append(archivePath);
             stringBuilder.append("!");
         }
 

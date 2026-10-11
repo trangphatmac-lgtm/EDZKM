@@ -20,11 +20,11 @@ public class DirectoryComboBoxRenderer extends DefaultListCellRenderer {
             return this;
         }
 
-        int bb = 0;
+        int indentLevelValue = 0;
         FileIconProvider fileIconProvider;
         if (ba != -1) {
             for (File file2 = file1.getParentFile(); file2 != null; file2 = file2.getParentFile()) {
-                bb++;
+                indentLevelValue++;
             }
 
             fileIconProvider = this.iconProvider;
@@ -34,7 +34,7 @@ public class DirectoryComboBoxRenderer extends DefaultListCellRenderer {
 
         Icon icon1 = fileIconProvider.getFileIcon(file1);
         this.indentedIcon.icon = icon1;
-        this.indentedIcon.indentLevel = bb;
+        this.indentedIcon.indentLevel = indentLevelValue;
         this.setIcon(this.indentedIcon);
         return this;
     }

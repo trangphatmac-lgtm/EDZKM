@@ -9,8 +9,8 @@ public class FieldNameComparator implements Comparator {
     }
 
     public int compareByName(FieldInfo fieldInfo, FieldInfo fieldInfo1) {
-        String string = fieldInfo.getSourceName();
-        String string1 = fieldInfo1.getSourceName();
-        return string.compareTo(string1);
+        String sourceName = fieldInfo.getSourceName();
+        String sourceNameValue = fieldInfo1.getSourceName();
+        return sourceName.compareTo(sourceNameValue);
     }
 }

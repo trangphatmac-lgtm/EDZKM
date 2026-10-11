@@ -53,17 +53,17 @@ public abstract class AbstractMethodInfo extends MemberInfo {
         return false;
     }
 
-    public static String formatMethodSignature(String string, String string1) {
+    public static String formatMethodSignature(String string, String descriptorArgument) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(string);
         stringBuilder.append('(');
-        List list1 = ConstantPoolEntry.parseParameterTypes(string1, true);
-        int ba = list1.size();
+        List list1 = ConstantPoolEntry.parseParameterTypes(descriptorArgument, true);
+        int list1Size = list1.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string2 = (String) list1.get(i);
-            stringBuilder.append(ConstantPoolEntry.descriptorToJavaType(string2));
-            if (i < ba - 1) {
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            String descriptorValue = (String) list1.get(elementIndex);
+            stringBuilder.append(ConstantPoolEntry.descriptorToJavaType(descriptorValue));
+            if (elementIndex < list1Size - 1) {
                 stringBuilder.append(", ");
             }
         }
@@ -84,10 +84,10 @@ public abstract class AbstractMethodInfo extends MemberInfo {
         return new MethodSignature(this.getJvmName(), this.getDescriptor());
     }
 
-    public void addToInheritedMethods(MethodOverrideAnalyzer methodOverrideAnalyzer, Map map1, boolean bl, Object object) {
+    public void addToInheritedMethods(MethodOverrideAnalyzer methodOverrideAnalyzer, Map map1, boolean bl, Object value) {
         if (!this.isConstructor() && !this.isStaticInitializer() && !this.isStatic() && (this.isAbstract() || !this.isStrictlyPrivate())) {
             MethodSignature methodSignature1 = this.getSignature();
-            ClassFileBase classFileBase = (ClassFileBase) map1.put(methodSignature1, object);
+            ClassFileBase classFileBase = (ClassFileBase) map1.put(methodSignature1, value);
             if (classFileBase != null) {
                 map1.put(methodSignature1, classFileBase);
             }
@@ -108,7 +108,7 @@ public abstract class AbstractMethodInfo extends MemberInfo {
 
     public abstract void collectCodeTypeReferences(Set set1, Set set2, Set set3, Set set4) throws ZkmProcessingException;
 
-    public final void setHadLocalVariableTable(boolean bl) {
+    public final void setHadLocalVariableTable(boolean hadLocalVariableTableArgument) {
         this.setStateFlag(16);
     }
 
@@ -134,9 +134,9 @@ public abstract class AbstractMethodInfo extends MemberInfo {
         stringBuilder.append('(');
         List list1 = ConstantPoolEntry.parseParameterTypes(this.getOriginalDescriptor(), false);
 
-        for (int i = 0; i < list1.size(); i++) {
-            stringBuilder.append(ConstantPoolEntry.descriptorToJavaType((String) list1.get(i)));
-            stringBuilder.append(i < list1.size() - 1 ? ", " : "");
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            stringBuilder.append(ConstantPoolEntry.descriptorToJavaType((String) list1.get(elementIndex)));
+            stringBuilder.append(elementIndex < list1.size() - 1 ? ", " : "");
         }
 
         stringBuilder.append(')');
@@ -164,8 +164,8 @@ public abstract class AbstractMethodInfo extends MemberInfo {
         }
 
         if (exceptionsAttribute != null) {
-            for (int i = 0; i < exceptionsAttribute.getExceptionCount(); i++) {
-                arrayList.add(exceptionsAttribute.getExceptionClass(i).getClassName());
+            for (int exceptionClasseIndex = 0; exceptionClasseIndex < exceptionsAttribute.getExceptionCount(); exceptionClasseIndex++) {
+                arrayList.add(exceptionsAttribute.getExceptionClass(exceptionClasseIndex).getClassName());
             }
         }
 
@@ -174,12 +174,12 @@ public abstract class AbstractMethodInfo extends MemberInfo {
 
     public final List getWidenedParameterTypes() {
         List list1 = ConstantPoolEntry.getParameterTypes(this.descriptor);
-        int ba = list1.size();
+        int list1Size = list1.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string = (String) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            String string = (String) list1.get(elementIndex);
             if (string.equals("B") || string.equals("C") || string.equals("S") || string.equals("Z")) {
-                list1.set(i, "I");
+                list1.set(elementIndex, "I");
             }
         }
 
@@ -191,9 +191,9 @@ public abstract class AbstractMethodInfo extends MemberInfo {
     }
 
     public void updateParameterAnnotations(ChangedMethodDescriptor changedMethodDescriptor) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof ParameterAnnotationsAttribute) {
-                ((ParameterAnnotationsAttribute) this.attributes[i]).insertAddedParameters(changedMethodDescriptor);
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ParameterAnnotationsAttribute) {
+                ((ParameterAnnotationsAttribute) this.attributes[attributeIndex]).insertAddedParameters(changedMethodDescriptor);
             }
         }
     }
@@ -303,16 +303,16 @@ public abstract class AbstractMethodInfo extends MemberInfo {
     public Enumeration enumerateParameterAnnotationTypes(int ba) {
         HashSet hashSet = null;
 
-        for (int i = 0; i < this.attributeCount; i++) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
             if (hashSet == null) {
                 hashSet = ZkmUtils.createHashSet(13);
             }
 
-            if (this.attributes[i] instanceof ParameterAnnotationsAttribute) {
-                String[] strings = ((ParameterAnnotationsAttribute) this.attributes[i]).getOriginalAnnotationTypes(ba);
+            if (this.attributes[attributeIndex] instanceof ParameterAnnotationsAttribute) {
+                String[] originalAnnotationTypes = ((ParameterAnnotationsAttribute) this.attributes[attributeIndex]).getOriginalAnnotationTypes(ba);
 
-                for (int j = 0; j < strings.length; j++) {
-                    hashSet.add(strings[j]);
+                for (int originalAnnotationTypeIndex = 0; originalAnnotationTypeIndex < originalAnnotationTypes.length; originalAnnotationTypeIndex++) {
+                    hashSet.add(originalAnnotationTypes[originalAnnotationTypeIndex]);
                 }
             }
         }
@@ -352,29 +352,29 @@ public abstract class AbstractMethodInfo extends MemberInfo {
             int ba = 0;
             String[] strings = new String[abstractMethodInfos.length];
 
-            for (int i = 0; i < abstractMethodInfos.length; i++) {
-                String string = abstractMethodInfos[i].getReturnDescriptor();
+            for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < abstractMethodInfos.length; abstractMethodInfoIndex++) {
+                String returnDescriptor = abstractMethodInfos[abstractMethodInfoIndex].getReturnDescriptor();
                 int bc = 0;
 
-                while (string.charAt(bc) == '[') {
+                while (returnDescriptor.charAt(bc) == '[') {
                     bc++;
                 }
 
-                if (i == 0) {
+                if (abstractMethodInfoIndex == 0) {
                     ba = bc;
                 } else if (bc != ba) {
                     return null;
                 }
 
                 if (bc > 0) {
-                    string = string.substring(bc);
+                    returnDescriptor = returnDescriptor.substring(bc);
                 }
 
-                if (string.endsWith(";")) {
-                    string = string.substring(1, string.length() - 1);
+                if (returnDescriptor.endsWith(";")) {
+                    returnDescriptor = returnDescriptor.substring(1, returnDescriptor.length() - 1);
                 }
 
-                strings[i] = string;
+                strings[abstractMethodInfoIndex] = returnDescriptor;
             }
 
             int bd;
@@ -431,9 +431,9 @@ public abstract class AbstractMethodInfo extends MemberInfo {
     }
 
     public void updateMethodParametersAttribute(ChangedMethodDescriptor changedMethodDescriptor, AbstractConstantPool abstractConstantPool, List list1) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof MethodParametersAttribute) {
-                MethodParametersAttribute methodParametersAttribute = (MethodParametersAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof MethodParametersAttribute) {
+                MethodParametersAttribute methodParametersAttribute = (MethodParametersAttribute) this.attributes[attributeIndex];
                 this.getWidenedParameterTypes();
                 this.isStatic();
                 AbstractConstantPool abstractConstantPool1 = abstractConstantPool;
@@ -446,16 +446,16 @@ public abstract class AbstractMethodInfo extends MemberInfo {
     public Enumeration enumerateDeclaredParameterAnnotationTypes(int ba) {
         HashSet hashSet = null;
 
-        for (int i = 0; i < this.attributeCount; i++) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
             if (hashSet == null) {
                 hashSet = ZkmUtils.createHashSet(13);
             }
 
-            if (this.attributes[i] instanceof ParameterAnnotationsAttribute) {
-                String[] strings = ((ParameterAnnotationsAttribute) this.attributes[i]).getAnnotationTypes(ba);
+            if (this.attributes[attributeIndex] instanceof ParameterAnnotationsAttribute) {
+                String[] annotationTypes = ((ParameterAnnotationsAttribute) this.attributes[attributeIndex]).getAnnotationTypes(ba);
 
-                for (int j = 0; j < strings.length; j++) {
-                    hashSet.add(strings[j]);
+                for (int annotationTypeIndex = 0; annotationTypeIndex < annotationTypes.length; annotationTypeIndex++) {
+                    hashSet.add(annotationTypes[annotationTypeIndex]);
                 }
             }
         }
@@ -464,19 +464,19 @@ public abstract class AbstractMethodInfo extends MemberInfo {
     }
 
     public final int getArgumentSlotCount() {
-        int ba = this.accessFlags.isStatic() ? 0 : 1;
+        int argumentSlotCount = this.accessFlags.isStatic() ? 0 : 1;
 
-        for (int i = 0; i < this.parameterTypes.size(); i++) {
-            if (((String) this.parameterTypes.get(i)).equals("D")) {
-                ba += 2;
-            } else if (((String) this.parameterTypes.get(i)).equals("J")) {
-                ba += 2;
+        for (int elementIndex = 0; elementIndex < this.parameterTypes.size(); elementIndex++) {
+            if (((String) this.parameterTypes.get(elementIndex)).equals("D")) {
+                argumentSlotCount += 2;
+            } else if (((String) this.parameterTypes.get(elementIndex)).equals("J")) {
+                argumentSlotCount += 2;
             } else {
-                ba++;
+                argumentSlotCount++;
             }
         }
 
-        return ba;
+        return argumentSlotCount;
     }
 
     public final void setHasChangedParameters() {
@@ -513,14 +513,14 @@ public abstract class AbstractMethodInfo extends MemberInfo {
     }
 
     @Override
-    public final void setDescriptor(String string) throws ZkmException, IOException {
-        this.descriptor = string;
+    public final void setDescriptor(String descriptorArgument) throws ZkmException, IOException {
+        this.descriptor = descriptorArgument;
         this.parameterTypes = ConstantPoolEntry.parseParameterTypes(this.descriptor, true);
-        super.setDescriptor(string);
+        super.setDescriptor(descriptorArgument);
     }
 
-    public AbstractMethodInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, int ba) {
-        super(classFileBase, constantUtf8, constantUtf81, attributes1, ba);
+    public AbstractMethodInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1, int creationKindArgument) {
+        super(classFileBase, constantUtf8, constantUtf81, attributes1, creationKindArgument);
         this.cacheNameAndDescriptor();
     }
 
@@ -528,17 +528,17 @@ public abstract class AbstractMethodInfo extends MemberInfo {
         String[] strings = null;
         String string2;
         if (map1 != null) {
-            int ba = 0;
+            int integerValue = 0;
             Iterator iterator = map1.keySet().iterator();
 
             while (iterator.hasNext()) {
                 Integer integer = (Integer) iterator.next();
-                if (integer > ba) {
-                    ba = integer;
+                if (integer > integerValue) {
+                    integerValue = integer;
                 }
             }
 
-            strings = new String[ba + 1];
+            strings = new String[integerValue + 1];
             iterator = map1.entrySet().iterator();
 
             while (iterator.hasNext()) {
@@ -555,9 +555,9 @@ public abstract class AbstractMethodInfo extends MemberInfo {
         StringBuilder stringBuilder = new StringBuilder();
         int bb = this.accessFlags.isStatic() ? 0 : 1;
 
-        for (int i = 0; i < this.parameterTypes.size(); i++) {
+        for (int elementIndex = 0; elementIndex < this.parameterTypes.size(); elementIndex++) {
             if (bl) {
-                stringBuilder.append(ConstantPoolEntry.descriptorToJavaType((String) this.parameterTypes.get(i)));
+                stringBuilder.append(ConstantPoolEntry.descriptorToJavaType((String) this.parameterTypes.get(elementIndex)));
                 stringBuilder.append(" ");
                 if (strings != null && strings.length > bb && strings[bb] != null) {
                     stringBuilder.append(strings[bb]);
@@ -565,24 +565,24 @@ public abstract class AbstractMethodInfo extends MemberInfo {
                     stringBuilder.append(string + bb);
                 }
 
-                if (i < this.parameterTypes.size() - 1) {
+                if (elementIndex < this.parameterTypes.size() - 1) {
                     stringBuilder.append(", ");
                 }
 
-                bb += getSlotSize((String) this.parameterTypes.get(i));
+                bb += getSlotSize((String) this.parameterTypes.get(elementIndex));
             } else {
-                stringBuilder.append(ConstantPoolEntry.descriptorToJavaType((String) this.parameterTypes.get(i)));
-                stringBuilder.append(i < this.parameterTypes.size() - 1 ? ", " : "");
+                stringBuilder.append(ConstantPoolEntry.descriptorToJavaType((String) this.parameterTypes.get(elementIndex)));
+                stringBuilder.append(elementIndex < this.parameterTypes.size() - 1 ? ", " : "");
             }
         }
 
-        String string1;
+        String modifierString;
         if (this.methodName.equals("<init>")) {
-            string1 = this.accessFlags.getModifierString() + this.getClassSimpleName() + "(" + stringBuilder + ")";
+            modifierString = this.accessFlags.getModifierString() + this.getClassSimpleName() + "(" + stringBuilder + ")";
         } else if (this.methodName.equals("<clinit>")) {
-            string1 = this.accessFlags.getModifierString();
+            modifierString = this.accessFlags.getModifierString();
         } else {
-            string1 = this.accessFlags.getModifierString()
+            modifierString = this.accessFlags.getModifierString()
                     + ConstantPoolEntry.descriptorToJavaType(this.descriptor)
                     + " "
                     + this.methodName
@@ -591,7 +591,7 @@ public abstract class AbstractMethodInfo extends MemberInfo {
                     + ")";
         }
 
-        return string1;
+        return modifierString;
     }
 
     public final boolean hadLocalVariableTable() {
@@ -616,8 +616,8 @@ public abstract class AbstractMethodInfo extends MemberInfo {
         return this.descriptor.substring(ba + 1);
     }
 
-    public final void setNameChanged(boolean bl) {
-        if (bl) {
+    public final void setNameChanged(boolean nameChanged) {
+        if (nameChanged) {
             this.setStateFlag(4);
         } else {
             this.clearStateFlag(4);
@@ -630,30 +630,30 @@ public abstract class AbstractMethodInfo extends MemberInfo {
 
     public boolean isSameMethod(AbstractMethodInfo abstractMethodInfo1) {
         VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        boolean bl = this.methodName.equals(abstractMethodInfo1.methodName);
+        boolean sameMethod = this.methodName.equals(abstractMethodInfo1.methodName);
         if (visitableNodes1 != null) {
-            if (bl) {
-                bl = this.descriptor.equals(abstractMethodInfo1.descriptor);
+            if (sameMethod) {
+                sameMethod = this.descriptor.equals(abstractMethodInfo1.descriptor);
                 if (visitableNodes1 == null) {
-                    return bl;
+                    return sameMethod;
                 }
 
-                if (bl) {
-                    bl = this.getClassName().equals(abstractMethodInfo1.getClassName());
+                if (sameMethod) {
+                    sameMethod = this.getClassName().equals(abstractMethodInfo1.getClassName());
                     if (visitableNodes1 == null) {
-                        return bl;
+                        return sameMethod;
                     }
 
-                    if (bl) {
+                    if (sameMethod) {
                         return true;
                     }
                 }
             }
 
-            bl = false;
+            sameMethod = false;
         }
 
-        return bl;
+        return sameMethod;
     }
 
     @Override
@@ -680,12 +680,12 @@ public abstract class AbstractMethodInfo extends MemberInfo {
         }
 
         stringBuilder1.append(bc);
-        int ba = this.parameterTypes.size();
+        int parameterTypesSize = this.parameterTypes.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string = (String) this.parameterTypes.get(i);
-            stringBuilder.append(ConstantPoolEntry.descriptorToJavaType(string));
-            if (i < ba - 1) {
+        for (int elementIndex = 0; elementIndex < parameterTypesSize; elementIndex++) {
+            String descriptorValue = (String) this.parameterTypes.get(elementIndex);
+            stringBuilder.append(ConstantPoolEntry.descriptorToJavaType(descriptorValue));
+            if (elementIndex < parameterTypesSize - 1) {
                 stringBuilder.append(", ");
             }
         }

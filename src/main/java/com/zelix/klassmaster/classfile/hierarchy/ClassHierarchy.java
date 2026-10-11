@@ -107,9 +107,9 @@ public class ClassHierarchy extends ChangeObservable {
     }
 
     public void checkForHierarchyLoops(ClassFileBase[] classFileBases) throws ZkmException, IOException {
-        for (int i = 0; i < classFileBases.length; i++) {
+        for (int classFileBaseIndex = 0; classFileBaseIndex < classFileBases.length; classFileBaseIndex++) {
             LinkedHashSet linkedHashSet = new LinkedHashSet();
-            ClassFileBase classFileBase = classFileBases[i];
+            ClassFileBase classFileBase = classFileBases[classFileBaseIndex];
             linkedHashSet.add(classFileBase);
             ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(classFileBase.getClassName());
 
@@ -134,10 +134,10 @@ public class ClassHierarchy extends ChangeObservable {
             }
         }
 
-        for (int i = 0; i < classFileBases.length; i++) {
+        for (int classFileBaseIndexValue = 0; classFileBaseIndexValue < classFileBases.length; classFileBaseIndexValue++) {
             LinkedHashSet linkedHashSet1 = new LinkedHashSet();
             ObservableHolder observableHolder = new ObservableHolder();
-            ClassHierarchyNode classHierarchyNode2 = ClassHierarchyNode.findNode(classFileBases[i].getClassName());
+            ClassHierarchyNode classHierarchyNode2 = ClassHierarchyNode.findNode(classFileBases[classFileBaseIndexValue].getClassName());
             if (!this.checkImplementationLoop(classHierarchyNode2, linkedHashSet1, observableHolder)) {
                 throw new ZkmProcessingException((String) observableHolder.getValue());
             }
@@ -236,12 +236,12 @@ public class ClassHierarchy extends ChangeObservable {
 
     public List getTopProgramNodes() {
         ArrayList arrayList = new ArrayList();
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
         for (List list1 = this.rootNodes; bb < list1.size(); list1 = this.rootNodes) {
-            this.collectTopProgramNodes((ClassHierarchyNode) this.rootNodes.get(ba), arrayList);
-            bb = ++ba;
+            this.collectTopProgramNodes((ClassHierarchyNode) this.rootNodes.get(elementIndex), arrayList);
+            bb = ++elementIndex;
         }
 
         return arrayList;
@@ -260,8 +260,8 @@ public class ClassHierarchy extends ChangeObservable {
         }
     }
 
-    public ClassHierarchyNode getNodeAt(int ba) {
-        return (ClassHierarchyNode) this.orderedNodes.get(ba);
+    public ClassHierarchyNode getNodeAt(int elementIndex) {
+        return (ClassHierarchyNode) this.orderedNodes.get(elementIndex);
     }
 
     public void collectTopLoadedNodes(ClassHierarchyNode classHierarchyNode, List list1) {
@@ -305,9 +305,9 @@ public class ClassHierarchy extends ChangeObservable {
             return true;
         }
 
-        String string = classFileBase1.getSuperclassName();
-        if (string != null) {
-            ClassFileBase classFileBase2 = ClassHierarchyNode.findClassFile(string);
+        String superclassName = classFileBase1.getSuperclassName();
+        if (superclassName != null) {
+            ClassFileBase classFileBase2 = ClassHierarchyNode.findClassFile(superclassName);
             if (classFileBase2 != null) {
                 if (classFileBase2.isInterface()) {
                     observableHolder.setValue(
@@ -333,7 +333,7 @@ public class ClassHierarchy extends ChangeObservable {
                 }
             } else {
                 String string1 = "looking for the superclass of '" + classFileBase1.getDisplayLocationName() + "'";
-                ClassFileBase classFileBase3 = classResolver1.getClassFile(string, string1);
+                ClassFileBase classFileBase3 = classResolver1.getClassFile(superclassName, string1);
                 boolean bl2 = this.validateSupertypes(classFileBase, classFileBase3, observableHolder, classResolver1, false);
                 if (!bl2) {
                     return false;
@@ -341,11 +341,11 @@ public class ClassHierarchy extends ChangeObservable {
             }
         }
 
-        String[] strings = classFileBase1.getInterfaceNames();
+        String[] interfaceNames = classFileBase1.getInterfaceNames();
 
-        for (int i = 0; i < strings.length; i++) {
-            String string2 = strings[i];
-            ClassFileBase classFileBase5 = ClassHierarchyNode.findClassFile(string2);
+        for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+            String interfaceName = interfaceNames[interfaceNameIndex];
+            ClassFileBase classFileBase5 = ClassHierarchyNode.findClassFile(interfaceName);
             if (classFileBase5 != null) {
                 if (!classFileBase5.isInterface()) {
                     observableHolder.setValue(
@@ -371,7 +371,7 @@ public class ClassHierarchy extends ChangeObservable {
                 }
             } else {
                 String string3 = "looking for an implemented interface of '" + classFileBase1.getLocationName() + "'";
-                ClassFileBase classFileBase4 = classResolver1.getClassFile(string2, string3);
+                ClassFileBase classFileBase4 = classResolver1.getClassFile(interfaceName, string3);
                 if (!this.validateSupertypes(classFileBase, classFileBase4, observableHolder, classResolver1, false)) {
                     return false;
                 }
@@ -416,12 +416,12 @@ public class ClassHierarchy extends ChangeObservable {
 
     public List getTopLoadedNodes() {
         ArrayList arrayList = new ArrayList();
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
         for (List list1 = this.rootNodes; bb < list1.size(); list1 = this.rootNodes) {
-            this.collectTopLoadedNodes((ClassHierarchyNode) this.rootNodes.get(ba), arrayList);
-            bb = ++ba;
+            this.collectTopLoadedNodes((ClassHierarchyNode) this.rootNodes.get(elementIndex), arrayList);
+            bb = ++elementIndex;
         }
 
         return arrayList;
@@ -430,8 +430,8 @@ public class ClassHierarchy extends ChangeObservable {
     public boolean validateLoadedHierarchies(ObservableHolder observableHolder, ClassResolver classResolver1) throws ZkmException, IOException {
         List list1 = this.getTopLoadedNodes();
 
-        for (int i = 0; i < list1.size(); i++) {
-            ClassFileBase classFileBase = ((ClassHierarchyNode) list1.get(i)).getClassFile();
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ClassFileBase classFileBase = ((ClassHierarchyNode) list1.get(elementIndex)).getClassFile();
             if (!this.validateSupertypes(classFileBase, classFileBase, observableHolder, classResolver1, true)) {
                 return false;
             }
@@ -451,8 +451,8 @@ public class ClassHierarchy extends ChangeObservable {
         this.orderedNodes = new ArrayList();
         HashMap hashMap = ZkmUtils.createHashMap();
 
-        for (int i = 0; i < classFileBases.length; i++) {
-            ClassFileBase classFileBase = classFileBases[i];
+        for (int classFileBaseIndex = 0; classFileBaseIndex < classFileBases.length; classFileBaseIndex++) {
+            ClassFileBase classFileBase = classFileBases[classFileBaseIndex];
             hashMap.put(classFileBase.getClassName(), classFileBase);
             if (!classFileBase.isProgramClass()) {
                 this.hasLibraryClasses = true;
@@ -463,12 +463,12 @@ public class ClassHierarchy extends ChangeObservable {
         ClassHierarchyNode.disposeAllNodes();
         HashMap hashMap2 = ZkmUtils.createHashMap();
 
-        for (int i = 0; i < classFileBases.length; i++) {
-            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.getOrCreateNode(classFileBases[i].getClassName(), classFileBases[i]);
+        for (int classFileBaseIndexValue = 0; classFileBaseIndexValue < classFileBases.length; classFileBaseIndexValue++) {
+            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.getOrCreateNode(classFileBases[classFileBaseIndexValue].getClassName(), classFileBases[classFileBaseIndexValue]);
             ClassHierarchyNode classHierarchyNode1;
-            if (!classFileBases[i].isModule()) {
+            if (!classFileBases[classFileBaseIndexValue].isModule()) {
                 classHierarchyNode1 = ClassHierarchyNode.getOrCreateNode(
-                        classFileBases[i].getSuperclassName(), (ClassFileBase) hashMap.get(classFileBases[i].getSuperclassName())
+                        classFileBases[classFileBaseIndexValue].getSuperclassName(), (ClassFileBase) hashMap.get(classFileBases[classFileBaseIndexValue].getSuperclassName())
                 );
             } else {
                 classHierarchyNode1 = ClassHierarchyNode.getOrCreateNode("java/lang/Object", (ClassFileBase) hashMap.get("java/lang/Object"));
@@ -478,36 +478,36 @@ public class ClassHierarchy extends ChangeObservable {
             classHierarchyNode1.addSubclass(classHierarchyNode);
             this.subclassesBySuperclass.addValue(classHierarchyNode1, classHierarchyNode);
             hashMap2.put(classHierarchyNode, classHierarchyNode1);
-            if (classFileBases[i].getInterfaceCount() > 0) {
-                for (int j = 0; j < classFileBases[i].getInterfaceCount(); j++) {
-                    String string = classFileBases[i].getInterfaceName(j);
-                    ClassHierarchyNode classHierarchyNode2 = ClassHierarchyNode.getOrCreateNode(string, (ClassFileBase) hashMap.get(string));
+            if (classFileBases[classFileBaseIndexValue].getInterfaceCount() > 0) {
+                for (int interfaceIndex = 0; interfaceIndex < classFileBases[classFileBaseIndexValue].getInterfaceCount(); interfaceIndex++) {
+                    String interfaceName = classFileBases[classFileBaseIndexValue].getInterfaceName(interfaceIndex);
+                    ClassHierarchyNode classHierarchyNode2 = ClassHierarchyNode.getOrCreateNode(interfaceName, (ClassFileBase) hashMap.get(interfaceName));
                     listMultimap.addValue(classHierarchyNode, classHierarchyNode2);
                     classHierarchyNode.addInterface(classHierarchyNode2);
                     classHierarchyNode2.addImplementor(classHierarchyNode);
                 }
             }
 
-            if (classFileBases[i].isInnerClassesTrimPending()) {
+            if (classFileBases[classFileBaseIndexValue].isInnerClassesTrimPending()) {
                 this.innerClassesHolders.add(classHierarchyNode);
             }
 
-            if (classFileBases[i].hasPermittedSubclasses()) {
+            if (classFileBases[classFileBaseIndexValue].hasPermittedSubclasses()) {
                 this.permittedSubclassHolders.add(classHierarchyNode);
             }
 
-            if (classFileBases[i].isInnerClass()) {
-                String string2 = classFileBases[i].getEnclosingClassName();
-                if (string2 != null) {
-                    hashMap1.put(classFileBases[i], string2);
+            if (classFileBases[classFileBaseIndexValue].isInnerClass()) {
+                String enclosingClassName = classFileBases[classFileBaseIndexValue].getEnclosingClassName();
+                if (enclosingClassName != null) {
+                    hashMap1.put(classFileBases[classFileBaseIndexValue], enclosingClassName);
                 }
             }
         }
 
         for (ClassFileBase classFileBase2 : classFileBases) {
-            String string4 = classFileBase2.getNestHostName();
-            if (string4 != null) {
-                ClassHierarchyNode classHierarchyNode7 = ClassHierarchyNode.findNode(string4);
+            String nestHostName = classFileBase2.getNestHostName();
+            if (nestHostName != null) {
+                ClassHierarchyNode classHierarchyNode7 = ClassHierarchyNode.findNode(nestHostName);
                 if (classHierarchyNode7 != null) {
                     ClassHierarchyNode classHierarchyNode3 = ClassHierarchyNode.findNode(classFileBase2.getClassName());
                     this.nestMembersByHost.addValue(classHierarchyNode7, classHierarchyNode3);
@@ -534,17 +534,17 @@ public class ClassHierarchy extends ChangeObservable {
 
         Collections.sort(this.rootNodes);
 
-        for (int i = 0; i < classFileBases.length; i++) {
-            if (classFileBases[i].isProgramClass() && classFileBases[i].isInterface()) {
-                ClassHierarchyNode classHierarchyNode6 = ClassHierarchyNode.findNode(classFileBases[i].getClassName());
+        for (int classFileBaseIndexValue2 = 0; classFileBaseIndexValue2 < classFileBases.length; classFileBaseIndexValue2++) {
+            if (classFileBases[classFileBaseIndexValue2].isProgramClass() && classFileBases[classFileBaseIndexValue2].isInterface()) {
+                ClassHierarchyNode classHierarchyNode6 = ClassHierarchyNode.findNode(classFileBases[classFileBaseIndexValue2].getClassName());
                 List list2 = listMultimap.getValues(classHierarchyNode6);
                 if (list2 == null) {
                     this.rootProgramInterfaces.add(classHierarchyNode6);
                 } else {
                     boolean bl = false;
 
-                    for (int j = 0; j < list2.size(); j++) {
-                        ClassHierarchyNode classHierarchyNode8 = (ClassHierarchyNode) list2.get(j);
+                    for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
+                        ClassHierarchyNode classHierarchyNode8 = (ClassHierarchyNode) list2.get(elementIndex);
                         if (classHierarchyNode8.isProgramClass()) {
                             bl = true;
                             break;
@@ -564,16 +564,16 @@ public class ClassHierarchy extends ChangeObservable {
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
             ClassFileBase classFileBase1 = (ClassFileBase) entry.getKey();
-            String string3 = (String) entry.getValue();
-            String string5 = classFileBase1.getClassName();
-            ClassHierarchyNode classHierarchyNode9 = ClassHierarchyNode.findNode(string5);
-            ClassHierarchyNode classHierarchyNode10 = ClassHierarchyNode.findNode(string3);
+            String value = (String) entry.getValue();
+            String className = classFileBase1.getClassName();
+            ClassHierarchyNode classHierarchyNode9 = ClassHierarchyNode.findNode(className);
+            ClassHierarchyNode classHierarchyNode10 = ClassHierarchyNode.findNode(value);
             if (classHierarchyNode10 != null) {
                 classHierarchyNode10.addEnclosedClass(classHierarchyNode9);
                 classHierarchyNode9.setEnclosingNode(classHierarchyNode10);
-                String string1 = classHierarchyNode9.getClassFile().getOuterClassName();
-                if (string1 != null) {
-                    ClassHierarchyNode classHierarchyNode4 = ClassHierarchyNode.findNode(string1);
+                String outerClassName = classHierarchyNode9.getClassFile().getOuterClassName();
+                if (outerClassName != null) {
+                    ClassHierarchyNode classHierarchyNode4 = ClassHierarchyNode.findNode(outerClassName);
                     if (classHierarchyNode4 != null) {
                         classHierarchyNode9.setOuterClassNode(classHierarchyNode4);
                     } else {
@@ -587,9 +587,9 @@ public class ClassHierarchy extends ChangeObservable {
             }
         }
 
-        for (int i = 0; i < classFileBases.length; i++) {
-            if (classFileBases[i].isProgramClass()) {
-                ProgramClass programClass1 = (ProgramClass) classFileBases[i];
+        for (int classFileBaseIndexValue3 = 0; classFileBaseIndexValue3 < classFileBases.length; classFileBaseIndexValue3++) {
+            if (classFileBases[classFileBaseIndexValue3].isProgramClass()) {
+                ProgramClass programClass1 = (ProgramClass) classFileBases[classFileBaseIndexValue3];
                 if (programClass1.isInnerClassesRemovalPending()) {
                     programClass1.removeInnerClassAttributes();
                 }

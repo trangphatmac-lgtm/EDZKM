@@ -30,8 +30,8 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
     public AbstractMethodInfo targetMethod;
     public AbstractMethodInfo lambdaImplMethod;
 
-    public ResolvedInvokeDynamic(int ba, AbstractConstantPool abstractConstantPool, int bb, ResolvedNameAndType resolvedNameAndType) {
-        super(ba, abstractConstantPool, bb, resolvedNameAndType);
+    public ResolvedInvokeDynamic(int index, AbstractConstantPool abstractConstantPool, int bootstrapMethodIndex, ResolvedNameAndType resolvedNameAndType) {
+        super(index, abstractConstantPool, bootstrapMethodIndex, resolvedNameAndType);
     }
 
     public AbstractMethodInfo getLambdaImplMethod() {
@@ -39,11 +39,11 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
     }
 
     public void addReturnTypeIfSupertype(ClassFileBase classFileBase, Set set1) {
-        String string = MethodSignature.getReturnPart(super.nameAndType.getDescriptor());
-        if (string.length() > 2 && string.charAt(string.length() - 1) == ';') {
-            String string1 = string.substring(1, string.length() - 1);
-            if (!string1.equals(classFileBase.getClassName())) {
-                ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string1);
+        String returnPart = MethodSignature.getReturnPart(super.nameAndType.getDescriptor());
+        if (returnPart.length() > 2 && returnPart.charAt(returnPart.length() - 1) == ';') {
+            String key = returnPart.substring(1, returnPart.length() - 1);
+            if (!key.equals(classFileBase.getClassName())) {
+                ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(key);
                 if (classHierarchyNode != null && classHierarchyNode.isProgramClass()) {
                     ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(classFileBase.getClassName());
                     if (classHierarchyNode1 != null) {
@@ -68,10 +68,10 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
         return super.nameAndType.getConstantKey() + '~' + this.bootstrapMethod.getUniqueKey();
     }
 
-    public void setParameterDescriptor(String string) {
-        String string1 = super.nameAndType.getDescriptor();
-        String string2 = '(' + string + string1.substring(string1.indexOf(41));
-        super.nameAndType.setDescriptor(string2);
+    public void setParameterDescriptor(String parameterDescriptor) {
+        String descriptor = super.nameAndType.getDescriptor();
+        String descriptorValue = '(' + parameterDescriptor + descriptor.substring(descriptor.indexOf(41));
+        super.nameAndType.setDescriptor(descriptorValue);
     }
 
     public AbstractMethodInfo findMethodInHierarchy(
@@ -92,12 +92,12 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
             Integer integer1 = classFileBase1.hasReleaseVersion() ? classFileBase1.getReleaseVersion() : integer;
             abstractMethodInfo = ResolvedMethodRef.findMethodInClass(classFileBase1, methodSignature1, classMemberLookup1);
             hashSet.add(classFileBase1);
-            String string1 = classFileBase1.getSuperclassName();
-            if (string1 == null) {
+            String superclassName = classFileBase1.getSuperclassName();
+            if (superclassName == null) {
                 break;
             }
 
-            classFileBase1 = classResolver1.getVersionedClass(string1, integer1, string, ignoreMissingReferencesSpec1);
+            classFileBase1 = classResolver1.getVersionedClass(superclassName, integer1, string, ignoreMissingReferencesSpec1);
         }
 
         if (abstractMethodInfo == null) {
@@ -108,13 +108,13 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
                         classFileBase1, methodSignature1, integer, classMemberLookup1, classResolver1, hashSet, string, ignoreMissingReferencesSpec1
                 );
                 if (abstractMethodInfo == null) {
-                    String string2 = classFileBase1.getSuperclassName();
-                    if (string2 == null) {
+                    String superclassNameValue = classFileBase1.getSuperclassName();
+                    if (superclassNameValue == null) {
                         break;
                     }
 
                     Integer integer2 = classFileBase1.hasReleaseVersion() ? classFileBase1.getReleaseVersion() : integer;
-                    classFileBase1 = classResolver1.getVersionedClass(string2, integer2, string, ignoreMissingReferencesSpec1);
+                    classFileBase1 = classResolver1.getVersionedClass(superclassNameValue, integer2, string, ignoreMissingReferencesSpec1);
                 }
             }
         }
@@ -129,23 +129,23 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
     public void resolveTargetMethod(
             Set set1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1
     ) throws ZkmException, IOException {
-        String string = super.nameAndType.getName();
-        String string1 = MethodSignature.getReturnPart(super.nameAndType.getDescriptor());
+        String name = super.nameAndType.getName();
+        String returnPart = MethodSignature.getReturnPart(super.nameAndType.getDescriptor());
         if (this.bootstrapMethod.getBootstrapClassName().equals("java/lang/runtime/ObjectMethods")) {
             List list1 = MethodSignature.splitParameterDescriptors(super.nameAndType.getDescriptor());
             if (list1.size() >= 1) {
                 String string3 = (String) list1.get(0);
                 if (string3.startsWith("L") && string3.endsWith(";")) {
-                    String string2 = string3.substring(1, string3.length() - 1);
-                    ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string2);
+                    String key = string3.substring(1, string3.length() - 1);
+                    ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
                     if (programClass1 != null) {
                         MethodSignature methodSignature1;
-                        if (string.equals("toString")) {
-                            methodSignature1 = new MethodSignature(string, "()Ljava/lang/String;");
-                        } else if (string.equals("equals")) {
-                            methodSignature1 = new MethodSignature(string, "(Ljava/lang/Object;)Z");
-                        } else if (string.equals("hashCode")) {
-                            methodSignature1 = new MethodSignature(string, "()I");
+                        if (name.equals("toString")) {
+                            methodSignature1 = new MethodSignature(name, "()Ljava/lang/String;");
+                        } else if (name.equals("equals")) {
+                            methodSignature1 = new MethodSignature(name, "(Ljava/lang/Object;)Z");
+                        } else if (name.equals("hashCode")) {
+                            methodSignature1 = new MethodSignature(name, "()I");
                         } else {
                             methodSignature1 = null;
                         }
@@ -193,8 +193,8 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
                                 abstractMethodInfo.markLambdaImplementation();
                                 List list3 = MethodSignature.splitParameterDescriptors(super.nameAndType.getDescriptor());
                                 ResolvedMethodType resolvedMethodType = (ResolvedMethodType) constantPoolEntrys[2];
-                                String string4 = resolvedMethodType.getDescriptor();
-                                List list4 = MethodSignature.splitParameterDescriptors(string4);
+                                String descriptor = resolvedMethodType.getDescriptor();
+                                List list4 = MethodSignature.splitParameterDescriptors(descriptor);
                                 if (!abstractMethodInfo.isInstanceNonConstructor() || !list3.isEmpty()) {
                                     if (abstractMethodInfo.isInstanceNonConstructor()) {
                                         String string8 = (String) list3.remove(0);
@@ -204,8 +204,8 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
                                     }
 
                                     int ba = list2.size() - list4.size();
-                                    int bb = list2.size() - ba;
-                                    abstractMethodInfo.setLambdaArgCount(bb);
+                                    int lambdaArgCount = list2.size() - ba;
+                                    abstractMethodInfo.setLambdaArgCount(lambdaArgCount);
                                     this.lambdaImplMethod = abstractMethodInfo;
                                 }
                             }
@@ -214,19 +214,19 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
                 }
             }
 
-            if (string1.charAt(0) == '[' || ConstantPoolEntry.isPrimitiveDescriptor(string1)) {
+            if (returnPart.charAt(0) == '[' || ConstantPoolEntry.isPrimitiveDescriptor(returnPart)) {
                 return;
             }
 
-            String string5 = string1.substring(1, string1.length() - 1);
+            String keyValue = returnPart.substring(1, returnPart.length() - 1);
             ConstantPoolEntry[] constantPoolEntrys1 = this.bootstrapMethod.copyArguments();
             HashSet hashSet = ZkmUtils.createHashSet();
 
-            for (int i = 0; i < constantPoolEntrys1.length; i++) {
-                if (constantPoolEntrys1[i] instanceof ResolvedMethodType) {
-                    hashSet.add(((ResolvedMethodType) constantPoolEntrys1[i]).getDescriptor());
-                } else if (constantPoolEntrys1[i] instanceof ResolvedMethodHandleConstant) {
-                    ResolvedMethodHandleConstant resolvedMethodHandleConstant1 = (ResolvedMethodHandleConstant) constantPoolEntrys1[i];
+            for (int constantPoolEntrys1ElementIndex = 0; constantPoolEntrys1ElementIndex < constantPoolEntrys1.length; constantPoolEntrys1ElementIndex++) {
+                if (constantPoolEntrys1[constantPoolEntrys1ElementIndex] instanceof ResolvedMethodType) {
+                    hashSet.add(((ResolvedMethodType) constantPoolEntrys1[constantPoolEntrys1ElementIndex]).getDescriptor());
+                } else if (constantPoolEntrys1[constantPoolEntrys1ElementIndex] instanceof ResolvedMethodHandleConstant) {
+                    ResolvedMethodHandleConstant resolvedMethodHandleConstant1 = (ResolvedMethodHandleConstant) constantPoolEntrys1[constantPoolEntrys1ElementIndex];
                     if (resolvedMethodHandleConstant1 != null && resolvedMethodHandleConstant1.isMethodKind()) {
                         hashSet.add(resolvedMethodHandleConstant1.getMemberRef().getDescriptor());
                     }
@@ -236,15 +236,15 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
             ClassFileBase classFileBase1 = this.getOwnerClass();
             Integer integer = classFileBase1.hasReleaseVersion() ? classFileBase1.getReleaseVersion() : null;
             ClassFileBase classFileBase2 = classResolver1.getVersionedClass(
-                    string5, integer, "looking for class '" + ZkmUtils.slashesToDots(string5) + "' which is referenced in class '" + this.getOwnerFilePath() + "'"
+                    keyValue, integer, "looking for class '" + ZkmUtils.slashesToDots(keyValue) + "' which is referenced in class '" + this.getOwnerFilePath() + "'"
             );
             if (!hashSet.isEmpty()) {
                 Iterator iterator = hashSet.iterator();
 
                 while (iterator.hasNext()) {
                     String string6 = (String) iterator.next();
-                    MethodSignature methodSignature2 = new MethodSignature(string, string6);
-                    if (MethodSignature.isSignaturePolymorphic(string5, string, classMemberLookup1) && this.getOwnerClass().supportsJava8()) {
+                    MethodSignature methodSignature2 = new MethodSignature(name, string6);
+                    if (MethodSignature.isSignaturePolymorphic(keyValue, name, classMemberLookup1) && this.getOwnerClass().supportsJava8()) {
                         ClasspathClassFile classpathClassFile = (ClasspathClassFile) classResolver1.getVersionedClass(
                                 "java/lang/invoke/MethodHandle",
                                 integer,
@@ -258,7 +258,7 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
                     String string7 = "looking for method '"
                             + methodSignature2.getNameWithParameters((Map) null)
                             + "' in class '"
-                            + ZkmUtils.slashesToDots(string5)
+                            + ZkmUtils.slashesToDots(keyValue)
                             + "' which is referenced in class '"
                             + this.getOwnerFilePath()
                             + "'";
@@ -280,8 +280,8 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
         super(abstractConstantPool, resolvedNameAndType, bootstrapMethodEntry);
     }
 
-    public ResolvedInvokeDynamic(int ba, ResolvedNameAndType resolvedNameAndType, ResolvedInvokeDynamic resolvedInvokeDynamic1) {
-        super(ba, resolvedNameAndType, resolvedInvokeDynamic1);
+    public ResolvedInvokeDynamic(int index, ResolvedNameAndType resolvedNameAndType, ResolvedInvokeDynamic resolvedInvokeDynamic1) {
+        super(index, resolvedNameAndType, resolvedInvokeDynamic1);
         this.targetMethod = resolvedInvokeDynamic1.targetMethod;
         this.lambdaImplMethod = resolvedInvokeDynamic1.lambdaImplMethod;
     }
@@ -320,10 +320,10 @@ public class ResolvedInvokeDynamic extends ResolvedDynamicRef implements Constan
 
     public final void updateNameFromTarget() {
         if (this.targetMethod != null && !ClassHierarchyNode.isUnknownClass(this.targetMethod.getClassName())) {
-            String string = super.nameAndType.getName();
-            String string1 = this.targetMethod.getJvmName();
-            if (!string.equals(string1)) {
-                super.nameAndType.setName(string1);
+            String name = super.nameAndType.getName();
+            String jvmName = this.targetMethod.getJvmName();
+            if (!name.equals(jvmName)) {
+                super.nameAndType.setName(jvmName);
             }
         }
     }

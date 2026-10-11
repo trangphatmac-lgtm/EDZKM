@@ -61,8 +61,8 @@ public class ObfuscatedReferenceSlot {
         return this.invokeDynamic;
     }
 
-    public static void setSharedStrings(String[] strings) {
-        sharedStrings = strings;
+    public static void setSharedStrings(String[] sharedStringsArgument) {
+        sharedStrings = sharedStringsArgument;
     }
 
     public static String[] getSharedStrings() {

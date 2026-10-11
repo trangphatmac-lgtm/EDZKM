@@ -74,28 +74,28 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
 
     public abstract void applyStatementOptions(ObfuscateOptions obfuscateOptions1, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException;
 
-    public String translateProGuardMapping(String string, ScriptEnvironment scriptEnvironment1) throws ZkmException {
+    public String translateProGuardMapping(String mappingFileName, ScriptEnvironment scriptEnvironment1) throws ZkmException {
         BufferedReader bufferedReader = null;
 
         try {
-            bufferedReader = ZkmFileUtils.openReaderForPath(string);
+            bufferedReader = ZkmFileUtils.openReaderForPath(mappingFileName);
             new ProGuardMappingParser(bufferedReader);
             ProGuardMappingASTInput proGuardMappingASTInput = (ProGuardMappingASTInput) ProGuardMappingParser.Input();
-            ProGuardMappingTranslator proGuardMappingTranslator = new ProGuardMappingTranslator(string);
+            ProGuardMappingTranslator proGuardMappingTranslator = new ProGuardMappingTranslator(mappingFileName);
             proGuardMappingASTInput.translate(null, proGuardMappingTranslator);
-            String string1 = proGuardMappingTranslator.buildChangeLog();
+            String text = proGuardMappingTranslator.buildChangeLog();
             ObservableHolder observableHolder = new ObservableHolder();
-            File file1 = ZkmFileUtils.writeStringToTempFile(string1, observableHolder);
+            File file1 = ZkmFileUtils.writeStringToTempFile(text, observableHolder);
             if (file1 != null) {
                 scriptEnvironment1.logMessage(
-                        "Mapping file '" + string + "' into " + "Zelix KlassMaster" + " format : '" + (String) observableHolder.getValue() + "'"
+                        "Mapping file '" + mappingFileName + "' into " + "Zelix KlassMaster" + " format : '" + (String) observableHolder.getValue() + "'"
                 );
                 return file1.getAbsolutePath();
             }
 
             scriptEnvironment1.logSeriousError_v(
                     "Error creating temporary file while translating '"
-                            + string
+                            + mappingFileName
                             + "' into "
                             + "Zelix KlassMaster"
                             + " format : '"
@@ -104,11 +104,11 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
             );
         } catch (IOException iOException1) {
             scriptEnvironment1.logSeriousError_v(
-                    "Error translating '" + string + "' into " + "Zelix KlassMaster" + " format : '" + iOException1.getMessage() + "' (A)"
+                    "Error translating '" + mappingFileName + "' into " + "Zelix KlassMaster" + " format : '" + iOException1.getMessage() + "' (A)"
             );
         } catch (ProGuardMappingParseException proGuardMappingParseException) {
             scriptEnvironment1.logSeriousError_v(
-                    "Error translating '" + string + "' into " + "Zelix KlassMaster" + " format : '" + proGuardMappingParseException.getMessage() + "' (B)"
+                    "Error translating '" + mappingFileName + "' into " + "Zelix KlassMaster" + " format : '" + proGuardMappingParseException.getMessage() + "' (B)"
             );
         } finally {
             try {
@@ -119,7 +119,7 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
             }
         }
 
-        return string;
+        return mappingFileName;
     }
 
     public abstract void executeObfuscation(
@@ -141,8 +141,8 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
         }
     }
 
-    public String getFirstParameterValue(Object object) {
-        List list1 = super.parameterValues.getValues(object);
+    public String getFirstParameterValue(Object key) {
+        List list1 = super.parameterValues.getValues(key);
         if (list1 != null && list1.size() > 0) {
             String string = (String) list1.get(0);
             return string != null && string.length() > 0 ? string : null;
@@ -186,9 +186,9 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
     @Override
     public final void executeStatement(Object object, Object object1, Object object2, Object object3) throws ZkmException, IOException {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object;
-        int ba = (Integer) object2;
-        int bc = (Integer) object3;
-        int bb = (Integer) object1;
+        int warningCount = (Integer) object2;
+        int errorCount = (Integer) object3;
+        int messageCount = (Integer) object1;
         ClassRepository classRepository1 = scriptEnvironment1.getClassRepository();
         if (!classRepository1.isOpened()) {
             scriptEnvironment1.logFatalError(
@@ -236,9 +236,9 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
         this.applyStatementOptions(obfuscateOptions1, scriptEnvironment1);
         ObfuscateStatementBase obfuscateStatementBase1;
         ScriptEnvironment scriptEnvironment2;
-        int bg;
-        int bh;
-        int bi;
+        int messageCountValue;
+        int warningCountValue;
+        int errorCountValue;
         String string2;
         if (scriptEnvironment1.isVerbose()) {
             StringBuffer stringBuffer = new StringBuffer();
@@ -249,16 +249,16 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
             }
 
             if (obfuscateOptions1.g != null && obfuscateOptions1.g.length != 0) {
-                int bd = 0;
-                int bf = bd;
+                int inputChangeLogIndex = 0;
+                int inputChangeLogIndexValue = inputChangeLogIndex;
 
-                for (ChangeLogInputFile[] changeLogInputFiles = obfuscateOptions1.g; bf < changeLogInputFiles.length; changeLogInputFiles = obfuscateOptions1.g) {
-                    if (bd > 0) {
+                for (ChangeLogInputFile[] changeLogInputFiles = obfuscateOptions1.g; inputChangeLogIndexValue < changeLogInputFiles.length; changeLogInputFiles = obfuscateOptions1.g) {
+                    if (inputChangeLogIndex > 0) {
                         stringBuffer.append(", ");
                     }
 
-                    stringBuffer.append("\"" + obfuscateOptions1.g[bd].getFileName() + "\"");
-                    bf = ++bd;
+                    stringBuffer.append("\"" + obfuscateOptions1.g[inputChangeLogIndex].getFileName() + "\"");
+                    inputChangeLogIndexValue = ++inputChangeLogIndex;
                 }
             } else {
                 stringBuffer.append("\"\"");
@@ -284,31 +284,31 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
             printWriter.println("\tkeepInnerClassInfo=" + string1);
             obfuscateStatementBase1 = this;
             scriptEnvironment2 = scriptEnvironment1;
-            bg = bb;
-            bh = ba;
-            bi = bc;
+            messageCountValue = messageCount;
+            warningCountValue = warningCount;
+            errorCountValue = errorCount;
             string2 = "in parse of";
         } else {
             obfuscateStatementBase1 = this;
             scriptEnvironment2 = scriptEnvironment1;
-            bg = bb;
-            bh = ba;
-            bi = bc;
+            messageCountValue = messageCount;
+            warningCountValue = warningCount;
+            errorCountValue = errorCount;
             string2 = "in parse of";
         }
 
-        obfuscateStatementBase1.printMessageSummary(scriptEnvironment2, bg, bh, bi, string2);
-        bb = scriptEnvironment1.getMessageCount();
-        ba = scriptEnvironment1.getWarningCount();
-        bc = scriptEnvironment1.getErrorCount();
+        obfuscateStatementBase1.printMessageSummary(scriptEnvironment2, messageCountValue, warningCountValue, errorCountValue, string2);
+        messageCount = scriptEnvironment1.getMessageCount();
+        warningCount = scriptEnvironment1.getWarningCount();
+        errorCount = scriptEnvironment1.getErrorCount();
         int seriousErrorCount = scriptEnvironment1.getSeriousErrorCount();
         this.executeObfuscation(list1, list2, obfuscateOptions1, scriptEnvironment1, noOpCallback, logMessageReporter);
-        if (obfuscateOptions1.h != null) {
-            obfuscateOptions1.h.close();
-            obfuscateOptions1.h = null;
+        if (obfuscateOptions1.changeLogWriter != null) {
+            obfuscateOptions1.changeLogWriter.close();
+            obfuscateOptions1.changeLogWriter = null;
         }
 
-        this.printMessageSummary(scriptEnvironment1, bb, ba, bc, "while executing");
+        this.printMessageSummary(scriptEnvironment1, messageCount, warningCount, errorCount, "while executing");
         if (scriptEnvironment1.getSeriousErrorCount() > seriousErrorCount) {
             logMessageReporter.reportFatalErrorWithDetail(
                     "FATAL ERROR:",
@@ -330,10 +330,10 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
 
         ArrayList arrayList = new ArrayList();
         if (list1 != null) {
-            for (int i = 0; i < list1.size(); i++) {
-                String string = (String) list1.get(i);
-                if (string != null && string.length() > 0) {
-                    String string1 = ZkmFileUtils.normalizeSeparators(string);
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String fileName = (String) list1.get(elementIndex);
+                if (fileName != null && fileName.length() > 0) {
+                    String string1 = ZkmFileUtils.normalizeSeparators(fileName);
                     File file1;
                     if (ZkmFileUtils.isRelativePath(string1)) {
                         file1 = new File(scriptEnvironment1.getDefaultDirectory(), string1);
@@ -353,19 +353,19 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
                         );
                     }
 
-                    String string2 = file1.getAbsolutePath();
-                    String string3 = scriptEnvironment1.getLogFileName();
-                    this.checkChangeLogFileClash(string2, string3, "ZKM log", scriptEnvironment1);
-                    String string4 = scriptEnvironment1.getTrimLogFileName();
-                    this.checkChangeLogFileClash(string2, string4, "trim log", scriptEnvironment1);
+                    String absolutePath = file1.getAbsolutePath();
+                    String logFileName = scriptEnvironment1.getLogFileName();
+                    this.checkChangeLogFileClash(absolutePath, logFileName, "ZKM log", scriptEnvironment1);
+                    String trimLogFileName = scriptEnvironment1.getTrimLogFileName();
+                    this.checkChangeLogFileClash(absolutePath, trimLogFileName, "trim log", scriptEnvironment1);
                     ChangeLogInputFile changeLogInputFile;
-                    if (scriptEnvironment1.isProGuardMappingInputEnabled() && this.isProGuardMappingFile(string2, scriptEnvironment1)) {
-                        String string5 = this.translateProGuardMapping(string2, scriptEnvironment1);
-                        changeLogInputFile = new ChangeLogInputFile(string5);
-                        file1 = new File(string5);
-                        string2 = file1.getAbsolutePath();
+                    if (scriptEnvironment1.isProGuardMappingInputEnabled() && this.isProGuardMappingFile(absolutePath, scriptEnvironment1)) {
+                        String fileNameValue = this.translateProGuardMapping(absolutePath, scriptEnvironment1);
+                        changeLogInputFile = new ChangeLogInputFile(fileNameValue);
+                        file1 = new File(fileNameValue);
+                        absolutePath = file1.getAbsolutePath();
                     } else {
-                        changeLogInputFile = new ChangeLogInputFile(string);
+                        changeLogInputFile = new ChangeLogInputFile(fileName);
                     }
 
                     try {
@@ -374,7 +374,7 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
                     } catch (IOException iOException) {
                         scriptEnvironment1.logFatalError(
                                 "Change log file \""
-                                        + string2
+                                        + absolutePath
                                         + "\" could not be opened in \""
                                         + this.getStatementName()
                                         + "\" statement at line "
@@ -423,10 +423,10 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
     public boolean isParameterAccepted(Object object, Object object1) {
         DelegatingParameterNode delegatingParameterNode = (DelegatingParameterNode) object;
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object1;
-        String string = delegatingParameterNode.getParameterName();
+        String parameterName = delegatingParameterNode.getParameterName();
         ListMultimap listMultimap;
         if (super.parameterValues.containsKey("changeLogFileIn")) {
-            if (string.equals("looseChangeLogFileIn")) {
+            if (parameterName.equals("looseChangeLogFileIn")) {
                 scriptEnvironment1.logError(
                         "\"changeLogFileIn\" and \"looseChangeLogFileIn\" appear in \""
                                 + this.getStatementName()
@@ -444,7 +444,7 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
             listMultimap = super.parameterValues;
         }
 
-        if (listMultimap.containsKey("looseChangeLogFileIn") && string.equals("changeLogFileIn")) {
+        if (listMultimap.containsKey("looseChangeLogFileIn") && parameterName.equals("changeLogFileIn")) {
             scriptEnvironment1.logError(
                     "\"looseChangeLogFileIn\" and \"changeLogFileIn\" appear in \""
                             + this.getStatementName()
@@ -466,7 +466,7 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
             list1 = super.parameterValues.getValues("changeLogFile");
         }
 
-        obfuscateOptions1.h = null;
+        obfuscateOptions1.changeLogWriter = null;
         if (list1 != null && list1.size() > 0) {
             obfuscateOptions1.f = ((String) list1.get(0)).trim();
         } else {
@@ -474,18 +474,18 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
         }
 
         if (obfuscateOptions1.f.length() > 0) {
-            String string = ZkmFileUtils.normalizeSeparators(obfuscateOptions1.f);
+            String absolutePathValue = ZkmFileUtils.normalizeSeparators(obfuscateOptions1.f);
             File file1 = null;
 
             try {
-                if (ZkmFileUtils.isRelativePath(string)) {
-                    file1 = new File(scriptEnvironment1.getDefaultDirectory(), string);
+                if (ZkmFileUtils.isRelativePath(absolutePathValue)) {
+                    file1 = new File(scriptEnvironment1.getDefaultDirectory(), absolutePathValue);
                 } else {
-                    file1 = new File(string);
+                    file1 = new File(absolutePathValue);
                 }
 
-                String string6;
-                String string7;
+                String absolutePath;
+                String fileSeparator;
                 if (file1.isDirectory()) {
                     scriptEnvironment1.logFatalError(
                             "Change log file cannot be a directory : \""
@@ -496,34 +496,34 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
                                     + file1.getAbsolutePath()
                                     + "\""
                     );
-                    string6 = string;
-                    string7 = SystemEnvironmentConstants.FILE_SEPARATOR;
+                    absolutePath = absolutePathValue;
+                    fileSeparator = SystemEnvironmentConstants.FILE_SEPARATOR;
                 } else {
-                    string6 = string;
-                    string7 = SystemEnvironmentConstants.FILE_SEPARATOR;
+                    absolutePath = absolutePathValue;
+                    fileSeparator = SystemEnvironmentConstants.FILE_SEPARATOR;
                 }
 
-                int ba = string6.lastIndexOf(string7);
-                if (ba > 0) {
-                    String string1 = string.substring(0, ba);
+                int endIndex = absolutePath.lastIndexOf(fileSeparator);
+                if (endIndex > 0) {
+                    String string1 = absolutePathValue.substring(0, endIndex);
                     DirectoryFileLister.ensureDirectoryExists(string1);
-                    string6 = file1.getAbsolutePath();
+                    absolutePath = file1.getAbsolutePath();
                 } else {
-                    string6 = file1.getAbsolutePath();
+                    absolutePath = file1.getAbsolutePath();
                 }
 
-                String string5 = string6;
-                String string2 = scriptEnvironment1.getLogFileName();
-                this.checkChangeLogFileClash(string5, string2, "ZKM log", scriptEnvironment1);
-                String string3 = scriptEnvironment1.getTrimLogFileName();
-                this.checkChangeLogFileClash(string5, string3, "trim log", scriptEnvironment1);
-                String string4 = AbstractChangeLog.getChangeLogEncoding();
-                if (string4 != null) {
-                    obfuscateOptions1.h = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file1), string4), 2048));
-                    obfuscateOptions1.v = string4;
+                String absolutePathValue2 = absolutePath;
+                String logFileName = scriptEnvironment1.getLogFileName();
+                this.checkChangeLogFileClash(absolutePathValue2, logFileName, "ZKM log", scriptEnvironment1);
+                String trimLogFileName = scriptEnvironment1.getTrimLogFileName();
+                this.checkChangeLogFileClash(absolutePathValue2, trimLogFileName, "trim log", scriptEnvironment1);
+                String changeLogEncoding = AbstractChangeLog.getChangeLogEncoding();
+                if (changeLogEncoding != null) {
+                    obfuscateOptions1.changeLogWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file1), changeLogEncoding), 2048));
+                    obfuscateOptions1.v = changeLogEncoding;
                 } else {
                     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file1), "UTF-8");
-                    obfuscateOptions1.h = new PrintWriter(new BufferedWriter(outputStreamWriter, 2048));
+                    obfuscateOptions1.changeLogWriter = new PrintWriter(new BufferedWriter(outputStreamWriter, 2048));
                     obfuscateOptions1.v = "UTF-8";
                 }
             } catch (IOException iOException) {

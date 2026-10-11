@@ -12,20 +12,20 @@ public class ThreeKeySetMultiMap {
         this.map.clear();
     }
 
-    public SetMultiMap getSetMultiMap(Object object, Object object1) {
-        TwoKeySetMultiMap twoKeySetMultiMap = (TwoKeySetMultiMap) this.map.get(object);
-        return twoKeySetMultiMap == null ? null : twoKeySetMultiMap.getSetMultiMap(object1);
+    public SetMultiMap getSetMultiMap(Object key, Object keyArgument) {
+        TwoKeySetMultiMap twoKeySetMultiMap = (TwoKeySetMultiMap) this.map.get(key);
+        return twoKeySetMultiMap == null ? null : twoKeySetMultiMap.getSetMultiMap(keyArgument);
     }
 
-    public boolean addValue(Object object, Object object1, Object object2, Object object3) {
-        TwoKeySetMultiMap twoKeySetMultiMap = (TwoKeySetMultiMap) this.map.get(object);
+    public boolean addValue(Object key, Object keyArgument, Object keyArgument2, Object object3) {
+        TwoKeySetMultiMap twoKeySetMultiMap = (TwoKeySetMultiMap) this.map.get(key);
         if (twoKeySetMultiMap == null) {
             twoKeySetMultiMap = new TwoKeySetMultiMap(this.nestedCapacity, this.innerCapacity, this.valueSetCapacity);
-            boolean bl = twoKeySetMultiMap.addValue(object1, object2, object3);
-            this.map.put(object, twoKeySetMultiMap);
+            boolean bl = twoKeySetMultiMap.addValue(keyArgument, keyArgument2, object3);
+            this.map.put(key, twoKeySetMultiMap);
             return bl;
         } else {
-            return twoKeySetMultiMap.addValue(object1, object2, object3);
+            return twoKeySetMultiMap.addValue(keyArgument, keyArgument2, object3);
         }
     }
 

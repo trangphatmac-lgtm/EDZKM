@@ -13,18 +13,18 @@ public class PairValueMap implements Map {
     }
 
     @Override
-    public boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
     @Override
-    public Object get(Object object) {
-        return this.getPair(object);
+    public Object get(Object key) {
+        return this.getPair(key);
     }
 
     @Override
-    public Object put(Object object, Object object1) {
-        return this.putPairValue(object, (ObjectPair) object1);
+    public Object put(Object key, Object object1) {
+        return this.putPairValue(key, (ObjectPair) object1);
     }
 
     @Override
@@ -33,8 +33,8 @@ public class PairValueMap implements Map {
     }
 
     @Override
-    public Object remove(Object object) {
-        return this.removePair(object);
+    public Object remove(Object key) {
+        return this.removePair(key);
     }
 
     @Override
@@ -42,9 +42,9 @@ public class PairValueMap implements Map {
         return this.map.entrySet();
     }
 
-    public ObjectPair putPair(Object object, Object object1, Object object2) {
-        ObjectPair objectPair = new ObjectPair(object1, object2);
-        return ((com.zelix.klassmaster.util.ObjectPair) (this.map.put(object, objectPair)));
+    public ObjectPair putPair(Object key, Object first, Object second) {
+        ObjectPair objectPair = new ObjectPair(first, second);
+        return ((com.zelix.klassmaster.util.ObjectPair) (this.map.put(key, objectPair)));
     }
 
     @Override
@@ -67,16 +67,16 @@ public class PairValueMap implements Map {
         return this.map.containsValue(object);
     }
 
-    public ObjectPair putPairValue(Object object, Object object1) {
-        return (ObjectPair) this.map.put(object, object1);
+    public ObjectPair putPairValue(Object key, Object value) {
+        return (ObjectPair) this.map.put(key, value);
     }
 
-    public ObjectPair removePair(Object object) {
-        return (ObjectPair) this.map.remove(object);
+    public ObjectPair removePair(Object key) {
+        return (ObjectPair) this.map.remove(key);
     }
 
-    public ObjectPair getPair(Object object) {
-        return (ObjectPair) this.map.get(object);
+    public ObjectPair getPair(Object key) {
+        return (ObjectPair) this.map.get(key);
     }
 
     @Override

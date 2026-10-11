@@ -8,13 +8,13 @@ public class WeightedObject implements Comparable {
         return Float.compare(this.weight, weightedObject1.weight);
     }
 
-    public WeightedObject(float weight, Object object) {
+    public WeightedObject(float weight, Object valueArgument) {
         this.weight = weight;
-        this.value = object;
+        this.value = valueArgument;
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByWeight((WeightedObject) object);
+    public int compareTo(Object other) {
+        return this.compareByWeight((WeightedObject) other);
     }
 }

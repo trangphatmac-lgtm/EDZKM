@@ -18,20 +18,20 @@ public class ASTLineNumberChange extends ChangeLogSimpleNode {
         this.changeLog = abstractChangeLog;
         int bb = this.jjtGetNumChildren();
         this.oldLineNumbers = new ArrayList(bb - 1);
-        int bc = 0;
+        int childrenElementIndex = 0;
 
-        while (bc < bb) {
-            this.jjtGetChild(bc).interpret(this, 30872, 34067, 41973, abstractChangeLog);
+        while (childrenElementIndex < bb) {
+            this.jjtGetChild(childrenElementIndex).interpret(this, 30872, 34067, 41973, abstractChangeLog);
             if (ba >= 0) {
-                bc++;
+                childrenElementIndex++;
             }
         }
 
         if (abstractChangeLog.acceptsLineNumberChanges()) {
             ASTClassChange aSTClassChange = (ASTClassChange) changeLogNode;
 
-            for (int i = 0; i < this.oldLineNumbers.size(); i++) {
-                aSTClassChange.addLineNumberChange((Integer) this.oldLineNumbers.get(i), this.newLineNumber);
+            for (int elementIndex = 0; elementIndex < this.oldLineNumbers.size(); elementIndex++) {
+                aSTClassChange.addLineNumberChange((Integer) this.oldLineNumbers.get(elementIndex), this.newLineNumber);
             }
         }
     }
@@ -40,8 +40,8 @@ public class ASTLineNumberChange extends ChangeLogSimpleNode {
         this.oldLineNumbers.add(this.changeLog.getCachedInteger(Integer.parseInt(string)));
     }
 
-    public void setNewLineNumber(String string) {
-        this.newLineNumber = this.changeLog.getCachedInteger(Integer.parseInt(string));
+    public void setNewLineNumber(String newLineNumberArgument) {
+        this.newLineNumber = this.changeLog.getCachedInteger(Integer.parseInt(newLineNumberArgument));
     }
 
     public ASTLineNumberChange() {

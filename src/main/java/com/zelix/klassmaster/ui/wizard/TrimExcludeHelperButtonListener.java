@@ -11,16 +11,16 @@ public class TrimExcludeHelperButtonListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.dialog.previousBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.dialog.previousBtn) {
                 this.dialog.goToPreviousStep();
-            } else if (object == this.dialog.okBtn) {
+            } else if (source == this.dialog.okBtn) {
                 this.dialog.acceptParameters();
-            } else if (object == this.dialog.skipBtn) {
+            } else if (source == this.dialog.skipBtn) {
                 this.dialog.skipStep();
-            } else if (object == this.dialog.cancelBtn) {
+            } else if (source == this.dialog.cancelBtn) {
                 this.dialog.cancelDialog();
-            } else if (object == this.dialog.helpBtn) {
+            } else if (source == this.dialog.helpBtn) {
                 this.dialog.showHelp();
             }
         } catch (Throwable throwable) {

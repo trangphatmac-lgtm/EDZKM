@@ -58,24 +58,12 @@ public class PendingReflectionValue implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeEnabled = StackFrameState.isStrictMergeEnabled();
-        int ba = ((object instanceof PendingReflectionValue) ? 1 : 0);
-        if (strictMergeEnabled) {
-            if ((ba != 0)) {
-                PendingReflectionValue pendingReflectionValue1 = (PendingReflectionValue) object;
-                ba = this.callInstructionIndex;
-                if (strictMergeEnabled) {
-                    ba = this.callInstructionIndex == pendingReflectionValue1.callInstructionIndex ? 1 : 0;
-                }
-
-                return ba != 0;
-            }
-
-            ba = 0;
+        if (!(other instanceof PendingReflectionValue)) {
+            return false;
         }
-
-        return ba != 0;
+        return !strictMergeEnabled || this.callInstructionIndex == ((PendingReflectionValue) other).callInstructionIndex;
     }
 
     @Override

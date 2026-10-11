@@ -6,16 +6,16 @@ public abstract class ProGuardNameChangeNode extends ProGuardMappingSimpleNode {
     public String newName;
     public String oldName;
 
-    public final void setNewName(String string) {
-        this.newName = string;
+    public final void setNewName(String newNameArgument) {
+        this.newName = newNameArgument;
     }
 
     public final String getNewName() {
         return this.newName;
     }
 
-    public final void setOldName(String string) {
-        this.oldName = string;
+    public final void setOldName(String oldNameArgument) {
+        this.oldName = oldNameArgument;
     }
 
     public ProGuardNameChangeNode(int ba) {

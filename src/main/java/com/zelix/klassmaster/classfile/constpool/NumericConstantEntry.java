@@ -13,21 +13,21 @@ public abstract class NumericConstantEntry extends ConstantPoolEntry implements 
 
     @Override
     public void notifyObservers(Object object, Object object1, Object object2) throws ZkmException, IOException {
-        int ba;
+        int observersSize;
         NodeVisitor[] nodeVisitors;
         synchronized (this) {
             if (this.observers == null) {
                 return;
             }
 
-            ba = this.observers.size();
-            nodeVisitors = new NodeVisitor[ba];
+            observersSize = this.observers.size();
+            nodeVisitors = new NodeVisitor[observersSize];
             nodeVisitors = ((com.zelix.klassmaster.util.NodeVisitor[]) (this.observers.toArray(nodeVisitors)));
         }
 
-        for (int i = ba - 1; i >= 0; i += -1) {
-            if (nodeVisitors[i] != null) {
-                nodeVisitors[i].handleObservedChange(this, object, object1, object2);
+        for (int nodeVisitorIndex = observersSize - 1; nodeVisitorIndex >= 0; nodeVisitorIndex += -1) {
+            if (nodeVisitors[nodeVisitorIndex] != null) {
+                nodeVisitors[nodeVisitorIndex].handleObservedChange(this, object, object1, object2);
             }
         }
     }
@@ -60,8 +60,8 @@ public abstract class NumericConstantEntry extends ConstantPoolEntry implements 
         nodeVisitor.handleObservedChange(this, null, null, null);
     }
 
-    public NumericConstantEntry(int ba, AbstractConstantPool abstractConstantPool) {
-        super(ba, abstractConstantPool);
+    public NumericConstantEntry(int index, AbstractConstantPool abstractConstantPool) {
+        super(index, abstractConstantPool);
     }
 
     @Override

@@ -31,15 +31,15 @@ public class ParameterUsageInfo {
         return this.typeDescriptor;
     }
 
-    public ParameterUsageInfo(MethodBytecode methodBytecode1, int parameterIndex, String string) {
+    public ParameterUsageInfo(MethodBytecode methodBytecode1, int parameterIndex, String typeDescriptorArgument) {
         this.methodBytecode = methodBytecode1;
         this.usageIndices = new ArrayList();
         this.storedTo = false;
         this.requiresCast = true;
         this.unpackAtEntry = true;
         this.parameterIndex = parameterIndex;
-        this.typeDescriptor = string;
-        if (string.equals(OBJECT_DESCRIPTOR)) {
+        this.typeDescriptor = typeDescriptorArgument;
+        if (typeDescriptorArgument.equals(OBJECT_DESCRIPTOR)) {
             this.markNoCastRequired();
         }
     }

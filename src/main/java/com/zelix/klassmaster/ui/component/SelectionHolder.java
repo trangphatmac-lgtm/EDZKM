@@ -14,8 +14,8 @@ public class SelectionHolder extends ObservableHolder implements NodeVisitor {
     }
 
     @Override
-    public void setValue(Object object) throws ZkmException, IOException {
-        this.selectNode((VisitableNode) object);
+    public void setValue(Object valueArgument) throws ZkmException, IOException {
+        this.selectNode((VisitableNode) valueArgument);
     }
 
     @Override

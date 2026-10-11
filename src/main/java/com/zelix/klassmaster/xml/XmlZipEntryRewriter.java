@@ -29,24 +29,24 @@ public class XmlZipEntryRewriter {
             new XmlResourceProcessor(inputStream, outputStream, xmlContentHandler, s, mutableInt.getValue(), mutableInt2.getValue(), mutableInt3.getValue(), file.getAbsolutePath(), b);
             try {
                 ((FileInputStream) inputStream).close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
             try {
                 ((FileOutputStream) outputStream).close();
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         } finally {
             try {
                 if (inputStream != null) {
                     ((FileInputStream) inputStream).close();
                 }
-            } catch (final IOException ex3) {
+            } catch (final IOException ioExceptionValue2) {
             }
             try {
                 if (outputStream != null) {
                     ((FileOutputStream) outputStream).close();
                 }
-            } catch (final IOException ex4) {
+            } catch (final IOException ioExceptionValue3) {
             }
         }
     }
@@ -62,15 +62,15 @@ public class XmlZipEntryRewriter {
             ZipOutputStream zipOutputStream1,
             ResourcePathTranslator resourcePathTranslator1,
             XmlContentHandler xmlContentHandler,
-            boolean bl,
+            boolean compressed,
             boolean bl1
     ) throws ZkmException, IOException {
         InputStream inputStream1 = null;
 
         try {
             inputStream1 = zipFile1.getInputStream(zipEntry1);
-            String string1 = resourcePathTranslator1.translateResourcePath(zipEntry1.getName());
-            ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, string1, bl);
+            String entryName = resourcePathTranslator1.translateResourcePath(zipEntry1.getName());
+            ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream1, entryName, compressed);
             new XmlResourceProcessor(
                     inputStream1,
                     zipEntryWriter.getOutputStream(),
@@ -93,23 +93,23 @@ public class XmlZipEntryRewriter {
         }
     }
 
-    public XmlZipEntryRewriter(final File file, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3, final String s, final ZipOutputStream zipOutputStream, final XmlContentHandler xmlContentHandler, final boolean b, final boolean b2) throws ZkmException, IOException {
+    public XmlZipEntryRewriter(final File file, final MutableInt mutableInt, final MutableInt mutableInt2, final MutableInt mutableInt3, final String s, final ZipOutputStream zipOutputStream, final XmlContentHandler xmlContentHandler, final boolean compressed, final boolean b2) throws ZkmException, IOException {
         InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
-            final ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream, file.getName(), b);
+            final ZipEntryWriter zipEntryWriter = new ZipEntryWriter(zipOutputStream, file.getName(), compressed);
             new XmlResourceProcessor(inputStream, zipEntryWriter.getOutputStream(), xmlContentHandler, s, mutableInt.getValue(), mutableInt2.getValue(), mutableInt3.getValue(), file.getName(), b2);
             zipEntryWriter.writeEntry();
             try {
                 ((FileInputStream) inputStream).close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
         } finally {
             try {
                 if (inputStream != null) {
                     ((FileInputStream) inputStream).close();
                 }
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         }
     }

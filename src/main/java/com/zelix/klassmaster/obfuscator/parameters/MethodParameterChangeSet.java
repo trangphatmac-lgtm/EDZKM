@@ -139,7 +139,7 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
     }
 
     public final void validateMappedSignature(ClassHierarchyNode classHierarchyNode, ClassFileBase classFileBase, AbstractMethodInfo abstractMethodInfo) throws ZkmException, IOException {
-        String string = classFileBase.getClassName();
+        String className = classFileBase.getClassName();
         MethodSignature methodSignature1 = abstractMethodInfo.getSignature();
         if (this.changeLogMapping.hasAddedParameters(abstractMethodInfo)) {
             AddedParameter[] addedParameters1 = this.changeLogMapping.getAddedParameters(abstractMethodInfo);
@@ -181,7 +181,7 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
                         changeLogMapping2 = this.changeLogMapping;
                     }
 
-                    changeLogMapping2.removeMethodMapping(string, methodSignature3);
+                    changeLogMapping2.removeMethodMapping(className, methodSignature3);
                 }
             } else if (!this.canChangeWithoutClash(classHierarchyNode, methodSignature1, methodSignature2, abstractMethodInfo, observableHolder)) {
                 MemberSignatureBase memberSignatureBase = (MemberSignatureBase) observableHolder.getValue();
@@ -227,7 +227,7 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
                     changeLogMapping1 = this.changeLogMapping;
                 }
 
-                changeLogMapping1.removeMethodMapping(string, methodSignature4);
+                changeLogMapping1.removeMethodMapping(className, methodSignature4);
             }
         }
     }
@@ -287,8 +287,8 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
                 if (observableHolder1 != null) {
                     List list2 = (List) observableHolder1.getValue();
 
-                    for (int i = 0; i < list2.size(); i += 1) {
-                        ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list2.get(i);
+                    for (int elementIndex = 0; elementIndex < list2.size(); elementIndex += 1) {
+                        ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list2.get(elementIndex);
                         if (classHierarchyNode1.isProgramClass() && classHierarchyNode1 != classHierarchyNode) {
                             MethodInfo methodInfo2 = this.classRepository.findDeclaredMethod(classHierarchyNode1.getProgramClass(), methodSignature1);
                             if (methodInfo2 != null) {
@@ -338,10 +338,10 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
         }
 
         List list4 = this.classHierarchy.getTopProgramNodes();
-        int bb = list4.size();
+        int list4Size = list4.size();
 
-        for (int i = 0; i < bb; i += 1) {
-            ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) list4.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < list4Size; elementIndexValue += 1) {
+            ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) list4.get(elementIndexValue);
             if (classHierarchyNode2.isInterface()) {
                 SetMultiMap setMultiMap5 = new SetMultiMap();
                 this.collectInheritedSignatures(classHierarchyNode2.getClassFile(), setMultiMap5);
@@ -360,14 +360,14 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
             }
         }
 
-        for (int i = 0; i < bb; i += 1) {
-            ClassHierarchyNode classHierarchyNode3 = (ClassHierarchyNode) list4.get(i);
+        for (int elementIndexValue2 = 0; elementIndexValue2 < list4Size; elementIndexValue2 += 1) {
+            ClassHierarchyNode classHierarchyNode3 = (ClassHierarchyNode) list4.get(elementIndexValue2);
             if (!classHierarchyNode3.isInterface()) {
                 SetMultiMap setMultiMap6 = new SetMultiMap();
                 this.collectInheritedSignatures(classHierarchyNode3.getClassFile(), setMultiMap6);
                 Map map4 = this.descriptorOverrides;
-                boolean bl3 = this.shuffleMethods;
-                boolean bl4 = this.compareFullSignatures;
+                boolean shuffleMethodsValue = this.shuffleMethods;
+                boolean compareFullSignaturesValue = this.compareFullSignatures;
                 SetMultiMap setMultiMap2 = setMultiMap6;
                 MethodOverrideAnalyzer methodOverrideAnalyzer3 = this.overrideAnalyzer;
                 SetMultiMap setMultiMap3 = setMultiMap4;
@@ -375,7 +375,7 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
                 MethodParameterChangeSet methodParameterChangeSet2 = this;
                 ChangeLogMapping changeLogMapping2 = this.changeLogMapping;
                 classHierarchyNode3.applyParameterChanges(
-                        changeLogMapping2, methodParameterChangeSet2, parameterListGenerator2, setMultiMap3, methodOverrideAnalyzer3, setMultiMap2, bl4, bl3, map4
+                        changeLogMapping2, methodParameterChangeSet2, parameterListGenerator2, setMultiMap3, methodOverrideAnalyzer3, setMultiMap2, compareFullSignaturesValue, shuffleMethodsValue, map4
                 );
             }
         }
@@ -452,20 +452,9 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
         }
 
         this.initNodeMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(listMultimap2.getKeyCount()));
-        label209:
-        if (methodParameterChanger.isKeyChainingEnabled()) {
-            boolean bl5;
-            if (listMultimap2.getKeyCount() + listMultimap1.getKeyCount() <= 31) {
-                if (!HiddenOptionFlags.CHECK_SMALL_CHANGE_SETS) {
-                    break label209;
-                }
-
-                bl5 = HiddenOptionFlags.SKIP_PARAMETER_MAP_REBUILD;
-            } else {
-                bl5 = HiddenOptionFlags.SKIP_PARAMETER_MAP_REBUILD;
-            }
-
-            if (!bl5 && HiddenOptionFlags.REBUILD_PARAMETER_MAPS) {
+        if (methodParameterChanger.isKeyChainingEnabled()
+                && (listMultimap2.getKeyCount() + listMultimap1.getKeyCount() > 31 || HiddenOptionFlags.CHECK_SMALL_CHANGE_SETS)) {
+            if (!HiddenOptionFlags.SKIP_PARAMETER_MAP_REBUILD && HiddenOptionFlags.REBUILD_PARAMETER_MAPS) {
                 EnumerableMap enumerableMap = this.classRepository.getCumulativeNameMap();
                 EnumerableMap enumerableMap1 = this.classRepository.getOriginalToCurrentNameMap();
                 EnumerableMap enumerableMap2 = this.classRepository.getCurrentToOriginalNameMap();
@@ -501,10 +490,10 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
 
         ClassResolver classResolver2 = this.classRepository.getClassResolver();
         ProgramClass[] programClass4 = this.programClasses;
-        int bf = programClass4.length;
+        int lengthValue = programClass4.length;
 
-        for (int i = 0; i < bf; i += 1) {
-            ProgramClass programClass5 = programClass4[i];
+        for (int programClass4ElementIndex = 0; programClass4ElementIndex < lengthValue; programClass4ElementIndex += 1) {
+            ProgramClass programClass5 = programClass4[programClass4ElementIndex];
             ArrayList arrayList1 = new ArrayList();
             programClass5.applyStaticInitParameterChange(
                     this.initNodeMap, inheritedMemberAnalyzer, this.classRepository, classResolver2, arrayList1, methodParameterChanger
@@ -515,10 +504,10 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
         }
 
         programClass4 = this.programClasses;
-        bf = programClass4.length;
+        lengthValue = programClass4.length;
 
-        for (int i = 0; i < bf; i += 1) {
-            ProgramClass programClass6 = programClass4[i];
+        for (int programClass4ElementIndexValue = 0; programClass4ElementIndexValue < lengthValue; programClass4ElementIndexValue += 1) {
+            ProgramClass programClass6 = programClass4[programClass4ElementIndexValue];
             if ((this.fixedClassesExclusions == null || !this.fixedClassesExclusions.isMatchedClass(programClass6)) && !programClass6.isGenerated()) {
                 ArrayList arrayList2 = new ArrayList();
                 Map map5 = this.changedDescriptors;
@@ -596,17 +585,17 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
     public void applyChangeLogToHierarchy() {
         if (this.changeLogMapping != null) {
             List list1 = this.classHierarchy.getTopLoadedNodes();
-            int ba = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < ba; i++) {
-                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(elementIndex);
                 if (classHierarchyNode.isInterface()) {
                     classHierarchyNode.registerParameterChangeMethods(this);
                 }
             }
 
-            for (int i = 0; i < ba; i++) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < list1Size; elementIndexValue++) {
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndexValue);
                 if (!classHierarchyNode1.isInterface()) {
                     classHierarchyNode1.registerParameterChangeMethods(this);
                 }
@@ -624,17 +613,17 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
             }
 
             List list1 = this.classHierarchy.getTopLoadedNodes();
-            int bb = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < bb; i++) {
-                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(elementIndex);
                 if (classHierarchyNode.isInterface()) {
                     classHierarchyNode.analyzeParameterChanges(this);
                 }
             }
 
-            for (int i = 0; i < bb; i++) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < list1Size; elementIndexValue++) {
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndexValue);
                 if (!classHierarchyNode1.isInterface()) {
                     classHierarchyNode1.analyzeParameterChanges(this);
                 }
@@ -705,14 +694,14 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
 
         for (ProgramClass programClass1 : this.programClasses) {
             if (!programClass1.isVersionedVariant()) {
-                String string = programClass1.getClassName();
+                String className = programClass1.getClassName();
 
                 for (MethodInfo methodInfo1 : programClass1.getMethodInfos()) {
                     if (!methodInfo1.isStaticInitializer()) {
                         MethodSignature methodSignature1 = (MethodSignature) this.originalSignatures.get(methodInfo1);
                         MethodSignature methodSignature2 = methodInfo1.getSignature();
-                        this.originalToCurrentSignatures.putValue(string, methodSignature1, methodSignature2);
-                        this.currentToOriginalSignatures.putValue(string, methodSignature2, methodSignature1);
+                        this.originalToCurrentSignatures.putValue(className, methodSignature1, methodSignature2);
+                        this.currentToOriginalSignatures.putValue(className, methodSignature2, methodSignature1);
                     }
                 }
             }
@@ -906,8 +895,8 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
         MethodSignature methodSignature2;
         if (changedMethodDescriptor != null) {
             this.changedDescriptors.put(methodInfo1, changedMethodDescriptor);
-            String string = changedMethodDescriptor.getDescriptor();
-            methodSignature2 = new MethodSignature(methodSignature1.getName(), string);
+            String descriptor = changedMethodDescriptor.getDescriptor();
+            methodSignature2 = new MethodSignature(methodSignature1.getName(), descriptor);
         } else {
             methodSignature2 = methodSignature1;
         }
@@ -1045,7 +1034,7 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
             TwoKeyMap twoKeyMap1,
             ObservableHolder observableHolder,
             Map map3,
-            String string,
+            String helperClassPrefixArgument,
             SetValuedMap setValuedMap,
             Map map4,
             BooleanFlag booleanFlag,
@@ -1086,17 +1075,17 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
         this.currentToOriginalSignatures = twoKeyMap1;
         this.defaultHelperHolder = observableHolder;
         this.archiveHelperClasses = map3;
-        this.helperClassPrefix = string;
+        this.helperClassPrefix = helperClassPrefixArgument;
         this.helperClassUsers = setValuedMap;
         this.descriptorOverrides = map4;
         this.changesEnabled = booleanFlag;
         this.includeInterfaces = includeInterfaces;
         this.scriptEnvironment = scriptEnvironment1;
 
-        for (int i = 0; i < OBFUSCATED_STRINGS.length - 1; i++) {
+        for (int obfuscatedStringIndex = 0; obfuscatedStringIndex < OBFUSCATED_STRINGS.length - 1; obfuscatedStringIndex++) {
             try {
-                String string1 = OBFUSCATED_STRINGS[i];
-                Class<?> class1 = Class.forName(string1);
+                String obfuscatedString = OBFUSCATED_STRINGS[obfuscatedStringIndex];
+                Class<?> class1 = Class.forName(obfuscatedString);
                 this.helperInstance = class1.newInstance();
                 break;
             } catch (Throwable throwable) {
@@ -1104,8 +1093,8 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
         }
     }
 
-    public ChangedMethodDescriptor getChangedDescriptor(Object object) {
-        return (ChangedMethodDescriptor) this.changedDescriptors.get(object);
+    public ChangedMethodDescriptor getChangedDescriptor(Object key) {
+        return (ChangedMethodDescriptor) this.changedDescriptors.get(key);
     }
 
     public void reserveUnchangedSignatures(SetMultiMap setMultiMap, Set set1) throws ZkmException, IOException {
@@ -1165,8 +1154,8 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
             MethodSignature methodSignature1 = methodInfo1.getSignature();
             ClassFileBase classFileBase = (ClassFileBase) methodInfo1.getParent();
             if (classFileBase.isInterface() && !methodInfo1.isStaticInitializer() && !this.overrideAnalyzer.isSignatureReserved(methodSignature1)) {
-                String string = classFileBase.getClassName();
-                ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
+                String className = classFileBase.getClassName();
+                ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(className);
                 ObservableHolder observableHolder = new ObservableHolder();
                 boolean bl = this.overrideAnalyzer.tryReserveRename(classHierarchyNode, methodSignature1, methodSignature1, observableHolder);
                 if (!bl) {
@@ -1182,8 +1171,8 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
             MethodSignature methodSignature2 = methodInfo2.getSignature();
             ClassFileBase classFileBase1 = (ClassFileBase) methodInfo2.getParent();
             if (!classFileBase1.isInterface() && !methodInfo2.isStaticInitializer() && !this.overrideAnalyzer.isSignatureReserved(methodSignature2)) {
-                String string1 = classFileBase1.getClassName();
-                ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(string1);
+                String classNameValue = classFileBase1.getClassName();
+                ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(classNameValue);
                 ObservableHolder observableHolder1 = new ObservableHolder();
                 boolean bl1;
                 if (methodInfo2.isConstructor()) {
@@ -1202,11 +1191,11 @@ public class MethodParameterChangeSet extends OpaquePredicateBase {
     public void loadOriginalSignatures() {
         for (ProgramClass programClass1 : this.programClasses) {
             if (!programClass1.isVersionedVariant()) {
-                String string = programClass1.getClassName();
+                String className = programClass1.getClassName();
 
                 for (MethodInfo methodInfo1 : programClass1.getMethodInfos()) {
                     MethodSignature methodSignature1 = methodInfo1.getSignature();
-                    MethodSignature methodSignature2 = (MethodSignature) ZkmUtils.twoKeyMapOrSelf(string, methodSignature1, this.currentToOriginalSignatures);
+                    MethodSignature methodSignature2 = (MethodSignature) ZkmUtils.twoKeyMapOrSelf(className, methodSignature1, this.currentToOriginalSignatures);
                     this.originalSignatures.put(methodInfo1, methodSignature2);
                 }
             }

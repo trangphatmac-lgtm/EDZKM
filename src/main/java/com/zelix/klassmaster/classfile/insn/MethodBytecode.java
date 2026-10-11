@@ -137,10 +137,10 @@ public class MethodBytecode extends ClassFileComponent {
     private final LocalVariableList localVariableList;
 
     public void recordMemberNameValue(String string, TrackedValue trackedValue, TwoKeyMap twoKeyMap, Set set1) {
-        String string1 = string;
-        if (string1 != null && string1.length() > 0 && trackedValue instanceof StringConstantNameRef) {
-            string1 = ZkmUtils.dotsToSlashes(string1);
-            twoKeyMap.putValue(string1, trackedValue, trackedValue);
+        String key = string;
+        if (key != null && key.length() > 0 && trackedValue instanceof StringConstantNameRef) {
+            key = ZkmUtils.dotsToSlashes(key);
+            twoKeyMap.putValue(key, trackedValue, trackedValue);
             if (trackedValue instanceof StringConstantNameRef) {
                 set1.add(((StringConstantNameRef) trackedValue).getStringConstant());
             }
@@ -166,10 +166,10 @@ public class MethodBytecode extends ClassFileComponent {
         int endIndex = basicBlock.getEndIndex();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = endIndex - 1; i >= startIndex; i += -1) {
-            if (stackFrameStates[i].isFullyInitialized()) {
-                int bd = basicBlock1.findMatchingFrame(
-                        stackFrameStates[i],
+        for (int startIndexValue = endIndex - 1; startIndexValue >= startIndex; startIndexValue += -1) {
+            if (stackFrameStates[startIndexValue].isFullyInitialized()) {
+                int endIndexValue = basicBlock1.findMatchingFrame(
+                        stackFrameStates[startIndexValue],
                         set1,
                         stackFrameStates,
                         ZkmUtils.createHashSet(),
@@ -183,8 +183,8 @@ public class MethodBytecode extends ClassFileComponent {
                         bl,
                         string
                 );
-                if (bd != -1) {
-                    arrayList.add(new FlowSplitCandidate(this, i, bd, (BasicBlock) observableHolder.getValue()));
+                if (endIndexValue != -1) {
+                    arrayList.add(new FlowSplitCandidate(this, startIndexValue, endIndexValue, (BasicBlock) observableHolder.getValue()));
                     if (HiddenOptionFlags.STOP_AT_FIRST_BLOCK_SPLIT) {
                         break;
                     }
@@ -196,10 +196,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void collectReferencedMembers(Set set1, Set set2, Set set3, Set set4) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             switch (instruction1.getOpcode()) {
                 case 18:
                 case 19:
@@ -259,10 +259,10 @@ public class MethodBytecode extends ClassFileComponent {
     public void indexFieldAndMethodUsages(
             NestedMultiMap nestedMultiMap, NestedMultiMap nestedMultiMap1, NestedMultiMap nestedMultiMap2, IntegerCache integerCache1
     ) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             switch (instruction1.getOpcode()) {
                 case 178:
                 case 180:
@@ -271,7 +271,7 @@ public class MethodBytecode extends ClassFileComponent {
                     AbstractFieldInfo abstractFieldInfo1 = (AbstractFieldInfo) resolvedFieldRef1.getResolvedMember();
                     if (abstractFieldInfo1 != null && abstractFieldInfo1.isProgramMember()) {
                         MemberRefKey memberRefKey1 = abstractFieldInfo1.toMemberRefKey();
-                        nestedMultiMap.addValue(memberRefKey1, this, integerCache1.valueOf(i));
+                        nestedMultiMap.addValue(memberRefKey1, this, integerCache1.valueOf(elementIndex));
                     }
                     break;
                 case 179:
@@ -281,7 +281,7 @@ public class MethodBytecode extends ClassFileComponent {
                     AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) resolvedFieldRef.getResolvedMember();
                     if (abstractFieldInfo != null && abstractFieldInfo.isProgramMember()) {
                         MemberRefKey memberRefKey = abstractFieldInfo.toMemberRefKey();
-                        nestedMultiMap1.addValue(memberRefKey, this, integerCache1.valueOf(i));
+                        nestedMultiMap1.addValue(memberRefKey, this, integerCache1.valueOf(elementIndex));
                     }
                     break;
                 case 182:
@@ -293,45 +293,45 @@ public class MethodBytecode extends ClassFileComponent {
                     AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) resolvedMethodRef.getResolvedMember();
                     if (abstractMethodInfo != null) {
                         MethodKey methodKey = abstractMethodInfo.toMethodKey();
-                        nestedMultiMap2.addValue(methodKey, this, integerCache1.valueOf(i));
+                        nestedMultiMap2.addValue(methodKey, this, integerCache1.valueOf(elementIndex));
                     }
             }
         }
     }
 
     public boolean hasPushOnlyArguments(int ba, AbstractMethodInfo abstractMethodInfo, MutableInt mutableInt) {
-        int bb = ba;
-        int bc = abstractMethodInfo.getWidenedParameterTypes().size();
-        int bd = 1;
+        int elementIndex = ba;
+        int widenedParameterTypesSize = abstractMethodInfo.getWidenedParameterTypes().size();
+        int valueValue = 1;
 
-        for (int i = bc - 1; i >= 0; i += -1) {
-            int bf = bb - bc + i + 1;
-            if (!((Instruction) this.instructions.get(bf)).pushesWithoutPopping()) {
+        for (int i = widenedParameterTypesSize - 1; i >= 0; i += -1) {
+            int elementIndexValue = elementIndex - widenedParameterTypesSize + i + 1;
+            if (!((Instruction) this.instructions.get(elementIndexValue)).pushesWithoutPopping()) {
                 return false;
             }
 
-            bb += -1;
-            bd++;
+            elementIndex += -1;
+            valueValue++;
         }
 
         if (!abstractMethodInfo.isStatic()) {
-            Instruction instruction1 = (Instruction) this.instructions.get(bb);
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (!instruction1.pushesWithoutPopping()) {
                 return false;
             }
 
-            bd++;
+            valueValue++;
         }
 
-        mutableInt.setValue(bd);
+        mutableInt.setValue(valueValue);
         return true;
     }
 
     public void collectLabelReferences(SetMultiMap setMultiMap) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1 instanceof LabelTargetHolder) {
                 ((LabelTargetHolder) instruction1).registerLabelTargets(setMultiMap);
             }
@@ -339,11 +339,11 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void indexCalledMethods(ListMultimap listMultimap) {
-        int ba = this.instructions.size();
-        HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(Math.min(Math.max(5, ba / 2), 101)));
+        int instructionsSize = this.instructions.size();
+        HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(Math.min(Math.max(5, instructionsSize / 2), 101)));
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isMethodInvoke()) {
                 AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) ((ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry())
                         .getResolvedMember();
@@ -374,7 +374,7 @@ public class MethodBytecode extends ClassFileComponent {
             ResolvedMethodRef resolvedMethodRef1,
             Map map4,
             ResolvedMethodRef resolvedMethodRef2,
-            int[] ba,
+            int[] integerArray,
             Map map5,
             ObservableHolder observableHolder,
             Long long1,
@@ -394,7 +394,7 @@ public class MethodBytecode extends ClassFileComponent {
 
         while (iterator.hasNext()) {
             ClassMemberRef classMemberRef = (ClassMemberRef) iterator.next();
-            Boolean boolean1 = bl && ReferenceObfuscator.canUseInvokedynamic(classMemberRef, classMemberLookup1) ? true : false;
+            Boolean boolean1 = (bl && ReferenceObfuscator.canUseInvokedynamic(classMemberRef, classMemberLookup1));
             List list4 = nestedMultiMap.getValues(classMemberRef, this);
             if (list4 != null) {
                 Iterator iterator1 = list4.iterator();
@@ -413,10 +413,10 @@ public class MethodBytecode extends ClassFileComponent {
         }
 
         ArrayList arrayList = new ArrayList();
-        int bb = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < bb; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (hashMap.containsKey(instruction1)) {
                 ResolvedMemberRef resolvedMemberRef = (ResolvedMemberRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
                 ClassMemberRef classMemberRef1 = (ClassMemberRef) map2.get(resolvedMemberRef);
@@ -425,7 +425,7 @@ public class MethodBytecode extends ClassFileComponent {
                     Long long2 = (Long) map3.get(integer);
                     this.obfuscateReference(
                             (ConstantRefInstruction) instruction1,
-                            i,
+                            elementIndex,
                             resolvedMemberRef,
                             classMemberRef1,
                             long2,
@@ -434,7 +434,7 @@ public class MethodBytecode extends ClassFileComponent {
                             resolvedMethodRef1,
                             map4,
                             resolvedMethodRef2,
-                            ba,
+                            integerArray,
                             map5,
                             observableHolder,
                             long1,
@@ -460,18 +460,18 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void analyzeParameterUsage(ParameterUsageInfo[] parameterUsageInfos) {
-        for (int i = 0; i < parameterUsageInfos.length; i++) {
-            ParameterUsageInfo parameterUsageInfo = parameterUsageInfos[i];
+        for (int parameterUsageInfoIndex = 0; parameterUsageInfoIndex < parameterUsageInfos.length; parameterUsageInfoIndex++) {
+            ParameterUsageInfo parameterUsageInfo = parameterUsageInfos[parameterUsageInfoIndex];
             if (parameterUsageInfo != null && parameterUsageInfo.hasSingleUsage() && !parameterUsageInfo.isStoredTo()) {
-                int bb = (Integer) parameterUsageInfo.getUsageIndices().get(0);
-                Instruction instruction1 = (Instruction) this.instructions.get(bb);
+                int elementIndex = (Integer) parameterUsageInfo.getUsageIndices().get(0);
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
                 if (instruction1.getOpcode() == 132) {
                     parameterUsageInfo.markUnpackAtUse();
                 } else {
                     int stackDelta = instruction1.getStackDelta();
 
-                    for (int j = bb + 1; j < this.instructions.size(); j++) {
-                        Instruction instruction2 = (Instruction) this.instructions.get(j);
+                    for (int elementIndexValue = elementIndex + 1; elementIndexValue < this.instructions.size(); elementIndexValue++) {
+                        Instruction instruction2 = (Instruction) this.instructions.get(elementIndexValue);
                         if (instruction2.isStackManipulation()
                                 || instruction2.isJump()
                                 || instruction2.getOpcode() == 186
@@ -522,9 +522,9 @@ public class MethodBytecode extends ClassFileComponent {
                                 be += -1;
                             }
 
-                            String string = abstractMethodInfo.getReturnDescriptor();
-                            if (!string.equals("V")) {
-                                if (ConstantPoolEntry.isWideType(string)) {
+                            String returnDescriptor = abstractMethodInfo.getReturnDescriptor();
+                            if (!returnDescriptor.equals("V")) {
+                                if (ConstantPoolEntry.isWideType(returnDescriptor)) {
                                     be += 2;
                                 } else {
                                     be++;
@@ -536,16 +536,16 @@ public class MethodBytecode extends ClassFileComponent {
                             }
 
                             List list1 = abstractMethodInfo.getParameterTypes();
-                            int bf = stackDelta;
+                            int stackDeltaValue = stackDelta;
                             int bg = 0;
                             bg++;
 
                             String string1;
-                            for (string1 = (String) list1.get(0); bf != be; string1 = (String) list1.get(bg++)) {
+                            for (string1 = (String) list1.get(0); stackDeltaValue != be; string1 = (String) list1.get(bg++)) {
                                 if (ConstantPoolEntry.isWideType(string1)) {
-                                    bf += 2;
+                                    stackDeltaValue += 2;
                                 } else {
-                                    bf++;
+                                    stackDeltaValue++;
                                 }
                             }
 
@@ -589,14 +589,14 @@ public class MethodBytecode extends ClassFileComponent {
     ) {
         BasicBlock basicBlock = methodFlowAnalyzer.getBlock();
         if (syncIndexedSet.size() > 1 && !HiddenOptionFlags.NO_RANDOM_INSERTION_POINTS) {
-            int bd = random1.nextInt(syncIndexedSet.size() - 1) + 1;
-            int be = random1.nextInt(bd);
+            int elementIndex = random1.nextInt(syncIndexedSet.size() - 1) + 1;
+            int elementIndexValue = random1.nextInt(elementIndex);
             ArrayList arrayList2 = new ArrayList(list1.size());
             arrayList2.addAll(list1);
-            CodeInsertion codeInsertion5 = new CodeInsertion(arrayList2, (Integer) syncIndexedSet.getElementAt(be), 0, 1);
+            CodeInsertion codeInsertion5 = new CodeInsertion(arrayList2, (Integer) syncIndexedSet.getElementAt(elementIndexValue), 0, 1);
             list2.add(codeInsertion5);
             if (instruction1 != null) {
-                CodeInsertion codeInsertion3 = new CodeInsertion(instruction1, (Integer) syncIndexedSet.getElementAt(bd), 0, 0);
+                CodeInsertion codeInsertion3 = new CodeInsertion(instruction1, (Integer) syncIndexedSet.getElementAt(elementIndex), 0, 0);
                 list2.add(codeInsertion3);
             }
         } else {
@@ -668,7 +668,7 @@ public class MethodBytecode extends ClassFileComponent {
 
     public void addFieldAccessObfuscation(
             Instruction instruction1,
-            int ba,
+            int elementIndex,
             ResolvedFieldRef resolvedFieldRef,
             ConstantLong constantLong,
             Instruction instruction2,
@@ -700,20 +700,20 @@ public class MethodBytecode extends ClassFileComponent {
                 resolvedFieldRef, booleanFlag, constantPool1, list2, classMemberLookup1, classResolver1
         );
         arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant));
-        if (booleanFlag.getValue() && this.needsCheckcast(ba, resolvedFieldRef, map1, methodFlowAnalyzer)) {
+        if (booleanFlag.getValue() && this.needsCheckcast(elementIndex, resolvedFieldRef, map1, methodFlowAnalyzer)) {
             ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant(
                     ConstantPoolEntry.stripClassDescriptor(resolvedFieldRef.getStackFieldType()), list2
             );
             arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant));
         }
 
-        CodeInsertion codeInsertion = new CodeInsertion(arrayList, ba - 1, 1, 2);
+        CodeInsertion codeInsertion = new CodeInsertion(arrayList, elementIndex - 1, 1, 2);
         list1.add(codeInsertion);
     }
 
     public List buildArrayElementLoad(
             Integer integer,
-            String string,
+            String valueArgument,
             boolean bl,
             boolean bl1,
             ConstantPool constantPool1,
@@ -729,21 +729,21 @@ public class MethodBytecode extends ClassFileComponent {
         arrayList.add(Instruction.createIntPush(integer));
         arrayList.add(SimpleInstruction.forOpcode(50));
         if (bl1) {
-            if (string.length() == 1) {
-                String string1 = ConstantPoolEntry.getStackWrapperClassName(string);
-                ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant(string1, list1);
+            if (valueArgument.length() == 1) {
+                String stackWrapperClassName = ConstantPoolEntry.getStackWrapperClassName(valueArgument);
+                ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant(stackWrapperClassName, list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant));
-                ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddUnboxMethodRef(string, list1, classMemberLookup1, classResolver1);
+                ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddUnboxMethodRef(valueArgument, list1, classMemberLookup1, classResolver1);
                 arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant));
             } else {
-                String string2;
-                if (string.startsWith("L") && string.endsWith(";")) {
-                    string2 = ConstantPoolEntry.stripClassDescriptor(string);
+                String valueValue;
+                if (valueArgument.startsWith("L") && valueArgument.endsWith(";")) {
+                    valueValue = ConstantPoolEntry.stripClassDescriptor(valueArgument);
                 } else {
-                    string2 = string;
+                    valueValue = valueArgument;
                 }
 
-                ResolvedClassConstant resolvedClassConstant1 = constantPool1.getOrCreateClassConstant(string2, list1);
+                ResolvedClassConstant resolvedClassConstant1 = constantPool1.getOrCreateClassConstant(valueValue, list1);
                 arrayList.add(new ConstantRefInstruction(192, resolvedClassConstant1));
             }
         }
@@ -802,13 +802,13 @@ public class MethodBytecode extends ClassFileComponent {
         Iterator iterator = set1.iterator();
 
         while (iterator.hasNext()) {
-            String string = ((TrackedValue) iterator.next()).getNormalizedName();
-            if (string != null && string.length() > 0) {
+            String normalizedName = ((TrackedValue) iterator.next()).getNormalizedName();
+            if (normalizedName != null && normalizedName.length() > 0) {
                 Iterator iterator1 = set2.iterator();
 
                 while (iterator1.hasNext()) {
                     TrackedValue trackedValue = (TrackedValue) iterator1.next();
-                    Set set3 = this.buildReflectedSignatures(string, bl, trackedValue);
+                    Set set3 = this.buildReflectedSignatures(normalizedName, bl, trackedValue);
                     if (set3 != null) {
                         AbstractMethodInfo abstractMethodInfo = null;
                         Iterator iterator2 = set3.iterator();
@@ -851,21 +851,21 @@ public class MethodBytecode extends ClassFileComponent {
         }
     }
 
-    public void setMaxStack(int ba) throws ZkmProcessingException {
-        ((CodeAttributeBody) this.getParent()).setMaxStack(ba);
+    public void setMaxStack(int maxStackArgument) throws ZkmProcessingException {
+        ((CodeAttributeBody) this.getParent()).setMaxStack(maxStackArgument);
     }
 
     public boolean traceStringBuilderChain(int ba, String string, MutableInt mutableInt, Set set1) {
-        int bb = ba;
+        int elementIndex = ba;
         ArrayList arrayList = new ArrayList();
         arrayList.add(string);
         boolean bl = false;
         boolean bl1 = false;
-        int bc = 1;
+        int valueValue = 1;
 
         do {
-            bc++;
-            Instruction instruction1 = (Instruction) this.instructions.get(bb);
+            valueValue++;
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             ResolvedMethodRef resolvedMethodRef = null;
             AbstractMethodInfo abstractMethodInfo = null;
             if (instruction1.isMethodInvoke()) {
@@ -887,11 +887,11 @@ public class MethodBytecode extends ClassFileComponent {
             } else if (instruction1.getOpcode() == 183 && arrayList.size() == 1 && ((String) arrayList.get(arrayList.size() - 1)).equals(string)) {
                 if (!resolvedMethodRef.isConstructor() || !resolvedMethodRef.getDescriptor().equals("()V")) {
                     bl = false;
-                } else if (bb - 2 >= 0
+                } else if (elementIndex - 2 >= 0
                         && arrayList.size() == 1
-                        && ((Instruction) this.instructions.get(bb - 1)).getOpcode() == 89
-                        && ((Instruction) this.instructions.get(bb - 2)).getOpcode() == 187) {
-                    bc += 2;
+                        && ((Instruction) this.instructions.get(elementIndex - 1)).getOpcode() == 89
+                        && ((Instruction) this.instructions.get(elementIndex - 2)).getOpcode() == 187) {
+                    valueValue += 2;
                     bl = true;
                 } else {
                     bl = false;
@@ -900,10 +900,10 @@ public class MethodBytecode extends ClassFileComponent {
                 bl1 = true;
             } else if (instruction1.pushesWithoutPopping() && arrayList.size() == 2) {
                 arrayList.remove(arrayList.size() - 1);
-            } else if (instruction1.getOpcode() == 180 && ((Instruction) this.instructions.get(bb - 1)).pushesWithoutPopping()) {
+            } else if (instruction1.getOpcode() == 180 && ((Instruction) this.instructions.get(elementIndex - 1)).pushesWithoutPopping()) {
                 arrayList.remove(arrayList.size() - 1);
-                bc++;
-                bb += -1;
+                valueValue++;
+                elementIndex += -1;
             } else if (instruction1.isMethodInvoke()
                     && resolvedMethodRef.getStackReturnType() != null
                     && abstractMethodInfo != null
@@ -912,10 +912,10 @@ public class MethodBytecode extends ClassFileComponent {
                     && !resolvedMethodRef.getReferencedClassName().equals("java/lang/StringBuilder")) {
                 abstractMethodInfo.getWidenedParameterTypes();
                 MutableInt mutableInt1 = new MutableInt();
-                if (this.hasPushOnlyArguments(bb - 1, abstractMethodInfo, mutableInt1)) {
+                if (this.hasPushOnlyArguments(elementIndex - 1, abstractMethodInfo, mutableInt1)) {
                     int value = mutableInt1.getValue();
-                    bc += value;
-                    bb -= value;
+                    valueValue += value;
+                    elementIndex -= value;
                     String string1 = (String) arrayList.remove(arrayList.size() - 1);
                 } else {
                     bl = false;
@@ -926,23 +926,23 @@ public class MethodBytecode extends ClassFileComponent {
                 bl = false;
             }
 
-            bb += -1;
+            elementIndex += -1;
         } while (!bl1);
 
-        mutableInt.setValue(bc);
+        mutableInt.setValue(valueValue);
         return bl;
     }
 
     private int findMarkerLabelIndex() {
-        int ba = -1;
-        int bb = this.instructions.size();
+        int elementIndexValue = -1;
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < bb; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isLabel()) {
                 LabelInstruction labelInstruction = (LabelInstruction) instruction1;
                 if (labelInstruction.hasUsageBits(8192)) {
-                    ba = i;
+                    elementIndexValue = elementIndex;
                     break;
                 }
 
@@ -952,13 +952,13 @@ public class MethodBytecode extends ClassFileComponent {
             }
         }
 
-        return ba;
+        return elementIndexValue;
     }
 
     public LocalVariableSlot buildParamChangePrologue(
             MethodParamChangeNode methodParamChangeNode,
             ChangedMethodDescriptor changedMethodDescriptor,
-            long ba,
+            long valueArgument,
             boolean bl,
             Map map1,
             Map map2,
@@ -978,16 +978,16 @@ public class MethodBytecode extends ClassFileComponent {
             arrayList.addAll(list4);
         }
 
-        int bg = this.instructions.size();
+        int instructionsSize = this.instructions.size();
         boolean bl1 = false;
         LocalVariableSlot localVariableSlot1 = null;
         MethodFlowAnalyzer methodFlowAnalyzer = null;
-        int bb = 0;
+        int extraStackSizeValue = 0;
         ArrayList arrayList1 = new ArrayList();
         HashSet hashSet = ZkmUtils.createHashSet();
 
-        for (int i = 0; i < bg; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isMethodInvoke() || instruction1.getOpcode() == 186 && HiddenOptionFlags.FOLLOW_LAMBDA_METHOD_HANDLES) {
                 ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) instruction1;
                 AbstractMethodInfo abstractMethodInfo;
@@ -1003,7 +1003,7 @@ public class MethodBytecode extends ClassFileComponent {
                     ChangedMethodDescriptor changedMethodDescriptor1 = (ChangedMethodDescriptor) map2.get(abstractMethodInfo);
                     if (changedMethodDescriptor1 != null && !changedMethodDescriptor1.hasNoAddedParams()) {
                         bl1 = true;
-                        arrayList1.add(integerCache.valueOf(i));
+                        arrayList1.add(integerCache.valueOf(elementIndex));
                         hashSet.add((MethodInfo) abstractMethodInfo);
                     }
                 }
@@ -1012,8 +1012,8 @@ public class MethodBytecode extends ClassFileComponent {
 
         if (bl || bl1) {
             ObservableHolder observableHolder = new ObservableHolder();
-            bb = this.emitMethodKeyInit(
-                    methodParamChangeNode, changedMethodDescriptor, ba, map1, observableHolder, arrayList, set1, list1, list3, constantPool1, methodOverrideAnalyzer
+            extraStackSizeValue = this.emitMethodKeyInit(
+                    methodParamChangeNode, changedMethodDescriptor, valueArgument, map1, observableHolder, arrayList, set1, list1, list3, constantPool1, methodOverrideAnalyzer
             );
             localVariableSlot1 = (LocalVariableSlot) observableHolder.getValue();
 
@@ -1027,12 +1027,12 @@ public class MethodBytecode extends ClassFileComponent {
         if (bl1) {
             HashMap hashMap = ZkmUtils.createHashMap();
             int bh = this.emitCalleeKeyComputation(
-                    ba, localVariableSlot1, hashSet, map1, map2, map3, arrayList, list1, hashMap, list3, constantPool1, methodOverrideAnalyzer
+                    valueArgument, localVariableSlot1, hashSet, map1, map2, map3, arrayList, list1, hashMap, list3, constantPool1, methodOverrideAnalyzer
             );
-            bb = Math.max(bb, bh);
+            extraStackSizeValue = Math.max(extraStackSizeValue, bh);
             LabelInstruction labelInstruction1 = new LabelInstruction(8192);
             arrayList.add(labelInstruction1);
-            CodeInsertion codeInsertion1 = new CodeInsertion(arrayList, -1, 0, bb);
+            CodeInsertion codeInsertion1 = new CodeInsertion(arrayList, -1, 0, extraStackSizeValue);
             list2.add(codeInsertion1);
             ListMultimap listMultimap = new ListMultimap();
             CodeAttributeBody codeAttributeBody = this.getCodeAttributeBody();
@@ -1042,23 +1042,23 @@ public class MethodBytecode extends ClassFileComponent {
 
             while (iterator.hasNext()) {
                 Integer integer = (Integer) iterator.next();
-                int be = integer;
-                ConstantRefInstruction constantRefInstruction1 = (ConstantRefInstruction) this.instructions.get(be);
+                int integerValue = integer;
+                ConstantRefInstruction constantRefInstruction1 = (ConstantRefInstruction) this.instructions.get(integerValue);
                 AbstractMethodInfo abstractMethodInfo1;
-                String string;
+                String descriptor;
                 if (constantRefInstruction1.isMethodInvoke()) {
                     ResolvedMethodRef resolvedMethodRef1 = (ResolvedMethodRef) ((ConstantPoolOperand) constantRefInstruction1).getConstantPoolEntry();
                     abstractMethodInfo1 = (AbstractMethodInfo) resolvedMethodRef1.getResolvedMember();
-                    string = resolvedMethodRef1.getDescriptor();
+                    descriptor = resolvedMethodRef1.getDescriptor();
                 } else {
                     ResolvedInvokeDynamic resolvedInvokeDynamic1 = (ResolvedInvokeDynamic) ((ConstantPoolOperand) constantRefInstruction1).getConstantPoolEntry();
                     abstractMethodInfo1 = resolvedInvokeDynamic1.getLambdaImplMethod();
-                    string = resolvedInvokeDynamic1.getDescriptor();
+                    descriptor = resolvedInvokeDynamic1.getDescriptor();
                 }
 
                 ChangedMethodDescriptor changedMethodDescriptor2 = (ChangedMethodDescriptor) map2.get(abstractMethodInfo1);
-                int[] bf = (int[]) hashMap.get(abstractMethodInfo1);
-                this.rewriteCallArguments(methodFlowAnalyzer, be, string, changedMethodDescriptor2, bf, listMultimap, list1, maxLocals, mutableInt);
+                int[] integerArray = (int[]) hashMap.get(abstractMethodInfo1);
+                this.rewriteCallArguments(methodFlowAnalyzer, integerValue, descriptor, changedMethodDescriptor2, integerArray, listMultimap, list1, maxLocals, mutableInt);
             }
 
             if (methodFlowAnalyzer != null) {
@@ -1079,7 +1079,7 @@ public class MethodBytecode extends ClassFileComponent {
         } else if (arrayList.size() > 0) {
             LabelInstruction labelInstruction = new LabelInstruction(8192);
             arrayList.add(labelInstruction);
-            CodeInsertion codeInsertion = new CodeInsertion(arrayList, -1, 0, bb);
+            CodeInsertion codeInsertion = new CodeInsertion(arrayList, -1, 0, extraStackSizeValue);
             list2.add(codeInsertion);
         }
 
@@ -1092,32 +1092,32 @@ public class MethodBytecode extends ClassFileComponent {
         boolean bl1;
         do {
             bl1 = false;
-            int ba = 0;
-            int bb = this.instructions.size();
+            int codeLengthValue = 0;
+            int instructionsSize = this.instructions.size();
 
-            for (int i = 0; i < bb; i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                instruction1.setOffset(ba);
+            for (int instructionIndexValue = 0; instructionIndexValue < instructionsSize; instructionIndexValue++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(instructionIndexValue);
+                instruction1.setOffset(codeLengthValue);
                 if (instruction1 instanceof LabelInstruction) {
-                    ((LabelInstruction) instruction1).setInstructionIndex(i);
+                    ((LabelInstruction) instruction1).setInstructionIndex(instructionIndexValue);
                 }
 
-                ba += instruction1.getLength();
+                codeLengthValue += instruction1.getLength();
             }
 
-            this.codeLength = ba;
-            int be = this.instructions.size();
+            this.codeLength = codeLengthValue;
+            int instructionsSizeValue = this.instructions.size();
 
-            for (int i = 0; i < be; i++) {
-                List list1 = ((Instruction) this.instructions.get(i)).expandWideJump();
+            for (int elementIndex = 0; elementIndex < instructionsSizeValue; elementIndex++) {
+                List list1 = ((Instruction) this.instructions.get(elementIndex)).expandWideJump();
                 if (list1 != null) {
-                    for (int j = 0; j < list1.size(); j++) {
-                        Instruction instruction2 = (Instruction) list1.get(j);
-                        if (j == 0) {
-                            this.instructions.set(i, instruction2);
+                    for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+                        Instruction instruction2 = (Instruction) list1.get(elementIndexValue);
+                        if (elementIndexValue == 0) {
+                            this.instructions.set(elementIndex, instruction2);
                         } else {
-                            this.instructions.add(++i, instruction2);
-                            be = this.instructions.size();
+                            this.instructions.add(++elementIndex, instruction2);
+                            instructionsSizeValue = this.instructions.size();
                         }
                     }
 
@@ -1134,11 +1134,11 @@ public class MethodBytecode extends ClassFileComponent {
         return bl;
     }
 
-    public static ClassFileBase lookupClass(String string, ClasspathClassLoader classpathClassLoader1) throws ZkmException, IOException {
-        ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string);
+    public static ClassFileBase lookupClass(String key, ClasspathClassLoader classpathClassLoader1) throws ZkmException, IOException {
+        ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(key);
         if (classFileBase == null) {
             try {
-                classFileBase = classpathClassLoader1.findClassFile(string);
+                classFileBase = classpathClassLoader1.findClassFile(key);
             } catch (ClassFileLoadException classFileLoadException) {
             }
         }
@@ -1146,8 +1146,8 @@ public class MethodBytecode extends ClassFileComponent {
         return classFileBase;
     }
 
-    public void addRethrowingHandler(int ba, Integer integer, String string, boolean bl, List list1, List list2, List list3) {
-        ResolvedClassConstant resolvedClassConstant = ((ConstantPool) this.getOwningClass().getConstantPool()).getOrCreateClassConstant(string, list3);
+    public void addRethrowingHandler(int elementIndex, Integer integer, String valueArgument, boolean bl, List list1, List list2, List list3) {
+        ResolvedClassConstant resolvedClassConstant = ((ConstantPool) this.getOwningClass().getConstantPool()).getOrCreateClassConstant(valueArgument, list3);
         LabelInstruction labelInstruction = new LabelInstruction(true, 128);
         LabelInstruction labelInstruction1 = new LabelInstruction(true, 128);
         LabelInstruction labelInstruction2 = new LabelInstruction(true, 128);
@@ -1156,13 +1156,13 @@ public class MethodBytecode extends ClassFileComponent {
         );
         list1.add(exceptionTableEntry1);
         int bb = -1;
-        Instruction instruction1 = (Instruction) this.instructions.get(ba);
+        Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
 
         while (instruction1.isLabel()) {
-            instruction1 = (Instruction) this.instructions.get(ba + ++bb + 1);
+            instruction1 = (Instruction) this.instructions.get(elementIndex + ++bb + 1);
         }
 
-        CodeInsertion codeInsertion = new CodeInsertion(labelInstruction, ba + bb, 0, 0);
+        CodeInsertion codeInsertion = new CodeInsertion(labelInstruction, elementIndex + bb, 0, 0);
         ArrayList arrayList = new ArrayList();
         if (bl) {
             arrayList.add(labelInstruction1);
@@ -1186,8 +1186,8 @@ public class MethodBytecode extends ClassFileComponent {
         this.applyCodeInsertions(list1, string, bl, true);
     }
 
-    public String formatArgumentValues(CallArgumentValues callArgumentValues, int ba, boolean bl, List list1) {
-        Set set1 = callArgumentValues.getArgumentValues(ba);
+    public String formatArgumentValues(CallArgumentValues callArgumentValues, int elementIndex, boolean bl, List list1) {
+        Set set1 = callArgumentValues.getArgumentValues(elementIndex);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[");
         Iterator iterator = set1.iterator();
@@ -1272,8 +1272,8 @@ public class MethodBytecode extends ClassFileComponent {
 
     public void addMethodCallObfuscation(
             Instruction instruction1,
-            int ba,
-            Object object,
+            int elementIndex,
+            Object key,
             ResolvedMethodRef resolvedMethodRef,
             ConstantLong constantLong,
             Instruction instruction2,
@@ -1289,7 +1289,7 @@ public class MethodBytecode extends ClassFileComponent {
             ClassMemberLookup classMemberLookup1,
             ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        ResolvedMethodRef resolvedMethodRef2 = (ResolvedMethodRef) map1.get(object);
+        ResolvedMethodRef resolvedMethodRef2 = (ResolvedMethodRef) map1.get(key);
         if (resolvedMethodRef2 != null) {
             ArrayList arrayList = new ArrayList();
             arrayList.add(new ConstantRefInstruction(184, resolvedMethodRef2));
@@ -1323,7 +1323,7 @@ public class MethodBytecode extends ClassFileComponent {
             list2.add(exceptionTableEntry1);
             arrayList.add(labelInstruction);
             arrayList.add(new ConstantRefInstruction(182, resolvedMethodRefConstant));
-            if (this.needsCheckcast(ba, resolvedMethodRef, map2, methodFlowAnalyzer)) {
+            if (this.needsCheckcast(elementIndex, resolvedMethodRef, map2, methodFlowAnalyzer)) {
                 List list4 = referenceObfuscator.buildReturnUnboxCode(resolvedMethodRef, constantPool1, list3, classMemberLookup1, classResolver1);
                 if (list4 != null) {
                     arrayList.addAll(list4);
@@ -1339,18 +1339,18 @@ public class MethodBytecode extends ClassFileComponent {
                 case 182:
                 case 183:
                 case 185:
-                    int bg = ba - 1;
-                    int bb = argumentSlotCount >= 4 ? 0 : 4 - argumentSlotCount;
-                    int bc = bg;
+                    int bg = elementIndex - 1;
+                    int extraStackSizeValue = argumentSlotCount >= 4 ? 0 : 4 - argumentSlotCount;
+                    int positionValue = bg;
                     ArrayList arrayList1 = arrayList;
-                    codeInsertion = new CodeInsertion(arrayList1, bc, 1, bb);
+                    codeInsertion = new CodeInsertion(arrayList1, positionValue, 1, extraStackSizeValue);
                     break;
                 case 184:
-                    int bh = ba - 1;
-                    int bd = argumentSlotCount >= 3 ? 0 : 3 - argumentSlotCount;
-                    int be = bh;
+                    int bh = elementIndex - 1;
+                    int extraStackSizeValue2 = argumentSlotCount >= 3 ? 0 : 3 - argumentSlotCount;
+                    int positionValue2 = bh;
                     ArrayList arrayList2 = arrayList;
-                    codeInsertion = new CodeInsertion(arrayList2, be, 1, bd);
+                    codeInsertion = new CodeInsertion(arrayList2, positionValue2, 1, extraStackSizeValue2);
             }
 
             list1.add(codeInsertion);
@@ -1365,17 +1365,17 @@ public class MethodBytecode extends ClassFileComponent {
     ) throws ZkmException, IOException {
         MethodFlowAnalyzer methodFlowAnalyzer = this.createFlowAnalyzer(commonSuperTypeResolver1, classHierarchyQuery);
         ClassResolver classResolver1 = commonSuperTypeResolver1.getClassResolver();
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isMethodInvoke()) {
                 ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
                 MemberInfo memberInfo1 = resolvedMethodRef.getResolvedMember();
                 if (memberInfo1 != null
                         && !((AbstractMethodInfo) memberInfo1).isConstructor()
                         && !((AbstractMethodInfo) memberInfo1).isStaticInitializer()
-                        && !methodFlowAnalyzer.hasUninitializedThisAt(i)
+                        && !methodFlowAnalyzer.hasUninitializedThisAt(elementIndex)
                         && (instruction1.getOpcode() != 183 || memberInfo1.isStrictlyPrivate())
                         && (!memberInfo1.getSourceName().equals("identityHashCode") || !memberInfo1.getClassName().equals("java/lang/System"))
                         && (!memberInfo1.isProtected() && !memberInfo1.isNative() || !memberInfo1.getClassName().equals("java/lang/Object"))
@@ -1438,7 +1438,7 @@ public class MethodBytecode extends ClassFileComponent {
     public void applyIntegerEncryption(
             List list1,
             boolean bl,
-            int[][] ba,
+            int[][] integerArrayArray,
             Long long1,
             LocalVariableIndex localVariableIndex1,
             IntCounter intCounter,
@@ -1449,23 +1449,23 @@ public class MethodBytecode extends ClassFileComponent {
     ) throws ZkmException, IOException {
         InstructionPositionComparator instructionPositionComparator = new InstructionPositionComparator(this);
         Collections.sort(list1, instructionPositionComparator);
-        int bb = list1.size();
-        int bc = -1;
-        if (bb != 0) {
+        int list1Size = list1.size();
+        int valueValue = -1;
+        if (list1Size != 0) {
             MethodFlowAnalyzer methodFlowAnalyzer = null;
             Iterator iterator = list1.iterator();
             ObjectPair objectPair = (ObjectPair) iterator.next();
             ConstantPoolOperand constantPoolOperand = (ConstantPoolOperand) ((RankedValue) objectPair.getFirst()).getValue();
-            int bd = bb;
+            int list1SizeValue = list1Size;
             this.setModified(true);
-            byte be = 0;
+            byte extraStackSizeValue = 0;
             boolean bl1 = false;
             boolean bl2 = false;
             ArrayList arrayList = new ArrayList();
-            int bf = this.instructions.size();
+            int instructionsSize = this.instructions.size();
 
-            for (int i = 0; i < bf; i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
+            for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
                 if (instruction1.isLabel()) {
                     LabelInstruction labelInstruction = (LabelInstruction) instruction1;
                     if (labelInstruction.hasUsageBits(1) || labelInstruction.hasUsageBits(1024)) {
@@ -1474,44 +1474,44 @@ public class MethodBytecode extends ClassFileComponent {
                 }
 
                 if (instruction1 == constantPoolOperand) {
-                    bd += -1;
+                    list1SizeValue += -1;
                     EncryptedValueLocation encryptedValueLocation = (EncryptedValueLocation) objectPair.getSecond();
-                    be = 0;
+                    extraStackSizeValue = 0;
                     switch (LookupStrategySwitchMap.INT_STORAGE_KIND_SWITCH[encryptedValueLocation.getStorageKind().ordinal()]) {
                         case 1:
                             ArrayList arrayList4 = new ArrayList();
                             if (encryptedValueLocation.hasIndex()) {
-                                be = 1;
+                                extraStackSizeValue = 1;
                                 arrayList4.add(Instruction.createObjectLoad(encryptedValueLocation.getLocalVariableIndex(), this.localVariableList, 11));
-                                this.appendIntConstant(encryptedValueLocation.getIndex(), arrayList4, constantPool1, list2, bb);
+                                this.appendIntConstant(encryptedValueLocation.getIndex(), arrayList4, constantPool1, list2, list1Size);
                                 arrayList4.add(SimpleInstruction.forOpcode(47));
                                 arrayList4.add(SimpleInstruction.forOpcode(136));
                             } else {
-                                be = 2;
+                                extraStackSizeValue = 2;
                                 arrayList4.add(Instruction.createLongLoad(encryptedValueLocation.getLocalVariableIndex(), this.localVariableList, 11));
                                 arrayList4.add(SimpleInstruction.forOpcode(136));
                             }
 
-                            arrayList.add(new CodeInsertion(arrayList4, i - 1, 1, be));
+                            arrayList.add(new CodeInsertion(arrayList4, elementIndex - 1, 1, extraStackSizeValue));
                             break;
                         case 2:
                             ArrayList arrayList3 = new ArrayList();
                             ResolvedFieldRef resolvedFieldRef = encryptedValueLocation.getArrayField();
                             if (encryptedValueLocation.hasIndex()) {
-                                be = 1;
+                                extraStackSizeValue = 1;
                                 if (bl1) {
-                                    arrayList3.add(Instruction.createObjectLoad(bc, this.localVariableList, 11));
+                                    arrayList3.add(Instruction.createObjectLoad(valueValue, this.localVariableList, 11));
                                 } else {
                                     arrayList3.add(new ConstantRefInstruction(178, resolvedFieldRef));
-                                    if (bd > 0 && (ba.length == 0 || !this.isInAnyRange(i, ba))) {
+                                    if (list1SizeValue > 0 && (integerArrayArray.length == 0 || !this.isInAnyRange(elementIndex, integerArrayArray))) {
                                         if (!bl2) {
                                             bl2 = true;
-                                            bc = intCounter.getValue();
+                                            valueValue = intCounter.getValue();
                                             intCounter.incrementAndGet();
                                         }
 
-                                        arrayList3.add(Instruction.createObjectStore(bc, this.localVariableList, 11));
-                                        arrayList3.add(Instruction.createObjectLoad(bc, this.localVariableList, 11));
+                                        arrayList3.add(Instruction.createObjectStore(valueValue, this.localVariableList, 11));
+                                        arrayList3.add(Instruction.createObjectLoad(valueValue, this.localVariableList, 11));
                                         bl1 = true;
                                     }
                                 }
@@ -1524,13 +1524,12 @@ public class MethodBytecode extends ClassFileComponent {
                                 arrayList3.add(SimpleInstruction.forOpcode(136));
                             }
 
-                            arrayList.add(new CodeInsertion(arrayList3, i - 1, 1, be));
+                            arrayList.add(new CodeInsertion(arrayList3, elementIndex - 1, 1, extraStackSizeValue));
                             break;
                         case 3:
                             ResolvedMethodRef resolvedMethodRef1;
                             ArrayList arrayList6;
                             ArrayList arrayList8;
-                            label80:
                             {
                                 methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
                                 resolvedMethodRef1 = encryptedValueLocation.getLookupMethod();
@@ -1538,82 +1537,68 @@ public class MethodBytecode extends ClassFileComponent {
                                 arrayList8 = new ArrayList();
                                 int index = encryptedValueLocation.getIndex();
                                 long decryptionKey = encryptedValueLocation.getDecryptionKey();
-                                int by;
-                                long bz;
-                                long ca;
-                                if (long1 != null) {
-                                    if (localVariableIndex1 != null) {
-                                        int bu = index ^ (int) (decryptionKey & 32767L);
-                                        this.appendIntConstant(bu, arrayList6, constantPool1, list2, bb);
-                                        long bx = decryptionKey ^ long1;
-                                        Instruction.appendLongConstant(bx, arrayList8, constantPool1, list2);
-                                        arrayList8.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 11));
-                                        arrayList8.add(SimpleInstruction.forOpcode(131));
-                                        break label80;
-                                    }
-
-                                    by = index;
-                                    bz = decryptionKey;
-                                    ca = 32767L;
+                                if (long1 != null && localVariableIndex1 != null) {
+                                    int maskedIndex = index ^ (int) (decryptionKey & 32767L);
+                                    this.appendIntConstant(maskedIndex, arrayList6, constantPool1, list2, list1Size);
+                                    long maskedKey = decryptionKey ^ long1;
+                                    Instruction.appendLongConstant(maskedKey, arrayList8, constantPool1, list2);
+                                    arrayList8.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 11));
+                                    arrayList8.add(SimpleInstruction.forOpcode(131));
                                 } else {
-                                    by = index;
-                                    bz = decryptionKey;
-                                    ca = 32767L;
+                                    int maskedIndex = index ^ (int) (decryptionKey & 32767L);
+                                    this.appendIntConstant(maskedIndex, arrayList6, constantPool1, list2, list1Size);
+                                    Instruction.appendLongConstant(decryptionKey, arrayList8, constantPool1, list2);
                                 }
-
-                                int bv = by ^ (int) (bz & ca);
-                                this.appendIntConstant(bv, arrayList6, constantPool1, list2, bb);
-                                Instruction.appendLongConstant(decryptionKey, arrayList8, constantPool1, list2);
                             }
 
                             ConstantRefInstruction constantRefInstruction1 = new ConstantRefInstruction(184, resolvedMethodRef1);
-                            this.addSplitCodeInsertions(arrayList6, arrayList8, constantRefInstruction1, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList6, arrayList8, constantRefInstruction1, arrayList, methodFlowAnalyzer, elementIndex);
                             break;
                         case 4:
                             methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
                             ResolvedMethodRef resolvedMethodRef = encryptedValueLocation.getLookupMethod();
                             ArrayList arrayList5 = new ArrayList();
                             ArrayList arrayList7 = new ArrayList();
-                            int bn = encryptedValueLocation.getIndex();
-                            long bp = encryptedValueLocation.getDecryptionKey();
+                            int indexValue = encryptedValueLocation.getIndex();
+                            long decryptionKeyValue = encryptedValueLocation.getDecryptionKey();
                             if (long1 != null && localVariableIndex1 != null) {
-                                int bt = bn ^ (int) (bp & 32767L);
-                                this.appendIntConstant(bt, arrayList5, constantPool1, list2, bb);
-                                long bw = bp ^ long1;
-                                Instruction.appendLongConstant(bw, arrayList7, constantPool1, list2);
+                                int valueValue3 = indexValue ^ (int) (decryptionKeyValue & 32767L);
+                                this.appendIntConstant(valueValue3, arrayList5, constantPool1, list2, list1Size);
+                                long valueValue6 = decryptionKeyValue ^ long1;
+                                Instruction.appendLongConstant(valueValue6, arrayList7, constantPool1, list2);
                                 arrayList7.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 11));
                                 arrayList7.add(SimpleInstruction.forOpcode(131));
                             } else {
-                                int bs = bn ^ (int) bp;
-                                Instruction.appendIntConstant(bs, arrayList5, constantPool1, list2);
-                                Instruction.appendLongConstant(bp, arrayList7, constantPool1, list2);
+                                int valueValue2 = indexValue ^ (int) decryptionKeyValue;
+                                Instruction.appendIntConstant(valueValue2, arrayList5, constantPool1, list2);
+                                Instruction.appendLongConstant(decryptionKeyValue, arrayList7, constantPool1, list2);
                             }
 
                             ConstantRefInstruction constantRefInstruction = new ConstantRefInstruction(184, resolvedMethodRef);
-                            this.addSplitCodeInsertions(arrayList5, arrayList7, constantRefInstruction, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList5, arrayList7, constantRefInstruction, arrayList, methodFlowAnalyzer, elementIndex);
                             break;
                         case 5:
                             ResolvedInvokeDynamic resolvedInvokeDynamic = encryptedValueLocation.getIndyEntry();
                             methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
                             ArrayList arrayList1 = new ArrayList();
                             ArrayList arrayList2 = new ArrayList();
-                            int bh = encryptedValueLocation.getIndex();
-                            long bi = encryptedValueLocation.getDecryptionKey();
+                            int indexValue2 = encryptedValueLocation.getIndex();
+                            long decryptionKeyValue2 = encryptedValueLocation.getDecryptionKey();
                             if (long1 != null && localVariableIndex1 != null) {
-                                int br = bh ^ (int) (bi & 32767L);
-                                this.appendIntConstant(br, arrayList1, constantPool1, list2, bb);
-                                long bk = bi ^ long1;
-                                Instruction.appendLongConstant(bk, arrayList2, constantPool1, list2);
+                                int valueValue4 = indexValue2 ^ (int) (decryptionKeyValue2 & 32767L);
+                                this.appendIntConstant(valueValue4, arrayList1, constantPool1, list2, list1Size);
+                                long valueValue7 = decryptionKeyValue2 ^ long1;
+                                Instruction.appendLongConstant(valueValue7, arrayList2, constantPool1, list2);
                                 arrayList2.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 11));
                                 arrayList2.add(SimpleInstruction.forOpcode(131));
                             } else {
-                                int bj = bh ^ (int) bi;
-                                this.appendIntConstant(bj, arrayList1, constantPool1, list2, bb);
-                                Instruction.appendLongConstant(bi, arrayList2, constantPool1, list2);
+                                int valueValue5 = indexValue2 ^ (int) decryptionKeyValue2;
+                                this.appendIntConstant(valueValue5, arrayList1, constantPool1, list2, list1Size);
+                                Instruction.appendLongConstant(decryptionKeyValue2, arrayList2, constantPool1, list2);
                             }
 
                             InvokeDynamicInstruction invokeDynamicInstruction = new InvokeDynamicInstruction(resolvedInvokeDynamic);
-                            this.addSplitCodeInsertions(arrayList1, arrayList2, invokeDynamicInstruction, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList1, arrayList2, invokeDynamicInstruction, arrayList, methodFlowAnalyzer, elementIndex);
                     }
 
                     if (!iterator.hasNext()) {
@@ -1629,7 +1614,7 @@ public class MethodBytecode extends ClassFileComponent {
             if (!bl) {
                 CodeAttributeBody codeAttributeBody = (CodeAttributeBody) this.getParent();
                 int maxStack = codeAttributeBody.getMaxStack();
-                codeAttributeBody.setMaxStack(maxStack + be);
+                codeAttributeBody.setMaxStack(maxStack + extraStackSizeValue);
             }
         }
     }
@@ -1650,10 +1635,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     private void collectProgramMethodRef(ResolvedMethodRef resolvedMethodRef, Set set1, Set set2) {
-        String string = resolvedMethodRef.getReferencedClassName();
+        String referencedClassName = resolvedMethodRef.getReferencedClassName();
         ProgramClass programClass1 = null;
-        if (!string.startsWith("[")) {
-            programClass1 = ClassHierarchyNode.findProgramClass(string);
+        if (!referencedClassName.startsWith("[")) {
+            programClass1 = ClassHierarchyNode.findProgramClass(referencedClassName);
             if (programClass1 != null) {
                 set2.add(this.selectMatchingProgramClass(programClass1));
             }
@@ -1675,11 +1660,11 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void insertArgumentArrayViaHelpers(List list1, List list2, Map map1, ConstantPool constantPool1, List list3) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
         ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant("java/lang/Object", list3);
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isMethodInvoke()) {
                 AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) ((ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry())
                         .getResolvedMember();
@@ -1689,79 +1674,79 @@ public class MethodBytecode extends ClassFileComponent {
                     }
 
                     List list4 = abstractMethodInfo.getParameterTypes();
-                    int bc = list4.size();
-                    ArrayList arrayList = new ArrayList(bc + 2);
-                    arrayList.add(Instruction.createIntConstantPush(bc, constantPool1, list3));
+                    int list4Size = list4.size();
+                    ArrayList arrayList = new ArrayList(list4Size + 2);
+                    arrayList.add(Instruction.createIntConstantPush(list4Size, constantPool1, list3));
                     arrayList.add(new ConstantRefInstruction(189, resolvedClassConstant));
 
-                    for (int j = bc - 1; j >= 0; j += -1) {
+                    for (int elementIndexValue = list4Size - 1; elementIndexValue >= 0; elementIndexValue += -1) {
                         ResolvedMethodRef resolvedMethodRef = null;
-                        String string = (String) list4.get(j);
-                        if (string.length() == 1) {
-                            switch (string.charAt(0)) {
+                        String key = (String) list4.get(elementIndexValue);
+                        if (key.length() == 1) {
+                            switch (key.charAt(0)) {
                                 case 'B':
                                 case 'C':
                                 case 'I':
                                 case 'S':
-                                    if (j > 1) {
-                                        String string1 = (String) list4.get(j - 2);
-                                        String string2 = (String) list4.get(j - 1);
+                                    if (elementIndexValue > 1) {
+                                        String string1 = (String) list4.get(elementIndexValue - 2);
+                                        String string2 = (String) list4.get(elementIndexValue - 1);
                                         if ((string1.equals("B") || string1.equals("S") || string1.equals("C") || string1.equals("I"))
                                                 && (string2.equals("B") || string2.equals("S") || string2.equals("C") || string2.equals("I"))) {
-                                            arrayList.add(Instruction.createIntConstantPush(j - 2, constantPool1, list3));
+                                            arrayList.add(Instruction.createIntConstantPush(elementIndexValue - 2, constantPool1, list3));
                                             resolvedMethodRef = (ResolvedMethodRef) map1.get("III");
-                                            j += -2;
+                                            elementIndexValue += -2;
                                         }
                                     }
 
-                                    if (resolvedMethodRef == null && j > 0) {
-                                        String string3 = (String) list4.get(j - 1);
+                                    if (resolvedMethodRef == null && elementIndexValue > 0) {
+                                        String string3 = (String) list4.get(elementIndexValue - 1);
                                         if (string3.equals("B") || string3.equals("S") || string3.equals("C") || string3.equals("I")) {
-                                            arrayList.add(Instruction.createIntConstantPush(j - 1, constantPool1, list3));
+                                            arrayList.add(Instruction.createIntConstantPush(elementIndexValue - 1, constantPool1, list3));
                                             resolvedMethodRef = (ResolvedMethodRef) map1.get("II");
-                                            j += -1;
+                                            elementIndexValue += -1;
                                         }
                                     }
 
                                     if (resolvedMethodRef == null) {
-                                        arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
+                                        arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
                                         resolvedMethodRef = (ResolvedMethodRef) map1.get("I");
                                     }
                                     break;
                                 default:
-                                    arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
-                                    resolvedMethodRef = (ResolvedMethodRef) map1.get(string);
+                                    arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
+                                    resolvedMethodRef = (ResolvedMethodRef) map1.get(key);
                             }
-                        } else if (j > 1 && ((String) list4.get(j - 1)).length() > 1 && ((String) list4.get(j - 2)).length() > 1) {
-                            arrayList.add(Instruction.createIntConstantPush(j - 2, constantPool1, list3));
+                        } else if (elementIndexValue > 1 && ((String) list4.get(elementIndexValue - 1)).length() > 1 && ((String) list4.get(elementIndexValue - 2)).length() > 1) {
+                            arrayList.add(Instruction.createIntConstantPush(elementIndexValue - 2, constantPool1, list3));
                             resolvedMethodRef = (ResolvedMethodRef) map1.get("OOO");
-                            j += -2;
-                        } else if (j > 0 && ((String) list4.get(j - 1)).length() > 1) {
-                            arrayList.add(Instruction.createIntConstantPush(j - 1, constantPool1, list3));
+                            elementIndexValue += -2;
+                        } else if (elementIndexValue > 0 && ((String) list4.get(elementIndexValue - 1)).length() > 1) {
+                            arrayList.add(Instruction.createIntConstantPush(elementIndexValue - 1, constantPool1, list3));
                             resolvedMethodRef = (ResolvedMethodRef) map1.get("OO");
-                            j += -1;
+                            elementIndexValue += -1;
                         } else {
-                            arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
+                            arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
                             resolvedMethodRef = (ResolvedMethodRef) map1.get("O");
                         }
 
                         arrayList.add(new ConstantRefInstruction(184, resolvedMethodRef));
                     }
 
-                    list1.add(new CodeInsertion(arrayList, i - 1, 0, 2));
+                    list1.add(new CodeInsertion(arrayList, elementIndex - 1, 0, 2));
                 }
             }
         }
     }
 
-    public void removeDeadInstructions(int[] ba, boolean bl, ScriptEnvironment scriptEnvironment1) {
-        int bb = this.instructions.size();
+    public void removeDeadInstructions(int[] integerArray, boolean bl, ScriptEnvironment scriptEnvironment1) {
+        int instructionsSize = this.instructions.size();
         int bc = 0;
-        int bd = 0;
+        int integerArrayElementIndex = 0;
 
-        for (Iterator iterator = this.instructions.iterator(); iterator.hasNext() && bd < ba.length; bc++) {
+        for (Iterator iterator = this.instructions.iterator(); iterator.hasNext() && integerArrayElementIndex < integerArray.length; bc++) {
             Instruction instruction1 = (Instruction) iterator.next();
-            if (bc == ba[bd]) {
+            if (bc == integerArray[integerArrayElementIndex]) {
                 if (instruction1.isLabel()) {
                     LabelInstruction labelInstruction = (LabelInstruction) instruction1;
                     if (labelInstruction.isUnused() || labelInstruction.isOnlyJumpTarget()) {
@@ -1773,14 +1758,14 @@ public class MethodBytecode extends ClassFileComponent {
                     iterator.remove();
                 }
 
-                bd++;
+                integerArrayElementIndex++;
             }
         }
 
         if (bl) {
             scriptEnvironment1.logMessage(
                     "Removed "
-                            + ba.length
+                            + integerArray.length
                             + " dead instructions from the method '"
                             + this.getMethod().toDisplayString()
                             + "' in class '"
@@ -1791,7 +1776,7 @@ public class MethodBytecode extends ClassFileComponent {
 
         this.recomputeOffsets();
         this.setModified(true);
-        if (bb != this.instructions.size()) {
+        if (instructionsSize != this.instructions.size()) {
             this.setModified(true);
         }
     }
@@ -1821,54 +1806,54 @@ public class MethodBytecode extends ClassFileComponent {
             if (!changedMethodDescriptor.hasNoAddedParams()) {
                 long bc = (Long) map3.get(methodInfo1);
                 MethodParamChangeNode methodParamChangeNode = (MethodParamChangeNode) map1.get(methodInfo1.getOwnerProgramClass());
-                long bd;
+                long valueValue3;
                 if (usesKeyField(methodInfo1, methodParamChangeNode, methodOverrideAnalyzer)) {
-                    bd = ba ^ bc ^ methodParamChangeNode.getEffectiveKey();
+                    valueValue3 = ba ^ bc ^ methodParamChangeNode.getEffectiveKey();
                 } else {
-                    bd = ba ^ bc;
+                    valueValue3 = ba ^ bc;
                 }
 
                 list1.add(SimpleInstruction.forOpcode(92));
-                list1.add(Instruction.createLongConstantLoad(bd, constantPool1, list3));
+                list1.add(Instruction.createLongConstantLoad(valueValue3, constantPool1, list3));
                 list1.add(SimpleInstruction.forOpcode(131));
                 if (changedMethodDescriptor.hasMultipleParams()) {
-                    int[] bi = new int[changedMethodDescriptor.getAddedParamCount()];
+                    int[] valueValue = new int[changedMethodDescriptor.getAddedParamCount()];
 
-                    for (int i = 0; i < bi.length; i++) {
+                    for (int parameterIndex = 0; parameterIndex < valueValue.length; parameterIndex++) {
                         list1.add(SimpleInstruction.forOpcode(92));
-                        int bg = changedMethodDescriptor.getKeyBitOffset(i);
-                        if (bg > 0) {
-                            list1.add(Instruction.createIntPush(bg));
+                        int keyBitOffset = changedMethodDescriptor.getKeyBitOffset(parameterIndex);
+                        if (keyBitOffset > 0) {
+                            list1.add(Instruction.createIntPush(keyBitOffset));
                             list1.add(SimpleInstruction.forOpcode(121));
                         }
 
-                        int bh = changedMethodDescriptor.getShiftCount(i);
-                        list1.add(Instruction.createIntPush(bh));
+                        int shiftCount = changedMethodDescriptor.getShiftCount(parameterIndex);
+                        list1.add(Instruction.createIntPush(shiftCount));
                         list1.add(SimpleInstruction.forOpcode(125));
-                        if (changedMethodDescriptor.isLongParam(i)) {
+                        if (changedMethodDescriptor.isLongParam(parameterIndex)) {
                             list1.add(Instruction.createLongStore(maxLocals, this.localVariableList, 5));
-                            bi[i] = maxLocals;
+                            valueValue[parameterIndex] = maxLocals;
                             list2.add(integerCache.valueOf(maxLocals));
                             list2.add(integerCache.valueOf(maxLocals + 1));
                             maxLocals += 2;
                         } else {
                             list1.add(SimpleInstruction.forOpcode(136));
                             list1.add(Instruction.createIntStore(maxLocals, this.localVariableList, 5));
-                            bi[i] = maxLocals;
+                            valueValue[parameterIndex] = maxLocals;
                             list2.add(integerCache.valueOf(maxLocals));
                             maxLocals++;
                         }
                     }
 
                     list1.add(SimpleInstruction.forOpcode(88));
-                    map4.put(methodInfo1, bi);
+                    map4.put(methodInfo1, valueValue);
                 } else {
                     list1.add(Instruction.createLongStore(maxLocals, this.localVariableList, 5));
-                    int[] be = new int[]{maxLocals};
+                    int[] valueValue2 = new int[]{maxLocals};
                     list2.add(integerCache.valueOf(maxLocals));
                     list2.add(integerCache.valueOf(maxLocals + 1));
                     maxLocals += 2;
-                    map4.put(methodInfo1, be);
+                    map4.put(methodInfo1, valueValue2);
                 }
             }
         }
@@ -1894,7 +1879,7 @@ public class MethodBytecode extends ClassFileComponent {
             ConstantLong constantLong,
             Instruction instruction1,
             Long long1,
-            String string,
+            String valueArgument,
             int bb,
             ObservableHolder observableHolder,
             ResolvedMethodRef resolvedMethodRef,
@@ -1922,7 +1907,7 @@ public class MethodBytecode extends ClassFileComponent {
         }
 
         ResolvedInvokeDynamic resolvedInvokeDynamic = this.getOrCreateInvokeDynamic(
-                string, bc, resolvedMethodRef, bootstrapMethodsAttribute1, map1, list2, constantPool1
+                valueArgument, bc, resolvedMethodRef, bootstrapMethodsAttribute1, map1, list2, constantPool1
         );
         arrayList.add(new InvokeDynamicInstruction(resolvedInvokeDynamic));
         CodeInsertion codeInsertion = new CodeInsertion(arrayList, ba - 1, 1, 2);
@@ -1930,140 +1915,53 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     @Override
-    public void collectUsedConstants(char ba, int bb, UsedConstantsCollector usedConstantsCollector, char bc) {
-        com.zelix.klassmaster.classfile.constpool.ConstantPoolEntry constantPoolEntry6 = null;
+    public void collectUsedConstants(char controlTag, int controlSeed, UsedConstantsCollector collector, char controlMode) {
         ClassFileComponent.getFlowGuardNodes();
-        int bd = this.instructions.size();
-        int be = 0;
-
-        while (be < bd) {
-            Instruction instruction1 = (Instruction) this.instructions.get(be);
-            if (bb >= 0) {
-                label59:
-                {
-                    UsedConstantsCollector usedConstantsCollector1;
-                    ConstantPoolEntry constantPoolEntry7;
-                    Instruction instruction2;
-                    label72:
-                    {
-                        com.zelix.klassmaster.classfile.insn.Instruction constantRefInstruction;
-                        label56:
-                        {
-                            label73:
-                            {
-                                label52:
-                                {
-                                    label51:
-                                    {
-                                        constantRefInstruction = instruction1;
-                                        if (bc > 0) {
-                                            switch (instruction1.getOpcode()) {
-                                                case 18:
-                                                    constantRefInstruction = (LdcInstruction) instruction1;
-                                                    if (bc > 0) {
-                                                        ConstantPoolEntry constantPoolEntry5 = ((ConstantPoolOperand) constantRefInstruction).getConstantPoolEntry();
-                                                        usedConstantsCollector1 = usedConstantsCollector;
-                                                        constantPoolEntry7 = constantPoolEntry5;
-                                                        instruction2 = instruction1;
-                                                        long bm = 129613246637798L;
-                                                        break label72;
-                                                    }
-                                                    break label73;
-                                                case 19:
-                                                    constantRefInstruction = instruction1;
-                                                    break label73;
-                                                case 20:
-                                                    constantRefInstruction = (ConstantRefInstruction) instruction1;
-                                                    boolean bl1 = false;
-                                                    short bg = 16962;
-                                                    int bj = 789836191;
-                                                    break label56;
-                                                case 178:
-                                                case 179:
-                                                case 180:
-                                                case 181:
-                                                case 182:
-                                                case 183:
-                                                case 184:
-                                                case 185:
-                                                    constantRefInstruction = (ConstantRefInstruction) instruction1;
-                                                    boolean bl = false;
-                                                    short bf = 16962;
-                                                    int bi = 789836191;
-                                                    break label51;
-                                                case 186:
-                                                    constantPoolEntry6 = ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
-                                                    break label52;
-                                                case 187:
-                                                case 189:
-                                                case 192:
-                                                case 193:
-                                                case 197:
-                                                    constantRefInstruction = instruction1;
-                                                    break;
-                                                default:
-                                                    break label59;
-                                            }
-                                        }
-
-                                        constantRefInstruction = constantRefInstruction;
-                                        boolean bl3 = false;
-                                        short bn = 16962;
-                                        int bo = 789836191;
-                                        if (bb > 0) {
-                                            ConstantPoolEntry constantPoolEntry = ((ConstantPoolOperand) constantRefInstruction).getConstantPoolEntry();
-                                            usedConstantsCollector.markUsed(constantPoolEntry, instruction1, this);
-                                            break label59;
-                                        }
-                                    }
-
-                                    constantPoolEntry6 = ((ConstantPoolOperand) constantRefInstruction).getConstantPoolEntry();
-                                    if (ba >= 0) {
-                                        ConstantPoolEntry constantPoolEntry2 = constantPoolEntry6;
-                                        usedConstantsCollector.markUsed(constantPoolEntry2, instruction1, this);
-                                        break label59;
-                                    }
-                                }
-
-                                ConstantPoolEntry constantPoolEntry1 = constantPoolEntry6;
-                                usedConstantsCollector1 = usedConstantsCollector;
-                                constantPoolEntry7 = constantPoolEntry1;
-                                instruction2 = instruction1;
-                                long bp = 129613246637798L;
-                                if (bb >= 0) {
-                                    usedConstantsCollector.markUsed(constantPoolEntry1, instruction1, this);
-                                    break label59;
-                                }
-                                break label72;
-                            }
-
-                            constantRefInstruction = constantRefInstruction;
-                            boolean bl2 = false;
-                            short bh = 16962;
-                            int bk = 789836191;
-                            if (bb >= 0) {
-                                ConstantPoolEntry constantPoolEntry4 = ((ConstantPoolOperand) constantRefInstruction).getConstantPoolEntry();
-                                usedConstantsCollector.markUsed(constantPoolEntry4, instruction1, this);
-                                break label59;
-                            }
-                        }
-
-                        ConstantPoolEntry constantPoolEntry3 = ((ConstantPoolOperand) constantRefInstruction).getConstantPoolEntry();
-                        usedConstantsCollector.markUsed(constantPoolEntry3, instruction1, this);
-                        break label59;
+        int instructionCount = this.instructions.size();
+        int instructionIndex = 0;
+        while (instructionIndex < instructionCount) {
+            Instruction instruction = (Instruction) this.instructions.get(instructionIndex);
+            if (controlSeed >= 0) {
+                if (controlMode == 0) {
+                    ConstantPoolEntry constant = ((ConstantPoolOperand) instruction).getConstantPoolEntry();
+                    collector.markUsed(constant, instruction, this);
+                } else {
+                    switch (instruction.getOpcode()) {
+                        case 18:
+                            collector.markUsed(((LdcInstruction) instruction).getConstantPoolEntry(), instruction, this);
+                            break;
+                        case 20:
+                        case 178:
+                        case 179:
+                        case 180:
+                        case 181:
+                        case 182:
+                        case 183:
+                        case 184:
+                        case 185:
+                        case 186:
+                            collector.markUsed(((ConstantRefInstruction) instruction).getConstantPoolEntry(), instruction, this);
+                            break;
+                        case 19:
+                        case 187:
+                        case 189:
+                        case 192:
+                        case 193:
+                        case 197:
+                            collector.markUsed(((ConstantPoolOperand) instruction).getConstantPoolEntry(), instruction, this);
+                            break;
+                        default:
+                            break;
                     }
-
-                    usedConstantsCollector1.markUsed(constantPoolEntry7, instruction2, this);
                 }
-
-                be++;
+                instructionIndex++;
             }
         }
     }
 
     public void obfuscateReference(
             ConstantRefInstruction constantRefInstruction,
-            int ba,
+            int elementIndex,
             ResolvedMemberRef resolvedMemberRef,
             ClassMemberRef classMemberRef,
             Long long1,
@@ -2072,7 +1970,7 @@ public class MethodBytecode extends ClassFileComponent {
             ResolvedMethodRef resolvedMethodRef1,
             Map map1,
             ResolvedMethodRef resolvedMethodRef2,
-            int[] bb,
+            int[] integerArray,
             Map map2,
             ObservableHolder observableHolder,
             Long long2,
@@ -2087,88 +1985,88 @@ public class MethodBytecode extends ClassFileComponent {
             ClassResolver classResolver1
     ) throws ZkmException, IOException {
         Instruction instruction1 = null;
-        long bc;
+        long long1Value;
         if (long2 != null && localVariableIndex1 != null) {
-            bc = long1 ^ (long2 << 48 | long2);
+            long1Value = long1 ^ (long2 << 48 | long2);
             instruction1 = Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 4);
         } else {
-            bc = long1;
+            long1Value = long1;
         }
 
-        ConstantLong constantLong = constantPool1.getOrAddLongConstant(bc, list3);
+        ConstantLong constantLong = constantPool1.getOrAddLongConstant(long1Value, list3);
         if ((Boolean) map3.get(constantRefInstruction)) {
             MemberInfo memberInfo1 = classMemberRef.getMember();
-            String string = classMemberRef.getDescriptor();
-            String string1 = classMemberRef.getOwnerClass().getClassName();
+            String descriptor = classMemberRef.getDescriptor();
+            String className = classMemberRef.getOwnerClass().getClassName();
             StringBuilder stringBuilder = new StringBuilder();
-            String string2;
+            String classNameValue;
             if (memberInfo1.isProtected() && !memberInfo1.getPackagePath().equals(this.getPackagePath())) {
-                string2 = this.getClassName();
+                classNameValue = this.getClassName();
             } else {
-                string2 = string1;
+                classNameValue = className;
             }
 
             String string3 = instruction1 == null ? "J" : "JJ";
-            int bd;
+            int integerArrayElement;
             switch (constantRefInstruction.getOpcode()) {
                 case 178:
                     stringBuilder.append('(');
                     stringBuilder.append(string3);
                     stringBuilder.append(')');
-                    stringBuilder.append(string);
-                    bd = bb[2];
+                    stringBuilder.append(descriptor);
+                    integerArrayElement = integerArray[2];
                     break;
                 case 179:
                     stringBuilder.append('(');
-                    stringBuilder.append(string);
+                    stringBuilder.append(descriptor);
                     stringBuilder.append(string3);
                     stringBuilder.append(")V");
-                    bd = bb[3];
+                    integerArrayElement = integerArray[3];
                     break;
                 case 180:
                     stringBuilder.append("(L");
-                    stringBuilder.append(HiddenOptionFlags.KEEP_FIELD_ACCESSOR_TYPES ? string2 : "java/lang/Object");
+                    stringBuilder.append(HiddenOptionFlags.KEEP_FIELD_ACCESSOR_TYPES ? classNameValue : "java/lang/Object");
                     stringBuilder.append(';');
                     stringBuilder.append(string3);
                     stringBuilder.append(')');
-                    stringBuilder.append(string);
-                    bd = bb[0];
+                    stringBuilder.append(descriptor);
+                    integerArrayElement = integerArray[0];
                     break;
                 case 181:
                     stringBuilder.append("(L");
-                    stringBuilder.append(HiddenOptionFlags.KEEP_FIELD_ACCESSOR_TYPES ? string2 : "java/lang/Object");
+                    stringBuilder.append(HiddenOptionFlags.KEEP_FIELD_ACCESSOR_TYPES ? classNameValue : "java/lang/Object");
                     stringBuilder.append(";");
-                    stringBuilder.append(string);
+                    stringBuilder.append(descriptor);
                     stringBuilder.append(string3);
                     stringBuilder.append(")V");
-                    bd = bb[1];
+                    integerArrayElement = integerArray[1];
                     break;
                 case 182:
                 case 185:
-                    stringBuilder.append(buildErasedDescriptor(string3, this.prependParameterType(string2, string)));
-                    bd = bb[4];
+                    stringBuilder.append(buildErasedDescriptor(string3, this.prependParameterType(classNameValue, descriptor)));
+                    integerArrayElement = integerArray[4];
                     break;
                 case 183:
-                    stringBuilder.append(buildErasedDescriptor(string3, this.prependParameterType(string1, string)));
-                    bd = bb[6];
+                    stringBuilder.append(buildErasedDescriptor(string3, this.prependParameterType(className, descriptor)));
+                    integerArrayElement = integerArray[6];
                     break;
                 case 184:
-                    stringBuilder.append(buildErasedDescriptor(string3, string));
-                    bd = bb[5];
+                    stringBuilder.append(buildErasedDescriptor(string3, descriptor));
+                    integerArrayElement = integerArray[5];
                     break;
                 default:
-                    bd = bb[4];
+                    integerArrayElement = integerArray[4];
             }
 
             this.addInvokeDynamicObfuscation(
-                    ba, constantLong, instruction1, long2, stringBuilder.toString(), bd, observableHolder, resolvedMethodRef2, map2, list1, list3, constantPool1
+                    elementIndex, constantLong, instruction1, long2, stringBuilder.toString(), integerArrayElement, observableHolder, resolvedMethodRef2, map2, list1, list3, constantPool1
             );
         } else {
             switch (constantRefInstruction.getOpcode()) {
                 case 178:
                     this.addFieldAccessObfuscation(
                             constantRefInstruction,
-                            ba,
+                            elementIndex,
                             (ResolvedFieldRef) resolvedMemberRef,
                             constantLong,
                             instruction1,
@@ -2193,8 +2091,8 @@ public class MethodBytecode extends ClassFileComponent {
 
                     arrayList3.add(new ConstantRefInstruction(184, resolvedMethodRef));
                     arrayList3.add(SimpleInstruction.forOpcode(1));
-                    boolean bl1 = referenceObfuscator.isWideField(resolvedFieldRef1);
-                    if (bl1) {
+                    boolean wideField = referenceObfuscator.isWideField(resolvedFieldRef1);
+                    if (wideField) {
                         arrayList3.add(SimpleInstruction.forOpcode(94));
                     } else {
                         arrayList3.add(SimpleInstruction.forOpcode(93));
@@ -2205,17 +2103,17 @@ public class MethodBytecode extends ClassFileComponent {
                             resolvedFieldRef1, constantPool1, list3, classMemberLookup1, classResolver1
                     );
                     arrayList3.add(new ConstantRefInstruction(182, resolvedMethodRefConstant1));
-                    int bi = ba - 1;
-                    int be = bl1 ? 6 : 5;
-                    int bf = bi;
+                    int bi = elementIndex - 1;
+                    int extraStackSizeValue = wideField ? 6 : 5;
+                    int positionValue = bi;
                     ArrayList arrayList = arrayList3;
-                    CodeInsertion codeInsertion1 = new CodeInsertion(arrayList, bf, 1, be);
+                    CodeInsertion codeInsertion1 = new CodeInsertion(arrayList, positionValue, 1, extraStackSizeValue);
                     list1.add(codeInsertion1);
                     break;
                 case 180:
                     this.addFieldAccessObfuscation(
                             constantRefInstruction,
-                            ba,
+                            elementIndex,
                             (ResolvedFieldRef) resolvedMemberRef,
                             constantLong,
                             instruction1,
@@ -2233,8 +2131,8 @@ public class MethodBytecode extends ClassFileComponent {
                 case 181:
                     ArrayList arrayList2 = new ArrayList();
                     ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) resolvedMemberRef;
-                    boolean bl = referenceObfuscator.isWideField(resolvedFieldRef);
-                    if (bl) {
+                    boolean wideFieldValue = referenceObfuscator.isWideField(resolvedFieldRef);
+                    if (wideFieldValue) {
                         arrayList2.add(SimpleInstruction.forOpcode(93));
                         arrayList2.add(SimpleInstruction.forOpcode(88));
                         arrayList2.add(new ConstantRefInstruction(20, constantLong));
@@ -2261,11 +2159,11 @@ public class MethodBytecode extends ClassFileComponent {
                             resolvedFieldRef, constantPool1, list3, classMemberLookup1, classResolver1
                     );
                     arrayList2.add(new ConstantRefInstruction(182, resolvedMethodRefConstant));
-                    int bj = ba - 1;
-                    int bg = bl ? 6 : 4;
-                    int bh = bj;
+                    int bj = elementIndex - 1;
+                    int extraStackSizeValue2 = wideFieldValue ? 6 : 4;
+                    int positionValue2 = bj;
                     ArrayList arrayList1 = arrayList2;
-                    CodeInsertion codeInsertion = new CodeInsertion(arrayList1, bh, 1, bg);
+                    CodeInsertion codeInsertion = new CodeInsertion(arrayList1, positionValue2, 1, extraStackSizeValue2);
                     list1.add(codeInsertion);
                     break;
                 case 182:
@@ -2273,7 +2171,7 @@ public class MethodBytecode extends ClassFileComponent {
                 case 185:
                     this.addMethodCallObfuscation(
                             constantRefInstruction,
-                            ba,
+                            elementIndex,
                             classMemberRef,
                             (ResolvedMethodRef) resolvedMemberRef,
                             constantLong,
@@ -2294,7 +2192,7 @@ public class MethodBytecode extends ClassFileComponent {
                 case 184:
                     this.addMethodCallObfuscation(
                             constantRefInstruction,
-                            ba,
+                            elementIndex,
                             classMemberRef,
                             (ResolvedMethodRef) resolvedMemberRef,
                             constantLong,
@@ -2315,7 +2213,7 @@ public class MethodBytecode extends ClassFileComponent {
         }
     }
 
-    public MethodFlowAnalyzer createFlowAnalyzer(CommonSuperTypeResolver commonSuperTypeResolver1, ClassHierarchyQuery classHierarchyQuery, boolean bl) throws ZkmException, IOException {
+    public MethodFlowAnalyzer createFlowAnalyzer(CommonSuperTypeResolver commonSuperTypeResolver1, ClassHierarchyQuery classHierarchyQuery, boolean livenessAnalysisEnabled) throws ZkmException, IOException {
         CodeAttributeBody codeAttributeBody = (CodeAttributeBody) this.getParent();
         NonNullList nonNullList = new NonNullList(this.instructions);
         ExceptionTableEntry[] exceptionTableEntrys = this.copyExceptionTable();
@@ -2324,10 +2222,10 @@ public class MethodBytecode extends ClassFileComponent {
         List list2 = codeAttributeBody.getNormalizedParameterTypes();
         boolean methodStatic = codeAttributeBody.isMethodStatic();
         boolean constructor = this.isConstructor();
-        boolean bl2 = methodStatic;
+        boolean methodStaticValue = methodStatic;
         List list1 = list2;
         MethodFlowAnalyzer methodFlowAnalyzer = new MethodFlowAnalyzer(
-                nonNullList, exceptionTableEntrys, maxLocals, list1, bl2, constructor, commonSuperTypeResolver1, classHierarchyQuery, this, bl
+                nonNullList, exceptionTableEntrys, maxLocals, list1, methodStaticValue, constructor, commonSuperTypeResolver1, classHierarchyQuery, this, livenessAnalysisEnabled
         );
         this.hasLoops = methodFlowAnalyzer.hasNaturalLoops();
         return methodFlowAnalyzer;
@@ -2336,11 +2234,11 @@ public class MethodBytecode extends ClassFileComponent {
     public void insertArgumentArrayBoxing(
             List list1, List list2, ConstantPool constantPool1, List list3, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
         ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant("java/lang/Object", list3);
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isMethodInvoke()) {
                 AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) ((ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry())
                         .getResolvedMember();
@@ -2350,13 +2248,13 @@ public class MethodBytecode extends ClassFileComponent {
                     }
 
                     List list4 = abstractMethodInfo.getParameterTypes();
-                    int bc = list4.size();
+                    int list4Size = list4.size();
                     ArrayList arrayList = new ArrayList();
-                    arrayList.add(Instruction.createIntConstantPush(bc, constantPool1, list3));
+                    arrayList.add(Instruction.createIntConstantPush(list4Size, constantPool1, list3));
                     arrayList.add(new ConstantRefInstruction(189, resolvedClassConstant));
 
-                    for (int j = bc - 1; j >= 0; j += -1) {
-                        String string = (String) list4.get(j);
+                    for (int elementIndexValue = list4Size - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                        String string = (String) list4.get(elementIndexValue);
                         if (string.length() == 1) {
                             switch (string.charAt(0)) {
                                 case 'B':
@@ -2370,7 +2268,7 @@ public class MethodBytecode extends ClassFileComponent {
                                     ConstantPool constantPool2 = constantPool1;
                                     List list5 = list3;
                                     PrimitiveBoxingGenerator.boxIntOnStack(arrayList, bl3, list5, constantPool2, classMemberLookup2, classResolver1);
-                                    arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
+                                    arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
                                     arrayList.add(SimpleInstruction.forOpcode(95));
                                     arrayList.add(SimpleInstruction.forOpcode(83));
                                     break;
@@ -2383,7 +2281,7 @@ public class MethodBytecode extends ClassFileComponent {
                                     ConstantPool constantPool6 = constantPool1;
                                     List list9 = list3;
                                     PrimitiveBoxingGenerator.boxDoubleOnStack(arrayList, bl2, list9, constantPool6, classMemberLookup6, classResolver1);
-                                    arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
+                                    arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
                                     arrayList.add(SimpleInstruction.forOpcode(95));
                                     arrayList.add(SimpleInstruction.forOpcode(83));
                                 case 'E':
@@ -2414,7 +2312,7 @@ public class MethodBytecode extends ClassFileComponent {
                                     ConstantPool constantPool4 = constantPool1;
                                     List list7 = list3;
                                     PrimitiveBoxingGenerator.boxFloatOnStack(arrayList, bl1, list7, constantPool4, classMemberLookup4, classResolver2);
-                                    arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
+                                    arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
                                     arrayList.add(SimpleInstruction.forOpcode(95));
                                     arrayList.add(SimpleInstruction.forOpcode(83));
                                     break;
@@ -2428,7 +2326,7 @@ public class MethodBytecode extends ClassFileComponent {
                                     ConstantPool constantPool5 = constantPool1;
                                     List list8 = list3;
                                     PrimitiveBoxingGenerator.boxLongOnStack(arrayList, bl, list8, constantPool5, classMemberLookup5, classResolver3);
-                                    arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
+                                    arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
                                     arrayList.add(SimpleInstruction.forOpcode(95));
                                     arrayList.add(SimpleInstruction.forOpcode(83));
                                     break;
@@ -2440,20 +2338,20 @@ public class MethodBytecode extends ClassFileComponent {
                                     ConstantPool constantPool3 = constantPool1;
                                     List list6 = list3;
                                     PrimitiveBoxingGenerator.boxBooleanOnStack(arrayList, bl4, list6, constantPool3, classMemberLookup3, classResolver1);
-                                    arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
+                                    arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
                                     arrayList.add(SimpleInstruction.forOpcode(95));
                                     arrayList.add(SimpleInstruction.forOpcode(83));
                             }
                         } else {
                             arrayList.add(SimpleInstruction.forOpcode(90));
                             arrayList.add(SimpleInstruction.forOpcode(95));
-                            arrayList.add(Instruction.createIntConstantPush(j, constantPool1, list3));
+                            arrayList.add(Instruction.createIntConstantPush(elementIndexValue, constantPool1, list3));
                             arrayList.add(SimpleInstruction.forOpcode(95));
                             arrayList.add(SimpleInstruction.forOpcode(83));
                         }
                     }
 
-                    list1.add(new CodeInsertion(arrayList, i - 1, 0, 2));
+                    list1.add(new CodeInsertion(arrayList, elementIndex - 1, 0, 2));
                 }
             }
         }
@@ -2479,15 +2377,15 @@ public class MethodBytecode extends ClassFileComponent {
 
         while (iterator.hasNext()) {
             TrackedValue trackedValue = (TrackedValue) iterator.next();
-            String string = trackedValue.getNormalizedName();
-            if (string != null && string.length() > 0) {
-                String string1 = ZkmUtils.dotsToSlashes(string);
-                ClassFileBase classFileBase = lookupClass(string1, classpathClassLoader1);
+            String normalizedName = trackedValue.getNormalizedName();
+            if (normalizedName != null && normalizedName.length() > 0) {
+                String key = ZkmUtils.dotsToSlashes(normalizedName);
+                ClassFileBase classFileBase = lookupClass(key, classpathClassLoader1);
                 if (classFileBase != null) {
                     bl1 = this.resolveReflectedMethodsInClass(classFileBase, set2, set3, bl, set4, twoKeyMap, set5, classMemberLookup1, bl1);
                 } else if (trackedValue instanceof TracedObjectType) {
                     try {
-                        ClasspathClassFile classpathClassFile = classpathClassLoader1.getClassFile(string1);
+                        ClasspathClassFile classpathClassFile = classpathClassLoader1.getClassFile(key);
                         if (classpathClassFile != null) {
                             bl1 = this.resolveReflectedLibraryMethods(classpathClassFile, set2, set3, bl, bl1);
                         } else {
@@ -2506,10 +2404,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     private void collectMethodRef(ResolvedMethodRef resolvedMethodRef, Set set1, Set set2) {
-        String string = resolvedMethodRef.getReferencedClassName();
+        String referencedClassName = resolvedMethodRef.getReferencedClassName();
         ClassFileBase classFileBase = null;
-        if (!string.startsWith("[")) {
-            classFileBase = ClassHierarchyNode.findClassFile(string);
+        if (!referencedClassName.startsWith("[")) {
+            classFileBase = ClassHierarchyNode.findClassFile(referencedClassName);
             if (classFileBase != null) {
                 if (classFileBase.isMultiRelease()) {
                     set2.addAll(classFileBase.getAllVersions());
@@ -2539,9 +2437,9 @@ public class MethodBytecode extends ClassFileComponent {
         ArrayList arrayList = new ArrayList();
         ResolvedFieldRef resolvedFieldRef = methodParamChangeNode.getKeyFieldRef();
         long effectiveKey = methodParamChangeNode.getEffectiveKey();
-        long bc = long1 ^ effectiveKey;
+        long valueValue = long1 ^ effectiveKey;
         arrayList.add(new ConstantRefInstruction(178, resolvedFieldRef));
-        arrayList.add(Instruction.createLongConstantLoad(bc, constantPool1, list1));
+        arrayList.add(Instruction.createLongConstantLoad(valueValue, constantPool1, list1));
         arrayList.add(SimpleInstruction.forOpcode(131));
         int maxLocals = this.getMaxLocals();
         arrayList.add(Instruction.createLongStore(maxLocals, this.localVariableList, ba));
@@ -2560,209 +2458,199 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void collectSerialPersistentFields(List list1, ClassMemberLookup classMemberLookup1) throws ZkmProcessingException {
-        String string = ((ProgramClass) this.getOwningClass()).getClassName();
-        String string1 = null;
-        String string2 = null;
-        byte ba = 1;
-        int bb = this.instructions.size();
-        boolean bl = false;
-        int bc = bb - 1;
+        String owningClassName = ((ProgramClass) this.getOwningClass()).getClassName();
+        String fieldDescriptor = null;
+        String fieldName = null;
+        byte scanState = 1;
+        int instructionCountValue = this.instructions.size();
+        boolean validateArrayLength = false;
+        int instructionIndexValue = instructionCountValue - 1;
 
-        while (true) {
-            label165:
-            {
-                if (bc >= 0) {
-                    Instruction instruction1 = (Instruction) this.instructions.get(bc);
-                    int opcode = instruction1.getOpcode();
-                    switch (ba) {
-                        case 1:
-                            if (opcode == 179) {
-                                ResolvedFieldRef resolvedFieldRef2 = (ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
-                                if (resolvedFieldRef2.getMemberName().trim().equals("serialPersistentFields")
-                                        && resolvedFieldRef2.getReferencedClassName().trim().equals(string)) {
-                                    ba = 2;
+        for (; instructionIndexValue >= 0; instructionIndexValue--) {
+            Instruction instruction1 = (Instruction) this.instructions.get(instructionIndexValue);
+            int opcode = instruction1.getOpcode();
+            switch (scanState) {
+                case 1:
+                    if (opcode == 179) {
+                        ResolvedFieldRef resolvedFieldRef2 = (ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
+                        if (resolvedFieldRef2.getMemberName().trim().equals("serialPersistentFields")
+                                && resolvedFieldRef2.getReferencedClassName().trim().equals(owningClassName)) {
+                            scanState = 2;
+                        }
+                    }
+                    break;
+                case 2:
+                    if (opcode == 183) {
+                        ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
+                        if (resolvedMethodRef.getMemberName().trim().equals("<init>")
+                                && resolvedMethodRef.getReferencedClassName().trim().equals("java/io/ObjectStreamField")
+                                && resolvedMethodRef.getDescriptor().trim().equals("(Ljava/lang/String;Ljava/lang/Class;)V")) {
+                            scanState = 3;
+                        }
+                    } else if (opcode == 189) {
+                        ResolvedClassConstant resolvedClassConstant2 = (ResolvedClassConstant) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
+                        if (resolvedClassConstant2.getClassName().trim().equals("java/io/ObjectStreamField")) {
+                            validateArrayLength = true;
+                            scanState = 4;
+                        }
+                    } else if (opcode == 178) {
+                        ResolvedFieldRef resolvedFieldRef1 = (ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
+                        if (resolvedFieldRef1.getMemberName().trim().equals("NO_FIELDS")
+                                && resolvedFieldRef1.getReferencedClassName().trim().equals("java/io/ObjectStreamClass")) {
+                            scanState = 4;
+                        }
+                    }
+                    break;
+                case 3:
+                    if (opcode != 18 && opcode != 19) {
+                        if (opcode != 178 && opcode != 180) {
+                            if (opcode == 187) {
+                                ResolvedClassConstant resolvedClassConstant1 = (ResolvedClassConstant) ((ConstantRefInstruction) instruction1)
+                                        .getConstantPoolEntry();
+                                if (!resolvedClassConstant1.getClassName().trim().equals("java/io/ObjectStreamField")) {
+                                    break;
                                 }
-                            }
-                            break label165;
-                        case 2:
-                            if (opcode == 183) {
-                                ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
-                                if (resolvedMethodRef.getMemberName().trim().equals("<init>")
-                                        && resolvedMethodRef.getReferencedClassName().trim().equals("java/io/ObjectStreamField")
-                                        && resolvedMethodRef.getDescriptor().trim().equals("(Ljava/lang/String;Ljava/lang/Class;)V")) {
-                                    ba = 3;
-                                }
-                            } else if (opcode == 189) {
-                                ResolvedClassConstant resolvedClassConstant2 = (ResolvedClassConstant) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
-                                if (resolvedClassConstant2.getClassName().trim().equals("java/io/ObjectStreamField")) {
-                                    bl = true;
-                                    ba = 4;
-                                }
-                            } else if (opcode == 178) {
-                                ResolvedFieldRef resolvedFieldRef1 = (ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
-                                if (resolvedFieldRef1.getMemberName().trim().equals("NO_FIELDS")
-                                        && resolvedFieldRef1.getReferencedClassName().trim().equals("java/io/ObjectStreamClass")) {
-                                    ba = 4;
-                                }
-                            }
-                            break label165;
-                        case 3:
-                            if (opcode != 18 && opcode != 19) {
-                                if (opcode != 178 && opcode != 180) {
-                                    if (opcode == 187) {
-                                        ResolvedClassConstant resolvedClassConstant1 = (ResolvedClassConstant) ((ConstantRefInstruction) instruction1)
-                                                .getConstantPoolEntry();
-                                        if (!resolvedClassConstant1.getClassName().trim().equals("java/io/ObjectStreamField")) {
-                                            break label165;
-                                        }
 
-                                        ba = 2;
-                                        if (string1 != null && string2 != null) {
-                                            FieldInfo fieldInfo = classMemberLookup1.findField(string, string2, string1);
-                                            if (fieldInfo == null) {
-                                                throw new ZkmProcessingException("Unexpected structure (06) (" + string1 + "," + string2 + ")");
-                                            }
-
-                                            list1.add(fieldInfo);
-                                            string1 = null;
-                                            string2 = null;
-                                            break label165;
-                                        }
-
-                                        StringBuilder stringBuilder = new StringBuilder().append("Unexpected structure (07) ('").append(string1).append("', '");
-                                        String string3 = (string2 != null ? stringBuilder.append(true) : stringBuilder.append(false)).append("')").toString();
-                                        throw new ZkmProcessingException(string3);
+                                scanState = 2;
+                                if (fieldDescriptor != null && fieldName != null) {
+                                    FieldInfo fieldInfo = classMemberLookup1.findField(owningClassName, fieldName, fieldDescriptor);
+                                    if (fieldInfo == null) {
+                                        throw new ZkmProcessingException("Unexpected structure (06) (" + fieldDescriptor + "," + fieldName + ")");
                                     }
 
-                                    if (opcode == 189) {
-                                        ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) ((ConstantRefInstruction) instruction1)
-                                                .getConstantPoolEntry();
-                                        if (resolvedClassConstant.getClassName().trim().equals("java/io/ObjectStreamField")) {
-                                            ba = 4;
-                                        }
-                                    }
-                                    break label165;
+                                    list1.add(fieldInfo);
+                                    fieldDescriptor = null;
+                                    fieldName = null;
+                                    break;
                                 }
 
-                                ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
-                                if (string1 == null) {
-                                    if (!resolvedFieldRef.getDescriptor().equals("Ljava/lang/Class;") || !resolvedFieldRef.getMemberName().equals("TYPE")) {
-                                        throw new ZkmProcessingException("Unexpected structure (04) : '" + resolvedFieldRef.getValueString() + "'");
-                                    }
-
-                                    String string4 = ConstantPoolEntry.getWrapperPrimitiveDescriptor(resolvedFieldRef.getReferencedClassName());
-                                    if (string4 == null) {
-                                        throw new ZkmProcessingException("Unexpected structure (03) : '" + resolvedFieldRef.getValueString() + "'");
-                                    }
-
-                                    string1 = string4;
-                                }
-                                break label165;
+                                StringBuilder stringBuilder = new StringBuilder().append("Unexpected structure (07) ('").append(fieldDescriptor).append("', '");
+                                String string3 = (fieldName != null ? stringBuilder.append(true) : stringBuilder.append(false)).append("')").toString();
+                                throw new ZkmProcessingException(string3);
                             }
 
-                            ConstantPoolEntry constantPoolEntry;
-                            if (opcode == 18) {
-                                LdcInstruction ldcInstruction = (LdcInstruction) instruction1;
-                                constantPoolEntry = ldcInstruction.getConstantPoolEntry();
-                            } else {
-                                ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) instruction1;
-                                constantPoolEntry = ((ConstantPoolOperand) constantRefInstruction).getConstantPoolEntry();
-                            }
-
-                            if (constantPoolEntry instanceof ResolvedClassConstant) {
-                                ResolvedClassConstant resolvedClassConstant3 = (ResolvedClassConstant) constantPoolEntry;
-                                if (string1 != null) {
-                                    throw new ZkmProcessingException("Unexpected structure (01) : '" + string1 + "' : '" + resolvedClassConstant3.getClassName() + "'");
-                                }
-
-                                string1 = resolvedClassConstant3.getClassName();
-                            } else if (constantPoolEntry instanceof ResolvedStringConstant) {
-                                ConstantUtf8 constantUtf8 = ((ResolvedStringConstant) constantPoolEntry).getValueUtf8();
-                                if (string1 == null) {
-                                    string1 = constantUtf8.getValue();
-                                } else {
-                                    if (string2 != null) {
-                                        throw new ZkmProcessingException(
-                                                "Unexpected structure (02) : '" + string2 + "' : '" + string1 + "' : '" + constantUtf8.getValue() + "'"
-                                        );
-                                    }
-
-                                    string2 = constantUtf8.getValue();
-                                }
-                            }
-                            break label165;
-                        case 4:
-                            if (bl) {
-                                int be = list1.size();
-                                switch (opcode) {
-                                    case 3:
-                                        if (be != 0) {
-                                            throw new ZkmProcessingException("Unexpected structure (08) (" + be + ",0)");
-                                        }
-                                        break;
-                                    case 4:
-                                        if (be != 1) {
-                                            throw new ZkmProcessingException("Unexpected structure (08) (" + be + ",1)");
-                                        }
-                                        break;
-                                    case 5:
-                                        if (be != 2) {
-                                            throw new ZkmProcessingException("Unexpected structure (08) (" + be + ",2)");
-                                        }
-                                        break;
-                                    case 6:
-                                        if (be != 3) {
-                                            throw new ZkmProcessingException("Unexpected structure (08) (" + be + ",3)");
-                                        }
-                                        break;
-                                    case 7:
-                                        if (be != 4) {
-                                            throw new ZkmProcessingException("Unexpected structure (08) (" + be + ",4)");
-                                        }
-                                        break;
-                                    case 8:
-                                        if (be != 5) {
-                                            throw new ZkmProcessingException("Unexpected structure (08) (" + be + ",5)");
-                                        }
-                                    case 9:
-                                    case 10:
-                                    case 11:
-                                    case 12:
-                                    case 13:
-                                    case 14:
-                                    case 15:
-                                    default:
-                                        break;
-                                    case 16:
-                                        BipushInstruction bipushInstruction = (BipushInstruction) instruction1;
-                                        if (be != bipushInstruction.getByteValue()) {
-                                            throw new ZkmProcessingException("Unexpected structure (08) (" + be + "," + bipushInstruction.getByteValue() + ")");
-                                        }
+                            if (opcode == 189) {
+                                ResolvedClassConstant resolvedClassConstant = (ResolvedClassConstant) ((ConstantRefInstruction) instruction1)
+                                        .getConstantPoolEntry();
+                                if (resolvedClassConstant.getClassName().trim().equals("java/io/ObjectStreamField")) {
+                                    scanState = 4;
                                 }
                             }
                             break;
-                        default:
-                            break label165;
+                        }
+
+                        ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
+                        if (fieldDescriptor == null) {
+                            if (!resolvedFieldRef.getDescriptor().equals("Ljava/lang/Class;") || !resolvedFieldRef.getMemberName().equals("TYPE")) {
+                                throw new ZkmProcessingException("Unexpected structure (04) : '" + resolvedFieldRef.getValueString() + "'");
+                            }
+
+                            String fieldDescriptorValue = ConstantPoolEntry.getWrapperPrimitiveDescriptor(resolvedFieldRef.getReferencedClassName());
+                            if (fieldDescriptorValue == null) {
+                                throw new ZkmProcessingException("Unexpected structure (03) : '" + resolvedFieldRef.getValueString() + "'");
+                            }
+
+                            fieldDescriptor = fieldDescriptorValue;
+                        }
+                        break;
                     }
-                }
 
-                if (ba != 4) {
-                    throw new ZkmProcessingException("Unexpected structure (09) mode=" + ba);
-                }
+                    ConstantPoolEntry constantPoolEntry;
+                    if (opcode == 18) {
+                        LdcInstruction ldcInstruction = (LdcInstruction) instruction1;
+                        constantPoolEntry = ldcInstruction.getConstantPoolEntry();
+                    } else {
+                        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) instruction1;
+                        constantPoolEntry = ((ConstantPoolOperand) constantRefInstruction).getConstantPoolEntry();
+                    }
 
-                return;
+                    if (constantPoolEntry instanceof ResolvedClassConstant) {
+                        ResolvedClassConstant resolvedClassConstant3 = (ResolvedClassConstant) constantPoolEntry;
+                        if (fieldDescriptor != null) {
+                            throw new ZkmProcessingException("Unexpected structure (01) : '" + fieldDescriptor + "' : '" + resolvedClassConstant3.getClassName() + "'");
+                        }
+
+                        fieldDescriptor = resolvedClassConstant3.getClassName();
+                    } else if (constantPoolEntry instanceof ResolvedStringConstant) {
+                        ConstantUtf8 constantUtf8 = ((ResolvedStringConstant) constantPoolEntry).getValueUtf8();
+                        if (fieldDescriptor == null) {
+                            fieldDescriptor = constantUtf8.getValue();
+                        } else {
+                            if (fieldName != null) {
+                                throw new ZkmProcessingException(
+                                        "Unexpected structure (02) : '" + fieldName + "' : '" + fieldDescriptor + "' : '" + constantUtf8.getValue() + "'"
+                                );
+                            }
+
+                            fieldName = constantUtf8.getValue();
+                        }
+                    }
+                    break;
+                case 4:
+                    if (validateArrayLength) {
+                        int collectedFieldCount = list1.size();
+                        switch (opcode) {
+                            case 3:
+                                if (collectedFieldCount != 0) {
+                                    throw new ZkmProcessingException("Unexpected structure (08) (" + collectedFieldCount + ",0)");
+                                }
+                                break;
+                            case 4:
+                                if (collectedFieldCount != 1) {
+                                    throw new ZkmProcessingException("Unexpected structure (08) (" + collectedFieldCount + ",1)");
+                                }
+                                break;
+                            case 5:
+                                if (collectedFieldCount != 2) {
+                                    throw new ZkmProcessingException("Unexpected structure (08) (" + collectedFieldCount + ",2)");
+                                }
+                                break;
+                            case 6:
+                                if (collectedFieldCount != 3) {
+                                    throw new ZkmProcessingException("Unexpected structure (08) (" + collectedFieldCount + ",3)");
+                                }
+                                break;
+                            case 7:
+                                if (collectedFieldCount != 4) {
+                                    throw new ZkmProcessingException("Unexpected structure (08) (" + collectedFieldCount + ",4)");
+                                }
+                                break;
+                            case 8:
+                                if (collectedFieldCount != 5) {
+                                    throw new ZkmProcessingException("Unexpected structure (08) (" + collectedFieldCount + ",5)");
+                                }
+                            case 9:
+                            case 10:
+                            case 11:
+                            case 12:
+                            case 13:
+                            case 14:
+                            case 15:
+                            default:
+                                break;
+                            case 16:
+                                BipushInstruction bipushInstruction = (BipushInstruction) instruction1;
+                                if (collectedFieldCount != bipushInstruction.getByteValue()) {
+                                    throw new ZkmProcessingException("Unexpected structure (08) (" + collectedFieldCount + "," + bipushInstruction.getByteValue() + ")");
+                                }
+                        }
+                    }
+                    return;
+                default:
+                    break;
             }
-
-            bc += -1;
+        }
+        if (scanState != 4) {
+            throw new ZkmProcessingException("Unexpected structure (09) mode=" + scanState);
         }
     }
 
     public void recordCallGraphEdges(SetMultiMap setMultiMap, Set set1) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
         MethodInfo methodInfo1 = (MethodInfo) this.getMethod();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isMethodInvoke()) {
                 ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
                 AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) resolvedMethodRef.getResolvedMember();
@@ -2783,10 +2671,10 @@ public class MethodBytecode extends ClassFileComponent {
 
     public void collectExcludedStringConstants(Set set1, StringEncryptionExclusionSpec stringEncryptionExclusionSpec) {
         ProgramClass programClass1 = (ProgramClass) this.getOwningClass();
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             int opcode = instruction1.getOpcode();
             if (opcode == 179 || opcode == 181) {
                 AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) ((ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry())
@@ -2795,11 +2683,11 @@ public class MethodBytecode extends ClassFileComponent {
                         && abstractFieldInfo.isProgramMember()
                         && abstractFieldInfo.getParent() == programClass1
                         && stringEncryptionExclusionSpec.isFieldExcluded((FieldInfo) abstractFieldInfo)) {
-                    Instruction instruction2 = (Instruction) this.instructions.get(i - 1);
-                    int bd = instruction2.getOpcode();
-                    if (bd == 18 || bd == 19) {
+                    Instruction instruction2 = (Instruction) this.instructions.get(elementIndex - 1);
+                    int opcodeValue = instruction2.getOpcode();
+                    if (opcodeValue == 18 || opcodeValue == 19) {
                         ConstantPoolEntry constantPoolEntry;
-                        if (bd == 18) {
+                        if (opcodeValue == 18) {
                             LdcInstruction ldcInstruction = (LdcInstruction) instruction2;
                             constantPoolEntry = ldcInstruction.getConstantPoolEntry();
                         } else {
@@ -2827,25 +2715,25 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public int findLastExitIndex() {
-        int ba = -1;
-        int bb = -1;
+        int elementIndexValue = -1;
+        int elementIndexValue2 = -1;
 
-        for (int i = this.instructions.size() - 1; i >= 0; i += -1) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = this.instructions.size() - 1; elementIndex >= 0; elementIndex += -1) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isReturn()) {
-                return i;
+                return elementIndex;
             }
 
-            if (ba == -1 && instruction1.getOpcode() == 191) {
-                ba = i;
+            if (elementIndexValue == -1 && instruction1.getOpcode() == 191) {
+                elementIndexValue = elementIndex;
             }
 
-            if (bb == -1 && instruction1.isJump()) {
-                bb = i;
+            if (elementIndexValue2 == -1 && instruction1.isJump()) {
+                elementIndexValue2 = elementIndex;
             }
         }
 
-        return ba > -1 ? ba : bb;
+        return elementIndexValue > -1 ? elementIndexValue : elementIndexValue2;
     }
 
     public String prependParameterType(String string, String string1) {
@@ -2869,37 +2757,37 @@ public class MethodBytecode extends ClassFileComponent {
             ClasspathClassLoader classpathClassLoader1,
             ClassMemberLookup classMemberLookup1
     ) throws ZkmException, IOException {
-        String string1 = string;
-        if (string1 != null
-                && string1.length() > 0
-                && (Character.isJavaIdentifierStart(string1.charAt(0)) || string1.charAt(0) == '[' && string1.charAt(string1.length() - 1) == ';')
+        String key = string;
+        if (key != null
+                && key.length() > 0
+                && (Character.isJavaIdentifierStart(key.charAt(0)) || key.charAt(0) == '[' && key.charAt(key.length() - 1) == ';')
                 && !(trackedValue instanceof TracedObjectType)
                 && !(trackedValue instanceof LiteralStringValue)) {
             int ba = 0;
 
-            while (string1.charAt(ba) == '[') {
+            while (key.charAt(ba) == '[') {
                 ba++;
             }
 
             if (ba > 0) {
-                string1 = string1.substring(ba);
-                if (string1.length() <= 1 || !string1.endsWith(";")) {
+                key = key.substring(ba);
+                if (key.length() <= 1 || !key.endsWith(";")) {
                     return;
                 }
 
-                string1 = string1.substring(1, string1.length() - 1);
+                key = key.substring(1, key.length() - 1);
             }
 
-            String string2 = ZkmUtils.dotsToSlashes(string1);
-            ClassFileBase classFileBase = lookupClass(string2, classpathClassLoader1);
-            if (classFileBase != null && (!bl || this.isResourceBundleSubclass(string2, classMemberLookup1))) {
+            String keyValue2 = ZkmUtils.dotsToSlashes(key);
+            ClassFileBase classFileBase = lookupClass(keyValue2, classpathClassLoader1);
+            if (classFileBase != null && (!bl || this.isResourceBundleSubclass(keyValue2, classMemberLookup1))) {
                 twoKeyMap.putValue(classFileBase, trackedValue, integerCache.valueOf(ba));
                 set2.add(classFileBase);
                 if (trackedValue instanceof StringConstantNameRef) {
                     set1.add(((StringConstantNameRef) trackedValue).getStringConstant());
                 }
             } else if (bl && ba == 0) {
-                listMultimap.addValue(string1, trackedValue);
+                listMultimap.addValue(key, trackedValue);
                 if (trackedValue instanceof StringConstantNameRef) {
                     set1.add(((StringConstantNameRef) trackedValue).getStringConstant());
                 }
@@ -2928,9 +2816,9 @@ public class MethodBytecode extends ClassFileComponent {
                 startIndex++;
             }
 
-            for (int i = basicBlock.getEndIndex() - 1; i >= startIndex; i += -1) {
-                if (stackFrameStates[i].isFullyInitialized()) {
-                    StackFrameState stackFrameState = stackFrameStates[i];
+            for (int stackFrameStateIndex = basicBlock.getEndIndex() - 1; stackFrameStateIndex >= startIndex; stackFrameStateIndex += -1) {
+                if (stackFrameStates[stackFrameStateIndex].isFullyInitialized()) {
+                    StackFrameState stackFrameState = stackFrameStates[stackFrameStateIndex];
                     HashSet hashSet = ZkmUtils.createHashSet();
                     NonNullList nonNullList1 = new NonNullList(this.instructions);
                     String string1 = string;
@@ -2939,7 +2827,7 @@ public class MethodBytecode extends ClassFileComponent {
                     ScriptEnvironment scriptEnvironment2 = scriptEnvironment1;
                     CommonSuperTypeResolver commonSuperTypeResolver2 = commonSuperTypeResolver1;
                     NonNullList nonNullList = nonNullList1;
-                    int bb = basicBlock1.findMatchingFrame(
+                    int endIndexValue = basicBlock1.findMatchingFrame(
                             stackFrameState,
                             set1,
                             stackFrameStates,
@@ -2954,8 +2842,8 @@ public class MethodBytecode extends ClassFileComponent {
                             boolean1,
                             string1
                     );
-                    if (bb != -1 && !((Instruction) this.instructions.get(i)).isLabel()) {
-                        arrayList.add(new FlowSplitCandidate(this, i, bb, (BasicBlock) observableHolder.getValue()));
+                    if (endIndexValue != -1 && !((Instruction) this.instructions.get(stackFrameStateIndex)).isLabel()) {
+                        arrayList.add(new FlowSplitCandidate(this, stackFrameStateIndex, endIndexValue, (BasicBlock) observableHolder.getValue()));
                         if (HiddenOptionFlags.STOP_AT_FIRST_SPLIT_CANDIDATE) {
                             break;
                         }
@@ -2970,7 +2858,7 @@ public class MethodBytecode extends ClassFileComponent {
     public int emitMethodKeyInit(
             MethodParamChangeNode methodParamChangeNode,
             ChangedMethodDescriptor changedMethodDescriptor,
-            long ba,
+            long valueArgument,
             Map map1,
             ObservableHolder observableHolder,
             List list1,
@@ -2993,23 +2881,23 @@ public class MethodBytecode extends ClassFileComponent {
                     list1.add(SimpleInstruction.forOpcode(133));
                 }
 
-                int bd = changedMethodDescriptor.getUnusedBitCount(0);
-                list1.add(Instruction.createIntPush(bd));
+                int unusedBitCount = changedMethodDescriptor.getUnusedBitCount(0);
+                list1.add(Instruction.createIntPush(unusedBitCount));
                 list1.add(SimpleInstruction.forOpcode(121));
 
-                for (int i = 1; i < indexedLocalSlots.length; i++) {
-                    if (changedMethodDescriptor.isLongParam(i)) {
-                        list1.add(Instruction.createLongLoad(indexedLocalSlots[i].getSlot()));
+                for (int parameterIndex = 1; parameterIndex < indexedLocalSlots.length; parameterIndex++) {
+                    if (changedMethodDescriptor.isLongParam(parameterIndex)) {
+                        list1.add(Instruction.createLongLoad(indexedLocalSlots[parameterIndex].getSlot()));
                     } else {
-                        list1.add(Instruction.createIntLoad(indexedLocalSlots[i].getSlot()));
+                        list1.add(Instruction.createIntLoad(indexedLocalSlots[parameterIndex].getSlot()));
                         list1.add(SimpleInstruction.forOpcode(133));
                     }
 
-                    bd = changedMethodDescriptor.getUnusedBitCount(i);
-                    list1.add(Instruction.createIntPush(bd));
+                    unusedBitCount = changedMethodDescriptor.getUnusedBitCount(parameterIndex);
+                    list1.add(Instruction.createIntPush(unusedBitCount));
                     list1.add(SimpleInstruction.forOpcode(121));
-                    int bf = changedMethodDescriptor.getBitOffset(i);
-                    list1.add(Instruction.createIntPush(bf));
+                    int bitOffset = changedMethodDescriptor.getBitOffset(parameterIndex);
+                    list1.add(Instruction.createIntPush(bitOffset));
                     list1.add(SimpleInstruction.forOpcode(125));
                     list1.add(SimpleInstruction.forOpcode(129));
                 }
@@ -3043,39 +2931,39 @@ public class MethodBytecode extends ClassFileComponent {
             if (methodParamChangeNode != null) {
                 ResolvedFieldRef resolvedFieldRef = methodParamChangeNode.getKeyFieldRef();
                 long effectiveKey = methodParamChangeNode.getEffectiveKey();
-                long be = ba ^ effectiveKey;
+                long valueValue = valueArgument ^ effectiveKey;
                 List list4;
                 Instruction instruction1;
                 if (resolvedFieldRef != null) {
                     list1.add(new ConstantRefInstruction(178, resolvedFieldRef));
                     list4 = list1;
-                    instruction1 = Instruction.createLongConstantLoad(be, constantPool1, list3);
+                    instruction1 = Instruction.createLongConstantLoad(valueValue, constantPool1, list3);
                 } else {
                     list4 = list1;
-                    instruction1 = Instruction.createLongConstantLoad(be, constantPool1, list3);
+                    instruction1 = Instruction.createLongConstantLoad(valueValue, constantPool1, list3);
                 }
 
                 list4.add(instruction1);
                 list1.add(SimpleInstruction.forOpcode(131));
             } else {
-                list1.add(Instruction.createLongConstantLoad(ba, constantPool1, list3));
+                list1.add(Instruction.createLongConstantLoad(valueArgument, constantPool1, list3));
             }
 
-            int bg = this.getMaxLocals();
-            list1.add(Instruction.createLongStore(bg, this.localVariableList, 5));
+            int maxLocalsValue = this.getMaxLocals();
+            list1.add(Instruction.createLongStore(maxLocalsValue, this.localVariableList, 5));
             bb = 1;
-            list2.add(integerCache.valueOf(bg));
-            list2.add(integerCache.valueOf(bg + 1));
-            observableHolder.setValue(this.localVariableList.getSlotAt(bg));
-            this.setMaxLocals(bg + 2);
+            list2.add(integerCache.valueOf(maxLocalsValue));
+            list2.add(integerCache.valueOf(maxLocalsValue + 1));
+            observableHolder.setValue(this.localVariableList.getSlotAt(maxLocalsValue));
+            this.setMaxLocals(maxLocalsValue + 2);
         }
 
         return bb;
     }
 
-    public boolean collectSubclassMethods(String string, Set set1, Set set2, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
+    public boolean collectSubclassMethods(String key, Set set1, Set set2, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
         boolean bl = false;
-        ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
+        ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(key);
         HashMap hashMap = ZkmUtils.createHashMap();
         classHierarchyNode.collectAllSubtypes(hashMap);
         Iterator iterator = hashMap.keySet().iterator();
@@ -3111,10 +2999,10 @@ public class MethodBytecode extends ClassFileComponent {
 
     public void collectExcludedLongConstants(Set set1, LongEncryptionExclusionHandler longEncryptionExclusionHandler) {
         ProgramClass programClass1 = (ProgramClass) this.getOwningClass();
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             int opcode = instruction1.getOpcode();
             if (opcode == 179 || opcode == 181) {
                 AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) ((ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry())
@@ -3123,7 +3011,7 @@ public class MethodBytecode extends ClassFileComponent {
                         && abstractFieldInfo.isProgramMember()
                         && abstractFieldInfo.getParent() == programClass1
                         && longEncryptionExclusionHandler.isFieldExcluded((FieldInfo) abstractFieldInfo)) {
-                    Instruction instruction2 = (Instruction) this.instructions.get(i - 1);
+                    Instruction instruction2 = (Instruction) this.instructions.get(elementIndex - 1);
                     if (instruction2.getOpcode() == 20) {
                         ConstantPoolEntry constantPoolEntry = ((ConstantRefInstruction) instruction2).getConstantPoolEntry();
                         if (constantPoolEntry instanceof ConstantLong) {
@@ -3162,15 +3050,15 @@ public class MethodBytecode extends ClassFileComponent {
                 this.insertAtMethodStart(arrayList, 0, "Method Parameter List Changing", arrayList1);
             }
         } else {
-            long ba = long1;
+            long long1Value = long1;
             CodeAttributeBody codeAttributeBody = this.getCodeAttributeBody();
             boolean bl1 = false;
             if (changedMethodDescriptor != null) {
-                int[] bb = ChangedMethodDescriptor.computeLocalIndices(changedMethodDescriptor, this.isStatic());
-                if (bb.length > 0) {
-                    for (int i = 0; i < bb.length; i++) {
-                        LocalVariableSlot localVariableSlot1 = this.localVariableList.insertSlot(bb[i], changedMethodDescriptor.isLongParam(i), 5);
-                        changedMethodDescriptor.registerLocalSlot(this, i, localVariableSlot1);
+                int[] integerArray = ChangedMethodDescriptor.computeLocalIndices(changedMethodDescriptor, this.isStatic());
+                if (integerArray.length > 0) {
+                    for (int integerArrayElementIndex = 0; integerArrayElementIndex < integerArray.length; integerArrayElementIndex++) {
+                        LocalVariableSlot localVariableSlot1 = this.localVariableList.insertSlot(integerArray[integerArrayElementIndex], changedMethodDescriptor.isLongParam(integerArrayElementIndex), 5);
+                        changedMethodDescriptor.registerLocalSlot(this, integerArrayElementIndex, localVariableSlot1);
                     }
 
                     int bd = this.localVariableList.renumberSlots();
@@ -3184,7 +3072,7 @@ public class MethodBytecode extends ClassFileComponent {
             LocalVariableSlot localVariableSlot2 = this.buildParamChangePrologue(
                     methodParamChangeNode,
                     changedMethodDescriptor,
-                    ba,
+                    long1Value,
                     bl,
                     map1,
                     map2,
@@ -3222,7 +3110,7 @@ public class MethodBytecode extends ClassFileComponent {
 
     public MethodBytecode(
             ClassFileComponent classFileComponent,
-            byte[] ba,
+            byte[] byteArray,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
             ListMultimap listMultimap2,
@@ -3232,11 +3120,11 @@ public class MethodBytecode extends ClassFileComponent {
             ListMultimap listMultimap6
     ) throws ZkmProcessingException, IOException {
         super(classFileComponent);
-        this.codeLength = ba.length;
+        this.codeLength = byteArray.length;
         this.instructions = new ArrayList(Math.max(5, (int) (this.codeLength / 2.5)));
         this.localVariableList = new LocalVariableList(this, ((CodeAttributeBody) classFileComponent).getMaxLocals());
         this.readInstructions(
-                ClassFileInputStream.fromBytes(ba, false),
+                ClassFileInputStream.fromBytes(byteArray, false),
                 this.codeLength,
                 listMultimap,
                 this.localVariableList,
@@ -3251,10 +3139,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void collectLongConstants(Set set1) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isLongConstantLoad()) {
                 ConstantPoolEntry constantPoolEntry = ((ConstantPoolOperand) instruction1).getConstantPoolEntry();
                 if (constantPoolEntry instanceof ConstantLong) {
@@ -3363,11 +3251,11 @@ public class MethodBytecode extends ClassFileComponent {
                 Set set5 = callArgumentValues.getArgumentValues(0);
                 StringConstantNameRef stringConstantNameRef = (StringConstantNameRef) set5.iterator().next();
                 Set set10 = callArgumentValues.getArgumentValues(1);
-                String string1 = ((StringConstantNameRef) set10.iterator().next()).getStringValue();
+                String stringValue = ((StringConstantNameRef) set10.iterator().next()).getStringValue();
                 Set set15 = callArgumentValues.getArgumentValues(2);
-                String string3 = ((StringConstantNameRef) set15.iterator().next()).getStringValue();
-                MethodSignature methodSignature1 = new MethodSignature(stringConstantNameRef.getStringValue(), string1);
-                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string3);
+                String stringValueValue = ((StringConstantNameRef) set15.iterator().next()).getStringValue();
+                MethodSignature methodSignature1 = new MethodSignature(stringConstantNameRef.getStringValue(), stringValue);
+                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(stringValueValue);
                 if (programClass2 != null) {
                     MethodInfo methodInfo3 = programClass2.findMethodBySignature(methodSignature1);
                     if (methodInfo3 != null) {
@@ -3375,18 +3263,18 @@ public class MethodBytecode extends ClassFileComponent {
                         set2.add(methodInfo3);
                         set1.add(stringConstantNameRef.getStringConstant());
                     } else {
-                        observableHolder.setValue("'" + string3 + "' not found (A)");
+                        observableHolder.setValue("'" + stringValueValue + "' not found (A)");
                         bl = false;
                     }
                 } else {
                     try {
-                        ClasspathClassFile classpathClassFile = classpathClassLoader1.getClassFile(string3);
+                        ClasspathClassFile classpathClassFile = classpathClassLoader1.getClassFile(stringValueValue);
                         if (classpathClassFile.findMethod(methodSignature1) == null) {
                             observableHolder.setValue("Method not found in unopened class");
                             bl = false;
                         }
                     } catch (ClassFileLoadException classFileLoadException) {
-                        observableHolder.setValue("'" + string3 + "' not found (B)");
+                        observableHolder.setValue("'" + stringValueValue + "' not found (B)");
                         bl = false;
                     }
                 }
@@ -3400,15 +3288,15 @@ public class MethodBytecode extends ClassFileComponent {
             int argumentCount = callArgumentValues.getArgumentCount();
             List list1 = reflectionApiMethod.getParamDetails();
 
-            for (int i = 0; i < argumentCount; i += 1) {
+            for (int elementIndex = 0; elementIndex < argumentCount; elementIndex += 1) {
                 ReflectionParamDetail reflectionParamDetail;
-                if (i < paramDetailCount) {
-                    reflectionParamDetail = (ReflectionParamDetail) list1.get(i);
+                if (elementIndex < paramDetailCount) {
+                    reflectionParamDetail = (ReflectionParamDetail) list1.get(elementIndex);
                 } else {
                     reflectionParamDetail = null;
                 }
 
-                Set set3 = callArgumentValues.getArgumentValues(i);
+                Set set3 = callArgumentValues.getArgumentValues(elementIndex);
                 if ((reflectionParamDetail == null || !reflectionParamDetail.isClassParam())
                         && (reflectionParamDetail == null || !reflectionParamDetail.isClassNameParam())
                         && (reflectionParamDetail == null || !reflectionParamDetail.isClassOrPropertiesNameParam())
@@ -3422,13 +3310,13 @@ public class MethodBytecode extends ClassFileComponent {
                                 if (trackedValue7 instanceof TracedArrayValue) {
                                     ArrayList arrayList1 = ((TracedArrayValue) trackedValue7).getAllValues();
 
-                                    for (int j = 0; j < arrayList1.size(); j += 1) {
-                                        TrackedValue trackedValue12 = (TrackedValue) arrayList1.get(j);
+                                    for (int elementIndexValue = 0; elementIndexValue < arrayList1.size(); elementIndexValue += 1) {
+                                        TrackedValue trackedValue12 = (TrackedValue) arrayList1.get(elementIndexValue);
                                         this.recordMemberNameValue(trackedValue12.getNormalizedName(), trackedValue12, twoKeyMap3, set1);
                                     }
                                 } else {
-                                    String string6 = trackedValue7.getNormalizedName();
-                                    this.recordMemberNameValue(string6, trackedValue7, twoKeyMap3, set1);
+                                    String normalizedName = trackedValue7.getNormalizedName();
+                                    this.recordMemberNameValue(normalizedName, trackedValue7, twoKeyMap3, set1);
                                 }
                             }
                         }
@@ -3442,8 +3330,8 @@ public class MethodBytecode extends ClassFileComponent {
                             if (trackedValue instanceof TracedArrayValue) {
                                 ArrayList arrayList = ((TracedArrayValue) trackedValue).getAllValues();
 
-                                for (int j = 0; j < arrayList.size(); j += 1) {
-                                    TrackedValue trackedValue1 = (TrackedValue) arrayList.get(j);
+                                for (int elementIndexValue2 = 0; elementIndexValue2 < arrayList.size(); elementIndexValue2 += 1) {
+                                    TrackedValue trackedValue1 = (TrackedValue) arrayList.get(elementIndexValue2);
                                     this.recordClassNameValue(
                                             trackedValue1.getStringValue(),
                                             reflectionParamDetail != null && reflectionParamDetail.isClassOrPropertiesNameParam(),
@@ -3457,9 +3345,9 @@ public class MethodBytecode extends ClassFileComponent {
                                     );
                                 }
                             } else {
-                                String string = trackedValue.getStringValue();
+                                String stringValueValue2 = trackedValue.getStringValue();
                                 this.recordClassNameValue(
-                                        string,
+                                        stringValueValue2,
                                         reflectionParamDetail != null && reflectionParamDetail.isClassOrPropertiesNameParam(),
                                         trackedValue,
                                         twoKeyMap,
@@ -3479,364 +3367,322 @@ public class MethodBytecode extends ClassFileComponent {
                 return false;
             }
 
-            ObservableHolder observableHolder1;
-            String string10;
-            label411:
-            {
-                label410:
-                {
-                    label409:
-                    {
-                        label516:
-                        {
-                            if (reflectionApiMethod.isFieldLookup()) {
-                                Set set9 = callArgumentValues.getArgumentValues(ReflectionApiMethod.getMemberNameParamIndex(reflectionApiMethod));
-                                SetMultiMap setMultiMap2 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set9.size()));
-                                Iterator iterator6 = set9.iterator();
+            if (reflectionApiMethod.isFieldLookup()) {
+                Set set9 = callArgumentValues.getArgumentValues(ReflectionApiMethod.getMemberNameParamIndex(reflectionApiMethod));
+                SetMultiMap setMultiMap2 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set9.size()));
+                Iterator iterator6 = set9.iterator();
 
-                                while (iterator6.hasNext()) {
-                                    TrackedValue trackedValue6 = (TrackedValue) iterator6.next();
-                                    setMultiMap2.addValue(trackedValue6.getStringValue(), trackedValue6);
-                                }
+                while (iterator6.hasNext()) {
+                    TrackedValue trackedValue6 = (TrackedValue) iterator6.next();
+                    setMultiMap2.addValue(trackedValue6.getStringValue(), trackedValue6);
+                }
 
-                                Set set14 = callArgumentValues.getArgumentValues(ReflectionApiMethod.getTargetClassArgIndex(reflectionApiMethod));
-                                Set set17 = null;
-                                if (ReflectionApiMethod.getFieldTypeParamIndex(reflectionApiMethod) > -1) {
-                                    set17 = callArgumentValues.getArgumentValues(ReflectionApiMethod.getFieldTypeParamIndex(reflectionApiMethod));
-                                } else if (ReflectionApiMethod.isPrimitiveFieldUpdater(reflectionApiMethod)) {
-                                    set17 = ZkmUtils.createHashSet();
-                                    set17.add(new KnownNameValue(ReflectionApiMethod.getPrimitiveFieldTypeDescriptor(reflectionApiMethod)));
-                                }
+                Set set14 = callArgumentValues.getArgumentValues(ReflectionApiMethod.getTargetClassArgIndex(reflectionApiMethod));
+                Set set17 = null;
+                if (ReflectionApiMethod.getFieldTypeParamIndex(reflectionApiMethod) > -1) {
+                    set17 = callArgumentValues.getArgumentValues(ReflectionApiMethod.getFieldTypeParamIndex(reflectionApiMethod));
+                } else if (ReflectionApiMethod.isPrimitiveFieldUpdater(reflectionApiMethod)) {
+                    set17 = ZkmUtils.createHashSet();
+                    set17.add(new KnownNameValue(ReflectionApiMethod.getPrimitiveFieldTypeDescriptor(reflectionApiMethod)));
+                }
 
-                                SetMultiMap setMultiMap5 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set14.size()));
-                                Iterator iterator11 = set14.iterator();
+                SetMultiMap setMultiMap5 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set14.size()));
+                Iterator iterator11 = set14.iterator();
 
-                                while (iterator11.hasNext()) {
-                                    TrackedValue trackedValue11 = (TrackedValue) iterator11.next();
-                                    setMultiMap5.addValue(trackedValue11.getNormalizedName(), trackedValue11);
-                                }
+                while (iterator11.hasNext()) {
+                    TrackedValue trackedValue11 = (TrackedValue) iterator11.next();
+                    setMultiMap5.addValue(trackedValue11.getNormalizedName(), trackedValue11);
+                }
 
-                                if (setMultiMap5.getKeyCount() == 0) {
-                                    observableHolder1 = observableHolder;
-                                    string10 = "UNRESOLVED : Field inadequately resolved (A)";
-                                    break label411;
-                                }
-
-                                if (setMultiMap2.getKeyCount() == 0) {
-                                    observableHolder1 = observableHolder;
-                                    string10 = "UNRESOLVED : Field inadequately resolved (A)";
-                                    break label411;
-                                }
-
-                                if (setMultiMap5.getKeyCount() > 1 && setMultiMap2.getKeyCount() > 1) {
-                                    observableHolder1 = observableHolder;
-                                    string10 = "UNRESOLVED : Field inadequately resolved (A)";
-                                    break label411;
-                                }
-
-                                boolean bl3 = this.resolveReflectedFields(
-                                        set14, set9, set17, set1, twoKeyMap1, set2, observableHolder, classpathClassLoader1, classMemberLookup1
-                                );
-                                if (!bl3) {
-                                    return bl3;
-                                }
-                            } else if (reflectionApiMethod.isMethodLookup()) {
-                                Set set8 = callArgumentValues.getArgumentValues(2);
-                                SetMultiMap setMultiMap1 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set8.size()));
-                                Iterator iterator5 = set8.iterator();
-
-                                while (iterator5.hasNext()) {
-                                    TrackedValue trackedValue5 = (TrackedValue) iterator5.next();
-                                    setMultiMap1.addValue(trackedValue5.getNormalizedName(), trackedValue5);
-                                }
-
-                                Set set13 = callArgumentValues.getArgumentValues(0);
-                                SetMultiMap setMultiMap3 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set13.size()));
-                                Iterator iterator9 = set13.iterator();
-
-                                while (iterator9.hasNext()) {
-                                    TrackedValue trackedValue9 = (TrackedValue) iterator9.next();
-                                    setMultiMap3.addValue(trackedValue9.getStringValue(), trackedValue9);
-                                }
-
-                                Set set18 = callArgumentValues.getArgumentValues(1);
-                                SetMultiMap setMultiMap7 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set18.size()));
-                                Iterator iterator13 = set18.iterator();
-
-                                while (iterator13.hasNext()) {
-                                    TrackedValue trackedValue14 = (TrackedValue) iterator13.next();
-                                    setMultiMap7.addValue(trackedValue14.getCombinedValueKey(), trackedValue14);
-                                }
-
-                                if (setMultiMap1.getKeyCount() == 0) {
-                                    observableHolder1 = observableHolder;
-                                    string10 = "UNRESOLVED : Method inadequately resolved (A).";
-                                    break label410;
-                                }
-
-                                if (setMultiMap3.getKeyCount() == 0) {
-                                    observableHolder1 = observableHolder;
-                                    string10 = "UNRESOLVED : Method inadequately resolved (A).";
-                                    break label410;
-                                }
-
-                                if (setMultiMap7.getKeyCount() == 0) {
-                                    observableHolder1 = observableHolder;
-                                    string10 = "UNRESOLVED : Method inadequately resolved (A).";
-                                    break label410;
-                                }
-
-                                if (setMultiMap1.getKeyCount() > 1) {
-                                    if (setMultiMap3.getKeyCount() > 1) {
-                                        observableHolder1 = observableHolder;
-                                        string10 = "UNRESOLVED : Method inadequately resolved (A).";
-                                        break label410;
-                                    }
-
-                                    if (setMultiMap7.getKeyCount() > 1) {
-                                        observableHolder1 = observableHolder;
-                                        string10 = "UNRESOLVED : Method inadequately resolved (A).";
-                                        break label410;
-                                    }
-                                }
-
-                                boolean bl6 = this.resolveReflectedMethodTargets(
-                                        set8, set13, set18, false, set1, twoKeyMap2, set2, classpathClassLoader1, classMemberLookup1
-                                );
-                                if (!bl6) {
-                                    return bl6;
-                                }
-                            } else if (reflectionApiMethod.isConstructorLookup()) {
-                                Set set7 = callArgumentValues.getArgumentValues(callArgumentValues.getArgumentCount() - 1);
-                                if (reflectionApiMethod.isDefaultConstructorCall()) {
-                                    boolean bl1 = false;
-                                    Iterator iterator4 = set7.iterator();
-
-                                    while (iterator4.hasNext()) {
-                                        TrackedValue trackedValue4 = (TrackedValue) iterator4.next();
-                                        if (!(trackedValue4 instanceof NullReflectionValue)) {
-                                            String string4 = trackedValue4.getNormalizedName();
-                                            String string7 = ZkmUtils.dotsToSlashes(string4);
-                                            ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(string7);
-                                            if (programClass3 != null) {
-                                                FieldNameTypeSignature fieldNameTypeSignature1 = new FieldNameTypeSignature("<init>", "()", "V");
-                                                MethodInfo[] methodInfos = classMemberLookup1.findMatchingMethods(programClass3, fieldNameTypeSignature1);
-                                                if (methodInfos != null) {
-                                                    if (methodInfos.length == 1) {
-                                                        set2.add(methodInfos[0]);
-                                                        bl1 = true;
-                                                    }
-                                                } else if (trackedValue4 instanceof TracedObjectType) {
-                                                    HashSet hashSet = ZkmUtils.createHashSet(3);
-                                                    hashSet.add(fieldNameTypeSignature1);
-                                                    bl1 = this.collectSubclassMethods(string7, hashSet, set2, classMemberLookup1);
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (!bl1) {
-                                        observableHolder.setValue("UNRESOLVED : Constructor inadequately resolved (A).");
-                                        return false;
-                                    }
-                                } else if (reflectionApiMethod.isAllConstructorsLookup()) {
-                                    Iterator iterator2 = set7.iterator();
-
-                                    while (iterator2.hasNext()) {
-                                        TrackedValue trackedValue2 = (TrackedValue) iterator2.next();
-                                        if (!(trackedValue2 instanceof NullReflectionValue)) {
-                                            String string2 = trackedValue2.getNormalizedName();
-                                            String string5 = ZkmUtils.dotsToSlashes(string2);
-                                            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string5);
-                                            if (programClass1 != null) {
-                                                List list2 = programClass1.findMethodsByName("<init>");
-
-                                                for (int i = 0; i < list2.size(); i += 1) {
-                                                    MethodInfo methodInfo4 = (MethodInfo) list2.get(i);
-                                                    set2.add(methodInfo4);
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else if (reflectionApiMethod.isSpecificConstructorLookup()) {
-                                    Set set11 = callArgumentValues.getArgumentValues(0);
-                                    if (set7.size() != 1 && set11.size() != 1) {
-                                        observableHolder.setValue("UNRESOLVED : Constructor inadequately resolved (C).");
-                                        return false;
-                                    }
-
-                                    boolean bl2 = false;
-                                    Iterator iterator8 = set7.iterator();
-
-                                    while (iterator8.hasNext()) {
-                                        TrackedValue trackedValue8 = (TrackedValue) iterator8.next();
-                                        if (!(trackedValue8 instanceof NullReflectionValue)) {
-                                            String string8 = trackedValue8.getNormalizedName();
-                                            String string9 = ZkmUtils.dotsToSlashes(string8);
-                                            ProgramClass programClass4 = ClassHierarchyNode.findProgramClass(string9);
-                                            if (programClass4 != null) {
-                                                Iterator iterator14 = set11.iterator();
-
-                                                while (iterator14.hasNext()) {
-                                                    TrackedValue trackedValue15 = (TrackedValue) iterator14.next();
-                                                    Set set4 = this.buildReflectedSignatures("<init>", false, trackedValue15);
-                                                    if (set4 != null) {
-                                                        MethodInfo methodInfo1 = null;
-                                                        Iterator iterator1 = set4.iterator();
-
-                                                        while (iterator1.hasNext()) {
-                                                            FieldNameTypeSignature fieldNameTypeSignature = (FieldNameTypeSignature) iterator1.next();
-                                                            MethodInfo methodInfo2 = (MethodInfo) AbstractMethodInfo.selectMostSpecificReturnType(
-                                                                    classMemberLookup1.findMatchingMethods(programClass4, fieldNameTypeSignature), classMemberLookup1
-                                                            );
-                                                            if (methodInfo2 != null) {
-                                                                if (methodInfo1 != null) {
-                                                                    methodInfo1 = null;
-                                                                    break;
-                                                                }
-
-                                                                methodInfo1 = methodInfo2;
-                                                            }
-                                                        }
-
-                                                        if (methodInfo1 != null) {
-                                                            bl2 = true;
-                                                            set2.add(methodInfo1);
-                                                        } else if (trackedValue8 instanceof TracedObjectType) {
-                                                            bl2 = this.collectSubclassMethods(string9, set4, set2, classMemberLookup1);
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (!bl2) {
-                                        observableHolder.setValue("UNRESOLVED : Constructor inadequately resolved (B).");
-                                        return false;
-                                    }
-                                }
-                            } else if (!reflectionApiMethod.isMethodTypeLookup() && reflectionApiMethod.isMethodHandleLookup()) {
-                                Set set6 = callArgumentValues.getArgumentValues(0);
-                                SetMultiMap setMultiMap = new SetMultiMap(ZkmUtils.getPrimeCapacity(set6.size()));
-                                Iterator iterator3 = set6.iterator();
-
-                                while (iterator3.hasNext()) {
-                                    TrackedValue trackedValue3 = (TrackedValue) iterator3.next();
-                                    setMultiMap.addValue(trackedValue3.getNormalizedName(), trackedValue3);
-                                }
-
-                                Set set12;
-                                Set set16;
-                                if (reflectionApiMethod.isConstructorLookup()) {
-                                    set12 = ZkmUtils.createHashSet(3);
-                                    set12.add(new KnownNameValue("<init>"));
-                                    set16 = callArgumentValues.getArgumentValues(1);
-                                } else {
-                                    set12 = callArgumentValues.getArgumentValues(1);
-                                    set16 = callArgumentValues.getArgumentValues(2);
-                                }
-
-                                SetMultiMap setMultiMap4 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set12.size()));
-                                Iterator iterator10 = set12.iterator();
-
-                                while (iterator10.hasNext()) {
-                                    TrackedValue trackedValue10 = (TrackedValue) iterator10.next();
-                                    setMultiMap4.addValue(trackedValue10.getStringValue(), trackedValue10);
-                                }
-
-                                SetMultiMap setMultiMap6 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set16.size()));
-                                Iterator iterator12 = set16.iterator();
-
-                                while (iterator12.hasNext()) {
-                                    TrackedValue trackedValue13 = (TrackedValue) iterator12.next();
-                                    setMultiMap6.addValue(trackedValue13.getCombinedValueKey(), trackedValue13);
-                                }
-
-                                if (reflectionApiMethod.hasMethodNameParam()) {
-                                    if (setMultiMap.getKeyCount() == 0) {
-                                        observableHolder1 = observableHolder;
-                                        string10 = "UNRESOLVED : Method inadequately resolved (B).";
-                                        break label409;
-                                    }
-
-                                    if (setMultiMap4.getKeyCount() == 0) {
-                                        observableHolder1 = observableHolder;
-                                        string10 = "UNRESOLVED : Method inadequately resolved (B).";
-                                        break label409;
-                                    }
-
-                                    if (setMultiMap6.getKeyCount() == 0) {
-                                        observableHolder1 = observableHolder;
-                                        string10 = "UNRESOLVED : Method inadequately resolved (B).";
-                                        break label409;
-                                    }
-
-                                    if (setMultiMap.getKeyCount() > 1) {
-                                        if (setMultiMap4.getKeyCount() > 1) {
-                                            observableHolder1 = observableHolder;
-                                            string10 = "UNRESOLVED : Method inadequately resolved (B).";
-                                            break label409;
-                                        }
-
-                                        if (setMultiMap6.getKeyCount() > 1) {
-                                            observableHolder1 = observableHolder;
-                                            string10 = "UNRESOLVED : Method inadequately resolved (B).";
-                                            break label409;
-                                        }
-                                    }
-
-                                    boolean bl4 = this.resolveReflectedMethodTargets(
-                                            set6, set12, set16, true, set1, twoKeyMap2, set2, classpathClassLoader1, classMemberLookup1
-                                    );
-                                    if (!bl4) {
-                                        return bl4;
-                                    }
-                                } else if (reflectionApiMethod.hasFieldNameParam()) {
-                                    if (setMultiMap.getKeyCount() == 0) {
-                                        observableHolder1 = observableHolder;
-                                        string10 = "UNRESOLVED : Field inadequately resolved (B)";
-                                        break label516;
-                                    }
-
-                                    if (setMultiMap4.getKeyCount() == 0) {
-                                        observableHolder1 = observableHolder;
-                                        string10 = "UNRESOLVED : Field inadequately resolved (B)";
-                                        break label516;
-                                    }
-
-                                    if (setMultiMap.getKeyCount() > 1 && setMultiMap4.getKeyCount() > 1) {
-                                        observableHolder1 = observableHolder;
-                                        string10 = "UNRESOLVED : Field inadequately resolved (B)";
-                                        break label516;
-                                    }
-
-                                    boolean bl5 = this.resolveReflectedFields(
-                                            set6, set12, set16, set1, twoKeyMap1, set2, observableHolder, classpathClassLoader1, classMemberLookup1
-                                    );
-                                    if (!bl5) {
-                                        return bl5;
-                                    }
-                                }
-                            }
-
-                            return true;
-                        }
-
-                        observableHolder1.setValue(string10);
-                        return false;
-                    }
-
-                    observableHolder1.setValue(string10);
+                if (setMultiMap5.getKeyCount() == 0) {
+                    observableHolder.setValue("UNRESOLVED : Field inadequately resolved (A)");
                     return false;
                 }
 
-                observableHolder1.setValue(string10);
-                return false;
+                if (setMultiMap2.getKeyCount() == 0) {
+                    observableHolder.setValue("UNRESOLVED : Field inadequately resolved (A)");
+                    return false;
+                }
+
+                if (setMultiMap5.getKeyCount() > 1 && setMultiMap2.getKeyCount() > 1) {
+                    observableHolder.setValue("UNRESOLVED : Field inadequately resolved (A)");
+                    return false;
+                }
+
+                boolean bl3 = this.resolveReflectedFields(
+                        set14, set9, set17, set1, twoKeyMap1, set2, observableHolder, classpathClassLoader1, classMemberLookup1
+                );
+                if (!bl3) {
+                    return bl3;
+                }
+            } else if (reflectionApiMethod.isMethodLookup()) {
+                Set set8 = callArgumentValues.getArgumentValues(2);
+                SetMultiMap setMultiMap1 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set8.size()));
+                Iterator iterator5 = set8.iterator();
+
+                while (iterator5.hasNext()) {
+                    TrackedValue trackedValue5 = (TrackedValue) iterator5.next();
+                    setMultiMap1.addValue(trackedValue5.getNormalizedName(), trackedValue5);
+                }
+
+                Set set13 = callArgumentValues.getArgumentValues(0);
+                SetMultiMap setMultiMap3 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set13.size()));
+                Iterator iterator9 = set13.iterator();
+
+                while (iterator9.hasNext()) {
+                    TrackedValue trackedValue9 = (TrackedValue) iterator9.next();
+                    setMultiMap3.addValue(trackedValue9.getStringValue(), trackedValue9);
+                }
+
+                Set set18 = callArgumentValues.getArgumentValues(1);
+                SetMultiMap setMultiMap7 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set18.size()));
+                Iterator iterator13 = set18.iterator();
+
+                while (iterator13.hasNext()) {
+                    TrackedValue trackedValue14 = (TrackedValue) iterator13.next();
+                    setMultiMap7.addValue(trackedValue14.getCombinedValueKey(), trackedValue14);
+                }
+
+                if (setMultiMap1.getKeyCount() == 0) {
+                    observableHolder.setValue("UNRESOLVED : Method inadequately resolved (A).");
+                    return false;
+                }
+
+                if (setMultiMap3.getKeyCount() == 0) {
+                    observableHolder.setValue("UNRESOLVED : Method inadequately resolved (A).");
+                    return false;
+                }
+
+                if (setMultiMap7.getKeyCount() == 0) {
+                    observableHolder.setValue("UNRESOLVED : Method inadequately resolved (A).");
+                    return false;
+                }
+
+                if (setMultiMap1.getKeyCount() > 1) {
+                    if (setMultiMap3.getKeyCount() > 1) {
+                        observableHolder.setValue("UNRESOLVED : Method inadequately resolved (A).");
+                        return false;
+                    }
+
+                    if (setMultiMap7.getKeyCount() > 1) {
+                        observableHolder.setValue("UNRESOLVED : Method inadequately resolved (A).");
+                        return false;
+                    }
+                }
+
+                boolean bl6 = this.resolveReflectedMethodTargets(
+                        set8, set13, set18, false, set1, twoKeyMap2, set2, classpathClassLoader1, classMemberLookup1
+                );
+                if (!bl6) {
+                    return bl6;
+                }
+            } else if (reflectionApiMethod.isConstructorLookup()) {
+                Set set7 = callArgumentValues.getArgumentValues(callArgumentValues.getArgumentCount() - 1);
+                if (reflectionApiMethod.isDefaultConstructorCall()) {
+                    boolean bl1 = false;
+                    Iterator iterator4 = set7.iterator();
+
+                    while (iterator4.hasNext()) {
+                        TrackedValue trackedValue4 = (TrackedValue) iterator4.next();
+                        if (!(trackedValue4 instanceof NullReflectionValue)) {
+                            String normalizedNameValue = trackedValue4.getNormalizedName();
+                            String key = ZkmUtils.dotsToSlashes(normalizedNameValue);
+                            ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(key);
+                            if (programClass3 != null) {
+                                FieldNameTypeSignature fieldNameTypeSignature1 = new FieldNameTypeSignature("<init>", "()", "V");
+                                MethodInfo[] methodInfos = classMemberLookup1.findMatchingMethods(programClass3, fieldNameTypeSignature1);
+                                if (methodInfos != null) {
+                                    if (methodInfos.length == 1) {
+                                        set2.add(methodInfos[0]);
+                                        bl1 = true;
+                                    }
+                                } else if (trackedValue4 instanceof TracedObjectType) {
+                                    HashSet hashSet = ZkmUtils.createHashSet(3);
+                                    hashSet.add(fieldNameTypeSignature1);
+                                    bl1 = this.collectSubclassMethods(key, hashSet, set2, classMemberLookup1);
+                                }
+                            }
+                        }
+                    }
+
+                    if (!bl1) {
+                        observableHolder.setValue("UNRESOLVED : Constructor inadequately resolved (A).");
+                        return false;
+                    }
+                } else if (reflectionApiMethod.isAllConstructorsLookup()) {
+                    Iterator iterator2 = set7.iterator();
+
+                    while (iterator2.hasNext()) {
+                        TrackedValue trackedValue2 = (TrackedValue) iterator2.next();
+                        if (!(trackedValue2 instanceof NullReflectionValue)) {
+                            String normalizedNameValue2 = trackedValue2.getNormalizedName();
+                            String keyValue2 = ZkmUtils.dotsToSlashes(normalizedNameValue2);
+                            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(keyValue2);
+                            if (programClass1 != null) {
+                                List list2 = programClass1.findMethodsByName("<init>");
+
+                                for (int elementIndexValue3 = 0; elementIndexValue3 < list2.size(); elementIndexValue3 += 1) {
+                                    MethodInfo methodInfo4 = (MethodInfo) list2.get(elementIndexValue3);
+                                    set2.add(methodInfo4);
+                                }
+                            }
+                        }
+                    }
+                } else if (reflectionApiMethod.isSpecificConstructorLookup()) {
+                    Set set11 = callArgumentValues.getArgumentValues(0);
+                    if (set7.size() != 1 && set11.size() != 1) {
+                        observableHolder.setValue("UNRESOLVED : Constructor inadequately resolved (C).");
+                        return false;
+                    }
+
+                    boolean bl2 = false;
+                    Iterator iterator8 = set7.iterator();
+
+                    while (iterator8.hasNext()) {
+                        TrackedValue trackedValue8 = (TrackedValue) iterator8.next();
+                        if (!(trackedValue8 instanceof NullReflectionValue)) {
+                            String normalizedNameValue3 = trackedValue8.getNormalizedName();
+                            String keyValue3 = ZkmUtils.dotsToSlashes(normalizedNameValue3);
+                            ProgramClass programClass4 = ClassHierarchyNode.findProgramClass(keyValue3);
+                            if (programClass4 != null) {
+                                Iterator iterator14 = set11.iterator();
+
+                                while (iterator14.hasNext()) {
+                                    TrackedValue trackedValue15 = (TrackedValue) iterator14.next();
+                                    Set set4 = this.buildReflectedSignatures("<init>", false, trackedValue15);
+                                    if (set4 != null) {
+                                        MethodInfo methodInfo1 = null;
+                                        Iterator iterator1 = set4.iterator();
+
+                                        while (iterator1.hasNext()) {
+                                            FieldNameTypeSignature fieldNameTypeSignature = (FieldNameTypeSignature) iterator1.next();
+                                            MethodInfo methodInfo2 = (MethodInfo) AbstractMethodInfo.selectMostSpecificReturnType(
+                                                    classMemberLookup1.findMatchingMethods(programClass4, fieldNameTypeSignature), classMemberLookup1
+                                            );
+                                            if (methodInfo2 != null) {
+                                                if (methodInfo1 != null) {
+                                                    methodInfo1 = null;
+                                                    break;
+                                                }
+
+                                                methodInfo1 = methodInfo2;
+                                            }
+                                        }
+
+                                        if (methodInfo1 != null) {
+                                            bl2 = true;
+                                            set2.add(methodInfo1);
+                                        } else if (trackedValue8 instanceof TracedObjectType) {
+                                            bl2 = this.collectSubclassMethods(keyValue3, set4, set2, classMemberLookup1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (!bl2) {
+                        observableHolder.setValue("UNRESOLVED : Constructor inadequately resolved (B).");
+                        return false;
+                    }
+                }
+            } else if (!reflectionApiMethod.isMethodTypeLookup() && reflectionApiMethod.isMethodHandleLookup()) {
+                Set set6 = callArgumentValues.getArgumentValues(0);
+                SetMultiMap setMultiMap = new SetMultiMap(ZkmUtils.getPrimeCapacity(set6.size()));
+                Iterator iterator3 = set6.iterator();
+
+                while (iterator3.hasNext()) {
+                    TrackedValue trackedValue3 = (TrackedValue) iterator3.next();
+                    setMultiMap.addValue(trackedValue3.getNormalizedName(), trackedValue3);
+                }
+
+                Set set12;
+                Set set16;
+                if (reflectionApiMethod.isConstructorLookup()) {
+                    set12 = ZkmUtils.createHashSet(3);
+                    set12.add(new KnownNameValue("<init>"));
+                    set16 = callArgumentValues.getArgumentValues(1);
+                } else {
+                    set12 = callArgumentValues.getArgumentValues(1);
+                    set16 = callArgumentValues.getArgumentValues(2);
+                }
+
+                SetMultiMap setMultiMap4 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set12.size()));
+                Iterator iterator10 = set12.iterator();
+
+                while (iterator10.hasNext()) {
+                    TrackedValue trackedValue10 = (TrackedValue) iterator10.next();
+                    setMultiMap4.addValue(trackedValue10.getStringValue(), trackedValue10);
+                }
+
+                SetMultiMap setMultiMap6 = new SetMultiMap(ZkmUtils.getPrimeCapacity(set16.size()));
+                Iterator iterator12 = set16.iterator();
+
+                while (iterator12.hasNext()) {
+                    TrackedValue trackedValue13 = (TrackedValue) iterator12.next();
+                    setMultiMap6.addValue(trackedValue13.getCombinedValueKey(), trackedValue13);
+                }
+
+                if (reflectionApiMethod.hasMethodNameParam()) {
+                    if (setMultiMap.getKeyCount() == 0) {
+                        observableHolder.setValue("UNRESOLVED : Method inadequately resolved (B).");
+                        return false;
+                    }
+
+                    if (setMultiMap4.getKeyCount() == 0) {
+                        observableHolder.setValue("UNRESOLVED : Method inadequately resolved (B).");
+                        return false;
+                    }
+
+                    if (setMultiMap6.getKeyCount() == 0) {
+                        observableHolder.setValue("UNRESOLVED : Method inadequately resolved (B).");
+                        return false;
+                    }
+
+                    if (setMultiMap.getKeyCount() > 1) {
+                        if (setMultiMap4.getKeyCount() > 1) {
+                            observableHolder.setValue("UNRESOLVED : Method inadequately resolved (B).");
+                            return false;
+                        }
+
+                        if (setMultiMap6.getKeyCount() > 1) {
+                            observableHolder.setValue("UNRESOLVED : Method inadequately resolved (B).");
+                            return false;
+                        }
+                    }
+
+                    boolean bl4 = this.resolveReflectedMethodTargets(
+                            set6, set12, set16, true, set1, twoKeyMap2, set2, classpathClassLoader1, classMemberLookup1
+                    );
+                    if (!bl4) {
+                        return bl4;
+                    }
+                } else if (reflectionApiMethod.hasFieldNameParam()) {
+                    if (setMultiMap.getKeyCount() == 0) {
+                        observableHolder.setValue("UNRESOLVED : Field inadequately resolved (B)");
+                        return false;
+                    }
+
+                    if (setMultiMap4.getKeyCount() == 0) {
+                        observableHolder.setValue("UNRESOLVED : Field inadequately resolved (B)");
+                        return false;
+                    }
+
+                    if (setMultiMap.getKeyCount() > 1 && setMultiMap4.getKeyCount() > 1) {
+                        observableHolder.setValue("UNRESOLVED : Field inadequately resolved (B)");
+                        return false;
+                    }
+
+                    boolean bl5 = this.resolveReflectedFields(
+                            set6, set12, set16, set1, twoKeyMap1, set2, observableHolder, classpathClassLoader1, classMemberLookup1
+                    );
+                    if (!bl5) {
+                        return bl5;
+                    }
+                }
             }
 
-            observableHolder1.setValue(string10);
-            return false;
+            return true;
         }
     }
 
@@ -3906,23 +3752,23 @@ public class MethodBytecode extends ClassFileComponent {
     public int[] insertAtMethodStart(List list1, int ba, String string, List list2) throws ZkmProcessingException {
         int bb = ba;
         if (bb == 0) {
-            for (int i = 0; i < this.instructions.size(); i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
+            for (int elementIndex = 0; elementIndex < this.instructions.size(); elementIndex++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
                 if (instruction1.getOpcode() == 2147483646) {
                     LabelInstruction labelInstruction = (LabelInstruction) instruction1;
                     if (labelInstruction.isFixed()) {
-                        bb = i + 1;
+                        bb = elementIndex + 1;
                     } else if (labelInstruction.hasUsageBits(8192)) {
-                        bb = i + 1;
+                        bb = elementIndex + 1;
                         break;
                     }
                 }
             }
         }
 
-        int bd = list1.size();
+        int list1Size = list1.size();
         this.instructions.size();
-        if (bd > 0) {
+        if (list1Size > 0) {
             this.setModified(true);
         }
 
@@ -3973,9 +3819,9 @@ public class MethodBytecode extends ClassFileComponent {
         }
     }
 
-    public void addSplitCodeInsertions(List list1, List list2, Instruction instruction1, List list3, MethodFlowAnalyzer methodFlowAnalyzer, int ba) {
+    public void addSplitCodeInsertions(List list1, List list2, Instruction instruction1, List list3, MethodFlowAnalyzer methodFlowAnalyzer, int blockByIndexCacheElementIndex) {
         if (methodFlowAnalyzer != null && !HiddenOptionFlags.NO_RANDOM_INSERTION_POINTS) {
-            SyncIndexedSet syncIndexedSet = this.findInsertionSyncPoints(list3, methodFlowAnalyzer, ba);
+            SyncIndexedSet syncIndexedSet = this.findInsertionSyncPoints(list3, methodFlowAnalyzer, blockByIndexCacheElementIndex);
             switch (syncIndexedSet.size()) {
                 case 0:
                     ArrayList arrayList2 = new ArrayList();
@@ -3988,7 +3834,7 @@ public class MethodBytecode extends ClassFileComponent {
                     }
 
                     arrayList2.add(instruction1);
-                    list3.add(new CodeInsertion(arrayList2, ba - 1, 1, 2));
+                    list3.add(new CodeInsertion(arrayList2, blockByIndexCacheElementIndex - 1, 1, 2));
                     break;
                 case 1:
                     ArrayList arrayList1 = new ArrayList();
@@ -4001,23 +3847,23 @@ public class MethodBytecode extends ClassFileComponent {
                     }
 
                     list3.add(new CodeInsertion(arrayList1, (Integer) syncIndexedSet.getElementAt(0), 0, 2));
-                    list3.add(new CodeInsertion(instruction1, ba - 1, 1, 0));
+                    list3.add(new CodeInsertion(instruction1, blockByIndexCacheElementIndex - 1, 1, 0));
                     break;
                 default:
-                    int bb = syncIndexedSet.size() - 1;
+                    int elementIndex = syncIndexedSet.size() - 1;
                     if (list1 != null && !list1.isEmpty()) {
-                        int bd = bb;
-                        bb += -1;
-                        int bc = (Integer) syncIndexedSet.getElementAt(bd);
+                        int elementIndexValue = elementIndex;
+                        elementIndex += -1;
+                        int elementAt = (Integer) syncIndexedSet.getElementAt(elementIndexValue);
                         List list4 = list1;
-                        list3.add(new CodeInsertion(list4, bc, 0, 2));
+                        list3.add(new CodeInsertion(list4, elementAt, 0, 2));
                     }
 
                     if (list2 != null && !list2.isEmpty()) {
-                        list3.add(new CodeInsertion(list2, (Integer) syncIndexedSet.getElementAt(bb), 0, 2));
+                        list3.add(new CodeInsertion(list2, (Integer) syncIndexedSet.getElementAt(elementIndex), 0, 2));
                     }
 
-                    list3.add(new CodeInsertion(instruction1, ba - 1, 1, 0));
+                    list3.add(new CodeInsertion(instruction1, blockByIndexCacheElementIndex - 1, 1, 0));
             }
         } else {
             ArrayList arrayList = new ArrayList();
@@ -4030,7 +3876,7 @@ public class MethodBytecode extends ClassFileComponent {
             }
 
             arrayList.add(instruction1);
-            list3.add(new CodeInsertion(arrayList, ba - 1, 1, 2));
+            list3.add(new CodeInsertion(arrayList, blockByIndexCacheElementIndex - 1, 1, 2));
         }
     }
 
@@ -4088,22 +3934,22 @@ public class MethodBytecode extends ClassFileComponent {
     public void writeCode(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeInt(this.getCodeLength());
 
-        for (int i = 0; i < this.instructions.size(); i++) {
-            ((Instruction) this.instructions.get(i)).writeTo(dataOutputStream);
+        for (int elementIndex = 0; elementIndex < this.instructions.size(); elementIndex++) {
+            ((Instruction) this.instructions.get(elementIndex)).writeTo(dataOutputStream);
         }
     }
 
-    public SyncIndexedSet findEmptyStackPositions(MethodFlowAnalyzer methodFlowAnalyzer, int ba, int bb, Integer integer) {
-        BasicBlock basicBlock = methodFlowAnalyzer.getBlockContaining(ba);
+    public SyncIndexedSet findEmptyStackPositions(MethodFlowAnalyzer methodFlowAnalyzer, int stackFrameStateIndex, int bb, Integer integer) {
+        BasicBlock basicBlock = methodFlowAnalyzer.getBlockContaining(stackFrameStateIndex);
         StackFrameState[] stackFrameStates = methodFlowAnalyzer.copyFrameStates();
         int bc = this.findMarkerLabelIndex();
         SyncIndexedSet syncIndexedSet = new SyncIndexedSet();
-        if (ba > 0 && stackFrameStates[ba].getStack().length == 0 && basicBlock.getStartIndex() > bc) {
+        if (stackFrameStateIndex > 0 && stackFrameStates[stackFrameStateIndex].getStack().length == 0 && basicBlock.getStartIndex() > bc) {
             int bd = Math.max(basicBlock.getStartIndex(), bb + 1);
 
-            for (int i = ba - 1; i >= bd; i += -1) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                StackFrameState stackFrameState = stackFrameStates[i];
+            for (int elementIndex = stackFrameStateIndex - 1; elementIndex >= bd; elementIndex += -1) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
+                StackFrameState stackFrameState = stackFrameStates[elementIndex];
                 LabelInstruction labelInstruction = null;
                 if (instruction1.isLabel()) {
                     labelInstruction = (LabelInstruction) instruction1;
@@ -4127,7 +3973,7 @@ public class MethodBytecode extends ClassFileComponent {
                     if (bl) {
                         syncIndexedSet.add(integerCache.valueOf(0));
                     } else {
-                        syncIndexedSet.add(integerCache.valueOf(i));
+                        syncIndexedSet.add(integerCache.valueOf(elementIndex));
                     }
                 }
             }
@@ -4139,8 +3985,8 @@ public class MethodBytecode extends ClassFileComponent {
     public void writeCodeRemapped(DataOutputStream dataOutputStream, Map map1) throws IOException {
         dataOutputStream.writeInt(this.getCodeLength());
 
-        for (int i = 0; i < this.instructions.size(); i++) {
-            ((Instruction) this.instructions.get(i)).writeRemapped(dataOutputStream, map1);
+        for (int elementIndex = 0; elementIndex < this.instructions.size(); elementIndex++) {
+            ((Instruction) this.instructions.get(elementIndex)).writeRemapped(dataOutputStream, map1);
         }
     }
 
@@ -4166,43 +4012,43 @@ public class MethodBytecode extends ClassFileComponent {
         if (addedParamCount == 1) {
             keyParameterValues[0] = new LongKeyParameterValue(indexedLocalSlots[0].getSlot(), long1);
         } else {
-            long bb;
+            long long1Value;
             if (long2 != null) {
-                bb = long1 ^ long2;
+                long1Value = long1 ^ long2;
             } else {
-                bb = long1;
+                long1Value = long1;
             }
 
-            for (int i = 0; i < addedParamCount; i++) {
-                int bd = changedMethodDescriptor.getKeyBitOffset(i);
-                long be;
-                if (bd > 0) {
-                    be = bb << bd;
+            for (int parameterIndex = 0; parameterIndex < addedParamCount; parameterIndex++) {
+                int keyBitOffset = changedMethodDescriptor.getKeyBitOffset(parameterIndex);
+                long keyValueValue;
+                if (keyBitOffset > 0) {
+                    keyValueValue = long1Value << keyBitOffset;
                 } else {
-                    be = bb;
+                    keyValueValue = long1Value;
                 }
 
-                int bg = changedMethodDescriptor.getShiftCount(i);
-                be >>>= bg;
-                if (changedMethodDescriptor.isLongParam(i)) {
-                    keyParameterValues[i] = new LongKeyParameterValue(indexedLocalSlots[i].getSlot(), be);
+                int shiftCount = changedMethodDescriptor.getShiftCount(parameterIndex);
+                keyValueValue >>>= shiftCount;
+                if (changedMethodDescriptor.isLongParam(parameterIndex)) {
+                    keyParameterValues[parameterIndex] = new LongKeyParameterValue(indexedLocalSlots[parameterIndex].getSlot(), keyValueValue);
                 } else {
-                    int bh = -1;
-                    switch (changedMethodDescriptor.getTypeCharAt(i)) {
+                    int intValueValue = -1;
+                    switch (changedMethodDescriptor.getTypeCharAt(parameterIndex)) {
                         case 'B':
-                            bh = (byte) be;
+                            intValueValue = (byte) keyValueValue;
                             break;
                         case 'C':
-                            bh = (char) be;
+                            intValueValue = (char) keyValueValue;
                             break;
                         case 'I':
-                            bh = (int) be;
+                            intValueValue = (int) keyValueValue;
                             break;
                         case 'S':
-                            bh = (short) be;
+                            intValueValue = (short) keyValueValue;
                     }
 
-                    keyParameterValues[i] = new IntParameterValue(indexedLocalSlots[i].getSlot(), bh);
+                    keyParameterValues[parameterIndex] = new IntParameterValue(indexedLocalSlots[parameterIndex].getSlot(), intValueValue);
                 }
             }
         }
@@ -4214,51 +4060,51 @@ public class MethodBytecode extends ClassFileComponent {
         ArrayList arrayList6 = new ArrayList(list1);
         int bs = 0;
 
-        for (int i = 0; i < arrayList6.size(); i++) {
-            CodeInsertion codeInsertion4 = (CodeInsertion) arrayList6.get(i);
+        for (int elementIndex = 0; elementIndex < arrayList6.size(); elementIndex++) {
+            CodeInsertion codeInsertion4 = (CodeInsertion) arrayList6.get(elementIndex);
             if (codeInsertion4 instanceof LabeledCodeInsertion) {
                 LabeledCodeInsertion labeledCodeInsertion = (LabeledCodeInsertion) codeInsertion4;
                 ArrayList arrayList = new ArrayList();
                 int bi = random1.nextInt(addedParamCount);
                 KeyParameterValue keyParameterValue = keyParameterValues[bi];
                 SyncIndexedSet syncIndexedSet = null;
-                int bj = -1;
+                int elementIndexValue = -1;
                 if (!HiddenOptionFlags.NO_KEY_INSERTION_SPLIT) {
                     int position = labeledCodeInsertion.getPosition();
                     int by = codeInsertion3 != null ? codeInsertion3.getPosition() : -1;
                     Integer integer = keyParameterValue.getSlotIndex();
                     syncIndexedSet = this.findEmptyStackPositions(methodFlowAnalyzer, position, by, integer);
-                    bj = syncIndexedSet.size() - 1;
+                    elementIndexValue = syncIndexedSet.size() - 1;
                 }
 
                 if (keyParameterValue.isLongKey()) {
                     Instruction instruction4 = Instruction.createLongLoad(indexedLocalSlots[bi].getSlot());
                     Instruction instruction5;
-                    long bw;
+                    long valueValue;
                     switch (random1.nextInt(processingStatistics1.meetsBasicSizeThreshold() ? 5 : 4)) {
                         case 0:
                         case 1:
                             instruction5 = SimpleInstruction.forOpcode(9);
-                            bw = 0L;
+                            valueValue = 0L;
                             break;
                         case 2:
                         case 3:
                             instruction5 = SimpleInstruction.forOpcode(10);
-                            bw = 1L;
+                            valueValue = 1L;
                             break;
                         default:
-                            bw = random1.nextLong();
-                            instruction5 = Instruction.createLongConstantLoad(bw, constantPool1, list2);
+                            valueValue = random1.nextLong();
+                            instruction5 = Instruction.createLongConstantLoad(valueValue, constantPool1, list2);
                     }
 
-                    boolean bl = processingStatistics1.meetsFullSizeThreshold() ? random1.nextBoolean() : false;
+                    boolean bl = ((processingStatistics1.meetsFullSizeThreshold()) && (random1.nextBoolean()));
                     SimpleInstruction simpleInstruction = SimpleInstruction.forOpcode(148);
                     long keyValue = ((LongKeyParameterValue) keyParameterValue).getKeyValue();
                     int bm;
                     if (bl) {
-                        bm = bw > keyValue ? 1 : (keyValue == bw ? 0 : -1);
+                        bm = valueValue > keyValue ? 1 : (keyValue == valueValue ? 0 : -1);
                     } else {
-                        bm = keyValue > bw ? 1 : (keyValue == bw ? 0 : -1);
+                        bm = keyValue > valueValue ? 1 : (keyValue == valueValue ? 0 : -1);
                     }
 
                     BranchInstruction branchInstruction1 = this.createKeySignBranch(
@@ -4269,13 +4115,13 @@ public class MethodBytecode extends ClassFileComponent {
                             ArrayList arrayList2 = new ArrayList();
                             if (bl) {
                                 arrayList2.add(instruction5);
-                                CodeInsertion codeInsertion1 = new CodeInsertion(arrayList2, (Integer) syncIndexedSet.getElementAt(bj), 0, 1);
+                                CodeInsertion codeInsertion1 = new CodeInsertion(arrayList2, (Integer) syncIndexedSet.getElementAt(elementIndexValue), 0, 1);
                                 list1.add(bs, codeInsertion1);
                                 bs++;
                                 arrayList.add(instruction4);
                             } else {
                                 arrayList2.add(instruction4);
-                                CodeInsertion codeInsertion8 = new CodeInsertion(arrayList2, (Integer) syncIndexedSet.getElementAt(bj), 0, 1);
+                                CodeInsertion codeInsertion8 = new CodeInsertion(arrayList2, (Integer) syncIndexedSet.getElementAt(elementIndexValue), 0, 1);
                                 list1.add(bs, codeInsertion8);
                                 bs++;
                                 arrayList.add(instruction5);
@@ -4284,24 +4130,24 @@ public class MethodBytecode extends ClassFileComponent {
                             arrayList.add(simpleInstruction);
                         } else if (syncIndexedSet.size() == 2) {
                             if (bl) {
-                                CodeInsertion codeInsertion5 = new CodeInsertion(instruction5, (Integer) syncIndexedSet.getElementAt(bj), 0, 1);
+                                CodeInsertion codeInsertion5 = new CodeInsertion(instruction5, (Integer) syncIndexedSet.getElementAt(elementIndexValue), 0, 1);
                                 list1.add(bs, codeInsertion5);
                                 bs++;
                                 ArrayList arrayList9 = new ArrayList();
                                 arrayList9.add(instruction4);
-                                CodeInsertion codeInsertion2 = new CodeInsertion(arrayList9, (Integer) syncIndexedSet.getElementAt(bj), 0, 1);
+                                CodeInsertion codeInsertion2 = new CodeInsertion(arrayList9, (Integer) syncIndexedSet.getElementAt(elementIndexValue), 0, 1);
                                 list1.add(bs, codeInsertion2);
                                 bs++;
                             } else {
                                 ArrayList arrayList7 = new ArrayList();
                                 arrayList7.add(instruction4);
-                                int bt = bj + -1;
-                                int bn = (Integer) syncIndexedSet.getElementAt(bj);
+                                int elementIndexValue2 = elementIndexValue + -1;
+                                int elementAt = (Integer) syncIndexedSet.getElementAt(elementIndexValue);
                                 ArrayList arrayList3 = arrayList7;
-                                CodeInsertion codeInsertion9 = new CodeInsertion(arrayList3, bn, 0, 1);
+                                CodeInsertion codeInsertion9 = new CodeInsertion(arrayList3, elementAt, 0, 1);
                                 list1.add(bs, codeInsertion9);
                                 bs++;
-                                CodeInsertion codeInsertion11 = new CodeInsertion(instruction5, (Integer) syncIndexedSet.getElementAt(bt), 0, 1);
+                                CodeInsertion codeInsertion11 = new CodeInsertion(instruction5, (Integer) syncIndexedSet.getElementAt(elementIndexValue2), 0, 1);
                                 list1.add(bs, codeInsertion11);
                                 bs++;
                             }
@@ -4309,38 +4155,38 @@ public class MethodBytecode extends ClassFileComponent {
                             arrayList.add(simpleInstruction);
                         } else {
                             if (bl) {
-                                int bu = bj + -1;
-                                int bo = (Integer) syncIndexedSet.getElementAt(bj);
+                                int elementIndexValue3 = elementIndexValue + -1;
+                                int elementAtValue = (Integer) syncIndexedSet.getElementAt(elementIndexValue);
                                 Instruction instruction2 = instruction5;
-                                CodeInsertion codeInsertion6 = new CodeInsertion(instruction2, bo, 0, 1);
+                                CodeInsertion codeInsertion6 = new CodeInsertion(instruction2, elementAtValue, 0, 1);
                                 list1.add(bs, codeInsertion6);
                                 bs++;
                                 ArrayList arrayList10 = new ArrayList();
                                 arrayList10.add(instruction4);
-                                bj = bu + -1;
-                                int bp = (Integer) syncIndexedSet.getElementAt(bu);
+                                elementIndexValue = elementIndexValue3 + -1;
+                                int elementAtValue2 = (Integer) syncIndexedSet.getElementAt(elementIndexValue3);
                                 ArrayList arrayList4 = arrayList10;
-                                CodeInsertion codeInsertion12 = new CodeInsertion(arrayList4, bp, 0, 1);
+                                CodeInsertion codeInsertion12 = new CodeInsertion(arrayList4, elementAtValue2, 0, 1);
                                 list1.add(bs, codeInsertion12);
                                 bs++;
                             } else {
                                 ArrayList arrayList8 = new ArrayList();
                                 arrayList8.add(instruction4);
-                                int bv = bj + -1;
-                                int bq = (Integer) syncIndexedSet.getElementAt(bj);
+                                int elementIndexValue4 = elementIndexValue + -1;
+                                int elementAtValue3 = (Integer) syncIndexedSet.getElementAt(elementIndexValue);
                                 ArrayList arrayList5 = arrayList8;
-                                CodeInsertion codeInsertion10 = new CodeInsertion(arrayList5, bq, 0, 1);
+                                CodeInsertion codeInsertion10 = new CodeInsertion(arrayList5, elementAtValue3, 0, 1);
                                 list1.add(bs, codeInsertion10);
                                 bs++;
-                                bj = bv + -1;
-                                int br = (Integer) syncIndexedSet.getElementAt(bv);
+                                elementIndexValue = elementIndexValue4 + -1;
+                                int elementAtValue4 = (Integer) syncIndexedSet.getElementAt(elementIndexValue4);
                                 Instruction instruction3 = instruction5;
-                                CodeInsertion codeInsertion13 = new CodeInsertion(instruction3, br, 0, 1);
+                                CodeInsertion codeInsertion13 = new CodeInsertion(instruction3, elementAtValue4, 0, 1);
                                 list1.add(bs, codeInsertion13);
                                 bs++;
                             }
 
-                            CodeInsertion codeInsertion7 = new CodeInsertion(simpleInstruction, (Integer) syncIndexedSet.getElementAt(bj), 0, 1);
+                            CodeInsertion codeInsertion7 = new CodeInsertion(simpleInstruction, (Integer) syncIndexedSet.getElementAt(elementIndexValue), 0, 1);
                             list1.add(bs, codeInsertion7);
                             bs++;
                         }
@@ -4397,8 +4243,8 @@ public class MethodBytecode extends ClassFileComponent {
                     flowSplitCandidate = (FlowSplitCandidate) list1.get(1);
                     break;
                 default:
-                    int ba = random1.nextInt(list1.size() - 1) + 1;
-                    flowSplitCandidate = (FlowSplitCandidate) list1.get(ba);
+                    int elementIndex = random1.nextInt(list1.size() - 1) + 1;
+                    flowSplitCandidate = (FlowSplitCandidate) list1.get(elementIndex);
             }
 
             mutableInt.setValue(flowSplitCandidate.startIndex);
@@ -4419,52 +4265,52 @@ public class MethodBytecode extends ClassFileComponent {
         return this.instructions.indexOf(object);
     }
 
-    public boolean needsCheckcast(int ba, ResolvedMemberRef resolvedMemberRef, Map map1, MethodFlowAnalyzer methodFlowAnalyzer) {
+    public boolean needsCheckcast(int elementIndex, ResolvedMemberRef resolvedMemberRef, Map map1, MethodFlowAnalyzer methodFlowAnalyzer) {
         if (HiddenOptionFlags.OBFUSCATE_ALL_MEMBER_REFERENCES) {
             return true;
         }
 
-        int opcode = ((Instruction) this.instructions.get(ba)).getOpcode();
+        int opcode = ((Instruction) this.instructions.get(elementIndex)).getOpcode();
         if (opcode != 182 && opcode != 183 && opcode != 184 && opcode != 185) {
-            String string1 = ((ResolvedFieldRef) resolvedMemberRef).getDescriptor();
-            if (!string1.startsWith("[") && (!string1.startsWith("L") || !string1.endsWith(";"))) {
+            String descriptor = ((ResolvedFieldRef) resolvedMemberRef).getDescriptor();
+            if (!descriptor.startsWith("[") && (!descriptor.startsWith("L") || !descriptor.endsWith(";"))) {
                 return false;
             }
         } else {
-            String string = ConstantPoolEntry.getReturnDescriptor(((ResolvedMethodRef) resolvedMemberRef).getDescriptor());
-            if (string.equals("V")) {
+            String returnDescriptor = ConstantPoolEntry.getReturnDescriptor(((ResolvedMethodRef) resolvedMemberRef).getDescriptor());
+            if (returnDescriptor.equals("V")) {
                 return true;
             }
         }
 
-        if (ba >= this.instructions.size() - 1) {
+        if (elementIndex >= this.instructions.size() - 1) {
             return false;
         }
 
         StackFrameState[] stackFrameStates = methodFlowAnalyzer.copyFrameStates();
-        int bc = stackFrameStates[ba].getStackDepth() - 1;
-        VerifierType verifierType = stackFrameStates[ba].getStack()[bc];
+        int integerArrayElement = stackFrameStates[elementIndex].getStackDepth() - 1;
+        VerifierType verifierType = stackFrameStates[elementIndex].getStack()[integerArrayElement];
 
-        for (int i = ba + 1; i < this.instructions.size(); i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
-            StackFrameState stackFrameState = stackFrameStates[i];
+        for (int elementIndexValue = elementIndex + 1; elementIndexValue < this.instructions.size(); elementIndexValue++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndexValue);
+            StackFrameState stackFrameState = stackFrameStates[elementIndexValue];
             if (instruction1.isJump()) {
                 return true;
             }
 
             if (instruction1.isStackManipulation()) {
-                int[] be = instruction1.mapStackSlotForward(stackFrameStates[i - 1].getStack(), stackFrameState.getStack(), bc);
-                if (be.length == 0) {
+                int[] integerArray = instruction1.mapStackSlotForward(stackFrameStates[elementIndexValue - 1].getStack(), stackFrameState.getStack(), integerArrayElement);
+                if (integerArray.length == 0) {
                     return verifierType.isWide();
                 }
 
-                if (be.length != 1) {
+                if (integerArray.length != 1) {
                     return true;
                 }
 
-                bc = be[0];
+                integerArrayElement = integerArray[0];
             } else {
-                if (instruction1.consumesStackSlot(bc, stackFrameStates[i].getStackDepth())) {
+                if (instruction1.consumesStackSlot(integerArrayElement, stackFrameStates[elementIndexValue].getStackDepth())) {
                     if (map1.containsKey(instruction1) && !(Boolean) map1.get(instruction1)) {
                         if (verifierType.isClassType()) {
                             return false;
@@ -4473,13 +4319,13 @@ public class MethodBytecode extends ClassFileComponent {
                         return true;
                     }
 
-                    Integer integer = stackFrameStates[i].getStackDepth();
+                    Integer integer = stackFrameStates[elementIndexValue].getStackDepth();
                     VerifierType verifierType1 = verifierType;
-                    return instruction1.requiresTypedValueAt(bc, verifierType1, integer);
+                    return instruction1.requiresTypedValueAt(integerArrayElement, verifierType1, integer);
                 }
 
                 if (instruction1.isLabel()) {
-                    if (i == this.instructions.size() - 1) {
+                    if (elementIndexValue == this.instructions.size() - 1) {
                         return false;
                     }
 
@@ -4506,19 +4352,19 @@ public class MethodBytecode extends ClassFileComponent {
             Collections.sort(arrayList);
             Iterator iterator = arrayList.iterator();
             Integer integer = (Integer) iterator.next();
-            int bb = this.instructions.size();
+            int instructionsSize = this.instructions.size();
             int bc = 0;
-            ArrayList arrayList1 = new ArrayList(bb + keyCount);
-            int bd = 0;
+            ArrayList arrayList1 = new ArrayList(instructionsSize + keyCount);
+            int offset = 0;
 
-            for (int i = 0; i < this.instructions.size(); i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                if ((i > 0 || !instruction1.isLabel() || !((LabelInstruction) instruction1).isFixed()) && bd == integer) {
+            for (int elementIndex = 0; elementIndex < this.instructions.size(); elementIndex++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
+                if ((elementIndex > 0 || !instruction1.isLabel() || !((LabelInstruction) instruction1).isFixed()) && offset == integer) {
                     LabelInstruction labelInstruction;
                     if (instruction1.isLabel()) {
                         labelInstruction = (LabelInstruction) instruction1;
                     } else {
-                        labelInstruction = new LabelInstruction(bd, 0);
+                        labelInstruction = new LabelInstruction(offset, 0);
                         arrayList1.add(labelInstruction);
                         bc++;
                     }
@@ -4532,7 +4378,7 @@ public class MethodBytecode extends ClassFileComponent {
                     }
 
                     if (!iterator.hasNext()) {
-                        arrayList1.addAll(this.instructions.subList(i, bb));
+                        arrayList1.addAll(this.instructions.subList(elementIndex, instructionsSize));
                         break;
                     }
 
@@ -4540,7 +4386,7 @@ public class MethodBytecode extends ClassFileComponent {
                 }
 
                 arrayList1.add(instruction1);
-                bd += instruction1.getLength();
+                offset += instruction1.getLength();
             }
 
             this.instructions = arrayList1;
@@ -4570,16 +4416,16 @@ public class MethodBytecode extends ClassFileComponent {
         List list3 = listMultimap.getValues(this);
         int ba = 0;
         LabeledCodeInsertion labeledCodeInsertion = null;
-        int bb = this.instructions.size() - 1;
+        int positionValue = this.instructions.size() - 1;
         CodeInsertion codeInsertion = null;
         int bc = this.findLastExitIndex();
         if (list3 != null) {
-            int bd = list3.size();
+            int list3Size = list3.size();
 
-            for (int i = 0; i < bd; i++) {
-                CodeInsertion codeInsertion1 = (CodeInsertion) list3.get(i);
-                if (codeInsertion1.getPosition() < bb) {
-                    bb = codeInsertion1.getPosition();
+            for (int elementIndex = 0; elementIndex < list3Size; elementIndex++) {
+                CodeInsertion codeInsertion1 = (CodeInsertion) list3.get(elementIndex);
+                if (codeInsertion1.getPosition() < positionValue) {
+                    positionValue = codeInsertion1.getPosition();
                     codeInsertion = codeInsertion1;
                 }
 
@@ -4601,9 +4447,9 @@ public class MethodBytecode extends ClassFileComponent {
         }
 
         if (bl || bl1) {
-            bb = Math.min(bc - 1, bb);
-            if (bc - 1 < bb) {
-                bb = bc - 1;
+            positionValue = Math.min(bc - 1, positionValue);
+            if (bc - 1 < positionValue) {
+                positionValue = bc - 1;
                 codeInsertion = null;
             }
         }
@@ -4637,25 +4483,25 @@ public class MethodBytecode extends ClassFileComponent {
             }
 
             CodeAttributeBody codeAttributeBody = (CodeAttributeBody) this.getParent();
-            int bg = codeAttributeBody.getMaxLocals() + 1;
-            codeAttributeBody.setMaxLocals(bg);
-            int bf = bg - 1;
-            list2.add(integerCache.valueOf(bf));
-            Instruction instruction1 = opaquePredicateField1.createLoadLocal(bf, this.localVariableList);
-            Instruction instruction2 = opaquePredicateField1.createStoreLocal(bf, this.localVariableList);
+            int maxLocalsValue = codeAttributeBody.getMaxLocals() + 1;
+            codeAttributeBody.setMaxLocals(maxLocalsValue);
+            int integerValue = maxLocalsValue - 1;
+            list2.add(integerCache.valueOf(integerValue));
+            Instruction instruction1 = opaquePredicateField1.createLoadLocal(integerValue, this.localVariableList);
+            Instruction instruction2 = opaquePredicateField1.createStoreLocal(integerValue, this.localVariableList);
             ArrayList arrayList = new ArrayList(1);
             arrayList.add(constantRefInstruction1);
             MutableInt mutableInt = new MutableInt();
             MutableInt mutableInt1 = mutableInt;
-            SyncIndexedSet syncIndexedSet = this.findPrologueSyncPoints(methodFlowAnalyzer, bb, mutableInt1);
-            this.addPredicateInsertions(arrayList, instruction2, list3, methodFlowAnalyzer, bb, codeInsertion, mutableInt.getValue(), syncIndexedSet, random1);
+            SyncIndexedSet syncIndexedSet = this.findPrologueSyncPoints(methodFlowAnalyzer, positionValue, mutableInt1);
+            this.addPredicateInsertions(arrayList, instruction2, list3, methodFlowAnalyzer, positionValue, codeInsertion, mutableInt.getValue(), syncIndexedSet, random1);
             Collections.sort(list3);
             CodeInsertion codeInsertion2 = null;
             ArrayList arrayList1 = new ArrayList(list3);
             int bh = 0;
 
-            for (int i = 0; i < arrayList1.size(); i++) {
-                CodeInsertion codeInsertion3 = (CodeInsertion) arrayList1.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < arrayList1.size(); elementIndexValue++) {
+                CodeInsertion codeInsertion3 = (CodeInsertion) arrayList1.get(elementIndexValue);
                 if (codeInsertion3 instanceof LabeledCodeInsertion) {
                     LabeledCodeInsertion labeledCodeInsertion1 = (LabeledCodeInsertion) codeInsertion3;
                     BranchInstruction branchInstruction;
@@ -4700,7 +4546,7 @@ public class MethodBytecode extends ClassFileComponent {
 
             if (bl1) {
                 List list4 = this.buildOpaqueGuardedBlock(
-                        bf,
+                        integerValue,
                         constantRefInstruction,
                         instruction1,
                         opaquePredicateField,
@@ -4725,8 +4571,8 @@ public class MethodBytecode extends ClassFileComponent {
                     labeledCodeInsertion.appendInstructions(list5);
                 } else {
                     LabelInstruction labelInstruction = new LabelInstruction(true, 1);
-                    int bj = list5.size();
-                    ArrayList arrayList3 = new ArrayList(bj + 3);
+                    int list5Size = list5.size();
+                    ArrayList arrayList3 = new ArrayList(list5Size + 3);
                     arrayList3.add(instruction1);
                     if (bl3) {
                         arrayList3.add(opaquePredicateField1.createBranchIfUnset(labelInstruction));
@@ -4734,8 +4580,8 @@ public class MethodBytecode extends ClassFileComponent {
                         arrayList3.add(opaquePredicateField1.createBranchIfSet(labelInstruction));
                     }
 
-                    for (int i = 0; i < bj; i++) {
-                        arrayList3.add(list5.get(i));
+                    for (int elementIndexValue2 = 0; elementIndexValue2 < list5Size; elementIndexValue2++) {
+                        arrayList3.add(list5.get(elementIndexValue2));
                     }
 
                     arrayList3.add(labelInstruction);
@@ -4759,8 +4605,8 @@ public class MethodBytecode extends ClassFileComponent {
 
         int bc = 0;
 
-        for (int i = 0; i < this.instructions.size(); i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < this.instructions.size(); elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
 
             try {
                 instruction1.printDisassembly(printWriter, stringBuilder);
@@ -4774,10 +4620,10 @@ public class MethodBytecode extends ClassFileComponent {
 
     public void collectExcludedIntConstants(Set set1, IntegerEncryptionExclusions integerEncryptionExclusions) {
         ProgramClass programClass1 = (ProgramClass) this.getOwningClass();
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             int opcode = instruction1.getOpcode();
             if (opcode == 179 || opcode == 181) {
                 AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) ((ResolvedFieldRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry())
@@ -4786,11 +4632,11 @@ public class MethodBytecode extends ClassFileComponent {
                         && abstractFieldInfo.isProgramMember()
                         && abstractFieldInfo.getParent() == programClass1
                         && integerEncryptionExclusions.isFieldExcluded((FieldInfo) abstractFieldInfo)) {
-                    Instruction instruction2 = (Instruction) this.instructions.get(i - 1);
-                    int bd = instruction2.getOpcode();
-                    if (bd == 18 || bd == 19) {
+                    Instruction instruction2 = (Instruction) this.instructions.get(elementIndex - 1);
+                    int opcodeValue = instruction2.getOpcode();
+                    if (opcodeValue == 18 || opcodeValue == 19) {
                         ConstantPoolEntry constantPoolEntry;
-                        if (bd == 18) {
+                        if (opcodeValue == 18) {
                             LdcInstruction ldcInstruction = (LdcInstruction) instruction2;
                             constantPoolEntry = ldcInstruction.getConstantPoolEntry();
                         } else {
@@ -4812,33 +4658,33 @@ public class MethodBytecode extends ClassFileComponent {
         ArrayList arrayList = new ArrayList();
         LinkedHashMap linkedHashMap = new LinkedHashMap();
         MutableInt mutableInt = new MutableInt();
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
         SetMultiMap setMultiMap = new SetMultiMap();
         BooleanFlag booleanFlag = new BooleanFlag(false);
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isMethodInvoke() && instruction1.getOpcode() != 183) {
                 ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
                 AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) resolvedMethodRef.getResolvedMember();
                 if (abstractMethodInfo != null && set1.contains(abstractMethodInfo)) {
-                    String string = resolvedMethodRef.getStackReturnType();
-                    Instruction instruction2 = (Instruction) this.instructions.get(i + 1);
-                    if (string != null && this.isResultValueUsed(instruction2, setMultiMap, booleanFlag)) {
+                    String stackReturnType = resolvedMethodRef.getStackReturnType();
+                    Instruction instruction2 = (Instruction) this.instructions.get(elementIndex + 1);
+                    if (stackReturnType != null && this.isResultValueUsed(instruction2, setMultiMap, booleanFlag)) {
                         if (scriptEnvironment1.isVerbose()) {
-                            linkedHashMap.put(integerCache.valueOf(i), abstractMethodInfo);
+                            linkedHashMap.put(integerCache.valueOf(elementIndex), abstractMethodInfo);
                         }
                     } else {
                         List list1 = resolvedMethodRef.getStackParameterTypes();
-                        boolean bl3;
+                        boolean verbose;
                         if (!abstractMethodInfo.isStatic()) {
                             list1.add(0, "java/lang/Object");
-                            bl3 = scriptEnvironment1.isVerbose();
+                            verbose = scriptEnvironment1.isVerbose();
                         } else {
-                            bl3 = scriptEnvironment1.isVerbose();
+                            verbose = scriptEnvironment1.isVerbose();
                         }
 
-                        if (bl3) {
+                        if (verbose) {
                             AbstractMethodInfo abstractMethodInfo1 = this.getMethod();
                             printWriter.println(
                                     "\tRemoving call to method '"
@@ -4854,34 +4700,34 @@ public class MethodBytecode extends ClassFileComponent {
                         }
 
                         ArrayList arrayList1 = new ArrayList();
-                        int bc = i - 1;
-                        int bd = bc;
-                        int be = 1 + (string == null ? 0 : 1);
+                        int positionValue = elementIndex - 1;
+                        int elementIndexValue = positionValue;
+                        int replacedCount = 1 + (stackReturnType == null ? 0 : 1);
                         boolean bl = false;
-                        int bf = list1.size();
+                        int list1Size = list1.size();
 
-                        for (int j = 0; j < bf; j++) {
-                            int bh = bf - j - 1;
-                            String string1 = (String) list1.get(bh);
+                        for (int j = 0; j < list1Size; j++) {
+                            int elementIndexValue2 = list1Size - j - 1;
+                            String string1 = (String) list1.get(elementIndexValue2);
                             if (!HiddenOptionFlags.SKIP_STRING_CONCAT_ANALYSIS && !bl) {
-                                Instruction instruction3 = (Instruction) this.instructions.get(bd);
+                                Instruction instruction3 = (Instruction) this.instructions.get(elementIndexValue);
                                 if (instruction3.pushesWithoutPopping()) {
-                                    be++;
-                                    bc += -1;
-                                    bd += -1;
-                                } else if (instruction3.getOpcode() == 180 && ((Instruction) this.instructions.get(bd - 1)).pushesWithoutPopping()) {
-                                    be += 2;
-                                    bc += -2;
-                                    bd += -2;
+                                    replacedCount++;
+                                    positionValue += -1;
+                                    elementIndexValue += -1;
+                                } else if (instruction3.getOpcode() == 180 && ((Instruction) this.instructions.get(elementIndexValue - 1)).pushesWithoutPopping()) {
+                                    replacedCount += 2;
+                                    positionValue += -2;
+                                    elementIndexValue += -2;
                                 } else {
                                     if (instruction3.isMethodInvoke()) {
                                         MutableInt mutableInt2 = mutableInt;
                                         Set set2 = set1;
-                                        if (this.isRemovableCall(bd, (ConstantRefInstruction) instruction3, set2, mutableInt2)) {
+                                        if (this.isRemovableCall(elementIndexValue, (ConstantRefInstruction) instruction3, set2, mutableInt2)) {
                                             int value = mutableInt.getValue();
-                                            be += value;
-                                            bc -= value;
-                                            bd -= value;
+                                            replacedCount += value;
+                                            positionValue -= value;
+                                            elementIndexValue -= value;
                                             continue;
                                         }
                                     }
@@ -4896,12 +4742,12 @@ public class MethodBytecode extends ClassFileComponent {
                                                         || resolvedMethodRef1.getReferencedClassName().equals("java/lang/StringBuilder")
                                         )) {
                                             MutableInt mutableInt1 = new MutableInt();
-                                            bl1 = this.traceStringBuilderChain(bd - 1, resolvedMethodRef1.getReferencedClassName(), mutableInt1, set1);
+                                            bl1 = this.traceStringBuilderChain(elementIndexValue - 1, resolvedMethodRef1.getReferencedClassName(), mutableInt1, set1);
                                             if (bl1) {
-                                                int bi = mutableInt1.getValue();
-                                                be += bi;
-                                                bc -= bi;
-                                                bd = bc;
+                                                int valueValue = mutableInt1.getValue();
+                                                replacedCount += valueValue;
+                                                positionValue -= valueValue;
+                                                elementIndexValue = positionValue;
                                             }
                                         }
                                     }
@@ -4914,7 +4760,7 @@ public class MethodBytecode extends ClassFileComponent {
                                             arrayList1.add(SimpleInstruction.forOpcode(87));
                                         }
 
-                                        bd += -1;
+                                        elementIndexValue += -1;
                                     }
                                 }
                             } else if (ConstantPoolEntry.isWideType(string1)) {
@@ -4924,11 +4770,11 @@ public class MethodBytecode extends ClassFileComponent {
                             }
                         }
 
-                        if (be > 0 && arrayList1.isEmpty()) {
+                        if (replacedCount > 0 && arrayList1.isEmpty()) {
                             arrayList1.add(SimpleInstruction.forOpcode(0));
                         }
 
-                        CodeInsertion codeInsertion1 = new CodeInsertion(arrayList1, bc, be, 0);
+                        CodeInsertion codeInsertion1 = new CodeInsertion(arrayList1, positionValue, replacedCount, 0);
                         arrayList.add(codeInsertion1);
                     }
                 }
@@ -4944,8 +4790,8 @@ public class MethodBytecode extends ClassFileComponent {
                 int bj = codeInsertion.getPosition() + 1;
                 int bk = bj + codeInsertion.getReplacedCount();
 
-                for (int i = bj; i < bk; i++) {
-                    Integer integer = integerCache.valueOf(i);
+                for (int integerValue = bj; integerValue < bk; integerValue++) {
+                    Integer integer = integerCache.valueOf(integerValue);
                     AbstractMethodInfo abstractMethodInfo4 = (AbstractMethodInfo) linkedHashMap.remove(integer);
                     if (abstractMethodInfo4 != null) {
                         printWriter.println(
@@ -5021,15 +4867,15 @@ public class MethodBytecode extends ClassFileComponent {
             ListMultimap listMultimap5,
             ListMultimap listMultimap6
     ) throws ZkmProcessingException, IOException {
-        int bb = 0;
+        int offset = 0;
         AbstractConstantPool abstractConstantPool = this.getConstantPool();
 
-        while (bb < ba) {
+        while (offset < ba) {
             Instruction instruction1;
             try {
                 instruction1 = Instruction.readInstruction(
                         classFileInputStream,
-                        bb,
+                        offset,
                         listMultimap,
                         listMultimap1,
                         listMultimap2,
@@ -5058,18 +4904,18 @@ public class MethodBytecode extends ClassFileComponent {
                 this.longConstantCount++;
             }
 
-            instruction1.setOffset(bb);
+            instruction1.setOffset(offset);
             this.instructions.add(instruction1);
-            bb += instruction1.getLength();
+            offset += instruction1.getLength();
         }
     }
 
     public boolean storesToField(FieldInfo fieldInfo) {
-        int ba = this.instructions.size();
-        int bb = 0;
+        int instructionsSize = this.instructions.size();
+        int elementIndex = 0;
 
-        while (bb < ba) {
-            Instruction instruction1 = (Instruction) this.instructions.get(bb);
+        while (elementIndex < instructionsSize) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             switch (instruction1.getOpcode()) {
                 case 179:
                 case 181:
@@ -5077,7 +4923,7 @@ public class MethodBytecode extends ClassFileComponent {
                         return true;
                     }
                 default:
-                    bb++;
+                    elementIndex++;
             }
         }
 
@@ -5086,10 +4932,10 @@ public class MethodBytecode extends ClassFileComponent {
 
     public void collectStringEncryptionCandidates(MultiMapTable multiMapTable, MethodInfo methodInfo1, Set set1) {
         if (this.stringConstantCount != 0) {
-            int ba = this.instructions.size();
+            int instructionsSize = this.instructions.size();
 
-            for (int i = 0; i < ba; i++) {
-                ((Instruction) this.instructions.get(i)).collectStringConstant(multiMapTable, set1, methodInfo1, i);
+            for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+                ((Instruction) this.instructions.get(elementIndex)).collectStringConstant(multiMapTable, set1, methodInfo1, elementIndex);
             }
         }
     }
@@ -5104,17 +4950,17 @@ public class MethodBytecode extends ClassFileComponent {
             List list1
     ) throws ZkmProcessingException {
         ArrayList arrayList = new ArrayList();
-        String string = resolvedInvokeDynamic.getDescriptor();
-        List list2 = ConstantPoolEntry.getParameterTypes(string);
-        int bb = list2.size();
+        String descriptor = resolvedInvokeDynamic.getDescriptor();
+        List list2 = ConstantPoolEntry.getParameterTypes(descriptor);
+        int list2Size = list2.size();
         List list3 = bootstrapMethodInfo.getRecipeParts();
-        int bc = list3.size();
-        int bd = bb + bc;
+        int list3Size = list3.size();
+        int bd = list2Size + list3Size;
         ConcatRecipePart concatRecipePart = (ConcatRecipePart) list3.get(0);
         StringBuilder stringBuilder = new StringBuilder();
-        byte be = 1;
-        if (bc == 1 && concatRecipePart.getTokenIndex() == bd - 1) {
-            stringBuilder.append(string.substring(1, string.indexOf(41)));
+        byte extraStackSizeValue = 1;
+        if (list3Size == 1 && concatRecipePart.getTokenIndex() == bd - 1) {
+            stringBuilder.append(descriptor.substring(1, descriptor.indexOf(41)));
             stringBuilder.append("Ljava/lang/String;");
             ResolvedStringConstant resolvedStringConstant = concatRecipePart.getStringConstant();
             if (resolvedStringConstant != null) {
@@ -5124,17 +4970,17 @@ public class MethodBytecode extends ClassFileComponent {
             }
 
             arrayList.add(new ConstantRefInstruction(19, resolvedStringConstant));
-        } else if (bc == 1 && concatRecipePart.getTokenIndex() == bd - 2) {
-            be = 2;
+        } else if (list3Size == 1 && concatRecipePart.getTokenIndex() == bd - 2) {
+            extraStackSizeValue = 2;
             String string2 = null;
 
-            for (int i = 0; i < list2.size(); i++) {
-                if (i == list2.size() - 1) {
+            for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
+                if (elementIndex == list2.size() - 1) {
                     stringBuilder.append("Ljava/lang/String;");
-                    string2 = (String) list2.get(i);
+                    string2 = (String) list2.get(elementIndex);
                 }
 
-                stringBuilder.append((String) list2.get(i));
+                stringBuilder.append((String) list2.get(elementIndex));
             }
 
             ResolvedStringConstant resolvedStringConstant2 = concatRecipePart.getStringConstant();
@@ -5151,17 +4997,17 @@ public class MethodBytecode extends ClassFileComponent {
             } else {
                 arrayList.add(SimpleInstruction.forOpcode(95));
             }
-        } else if (bc == 2 && concatRecipePart.getTokenIndex() == bd - 3 && ((ConcatRecipePart) list3.get(1)).getTokenIndex() == bd - 1) {
-            be = 2;
+        } else if (list3Size == 2 && concatRecipePart.getTokenIndex() == bd - 3 && ((ConcatRecipePart) list3.get(1)).getTokenIndex() == bd - 1) {
+            extraStackSizeValue = 2;
             String string1 = null;
 
-            for (int i = 0; i < list2.size(); i++) {
-                if (i == list2.size() - 1) {
+            for (int elementIndexValue = 0; elementIndexValue < list2.size(); elementIndexValue++) {
+                if (elementIndexValue == list2.size() - 1) {
                     stringBuilder.append("Ljava/lang/String;");
-                    string1 = (String) list2.get(i);
+                    string1 = (String) list2.get(elementIndexValue);
                 }
 
-                stringBuilder.append((String) list2.get(i));
+                stringBuilder.append((String) list2.get(elementIndexValue));
             }
 
             stringBuilder.append("Ljava/lang/String;");
@@ -5189,23 +5035,23 @@ public class MethodBytecode extends ClassFileComponent {
             }
 
             arrayList.add(new ConstantRefInstruction(19, resolvedStringConstant5));
-        } else if (bc == 2
+        } else if (list3Size == 2
                 && concatRecipePart.getTokenIndex() == bd - 4
                 && ((ConcatRecipePart) list3.get(1)).getTokenIndex() == bd - 2
                 && !VerifierType.isWideDescriptor((String) list2.get(list2.size() - 1))
                 && !VerifierType.isWideDescriptor((String) list2.get(list2.size() - 2))) {
-            be = 2;
+            extraStackSizeValue = 2;
 
-            for (int i = 0; i < list2.size(); i++) {
-                if (i == list2.size() - 1) {
+            for (int elementIndexValue2 = 0; elementIndexValue2 < list2.size(); elementIndexValue2++) {
+                if (elementIndexValue2 == list2.size() - 1) {
                     stringBuilder.append("Ljava/lang/String;");
-                    String string4 = (String) list2.get(i);
-                } else if (i == list2.size() - 2) {
+                    String string4 = (String) list2.get(elementIndexValue2);
+                } else if (elementIndexValue2 == list2.size() - 2) {
                     stringBuilder.append("Ljava/lang/String;");
-                    String string5 = (String) list2.get(i);
+                    String string5 = (String) list2.get(elementIndexValue2);
                 }
 
-                stringBuilder.append((String) list2.get(i));
+                stringBuilder.append((String) list2.get(elementIndexValue2));
             }
 
             ResolvedStringConstant resolvedStringConstant4 = concatRecipePart.getStringConstant();
@@ -5228,24 +5074,24 @@ public class MethodBytecode extends ClassFileComponent {
 
             arrayList.add(new ConstantRefInstruction(19, resolvedStringConstant7));
             arrayList.add(SimpleInstruction.forOpcode(95));
-        } else if (bc == 3
+        } else if (list3Size == 3
                 && concatRecipePart.getTokenIndex() == bd - 5
                 && ((ConcatRecipePart) list3.get(1)).getTokenIndex() == bd - 3
                 && ((ConcatRecipePart) list3.get(2)).getTokenIndex() == bd - 1
                 && !VerifierType.isWideDescriptor((String) list2.get(list2.size() - 1))
                 && !VerifierType.isWideDescriptor((String) list2.get(list2.size() - 2))) {
-            be = 2;
+            extraStackSizeValue = 2;
 
-            for (int i = 0; i < list2.size(); i++) {
-                if (i == list2.size() - 1) {
+            for (int elementIndexValue3 = 0; elementIndexValue3 < list2.size(); elementIndexValue3++) {
+                if (elementIndexValue3 == list2.size() - 1) {
                     stringBuilder.append("Ljava/lang/String;");
-                    String string6 = (String) list2.get(i);
-                } else if (i == list2.size() - 2) {
+                    String string6 = (String) list2.get(elementIndexValue3);
+                } else if (elementIndexValue3 == list2.size() - 2) {
                     stringBuilder.append("Ljava/lang/String;");
-                    String string3 = (String) list2.get(i);
+                    String string3 = (String) list2.get(elementIndexValue3);
                 }
 
-                stringBuilder.append((String) list2.get(i));
+                stringBuilder.append((String) list2.get(elementIndexValue3));
             }
 
             stringBuilder.append("Ljava/lang/String;");
@@ -5280,35 +5126,35 @@ public class MethodBytecode extends ClassFileComponent {
             arrayList.add(new ConstantRefInstruction(19, resolvedStringConstant8));
         } else {
             int maxLocals = this.getMaxLocals();
-            int bg = maxLocals;
-            int bh = verifierTypes != null ? verifierTypes.length - 1 : -1;
+            int maxLocalsValue = maxLocals;
+            int verifierTypeIndex = verifierTypes != null ? verifierTypes.length - 1 : -1;
             boolean bl = concatRecipePart.getTokenIndex() > 0;
 
-            for (int i = 0; i < bb - (bl ? 1 : 0); i++) {
-                int bs = bh;
-                bh += -1;
-                VerifierType verifierType = verifierTypes[bs];
+            for (int i = 0; i < list2Size - (bl ? 1 : 0); i++) {
+                int verifierTypeIndexValue = verifierTypeIndex;
+                verifierTypeIndex += -1;
+                VerifierType verifierType = verifierTypes[verifierTypeIndexValue];
                 if (verifierType.isIntLike()) {
-                    arrayList.add(Instruction.createIntStore(bg++, this.localVariableList, 1));
+                    arrayList.add(Instruction.createIntStore(maxLocalsValue++, this.localVariableList, 1));
                 } else if (verifierType == VerifierType.FLOAT) {
-                    arrayList.add(Instruction.createFloatStore(bg++, this.localVariableList, 1));
+                    arrayList.add(Instruction.createFloatStore(maxLocalsValue++, this.localVariableList, 1));
                 } else if (verifierType == VerifierType.DOUBLE) {
-                    arrayList.add(Instruction.createDoubleStore(bg++, this.localVariableList, 1));
-                    bg++;
-                    be = 2;
+                    arrayList.add(Instruction.createDoubleStore(maxLocalsValue++, this.localVariableList, 1));
+                    maxLocalsValue++;
+                    extraStackSizeValue = 2;
                 } else if (verifierType == VerifierType.LONG) {
-                    arrayList.add(Instruction.createLongStore(bg++, this.localVariableList, 1));
-                    bg++;
-                    be = 2;
+                    arrayList.add(Instruction.createLongStore(maxLocalsValue++, this.localVariableList, 1));
+                    maxLocalsValue++;
+                    extraStackSizeValue = 2;
                 } else if (verifierType.isArray() || verifierType.isClassType() || verifierType.isNull()) {
-                    arrayList.add(Instruction.createObjectStore(bg++, this.localVariableList, 1));
+                    arrayList.add(Instruction.createObjectStore(maxLocalsValue++, this.localVariableList, 1));
                 }
             }
 
-            bh++;
-            int br = 0;
+            verifierTypeIndex++;
+            int elementIndexValue4 = 0;
             ConcatRecipePart concatRecipePart4 = (ConcatRecipePart) list3.get(0);
-            int bj = bg;
+            int maxLocalsValue2 = maxLocalsValue;
             int bk = 0;
             if (bl) {
                 bk++;
@@ -5326,35 +5172,35 @@ public class MethodBytecode extends ClassFileComponent {
                     }
 
                     arrayList.add(new ConstantRefInstruction(19, resolvedStringConstant9));
-                    if (++br < list3.size()) {
-                        concatRecipePart4 = (ConcatRecipePart) list3.get(br);
+                    if (++elementIndexValue4 < list3.size()) {
+                        concatRecipePart4 = (ConcatRecipePart) list3.get(elementIndexValue4);
                     } else {
                         concatRecipePart4 = null;
                     }
                 } else {
                     stringBuilder.append((String) list2.get(bk++));
-                    VerifierType verifierType1 = verifierTypes[bh];
-                    bj += -1;
+                    VerifierType verifierType1 = verifierTypes[verifierTypeIndex];
+                    maxLocalsValue2 += -1;
                     if (verifierType1.isIntLike()) {
-                        arrayList.add(Instruction.createIntLoad(bj, this.localVariableList, 1));
+                        arrayList.add(Instruction.createIntLoad(maxLocalsValue2, this.localVariableList, 1));
                     } else if (verifierType1 == VerifierType.FLOAT) {
-                        arrayList.add(Instruction.createFloatLoad(bj, this.localVariableList, 1));
+                        arrayList.add(Instruction.createFloatLoad(maxLocalsValue2, this.localVariableList, 1));
                     } else if (verifierType1 == VerifierType.DOUBLE) {
-                        bj += -1;
-                        arrayList.add(Instruction.createDoubleLoad(bj, this.localVariableList, 1));
+                        maxLocalsValue2 += -1;
+                        arrayList.add(Instruction.createDoubleLoad(maxLocalsValue2, this.localVariableList, 1));
                     } else if (verifierType1 == VerifierType.LONG) {
-                        bj += -1;
-                        arrayList.add(Instruction.createLongLoad(bj, this.localVariableList, 1));
+                        maxLocalsValue2 += -1;
+                        arrayList.add(Instruction.createLongLoad(maxLocalsValue2, this.localVariableList, 1));
                     } else if (verifierType1.isArray() || verifierType1.isClassType() || verifierType1.isNull()) {
-                        arrayList.add(Instruction.createObjectLoad(bj, this.localVariableList, 1));
+                        arrayList.add(Instruction.createObjectLoad(maxLocalsValue2, this.localVariableList, 1));
                     }
 
-                    bh++;
+                    verifierTypeIndex++;
                 }
             }
 
-            if (bg != maxLocals) {
-                this.setMaxLocals(bg);
+            if (maxLocalsValue != maxLocals) {
+                this.setMaxLocals(maxLocalsValue);
             }
         }
 
@@ -5362,7 +5208,7 @@ public class MethodBytecode extends ClassFileComponent {
             map1.put(resolvedInvokeDynamic, stringBuilder.toString());
         }
 
-        return new CodeInsertion(arrayList, ba - 1, 0, be);
+        return new CodeInsertion(arrayList, ba - 1, 0, extraStackSizeValue);
     }
 
     public void appendExceptionUnwrap(
@@ -5407,91 +5253,103 @@ public class MethodBytecode extends ClassFileComponent {
 
         iterator = list4.iterator();
 
-        label114:
         while (iterator.hasNext()) {
             ExceptionTableEntry exceptionTableEntry3 = (ExceptionTableEntry) iterator.next();
             ResolvedClassConstant resolvedClassConstant = exceptionTableEntry3.getCatchType();
             if (resolvedClassConstant != null) {
+                boolean covered = false;
                 Iterator iterator1 = list4.iterator();
 
                 while (iterator1.hasNext()) {
                     ExceptionTableEntry exceptionTableEntry2 = (ExceptionTableEntry) iterator1.next();
-                    String string = exceptionTableEntry3.getCatchTypeName();
-                    String string1 = exceptionTableEntry2.getCatchTypeName();
-                    if (exceptionTableEntry2.isWithinRange(ba, bb) && this.areRelatedTypes(string, string1, ignoreMissingReferencesSpec1, classHierarchyQuery)) {
-                        continue label114;
+                    String catchTypeName = exceptionTableEntry3.getCatchTypeName();
+                    String catchTypeNameValue = exceptionTableEntry2.getCatchTypeName();
+                    if (exceptionTableEntry2.isWithinRange(ba, bb) && this.areRelatedTypes(catchTypeName, catchTypeNameValue, ignoreMissingReferencesSpec1, classHierarchyQuery)) {
+                        covered = true;
+                        break;
                     }
                 }
 
-                return resolvedClassConstant.getClassName();
+                if (!covered) {
+                    return resolvedClassConstant.getClassName();
+                }
             }
         }
 
         if (list3 != null) {
             iterator = list3.iterator();
 
-            label97:
             while (iterator.hasNext()) {
                 ResolvedClassConstant resolvedClassConstant1 = (ResolvedClassConstant) iterator.next();
-                String string3 = resolvedClassConstant1.getClassName();
+                String className = resolvedClassConstant1.getClassName();
+                boolean covered = false;
                 Iterator iterator3 = list4.iterator();
 
                 while (iterator3.hasNext()) {
                     ExceptionTableEntry exceptionTableEntry5 = (ExceptionTableEntry) iterator3.next();
                     if (exceptionTableEntry5.isWithinRange(ba, bb)) {
-                        String string6 = exceptionTableEntry5.getCatchTypeName();
-                        if (this.areRelatedTypes(string3, string6, ignoreMissingReferencesSpec1, classHierarchyQuery)) {
-                            continue label97;
+                        String catchTypeNameValue2 = exceptionTableEntry5.getCatchTypeName();
+                        if (this.areRelatedTypes(className, catchTypeNameValue2, ignoreMissingReferencesSpec1, classHierarchyQuery)) {
+                            covered = true;
+                            break;
                         }
                     }
                 }
 
-                return resolvedClassConstant1.getClassName();
+                if (!covered) {
+                    return resolvedClassConstant1.getClassName();
+                }
             }
         }
 
         if (list2 != null) {
             iterator = list2.iterator();
 
-            label83:
             while (iterator.hasNext()) {
                 ResolvedClassConstant resolvedClassConstant2 = (ResolvedClassConstant) iterator.next();
-                String string4 = resolvedClassConstant2.getClassName();
+                String classNameValue = resolvedClassConstant2.getClassName();
+                boolean covered = false;
                 Iterator iterator4 = list4.iterator();
 
                 while (iterator4.hasNext()) {
                     ExceptionTableEntry exceptionTableEntry6 = (ExceptionTableEntry) iterator4.next();
                     if (exceptionTableEntry6.isWithinRange(ba, bb)) {
-                        String string7 = exceptionTableEntry6.getCatchTypeName();
-                        if (this.areRelatedTypes(string4, string7, ignoreMissingReferencesSpec1, classHierarchyQuery)) {
-                            continue label83;
+                        String catchTypeNameValue3 = exceptionTableEntry6.getCatchTypeName();
+                        if (this.areRelatedTypes(classNameValue, catchTypeNameValue3, ignoreMissingReferencesSpec1, classHierarchyQuery)) {
+                            covered = true;
+                            break;
                         }
                     }
                 }
 
-                return resolvedClassConstant2.getClassName();
+                if (!covered) {
+                    return resolvedClassConstant2.getClassName();
+                }
             }
         }
 
         if (bl && list1 != null) {
             iterator = list1.iterator();
 
-            label68:
             while (iterator.hasNext()) {
                 String string2 = (String) iterator.next();
+                boolean covered = false;
                 Iterator iterator2 = list4.iterator();
 
                 while (iterator2.hasNext()) {
                     ExceptionTableEntry exceptionTableEntry4 = (ExceptionTableEntry) iterator2.next();
                     if (exceptionTableEntry4.isWithinRange(ba, bb)) {
-                        String string5 = exceptionTableEntry4.getCatchTypeName();
-                        if (this.areRelatedTypes(string2, string5, ignoreMissingReferencesSpec1, classHierarchyQuery)) {
-                            continue label68;
+                        String catchTypeNameValue4 = exceptionTableEntry4.getCatchTypeName();
+                        if (this.areRelatedTypes(string2, catchTypeNameValue4, ignoreMissingReferencesSpec1, classHierarchyQuery)) {
+                            covered = true;
+                            break;
                         }
                     }
                 }
 
-                return string2;
+                if (!covered) {
+                    return string2;
+                }
             }
         }
 
@@ -5513,8 +5371,8 @@ public class MethodBytecode extends ClassFileComponent {
 
             Arrays.sort(integers);
 
-            for (int i = 0; i < keyCount; i++) {
-                Integer integer = integers[i];
+            for (int integerIndex = 0; integerIndex < keyCount; integerIndex++) {
+                Integer integer = integers[integerIndex];
                 int bc = 0;
                 List list1 = listMultimap.getValues(integer);
                 if (integer == 0) {
@@ -5559,33 +5417,33 @@ public class MethodBytecode extends ClassFileComponent {
                 }
             }
 
-            int bf = arrayList.size();
-            int bg = this.instructions.size();
-            ArrayList arrayList1 = new ArrayList(bg + bf);
-            int bh = 0;
-            int bi = 0;
-            int bj = 0;
+            int arrayListSize = arrayList.size();
+            int instructionsSize = this.instructions.size();
+            ArrayList arrayList1 = new ArrayList(instructionsSize + arrayListSize);
+            int elementIndex = 0;
+            int integerValue = 0;
+            int integerValue2 = 0;
             if (labelInstruction != null) {
                 arrayList1.add(labelInstruction);
-                bh++;
+                elementIndex++;
             }
 
-            int bk;
-            if (bf > bh) {
-                bk = ((LabelInstruction) arrayList.get(bh)).getOffset();
+            int offset;
+            if (arrayListSize > elementIndex) {
+                offset = ((LabelInstruction) arrayList.get(elementIndex)).getOffset();
             } else {
-                bk = -1;
+                offset = -1;
             }
 
-            for (int i = 0; i < bg; i++) {
-                if (bh < bf && bi > bk) {
-                    List list2 = listMultimap.getValues(integers[labelInstruction == null ? bh : bh - 1]);
+            for (int elementIndexValue = 0; elementIndexValue < instructionsSize; elementIndexValue++) {
+                if (elementIndex < arrayListSize && integerValue > offset) {
+                    List list2 = listMultimap.getValues(integers[labelInstruction == null ? elementIndex : elementIndex - 1]);
                     Iterator iterator1 = list2.iterator();
 
                     while (iterator1.hasNext()) {
                         LabelTargetHolder labelTargetHolder2 = (LabelTargetHolder) iterator1.next();
                         if (!(labelTargetHolder2 instanceof LineNumberEntry)) {
-                            Instruction instruction1 = (Instruction) this.instructions.get(i - 1);
+                            Instruction instruction1 = (Instruction) this.instructions.get(elementIndexValue - 1);
                             StringBuilder stringBuilder = new StringBuilder();
                             Integer integer2 = 11169;
                             Integer integer1 = -167;
@@ -5598,9 +5456,9 @@ public class MethodBytecode extends ClassFileComponent {
                                             .append("' points into middle of an instruction : ")
                                             .append(instruction1.getMnemonic())
                                             .append(" : ")
-                                            .append(bj)
+                                            .append(integerValue2)
                                             .append(" : ")
-                                            .append(bk)
+                                            .append(offset)
                                             .toString()
                             );
                         }
@@ -5612,10 +5470,10 @@ public class MethodBytecode extends ClassFileComponent {
 
                     do {
                         if (!bl) {
-                            List list3 = listMultimap.getValues(integerCache.valueOf(bi));
+                            List list3 = listMultimap.getValues(integerCache.valueOf(integerValue));
                             if (list3 != null) {
-                                for (int j = 0; j < list3.size(); j++) {
-                                    if (list3.get(j) instanceof LineNumberEntry) {
+                                for (int elementIndexValue2 = 0; elementIndexValue2 < list3.size(); elementIndexValue2++) {
+                                    if (list3.get(elementIndexValue2) instanceof LineNumberEntry) {
                                         bl = true;
                                         break;
                                     }
@@ -5624,33 +5482,33 @@ public class MethodBytecode extends ClassFileComponent {
                         }
 
                         if (!bl) {
-                            arrayList1.add(arrayList.get(bh++));
+                            arrayList1.add(arrayList.get(elementIndex++));
                         } else {
-                            bh++;
+                            elementIndex++;
                             printWriter.println("ERROR: " + this.getLocationName() + " : " + "Invalid LineNumberTable Attribute" + " (D). Could not be corrected!");
                         }
 
-                        if (bh < keyCount) {
-                            bk = ((LabelInstruction) arrayList.get(bh)).getOffset();
+                        if (elementIndex < keyCount) {
+                            offset = ((LabelInstruction) arrayList.get(elementIndex)).getOffset();
                         }
-                    } while (bh < keyCount && bi > bk);
+                    } while (elementIndex < keyCount && integerValue > offset);
                 }
 
-                if (bh < bf && bi == bk) {
-                    arrayList1.add(arrayList.get(bh++));
-                    if (bh < bf) {
-                        bk = ((LabelInstruction) arrayList.get(bh)).getOffset();
+                if (elementIndex < arrayListSize && integerValue == offset) {
+                    arrayList1.add(arrayList.get(elementIndex++));
+                    if (elementIndex < arrayListSize) {
+                        offset = ((LabelInstruction) arrayList.get(elementIndex)).getOffset();
                     }
                 }
 
-                Instruction instruction2 = (Instruction) this.instructions.get(i);
+                Instruction instruction2 = (Instruction) this.instructions.get(elementIndexValue);
                 arrayList1.add(instruction2);
-                bj = bi;
-                bi += instruction2.getLength();
+                integerValue2 = integerValue;
+                integerValue += instruction2.getLength();
             }
 
-            if (bh < bf && bi == bk) {
-                arrayList1.add(arrayList.get(bh));
+            if (elementIndex < arrayListSize && integerValue == offset) {
+                arrayList1.add(arrayList.get(elementIndex));
             }
 
             this.instructions = arrayList1;
@@ -5658,32 +5516,32 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void applyCodeInsertions(List list1, String string, boolean bl, boolean bl1) throws ZkmProcessingException {
-        int ba = this.instructions.size();
-        int bb = -1;
+        int instructionsSize = this.instructions.size();
+        int positionValue = -1;
         if (bl1) {
-            bb = this.findMarkerLabelIndex();
+            positionValue = this.findMarkerLabelIndex();
         }
 
-        int bc = list1.size();
-        if (bc > 0) {
+        int list1Size = list1.size();
+        if (list1Size > 0) {
             Collections.sort(list1);
-            ArrayList arrayList = new ArrayList(this.instructions.size() + bc * 3);
-            int bd = 0;
+            ArrayList arrayList = new ArrayList(this.instructions.size() + list1Size * 3);
+            int extraStackSizeValue = 0;
             int be = 0;
-            Instruction instruction1 = ba > 0 ? (Instruction) this.instructions.get(0) : null;
+            Instruction instruction1 = instructionsSize > 0 ? (Instruction) this.instructions.get(0) : null;
             int bf = 0;
 
-            for (int i = 0; i < bc; i++) {
-                CodeInsertion codeInsertion = (CodeInsertion) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                CodeInsertion codeInsertion = (CodeInsertion) list1.get(elementIndex);
                 int extraStackSize = codeInsertion.getExtraStackSize();
-                if (extraStackSize > bd) {
-                    bd = extraStackSize;
+                if (extraStackSize > extraStackSizeValue) {
+                    extraStackSizeValue = extraStackSize;
                 }
 
                 boolean bl2 = false;
                 int position = codeInsertion.getPosition();
-                if (bb > -1 && (position == -1 || position == 0)) {
-                    position = bb;
+                if (positionValue > -1 && (position == -1 || position == 0)) {
+                    position = positionValue;
                 }
 
                 if (position == -1) {
@@ -5694,15 +5552,15 @@ public class MethodBytecode extends ClassFileComponent {
                         bl2 = true;
                     }
                 } else {
-                    for (int j = be; j <= position; j++) {
-                        arrayList.add(this.instructions.get(j));
+                    for (int elementIndexValue = be; elementIndexValue <= position; elementIndexValue++) {
+                        arrayList.add(this.instructions.get(elementIndexValue));
                     }
                 }
 
                 List list2 = codeInsertion.getInstructions();
 
-                for (int j = 0; j < list2.size(); j++) {
-                    Instruction instruction2 = (Instruction) list2.get(j);
+                for (int elementIndexValue2 = 0; elementIndexValue2 < list2.size(); elementIndexValue2++) {
+                    Instruction instruction2 = (Instruction) list2.get(elementIndexValue2);
                     arrayList.add(instruction2);
                     if (instruction2.isStringConstantLoad()) {
                         this.stringConstantCount++;
@@ -5720,14 +5578,14 @@ public class MethodBytecode extends ClassFileComponent {
                 be = position + 1 + codeInsertion.getReplacedCount() + (bl2 ? bf : 0);
             }
 
-            for (int i = be; i < ba; i++) {
-                arrayList.add(this.instructions.get(i));
+            for (int elementIndexValue3 = be; elementIndexValue3 < instructionsSize; elementIndexValue3++) {
+                arrayList.add(this.instructions.get(elementIndexValue3));
             }
 
             this.instructions = arrayList;
             CodeAttributeBody codeAttributeBody = (CodeAttributeBody) this.getParent();
-            int bn = codeAttributeBody.getMaxStack() + bd;
-            codeAttributeBody.setMaxStack(bn);
+            int maxStackValue = codeAttributeBody.getMaxStack() + extraStackSizeValue;
+            codeAttributeBody.setMaxStack(maxStackValue);
             int codeLength = this.getCodeLength();
             if (!bl) {
                 this.recomputeOffsets();
@@ -5785,71 +5643,51 @@ public class MethodBytecode extends ClassFileComponent {
     ) {
         ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
         boolean bl = false;
-        int ba = this.instructions.size();
-        int bb = 0;
+        int instructionsSize = this.instructions.size();
+        int elementIndexValue = 0;
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isLabel() && ((LabelInstruction) instruction1).isMarker()) {
-                bb = i;
+                elementIndexValue = elementIndex;
                 break;
             }
         }
 
-        for (int i = bb; i < ba; i++) {
-            Instruction instruction3 = (Instruction) this.instructions.get(i);
+        for (int elementIndexValue2 = elementIndexValue; elementIndexValue2 < instructionsSize; elementIndexValue2++) {
+            Instruction instruction3 = (Instruction) this.instructions.get(elementIndexValue2);
             if (instruction3.isLongConstantLoad() || instruction3.isLongConstant()) {
                 boolean bl1 = false;
-                if (i < ba - 1) {
-                    Instruction instruction2 = (Instruction) this.instructions.get(i + 1);
+                if (elementIndexValue2 < instructionsSize - 1) {
+                    Instruction instruction2 = (Instruction) this.instructions.get(elementIndexValue2 + 1);
                     if (instruction2.isFieldStore()) {
                         AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) ((ResolvedFieldRef) ((ConstantRefInstruction) instruction2).getConstantPoolEntry())
                                 .getResolvedMember();
                         if (abstractFieldInfo != null && abstractFieldInfo.isProgramMember()) {
                             bl1 = true;
-                            label62:
                             if (longEncryptionExclusionHandler == null || !longEncryptionExclusionHandler.isFieldExcluded((FieldInfo) abstractFieldInfo)) {
                                 int opcode = instruction3.getOpcode();
-                                long bg;
-                                if (opcode != 9) {
-                                    if (opcode != 10) {
-                                        instruction3.collectLongConstant(multiMapTable, set1, methodInfo1, i);
-                                        break label62;
-                                    }
-
-                                    bg = -1L;
+                                if (opcode != 9 && opcode != 10) {
+                                    instruction3.collectLongConstant(multiMapTable, set1, methodInfo1, elementIndexValue2);
                                 } else {
-                                    bg = -1L;
-                                }
-
-                                long be = bg;
-                                if (opcode == 9) {
                                     if (!HiddenOptionFlags.ENCRYPT_TRIVIAL_LONGS) {
                                         continue;
                                     }
-
-                                    be = 0L;
-                                } else if (opcode == 10) {
-                                    if (!HiddenOptionFlags.ENCRYPT_TRIVIAL_LONGS) {
-                                        continue;
-                                    }
-
-                                    be = 1L;
+                                    long valueValue = opcode == 9 ? 0L : 1L;
+                                    ConstantLong constantLong = constantPool1.getOrAddLongConstant(valueValue, list1, false, true);
+                                    ConstantRefInstruction constantRefInstruction = new ConstantRefInstruction(20, constantLong);
+                                    this.instructions.set(elementIndexValue2, constantRefInstruction);
+                                    this.longConstantCount++;
+                                    multiMapTable.addEntry(programClass1, methodInfo1, constantLong, new RankedValue(elementIndexValue2, constantRefInstruction));
+                                    bl = true;
                                 }
-
-                                ConstantLong constantLong = constantPool1.getOrAddLongConstant(be, list1, false, true);
-                                ConstantRefInstruction constantRefInstruction = new ConstantRefInstruction(20, constantLong);
-                                this.instructions.set(i, constantRefInstruction);
-                                this.longConstantCount++;
-                                multiMapTable.addEntry(programClass1, methodInfo1, constantLong, new RankedValue(i, constantRefInstruction));
-                                bl = true;
                             }
                         }
                     }
                 }
 
                 if (!bl1 && !instruction3.isLongConstant()) {
-                    Integer integer = i;
+                    Integer integer = elementIndexValue2;
                     instruction3.collectLongConstant(multiMapTable, set1, methodInfo1, integer);
                 }
             }
@@ -5869,10 +5707,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void markReachableMethods(Set set1, Set set2) throws ZkmProcessingException {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             switch (instruction1.getOpcode()) {
                 case 182:
                 case 183:
@@ -5930,12 +5768,12 @@ public class MethodBytecode extends ClassFileComponent {
         }
 
         int ba = this.findMarkerLabelIndex();
-        int[] bb = this.computeInstructionOffsets();
+        int[] integerArray = this.computeInstructionOffsets();
         List list8 = methodFlowAnalyzer.getNaturalLoops();
         HashMap hashMap = ZkmUtils.createHashMap();
 
-        for (int i = 0; i < list8.size(); i++) {
-            NaturalLoop naturalLoop = (NaturalLoop) list8.get(i);
+        for (int elementIndex = 0; elementIndex < list8.size(); elementIndex++) {
+            NaturalLoop naturalLoop = (NaturalLoop) list8.get(elementIndex);
             BasicBlock basicBlock = naturalLoop.getHeader();
             BasicBlock basicBlock1 = naturalLoop.getFirstLatchBlock();
             BasicBlock basicBlock2 = naturalLoop.getFollowBlock();
@@ -5949,21 +5787,21 @@ public class MethodBytecode extends ClassFileComponent {
                 int startIndex = basicBlock.getStartIndex();
                 int endIndex = basicBlock3.getEndIndex();
                 MutableInt mutableInt = new MutableInt(endIndex);
-                int bf = this.findProtectableRangeStart(startIndex, endIndex, mutableInt, ba, bl1, methodFlowAnalyzer);
-                if (bf > -1) {
+                int elementIndexValue = this.findProtectableRangeStart(startIndex, endIndex, mutableInt, ba, bl1, methodFlowAnalyzer);
+                if (elementIndexValue > -1) {
                     int value = mutableInt.getValue();
-                    if (bf <= basicBlock.getEndIndex() && value >= basicBlock3.getStartIndex()) {
+                    if (elementIndexValue <= basicBlock.getEndIndex() && value >= basicBlock3.getStartIndex()) {
                         String string = this.findUncoveredExceptionType(
-                                bb[bf], bb[value + 1], classHierarchyQuery, list1, list2, list3, list4, bl, ignoreMissingReferencesSpec1
+                                integerArray[elementIndexValue], integerArray[value + 1], classHierarchyQuery, list1, list2, list3, list4, bl, ignoreMissingReferencesSpec1
                         );
                         if (string != null) {
                             boolean bl3 = basicBlock3.lastInstructionFallsThrough(new NonNullList(this.instructions));
                             List list10 = list7;
                             List list9 = list6;
                             Boolean boolean1 = bl3;
-                            String string1 = string;
+                            String valueValue2 = string;
                             Integer integer = value;
-                            this.addRethrowingHandler(bf, integer, string1, boolean1, list9, list10, list5);
+                            this.addRethrowingHandler(elementIndexValue, integer, valueValue2, boolean1, list9, list10, list5);
                         }
                     }
                 }
@@ -5982,24 +5820,24 @@ public class MethodBytecode extends ClassFileComponent {
                     Collections.sort(list14);
                     BasicBlock basicBlock5 = (BasicBlock) list14.get(0);
                     if (basicBlock4.getEndIndex() == basicBlock5.getStartIndex() - 1 && basicBlock5.getEndIndex() < this.instructions.size() - 1) {
-                        int bh = basicBlock4.getStartIndex();
-                        int bi = basicBlock5.getEndIndex();
-                        MutableInt mutableInt1 = new MutableInt(bi);
-                        int bj = this.findProtectableRangeStart(bh, bi, mutableInt1, ba, bl1, methodFlowAnalyzer);
-                        if (bj > -1) {
-                            int bk = mutableInt1.getValue();
-                            if (bj <= basicBlock4.getEndIndex() && bk >= basicBlock5.getStartIndex()) {
+                        int startIndexValue = basicBlock4.getStartIndex();
+                        int endIndexValue = basicBlock5.getEndIndex();
+                        MutableInt mutableInt1 = new MutableInt(endIndexValue);
+                        int elementIndexValue2 = this.findProtectableRangeStart(startIndexValue, endIndexValue, mutableInt1, ba, bl1, methodFlowAnalyzer);
+                        if (elementIndexValue2 > -1) {
+                            int valueValue = mutableInt1.getValue();
+                            if (elementIndexValue2 <= basicBlock4.getEndIndex() && valueValue >= basicBlock5.getStartIndex()) {
                                 String string3 = this.findUncoveredExceptionType(
-                                        bb[bj], bb[bk + 1], classHierarchyQuery, list1, list2, list3, list4, bl, ignoreMissingReferencesSpec1
+                                        integerArray[elementIndexValue2], integerArray[valueValue + 1], classHierarchyQuery, list1, list2, list3, list4, bl, ignoreMissingReferencesSpec1
                                 );
                                 if (string3 != null) {
                                     boolean bl2 = basicBlock5.lastInstructionFallsThrough(new NonNullList(this.instructions));
                                     List list12 = list7;
                                     List list11 = list6;
                                     Boolean boolean2 = bl2;
-                                    String string2 = string3;
-                                    Integer integer1 = bk;
-                                    this.addRethrowingHandler(bj, integer1, string2, boolean2, list11, list12, list5);
+                                    String valueValue3 = string3;
+                                    Integer integer1 = valueValue;
+                                    this.addRethrowingHandler(elementIndexValue2, integer1, valueValue3, boolean2, list11, list12, list5);
                                 }
                             }
                         }
@@ -6117,8 +5955,8 @@ public class MethodBytecode extends ClassFileComponent {
         this.applyCodeInsertions(arrayList1, "Flow Obfuscation", false, true);
     }
 
-    public void setMaxLocals(int ba) throws ZkmProcessingException {
-        ((CodeAttributeBody) this.getParent()).setMaxLocals(ba);
+    public void setMaxLocals(int maxLocalsArgument) throws ZkmProcessingException {
+        ((CodeAttributeBody) this.getParent()).setMaxLocals(maxLocalsArgument);
     }
 
     public int planFlowObfuscationJumps(
@@ -6149,7 +5987,7 @@ public class MethodBytecode extends ClassFileComponent {
             throw new CorruptHierarchyException("StackOverflowError trapped in '" + this.getQualifiedMethodName() + "' (1)", stackOverflowError);
         }
 
-        int bc = this.findMarkerLabelIndex();
+        int integerValue = this.findMarkerLabelIndex();
         this.minReturnDistance = methodFlowAnalyzer.getShortestReturnPathLength();
         StackFrameState[] stackFrameStates = methodFlowAnalyzer.copyFrameStates();
         Set set1 = methodFlowAnalyzer.getMonitorTypes();
@@ -6162,9 +6000,9 @@ public class MethodBytecode extends ClassFileComponent {
             list2 = methodFlowAnalyzer.getNaturalLoops();
         }
 
-        for (int i = 0; i < list2.size(); i++) {
-            NaturalLoop naturalLoop = (NaturalLoop) list2.get(i);
-            if (bc <= -1 || !naturalLoop.containsInstruction(bc)) {
+        for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
+            NaturalLoop naturalLoop = (NaturalLoop) list2.get(elementIndex);
+            if (integerValue <= -1 || !naturalLoop.containsInstruction(integerValue)) {
                 BasicBlock basicBlock = naturalLoop.getHeader();
                 BasicBlock basicBlock1 = naturalLoop.getFirstLatchBlock();
                 hashMap.put(basicBlock, basicBlock);
@@ -6212,7 +6050,7 @@ public class MethodBytecode extends ClassFileComponent {
 
             while (iterator.hasNext()) {
                 BasicBlock basicBlock4 = (BasicBlock) iterator.next();
-                if (!hashMap.containsKey(basicBlock4) && (bc <= -1 || basicBlock4.getStartIndex() > bc)) {
+                if (!hashMap.containsKey(basicBlock4) && (integerValue <= -1 || basicBlock4.getStartIndex() > integerValue)) {
                     List list4 = basicBlock4.getSuccessorsCopy();
                     if (list4 != null && list4.size() > 1) {
                         MutableInt mutableInt2 = new MutableInt(-1);
@@ -6283,7 +6121,7 @@ public class MethodBytecode extends ClassFileComponent {
 
             while (iterator1.hasNext()) {
                 BasicBlock basicBlock5 = (BasicBlock) iterator1.next();
-                if (!hashMap.containsKey(basicBlock5) && (bc <= -1 || basicBlock5.getStartIndex() > bc)) {
+                if (!hashMap.containsKey(basicBlock5) && (integerValue <= -1 || basicBlock5.getStartIndex() > integerValue)) {
                     List list5 = basicBlock5.getSuccessorsCopy();
                     if (list5 != null && list5.size() > 1) {
                         MutableInt mutableInt3 = new MutableInt(-1);
@@ -6346,23 +6184,23 @@ public class MethodBytecode extends ClassFileComponent {
 
         list3 = methodFlowAnalyzer.getBlocksCopy();
         Collections.sort(list3);
-        int be = this.instructions.size();
+        int instructionsSize = this.instructions.size();
         Iterator iterator2 = list3.iterator();
 
         while (iterator2.hasNext()) {
             BasicBlock basicBlock6 = (BasicBlock) iterator2.next();
-            if (bc <= -1 || basicBlock6.getStartIndex() > bc) {
+            if (integerValue <= -1 || basicBlock6.getStartIndex() > integerValue) {
                 Instruction instruction1 = (Instruction) this.instructions.get(basicBlock6.getEndIndex());
-                int bf = basicBlock6.getEndIndex() + 1;
-                if (instruction1.getOpcode() == 167 && basicBlock6.getInstructionCount() > 1 && bf < be) {
+                int elementIndexValue = basicBlock6.getEndIndex() + 1;
+                if (instruction1.getOpcode() == 167 && basicBlock6.getInstructionCount() > 1 && elementIndexValue < instructionsSize) {
                     boolean bl4 = true;
                     boolean bl5 = true;
                     StackFrameState stackFrameState = stackFrameStates[basicBlock6.getEndIndex()];
-                    StackFrameState stackFrameState1 = stackFrameStates[bf];
+                    StackFrameState stackFrameState1 = stackFrameStates[elementIndexValue];
                     LabelInstruction labelInstruction1 = ((BranchInstruction) instruction1).getTargetLabel();
                     if (stackFrameState != null
                             && stackFrameState1 != null
-                            && labelInstruction1 != this.instructions.get(bf)
+                            && labelInstruction1 != this.instructions.get(elementIndexValue)
                             && (stackFrameState.isCompatibleWith(commonSuperTypeResolver1, stackFrameState1, set1, bl1, string) || !bl)
                             && stackFrameState.getSubroutineEntryLabel() == stackFrameState1.getSubroutineEntryLabel()) {
                         LabeledCodeInsertion labeledCodeInsertion2 = new LabeledCodeInsertion(true, labelInstruction1, basicBlock6.getEndIndex() - 1, 1);
@@ -6384,11 +6222,11 @@ public class MethodBytecode extends ClassFileComponent {
         return ((CodeAttributeBody) this.getParent()).getMaxLocals();
     }
 
-    public HashSet collectLabelsAt(int[] ba) {
+    public HashSet collectLabelsAt(int[] integerArray) {
         HashSet hashSet = ZkmUtils.createHashSet();
 
-        for (int i = 0; i < ba.length; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(ba[i]);
+        for (int integerArrayElementIndex = 0; integerArrayElementIndex < integerArray.length; integerArrayElementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(integerArray[integerArrayElementIndex]);
             if (instruction1 instanceof LabelInstruction) {
                 hashSet.add((LabelInstruction) instruction1);
             }
@@ -6431,9 +6269,9 @@ public class MethodBytecode extends ClassFileComponent {
     private ClassMemberRef createClassMemberRef(
             MemberInfo memberInfo1, ResolvedMemberRef resolvedMemberRef, ReferenceObfuscator referenceObfuscator, ClassResolver classResolver1
     ) throws ZkmException, IOException {
-        String string = resolvedMemberRef.getReferencedClassName();
-        if (string.charAt(0) == '[') {
-            string = "java/lang/Object";
+        String referencedClassName = resolvedMemberRef.getReferencedClassName();
+        if (referencedClassName.charAt(0) == '[') {
+            referencedClassName = "java/lang/Object";
         }
 
         ClassFileBase classFileBase = this.getOwningClass();
@@ -6447,7 +6285,7 @@ public class MethodBytecode extends ClassFileComponent {
             string1 = "in Reference Obfuscation";
         }
 
-        ClassFileBase classFileBase1 = classResolver1.getVersionedClass(string, integer, string1);
+        ClassFileBase classFileBase1 = classResolver1.getVersionedClass(referencedClassName, integer, string1);
         ClassMemberRef classMemberRef;
         if (memberInfo1.isProgramMember() && !HiddenOptionFlags.USE_ACCESSED_CLASS_FOR_REFERENCES) {
             classMemberRef = referenceObfuscator.getOrCreateMemberRef(memberInfo1, memberInfo1.getOwningClass());
@@ -6466,13 +6304,13 @@ public class MethodBytecode extends ClassFileComponent {
 
         while (iterator.hasNext()) {
             TrackedValue trackedValue = (TrackedValue) iterator.next();
-            String string = trackedValue.getNormalizedName();
-            if (string != null && string.length() > 0) {
+            String normalizedName = trackedValue.getNormalizedName();
+            if (normalizedName != null && normalizedName.length() > 0) {
                 Iterator iterator1 = set2.iterator();
 
                 while (iterator1.hasNext()) {
                     TrackedValue trackedValue1 = (TrackedValue) iterator1.next();
-                    Set set5 = this.buildReflectedSignatures(string, bl, trackedValue1);
+                    Set set5 = this.buildReflectedSignatures(normalizedName, bl, trackedValue1);
                     if (set5 != null) {
                         AbstractMethodInfo abstractMethodInfo = null;
                         Iterator iterator2 = set5.iterator();
@@ -6535,29 +6373,29 @@ public class MethodBytecode extends ClassFileComponent {
 
         while (iterator.hasNext()) {
             TrackedValue trackedValue = (TrackedValue) iterator.next();
-            String string = trackedValue.getNormalizedName();
-            if (string != null && string.length() > 0) {
-                String string1 = ZkmUtils.dotsToSlashes(string);
-                ClassFileBase classFileBase = lookupClass(string1, classpathClassLoader1);
+            String normalizedName = trackedValue.getNormalizedName();
+            if (normalizedName != null && normalizedName.length() > 0) {
+                String key = ZkmUtils.dotsToSlashes(normalizedName);
+                ClassFileBase classFileBase = lookupClass(key, classpathClassLoader1);
                 if (classFileBase != null) {
                     Iterator iterator1 = set2.iterator();
 
                     while (iterator1.hasNext()) {
                         TrackedValue trackedValue1 = (TrackedValue) iterator1.next();
-                        String string2 = trackedValue1.getNormalizedName();
-                        if (string2 != null && string2.length() > 0) {
+                        String normalizedNameValue = trackedValue1.getNormalizedName();
+                        if (normalizedNameValue != null && normalizedNameValue.length() > 0) {
                             AbstractFieldInfo[] abstractFieldInfos;
                             if (set3 != null && set3.size() > 0) {
                                 ArrayList arrayList = new ArrayList(set3.size());
                                 Iterator iterator2 = set3.iterator();
 
                                 while (iterator2.hasNext()) {
-                                    String string3 = ((TrackedValue) iterator2.next()).getStringValue();
+                                    String stringValue = ((TrackedValue) iterator2.next()).getStringValue();
                                     AbstractFieldInfo abstractFieldInfo;
                                     if (classFileBase.isProgramClass()) {
-                                        abstractFieldInfo = classMemberLookup1.findField(string1, string2, MethodSignature.toTypeDescriptor(string3));
+                                        abstractFieldInfo = classMemberLookup1.findField(key, normalizedNameValue, MethodSignature.toTypeDescriptor(stringValue));
                                     } else {
-                                        abstractFieldInfo = classFileBase.findField(string2, MethodSignature.toTypeDescriptor(string3));
+                                        abstractFieldInfo = classFileBase.findField(normalizedNameValue, MethodSignature.toTypeDescriptor(stringValue));
                                     }
 
                                     if (abstractFieldInfo != null) {
@@ -6567,9 +6405,9 @@ public class MethodBytecode extends ClassFileComponent {
 
                                 abstractFieldInfos = ((com.zelix.klassmaster.classfile.AbstractFieldInfo[]) (arrayList.toArray(new AbstractFieldInfo[arrayList.size()])));
                             } else if (classFileBase.isProgramClass()) {
-                                abstractFieldInfos = classMemberLookup1.findFieldsByName(string1, string2);
+                                abstractFieldInfos = classMemberLookup1.findFieldsByName(key, normalizedNameValue);
                             } else {
-                                abstractFieldInfos = classFileBase.findFieldsByName(string2);
+                                abstractFieldInfos = classFileBase.findFieldsByName(normalizedNameValue);
                             }
 
                             if (abstractFieldInfos != null && abstractFieldInfos.length > 0) {
@@ -6606,9 +6444,9 @@ public class MethodBytecode extends ClassFileComponent {
         return this.localVariableList;
     }
 
-    public boolean isInAnyRange(int ba, int[][] bb) {
-        for (int[] bc : bb) {
-            if (ba >= bc[0] && ba < bc[1]) {
+    public boolean isInAnyRange(int ba, int[][] integerArrayArray) {
+        for (int[] integerArray : integerArrayArray) {
+            if (ba >= integerArray[0] && ba < integerArray[1]) {
                 return true;
             }
         }
@@ -6617,10 +6455,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void collectInvokeOpcodes(HashMap hashMap) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             int opcode = instruction1.getOpcode();
             switch (opcode) {
                 case 182:
@@ -6634,19 +6472,19 @@ public class MethodBytecode extends ClassFileComponent {
         }
     }
 
-    public void appendIntConstant(int ba, List list1, ConstantPool constantPool1, List list2, int bb) {
+    public void appendIntConstant(int valueArgument, List list1, ConstantPool constantPool1, List list2, int bb) {
         if (!HiddenOptionFlags.ALWAYS_INLINE_INT_CONSTANTS
                 && (this.instructions.size() <= 10000 || bb <= 1000 || list2.size() >= 24000 || HiddenOptionFlags.IGNORE_METHOD_SIZE_LIMIT)) {
-            Instruction.appendIntConstant(ba, list1, constantPool1, list2);
+            Instruction.appendIntConstant(valueArgument, list1, constantPool1, list2);
         } else {
-            Instruction instruction1 = Instruction.createIntConstantPush(ba, constantPool1, list2);
+            Instruction instruction1 = Instruction.createIntConstantPush(valueArgument, constantPool1, list2);
             list1.add(instruction1);
         }
     }
 
     public boolean applyAutoReflection(
             List list1,
-            String string,
+            String valueArgument,
             List list2,
             boolean bl,
             boolean bl1,
@@ -6665,13 +6503,13 @@ public class MethodBytecode extends ClassFileComponent {
         }
 
         boolean bl4 = false;
-        int bc = this.instructions.size();
+        int instructionsSize = this.instructions.size();
         ClassResolver classResolver1 = commonSuperTypeResolver1.getClassResolver();
         ConstantPool constantPool1 = (ConstantPool) this.getOwningClass().getConstantPool();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < bc; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isMethodInvoke()) {
                 ReflectionCallSite reflectionCallSite1 = (ReflectionCallSite) hashMap.get(instruction1);
                 if (reflectionCallSite1 != null) {
@@ -6680,7 +6518,7 @@ public class MethodBytecode extends ClassFileComponent {
                         bl4 = true;
                         ReflectionLookupTemplate reflectionLookupTemplate = reflectionApiMethod.getLookupTemplate();
                         ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddMethodRef(
-                                string,
+                                valueArgument,
                                 reflectionLookupTemplate.getLookupMethodName(),
                                 reflectionLookupTemplate.getLookupMethodDescriptor(),
                                 list2,
@@ -6688,21 +6526,21 @@ public class MethodBytecode extends ClassFileComponent {
                                 classResolver1
                         );
                         ResolvedMethodRefConstant[] resolvedMethodRefConstants = null;
-                        String[] strings;
-                        if ((strings = reflectionLookupTemplate.getHelperOwnerClasses()) != null) {
-                            resolvedMethodRefConstants = new ResolvedMethodRefConstant[strings.length];
-                            String[] strings1 = reflectionLookupTemplate.getHelperMethodNames();
-                            String[] strings2 = reflectionLookupTemplate.getHelperMethodDescriptors();
+                        String[] helperOwnerClasses;
+                        if ((helperOwnerClasses = reflectionLookupTemplate.getHelperOwnerClasses()) != null) {
+                            resolvedMethodRefConstants = new ResolvedMethodRefConstant[helperOwnerClasses.length];
+                            String[] helperMethodNames = reflectionLookupTemplate.getHelperMethodNames();
+                            String[] helperMethodDescriptors = reflectionLookupTemplate.getHelperMethodDescriptors();
 
-                            for (int j = 0; j < strings1.length; j++) {
+                            for (int j = 0; j < helperMethodNames.length; j++) {
                                 resolvedMethodRefConstants[j] = constantPool1.getOrAddMethodRef(
-                                        strings[j], strings1[j], strings2[j], list2, classMemberLookup1, classResolver1
+                                        helperOwnerClasses[j], helperMethodNames[j], helperMethodDescriptors[j], list2, classMemberLookup1, classResolver1
                                 );
                             }
                         }
 
                         List list3 = reflectionLookupTemplate.createLookupInstructions(resolvedMethodRefConstant, resolvedMethodRefConstants);
-                        arrayList.add(new CodeInsertion(list3, i - 1, 0, reflectionLookupTemplate.getExtraStackSize()));
+                        arrayList.add(new CodeInsertion(list3, elementIndex - 1, 0, reflectionLookupTemplate.getExtraStackSize()));
                         if (bl3) {
                             PrintWriter printWriter = scriptEnvironment1.getLogWriter();
                             printWriter.println(
@@ -6732,16 +6570,16 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public int findProtectableRangeStart(int ba, int bb, MutableInt mutableInt, int bc, boolean bl, MethodFlowAnalyzer methodFlowAnalyzer) {
-        int bd = -1;
+        int elementIndexValue = -1;
         int be = 0;
         if (bb > bc) {
-            for (int i = bb; i >= ba; i += -1) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
-                if (instruction1.isStore() || instruction1.isJsr() || bl && (instruction1.isMonitor() || methodFlowAnalyzer.hasHeldMonitorsAt(i)) || i <= bc) {
+            for (int elementIndex = bb; elementIndex >= ba; elementIndex += -1) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
+                if (instruction1.isStore() || instruction1.isJsr() || bl && (instruction1.isMonitor() || methodFlowAnalyzer.hasHeldMonitorsAt(elementIndex)) || elementIndex <= bc) {
                     break;
                 }
 
-                bd = i;
+                elementIndexValue = elementIndex;
                 if (!instruction1.isLabel()) {
                     be++;
                 }
@@ -6752,27 +6590,27 @@ public class MethodBytecode extends ClassFileComponent {
             return -1;
         }
 
-        if (bd > ba) {
+        if (elementIndexValue > ba) {
         }
 
-        int bg = bb;
+        int valueValue = bb;
 
-        for (Instruction instruction2 = (Instruction) this.instructions.get(bg); instruction2.isLabel(); instruction2 = (Instruction) this.instructions.get(bg)) {
-            bg += -1;
+        for (Instruction instruction2 = (Instruction) this.instructions.get(valueValue); instruction2.isLabel(); instruction2 = (Instruction) this.instructions.get(valueValue)) {
+            valueValue += -1;
         }
 
-        if (bg < bb) {
-            mutableInt.setValue(bg);
+        if (valueValue < bb) {
+            mutableInt.setValue(valueValue);
         }
 
-        if (bd > -1) {
-            FrameSignatureKey frameSignatureKey = (FrameSignatureKey) methodFlowAnalyzer.getFrameStateKey(bd);
+        if (elementIndexValue > -1) {
+            FrameSignatureKey frameSignatureKey = (FrameSignatureKey) methodFlowAnalyzer.getFrameStateKey(elementIndexValue);
             if (frameSignatureKey == null || frameSignatureKey.hasUninitializedThisType()) {
                 return -1;
             }
         }
 
-        return bd;
+        return elementIndexValue;
     }
 
     public static boolean usesKeyField(
@@ -6808,9 +6646,9 @@ public class MethodBytecode extends ClassFileComponent {
     ) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList();
         HashMap hashMap = ZkmUtils.createHashMap();
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
+        for (int i = 0; i < instructionsSize; i++) {
             Instruction instruction1 = (Instruction) this.instructions.get(i);
             if (instruction1.isMethodInvoke()) {
                 ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
@@ -6823,49 +6661,39 @@ public class MethodBytecode extends ClassFileComponent {
 
         TwoKeyMap twoKeyMap4 = new TwoKeyMap(10, 10);
         if (arrayList.size() > 0) {
-            String string1 = "";
+            String message = "";
 
-            byte be;
-            label140:
-            {
-                try {
-                    MethodFlowAnalyzer methodFlowAnalyzer = this.getCachedFlowAnalyzer(map6, commonSuperTypeResolver1, classMemberLookup1);
-                    Iterator iterator = arrayList.iterator();
+            try {
+                MethodFlowAnalyzer methodFlowAnalyzer = this.getCachedFlowAnalyzer(map6, commonSuperTypeResolver1, classMemberLookup1);
+                Iterator iterator = arrayList.iterator();
 
-                    while (iterator.hasNext()) {
-                        RankedValue rankedValue = (RankedValue) iterator.next();
-                        ResolvedMethodRef resolvedMethodRef1 = (ResolvedMethodRef) rankedValue.getValue();
-                        ReflectionApiMethod reflectionApiMethod = (ReflectionApiMethod) map1.get(resolvedMethodRef1);
-                        CallArgumentValues callArgumentValues = methodFlowAnalyzer.traceReflectionCallArguments(
-                                rankedValue.getRank(),
-                                reflectionApiMethod,
-                                nestedMultiMap,
-                                nestedMultiMap1,
-                                nestedMultiMap2,
-                                map1,
-                                map2,
-                                map3,
-                                map4,
-                                map5,
-                                classMemberLookup1,
-                                map6
-                        );
-                        hashMap.put(integerCache.valueOf(rankedValue.getRank()), callArgumentValues);
-                    }
-                } catch (StackOverflowError stackOverflowError) {
-                    throw new CorruptHierarchyException("StackOverflowError trapped in '" + this.getQualifiedMethodName() + "' (2)", stackOverflowError);
-                } catch (ZkmProcessingException zkmProcessingException) {
-                    string1 = zkmProcessingException.getMessage();
-                    long bd = 56257057901662L;
-                    be = 13;
-                    break label140;
+                while (iterator.hasNext()) {
+                    RankedValue rankedValue = (RankedValue) iterator.next();
+                    ResolvedMethodRef resolvedMethodRef1 = (ResolvedMethodRef) rankedValue.getValue();
+                    ReflectionApiMethod reflectionApiMethod = (ReflectionApiMethod) map1.get(resolvedMethodRef1);
+                    CallArgumentValues callArgumentValues = methodFlowAnalyzer.traceReflectionCallArguments(
+                            rankedValue.getRank(),
+                            reflectionApiMethod,
+                            nestedMultiMap,
+                            nestedMultiMap1,
+                            nestedMultiMap2,
+                            map1,
+                            map2,
+                            map3,
+                            map4,
+                            map5,
+                            classMemberLookup1,
+                            map6
+                    );
+                    hashMap.put(integerCache.valueOf(rankedValue.getRank()), callArgumentValues);
                 }
-
-                long bc = 56257057901662L;
-                be = 13;
+            } catch (StackOverflowError stackOverflowError) {
+                throw new CorruptHierarchyException("StackOverflowError trapped in '" + this.getQualifiedMethodName() + "' (2)", stackOverflowError);
+            } catch (ZkmProcessingException zkmProcessingException) {
+                message = zkmProcessingException.getMessage();
             }
 
-            Integer integer = Integer.valueOf(be);
+            Integer integer = Integer.valueOf(13);
             HashSet hashSet = ZkmUtils.createHashSet(integer);
             HashMap hashMap1 = ZkmUtils.createHashMap();
             Iterator iterator1 = arrayList.iterator();
@@ -6880,8 +6708,8 @@ public class MethodBytecode extends ClassFileComponent {
                     if (!callArgumentValues1.areAllValuesKnown()) {
                         if (reflectionApiMethod1.isReportable()) {
                             ArrayList arrayList1 = new ArrayList();
-                            String string = this.describeReflectionCall(reflectionApiMethod1, callArgumentValues1, "UNRESOLVED", arrayList1);
-                            twoKeyMap4.putValue(resolvedMethodRef3, rankedValue1, string);
+                            String valueValue = this.describeReflectionCall(reflectionApiMethod1, callArgumentValues1, "UNRESOLVED", arrayList1);
+                            twoKeyMap4.putValue(resolvedMethodRef3, rankedValue1, valueValue);
                             if (reflectionApiMethod1.hasLookupTemplate()) {
                                 ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(rankedValue1.getRank());
                                 hashMap1.put(
@@ -6920,8 +6748,8 @@ public class MethodBytecode extends ClassFileComponent {
                         }
 
                         if (bl && reflectionApiMethod1.isReportable()) {
-                            String string3 = this.describeReflectionCall(reflectionApiMethod1, callArgumentValues1, "RESOLVED");
-                            twoKeyMap4.putValue(resolvedMethodRef3, rankedValue1, string3);
+                            String valueValue2 = this.describeReflectionCall(reflectionApiMethod1, callArgumentValues1, "RESOLVED");
+                            twoKeyMap4.putValue(resolvedMethodRef3, rankedValue1, valueValue2);
                         }
                     }
 
@@ -6946,12 +6774,12 @@ public class MethodBytecode extends ClassFileComponent {
                                     || ((String) twoKeyMap4.getValue(resolvedMethodRef3, rankedValue1)).startsWith("RESOLVED")
                     )) {
                         ArrayList arrayList3 = new ArrayList();
-                        String string4 = this.describeReflectionCall(reflectionApiMethod1, callArgumentValues1, "UNRESOLVED", arrayList3);
+                        String valueValue3 = this.describeReflectionCall(reflectionApiMethod1, callArgumentValues1, "UNRESOLVED", arrayList3);
                         if (!observableHolder.isValueNull()) {
-                            string4 = string4 + " : " + (String) observableHolder.getValue();
+                            valueValue3 = valueValue3 + " : " + (String) observableHolder.getValue();
                         }
 
-                        twoKeyMap4.putValue(resolvedMethodRef3, rankedValue1, string4);
+                        twoKeyMap4.putValue(resolvedMethodRef3, rankedValue1, valueValue3);
                         if (reflectionApiMethod1.hasLookupTemplate()) {
                             ConstantRefInstruction constantRefInstruction1 = (ConstantRefInstruction) this.instructions.get(rankedValue1.getRank());
                             hashMap1.put(
@@ -6969,7 +6797,7 @@ public class MethodBytecode extends ClassFileComponent {
                         }
                     }
                 } else if (reflectionApiMethod1.isReportable()) {
-                    twoKeyMap4.putValue(resolvedMethodRef3, rankedValue1, "UNRESOLVED " + string1);
+                    twoKeyMap4.putValue(resolvedMethodRef3, rankedValue1, "UNRESOLVED " + message);
                     if (reflectionApiMethod1.hasLookupTemplate()) {
                         ConstantRefInstruction constantRefInstruction2 = (ConstantRefInstruction) this.instructions.get(rankedValue1.getRank());
                         hashMap1.put(
@@ -7029,12 +6857,12 @@ public class MethodBytecode extends ClassFileComponent {
 
     public boolean adjustLdcWidths(Map map1) {
         boolean bl = false;
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = ((Instruction) this.instructions.get(i)).adjustLdcWidth(map1);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = ((Instruction) this.instructions.get(elementIndex)).adjustLdcWidth(map1);
             if (instruction1 != null) {
-                this.instructions.set(i, instruction1);
+                this.instructions.set(elementIndex, instruction1);
                 bl = true;
             }
         }
@@ -7049,7 +6877,7 @@ public class MethodBytecode extends ClassFileComponent {
     public void applyLongEncryption(
             List list1,
             boolean bl,
-            int[][] ba,
+            int[][] integerArrayArray,
             Long long1,
             LocalVariableIndex localVariableIndex1,
             IntCounter intCounter,
@@ -7060,22 +6888,22 @@ public class MethodBytecode extends ClassFileComponent {
     ) throws ZkmException, IOException {
         PriorityEntryComparator priorityEntryComparator = new PriorityEntryComparator(this);
         Collections.sort(list1, priorityEntryComparator);
-        int bb = list1.size();
-        int bc = -1;
-        if (bb != 0) {
+        int list1Size = list1.size();
+        int valueValue = -1;
+        if (list1Size != 0) {
             MethodFlowAnalyzer methodFlowAnalyzer = null;
             Iterator iterator = list1.iterator();
             ObjectPair objectPair = (ObjectPair) iterator.next();
             ConstantPoolOperand constantPoolOperand = (ConstantPoolOperand) ((RankedValue) objectPair.getFirst()).getValue();
-            int bd = bb;
+            int list1SizeValue = list1Size;
             this.setModified(true);
             boolean bl1 = false;
             boolean bl2 = false;
             ArrayList arrayList = new ArrayList();
-            int be = this.instructions.size();
+            int instructionsSize = this.instructions.size();
 
-            for (int i = 0; i < be; i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
+            for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
                 if (instruction1.isLabel()) {
                     LabelInstruction labelInstruction = (LabelInstruction) instruction1;
                     if (labelInstruction.hasUsageBits(1) || labelInstruction.hasUsageBits(1024)) {
@@ -7084,38 +6912,38 @@ public class MethodBytecode extends ClassFileComponent {
                 }
 
                 if (instruction1 == constantPoolOperand) {
-                    bd += -1;
+                    list1SizeValue += -1;
                     ObfuscatedReferenceSlot obfuscatedReferenceSlot = (ObfuscatedReferenceSlot) objectPair.getSecond();
                     switch (LookupStrategySwitchMap.LONG_STORAGE_KIND_SWITCH[obfuscatedReferenceSlot.getStorageKind().ordinal()]) {
                         case 1:
                             ArrayList arrayList4 = new ArrayList();
                             if (obfuscatedReferenceSlot.hasIndex()) {
                                 arrayList4.add(Instruction.createObjectLoad(obfuscatedReferenceSlot.getLocalVariableIndex(), this.localVariableList, 12));
-                                this.appendIntConstant(obfuscatedReferenceSlot.getIndex(), arrayList4, constantPool1, list2, bb);
+                                this.appendIntConstant(obfuscatedReferenceSlot.getIndex(), arrayList4, constantPool1, list2, list1Size);
                                 arrayList4.add(SimpleInstruction.forOpcode(47));
                             } else {
                                 arrayList4.add(Instruction.createLongLoad(obfuscatedReferenceSlot.getLocalVariableIndex(), this.localVariableList, 12));
                             }
 
-                            arrayList.add(new CodeInsertion(arrayList4, i - 1, 1, 0));
+                            arrayList.add(new CodeInsertion(arrayList4, elementIndex - 1, 1, 0));
                             break;
                         case 2:
                             ArrayList arrayList3 = new ArrayList();
                             ResolvedFieldRef resolvedFieldRef = obfuscatedReferenceSlot.getArrayField();
                             if (obfuscatedReferenceSlot.hasIndex()) {
                                 if (bl1) {
-                                    arrayList3.add(Instruction.createObjectLoad(bc, this.localVariableList, 12));
+                                    arrayList3.add(Instruction.createObjectLoad(valueValue, this.localVariableList, 12));
                                 } else {
                                     arrayList3.add(new ConstantRefInstruction(178, resolvedFieldRef));
-                                    if (bd > 0 && (ba.length == 0 || !this.isInAnyRange(i, ba))) {
+                                    if (list1SizeValue > 0 && (integerArrayArray.length == 0 || !this.isInAnyRange(elementIndex, integerArrayArray))) {
                                         if (!bl2) {
                                             bl2 = true;
-                                            bc = intCounter.getValue();
+                                            valueValue = intCounter.getValue();
                                             intCounter.incrementAndGet();
                                         }
 
-                                        arrayList3.add(Instruction.createObjectStore(bc, this.localVariableList, 12));
-                                        arrayList3.add(Instruction.createObjectLoad(bc, this.localVariableList, 12));
+                                        arrayList3.add(Instruction.createObjectStore(valueValue, this.localVariableList, 12));
+                                        arrayList3.add(Instruction.createObjectLoad(valueValue, this.localVariableList, 12));
                                         bl1 = true;
                                     }
                                 }
@@ -7126,13 +6954,12 @@ public class MethodBytecode extends ClassFileComponent {
                                 arrayList3.add(new ConstantRefInstruction(178, resolvedFieldRef));
                             }
 
-                            arrayList.add(new CodeInsertion(arrayList3, i - 1, 1, 0));
+                            arrayList.add(new CodeInsertion(arrayList3, elementIndex - 1, 1, 0));
                             break;
                         case 3:
                             ResolvedMethodRef resolvedMethodRef1;
                             ArrayList arrayList6;
                             ArrayList arrayList8;
-                            label80:
                             {
                                 methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
                                 resolvedMethodRef1 = obfuscatedReferenceSlot.getLookupMethod();
@@ -7140,82 +6967,68 @@ public class MethodBytecode extends ClassFileComponent {
                                 arrayList8 = new ArrayList();
                                 int index = obfuscatedReferenceSlot.getIndex();
                                 long encryptionKey = obfuscatedReferenceSlot.getEncryptionKey();
-                                int bx;
-                                long by;
-                                long bz;
-                                if (long1 != null) {
-                                    if (localVariableIndex1 != null) {
-                                        int bt = index ^ (int) (encryptionKey & 32767L);
-                                        this.appendIntConstant(bt, arrayList6, constantPool1, list2, bb);
-                                        long bw = encryptionKey ^ long1;
-                                        Instruction.appendLongConstant(bw, arrayList8, constantPool1, list2);
-                                        arrayList8.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 12));
-                                        arrayList8.add(SimpleInstruction.forOpcode(131));
-                                        break label80;
-                                    }
-
-                                    bx = index;
-                                    by = encryptionKey;
-                                    bz = 32767L;
+                                if (long1 != null && localVariableIndex1 != null) {
+                                    int maskedIndex = index ^ (int) (encryptionKey & 32767L);
+                                    this.appendIntConstant(maskedIndex, arrayList6, constantPool1, list2, list1Size);
+                                    long maskedKey = encryptionKey ^ long1;
+                                    Instruction.appendLongConstant(maskedKey, arrayList8, constantPool1, list2);
+                                    arrayList8.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 12));
+                                    arrayList8.add(SimpleInstruction.forOpcode(131));
                                 } else {
-                                    bx = index;
-                                    by = encryptionKey;
-                                    bz = 32767L;
+                                    int maskedIndex = index ^ (int) (encryptionKey & 32767L);
+                                    this.appendIntConstant(maskedIndex, arrayList6, constantPool1, list2, list1Size);
+                                    Instruction.appendLongConstant(encryptionKey, arrayList8, constantPool1, list2);
                                 }
-
-                                int bu = bx ^ (int) (by & bz);
-                                this.appendIntConstant(bu, arrayList6, constantPool1, list2, bb);
-                                Instruction.appendLongConstant(encryptionKey, arrayList8, constantPool1, list2);
                             }
 
                             ConstantRefInstruction constantRefInstruction1 = new ConstantRefInstruction(184, resolvedMethodRef1);
-                            this.addSplitCodeInsertions(arrayList6, arrayList8, constantRefInstruction1, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList6, arrayList8, constantRefInstruction1, arrayList, methodFlowAnalyzer, elementIndex);
                             break;
                         case 4:
                             methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
                             ResolvedMethodRef resolvedMethodRef = obfuscatedReferenceSlot.getLookupMethod();
                             ArrayList arrayList5 = new ArrayList();
                             ArrayList arrayList7 = new ArrayList();
-                            int bm = obfuscatedReferenceSlot.getIndex();
-                            long bo = obfuscatedReferenceSlot.getEncryptionKey();
+                            int indexValue = obfuscatedReferenceSlot.getIndex();
+                            long encryptionKeyValue = obfuscatedReferenceSlot.getEncryptionKey();
                             if (long1 != null && localVariableIndex1 != null) {
-                                int bs = bm ^ (int) (bo & 32767L);
-                                this.appendIntConstant(bs, arrayList5, constantPool1, list2, bb);
-                                long bv = bo ^ long1;
-                                Instruction.appendLongConstant(bv, arrayList7, constantPool1, list2);
+                                int valueValue3 = indexValue ^ (int) (encryptionKeyValue & 32767L);
+                                this.appendIntConstant(valueValue3, arrayList5, constantPool1, list2, list1Size);
+                                long valueValue6 = encryptionKeyValue ^ long1;
+                                Instruction.appendLongConstant(valueValue6, arrayList7, constantPool1, list2);
                                 arrayList7.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 12));
                                 arrayList7.add(SimpleInstruction.forOpcode(131));
                             } else {
-                                int br = bm ^ (int) bo;
-                                Instruction.appendIntConstant(br, arrayList5, constantPool1, list2);
-                                Instruction.appendLongConstant(bo, arrayList7, constantPool1, list2);
+                                int valueValue2 = indexValue ^ (int) encryptionKeyValue;
+                                Instruction.appendIntConstant(valueValue2, arrayList5, constantPool1, list2);
+                                Instruction.appendLongConstant(encryptionKeyValue, arrayList7, constantPool1, list2);
                             }
 
                             ConstantRefInstruction constantRefInstruction = new ConstantRefInstruction(184, resolvedMethodRef);
-                            this.addSplitCodeInsertions(arrayList5, arrayList7, constantRefInstruction, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList5, arrayList7, constantRefInstruction, arrayList, methodFlowAnalyzer, elementIndex);
                             break;
                         case 5:
                             ResolvedInvokeDynamic resolvedInvokeDynamic = obfuscatedReferenceSlot.getInvokeDynamic();
                             methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
                             ArrayList arrayList1 = new ArrayList();
                             ArrayList arrayList2 = new ArrayList();
-                            int bg = obfuscatedReferenceSlot.getIndex();
-                            long bh = obfuscatedReferenceSlot.getEncryptionKey();
+                            int indexValue2 = obfuscatedReferenceSlot.getIndex();
+                            long encryptionKeyValue2 = obfuscatedReferenceSlot.getEncryptionKey();
                             if (long1 != null && localVariableIndex1 != null) {
-                                int bq = bg ^ (int) (bh & 32767L);
-                                this.appendIntConstant(bq, arrayList1, constantPool1, list2, bb);
-                                long bj = bh ^ long1;
-                                Instruction.appendLongConstant(bj, arrayList2, constantPool1, list2);
+                                int valueValue4 = indexValue2 ^ (int) (encryptionKeyValue2 & 32767L);
+                                this.appendIntConstant(valueValue4, arrayList1, constantPool1, list2, list1Size);
+                                long valueValue7 = encryptionKeyValue2 ^ long1;
+                                Instruction.appendLongConstant(valueValue7, arrayList2, constantPool1, list2);
                                 arrayList2.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 12));
                                 arrayList2.add(SimpleInstruction.forOpcode(131));
                             } else {
-                                int bi = bg ^ (int) bh;
-                                this.appendIntConstant(bi, arrayList1, constantPool1, list2, bb);
-                                Instruction.appendLongConstant(bh, arrayList2, constantPool1, list2);
+                                int valueValue5 = indexValue2 ^ (int) encryptionKeyValue2;
+                                this.appendIntConstant(valueValue5, arrayList1, constantPool1, list2, list1Size);
+                                Instruction.appendLongConstant(encryptionKeyValue2, arrayList2, constantPool1, list2);
                             }
 
                             InvokeDynamicInstruction invokeDynamicInstruction = new InvokeDynamicInstruction(resolvedInvokeDynamic);
-                            this.addSplitCodeInsertions(arrayList1, arrayList2, invokeDynamicInstruction, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList1, arrayList2, invokeDynamicInstruction, arrayList, methodFlowAnalyzer, elementIndex);
                     }
 
                     if (!iterator.hasNext()) {
@@ -7242,16 +7055,16 @@ public class MethodBytecode extends ClassFileComponent {
             hashSet.add(new FieldNameTypeSignature(string, "()", null));
         } else if (trackedValue instanceof TracedArrayValue) {
             TracedArrayValue tracedArrayValue = (TracedArrayValue) trackedValue;
-            String[][] strings = tracedArrayValue.getValueCombinations();
-            if (tracedArrayValue.getLength() != 0 && strings != null && strings.length != 0) {
-                for (int i = 0; i < strings.length; i++) {
-                    String[] strings1 = strings[i];
+            String[][] valueCombinations = tracedArrayValue.getValueCombinations();
+            if (tracedArrayValue.getLength() != 0 && valueCombinations != null && valueCombinations.length != 0) {
+                for (int valueCombinationIndex = 0; valueCombinationIndex < valueCombinations.length; valueCombinationIndex++) {
+                    String[] sourceArray = valueCombinations[valueCombinationIndex];
                     if (bl) {
-                        String[] strings2 = new String[strings1.length - 1];
-                        System.arraycopy(strings1, 1, strings2, 0, strings2.length);
-                        hashSet.add(new FieldNameTypeSignature(string, this.buildParameterDescriptor(strings2), MethodSignature.toTypeDescriptor(strings1[0])));
+                        String[] destinationArray = new String[sourceArray.length - 1];
+                        System.arraycopy(sourceArray, 1, destinationArray, 0, destinationArray.length);
+                        hashSet.add(new FieldNameTypeSignature(string, this.buildParameterDescriptor(destinationArray), MethodSignature.toTypeDescriptor(sourceArray[0])));
                     } else {
-                        hashSet.add(new FieldNameTypeSignature(string, this.buildParameterDescriptor(strings1), null));
+                        hashSet.add(new FieldNameTypeSignature(string, this.buildParameterDescriptor(sourceArray), null));
                     }
                 }
             } else {
@@ -7285,10 +7098,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void collectIntConstants(Set set1) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.loadsConstantInteger()) {
                 ConstantPoolEntry constantPoolEntry = ((ConstantPoolOperand) instruction1).getConstantPoolEntry();
                 if (constantPoolEntry instanceof ConstantInteger) {
@@ -7303,7 +7116,7 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public ResolvedInvokeDynamic getOrCreateInvokeDynamic(
-            String string,
+            String valueArgument,
             int ba,
             ResolvedMethodRef resolvedMethodRef,
             BootstrapMethodsAttribute bootstrapMethodsAttribute1,
@@ -7311,10 +7124,10 @@ public class MethodBytecode extends ClassFileComponent {
             List list1,
             ConstantPool constantPool1
     ) {
-        String string1 = (char) ba + string;
-        ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) map1.get(string1);
+        String key = (char) ba + valueArgument;
+        ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) map1.get(key);
         if (resolvedInvokeDynamic == null) {
-            ResolvedNameAndType resolvedNameAndType = constantPool1.createNameAndType(String.valueOf((char) ba), string, list1);
+            ResolvedNameAndType resolvedNameAndType = constantPool1.createNameAndType(String.valueOf((char) ba), valueArgument, list1);
             ResolvedMethodHandleConstant resolvedMethodHandleConstant = constantPool1.getOrAddMethodHandle(
                     MethodHandleRefKind.REF_INVOKE_STATIC, resolvedMethodRef, list1
             );
@@ -7322,7 +7135,7 @@ public class MethodBytecode extends ClassFileComponent {
             BootstrapMethodEntry bootstrapMethodEntry = bootstrapMethodsAttribute1.addEntry(resolvedMethodHandleConstant, constantPoolEntrys);
             resolvedInvokeDynamic = new ResolvedInvokeDynamic(constantPool1, resolvedNameAndType, bootstrapMethodEntry);
             list1.add(resolvedInvokeDynamic);
-            map1.put(string1, resolvedInvokeDynamic);
+            map1.put(key, resolvedInvokeDynamic);
         }
 
         return resolvedInvokeDynamic;
@@ -7335,11 +7148,11 @@ public class MethodBytecode extends ClassFileComponent {
             stringBuilder.append(' ');
             int argumentCount = callArgumentValues.getArgumentCount();
 
-            for (int i = 0; i < argumentCount; i++) {
-                stringBuilder.append(this.formatArgumentValues(callArgumentValues, i, false, list1));
+            for (int elementIndex = 0; elementIndex < argumentCount; elementIndex++) {
+                stringBuilder.append(this.formatArgumentValues(callArgumentValues, elementIndex, false, list1));
             }
         } else {
-            int bc = 0;
+            int elementIndexValue = 0;
             List list2 = reflectionApiMethod.getParamDetails();
             Iterator iterator = list2.iterator();
 
@@ -7350,13 +7163,13 @@ public class MethodBytecode extends ClassFileComponent {
                                 + reflectionParamDetail.getPosition()
                                 + "="
                                 + this.formatArgumentValues(
-                                callArgumentValues, bc++, reflectionParamDetail.isClassParam(), reflectionParamDetail.isTargetClassParam() ? list1 : null
+                                callArgumentValues, elementIndexValue++, reflectionParamDetail.isClassParam(), reflectionParamDetail.isTargetClassParam() ? list1 : null
                         )
                 );
             }
 
             if (reflectionApiMethod.isReceiverTargetClass()) {
-                stringBuilder.append(" referencedClass=" + this.formatArgumentValues(callArgumentValues, bc, true, list1));
+                stringBuilder.append(" referencedClass=" + this.formatArgumentValues(callArgumentValues, elementIndexValue, true, list1));
             }
         }
 
@@ -7375,10 +7188,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void collectReferencedProgramMembers(Set set1, Set set2, Set set3, Set set4) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             switch (instruction1.getOpcode()) {
                 case 18:
                 case 19:
@@ -7448,8 +7261,8 @@ public class MethodBytecode extends ClassFileComponent {
             string = (String) list2.remove(0);
         }
 
-        for (int i = 0; i < addedParameters1.length; i++) {
-            AddedParameter addedParameter = addedParameters1[i];
+        for (int addedParameters1ElementIndex = 0; addedParameters1ElementIndex < addedParameters1.length; addedParameters1ElementIndex++) {
+            AddedParameter addedParameter = addedParameters1[addedParameters1ElementIndex];
             ZkmAssert.assertTrue(
                     addedParameter.getIndex() <= list2.size(),
                     new String[]{
@@ -7519,10 +7332,10 @@ public class MethodBytecode extends ClassFileComponent {
 
     public String buildParameterDescriptor(String[] strings) {
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = strings.length;
+        int lengthValue = strings.length;
         stringBuilder.append("(");
 
-        for (int i = 0; i < ba; i++) {
+        for (int i = 0; i < lengthValue; i++) {
             String string = strings[i];
             if (string != null) {
                 string.length();
@@ -7552,25 +7365,25 @@ public class MethodBytecode extends ClassFileComponent {
 
     public void rewriteCallArguments(
             MethodFlowAnalyzer methodFlowAnalyzer,
-            int ba,
-            String string,
+            int elementIndex,
+            String descriptor,
             ChangedMethodDescriptor changedMethodDescriptor,
-            int[] bb,
+            int[] integerArray,
             ListMultimap listMultimap,
             List list1,
             int bc,
             MutableInt mutableInt
     ) {
-        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(ba);
-        int bd = ba - 1;
+        ConstantRefInstruction constantRefInstruction = (ConstantRefInstruction) this.instructions.get(elementIndex);
+        int integerValue2 = elementIndex - 1;
         int be;
-        if (ba == 0) {
+        if (elementIndex == 0) {
             be = this.getMethod().getArgumentSlotCount();
         } else {
-            be = methodFlowAnalyzer.getStackDepthAt(bd);
+            be = methodFlowAnalyzer.getStackDepthAt(integerValue2);
         }
 
-        List list2 = ConstantPoolEntry.getParameterTypes(string);
+        List list2 = ConstantPoolEntry.getParameterTypes(descriptor);
         List list3;
         AddedParameter[] addedParameters1;
         if (constantRefInstruction.getOpcode() == 186) {
@@ -7593,9 +7406,9 @@ public class MethodBytecode extends ClassFileComponent {
             addedParameters1 = changedMethodDescriptor.getAddedParameters();
         }
 
-        int bp = list2.size();
-        int bq = list3.size();
-        int br = be - bp;
+        int list2Size = list2.size();
+        int list3Size = list3.size();
+        int br = be - list2Size;
         if (constantRefInstruction.getOpcode() == 185) {
             ((InvokeInterfaceInstruction) constantRefInstruction).setArgSlotCount(ConstantPoolEntry.countParameterSlots(list3) + 1);
         }
@@ -7608,39 +7421,39 @@ public class MethodBytecode extends ClassFileComponent {
         ListMultimap listMultimap1 = new ListMultimap();
         ListMultimap listMultimap2 = new ListMultimap();
 
-        for (int i = 0; i < bq; i++) {
+        for (int i = 0; i < list3Size; i++) {
             if (bt < addedParameters1.length && i == addedParameters1[bt].getIndex()) {
                 arrayList.clear();
                 char typeChar = addedParameters1[bt].getTypeChar();
                 if (typeChar == 'J') {
-                    arrayList.add(Instruction.createLongLoad(bb[bt], this.localVariableList, 5));
+                    arrayList.add(Instruction.createLongLoad(integerArray[bt], this.localVariableList, 5));
                 } else {
-                    arrayList.add(Instruction.createIntLoad(bb[bt], this.localVariableList, 5));
+                    arrayList.add(Instruction.createIntLoad(integerArray[bt], this.localVariableList, 5));
                     Instruction instruction1 = createNarrowingConversion(typeChar);
                     if (instruction1 != null) {
                         arrayList.add(instruction1);
                     }
                 }
 
-                if (bs >= bp) {
-                    listMultimap1.appendValues(integerCache.valueOf(bd), arrayList);
+                if (bs >= list2Size) {
+                    listMultimap1.appendValues(integerCache.valueOf(integerValue2), arrayList);
                 } else {
-                    BasicBlock basicBlock = methodFlowAnalyzer.getBlockContaining(bd);
-                    VerifierType[] verifierTypes = methodFlowAnalyzer.copyFrameStates()[bd].getStack();
+                    BasicBlock basicBlock = methodFlowAnalyzer.getBlockContaining(integerValue2);
+                    VerifierType[] verifierTypes = methodFlowAnalyzer.copyFrameStates()[integerValue2].getStack();
                     hashSet.clear();
                     hashSet1.clear();
-                    if (methodFlowAnalyzer.findStackValueProducers(basicBlock, ba, br, hashSet, hashSet1)) {
+                    if (methodFlowAnalyzer.findStackValueProducers(basicBlock, elementIndex, br, hashSet, hashSet1)) {
                         if (hashSet.size() > 1) {
                             Iterator iterator2 = hashSet.iterator();
 
                             while (iterator2.hasNext()) {
                                 Integer integer = (Integer) iterator2.next();
-                                int bv = integer;
-                                Instruction instruction4 = (Instruction) this.instructions.get(bv);
+                                int integerValue = integer;
+                                Instruction instruction4 = (Instruction) this.instructions.get(integerValue);
                                 if (instruction4.pushesWithoutPopping() && !instruction4.isMethodInvoke()) {
-                                    listMultimap1.appendValues(integerCache.valueOf(bv - 1), arrayList);
+                                    listMultimap1.appendValues(integerCache.valueOf(integerValue - 1), arrayList);
                                 } else {
-                                    VerifierType[] verifierTypes2 = methodFlowAnalyzer.copyFrameStates()[bv].getStack();
+                                    VerifierType[] verifierTypes2 = methodFlowAnalyzer.copyFrameStates()[integerValue].getStack();
                                     ArrayList arrayList2;
                                     if (verifierTypes2[verifierTypes2.length - 1].isWide()) {
                                         arrayList2 = new ArrayList(arrayList.size() + 2);
@@ -7667,12 +7480,12 @@ public class MethodBytecode extends ClassFileComponent {
                                 }
                             }
                         } else {
-                            int bu = (Integer) hashSet.iterator().next();
-                            Instruction instruction3 = (Instruction) this.instructions.get(bu);
+                            int elementIndexValue = (Integer) hashSet.iterator().next();
+                            Instruction instruction3 = (Instruction) this.instructions.get(elementIndexValue);
                             if (instruction3.pushesWithoutPopping() && !instruction3.isMethodInvoke()) {
-                                listMultimap1.appendValues(integerCache.valueOf(bu - 1), arrayList);
+                                listMultimap1.appendValues(integerCache.valueOf(elementIndexValue - 1), arrayList);
                             } else {
-                                VerifierType[] verifierTypes1 = methodFlowAnalyzer.copyFrameStates()[bu].getStack();
+                                VerifierType[] verifierTypes1 = methodFlowAnalyzer.copyFrameStates()[elementIndexValue].getStack();
                                 if (verifierTypes[verifierTypes1.length - 1].isWide()) {
                                     if (typeChar == 'J') {
                                         arrayList.add(SimpleInstruction.forOpcode(94));
@@ -7682,7 +7495,7 @@ public class MethodBytecode extends ClassFileComponent {
                                         arrayList.add(SimpleInstruction.forOpcode(87));
                                     }
 
-                                    listMultimap2.appendValues(integerCache.valueOf(bu), arrayList);
+                                    listMultimap2.appendValues(integerCache.valueOf(elementIndexValue), arrayList);
                                 } else {
                                     if (typeChar == 'J') {
                                         arrayList.add(SimpleInstruction.forOpcode(93));
@@ -7691,11 +7504,11 @@ public class MethodBytecode extends ClassFileComponent {
                                         arrayList.add(SimpleInstruction.forOpcode(95));
                                     }
 
-                                    listMultimap2.appendValues(integerCache.valueOf(bu), arrayList);
+                                    listMultimap2.appendValues(integerCache.valueOf(elementIndexValue), arrayList);
                                 }
                             }
                         }
-                    } else if (bb.length == 1 && br == be - 1 && !verifierTypes[be - 1].isWide()) {
+                    } else if (integerArray.length == 1 && br == be - 1 && !verifierTypes[be - 1].isWide()) {
                         if (typeChar == 'J') {
                             arrayList.add(SimpleInstruction.forOpcode(93));
                             arrayList.add(SimpleInstruction.forOpcode(88));
@@ -7703,8 +7516,8 @@ public class MethodBytecode extends ClassFileComponent {
                             arrayList.add(SimpleInstruction.forOpcode(95));
                         }
 
-                        listMultimap1.appendValues(integerCache.valueOf(bd), arrayList);
-                    } else if (bb.length == 1 && br == be - 1) {
+                        listMultimap1.appendValues(integerCache.valueOf(integerValue2), arrayList);
+                    } else if (integerArray.length == 1 && br == be - 1) {
                         if (typeChar == 'J') {
                             arrayList.add(SimpleInstruction.forOpcode(94));
                             arrayList.add(SimpleInstruction.forOpcode(88));
@@ -7713,55 +7526,55 @@ public class MethodBytecode extends ClassFileComponent {
                             arrayList.add(SimpleInstruction.forOpcode(87));
                         }
 
-                        listMultimap1.appendValues(integerCache.valueOf(bd), arrayList);
+                        listMultimap1.appendValues(integerCache.valueOf(integerValue2), arrayList);
                     } else {
-                        if (bb.length != 1 || br != be - 2 || verifierTypes[be - 1].isWide() || verifierTypes[be - 2].isWide()) {
-                            int bh = bc;
-                            this.localVariableList.clearWideFlagsFrom(bh);
+                        if (integerArray.length != 1 || br != be - 2 || verifierTypes[be - 1].isWide() || verifierTypes[be - 2].isWide()) {
+                            int integerValue3 = bc;
+                            this.localVariableList.clearWideFlagsFrom(integerValue3);
                             listMultimap1.clear();
                             listMultimap2.clear();
                             arrayList.clear();
                             ArrayList arrayList1 = new ArrayList();
                             int index = changedMethodDescriptor.getAddedParameters()[0].getIndex();
-                            int bj = bp - index;
-                            int[] bk = new int[bj];
-                            int bl = bp - 1;
+                            int bj = list2Size - index;
+                            int[] integerArrayValue = new int[bj];
+                            int elementIndexValue2 = list2Size - 1;
 
-                            for (int j = 0; j < bj; j++) {
-                                String string2 = (String) list2.get(bl);
-                                bl += -1;
-                                boolean bl1 = ConstantPoolEntry.isWideType(string2);
-                                arrayList1.add(Instruction.createStoreForType(string2, bh, this.localVariableList));
-                                bk[j] = bh;
-                                if (bh > (Integer) list1.get(list1.size() - 1)) {
-                                    list1.add(integerCache.valueOf(bh));
+                            for (int integerArrayValueElementIndex = 0; integerArrayValueElementIndex < bj; integerArrayValueElementIndex++) {
+                                String string2 = (String) list2.get(elementIndexValue2);
+                                elementIndexValue2 += -1;
+                                boolean wideType = ConstantPoolEntry.isWideType(string2);
+                                arrayList1.add(Instruction.createStoreForType(string2, integerValue3, this.localVariableList));
+                                integerArrayValue[integerArrayValueElementIndex] = integerValue3;
+                                if (integerValue3 > (Integer) list1.get(list1.size() - 1)) {
+                                    list1.add(integerCache.valueOf(integerValue3));
                                     mutableInt.incrementAndGet();
                                 }
 
-                                if (bl1) {
-                                    if (++bh > (Integer) list1.get(list1.size() - 1)) {
-                                        list1.add(integerCache.valueOf(bh));
+                                if (wideType) {
+                                    if (++integerValue3 > (Integer) list1.get(list1.size() - 1)) {
+                                        list1.add(integerCache.valueOf(integerValue3));
                                         mutableInt.incrementAndGet();
                                     }
                                 }
 
-                                bh++;
+                                integerValue3++;
                             }
 
                             int bw = 0;
-                            int bx = index;
-                            int by = index;
-                            int bn = bk.length - 1;
+                            int indexValue = index;
+                            int indexValue2 = index;
+                            int integerArrayValueElementIndexValue = integerArrayValue.length - 1;
 
-                            while (bx < bq) {
-                                String string3 = (String) list3.get(bx);
-                                if (bw < addedParameters1.length && bx == addedParameters1[bw].getIndex()) {
-                                    char bo = addedParameters1[bw].getTypeChar();
-                                    if (bo == 'J') {
-                                        arrayList1.add(Instruction.createLongLoad(bb[bw], this.localVariableList, 5));
+                            while (indexValue < list3Size) {
+                                String string3 = (String) list3.get(indexValue);
+                                if (bw < addedParameters1.length && indexValue == addedParameters1[bw].getIndex()) {
+                                    char typeCharValue = addedParameters1[bw].getTypeChar();
+                                    if (typeCharValue == 'J') {
+                                        arrayList1.add(Instruction.createLongLoad(integerArray[bw], this.localVariableList, 5));
                                     } else {
-                                        arrayList1.add(Instruction.createIntLoad(bb[bw], this.localVariableList, 5));
-                                        Instruction instruction2 = createNarrowingConversion(bo);
+                                        arrayList1.add(Instruction.createIntLoad(integerArray[bw], this.localVariableList, 5));
+                                        Instruction instruction2 = createNarrowingConversion(typeCharValue);
                                         if (instruction2 != null) {
                                             arrayList1.add(instruction2);
                                         }
@@ -7769,16 +7582,16 @@ public class MethodBytecode extends ClassFileComponent {
 
                                     bw++;
                                 } else {
-                                    arrayList1.add(Instruction.createLoadForType(string3, bk[bn], this.localVariableList));
-                                    bn += -1;
-                                    by++;
+                                    arrayList1.add(Instruction.createLoadForType(string3, integerArrayValue[integerArrayValueElementIndexValue], this.localVariableList));
+                                    integerArrayValueElementIndexValue += -1;
+                                    indexValue2++;
                                     br++;
                                 }
 
-                                bx++;
+                                indexValue++;
                             }
 
-                            listMultimap1.appendValues(integerCache.valueOf(bd), arrayList1);
+                            listMultimap1.appendValues(integerCache.valueOf(integerValue2), arrayList1);
                             break;
                         }
 
@@ -7790,7 +7603,7 @@ public class MethodBytecode extends ClassFileComponent {
                             arrayList.add(SimpleInstruction.forOpcode(87));
                         }
 
-                        listMultimap1.appendValues(integerCache.valueOf(bd), arrayList);
+                        listMultimap1.appendValues(integerCache.valueOf(integerValue2), arrayList);
                     }
                 }
 
@@ -7819,22 +7632,22 @@ public class MethodBytecode extends ClassFileComponent {
         listMultimap1.clear();
     }
 
-    public SyncIndexedSet findInsertionSyncPoints(List list1, MethodFlowAnalyzer methodFlowAnalyzer, int ba) {
-        BasicBlock basicBlock = methodFlowAnalyzer.getBlockContaining(ba);
+    public SyncIndexedSet findInsertionSyncPoints(List list1, MethodFlowAnalyzer methodFlowAnalyzer, int blockByIndexCacheElementIndex) {
+        BasicBlock basicBlock = methodFlowAnalyzer.getBlockContaining(blockByIndexCacheElementIndex);
         StackFrameState[] stackFrameStates = methodFlowAnalyzer.copyFrameStates();
         SyncIndexedSet syncIndexedSet = new SyncIndexedSet();
         int bb = this.findMarkerLabelIndex();
-        if (ba > 0 && stackFrameStates[ba - 1].getStack().length == 0 && basicBlock.getStartIndex() > bb) {
+        if (blockByIndexCacheElementIndex > 0 && stackFrameStates[blockByIndexCacheElementIndex - 1].getStack().length == 0 && basicBlock.getStartIndex() > bb) {
             int startIndex = basicBlock.getStartIndex();
-            int bd = -1;
+            int positionValue = -1;
             if (!list1.isEmpty()) {
-                bd = ((CodeInsertion) list1.get(list1.size() - 1)).getPosition();
+                positionValue = ((CodeInsertion) list1.get(list1.size() - 1)).getPosition();
             }
 
-            int be = Math.max(startIndex, bd + 1);
+            int be = Math.max(startIndex, positionValue + 1);
 
-            for (int i = ba - 1; i >= be; i += -1) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
+            for (int elementIndex = blockByIndexCacheElementIndex - 1; elementIndex >= be; elementIndex += -1) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
                 LabelInstruction labelInstruction = null;
                 if (instruction1.isLabel()) {
                     labelInstruction = (LabelInstruction) instruction1;
@@ -7844,14 +7657,14 @@ public class MethodBytecode extends ClassFileComponent {
                 }
 
                 boolean bl = labelInstruction != null && labelInstruction.getOffset() == 0;
-                if (stackFrameStates[i].getStack().length == 0
+                if (stackFrameStates[elementIndex].getStack().length == 0
                         && !instruction1.isJump()
                         && instruction1.getOpcode() != 191
                         && (labelInstruction == null || labelInstruction.getOffset() <= 0)) {
                     if (bl) {
                         syncIndexedSet.add(integerCache.valueOf(0));
                     } else {
-                        syncIndexedSet.add(integerCache.valueOf(i));
+                        syncIndexedSet.add(integerCache.valueOf(elementIndex));
                     }
                 }
             }
@@ -7861,10 +7674,10 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void collectStringConstants(Set set1) {
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isStringConstantLoad()) {
                 ConstantPoolEntry constantPoolEntry = ((ConstantPoolOperand) instruction1).getConstantPoolEntry();
                 if (constantPoolEntry instanceof ResolvedStringConstant) {
@@ -7885,23 +7698,23 @@ public class MethodBytecode extends ClassFileComponent {
     ) {
         boolean bl1 = false;
         ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
-        int ba = this.instructions.size();
-        int bb = 0;
+        int instructionsSize = this.instructions.size();
+        int elementIndexValue = 0;
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.isLabel() && ((LabelInstruction) instruction1).isMarker()) {
-                bb = i;
+                elementIndexValue = elementIndex;
                 break;
             }
         }
 
-        for (int i = bb; i < ba; i++) {
-            Instruction instruction3 = (Instruction) this.instructions.get(i);
+        for (int elementIndexValue2 = elementIndexValue; elementIndexValue2 < instructionsSize; elementIndexValue2++) {
+            Instruction instruction3 = (Instruction) this.instructions.get(elementIndexValue2);
             if (instruction3.isIntConstantPush() || instruction3.isIntConstantLdc()) {
                 boolean bl2 = false;
-                if (i < ba - 1) {
-                    Instruction instruction2 = (Instruction) this.instructions.get(i + 1);
+                if (elementIndexValue2 < instructionsSize - 1) {
+                    Instruction instruction2 = (Instruction) this.instructions.get(elementIndexValue2 + 1);
                     if (instruction2.isFieldStore()) {
                         ResolvedFieldRef resolvedFieldRef = (ResolvedFieldRef) ((ConstantRefInstruction) instruction2).getConstantPoolEntry();
                         AbstractFieldInfo abstractFieldInfo = (AbstractFieldInfo) resolvedFieldRef.getResolvedMember();
@@ -7953,12 +7766,12 @@ public class MethodBytecode extends ClassFileComponent {
 
                                     ConstantInteger constantInteger = constantPool1.getOrAddIntegerConstant(bd, list1, false, true);
                                     ConstantRefInstruction constantRefInstruction = new ConstantRefInstruction(19, constantInteger);
-                                    this.instructions.set(i, constantRefInstruction);
+                                    this.instructions.set(elementIndexValue2, constantRefInstruction);
                                     this.intConstantCount++;
-                                    multiMapTable.addEntry(programClass1, methodInfo1, constantInteger, new RankedValue(i, constantRefInstruction));
+                                    multiMapTable.addEntry(programClass1, methodInfo1, constantInteger, new RankedValue(elementIndexValue2, constantRefInstruction));
                                     bl1 = true;
                                 } else {
-                                    Integer integer = i;
+                                    Integer integer = elementIndexValue2;
                                     instruction3.collectIntConstant(multiMapTable, set1, methodInfo1, integer);
                                 }
                             }
@@ -7978,13 +7791,13 @@ public class MethodBytecode extends ClassFileComponent {
 
                             ConstantInteger constantInteger1 = constantPool1.getOrAddIntegerConstant(bf, list1, false, true);
                             ConstantRefInstruction constantRefInstruction1 = new ConstantRefInstruction(19, constantInteger1);
-                            this.instructions.set(i, constantRefInstruction1);
+                            this.instructions.set(elementIndexValue2, constantRefInstruction1);
                             this.intConstantCount++;
-                            multiMapTable.addEntry(programClass1, methodInfo1, constantInteger1, new RankedValue(i, constantRefInstruction1));
+                            multiMapTable.addEntry(programClass1, methodInfo1, constantInteger1, new RankedValue(elementIndexValue2, constantRefInstruction1));
                             bl1 = true;
                         }
                     } else {
-                        Integer integer1 = i;
+                        Integer integer1 = elementIndexValue2;
                         instruction3.collectIntConstant(multiMapTable, set1, methodInfo1, integer1);
                     }
                 }
@@ -8008,16 +7821,16 @@ public class MethodBytecode extends ClassFileComponent {
     ) throws ZkmException, IOException {
         MethodInfo methodInfo1 = (MethodInfo) this.getParent().getParent();
         List list3 = methodInfo1.getParameterTypes();
-        int ba = methodInfo1.isStatic() ? 0 : 1;
-        LocalVariableSlot localVariableSlot1 = this.localVariableList.insertSlot(ba, false, 10);
+        int indexValue = methodInfo1.isStatic() ? 0 : 1;
+        LocalVariableSlot localVariableSlot1 = this.localVariableList.insertSlot(indexValue, false, 10);
         this.localVariableList.renumberSlots();
         if (!list3.isEmpty()) {
-            int bb = list3.size() + ba;
-            int bc = ba + 1;
+            int bb = list3.size() + indexValue;
+            int bc = indexValue + 1;
             int bd = bc;
             ArrayList arrayList = new ArrayList(list3.size());
 
-            for (int i = ba; i < bb; i++) {
+            for (int indexValue2 = indexValue; indexValue2 < bb; indexValue2++) {
                 LocalVariableSlot localVariableSlot2 = this.localVariableList.getSlotAt(bd++);
                 arrayList.add(localVariableSlot2);
                 if (localVariableSlot2.isWideFirstHalf()) {
@@ -8028,30 +7841,30 @@ public class MethodBytecode extends ClassFileComponent {
             int bh = bd - 1;
             ParameterUsageInfo[] parameterUsageInfos = new ParameterUsageInfo[list3.size()];
 
-            for (int i = 0; i < this.instructions.size(); i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
+            for (int elementIndex = 0; elementIndex < this.instructions.size(); elementIndex++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
                 if (instruction1.isLocalVariableAccess()) {
                     LocalVariableInstruction localVariableInstruction = (LocalVariableInstruction) instruction1;
                     LocalVariableIndex localVariableIndex2 = localVariableInstruction.getLocalVariableIndex();
-                    int bg = arrayList.indexOf(localVariableIndex2);
-                    if (bg > -1) {
-                        ParameterUsageInfo parameterUsageInfo = parameterUsageInfos[bg];
+                    int parameterUsageInfoIndex = arrayList.indexOf(localVariableIndex2);
+                    if (parameterUsageInfoIndex > -1) {
+                        ParameterUsageInfo parameterUsageInfo = parameterUsageInfos[parameterUsageInfoIndex];
                         if (parameterUsageInfo == null) {
-                            parameterUsageInfo = new ParameterUsageInfo(this, bg, (String) list3.get(bg));
-                            parameterUsageInfos[bg] = parameterUsageInfo;
+                            parameterUsageInfo = new ParameterUsageInfo(this, parameterUsageInfoIndex, (String) list3.get(parameterUsageInfoIndex));
+                            parameterUsageInfos[parameterUsageInfoIndex] = parameterUsageInfo;
                         }
 
-                        parameterUsageInfo.addUsage(i, localVariableInstruction.isStore());
+                        parameterUsageInfo.addUsage(elementIndex, localVariableInstruction.isStore());
                     }
                 }
             }
 
             boolean bl2;
             if (localVariableIndex1 != null) {
-                int bi = arrayList.indexOf(localVariableIndex1);
-                if (bi > -1) {
-                    if (parameterUsageInfos[bi] == null) {
-                        parameterUsageInfos[bi] = new ParameterUsageInfo(this, bi, (String) list3.get(bi));
+                int parameterUsageInfoIndexValue = arrayList.indexOf(localVariableIndex1);
+                if (parameterUsageInfoIndexValue > -1) {
+                    if (parameterUsageInfos[parameterUsageInfoIndexValue] == null) {
+                        parameterUsageInfos[parameterUsageInfoIndexValue] = new ParameterUsageInfo(this, parameterUsageInfoIndexValue, (String) list3.get(parameterUsageInfoIndexValue));
                         bl2 = HiddenOptionFlags.TRACK_ALL_PARAMETER_USAGE;
                     } else {
                         bl2 = HiddenOptionFlags.TRACK_ALL_PARAMETER_USAGE;
@@ -8069,12 +7882,12 @@ public class MethodBytecode extends ClassFileComponent {
 
             LocalVariableInstruction localVariableInstruction2 = new LocalVariableInstruction(localVariableSlot1, LocalVariableAccessKind.OBJECT_LOAD);
 
-            for (int i = 0; i < parameterUsageInfos.length; i++) {
-                ParameterUsageInfo parameterUsageInfo2 = parameterUsageInfos[i];
+            for (int integerValue = 0; integerValue < parameterUsageInfos.length; integerValue++) {
+                ParameterUsageInfo parameterUsageInfo2 = parameterUsageInfos[integerValue];
                 if (parameterUsageInfo2 != null && !parameterUsageInfo2.isUnpackedAtEntry()) {
                     ArrayList arrayList1 = new ArrayList();
                     arrayList1.add(localVariableInstruction2);
-                    String string3 = parameterUsageInfo2.getTypeDescriptor();
+                    String typeDescriptor = parameterUsageInfo2.getTypeDescriptor();
                     boolean castRequired = parameterUsageInfo2.isCastRequired();
                     ClassResolver classResolver2 = classResolver1;
                     ClassMemberLookup classMemberLookup2 = classMemberLookup1;
@@ -8082,57 +7895,57 @@ public class MethodBytecode extends ClassFileComponent {
                     ConstantPool constantPool2 = constantPool1;
                     Boolean boolean2 = castRequired;
                     Boolean boolean1 = false;
-                    String string1 = string3;
-                    List list6 = this.buildArrayElementLoad(i, string1, boolean1, boolean2, constantPool2, list4, classMemberLookup2, classResolver2);
+                    String typeDescriptorValue = typeDescriptor;
+                    List list6 = this.buildArrayElementLoad(integerValue, typeDescriptorValue, boolean1, boolean2, constantPool2, list4, classMemberLookup2, classResolver2);
                     arrayList1.addAll(list6);
                     list1.add(new CodeInsertion(arrayList1, parameterUsageInfo2.getFirstUsageIndex() - 1, 1, 3));
                 }
             }
 
-            int bk = bc;
-            int bm = 0;
+            int elementIndexValue2 = bc;
+            int integerValue2 = 0;
             ArrayList arrayList2 = new ArrayList(bb);
 
-            for (int i = 0; i < list3.size(); i++) {
-                LocalVariableSlot localVariableSlot4 = this.localVariableList.getSlotAt(bk);
-                String string = (String) list3.get(i);
-                ParameterUsageInfo parameterUsageInfo1 = parameterUsageInfos[i];
+            for (int elementIndexValue = 0; elementIndexValue < list3.size(); elementIndexValue++) {
+                LocalVariableSlot localVariableSlot4 = this.localVariableList.getSlotAt(elementIndexValue2);
+                String string = (String) list3.get(elementIndexValue);
+                ParameterUsageInfo parameterUsageInfo1 = parameterUsageInfos[elementIndexValue];
                 if (parameterUsageInfo1 == null) {
                     if (!methodInfo1.hadLocalVariableTable() && !HiddenOptionFlags.KEEP_UNUSED_PARAMETER_SLOTS) {
-                        LocalVariableSlot localVariableSlot3 = this.localVariableList.removeSlot(bk);
+                        LocalVariableSlot localVariableSlot3 = this.localVariableList.removeSlot(elementIndexValue2);
                         this.localVariableList.renumberSlots();
                         bh += -1;
                         if (localVariableSlot3.isWideFirstHalf()) {
                             bh += -1;
                         }
                     } else {
-                        bk++;
+                        elementIndexValue2++;
                         if (LocalVariableList.isWideType(string)) {
-                            bk++;
+                            elementIndexValue2++;
                         }
                     }
                 } else {
                     if (parameterUsageInfo1.isUnpackedAtEntry()) {
-                        boolean bl1 = parameterUsageInfo1.isCastRequired();
+                        boolean castRequiredValue = parameterUsageInfo1.isCastRequired();
                         ClassMemberLookup classMemberLookup3 = classMemberLookup1;
                         List list5 = list2;
                         ConstantPool constantPool3 = constantPool1;
-                        Boolean boolean4 = bl1;
+                        Boolean boolean4 = castRequiredValue;
                         Boolean boolean3 = true;
-                        String string2 = string;
-                        List list8 = this.buildArrayElementLoad(bm, string2, boolean3, boolean4, constantPool3, list5, classMemberLookup3, classResolver1);
+                        String valueValue = string;
+                        List list8 = this.buildArrayElementLoad(integerValue2, valueValue, boolean3, boolean4, constantPool3, list5, classMemberLookup3, classResolver1);
                         LocalVariableInstruction localVariableInstruction1 = LocalVariableInstruction.createForType(string, localVariableSlot4);
                         list8.add(localVariableInstruction1);
                         arrayList2.add(list8);
                     }
 
-                    bk++;
+                    elementIndexValue2++;
                     if (LocalVariableList.isWideType(string)) {
-                        bk++;
+                        elementIndexValue2++;
                     }
                 }
 
-                bm++;
+                integerValue2++;
             }
 
             if (bl) {
@@ -8171,7 +7984,7 @@ public class MethodBytecode extends ClassFileComponent {
             List list1,
             boolean bl,
             Map map1,
-            int[][] ba,
+            int[][] integerArrayArray,
             ListMultimap listMultimap,
             Long long1,
             LocalVariableIndex localVariableIndex1,
@@ -8183,23 +7996,23 @@ public class MethodBytecode extends ClassFileComponent {
     ) throws ZkmException, IOException {
         RankedEntryComparator rankedEntryComparator = new RankedEntryComparator(this);
         Collections.sort(list1, rankedEntryComparator);
-        int bb = list1.size();
-        int bc = -1;
-        if (bb != 0) {
+        int list1Size = list1.size();
+        int valueValue = -1;
+        if (list1Size != 0) {
             MethodFlowAnalyzer methodFlowAnalyzer = null;
             Iterator iterator = list1.iterator();
             ObjectPair objectPair = (ObjectPair) iterator.next();
             ConstantPoolOperand constantPoolOperand = (ConstantPoolOperand) ((RankedValue) objectPair.getFirst()).getValue();
-            int bd = bb;
+            int list1SizeValue = list1Size;
             this.setModified(true);
-            byte be = 0;
+            byte extraStackSizeValue = 0;
             boolean bl1 = false;
             boolean bl2 = false;
             ArrayList arrayList = new ArrayList();
-            int bf = this.instructions.size();
+            int instructionsSize = this.instructions.size();
 
-            for (int i = 0; i < bf; i++) {
-                Instruction instruction1 = (Instruction) this.instructions.get(i);
+            for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+                Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
                 if (instruction1.isLabel()) {
                     LabelInstruction labelInstruction = (LabelInstruction) instruction1;
                     if (labelInstruction.hasUsageBits(1) || labelInstruction.hasUsageBits(1024)) {
@@ -8208,41 +8021,41 @@ public class MethodBytecode extends ClassFileComponent {
                 }
 
                 if (instruction1 == constantPoolOperand) {
-                    bd += -1;
+                    list1SizeValue += -1;
                     EncryptedStringLocation encryptedStringLocation = (EncryptedStringLocation) objectPair.getSecond();
-                    be = 0;
+                    extraStackSizeValue = 0;
                     switch (LookupStrategySwitchMap.STRING_TECHNIQUE_SWITCH[encryptedStringLocation.getTechnique().ordinal()]) {
                         case 1:
                             ArrayList arrayList4 = new ArrayList();
                             if (encryptedStringLocation.hasStringIndex()) {
-                                be = 1;
+                                extraStackSizeValue = 1;
                                 arrayList4.add(Instruction.createObjectLoad(encryptedStringLocation.getArrayLocalIndex(), this.localVariableList, 1));
-                                this.appendIntConstant(encryptedStringLocation.getStringIndex(), arrayList4, constantPool1, list2, bb);
+                                this.appendIntConstant(encryptedStringLocation.getStringIndex(), arrayList4, constantPool1, list2, list1Size);
                                 arrayList4.add(SimpleInstruction.forOpcode(50));
                             } else {
                                 arrayList4.add(Instruction.createObjectLoad(encryptedStringLocation.getArrayLocalIndex(), this.localVariableList, 1));
                             }
 
-                            arrayList.add(new CodeInsertion(arrayList4, i - 1, 1, be));
+                            arrayList.add(new CodeInsertion(arrayList4, elementIndex - 1, 1, extraStackSizeValue));
                             break;
                         case 2:
                             ArrayList arrayList3 = new ArrayList();
                             ResolvedFieldRef resolvedFieldRef = encryptedStringLocation.getArrayFieldRef();
                             if (encryptedStringLocation.hasStringIndex()) {
-                                be = 1;
+                                extraStackSizeValue = 1;
                                 if (bl1) {
-                                    arrayList3.add(Instruction.createObjectLoad(bc, this.localVariableList, 1));
+                                    arrayList3.add(Instruction.createObjectLoad(valueValue, this.localVariableList, 1));
                                 } else {
                                     arrayList3.add(new ConstantRefInstruction(178, resolvedFieldRef));
-                                    if (bd > 0 && (ba.length == 0 || !this.isInAnyRange(i, ba))) {
+                                    if (list1SizeValue > 0 && (integerArrayArray.length == 0 || !this.isInAnyRange(elementIndex, integerArrayArray))) {
                                         if (!bl2) {
                                             bl2 = true;
-                                            bc = intCounter.getValue();
+                                            valueValue = intCounter.getValue();
                                             intCounter.incrementAndGet();
                                         }
 
-                                        arrayList3.add(Instruction.createObjectStore(bc, this.localVariableList, 1));
-                                        arrayList3.add(Instruction.createObjectLoad(bc, this.localVariableList, 1));
+                                        arrayList3.add(Instruction.createObjectStore(valueValue, this.localVariableList, 1));
+                                        arrayList3.add(Instruction.createObjectLoad(valueValue, this.localVariableList, 1));
                                         bl1 = true;
                                     }
                                 }
@@ -8253,7 +8066,7 @@ public class MethodBytecode extends ClassFileComponent {
                                 arrayList3.add(new ConstantRefInstruction(178, resolvedFieldRef));
                             }
 
-                            arrayList.add(new CodeInsertion(arrayList3, i - 1, 1, be));
+                            arrayList.add(new CodeInsertion(arrayList3, elementIndex - 1, 1, extraStackSizeValue));
                             break;
                         case 3:
                             ResolvedMethodRefConstant resolvedMethodRefConstant = encryptedStringLocation.getFirstMethodRef();
@@ -8261,14 +8074,14 @@ public class MethodBytecode extends ClassFileComponent {
                             ArrayList arrayList10 = new ArrayList();
                             arrayList10.add(new ConstantRefInstruction(184, resolvedMethodRefConstant));
                             arrayList10.add(new ConstantRefInstruction(184, resolvedMethodRefConstant1));
-                            arrayList.add(new CodeInsertion(arrayList10, i - 1, 0, be));
+                            arrayList.add(new CodeInsertion(arrayList10, elementIndex - 1, 0, extraStackSizeValue));
                             break;
                         case 4:
                             LabelInstruction labelInstruction1 = encryptedStringLocation.getJumpLabel();
                             ArrayList arrayList7 = new ArrayList();
                             if (encryptedStringLocation.isJsr()) {
                                 arrayList7.add(new JsrInstruction(labelInstruction1));
-                                be = 1;
+                                extraStackSizeValue = 1;
                             } else {
                                 MutableInt mutableInt = (MutableInt) map1.get(labelInstruction1);
                                 int bq = mutableInt.incrementAndGet();
@@ -8279,7 +8092,7 @@ public class MethodBytecode extends ClassFileComponent {
                                 listMultimap.addValue(labelInstruction1, new RankedValue(bq, labelInstruction2));
                             }
 
-                            arrayList.add(new CodeInsertion(arrayList7, i - 1, 0, be));
+                            arrayList.add(new CodeInsertion(arrayList7, elementIndex - 1, 0, extraStackSizeValue));
                             break;
                         case 5:
                             methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
@@ -8289,65 +8102,65 @@ public class MethodBytecode extends ClassFileComponent {
                             int stringIndex = encryptedStringLocation.getStringIndex();
                             int lookupKey = encryptedStringLocation.getLookupKey();
                             if (long1 != null && localVariableIndex1 != null) {
-                                int bj = stringIndex ^ long1.intValue();
-                                this.appendIntConstant(bj, arrayList6, constantPool1, list2, bb);
-                                int bw = lookupKey ^ long1.intValue();
-                                this.appendIntConstant(bw, arrayList9, constantPool1, list2, bb);
+                                int valueValue3 = stringIndex ^ long1.intValue();
+                                this.appendIntConstant(valueValue3, arrayList6, constantPool1, list2, list1Size);
+                                int valueValue4 = lookupKey ^ long1.intValue();
+                                this.appendIntConstant(valueValue4, arrayList9, constantPool1, list2, list1Size);
                                 arrayList9.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 1));
                                 arrayList9.add(SimpleInstruction.forOpcode(136));
                             } else {
-                                this.appendIntConstant(stringIndex, arrayList6, constantPool1, list2, bb);
-                                this.appendIntConstant(lookupKey, arrayList9, constantPool1, list2, bb);
+                                this.appendIntConstant(stringIndex, arrayList6, constantPool1, list2, list1Size);
+                                this.appendIntConstant(lookupKey, arrayList9, constantPool1, list2, list1Size);
                             }
 
                             ConstantRefInstruction constantRefInstruction = new ConstantRefInstruction(184, resolvedMethodRef1);
-                            this.addSplitCodeInsertions(arrayList6, arrayList9, constantRefInstruction, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList6, arrayList9, constantRefInstruction, arrayList, methodFlowAnalyzer, elementIndex);
                             break;
                         case 6:
                             methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
                             ResolvedMethodRef resolvedMethodRef = encryptedStringLocation.getLookupMethodRef();
                             ArrayList arrayList5 = new ArrayList();
                             ArrayList arrayList8 = new ArrayList();
-                            int bo = encryptedStringLocation.getStringIndex();
+                            int stringIndexValue = encryptedStringLocation.getStringIndex();
                             long decryptKey = encryptedStringLocation.getDecryptKey();
                             if (long1 != null && localVariableIndex1 != null) {
-                                int bv = bo ^ (int) (decryptKey & 32767L);
-                                this.appendIntConstant(bv, arrayList5, constantPool1, list2, bb);
-                                long bx = decryptKey ^ long1;
-                                Instruction.appendLongConstant(bx, arrayList8, constantPool1, list2);
+                                int valueValue5 = stringIndexValue ^ (int) (decryptKey & 32767L);
+                                this.appendIntConstant(valueValue5, arrayList5, constantPool1, list2, list1Size);
+                                long valueValue8 = decryptKey ^ long1;
+                                Instruction.appendLongConstant(valueValue8, arrayList8, constantPool1, list2);
                                 arrayList8.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 1));
                                 arrayList8.add(SimpleInstruction.forOpcode(131));
                             } else {
-                                int bu = bo ^ (int) decryptKey;
-                                Instruction.appendIntConstant(bu, arrayList5, constantPool1, list2);
+                                int valueValue2 = stringIndexValue ^ (int) decryptKey;
+                                Instruction.appendIntConstant(valueValue2, arrayList5, constantPool1, list2);
                                 Instruction.appendLongConstant(decryptKey, arrayList8, constantPool1, list2);
                             }
 
                             ConstantRefInstruction constantRefInstruction1 = new ConstantRefInstruction(184, resolvedMethodRef);
-                            this.addSplitCodeInsertions(arrayList5, arrayList8, constantRefInstruction1, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList5, arrayList8, constantRefInstruction1, arrayList, methodFlowAnalyzer, elementIndex);
                             break;
                         case 7:
                             ResolvedInvokeDynamic resolvedInvokeDynamic = encryptedStringLocation.getIndyEntry();
                             methodFlowAnalyzer = this.ensureFlowAnalyzer(methodFlowAnalyzer, commonSuperTypeResolver1, classHierarchyQuery);
                             ArrayList arrayList1 = new ArrayList();
                             ArrayList arrayList2 = new ArrayList();
-                            int bh = encryptedStringLocation.getStringIndex();
-                            long bi = encryptedStringLocation.getDecryptKey();
+                            int stringIndexValue2 = encryptedStringLocation.getStringIndex();
+                            long decryptKeyValue = encryptedStringLocation.getDecryptKey();
                             if (long1 != null && localVariableIndex1 != null) {
-                                int bt = bh ^ (int) (bi & 32767L);
-                                this.appendIntConstant(bt, arrayList1, constantPool1, list2, bb);
-                                long bm = bi ^ long1;
-                                Instruction.appendLongConstant(bm, arrayList2, constantPool1, list2);
+                                int valueValue6 = stringIndexValue2 ^ (int) (decryptKeyValue & 32767L);
+                                this.appendIntConstant(valueValue6, arrayList1, constantPool1, list2, list1Size);
+                                long valueValue9 = decryptKeyValue ^ long1;
+                                Instruction.appendLongConstant(valueValue9, arrayList2, constantPool1, list2);
                                 arrayList2.add(Instruction.createLongLoad(localVariableIndex1.getIndex(), this.localVariableList, 1));
                                 arrayList2.add(SimpleInstruction.forOpcode(131));
                             } else {
-                                int bk = bh ^ (int) bi;
-                                this.appendIntConstant(bk, arrayList1, constantPool1, list2, bb);
-                                Instruction.appendLongConstant(bi, arrayList2, constantPool1, list2);
+                                int valueValue7 = stringIndexValue2 ^ (int) decryptKeyValue;
+                                this.appendIntConstant(valueValue7, arrayList1, constantPool1, list2, list1Size);
+                                Instruction.appendLongConstant(decryptKeyValue, arrayList2, constantPool1, list2);
                             }
 
                             InvokeDynamicInstruction invokeDynamicInstruction = new InvokeDynamicInstruction(resolvedInvokeDynamic);
-                            this.addSplitCodeInsertions(arrayList1, arrayList2, invokeDynamicInstruction, arrayList, methodFlowAnalyzer, i);
+                            this.addSplitCodeInsertions(arrayList1, arrayList2, invokeDynamicInstruction, arrayList, methodFlowAnalyzer, elementIndex);
                     }
 
                     if (!iterator.hasNext()) {
@@ -8363,7 +8176,7 @@ public class MethodBytecode extends ClassFileComponent {
             if (!bl) {
                 CodeAttributeBody codeAttributeBody = (CodeAttributeBody) this.getParent();
                 int maxStack = codeAttributeBody.getMaxStack();
-                codeAttributeBody.setMaxStack(maxStack + be);
+                codeAttributeBody.setMaxStack(maxStack + extraStackSizeValue);
             }
         }
     }
@@ -8383,10 +8196,10 @@ public class MethodBytecode extends ClassFileComponent {
     ) throws ZkmException, IOException {
         MethodFlowAnalyzer methodFlowAnalyzer = null;
         StackFrameState[] stackFrameStates = null;
-        int ba = this.instructions.size();
+        int instructionsSize = this.instructions.size();
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
             if (instruction1.getOpcode() == 186) {
                 ResolvedInvokeDynamic resolvedInvokeDynamic = ((InvokeDynamicInstruction) instruction1).getInvokeDynamicRef();
                 BootstrapMethodEntry bootstrapMethodEntry = resolvedInvokeDynamic.getBootstrapMethod();
@@ -8398,12 +8211,12 @@ public class MethodBytecode extends ClassFileComponent {
 
                     BootstrapMethodInfo bootstrapMethodInfo = bootstrapMethodIndex1.getInfo(bootstrapMethodEntry);
                     VerifierType[] verifierTypes = null;
-                    if (i > 0) {
-                        verifierTypes = stackFrameStates[i - 1].getStack();
+                    if (elementIndex > 0) {
+                        verifierTypes = stackFrameStates[elementIndex - 1].getStack();
                     }
 
                     CodeInsertion codeInsertion = this.buildStringConcatReplacement(
-                            i, bootstrapMethodInfo, resolvedInvokeDynamic, map1, verifierTypes, constantPool1, list1
+                            elementIndex, bootstrapMethodInfo, resolvedInvokeDynamic, map1, verifierTypes, constantPool1, list1
                     );
                     listMultimap.addValue(this, codeInsertion);
                 }
@@ -8435,17 +8248,17 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public int[] computeInstructionOffsets() {
-        int ba = this.instructions.size();
-        int[] bb = new int[ba];
-        int bc = 0;
+        int instructionsSize = this.instructions.size();
+        int[] integerArray = new int[instructionsSize];
+        int integerArrayElement = 0;
 
-        for (int i = 0; i < ba; i++) {
-            Instruction instruction1 = (Instruction) this.instructions.get(i);
-            bb[i] = bc;
-            bc += instruction1.getLength();
+        for (int elementIndex = 0; elementIndex < instructionsSize; elementIndex++) {
+            Instruction instruction1 = (Instruction) this.instructions.get(elementIndex);
+            integerArray[elementIndex] = integerArrayElement;
+            integerArrayElement += instruction1.getLength();
         }
 
-        return bb;
+        return integerArray;
     }
 
     public BranchInstruction createKeySignBranch(boolean bl, int ba, LabelInstruction labelInstruction, Random random1) {
@@ -8490,15 +8303,15 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public SyncIndexedSet findPrologueSyncPoints(MethodFlowAnalyzer methodFlowAnalyzer, Integer integer, MutableInt mutableInt) {
-        int ba = this.findMarkerLabelIndex();
+        int startIndexValue2 = this.findMarkerLabelIndex();
         BasicBlock basicBlock;
-        int bb;
-        if (ba == -1) {
+        int startIndexValue;
+        if (startIndexValue2 == -1) {
             basicBlock = methodFlowAnalyzer.getBlock();
-            bb = basicBlock.getStartIndex();
+            startIndexValue = basicBlock.getStartIndex();
         } else {
-            basicBlock = methodFlowAnalyzer.getBlockContaining(ba);
-            bb = ba;
+            basicBlock = methodFlowAnalyzer.getBlockContaining(startIndexValue2);
+            startIndexValue = startIndexValue2;
             ZkmAssert.assertTrue(
                     basicBlock.isHeader(),
                     new String[]{"In '" + this.getOwningClass().getDisplayLocationName() + "' '" + this.getMethod().toOriginalDisplayString() + "'"}
@@ -8509,40 +8322,40 @@ public class MethodBytecode extends ClassFileComponent {
         StackFrameState[] stackFrameStates = methodFlowAnalyzer.copyFrameStates();
         int endIndex = basicBlock.getEndIndex();
         Instruction instruction1 = (Instruction) this.instructions.get(endIndex);
-        int bd = instruction1.canFallThrough() && !instruction1.isJump() ? endIndex + 1 : endIndex;
-        bd = Math.min(bd, integer);
-        int be = endIndex;
+        int elementIndexValue2 = instruction1.canFallThrough() && !instruction1.isJump() ? endIndex + 1 : endIndex;
+        elementIndexValue2 = Math.min(elementIndexValue2, integer);
+        int endIndexValue = endIndex;
 
-        for (int i = bb; i <= bd; i++) {
-            Instruction instruction2 = (Instruction) this.instructions.get(i);
+        for (int elementIndex = startIndexValue; elementIndex <= elementIndexValue2; elementIndex++) {
+            Instruction instruction2 = (Instruction) this.instructions.get(elementIndex);
             if (instruction2.isLabel()) {
                 LabelInstruction labelInstruction = (LabelInstruction) instruction2;
-                if (labelInstruction.hasUsageBits(1) && i < bd) {
-                    bd = i;
+                if (labelInstruction.hasUsageBits(1) && elementIndex < elementIndexValue2) {
+                    elementIndexValue2 = elementIndex;
                     break;
                 }
 
                 if (labelInstruction.hasUsageBits(256)) {
-                    be = i;
-                    bd = i;
+                    endIndexValue = elementIndex;
+                    elementIndexValue2 = elementIndex;
                     break;
                 }
             }
         }
 
-        mutableInt.setValue(be);
-        bd = bd == 0 ? bd : bd - 1;
-        boolean bl = bb == 0;
-        int bg = -1;
+        mutableInt.setValue(endIndexValue);
+        elementIndexValue2 = elementIndexValue2 == 0 ? elementIndexValue2 : elementIndexValue2 - 1;
+        boolean bl = startIndexValue == 0;
+        int integer1Value = -1;
 
-        for (int i = bb; i <= bd; i++) {
-            Instruction instruction3 = (Instruction) this.instructions.get(i);
+        for (int elementIndexValue = startIndexValue; elementIndexValue <= elementIndexValue2; elementIndexValue++) {
+            Instruction instruction3 = (Instruction) this.instructions.get(elementIndexValue);
             bl = bl && instruction3.isLabel();
-            if (stackFrameStates[i].getStack().length == 0 && !instruction3.isJump() && instruction3.getOpcode() != 191) {
-                Integer integer1 = bl ? IntegerCache.MINUS_ONE : integerCache.valueOf(i);
+            if (stackFrameStates[elementIndexValue].getStack().length == 0 && !instruction3.isJump() && instruction3.getOpcode() != 191) {
+                Integer integer1 = bl ? IntegerCache.MINUS_ONE : integerCache.valueOf(elementIndexValue);
                 if (integer1 != IntegerCache.MINUS_ONE) {
-                    if (bg != -1) {
-                        if (i <= bg + 1) {
+                    if (integer1Value != -1) {
+                        if (elementIndexValue <= integer1Value + 1) {
                             continue;
                         }
 
@@ -8554,7 +8367,7 @@ public class MethodBytecode extends ClassFileComponent {
                     syncIndexedSet.add(integer1);
                 }
 
-                bg = integer1;
+                integer1Value = integer1;
             }
         }
 
@@ -8573,11 +8386,11 @@ public class MethodBytecode extends ClassFileComponent {
     }
 
     public void relocateAddedLocals(List list1) {
-        int ba = list1.size();
+        int list1Size = list1.size();
         int argumentSlotCount = ((MethodInfo) this.getParent().getParent()).getArgumentSlotCount();
         LocalVariableList localVariableList1 = this.localVariableList;
         Integer integer = argumentSlotCount;
-        localVariableList1.moveTrailingSlots(ba, integer);
+        localVariableList1.moveTrailingSlots(list1Size, integer);
     }
 
     public List buildPredicateFieldUpdate(
@@ -8612,15 +8425,15 @@ public class MethodBytecode extends ClassFileComponent {
             arrayList.add(constantRefInstruction1);
         } else {
             CodeAttributeBody codeAttributeBody = (CodeAttributeBody) this.getParent();
-            int ba = codeAttributeBody.getMaxLocals() + 1;
-            codeAttributeBody.setMaxLocals(ba);
-            int bb = ba - 1;
-            list2.add(integerCache.valueOf(bb));
-            Instruction instruction1 = Instruction.createIntStore(bb, this.localVariableList, 2);
-            Instruction instruction2 = Instruction.createIntLoad(bb, this.localVariableList, 2);
+            int maxLocalsValue = codeAttributeBody.getMaxLocals() + 1;
+            codeAttributeBody.setMaxLocals(maxLocalsValue);
+            int integerValue = maxLocalsValue - 1;
+            list2.add(integerCache.valueOf(integerValue));
+            Instruction instruction1 = Instruction.createIntStore(integerValue, this.localVariableList, 2);
+            Instruction instruction2 = Instruction.createIntLoad(integerValue, this.localVariableList, 2);
             arrayList.add(constantRefInstruction);
             arrayList.add(instruction1);
-            arrayList.add(Instruction.createIntIncrement(bb, 1, this.localVariableList, 2));
+            arrayList.add(Instruction.createIntIncrement(integerValue, 1, this.localVariableList, 2));
             arrayList.add(instruction2);
             arrayList.add(constantRefInstruction1);
         }

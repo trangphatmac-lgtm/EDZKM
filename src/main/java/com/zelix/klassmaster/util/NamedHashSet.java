@@ -12,13 +12,13 @@ public class NamedHashSet extends HashSet implements NamedSet {
         return this.name;
     }
 
-    public NamedHashSet(String string, Collection collection1) {
+    public NamedHashSet(String nameArgument, Collection collection1) {
         super(collection1);
-        this.name = string;
+        this.name = nameArgument;
     }
 
-    public NamedHashSet(String string, Map map1) {
-        this(string, map1.keySet());
+    public NamedHashSet(String nameArgument, Map map1) {
+        this(nameArgument, map1.keySet());
     }
 
     public NamedHashSet() {

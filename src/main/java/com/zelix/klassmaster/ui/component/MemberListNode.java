@@ -28,38 +28,38 @@ public class MemberListNode extends ListClassProperty {
         return this.members[super.cursor++].getSourceName();
     }
 
-    public int getMemberIndex(Object object) {
+    public int getMemberIndex(Object key) {
         if (super.indexMap == null) {
             super.indexMap = ZkmUtils.createHashMap((int) (this.memberCount * 1.5));
-            int ba = 0;
+            int integer = 0;
             int bb = 0;
 
-            for (int i = this.memberCount; bb < i; i = this.memberCount) {
-                super.indexMap.put(this.members[ba], super.integerCache.valueOf(ba));
-                bb = ++ba;
+            for (int memberCountValue = this.memberCount; bb < memberCountValue; memberCountValue = this.memberCount) {
+                super.indexMap.put(this.members[integer], super.integerCache.valueOf(integer));
+                bb = ++integer;
             }
         }
 
-        Object object1 = super.indexMap.get(object);
+        Object object1 = super.indexMap.get(key);
         return object1 != null ? (Integer) object1 : -1;
     }
 
-    public MemberListNode(String string, ClassFileComponent classFileComponent, MemberInfo[] memberInfos, IntegerCache integerCache1) {
-        super(string, classFileComponent, integerCache1);
+    public MemberListNode(String propertyName, ClassFileComponent classFileComponent, MemberInfo[] memberInfos, IntegerCache integerCache1) {
+        super(propertyName, classFileComponent, integerCache1);
         this.initMembers(memberInfos);
     }
 
-    public MemberInfo getMember(int ba) {
-        return this.members[ba];
+    public MemberInfo getMember(int memberIndex) {
+        return this.members[memberIndex];
     }
 
     public void initMembers(MemberInfo[] memberInfos) {
-        int ba = memberInfos.length;
-        Vector vector = new Vector(ba);
+        int lengthValue = memberInfos.length;
+        Vector vector = new Vector(lengthValue);
 
-        for (int i = 0; i < ba; i++) {
-            if (memberInfos[i].isValid()) {
-                vector.addElement(memberInfos[i]);
+        for (int memberInfoIndex = 0; memberInfoIndex < lengthValue; memberInfoIndex++) {
+            if (memberInfos[memberInfoIndex].isValid()) {
+                vector.addElement(memberInfos[memberInfoIndex]);
             }
         }
 

@@ -16,9 +16,9 @@ public class ReflectionParamDetail {
     }
 
     public ReflectionParamDetail(
-            int ba, ReflectionParamType reflectionParamType, boolean bl, boolean bl1, boolean bl2, ReflectionScopeSwitchMap reflectionScopeSwitchMap
+            int positionArgument, ReflectionParamType reflectionParamType, boolean arrayParamArgument, boolean targetClassParamArgument, boolean fieldTypeParamArgument, ReflectionScopeSwitchMap reflectionScopeSwitchMap
     ) {
-        this(ba, reflectionParamType, bl, bl1, bl2);
+        this(positionArgument, reflectionParamType, arrayParamArgument, targetClassParamArgument, fieldTypeParamArgument);
     }
 
     public boolean isClassOrPropertiesNameParam() {

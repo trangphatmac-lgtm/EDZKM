@@ -26,8 +26,8 @@ public class ASTLbraceClause extends ProGuardConfigSimpleNode implements ProGuar
     public List methodSpecs = new ArrayList();
 
     @Override
-    public void setAnnotationName(String string) {
-        this.annotationName = string;
+    public void setAnnotationName(String annotationNameArgument) {
+        this.annotationName = annotationNameArgument;
     }
 
     public boolean hasModifiers() {
@@ -46,8 +46,8 @@ public class ASTLbraceClause extends ProGuardConfigSimpleNode implements ProGuar
     public final void translate(Object object1, Object object) throws ZkmException, IOException {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < this.jjtGetNumChildren(); childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
 
         ProGuardClassSpecification proGuardClassSpecification = (ProGuardClassSpecification) this.jjtGetParent();
@@ -92,25 +92,25 @@ public class ASTLbraceClause extends ProGuardConfigSimpleNode implements ProGuar
                                 + "."
                 );
             } else {
-                String string1 = ProGuardWildcardConverter.convertClassPattern(namePatternEntry.getPattern());
-                namePatternEntry.setPattern(string1);
+                String pattern = ProGuardWildcardConverter.convertClassPattern(namePatternEntry.getPattern());
+                namePatternEntry.setPattern(pattern);
                 proGuardClassSpecification.addClassNamePattern(namePatternEntry);
             }
         }
     }
 
-    public void setExtendsAnnotation(String string, ProGuardConfigTranslator proGuardConfigTranslator) {
+    public void setExtendsAnnotation(String extendsAnnotationArgument, ProGuardConfigTranslator proGuardConfigTranslator) {
         if (this.extendsAnnotation != null) {
             proGuardConfigTranslator.logWarning(
-                    "More than one 'extends' clause annotation in class specification : '" + string + "' will replace '" + this.extendsAnnotation + "'"
+                    "More than one 'extends' clause annotation in class specification : '" + extendsAnnotationArgument + "' will replace '" + this.extendsAnnotation + "'"
             );
         }
 
-        this.extendsAnnotation = string;
+        this.extendsAnnotation = extendsAnnotationArgument;
     }
 
-    public void setImplementsClassName(String string) {
-        this.implementsClassName = string;
+    public void setImplementsClassName(String implementsClassNameArgument) {
+        this.implementsClassName = implementsClassNameArgument;
     }
 
     public List getClassNamePatterns() {
@@ -151,14 +151,14 @@ public class ASTLbraceClause extends ProGuardConfigSimpleNode implements ProGuar
         return this.buildAnnotationText();
     }
 
-    public void setImplementsAnnotation(String string, ProGuardConfigTranslator proGuardConfigTranslator) {
+    public void setImplementsAnnotation(String implementsAnnotationArgument, ProGuardConfigTranslator proGuardConfigTranslator) {
         if (this.implementsAnnotation != null) {
             proGuardConfigTranslator.logWarning(
-                    "More than one 'implements' clause in class specification : '" + string + "' will replace '" + this.implementsAnnotation + "'"
+                    "More than one 'implements' clause in class specification : '" + implementsAnnotationArgument + "' will replace '" + this.implementsAnnotation + "'"
             );
         }
 
-        this.implementsAnnotation = string;
+        this.implementsAnnotation = implementsAnnotationArgument;
     }
 
     public String getInheritanceText(long ba) {
@@ -202,19 +202,19 @@ public class ASTLbraceClause extends ProGuardConfigSimpleNode implements ProGuar
         if (this.implementsClassName != null) {
             stringBuilder.append(" implements ");
             StringBuilder stringBuilder1;
-            String string;
+            String implementsClassNameValue;
             if (this.implementsAnnotation != null) {
                 stringBuilder.append("@");
                 stringBuilder.append(ProGuardWildcardConverter.convertClassPattern(this.implementsAnnotation));
                 stringBuilder.append(' ');
                 stringBuilder1 = stringBuilder;
-                string = this.implementsClassName;
+                implementsClassNameValue = this.implementsClassName;
             } else {
                 stringBuilder1 = stringBuilder;
-                string = this.implementsClassName;
+                implementsClassNameValue = this.implementsClassName;
             }
 
-            stringBuilder1.append(ProGuardWildcardConverter.convertClassPattern(string));
+            stringBuilder1.append(ProGuardWildcardConverter.convertClassPattern(implementsClassNameValue));
         }
 
         return stringBuilder.toString();
@@ -224,14 +224,14 @@ public class ASTLbraceClause extends ProGuardConfigSimpleNode implements ProGuar
         return this.buildModifiersText();
     }
 
-    public void setExtendsClassName(String string, ProGuardConfigTranslator proGuardConfigTranslator) {
+    public void setExtendsClassName(String extendsClassNameArgument, ProGuardConfigTranslator proGuardConfigTranslator) {
         if (this.extendsClassName != null) {
             proGuardConfigTranslator.logWarning(
-                    "More than one 'extends' clause in class specification : '" + string + "' will replace '" + this.extendsClassName + "'"
+                    "More than one 'extends' clause in class specification : '" + extendsClassNameArgument + "' will replace '" + this.extendsClassName + "'"
             );
         }
 
-        this.extendsClassName = string;
+        this.extendsClassName = extendsClassNameArgument;
     }
 
     public boolean hasFieldSpecs() {

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class ClassListCollector extends HierarchyNodeVisitor {
     @Override
-    public void visitNode(ClassHierarchyNode classHierarchyNode, int ba, ArrayList arrayList) {
-        classHierarchyNode.setDepth(ba);
+    public void visitNode(ClassHierarchyNode classHierarchyNode, int depth, ArrayList arrayList) {
+        classHierarchyNode.setDepth(depth);
         arrayList.add(classHierarchyNode);
     }
 }

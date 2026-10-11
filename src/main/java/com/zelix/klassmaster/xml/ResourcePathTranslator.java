@@ -33,8 +33,8 @@ public class ResourcePathTranslator {
         Iterator iterator = set1.iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            this.sortedClassRootPrefixes[ba++] = string;
+            String sortedClassRootPrefixe = (String) iterator.next();
+            this.sortedClassRootPrefixes[ba++] = sortedClassRootPrefixe;
         }
 
         Arrays.sort(this.sortedClassRootPrefixes, CaseInsensitiveComparator.getInstance());
@@ -56,54 +56,54 @@ public class ResourcePathTranslator {
         StringBuilder stringBuilder1 = new StringBuilder();
 
         while (true) {
-            String string2 = stringBuilder.toString();
-            String string3 = (String) enumerableMap.get(string2);
+            String key = stringBuilder.toString();
+            String string3 = (String) enumerableMap.get(key);
             if (string3 != null) {
-                if (!string3.equals(string2)) {
+                if (!string3.equals(key)) {
                     stringBuilder1.setLength(0);
                     stringBuilder1.append(string3);
-                    String string4 = string1.substring(string2.length());
+                    String string4 = string1.substring(key.length());
                     if (stringBuilder1.length() == 0 && string4.length() > 0 && string4.charAt(0) == '/') {
                         string4 = string4.substring(1);
                     }
 
                     stringBuilder1.append(string4);
-                    mutableInt.setValue(ZkmStringUtils.countChar(string2, '/') + 1);
+                    mutableInt.setValue(ZkmStringUtils.countChar(key, '/') + 1);
                     return stringBuilder1.toString();
                 }
                 break;
             }
 
-            int ba = string2.lastIndexOf("/");
-            if (ba <= -1) {
+            int lengthValue = key.lastIndexOf("/");
+            if (lengthValue <= -1) {
                 break;
             }
 
-            stringBuilder.setLength(ba);
+            stringBuilder.setLength(lengthValue);
         }
 
         return string1;
     }
 
     public String renameDirectory(String string) {
-        String string1 = string;
+        String key = string;
         String string2 = "";
         String string3 = "";
-        if (string1.charAt(0) == '/') {
-            string1 = string1.substring(1);
+        if (key.charAt(0) == '/') {
+            key = key.substring(1);
             string2 = "/";
         }
 
         EnumerableMap enumerableMap;
-        if (string1.charAt(string1.length() - 1) == '/') {
-            string1 = string1.substring(0, string1.length() - 1);
+        if (key.charAt(key.length() - 1) == '/') {
+            key = key.substring(0, key.length() - 1);
             string3 = "/";
             enumerableMap = this.packageRenameMap;
         } else {
             enumerableMap = this.packageRenameMap;
         }
 
-        String string4 = (String) enumerableMap.get(string1);
+        String string4 = (String) enumerableMap.get(key);
         return string4 != null ? string2 + string4 + (string4.length() > 0 ? string3 : "") : string;
     }
 
@@ -133,13 +133,13 @@ public class ResourcePathTranslator {
         StringBuilder stringBuilder1 = new StringBuilder();
 
         while (true) {
-            String string5 = stringBuilder.toString();
-            String string6 = (String) enumerableMap.get(string5);
+            String key = stringBuilder.toString();
+            String string6 = (String) enumerableMap.get(key);
             if (string6 != null) {
-                if (!string6.equals(string5)) {
+                if (!string6.equals(key)) {
                     stringBuilder1.setLength(0);
                     stringBuilder1.append(string6);
-                    String string7 = string3.substring(string5.length());
+                    String string7 = string3.substring(key.length());
                     if (stringBuilder1.length() == 0 && string7.length() > 0 && string7.charAt(0) == '/') {
                         string7 = string7.substring(1);
                     }
@@ -154,12 +154,12 @@ public class ResourcePathTranslator {
                 break;
             }
 
-            int bb = string5.lastIndexOf("/");
-            if (bb <= -1) {
+            int lengthValue = key.lastIndexOf("/");
+            if (lengthValue <= -1) {
                 break;
             }
 
-            stringBuilder.setLength(bb);
+            stringBuilder.setLength(lengthValue);
         }
 
         return string1;
@@ -197,34 +197,34 @@ public class ResourcePathTranslator {
             arrayList.add(stringTokenizer.nextToken());
         }
 
-        String string4 = "";
+        String key = "";
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = arrayList.size();
+        int arrayListSize = arrayList.size();
 
-        for (int i = ba - 1; i >= 0; i += -1) {
+        for (int elementIndex = arrayListSize - 1; elementIndex >= 0; elementIndex += -1) {
             if (stringBuilder.length() > 0) {
                 stringBuilder.insert(0, '/');
             }
 
-            String string5 = (String) arrayList.get(i);
+            String string5 = (String) arrayList.get(elementIndex);
             String string10 = string5;
             stringBuilder.insert(0, string10);
             if (enumerableMap.containsKey(stringBuilder.toString())) {
-                string4 = stringBuilder.toString();
-            } else if (string4.length() > 0) {
+                key = stringBuilder.toString();
+            } else if (key.length() > 0) {
                 break;
             }
         }
 
-        String string11 = null;
+        String keyValue = null;
         String string12 = null;
         StringBuilder stringBuilder1 = new StringBuilder();
         StringTokenizer stringTokenizer1 = new StringTokenizer(string2, "/");
-        ba = stringTokenizer1.countTokens();
+        arrayListSize = stringTokenizer1.countTokens();
 
-        for (int i = 0; i < ba; i++) {
+        for (int i = 0; i < arrayListSize; i++) {
             stringBuilder.setLength(0);
-            stringBuilder.append(string4);
+            stringBuilder.append(key);
             if (stringBuilder.length() > 0) {
                 stringBuilder.append('/');
             }
@@ -240,15 +240,15 @@ public class ResourcePathTranslator {
                 break;
             }
 
-            string11 = stringBuilder.toString();
+            keyValue = stringBuilder.toString();
             string12 = stringBuilder1.toString();
         }
 
-        if (string11 != null) {
-            String string13 = (String) enumerableMap.get(string11);
-            if (string4.length() > 0) {
-                String string15 = (String) enumerableMap.get(string4);
-                if (string11.length() > string4.length()) {
+        if (keyValue != null) {
+            String string13 = (String) enumerableMap.get(keyValue);
+            if (key.length() > 0) {
+                String string15 = (String) enumerableMap.get(key);
+                if (keyValue.length() > key.length()) {
                     String string16 = "";
                     if (string13.length() != string15.length()) {
                         if (string13.length() > string15.length()) {
@@ -281,20 +281,20 @@ public class ResourcePathTranslator {
     }
 
     public boolean hasDirectoryMapping(String string) {
-        String string1 = string;
-        if (string1.charAt(0) == '/') {
-            string1 = string1.substring(1);
+        String key = string;
+        if (key.charAt(0) == '/') {
+            key = key.substring(1);
         }
 
         EnumerableMap enumerableMap;
-        if (string1.charAt(string1.length() - 1) == '/') {
-            string1 = string1.substring(0, string1.length() - 1);
+        if (key.charAt(key.length() - 1) == '/') {
+            key = key.substring(0, key.length() - 1);
             enumerableMap = this.packageRenameMap;
         } else {
             enumerableMap = this.packageRenameMap;
         }
 
-        return enumerableMap.containsKey(string1);
+        return enumerableMap.containsKey(key);
     }
 
     public String translateResourcePath(String string) throws IOException {
@@ -309,22 +309,22 @@ public class ResourcePathTranslator {
             String string1 = string;
             String string2 = "";
             String string10;
-            byte bd;
+            byte searchCharacter;
             if (string1.charAt(0) == '/') {
                 string1 = string1.substring(1);
                 string2 = "/";
                 string10 = string1;
-                bd = 47;
+                searchCharacter = 47;
             } else {
                 string10 = string1;
-                bd = 47;
+                searchCharacter = 47;
             }
 
-            int ba = string10.lastIndexOf(bd);
-            if (ba >= 0) {
-                String string3 = string1.substring(ba + 1);
-                String string4 = string1.substring(0, ba);
-                String string5 = (String) this.translatedDirCache.get(string4);
+            int endIndex = string10.lastIndexOf(searchCharacter);
+            if (endIndex >= 0) {
+                String string3 = string1.substring(endIndex + 1);
+                String key = string1.substring(0, endIndex);
+                String string5 = (String) this.translatedDirCache.get(key);
                 if (string5 != null) {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append(string2);
@@ -339,45 +339,45 @@ public class ResourcePathTranslator {
                     return stringBuilder.toString();
                 }
 
-                String string6 = "";
+                String sortedClassRootPrefixe = "";
 
-                for (int i = this.sortedClassRootPrefixes.length - 1; i >= 0; i += -1) {
-                    if (string4.startsWith(this.sortedClassRootPrefixes[i])) {
-                        string6 = this.sortedClassRootPrefixes[i];
-                        string4 = string4.substring(this.sortedClassRootPrefixes[i].length());
+                for (int sortedClassRootPrefixeIndex = this.sortedClassRootPrefixes.length - 1; sortedClassRootPrefixeIndex >= 0; sortedClassRootPrefixeIndex += -1) {
+                    if (key.startsWith(this.sortedClassRootPrefixes[sortedClassRootPrefixeIndex])) {
+                        sortedClassRootPrefixe = this.sortedClassRootPrefixes[sortedClassRootPrefixeIndex];
+                        key = key.substring(this.sortedClassRootPrefixes[sortedClassRootPrefixeIndex].length());
                         break;
                     }
                 }
 
-                StringBuilder stringBuilder1 = new StringBuilder(string4);
+                StringBuilder stringBuilder1 = new StringBuilder(key);
 
                 while (true) {
-                    String string7 = stringBuilder1.toString();
-                    String string8 = (String) this.packageRenameMap.get(string7);
+                    String keyValue = stringBuilder1.toString();
+                    String string8 = (String) this.packageRenameMap.get(keyValue);
                     if (string8 != null) {
                         StringBuilder stringBuilder2 = new StringBuilder(string8);
-                        String string9 = string4.substring(string7.length());
+                        String string9 = key.substring(keyValue.length());
                         if (stringBuilder2.length() == 0 && string9.length() > 0 && string9.charAt(0) == '/') {
                             string9 = string9.substring(1);
                         }
 
                         stringBuilder2.append(string9);
-                        this.translatedDirCache.put(string6 + string4, string6 + stringBuilder2.toString());
+                        this.translatedDirCache.put(sortedClassRootPrefixe + key, sortedClassRootPrefixe + stringBuilder2.toString());
                         if (stringBuilder2.length() > 0) {
                             stringBuilder2.append("/");
                         }
 
                         stringBuilder2.append(string3);
-                        return string2 + string6 + stringBuilder2.toString();
+                        return string2 + sortedClassRootPrefixe + stringBuilder2.toString();
                     }
 
-                    int bc = string7.lastIndexOf("/");
-                    if (bc <= -1) {
-                        this.translatedDirCache.put(string6 + string4, string6 + string4);
+                    int lengthValue = keyValue.lastIndexOf("/");
+                    if (lengthValue <= -1) {
+                        this.translatedDirCache.put(sortedClassRootPrefixe + key, sortedClassRootPrefixe + key);
                         break;
                     }
 
-                    stringBuilder1.setLength(bc);
+                    stringBuilder1.setLength(lengthValue);
                 }
             }
 
@@ -397,16 +397,16 @@ public class ResourcePathTranslator {
 
     public String renameClassFilePath(String string, EnumerableMap enumerableMap) {
         if (enumerableMap != null) {
-            int ba = string.indexOf(".class");
-            String string1 = string.substring(0, ba);
+            int endIndex = string.indexOf(".class");
+            String key = string.substring(0, endIndex);
             String string2 = "";
             Object object;
-            if (string1.charAt(0) == '/') {
-                string1 = string1.substring(1);
+            if (key.charAt(0) == '/') {
+                key = key.substring(1);
                 string2 = "/";
-                object = enumerableMap.get(string1);
+                object = enumerableMap.get(key);
             } else {
-                object = enumerableMap.get(string1);
+                object = enumerableMap.get(key);
             }
 
             String string3 = (String) object;
@@ -414,17 +414,17 @@ public class ResourcePathTranslator {
                 return string2 + string3 + ".class";
             }
 
-            String string4 = "";
+            String sortedClassRootPrefixe = "";
 
-            for (int i = this.sortedClassRootPrefixes.length - 1; i >= 0; i += -1) {
-                if (string1.startsWith(this.sortedClassRootPrefixes[i])) {
-                    string4 = this.sortedClassRootPrefixes[i];
+            for (int sortedClassRootPrefixeIndex = this.sortedClassRootPrefixes.length - 1; sortedClassRootPrefixeIndex >= 0; sortedClassRootPrefixeIndex += -1) {
+                if (key.startsWith(this.sortedClassRootPrefixes[sortedClassRootPrefixeIndex])) {
+                    sortedClassRootPrefixe = this.sortedClassRootPrefixes[sortedClassRootPrefixeIndex];
                     break;
                 }
             }
 
-            if (string4.length() > 0) {
-                return string2 + string4 + (String) ZkmUtils.mapOrSelf(string1.substring(string4.length()), enumerableMap) + ".class";
+            if (sortedClassRootPrefixe.length() > 0) {
+                return string2 + sortedClassRootPrefixe + (String) ZkmUtils.mapOrSelf(key.substring(sortedClassRootPrefixe.length()), enumerableMap) + ".class";
             }
         }
 
@@ -433,66 +433,66 @@ public class ResourcePathTranslator {
 
     public static String translateRelativeReference(String string, String string1, EnumerableMap enumerableMap) {
         String string2 = string;
-        String string3 = string1;
+        String searchText = string1;
         string2 = string2.trim();
-        string3 = string3.trim();
+        searchText = searchText.trim();
         if (string2.length() > 0 && string2.charAt(0) == '/') {
             string2 = string2.substring(1);
         }
 
-        int ba = string2.lastIndexOf(47);
-        if (ba <= 0) {
-            return string3;
+        int endIndex = string2.lastIndexOf(47);
+        if (endIndex <= 0) {
+            return searchText;
         }
 
-        String string4 = null;
-        StringBuilder stringBuilder = new StringBuilder(string2.substring(0, ba));
+        String keyValue2 = null;
+        StringBuilder stringBuilder = new StringBuilder(string2.substring(0, endIndex));
 
         String string5;
         while (true) {
-            String string6 = stringBuilder.toString();
-            string5 = (String) enumerableMap.get(string6);
+            String key = stringBuilder.toString();
+            string5 = (String) enumerableMap.get(key);
             if (string5 != null) {
-                string4 = string6;
+                keyValue2 = key;
                 break;
             }
 
-            int bb = string6.lastIndexOf("/");
-            if (bb <= -1) {
+            int lengthValue = key.lastIndexOf("/");
+            if (lengthValue <= -1) {
                 break;
             }
 
-            stringBuilder.setLength(bb);
+            stringBuilder.setLength(lengthValue);
         }
 
-        if (string4 != null && !string4.equals(string5)) {
-            String string9 = string2.substring(string4.length() + 1);
-            if (string9.length() >= string3.length()) {
-                return string3;
+        if (keyValue2 != null && !keyValue2.equals(string5)) {
+            String string9 = string2.substring(keyValue2.length() + 1);
+            if (string9.length() >= searchText.length()) {
+                return searchText;
             }
 
-            String string7;
-            if (!string3.equals(string2)) {
-                String string10 = string2.substring(0, string2.indexOf(string3) - 1);
-                string7 = (String) enumerableMap.get(string10);
+            String prefix;
+            if (!searchText.equals(string2)) {
+                String keyValue = string2.substring(0, string2.indexOf(searchText) - 1);
+                prefix = (String) enumerableMap.get(keyValue);
             } else {
-                string7 = "";
+                prefix = "";
             }
 
             String string8;
-            if (string7.equals(string5)) {
+            if (prefix.equals(string5)) {
                 string8 = string9;
-            } else if (string5.startsWith(string7)) {
+            } else if (string5.startsWith(prefix)) {
                 StringBuilder stringBuilder1 = new StringBuilder();
-                int bc = string7.length();
+                int prefixLength = prefix.length();
                 StringBuilder stringBuilder2;
                 char bd;
-                if (bc == 0) {
+                if (prefixLength == 0) {
                     stringBuilder1.append(string5);
                     stringBuilder2 = stringBuilder1;
                     bd = '/';
                 } else {
-                    stringBuilder1.append(string5.substring(bc + 1));
+                    stringBuilder1.append(string5.substring(prefixLength + 1));
                     stringBuilder2 = stringBuilder1;
                     bd = '/';
                 }
@@ -506,7 +506,7 @@ public class ResourcePathTranslator {
 
             return string8;
         } else {
-            return string3;
+            return searchText;
         }
     }
 

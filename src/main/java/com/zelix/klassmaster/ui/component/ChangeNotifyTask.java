@@ -12,14 +12,14 @@ public class ChangeNotifyTask implements Runnable {
     public Object changeArg3;
 
     public ChangeNotifyTask(
-            EdtCallbackInvoker edtCallbackInvoker, EdtCallback edtCallback, ObservableModel observableModel1, Object object, Object object1, Object object2
+            EdtCallbackInvoker edtCallbackInvoker, EdtCallback edtCallback, ObservableModel observableModel1, Object changeArg1Argument, Object changeArg2Argument, Object changeArg3Argument
     ) {
         this.invoker = edtCallbackInvoker;
         this.callback = edtCallback;
         this.observableModel = observableModel1;
-        this.changeArg1 = object;
-        this.changeArg2 = object1;
-        this.changeArg3 = object2;
+        this.changeArg1 = changeArg1Argument;
+        this.changeArg2 = changeArg2Argument;
+        this.changeArg3 = changeArg3Argument;
     }
 
     @Override

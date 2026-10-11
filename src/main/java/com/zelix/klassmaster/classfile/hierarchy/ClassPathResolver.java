@@ -49,10 +49,10 @@ public class ClassPathResolver {
     public Map resourceArchives = ZkmUtils.createHashMap();
     public boolean cacheMisses = false;
 
-    public void setClasspath(String string, MessageReporter messageReporter1) throws ZkmException, IOException {
-        this.classpathString = string;
+    public void setClasspath(String classpathStringArgument, MessageReporter messageReporter1) throws ZkmException, IOException {
+        this.classpathString = classpathStringArgument;
         this.invalidEntries = new LinkedHashSet();
-        this.classpathEntries = parseClasspath(string, this.invalidEntries, this.tempFiles, (File) null, messageReporter1);
+        this.classpathEntries = parseClasspath(classpathStringArgument, this.invalidEntries, this.tempFiles, (File) null, messageReporter1);
         if (HiddenOptionFlags.USE_PARALLEL) {
             this.lookupCache = new ConcurrentHashMap();
         } else {
@@ -81,11 +81,11 @@ public class ClassPathResolver {
 
     public boolean hasPackageDirectory(String string) {
         String string1 = string.replace('/', FILE_SEPARATOR_CHAR);
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
         for (List list1 = this.classpathEntries; bb < list1.size(); list1 = this.classpathEntries) {
-            Object object = this.classpathEntries.get(ba);
+            Object object = this.classpathEntries.get(elementIndex);
             if (object instanceof File) {
                 File file1 = (File) object;
                 String string2 = file1.getAbsolutePath() + FILE_SEPARATOR + string1;
@@ -101,7 +101,7 @@ public class ClassPathResolver {
                 }
             }
 
-            bb = ++ba;
+            bb = ++elementIndex;
         }
 
         return false;
@@ -112,17 +112,17 @@ public class ClassPathResolver {
 
         while (enumeration.hasMoreElements()) {
             ZipEntry zipEntry1 = (ZipEntry) enumeration.nextElement();
-            String string = ZkmFileUtils.getEntryPath(zipFile1, zipEntry1);
+            String entryPath = ZkmFileUtils.getEntryPath(zipFile1, zipEntry1);
             if (!zipEntry1.isDirectory()) {
-                boolean bl = false;
+                boolean nestedArchiveEntry = false;
 
                 try {
-                    bl = ZkmFileUtils.isNestedArchiveEntry(zipFile1, zipEntry1);
+                    nestedArchiveEntry = ZkmFileUtils.isNestedArchiveEntry(zipFile1, zipEntry1);
                 } catch (IOException iOException) {
-                    set1.add(string);
+                    set1.add(entryPath);
                 }
 
-                if (bl) {
+                if (nestedArchiveEntry) {
                     File file1 = null;
                     boolean bl1 = false;
 
@@ -136,7 +136,7 @@ public class ClassPathResolver {
                         if (messageReporter1 != null) {
                             messageReporter1.reportFatalError(
                                     "FATAL ERROR:",
-                                    "Could not create temporary file in '" + TempFileManager.tempDirPath + "' : '" + string + "' : " + iOException1 + " (4)"
+                                    "Could not create temporary file in '" + TempFileManager.tempDirPath + "' : '" + entryPath + "' : " + iOException1 + " (4)"
                             );
                         }
                     }
@@ -155,7 +155,7 @@ public class ClassPathResolver {
                                                 + "' in '"
                                                 + TempFileManager.tempDirPath
                                                 + "' : '"
-                                                + string
+                                                + entryPath
                                                 + "' : "
                                                 + iOException2
                                 );
@@ -183,9 +183,9 @@ public class ClassPathResolver {
         if (zipEntry1 != null && !zipEntry1.isDirectory()) {
             File file1 = new File(zipFile1.getName());
             if (TempFileManager.isZkmTempFile(file1)) {
-                String string4 = TempFileManager.getOriginalName(zipFile1.getName());
-                if (string4 != null) {
-                    SourceArchive sourceArchive1 = new SourceArchive(file1.getAbsolutePath(), file1.length(), string4);
+                String originalName = TempFileManager.getOriginalName(zipFile1.getName());
+                if (originalName != null) {
+                    SourceArchive sourceArchive1 = new SourceArchive(file1.getAbsolutePath(), file1.length(), originalName);
                     return new InputFileLocation(zipFile1, zipEntry1, sourceArchive1);
                 }
             }
@@ -253,8 +253,8 @@ public class ClassPathResolver {
         return bl;
     }
 
-    public ClassPathResolver(String string) throws ZkmException, IOException {
-        this(string, (MessageReporter) null);
+    public ClassPathResolver(String classpathStringArgument) throws ZkmException, IOException {
+        this(classpathStringArgument, (MessageReporter) null);
     }
 
     public static List parseClasspath(String string, Set set1, File file1, MessageReporter messageReporter1) throws ZkmException, IOException {
@@ -263,12 +263,12 @@ public class ClassPathResolver {
         return parseClasspath(string, set1, (Set) null, file2, messageReporter2);
     }
 
-    private ClassPathResolver(String string, MessageReporter messageReporter1) throws ZkmException, IOException {
-        this.setClasspath(string, messageReporter1);
+    private ClassPathResolver(String classpathStringArgument, MessageReporter messageReporter1) throws ZkmException, IOException {
+        this.setClasspath(classpathStringArgument, messageReporter1);
     }
 
-    public InputFileLocation findClassFile(String string, boolean bl) {
-        Object object = this.lookupCache.get(string);
+    public InputFileLocation findClassFile(String key, boolean bl) {
+        Object object = this.lookupCache.get(key);
         if (object != null) {
             if (object == NOT_FOUND_MARKER) {
                 return null;
@@ -287,14 +287,14 @@ public class ClassPathResolver {
         }
 
         InputFileLocation inputFileLocation = null;
-        int ba = 0;
+        int elementIndex = 0;
         int bc = 0;
 
         // IDEA and Gradle run configurations
-        if (string != null && string.startsWith("com/zelix/")) {
+        if (key != null && key.startsWith("com/zelix/")) {
             for (Object object1 : this.classpathEntries) {
                 if (object1 instanceof File) {
-                    inputFileLocation = this.findTemplateInDirectory((File) object1, string);
+                    inputFileLocation = this.findTemplateInDirectory((File) object1, key);
                     if (inputFileLocation != null) {
                         break;
                     }
@@ -303,39 +303,39 @@ public class ClassPathResolver {
         }
 
         for (List list1 = this.classpathEntries; inputFileLocation == null && bc < list1.size(); list1 = this.classpathEntries) {
-            Object object1 = this.classpathEntries.get(ba);
+            Object object1 = this.classpathEntries.get(elementIndex);
             if (object1 instanceof File) {
-                inputFileLocation = this.findInDirectory((File) object1, string);
+                inputFileLocation = this.findInDirectory((File) object1, key);
                 if (inputFileLocation != null) {
                     break;
                 }
             } else if (object1 instanceof ZipFile) {
-                inputFileLocation = this.findInArchive((ZipFile) object1, string);
+                inputFileLocation = this.findInArchive((ZipFile) object1, key);
                 if (inputFileLocation != null) {
                     break;
                 }
             }
 
-            bc = ++ba;
+            bc = ++elementIndex;
         }
 
         if (bl && inputFileLocation == null) {
-            URL uRL = this.getClass().getResource("/" + string.replace('.', '/') + ".class");
+            URL uRL = this.getClass().getResource("/" + key.replace('.', '/') + ".class");
             if (uRL != null) {
-                String string4 = uRL.getProtocol();
+                String protocol = uRL.getProtocol();
                 String string1 = ZkmFileUtils.urlDecode(uRL.getPath());
-                if (string4.equalsIgnoreCase("jar")) {
+                if (protocol.equalsIgnoreCase("jar")) {
                     File file1;
                     if (string1.substring(0, 5).equalsIgnoreCase("file:")) {
                         String string2 = string1.substring(5, string1.length());
-                        int bb = string2.indexOf(33);
-                        boolean bl1 = bb > 0;
+                        int endIndex = string2.indexOf(33);
+                        boolean bl1 = endIndex > 0;
                         String[] strings = new String[]{uRL.toString()};
                         ZkmAssert.assertTrue(bl1, strings);
-                        bl1 = bb == string2.lastIndexOf(33);
+                        bl1 = endIndex == string2.lastIndexOf(33);
                         strings = new String[]{uRL.toString()};
                         ZkmAssert.assertTrue(bl1, strings);
-                        String string3 = string2.substring(0, bb);
+                        String string3 = string2.substring(0, endIndex);
                         file1 = new File(string3);
                     } else {
                         file1 = new File(string1);
@@ -343,20 +343,20 @@ public class ClassPathResolver {
 
                     if (file1.exists() && !file1.isDirectory()) {
                         try {
-                            String string5 = file1.getAbsolutePath();
+                            String absolutePath = file1.getAbsolutePath();
                             ZipFile zipFile2;
-                            if (this.resourceArchives.containsKey(string5)) {
-                                zipFile2 = (ZipFile) this.resourceArchives.get(string5);
+                            if (this.resourceArchives.containsKey(absolutePath)) {
+                                zipFile2 = (ZipFile) this.resourceArchives.get(absolutePath);
                             } else {
                                 zipFile2 = new ArchiveZipFile(file1);
-                                this.resourceArchives.put(string5, zipFile2);
+                                this.resourceArchives.put(absolutePath, zipFile2);
                             }
 
-                            inputFileLocation = this.findInArchive(zipFile2, string);
+                            inputFileLocation = this.findInArchive(zipFile2, key);
                         } catch (IOException iOException) {
                         }
                     }
-                } else if (string4.equalsIgnoreCase("file")) {
+                } else if (protocol.equalsIgnoreCase("file")) {
                     File file2 = new File(string1);
                     if (file2.exists() && !file2.isDirectory()) {
                         inputFileLocation = new InputFileLocation(file2);
@@ -366,7 +366,7 @@ public class ClassPathResolver {
         }
 
         if (this.cacheMisses && inputFileLocation == null) {
-            this.lookupCache.put(string, NOT_FOUND_MARKER);
+            this.lookupCache.put(key, NOT_FOUND_MARKER);
         }
 
         return inputFileLocation;
@@ -386,9 +386,9 @@ public class ClassPathResolver {
         if (codeSource != null) {
             URL uRL = codeSource.getLocation();
             if (uRL != null) {
-                String string1 = uRL.getProtocol();
+                String protocol = uRL.getProtocol();
                 String string2 = ZkmFileUtils.urlDecode(uRL.getPath());
-                if (string1.equalsIgnoreCase("file")) {
+                if (protocol.equalsIgnoreCase("file")) {
                     File file1 = new File(string2);
                     if (file1.exists()) {
                         InputFileLocation inputFileLocation = null;
@@ -404,19 +404,19 @@ public class ClassPathResolver {
 
                         return inputFileLocation;
                     }
-                } else if (string1.equalsIgnoreCase("jar")) {
+                } else if (protocol.equalsIgnoreCase("jar")) {
                     File file2;
                     boolean bl;
                     if (string2.substring(0, 5).equalsIgnoreCase("file:")) {
                         String string4 = string2.substring(5, string2.length());
-                        int ba = string4.indexOf(33);
-                        bl = ba > 0;
+                        int endIndex = string4.indexOf(33);
+                        bl = endIndex > 0;
                         String[] strings = new String[]{uRL.toString()};
                         ZkmAssert.assertTrue(bl, strings);
-                        bl = ba == string4.lastIndexOf(33);
+                        bl = endIndex == string4.lastIndexOf(33);
                         strings = new String[]{uRL.toString()};
                         ZkmAssert.assertTrue(bl, strings);
-                        String string3 = string4.substring(0, ba);
+                        String string3 = string4.substring(0, endIndex);
                         file2 = new File(string3);
                         bl = file2.exists();
                     } else {
@@ -436,7 +436,7 @@ public class ClassPathResolver {
                         return inputFileLocation1;
                     }
                 } else {
-                    String[] strings1 = new String[]{string1};
+                    String[] strings1 = new String[]{protocol};
                     ZkmAssert.assertTrue(false, strings1);
                 }
             }
@@ -478,8 +478,8 @@ public class ClassPathResolver {
         ArrayList arrayList = new ArrayList(vector.size());
         HashSet hashSet = ZkmUtils.createHashSet();
 
-        for (int i = 0; i < vector.size(); i++) {
-            String string3 = (String) vector.get(i);
+        for (int elementIndex = 0; elementIndex < vector.size(); elementIndex++) {
+            String string3 = (String) vector.get(elementIndex);
             if (addUniquePath(string3, hashSet)) {
                 File file3;
                 if (ZkmFileUtils.isRelativePath(string3)) {
@@ -517,11 +517,11 @@ public class ClassPathResolver {
 
     public void close() {
         if (this.classpathEntries != null) {
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = this.classpathEntries; bb < list1.size(); list1 = this.classpathEntries) {
-                Object object = this.classpathEntries.get(ba);
+                Object object = this.classpathEntries.get(elementIndex);
                 if (object instanceof ZipFile) {
                     ZipFile zipFile1 = (ZipFile) object;
 
@@ -531,7 +531,7 @@ public class ClassPathResolver {
                     }
                 }
 
-                bb = ++ba;
+                bb = ++elementIndex;
             }
         }
 

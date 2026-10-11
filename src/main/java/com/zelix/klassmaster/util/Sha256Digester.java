@@ -29,14 +29,14 @@ public class Sha256Digester {
     }
 
     public void digestStream(BufferedInputStream bufferedInputStream) throws IOException {
-        byte[] ba = new byte[32768];
-        int bd = bufferedInputStream.read(ba);
+        byte[] byteArray = new byte[32768];
+        int bd = bufferedInputStream.read(byteArray);
 
         while (true) {
             int bb = bd;
             if (bb > 0) {
                 int bc = bb;
-                this.messageDigest.update(ba, 0, bc);
+                this.messageDigest.update(byteArray, 0, bc);
             }
 
             if (bb == -1) {
@@ -45,7 +45,7 @@ public class Sha256Digester {
                 return;
             }
 
-            bd = bufferedInputStream.read(ba);
+            bd = bufferedInputStream.read(byteArray);
         }
     }
 
@@ -53,8 +53,8 @@ public class Sha256Digester {
         byte[] digest = this.getDigest();
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < digest.length; i++) {
-            String string = Integer.toHexString(digest[i] & 255);
+        for (int digestElementIndex = 0; digestElementIndex < digest.length; digestElementIndex++) {
+            String string = Integer.toHexString(digest[digestElementIndex] & 255);
             if (string.length() == 1) {
                 string = "0" + string;
             }

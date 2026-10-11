@@ -14,8 +14,8 @@ public class ListClassProperty extends ClassPropertyNode {
         this.cursor = 0;
     }
 
-    public ListClassProperty(String string, ClassFileComponent classFileComponent, IntegerCache integerCache1) {
-        super(string, classFileComponent);
+    public ListClassProperty(String propertyName, ClassFileComponent classFileComponent, IntegerCache integerCache1) {
+        super(propertyName, classFileComponent);
         this.integerCache = integerCache1;
     }
 }

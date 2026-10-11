@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class ASTMethodParameterChangesExcludeStatement extends ParameterListStatement {
-    public ASTMethodParameterChangesExcludeStatement(int ba) {
-        super(ba);
+    public ASTMethodParameterChangesExcludeStatement(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     @Override

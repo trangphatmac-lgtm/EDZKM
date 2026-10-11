@@ -26,37 +26,37 @@ import java.util.Map.Entry;
 
 public abstract class SaveStatementNode extends LiteralParamStatementNode {
     public boolean isDeleteXmlComments() {
-        boolean bl = false;
+        boolean deleteXmlComments = false;
         String string = (String) super.namedValues.get("deleteXMLComments");
         if (string != null && string.equals("true")) {
-            bl = true;
+            deleteXmlComments = true;
         }
 
-        return bl;
+        return deleteXmlComments;
     }
 
     public boolean isDeleteEmptyDirectories() {
-        boolean bl = false;
+        boolean deleteEmptyDirectoriesValue = false;
         String string = (String) super.namedValues.get("deleteEmptyDirectories");
         if (string != null && string.equals("true")) {
-            bl = true;
+            deleteEmptyDirectoriesValue = true;
         }
 
-        return bl;
+        return deleteEmptyDirectoriesValue;
     }
 
     public int getArchiveCompression() {
-        byte ba = 3;
+        byte archiveCompressionValue = 3;
         String string = (String) super.namedValues.get("archiveCompression");
         if (string != null) {
             if (string.equals("all")) {
-                ba = 1;
+                archiveCompressionValue = 1;
             } else if (string.equals("none")) {
-                ba = 2;
+                archiveCompressionValue = 2;
             }
         }
 
-        return ba;
+        return archiveCompressionValue;
     }
 
     @Override
@@ -90,10 +90,10 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
         HashMap hashMap = ZkmUtils.createHashMap();
 
         for (SourceArchive sourceArchive1 : sourceArchives1) {
-            String string = sourceArchive1.getFileName();
-            Object object4 = hashMap.put(string, sourceArchive1);
+            String fileName = sourceArchive1.getFileName();
+            Object object4 = hashMap.put(fileName, sourceArchive1);
             if (object4 != null) {
-                hashSet.add(string);
+                hashSet.add(fileName);
             }
         }
 
@@ -103,10 +103,10 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
 
         while (iterator1.hasNext()) {
             JadFile jadFile1 = (JadFile) iterator1.next();
-            String string6 = ZkmFileUtils.getLastPathComponent(jadFile1.getJadFilePath());
-            Object object8 = hashMap5.put(string6, jadFile1);
+            String lastPathComponent = ZkmFileUtils.getLastPathComponent(jadFile1.getJadFilePath());
+            Object object8 = hashMap5.put(lastPathComponent, jadFile1);
             if (object8 != null) {
-                hashSet.add(string6);
+                hashSet.add(lastPathComponent);
             }
         }
 
@@ -114,10 +114,10 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
         HashMap hashMap6 = ZkmUtils.createHashMap();
 
         for (InputFileLocation inputFileLocation : inputFileLocations) {
-            String string1 = ZkmFileUtils.getLastPathComponent(inputFileLocation.getQualifiedName());
-            Object object5 = hashMap6.put(string1, inputFileLocation);
+            String lastPathComponentValue = ZkmFileUtils.getLastPathComponent(inputFileLocation.getQualifiedName());
+            Object object5 = hashMap6.put(lastPathComponentValue, inputFileLocation);
             if (object5 != null) {
-                hashSet.add(string1);
+                hashSet.add(lastPathComponentValue);
             }
         }
 
@@ -125,10 +125,10 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
         HashMap hashMap7 = ZkmUtils.createHashMap();
 
         for (InputFileLocation inputFileLocation1 : inputFileLocations1) {
-            String string2 = ZkmFileUtils.getLastPathComponent(inputFileLocation1.getQualifiedName());
-            Object object6 = hashMap7.put(string2, inputFileLocation1);
+            String lastPathComponentValue2 = ZkmFileUtils.getLastPathComponent(inputFileLocation1.getQualifiedName());
+            Object object6 = hashMap7.put(lastPathComponentValue2, inputFileLocation1);
             if (object6 != null) {
-                hashSet.add(string2);
+                hashSet.add(lastPathComponentValue2);
             }
         }
 
@@ -136,10 +136,10 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
         HashMap hashMap8 = ZkmUtils.createHashMap();
 
         for (InputFileLocation inputFileLocation2 : inputFileLocations2) {
-            String string3 = ZkmFileUtils.getLastPathComponent(inputFileLocation2.getQualifiedName());
-            Object object7 = hashMap8.put(string3, inputFileLocation2);
+            String lastPathComponentValue3 = ZkmFileUtils.getLastPathComponent(inputFileLocation2.getQualifiedName());
+            Object object7 = hashMap8.put(lastPathComponentValue3, inputFileLocation2);
             if (object7 != null) {
-                hashSet.add(string3);
+                hashSet.add(lastPathComponentValue3);
             }
         }
 
@@ -152,218 +152,195 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
         File file4;
         HashMap hashMap9;
         HashMap hashMap10;
-        label214:
-        {
-            SaveStatementNode saveStatementNode1;
-            List list1;
-            label251:
-            {
-                printWriter = scriptEnvironment1.getLogWriter();
-                logMessageReporter = new LogMessageReporter(scriptEnvironment1, ZkmScriptSimpleNode.getTimestampPrefix().length());
-                noOpCallback = NoOpCallback.getInstance();
-                file4 = null;
-                hashMap9 = ZkmUtils.createHashMap();
-                hashMap10 = ZkmUtils.createHashMap();
-                hashMap1 = ZkmUtils.createHashMap();
-                hashMap2 = ZkmUtils.createHashMap();
-                hashMap3 = ZkmUtils.createHashMap();
-                if (super.literalValues.size() == 1 && ZkmFileUtils.looksLikeArchiveName((String) super.literalValues.get(0))) {
-                    if (sourceArchives1.length + inputFileLocations.length > 1) {
-                        saveStatementNode1 = this;
-                        list1 = super.literalValues;
-                        break label251;
-                    }
-
-                    if (scriptEnvironment1.isLooseClassFilesLoaded()) {
-                        saveStatementNode1 = this;
-                        list1 = super.literalValues;
-                        break label251;
-                    }
+        printWriter = scriptEnvironment1.getLogWriter();
+        logMessageReporter = new LogMessageReporter(scriptEnvironment1, ZkmScriptSimpleNode.getTimestampPrefix().length());
+        noOpCallback = NoOpCallback.getInstance();
+        file4 = null;
+        hashMap9 = ZkmUtils.createHashMap();
+        hashMap10 = ZkmUtils.createHashMap();
+        hashMap1 = ZkmUtils.createHashMap();
+        hashMap2 = ZkmUtils.createHashMap();
+        hashMap3 = ZkmUtils.createHashMap();
+        if (super.literalValues.size() == 1
+                && ZkmFileUtils.looksLikeArchiveName((String) super.literalValues.get(0))
+                && (sourceArchives1.length + inputFileLocations.length > 1 || scriptEnvironment1.isLooseClassFilesLoaded())) {
+            file4 = this.resolveSavePath((String) super.literalValues.get(0), scriptEnvironment1.getDefaultDirectory());
+        } else {
+            Iterator iterator = super.literalValues.iterator();
+            while (iterator.hasNext()) {
+                String string4 = (String) iterator.next();
+                if (string4.trim().length() == 0) {
+                    scriptEnvironment1.logFatalError(
+                            "Missing base save directory or archive name in '" + this.getStatementName() + "' statement at line " + this.getStatementLine() + "."
+                    );
                 }
 
-                Iterator iterator = super.literalValues.iterator();
-
-                while (true) {
-                    if (!iterator.hasNext()) {
-                        break label214;
+                File file1 = this.resolveSavePath(string4, scriptEnvironment1.getDefaultDirectory());
+                String lastPathComponentValue4 = ZkmFileUtils.getLastPathComponent(string4);
+                if (hashMap.containsKey(lastPathComponentValue4)) {
+                    File file2 = ((java.io.File) (hashMap9.put(hashMap.get(lastPathComponentValue4), file1)));
+                    if (file2 != null) {
+                        hashMap9.put(hashMap.get(lastPathComponentValue4), file2);
+                        scriptEnvironment1.logWarning(
+                                "'"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + string4
+                                        + "' ignored."
+                        );
                     }
 
-                    String string4 = (String) iterator.next();
-                    if (string4.trim().length() == 0) {
+                    if (hashSet.contains(lastPathComponentValue4)) {
                         scriptEnvironment1.logFatalError(
-                                "Missing base save directory or archive name in '" + this.getStatementName() + "' statement at line " + this.getStatementLine() + "."
+                                "Ambiguous save file reference in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in 'open' statement. Cannot resolve save reference. (A)"
                         );
                     }
-
-                    File file1 = this.resolveSavePath(string4, scriptEnvironment1.getDefaultDirectory());
-                    String string5 = ZkmFileUtils.getLastPathComponent(string4);
-                    if (hashMap.containsKey(string5)) {
-                        File file2 = ((java.io.File) (hashMap9.put(hashMap.get(string5), file1)));
-                        if (file2 != null) {
-                            hashMap9.put(hashMap.get(string5), file2);
-                            scriptEnvironment1.logWarning(
-                                    "'"
-                                            + string5
-                                            + "' appears more than once in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string4
-                                            + "' ignored."
-                            );
-                        }
-
-                        if (hashSet.contains(string5)) {
-                            scriptEnvironment1.logFatalError(
-                                    "Ambiguous save file reference in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string5
-                                            + "' appears more than once in 'open' statement. Cannot resolve save reference. (A)"
-                            );
-                        }
-                    } else if (hashMap5.containsKey(string5)) {
-                        File file6 = ((java.io.File) (hashMap10.put(hashMap5.get(string5), file1)));
-                        if (file6 != null) {
-                            hashMap10.put(hashMap5.get(string5), file6);
-                            scriptEnvironment1.logWarning(
-                                    "'"
-                                            + string5
-                                            + "' appears more than once in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string4
-                                            + "' ignored."
-                            );
-                        }
-
-                        if (hashSet.contains(string5)) {
-                            scriptEnvironment1.logFatalError(
-                                    "Ambiguous save file reference in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string5
-                                            + "' appears more than once in 'open' statement. Cannot resolve save reference. (B)"
-                            );
-                        }
-                    } else if (hashMap6.containsKey(string5)) {
-                        File file7 = ((java.io.File) (hashMap1.put(hashMap6.get(string5), file1)));
-                        if (file7 != null) {
-                            hashMap1.put(hashMap6.get(string5), file7);
-                            scriptEnvironment1.logWarning(
-                                    "'"
-                                            + string5
-                                            + "' appears more than once in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string4
-                                            + "' ignored."
-                            );
-                        }
-
-                        if (hashSet.contains(string5)) {
-                            scriptEnvironment1.logFatalError(
-                                    "Ambiguous save file reference in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string5
-                                            + "' appears more than once in 'open' statement. Cannot resolve save reference. (C)"
-                            );
-                        }
-                    } else if (hashMap7.containsKey(string5)) {
-                        File file8 = ((java.io.File) (hashMap2.put(hashMap7.get(string5), file1)));
-                        if (file8 != null) {
-                            hashMap2.put(hashMap7.get(string5), file8);
-                            scriptEnvironment1.logWarning(
-                                    "'"
-                                            + string5
-                                            + "' appears more than once in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string4
-                                            + "' ignored."
-                            );
-                        }
-
-                        if (hashSet.contains(string5)) {
-                            scriptEnvironment1.logFatalError(
-                                    "Ambiguous save file reference in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string5
-                                            + "' appears more than once in 'open' statement. Cannot resolve save reference. (D)"
-                            );
-                        }
-                    } else if (hashMap8.containsKey(string5)) {
-                        File file9 = ((java.io.File) (hashMap3.put(hashMap8.get(string5), file1)));
-                        if (file9 != null) {
-                            hashMap3.put(hashMap8.get(string5), file9);
-                            scriptEnvironment1.logWarning(
-                                    "'"
-                                            + string5
-                                            + "' appears more than once in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string4
-                                            + "' ignored."
-                            );
-                        }
-
-                        if (hashSet.contains(string5)) {
-                            scriptEnvironment1.logFatalError(
-                                    "Ambiguous save file reference in '"
-                                            + this.getStatementName()
-                                            + "' statement at line "
-                                            + this.getStatementLine()
-                                            + " : '"
-                                            + string5
-                                            + "' appears more than once in 'open' statement. Cannot resolve save reference. (E)"
-                            );
-                        }
-                    } else if (file4 == null) {
-                        file4 = file1;
-                    } else if (ZkmFileUtils.looksLikeArchiveName(file1.getName())) {
+                } else if (hashMap5.containsKey(lastPathComponentValue4)) {
+                    File file6 = ((java.io.File) (hashMap10.put(hashMap5.get(lastPathComponentValue4), file1)));
+                    if (file6 != null) {
+                        hashMap10.put(hashMap5.get(lastPathComponentValue4), file6);
                         scriptEnvironment1.logWarning(
-                                " '"
+                                "'"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in '"
                                         + this.getStatementName()
                                         + "' statement at line "
                                         + this.getStatementLine()
-                                        + " specifies a redundant path : '"
-                                        + string4
-                                        + "' ignored."
-                        );
-                    } else {
-                        scriptEnvironment1.logWarning(
-                                " '"
-                                        + this.getStatementName()
-                                        + "' statement at line "
-                                        + this.getStatementLine()
-                                        + " specifies more than one base save directory or archive : '"
+                                        + " : '"
                                         + string4
                                         + "' ignored."
                         );
                     }
+
+                    if (hashSet.contains(lastPathComponentValue4)) {
+                        scriptEnvironment1.logFatalError(
+                                "Ambiguous save file reference in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in 'open' statement. Cannot resolve save reference. (B)"
+                        );
+                    }
+                } else if (hashMap6.containsKey(lastPathComponentValue4)) {
+                    File file7 = ((java.io.File) (hashMap1.put(hashMap6.get(lastPathComponentValue4), file1)));
+                    if (file7 != null) {
+                        hashMap1.put(hashMap6.get(lastPathComponentValue4), file7);
+                        scriptEnvironment1.logWarning(
+                                "'"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + string4
+                                        + "' ignored."
+                        );
+                    }
+
+                    if (hashSet.contains(lastPathComponentValue4)) {
+                        scriptEnvironment1.logFatalError(
+                                "Ambiguous save file reference in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in 'open' statement. Cannot resolve save reference. (C)"
+                        );
+                    }
+                } else if (hashMap7.containsKey(lastPathComponentValue4)) {
+                    File file8 = ((java.io.File) (hashMap2.put(hashMap7.get(lastPathComponentValue4), file1)));
+                    if (file8 != null) {
+                        hashMap2.put(hashMap7.get(lastPathComponentValue4), file8);
+                        scriptEnvironment1.logWarning(
+                                "'"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + string4
+                                        + "' ignored."
+                        );
+                    }
+
+                    if (hashSet.contains(lastPathComponentValue4)) {
+                        scriptEnvironment1.logFatalError(
+                                "Ambiguous save file reference in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in 'open' statement. Cannot resolve save reference. (D)"
+                        );
+                    }
+                } else if (hashMap8.containsKey(lastPathComponentValue4)) {
+                    File file9 = ((java.io.File) (hashMap3.put(hashMap8.get(lastPathComponentValue4), file1)));
+                    if (file9 != null) {
+                        hashMap3.put(hashMap8.get(lastPathComponentValue4), file9);
+                        scriptEnvironment1.logWarning(
+                                "'"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + string4
+                                        + "' ignored."
+                        );
+                    }
+
+                    if (hashSet.contains(lastPathComponentValue4)) {
+                        scriptEnvironment1.logFatalError(
+                                "Ambiguous save file reference in '"
+                                        + this.getStatementName()
+                                        + "' statement at line "
+                                        + this.getStatementLine()
+                                        + " : '"
+                                        + lastPathComponentValue4
+                                        + "' appears more than once in 'open' statement. Cannot resolve save reference. (E)"
+                        );
+                    }
+                } else if (file4 == null) {
+                    file4 = file1;
+                } else if (ZkmFileUtils.looksLikeArchiveName(file1.getName())) {
+                    scriptEnvironment1.logWarning(
+                            " '"
+                                    + this.getStatementName()
+                                    + "' statement at line "
+                                    + this.getStatementLine()
+                                    + " specifies a redundant path : '"
+                                    + string4
+                                    + "' ignored."
+                    );
+                } else {
+                    scriptEnvironment1.logWarning(
+                            " '"
+                                    + this.getStatementName()
+                                    + "' statement at line "
+                                    + this.getStatementLine()
+                                    + " specifies more than one base save directory or archive : '"
+                                    + string4
+                                    + "' ignored."
+                    );
                 }
             }
-
-            file4 = saveStatementNode1.resolveSavePath((String) list1.get(0), scriptEnvironment1.getDefaultDirectory());
         }
 
         if (file4 == null) {
@@ -414,24 +391,12 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
         while (iterator2.hasNext()) {
             Entry entry;
             entry = (Entry) iterator2.next();
-            label196:
             if (iterator2.hasNext()) {
-                StringBuilder stringBuilder1;
-                String string7;
-                if (file4 == null) {
-                    if (stringBuilder.length() == 0) {
-                        stringBuilder.append("\"");
-                        break label196;
-                    }
-
-                    stringBuilder1 = stringBuilder;
-                    string7 = ", \"";
+                if (file4 == null && stringBuilder.length() == 0) {
+                    stringBuilder.append("\"");
                 } else {
-                    stringBuilder1 = stringBuilder;
-                    string7 = ", \"";
+                    stringBuilder.append(", \"");
                 }
-
-                stringBuilder1.append(string7);
             } else {
                 stringBuilder.append(" and \"");
             }

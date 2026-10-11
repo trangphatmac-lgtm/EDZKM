@@ -14,16 +14,16 @@ public class AnnotationValueMap {
         this.sourceAttribute = runtimeInvisibleAnnotationsAttribute;
     }
 
-    public String getValue(Object object) {
-        return (String) this.valuesByName.get(object);
+    public String getValue(Object key) {
+        return (String) this.valuesByName.get(key);
     }
 
-    public void putValue(Object object, Object object1) {
-        this.valuesByName.put(object, object1);
+    public void putValue(Object key, Object value) {
+        this.valuesByName.put(key, value);
     }
 
-    public boolean hasValue(Object object) {
-        return this.valuesByName.containsKey(object);
+    public boolean hasValue(Object key) {
+        return this.valuesByName.containsKey(key);
     }
 
     static {

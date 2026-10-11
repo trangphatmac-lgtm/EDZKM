@@ -58,20 +58,20 @@ public class TextViewerDialog extends AbstractTextViewerDialog {
         MessageViewOkListener messageViewOkListener = new MessageViewOkListener(this);
         this.okBtn.addActionListener(messageViewOkListener);
         super.constraintLayout.setConstraints(layoutConstraints);
-        int ba = dimension.width;
-        int bc = Math.min(500, ba);
-        int bb = dimension.height;
-        this.setSize(bc, Math.min(400, bb));
+        int widthValue = dimension.width;
+        int bc = Math.min(500, widthValue);
+        int heightValue = dimension.height;
+        this.setSize(bc, Math.min(400, heightValue));
     }
 
-    public TextViewerDialog(JFrame jFrame, String string, String string1, BufferedReader bufferedReader, boolean bl, boolean bl1) {
-        this(jFrame, string, string1, bufferedReader);
+    public TextViewerDialog(JFrame jFrame, String string, String text, BufferedReader bufferedReader, boolean bl, boolean bl1) {
+        this(jFrame, string, text, bufferedReader);
     }
 
     public TextViewerDialog(
-            JFrame jFrame, String string, String string1, BufferedReader bufferedReader, boolean bl, boolean bl1, boolean bl2, DialogCallback dialogCallback1
+            JFrame jFrame, String string, String text, BufferedReader bufferedReader, boolean editable, boolean bl1, boolean bl2, DialogCallback dialogCallback1
     ) {
-        super(jFrame, string, string1, bufferedReader, bl, bl1);
+        super(jFrame, string, text, bufferedReader, editable, bl1);
         openViewers.addElement(this);
         int ba = openViewers.size() * 10;
         this.closeCallback = null;
@@ -82,8 +82,8 @@ public class TextViewerDialog extends AbstractTextViewerDialog {
         this(jFrame, "Error", "Error while parsing the whole exclude parameter", new BufferedReader(new StringReader(string)), false, true);
     }
 
-    public TextViewerDialog(JFrame jFrame, String string, String string1, BufferedReader bufferedReader) {
-        this(jFrame, string, string1, bufferedReader, false, true, true, null);
+    public TextViewerDialog(JFrame jFrame, String string, String text, BufferedReader bufferedReader) {
+        this(jFrame, string, text, bufferedReader, false, true, true, null);
     }
 
     @Override

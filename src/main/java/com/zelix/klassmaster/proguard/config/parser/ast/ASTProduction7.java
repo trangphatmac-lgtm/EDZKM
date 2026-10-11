@@ -13,8 +13,8 @@ public class ASTProduction7 extends ProGuardConfigSimpleNode {
         ASTLparenClause2 aSTLparenClause2 = (ASTLparenClause2) this.jjtGetParent();
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            ASTQuote122Clause aSTQuote122Clause = (ASTQuote122Clause) this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ASTQuote122Clause aSTQuote122Clause = (ASTQuote122Clause) this.jjtGetChild(childrenElementIndex);
             aSTQuote122Clause.translate(this, proGuardConfigTranslator);
             aSTLparenClause2.addFileFilter(aSTQuote122Clause.getValue());
         }

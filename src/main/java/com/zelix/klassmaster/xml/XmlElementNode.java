@@ -23,17 +23,17 @@ public class XmlElementNode {
     public List tokens = new ArrayList(10);
 
     public void addAttributeValue(String string) throws ZkmException, IOException {
-        String string1 = string;
+        String valueValue = string;
         if (this.currentAttributeNameHolder == null) {
-            throw new XmlContentException(NO_NAME_MESSAGE + string1 + "'");
+            throw new XmlContentException(NO_NAME_MESSAGE + valueValue + "'");
         }
 
         if (HiddenOptionFlags.TRIM_XML_TEXT) {
-            string1 = string1.trim();
+            valueValue = valueValue.trim();
         }
 
-        ObservableHolder observableHolder = new ObservableHolder(string1);
-        String string2 = (String) this.currentAttributeNameHolder.getValue();
+        ObservableHolder observableHolder = new ObservableHolder(valueValue);
+        String value = (String) this.currentAttributeNameHolder.getValue();
         Map map1;
         if (this.attributeNameHolders == null) {
             this.attributeNameHolders = ZkmUtils.createHashMap(13);
@@ -43,8 +43,8 @@ public class XmlElementNode {
             map1 = this.attributeNameHolders;
         }
 
-        map1.put(string2, this.currentAttributeNameHolder);
-        this.attributeValues.put(string2, observableHolder);
+        map1.put(value, this.currentAttributeNameHolder);
+        this.attributeValues.put(value, observableHolder);
         this.tokens.add(observableHolder);
     }
 
@@ -54,12 +54,12 @@ public class XmlElementNode {
         }
     }
 
-    public boolean renameAttribute(String string, String string1) throws ZkmException, IOException {
+    public boolean renameAttribute(String key, String value) throws ZkmException, IOException {
         if (this.attributeValues != null) {
-            ObservableHolder observableHolder = (ObservableHolder) this.attributeValues.remove(string);
+            ObservableHolder observableHolder = (ObservableHolder) this.attributeValues.remove(key);
             if (observableHolder != null) {
-                this.attributeValues.put(string1, observableHolder);
-                ((ObservableHolder) this.attributeNameHolders.get(string)).setValue(string1);
+                this.attributeValues.put(value, observableHolder);
+                ((ObservableHolder) this.attributeNameHolders.get(key)).setValue(value);
                 return true;
             } else {
                 return false;
@@ -69,19 +69,19 @@ public class XmlElementNode {
         }
     }
 
-    public ObservableHolder getAttributeValue(Object object) {
-        return this.attributeValues != null ? (ObservableHolder) this.attributeValues.get(object) : null;
+    public ObservableHolder getAttributeValue(Object key) {
+        return this.attributeValues != null ? (ObservableHolder) this.attributeValues.get(key) : null;
     }
 
     public Enumeration getAttributeNames() {
         return this.attributeValues != null ? Collections.enumeration(new ArrayList(this.attributeValues.keySet())) : new EmptyEnumeration();
     }
 
-    public void addName(String string) throws ZkmException, IOException {
-        ObservableHolder observableHolder = new ObservableHolder(string);
+    public void addName(String originalTagNameArgument) throws ZkmException, IOException {
+        ObservableHolder observableHolder = new ObservableHolder(originalTagNameArgument);
         List list1;
         if (this.tagNameHolder == null) {
-            this.originalTagName = string;
+            this.originalTagName = originalTagNameArgument;
             this.tagNameHolder = observableHolder;
             list1 = this.tokens;
         } else {
@@ -96,61 +96,40 @@ public class XmlElementNode {
         return this.originalTagName;
     }
 
-    public void setTagName(Object object) throws ZkmException, IOException {
-        this.tagNameHolder.setValue(object);
+    public void setTagName(Object tagName) throws ZkmException, IOException {
+        this.tagNameHolder.setValue(tagName);
     }
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        boolean predicateFlag_boolean = XmlResourceParserBase.getPredicateFlag_boolean();
-        int ba = this.tokens.size();
-        boolean bl = predicateFlag_boolean;
-        int bb = 0;
-
-        while (bb < ba) {
-            label23:
-            {
-                Object object;
-                label22:
-                {
-                    object = this.tokens.get(bb);
-                    if (bl) {
-                        if (!(object instanceof ObservableHolder)) {
-                            break label22;
-                        }
-
-                        stringBuilder.append((String) ((ObservableHolder) object).getValue());
-                    }
-
-                    if (bl) {
-                        break label23;
-                    }
-                }
-
-                stringBuilder.append(object);
+        StringBuilder result = new StringBuilder();
+        boolean expandHolders = XmlResourceParserBase.getPredicateFlag_boolean();
+        int tokenCount = this.tokens.size();
+        for (int tokenIndex = 0; tokenIndex < tokenCount; tokenIndex++) {
+            Object token = this.tokens.get(tokenIndex);
+            if (expandHolders && token instanceof ObservableHolder) {
+                result.append((String) ((ObservableHolder) token).getValue());
+            } else {
+                result.append(token);
             }
-
-            bb++;
-            if (!bl) {
+            if (!expandHolders) {
                 break;
             }
         }
-
-        return stringBuilder.toString();
+        return result.toString();
     }
 
     public String getTagName() {
         boolean predicateFlagClear = XmlResourceParserBase.isPredicateFlagClear();
-        Object object = this;
+        Object value = this;
         if (!predicateFlagClear) {
             if (this.tagNameHolder == null) {
                 return null;
             }
 
-            object = this.tagNameHolder.getValue();
+            value = this.tagNameHolder.getValue();
         }
 
-        return (String) object;
+        return (String) value;
     }
 }

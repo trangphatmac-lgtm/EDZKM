@@ -33,22 +33,22 @@ public class NestHostAttribute
 
 
 
-    public NestHostAttribute(ClassFileComponent classFileComponent, int n, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap, ListMultimap listMultimap2) throws ClassFileFormatException, IOException {
-        super(classFileComponent, n, string, classFileInputStream, listMultimap);
+    public NestHostAttribute(ClassFileComponent classFileComponent, int constantPoolIndexArgument, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap, ListMultimap listMultimap2) throws ClassFileFormatException, IOException {
+        super(classFileComponent, constantPoolIndexArgument, attributeName, classFileInputStream, listMultimap);
         this.rawBytes = new byte[this.length];
         classFileInputStream.read(this.rawBytes);
         ClassFileInputStream classFileInputStream2 = ClassFileInputStream.fromBytes(this.rawBytes, false);
         Throwable throwable = null;
         try {
-            int n2 = classFileInputStream2.readUnsignedShort();
-            ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(n2);
+            int constantPoolIndex = classFileInputStream2.readUnsignedShort();
+            ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
             if (constantPoolEntry == null) {
                 this.valid = false;
-                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in '" + "NestHost" + "' attribute : " + n2 + " : '" + this.getLocationName() + "' : File is probably corrupt (AV)");
+                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in '" + "NestHost" + "' attribute : " + constantPoolIndex + " : '" + this.getLocationName() + "' : File is probably corrupt (AV)");
             }
             if (!(constantPoolEntry instanceof ResolvedClassConstant)) {
                 this.valid = false;
-                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : '" + "NestHost" + "' : " + n2 + " : '" + this.getLocationName() + "' : File is probably corrupt (AW)");
+                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : '" + "NestHost" + "' : " + constantPoolIndex + " : '" + this.getLocationName() + "' : File is probably corrupt (AW)");
             }
             this.hostClass = (ResolvedClassConstant) constantPoolEntry;
             listMultimap2.addValue(this.hostClass, this);

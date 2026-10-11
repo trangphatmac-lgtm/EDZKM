@@ -27,11 +27,11 @@ public class ASTModuleName extends ZkmScriptSimpleNode implements QualifiedNameM
         int ba = this.jjtGetNumChildren();
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < ba; i++) {
-            String string = ((ScriptValueNode) this.jjtGetChild(i)).getValue();
-            this.nameComponents.add(string);
-            stringBuilder.append(string);
-            if (i < ba - 1) {
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            String value = ((ScriptValueNode) this.jjtGetChild(childrenElementIndex)).getValue();
+            this.nameComponents.add(value);
+            stringBuilder.append(value);
+            if (childrenElementIndex < ba - 1) {
                 stringBuilder.append(".");
             }
         }
@@ -43,8 +43,8 @@ public class ASTModuleName extends ZkmScriptSimpleNode implements QualifiedNameM
         int ba = this.jjtGetNumChildren();
         ArrayList arrayList = new ArrayList(ba);
 
-        for (int i = 0; i < ba; i++) {
-            ASTModuleNameComponent aSTModuleNameComponent = (ASTModuleNameComponent) this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ASTModuleNameComponent aSTModuleNameComponent = (ASTModuleNameComponent) this.jjtGetChild(childrenElementIndex);
             arrayList.add(aSTModuleNameComponent.getValue());
         }
 

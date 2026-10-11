@@ -94,19 +94,19 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
                 while (enumeration.hasMoreElements()) {
                     ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) enumeration.nextElement();
                     ProgramClass programClass1 = classHierarchyNode.getProgramClass();
-                    String string = classHierarchyNode.getClassName();
+                    String className = classHierarchyNode.getClassName();
                     if (programClass1 != null && classHierarchyNode.hasEnclosingNode()) {
                         if (ba == 1) {
                             hashSet.add(programClass1);
                         } else if (ba == 2
-                                && hashMap.containsKey(string)
-                                && !ClassFileBase.stripPackage((String) hashMap.get(string)).equals(ClassFileBase.stripPackage(string))) {
+                                && hashMap.containsKey(className)
+                                && !ClassFileBase.stripPackage((String) hashMap.get(className)).equals(ClassFileBase.stripPackage(className))) {
                             hashSet.add(programClass1);
                         }
 
                         if (fixedClassesExclusionSet1 != null && fixedClassesExclusionSet1.isMatchedClass(programClass1) && hashSet.contains(programClass1)) {
                             hashSet.remove(programClass1);
-                            String string1 = ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(string, hashMap));
+                            String string1 = ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(className, hashMap));
                             scriptEnvironment1.logWarning("Inner class information will not be removed from class '" + string1 + "' because it is a fixed class.");
                         }
                     }
@@ -144,13 +144,13 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
     }
 
     public ChangeLogMapping parseChangeLog(
-            String string, Reader reader1, MessageReporter messageReporter1, ScriptEnvironment scriptEnvironment1, Boolean boolean1
+            String changeLogName, Reader reader1, MessageReporter messageReporter1, ScriptEnvironment scriptEnvironment1, Boolean boolean1
     ) throws ZkmException, IOException {
         ChangeLogSimpleNode changeLogSimpleNode = null;
 
         ChangeLogMapping changeLogMapping1;
         try {
-            changeLogMapping1 = new ChangeLogMapping(string, scriptEnvironment1, boolean1);
+            changeLogMapping1 = new ChangeLogMapping(changeLogName, scriptEnvironment1, boolean1);
             ChangeLogParser changeLogParser = ChangeLogParser.instance;
             if (changeLogParser == null) {
                 new ChangeLogParser(reader1);
@@ -162,7 +162,7 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
             ChangeLogMapping changeLogMapping2 = changeLogMapping1;
             changeLogSimpleNode.interpret((ChangeLogNode) null, 30872, 34067, 41973, changeLogMapping2);
             if (changeLogSimpleNode.jjtGetNumChildren() == 0) {
-                messageReporter1.reportError("INPUT CHANGE LOG ERROR:", "\"" + string + "\" appears to contain no change data");
+                messageReporter1.reportError("INPUT CHANGE LOG ERROR:", "\"" + changeLogName + "\" appears to contain no change data");
                 changeLogMapping1 = null;
             } else {
                 changeLogMapping1.checkClassPackageNameClashes();
@@ -171,15 +171,15 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
                 changeLogMapping1.markParsingComplete();
             }
         } catch (ChangeLogTokenMgrError changeLogTokenMgrError) {
-            String string2 = ChangeLogMapping.describeSourceFile(string, scriptEnvironment1);
+            String string2 = ChangeLogMapping.describeSourceFile(changeLogName, scriptEnvironment1);
             messageReporter1.reportErrorWithDetail(
-                    "INPUT CHANGE LOG ERROR:", "Lexical error while reading \"" + string + "\"" + string2, changeLogTokenMgrError.getMessage()
+                    "INPUT CHANGE LOG ERROR:", "Lexical error while reading \"" + changeLogName + "\"" + string2, changeLogTokenMgrError.getMessage()
             );
             changeLogMapping1 = null;
         } catch (ChangeLogParseException changeLogParseException) {
-            String string1 = ChangeLogMapping.describeSourceFile(string, scriptEnvironment1);
+            String string1 = ChangeLogMapping.describeSourceFile(changeLogName, scriptEnvironment1);
             messageReporter1.reportErrorWithDetail(
-                    "INPUT CHANGE LOG ERROR:", "Parse error while reading \"" + string + "\"" + string1, changeLogParseException.getMessage()
+                    "INPUT CHANGE LOG ERROR:", "Parse error while reading \"" + changeLogName + "\"" + string1, changeLogParseException.getMessage()
             );
             changeLogMapping1 = null;
         } finally {
@@ -206,29 +206,29 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
             ArrayList arrayList = changeLogMapping1.getOldClassNames();
             ArrayList arrayList1 = new ArrayList();
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                String string = (String) arrayList.get(i);
-                if (!hashMap.containsKey(string)) {
-                    String string1 = changeLogMapping1.getNewClassName(string);
-                    if (string1 == null) {
-                        string1 = string;
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                String newClassNameValue = (String) arrayList.get(elementIndex);
+                if (!hashMap.containsKey(newClassNameValue)) {
+                    String newClassName = changeLogMapping1.getNewClassName(newClassNameValue);
+                    if (newClassName == null) {
+                        newClassName = newClassNameValue;
                     }
 
-                    if (!string.equals(string1)) {
+                    if (!newClassNameValue.equals(newClassName)) {
                         bl = true;
                     }
 
-                    hashMap.put(string, string1);
-                    hashMap1.put(string1, string);
-                    String string2 = changeLogMapping1.getSourceName(string);
-                    if (string2 != null) {
-                        hashMap2.put(string1, string2);
+                    hashMap.put(newClassNameValue, newClassName);
+                    hashMap1.put(newClassName, newClassNameValue);
+                    String sourceName = changeLogMapping1.getSourceName(newClassNameValue);
+                    if (sourceName != null) {
+                        hashMap2.put(newClassName, sourceName);
                     }
 
-                    ClasspathClassFile classpathClassFile = (ClasspathClassFile) ClassHierarchyNode.findNode(string).getClassFile();
-                    if (!string.equals(string1)) {
-                        classpathClassLoader1.removeCachedClass(string);
-                        Triple triple = new Triple(string, string1, classpathClassFile);
+                    ClasspathClassFile classpathClassFile = (ClasspathClassFile) ClassHierarchyNode.findNode(newClassNameValue).getClassFile();
+                    if (!newClassNameValue.equals(newClassName)) {
+                        classpathClassLoader1.removeCachedClass(newClassNameValue);
+                        Triple triple = new Triple(newClassNameValue, newClassName, classpathClassFile);
                         arrayList1.add(triple);
                     }
                 }
@@ -259,14 +259,14 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
     }
 
     public boolean initClassNameMaps(HashMap hashMap, HashMap hashMap1, HashMap hashMap2, ChangeLogMapping changeLogMapping1) throws ZkmException, IOException {
-        int ba = 0;
+        int programClasseIndex = 0;
         int bb = 0;
 
         for (ProgramClass[] programClass1 = this.programClasses; bb < programClass1.length; programClass1 = this.programClasses) {
-            String string = this.programClasses[ba].getClassName();
-            hashMap.put(string, string);
-            hashMap1.put(string, string);
-            bb = ++ba;
+            String className = this.programClasses[programClasseIndex].getClassName();
+            hashMap.put(className, className);
+            hashMap1.put(className, className);
+            bb = ++programClasseIndex;
         }
 
         return applyChangeLogClassNames(hashMap, hashMap1, hashMap2, this.classpathClassLoader, changeLogMapping1);
@@ -311,39 +311,39 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
     }
 
     public final ChangeLogMapping loadChangeLogs(
-            ChangeLogInputFile[] changeLogInputFiles, MessageReporter messageReporter1, ScriptEnvironment scriptEnvironment1, boolean bl, boolean bl1
+            ChangeLogInputFile[] changeLogInputFiles, MessageReporter messageReporter1, ScriptEnvironment scriptEnvironment1, boolean boolean1Argument, boolean bl1
     ) throws ZkmException, IOException {
         ChangeLogMapping changeLogMapping1 = null;
         int seriousErrorCount = scriptEnvironment1.getSeriousErrorCount();
         boolean bl2 = false;
 
-        for (int i = 0; i < changeLogInputFiles.length && seriousErrorCount == scriptEnvironment1.getSeriousErrorCount(); i++) {
-            ChangeLogInputFile changeLogInputFile = changeLogInputFiles[i];
-            String string = changeLogInputFile.getFileName();
-            File file1 = new File(string);
-            boolean bl3 = ChangeLogMapping.isAggressiveMethodOverloading(file1);
+        for (int changeLogInputFileIndex = 0; changeLogInputFileIndex < changeLogInputFiles.length && seriousErrorCount == scriptEnvironment1.getSeriousErrorCount(); changeLogInputFileIndex++) {
+            ChangeLogInputFile changeLogInputFile = changeLogInputFiles[changeLogInputFileIndex];
+            String fileName = changeLogInputFile.getFileName();
+            File file1 = new File(fileName);
+            boolean aggressiveMethodOverloading = ChangeLogMapping.isAggressiveMethodOverloading(file1);
             ObfuscatorEngineBase obfuscatorEngineBase1;
-            String string2;
+            String fileNameValue;
             Reader reader1;
-            if (bl3 != bl1) {
+            if (aggressiveMethodOverloading != bl1) {
                 String string1 = "Aggressive method overloading "
                         + (bl1 ? "is" : "is not")
                         + " set but change log '"
                         + file1.getAbsolutePath()
                         + "' was created "
-                        + (bl3 ? "with" : "without")
+                        + (aggressiveMethodOverloading ? "with" : "without")
                         + " aggressive method overloading. This can result in name clashes.";
                 scriptEnvironment1.logWarning(string1);
                 obfuscatorEngineBase1 = this;
-                string2 = string;
+                fileNameValue = fileName;
                 reader1 = changeLogInputFile.getReader();
             } else {
                 obfuscatorEngineBase1 = this;
-                string2 = string;
+                fileNameValue = fileName;
                 reader1 = changeLogInputFile.getReader();
             }
 
-            ChangeLogMapping changeLogMapping2 = obfuscatorEngineBase1.parseChangeLog(string2, reader1, messageReporter1, scriptEnvironment1, bl);
+            ChangeLogMapping changeLogMapping2 = obfuscatorEngineBase1.parseChangeLog(fileNameValue, reader1, messageReporter1, scriptEnvironment1, boolean1Argument);
             if (changeLogMapping1 == null) {
                 changeLogMapping1 = changeLogMapping2;
             } else {
@@ -364,25 +364,25 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
             HashSet hashSet = ZkmUtils.createHashSet();
             ArrayList arrayList = changeLogMapping1.getOldClassNames();
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                String string = (String) arrayList.get(i);
-                if (!ClassHierarchyNode.isProgramClassName(string)) {
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                String key = (String) arrayList.get(elementIndex);
+                if (!ClassHierarchyNode.isProgramClassName(key)) {
                     try {
-                        if (!bl && this.classpathClassLoader.findClassFile(string) != null) {
-                            String string1 = ClassFileBase.getPackagePath(string);
-                            if (string1.length() > 0) {
-                                hashSet.add(string1);
+                        if (!bl && this.classpathClassLoader.findClassFile(key) != null) {
+                            String packagePath = ClassFileBase.getPackagePath(key);
+                            if (packagePath.length() > 0) {
+                                hashSet.add(packagePath);
                             }
                         } else {
-                            changeLogMapping1.removeClassMapping(string);
+                            changeLogMapping1.removeClassMapping(key);
                         }
                     } catch (ClassFileLoadException classFileLoadException) {
                         throw new ZkmProcessingException(classFileLoadException.getMessage());
                     }
                 } else {
-                    String string2 = ClassFileBase.getPackagePath(string);
-                    if (string2.length() > 0) {
-                        hashSet.add(string2);
+                    String packagePathValue = ClassFileBase.getPackagePath(key);
+                    if (packagePathValue.length() > 0) {
+                        hashSet.add(packagePathValue);
                     }
                 }
             }
@@ -392,21 +392,21 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
     }
 
     public boolean initFieldNameMaps(TwoKeyMap twoKeyMap, TwoKeyMap twoKeyMap1, ChangeLogMapping changeLogMapping1) throws ZkmException, IOException {
-        int ba = 0;
+        int programClasseIndex = 0;
         int bc = 0;
 
         for (ProgramClass[] programClass1 = this.programClasses; bc < programClass1.length; programClass1 = this.programClasses) {
-            String string = this.programClasses[ba].getClassName();
-            ArrayEnumeration arrayEnumeration = this.programClasses[ba].enumerateFields();
+            String className = this.programClasses[programClasseIndex].getClassName();
+            ArrayEnumeration arrayEnumeration = this.programClasses[programClasseIndex].enumerateFields();
 
             while (arrayEnumeration.hasMoreElements()) {
                 FieldInfo fieldInfo = (FieldInfo) arrayEnumeration.nextElement();
                 FieldSignature fieldSignature = fieldInfo.getSignature();
-                twoKeyMap.putValue(string, fieldSignature, fieldSignature);
-                twoKeyMap1.putValue(string, fieldSignature, fieldSignature);
+                twoKeyMap.putValue(className, fieldSignature, fieldSignature);
+                twoKeyMap1.putValue(className, fieldSignature, fieldSignature);
             }
 
-            bc = ++ba;
+            bc = ++programClasseIndex;
         }
 
         boolean bl = false;
@@ -414,22 +414,22 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
             Enumeration enumeration = changeLogMapping1.getFieldMappedClassNames();
 
             while (enumeration.hasMoreElements()) {
-                String string1 = (String) enumeration.nextElement();
-                if (!twoKeyMap.containsKey(string1)) {
-                    ArrayList arrayList = changeLogMapping1.getFieldMappingPairs(string1);
+                String key = (String) enumeration.nextElement();
+                if (!twoKeyMap.containsKey(key)) {
+                    ArrayList arrayList = changeLogMapping1.getFieldMappingPairs(key);
 
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        ObjectPair objectPair = (ObjectPair) arrayList.get(i);
+                    for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                        ObjectPair objectPair = (ObjectPair) arrayList.get(elementIndex);
                         FieldSignature fieldSignature1 = (FieldSignature) objectPair.getFirst();
                         FieldSignature fieldSignature2 = (FieldSignature) objectPair.getSecond();
-                        twoKeyMap.putValue(string1, fieldSignature1, fieldSignature2);
-                        twoKeyMap1.putValue(string1, fieldSignature2, fieldSignature1);
+                        twoKeyMap.putValue(key, fieldSignature1, fieldSignature2);
+                        twoKeyMap1.putValue(key, fieldSignature2, fieldSignature1);
                         if (!bl && !fieldSignature1.getName().equals(fieldSignature2.getName())) {
                             bl = true;
                         }
                     }
 
-                    ClasspathClassFile classpathClassFile = (ClasspathClassFile) ClassHierarchyNode.findClassFile(string1);
+                    ClasspathClassFile classpathClassFile = (ClasspathClassFile) ClassHierarchyNode.findClassFile(key);
                     classpathClassFile.applyFieldNameMapping(twoKeyMap);
                 }
             }
@@ -450,11 +450,11 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
     }
 
     public boolean isClassNameExcluded(ClassFileBase classFileBase, NameExclusionSet nameExclusionSet, ChangeLogMapping changeLogMapping1) throws IOException {
-        String string = classFileBase.getClassName();
-        if (changeLogMapping1 != null && changeLogMapping1.hasClassMapping(string)) {
-            return changeLogMapping1.isSimpleNameChanged(string);
+        String className = classFileBase.getClassName();
+        if (changeLogMapping1 != null && changeLogMapping1.hasClassMapping(className)) {
+            return changeLogMapping1.isSimpleNameChanged(className);
         } else {
-            return classFileBase.isProgramClass() ? nameExclusionSet.isClassIncluded((ProgramClass) classFileBase) : false;
+            return ((classFileBase.isProgramClass()) && (nameExclusionSet.isClassIncluded((ProgramClass) classFileBase)));
         }
     }
 
@@ -462,9 +462,9 @@ public abstract class ObfuscatorEngineBase extends LicenseCheckBase {
         ArrayList arrayList = changeLogMapping1.getOldClassNames();
         ArrayList arrayList1 = new ArrayList();
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            String string = (String) arrayList.get(i);
-            ClassFileBase classFileBase = this.classResolver.getClassFile(string, "looking for input change log classes");
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            String key = (String) arrayList.get(elementIndex);
+            ClassFileBase classFileBase = this.classResolver.getClassFile(key, "looking for input change log classes");
             if (!classFileBase.isProgramClass()) {
                 if (this.verbose) {
                     changeLogMapping1.logMessage(

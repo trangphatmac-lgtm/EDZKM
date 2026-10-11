@@ -81,14 +81,14 @@ public class ResourceFileAnalyzer {
         if (enumeration != null) {
             while (enumeration.hasMoreElements()) {
                 InputFileLocation inputFileLocation = (InputFileLocation) enumeration.nextElement();
-                String string = inputFileLocation.getQualifiedName();
+                String qualifiedName = inputFileLocation.getQualifiedName();
 
                 try {
                     FileInputStream fileInputStream = new FileInputStream(inputFileLocation.getFile());
                     BufferedReader bufferedReader = ZkmFileUtils.createBomAwareReader(fileInputStream);
-                    new ResourceClassRefScanner(bufferedReader, string, map1);
+                    new ResourceClassRefScanner(bufferedReader, qualifiedName, map1);
                 } catch (IOException iOException) {
-                    this.messageReporter.reportError("FILE ERROR:", "Unexpected error analyzing YAML file '" + string + "' (B) : " + iOException.getMessage());
+                    this.messageReporter.reportError("FILE ERROR:", "Unexpected error analyzing YAML file '" + qualifiedName + "' (B) : " + iOException.getMessage());
                 }
             }
         }
@@ -99,12 +99,12 @@ public class ResourceFileAnalyzer {
 
         while (iterator.hasNext()) {
             ZipFile zipFile1 = (ZipFile) iterator.next();
-            String string = zipFile1.getName();
+            String name = zipFile1.getName();
 
             try {
                 zipFile1.close();
             } catch (IOException iOException) {
-                this.messageReporter.reportWarning("FILE ERROR (4)", "FILE ERROR (4) '" + string + "' : " + iOException.getMessage());
+                this.messageReporter.reportWarning("FILE ERROR (4)", "FILE ERROR (4) '" + name + "' : " + iOException.getMessage());
             }
         }
     }
@@ -113,14 +113,14 @@ public class ResourceFileAnalyzer {
         if (enumeration != null) {
             while (enumeration.hasMoreElements()) {
                 InputFileLocation inputFileLocation = (InputFileLocation) enumeration.nextElement();
-                String string = inputFileLocation.getQualifiedName();
+                String qualifiedName = inputFileLocation.getQualifiedName();
 
                 try {
                     FileInputStream fileInputStream = new FileInputStream(inputFileLocation.getFile());
                     BufferedReader bufferedReader = ZkmFileUtils.createBomAwareReader(fileInputStream);
-                    new PropertiesClassRefScanner(bufferedReader, string, map1);
+                    new PropertiesClassRefScanner(bufferedReader, qualifiedName, map1);
                 } catch (IOException iOException) {
-                    this.messageReporter.reportError("FILE ERROR:", "Unexpected error analyzing PROPERTIES file '" + string + "' (C) : " + iOException.getMessage());
+                    this.messageReporter.reportError("FILE ERROR:", "Unexpected error analyzing PROPERTIES file '" + qualifiedName + "' (C) : " + iOException.getMessage());
                 }
             }
         }
@@ -139,7 +139,7 @@ public class ResourceFileAnalyzer {
         if (enumeration != null) {
             while (enumeration.hasMoreElements()) {
                 InputFileLocation inputFileLocation = (InputFileLocation) enumeration.nextElement();
-                String string = inputFileLocation.getQualifiedName();
+                String qualifiedName = inputFileLocation.getQualifiedName();
 
                 try {
                     ObservableHolder observableHolder = new ObservableHolder();
@@ -148,38 +148,38 @@ public class ResourceFileAnalyzer {
                     MutableInt mutableInt2 = new MutableInt(Integer.MAX_VALUE);
                     String string1 = XmlResourceProcessor.readFileContent(inputFileLocation.getFile(), observableHolder, mutableInt, mutableInt1, mutableInt2);
                     XmlContentHandler xmlContentHandler = XmlConfigFileHandler.createAnalysisHandler(
-                            string, string1, this.resourceFileIndex, this.classMemberLookup, this.classResolver, this.messageReporter
+                            qualifiedName, string1, this.resourceFileIndex, this.classMemberLookup, this.classResolver, this.messageReporter
                     );
                     File file1 = inputFileLocation.getFile();
-                    String string2 = (String) observableHolder.getValue();
+                    String value = (String) observableHolder.getValue();
                     XmlContentHandler xmlContentHandler1 = xmlContentHandler;
-                    new XmlResourceReader(file1, mutableInt, mutableInt1, mutableInt2, string2, xmlContentHandler1, map1, map2, map3, twoKeyMap);
+                    new XmlResourceReader(file1, mutableInt, mutableInt1, mutableInt2, value, xmlContentHandler1, map1, map2, map3, twoKeyMap);
                 } catch (ZkmException zkmException) {
-                    this.messageReporter.reportError("FILE ERROR:", "Invalid XML file '" + string + "' (A) : " + zkmException.getMessage());
+                    this.messageReporter.reportError("FILE ERROR:", "Invalid XML file '" + qualifiedName + "' (A) : " + zkmException.getMessage());
                 } catch (IOException iOException) {
-                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing XML file '" + string + "' (A) : " + iOException.getMessage());
+                    this.messageReporter.reportError("FILE ERROR:", "Error reading or writing XML file '" + qualifiedName + "' (A) : " + iOException.getMessage());
                 } catch (Exception exception) {
-                    this.messageReporter.reportError("FILE ERROR:", "Unexpected error analyzing XML file '" + string + "' (A) : " + exception.getMessage());
+                    this.messageReporter.reportError("FILE ERROR:", "Unexpected error analyzing XML file '" + qualifiedName + "' (A) : " + exception.getMessage());
                 }
             }
         }
     }
 
     public void openArchives() {
-        int ba = 0;
+        int sourceArchiveIndex = 0;
         int bb = 0;
 
         for (SourceArchive[] sourceArchives1 = this.sourceArchives; bb < sourceArchives1.length; sourceArchives1 = this.sourceArchives) {
-            String string = this.sourceArchives[ba].getFilePath();
+            String filePath = this.sourceArchives[sourceArchiveIndex].getFilePath();
 
             try {
-                ArchiveZipFile archiveZipFile = new ArchiveZipFile(string);
-                this.openZipFiles.put(this.sourceArchives[ba], archiveZipFile);
+                ArchiveZipFile archiveZipFile = new ArchiveZipFile(filePath);
+                this.openZipFiles.put(this.sourceArchives[sourceArchiveIndex], archiveZipFile);
             } catch (IOException iOException) {
-                this.messageReporter.reportWarning("FILE ERROR (3)", "Couldn't open '" + string + "'. : " + iOException.getMessage());
+                this.messageReporter.reportWarning("FILE ERROR (3)", "Couldn't open '" + filePath + "'. : " + iOException.getMessage());
             }
 
-            bb = ++ba;
+            bb = ++sourceArchiveIndex;
         }
     }
 
@@ -200,7 +200,7 @@ public class ResourceFileAnalyzer {
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
             SourceArchive sourceArchive1 = (SourceArchive) entry.getKey();
-            String string = sourceArchive1.getName();
+            String name = sourceArchive1.getName();
             ZipFile zipFile1 = (ZipFile) entry.getValue();
             Map map5 = null;
             if (twoKeyMap1 != null) {
@@ -225,41 +225,41 @@ public class ResourceFileAnalyzer {
 
             while (enumeration.hasMoreElements()) {
                 ZipEntry zipEntry1 = (ZipEntry) enumeration.nextElement();
-                String string1 = zipEntry1.getName();
-                if ((map7 == null || !map7.containsKey(string1))
+                String nameValue = zipEntry1.getName();
+                if ((map7 == null || !map7.containsKey(nameValue))
                         && (this.excludedArchives == null || !this.excludedArchives.contains(sourceArchive1))
-                        && (map5 == null || !map5.containsKey(string1))) {
-                    String string6;
-                    String string7;
+                        && (map5 == null || !map5.containsKey(nameValue))) {
+                    String nameValue2;
+                    String suffix;
                     if (map6 != null) {
-                        if (map6.containsKey(string1)) {
+                        if (map6.containsKey(nameValue)) {
                             continue;
                         }
 
-                        string6 = string1;
-                        string7 = ".class";
+                        nameValue2 = nameValue;
+                        suffix = ".class";
                     } else {
-                        string6 = string1;
-                        string7 = ".class";
+                        nameValue2 = nameValue;
+                        suffix = ".class";
                     }
 
-                    if (!string6.endsWith(string7) && !this.isNestedArchiveEntry(zipFile1, zipEntry1, this.messageReporter)) {
-                        String string2 = string1.toUpperCase();
+                    if (!nameValue2.endsWith(suffix) && !this.isNestedArchiveEntry(zipFile1, zipEntry1, this.messageReporter)) {
+                        String string2 = nameValue.toUpperCase();
                         if (!zipEntry1.isDirectory() && string2.equals("META-INF/MANIFEST.MF")) {
                             ArchiveManifest archiveManifest = sourceArchive1.getManifest();
                             if (archiveManifest != null) {
-                                archiveManifest.collectEntryPointClasses(string, map1, map3, map4);
+                                archiveManifest.collectEntryPointClasses(name, map1, map3, map4);
                             }
                         } else if (!zipEntry1.isDirectory()
                                 && string2.startsWith("META-INF/services/".toUpperCase())
-                                && string1.length() > ServiceProviderFile.SERVICES_PREFIX_LENGTH) {
+                                && nameValue.length() > ServiceProviderFile.SERVICES_PREFIX_LENGTH) {
                             try {
                                 ServiceProviderFile serviceProviderFile = new ServiceProviderFile(zipFile1, zipEntry1);
-                                serviceProviderFile.collectReferencedClasses(string, map1);
+                                serviceProviderFile.collectReferencedClasses(name, map1);
                             } catch (IOException iOException3) {
-                                this.messageReporter.reportError("FILE ERROR:", "Error reading or writing service provider in '" + string + "' : " + iOException3);
+                                this.messageReporter.reportError("FILE ERROR:", "Error reading or writing service provider in '" + name + "' : " + iOException3);
                             }
-                        } else if (!zipEntry1.isDirectory() && ZkmFileUtils.isXmlFileName(string1)) {
+                        } else if (!zipEntry1.isDirectory() && ZkmFileUtils.isXmlFileName(nameValue)) {
                             try {
                                 ObservableHolder observableHolder = new ObservableHolder();
                                 MutableInt mutableInt1 = new MutableInt(0);
@@ -274,38 +274,38 @@ public class ResourceFileAnalyzer {
                                         this.classResolver,
                                         this.messageReporter
                                 );
-                                String string8 = (String) observableHolder.getValue();
+                                String value = (String) observableHolder.getValue();
                                 XmlContentHandler xmlContentHandler1 = xmlContentHandler;
                                 new XmlResourceReader(
-                                        zipFile1, zipEntry1, mutableInt1, mutableInt2, mutableInt, string8, xmlContentHandler1, map1, map2, map3, twoKeyMap
+                                        zipFile1, zipEntry1, mutableInt1, mutableInt2, mutableInt, value, xmlContentHandler1, map1, map2, map3, twoKeyMap
                                 );
                             } catch (ZkmException zkmException) {
                                 this.messageReporter
-                                        .reportError("FILE ERROR:", "Invalid XML file '" + string1 + "' in '" + string + "' : " + zkmException.getMessage());
+                                        .reportError("FILE ERROR:", "Invalid XML file '" + nameValue + "' in '" + name + "' : " + zkmException.getMessage());
                             } catch (IOException iOException2) {
-                                this.messageReporter.reportError("FILE ERROR:", "Error reading or writing '" + string1 + "' in '" + string + "' : " + iOException2);
+                                this.messageReporter.reportError("FILE ERROR:", "Error reading or writing '" + nameValue + "' in '" + name + "' : " + iOException2);
                             }
-                        } else if (!zipEntry1.isDirectory() && ZkmFileUtils.isYamlFileName(string1)) {
-                            String string5 = ZkmFileUtils.getEntryPath(zipFile1, zipEntry1);
+                        } else if (!zipEntry1.isDirectory() && ZkmFileUtils.isYamlFileName(nameValue)) {
+                            String entryPath = ZkmFileUtils.getEntryPath(zipFile1, zipEntry1);
 
                             try {
                                 InputStream inputStream2 = zipFile1.getInputStream(zipEntry1);
                                 BufferedReader bufferedReader1 = ZkmFileUtils.createBomAwareReader(inputStream2);
-                                new ResourceClassRefScanner(bufferedReader1, string5, map1);
+                                new ResourceClassRefScanner(bufferedReader1, entryPath, map1);
                             } catch (IOException iOException1) {
                                 this.messageReporter
-                                        .reportError("FILE ERROR:", "Unexpected error analyzing YAML file '" + string5 + "' (A) : " + iOException1.getMessage());
+                                        .reportError("FILE ERROR:", "Unexpected error analyzing YAML file '" + entryPath + "' (A) : " + iOException1.getMessage());
                             }
-                        } else if (!zipEntry1.isDirectory() && ZkmFileUtils.isPropertiesFileName(string1)) {
-                            String string3 = ZkmFileUtils.getEntryPath(zipFile1, zipEntry1);
+                        } else if (!zipEntry1.isDirectory() && ZkmFileUtils.isPropertiesFileName(nameValue)) {
+                            String entryPathValue = ZkmFileUtils.getEntryPath(zipFile1, zipEntry1);
 
                             try {
                                 InputStream inputStream1 = zipFile1.getInputStream(zipEntry1);
                                 BufferedReader bufferedReader = ZkmFileUtils.createBomAwareReader(inputStream1);
-                                new PropertiesClassRefScanner(bufferedReader, string3, map1);
+                                new PropertiesClassRefScanner(bufferedReader, entryPathValue, map1);
                             } catch (IOException iOException) {
                                 this.messageReporter
-                                        .reportError("FILE ERROR:", "Unexpected error analyzing PROPERTIES file '" + string3 + "' (A) : " + iOException.getMessage());
+                                        .reportError("FILE ERROR:", "Unexpected error analyzing PROPERTIES file '" + entryPathValue + "' (A) : " + iOException.getMessage());
                             }
                         } else if (!zipEntry1.isDirectory()) {
                         }

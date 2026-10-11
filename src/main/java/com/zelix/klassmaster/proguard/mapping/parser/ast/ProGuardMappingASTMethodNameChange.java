@@ -18,8 +18,8 @@ public class ProGuardMappingASTMethodNameChange extends ProGuardNameChangeNode i
     }
 
     @Override
-    public void applyMemberChange(String string, ProGuardMappingTranslator proGuardMappingTranslator) {
-        proGuardMappingTranslator.addMethodMapping(string, this.returnType, super.oldName, super.newName, this.argumentTypes);
+    public void applyMemberChange(String key, ProGuardMappingTranslator proGuardMappingTranslator) {
+        proGuardMappingTranslator.addMethodMapping(key, this.returnType, super.oldName, super.newName, this.argumentTypes);
     }
 
     public void setArgumentTypes(List list1) {

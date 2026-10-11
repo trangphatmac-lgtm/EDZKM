@@ -498,8 +498,8 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         if (++this.jj_gc > 100) {
             this.jj_gc = 0;
 
-            for (int i = 0; i < this.jj_2_rtns.length; i++) {
-                ProGuardConfigParserJJCalls proGuardConfigParserJJCalls = this.jj_2_rtns[i];
+            for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < this.jj_2_rtns.length; jj_2_rtnIndex++) {
+                ProGuardConfigParserJJCalls proGuardConfigParserJJCalls = this.jj_2_rtns[jj_2_rtnIndex];
 
                 while (proGuardConfigParserJJCalls != null) {
                     ProGuardConfigParserJJCalls proGuardConfigParserJJCalls1;
@@ -542,29 +542,19 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
             ProGuardConfigTreeState proGuardConfigTreeState;
             proGuardConfigToken = this.jj_consume_token(OPT_DONTNOTE);
             this.lastOptionKind = 57;
-            label83:
-            switch (this.jj_nt.s) {
-                case 122:
+            if (this.jj_nt.s == QUOTE_122) {
+                this.Quote122Clause();
+                ProGuardConfigToken nextClauseToken = this.jj_nt;
+                while (nextClauseToken.s == COMMA) {
+                    this.jj_consume_token(COMMA);
                     this.Quote122Clause();
-                    ProGuardConfigToken proGuardConfigToken1 = this.jj_nt;
-
-                    while (true) {
-                        switch (proGuardConfigToken1.s) {
-                            case 12:
-                                this.jj_consume_token(COMMA);
-                                this.Quote122Clause();
-                                proGuardConfigToken1 = this.jj_nt;
-                                break;
-                            default:
-                                this.jj_la1[30] = this.jj_gen;
-                                proGuardConfigTreeState = this.jjtree;
-                                break label83;
-                        }
-                    }
-                default:
-                    this.jj_la1[31] = this.jj_gen;
-                    proGuardConfigTreeState = this.jjtree;
+                    nextClauseToken = this.jj_nt;
+                }
+                this.jj_la1[30] = this.jj_gen;
+            } else {
+                this.jj_la1[31] = this.jj_gen;
             }
+            proGuardConfigTreeState = this.jjtree;
 
             proGuardConfigTreeState.closeNodeScope(aSTDontNoteOption);
             bl = false;
@@ -591,7 +581,7 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         }
     }
 
-    public boolean jj_scan_token(int ba) {
+    public boolean jj_scan_token(int tokenKindArgument) {
         if (this.jj_scanpos == this.jj_lastpos) {
             this.jj_la--;
             if (this.jj_scanpos.Y == null) {
@@ -604,22 +594,22 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         }
 
         if (this.jj_rescan) {
-            int bb = 0;
+            int jj_endposValue = 0;
 
             ProGuardConfigToken proGuardConfigToken;
             for (proGuardConfigToken = this.token;
                  proGuardConfigToken != null && proGuardConfigToken != this.jj_scanpos;
                  proGuardConfigToken = proGuardConfigToken.Y
             ) {
-                bb++;
+                jj_endposValue++;
             }
 
             if (proGuardConfigToken != null) {
-                this.jj_add_error_token(ba, bb);
+                this.jj_add_error_token(tokenKindArgument, jj_endposValue);
             }
         }
 
-        if (this.jj_scanpos.s != ba) {
+        if (this.jj_scanpos.s != tokenKindArgument) {
             return true;
         } else if (this.jj_la == 0 && this.jj_scanpos == this.jj_lastpos) {
             throw this.jj_ls;
@@ -812,7 +802,7 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
     }
 
     public boolean jj_3_1() {
-        return this.jj_scan_token(COMMA) ? true : this.jj_3R_29();
+        return ((this.jj_scan_token(COMMA)) || (this.jj_3R_29()));
     }
 
     public final void Quote122Clause() throws ProGuardConfigParseException {
@@ -824,10 +814,10 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
             ProGuardConfigToken proGuardConfigToken = this.jj_consume_token(QUOTE_122);
             this.jjtree.closeNodeScope(aSTQuote122Clause);
             bl = false;
-            String string = proGuardConfigToken.M;
-            string = string.substring(1, string.length() - 1);
-            string = ZkmStringUtils.replaceAll(string, ESCAPED_QUOTE, "\"");
-            aSTQuote122Clause.setValue(string);
+            String value = proGuardConfigToken.M;
+            value = value.substring(1, value.length() - 1);
+            value = ZkmStringUtils.replaceAll(value, ESCAPED_QUOTE, "\"");
+            aSTQuote122Clause.setValue(value);
         } finally {
             if (bl) {
                 this.jjtree.closeNodeScope(aSTQuote122Clause);
@@ -978,27 +968,18 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
                     this.jj_la1[37] = this.jj_gen;
                 }
             }
-            block13:
-            while (true) {
-                switch (this.jj_nt.s) {
-                    case 11: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[38] = this.jj_gen;
-                        break block13;
-                    }
-                }
+            while (this.jj_nt.s == TILDE) {
                 this.jj_consume_token(11);
                 this.Quote122Clause();
                 switch (this.jj_nt.s) {
                     case 20: {
                         this.LparenClause2();
-                        continue block13;
+                        continue;
                     }
                 }
                 this.jj_la1[39] = this.jj_gen;
             }
+            this.jj_la1[38] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTTildeClause);
         } catch (Throwable throwable) {
             try {
@@ -1269,21 +1250,12 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         try {
             this.StarClause2();
             ProGuardConfigToken proGuardConfigToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (proGuardConfigToken.s) {
-                    case 12: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[61] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (proGuardConfigToken.s == COMMA) {
                 this.jj_consume_token(12);
                 this.StarClause2();
                 proGuardConfigToken = this.jj_nt;
             }
+            this.jj_la1[61] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTProduction2);
             return;
         } catch (Throwable throwable) {
@@ -1396,7 +1368,7 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
     }
 
     public boolean jj_3R_9() {
-        return this.jj_3R_13() ? true : this.jj_3R_10();
+        return ((this.jj_3R_13()) || (this.jj_3R_10()));
     }
 
     public final void AdaptResourceFileContentsOption() throws ProGuardConfigParseException {
@@ -1408,26 +1380,17 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
             ProGuardConfigToken proGuardConfigToken;
             proGuardConfigToken = this.jj_consume_token(OPT_ADAPTRESOURCEFILECONTENTS);
             this.lastOptionKind = 108;
-            label81:
-            switch (this.jj_nt.s) {
-                case 122:
+            if (this.jj_nt.s == QUOTE_122) {
+                this.Quote122Clause();
+                ProGuardConfigToken nextClauseToken = this.jj_nt;
+                while (nextClauseToken.s == COMMA) {
+                    this.jj_consume_token(COMMA);
                     this.Quote122Clause();
-                    ProGuardConfigToken proGuardConfigToken1 = this.jj_nt;
-
-                    while (true) {
-                        switch (proGuardConfigToken1.s) {
-                            case 12:
-                                this.jj_consume_token(COMMA);
-                                this.Quote122Clause();
-                                proGuardConfigToken1 = this.jj_nt;
-                                break;
-                            default:
-                                this.jj_la1[28] = this.jj_gen;
-                                break label81;
-                        }
-                    }
-                default:
-                    this.jj_la1[29] = this.jj_gen;
+                    nextClauseToken = this.jj_nt;
+                }
+                this.jj_la1[28] = this.jj_gen;
+            } else {
+                this.jj_la1[29] = this.jj_gen;
             }
 
             this.jjtree.closeNodeScope(aSTAdaptResourceFileContentsOption);
@@ -1529,7 +1492,7 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         if (this.jj_3R_13()) {
             return true;
         } else {
-            return this.jj_3R_10() ? true : this.jj_scan_token(LPAREN);
+            return ((this.jj_3R_10()) || (this.jj_scan_token(LPAREN)));
         }
     }
 
@@ -2076,29 +2039,19 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
             ProGuardConfigTreeState proGuardConfigTreeState;
             proGuardConfigToken = this.jj_consume_token(OPT_ADAPTRESOURCEFILENAMES);
             this.lastOptionKind = 100;
-            label83:
-            switch (this.jj_nt.s) {
-                case 122:
+            if (this.jj_nt.s == QUOTE_122) {
+                this.Quote122Clause();
+                ProGuardConfigToken nextClauseToken = this.jj_nt;
+                while (nextClauseToken.s == COMMA) {
+                    this.jj_consume_token(COMMA);
                     this.Quote122Clause();
-                    ProGuardConfigToken proGuardConfigToken1 = this.jj_nt;
-
-                    while (true) {
-                        switch (proGuardConfigToken1.s) {
-                            case 12:
-                                this.jj_consume_token(COMMA);
-                                this.Quote122Clause();
-                                proGuardConfigToken1 = this.jj_nt;
-                                break;
-                            default:
-                                this.jj_la1[26] = this.jj_gen;
-                                proGuardConfigTreeState = this.jjtree;
-                                break label83;
-                        }
-                    }
-                default:
-                    this.jj_la1[27] = this.jj_gen;
-                    proGuardConfigTreeState = this.jjtree;
+                    nextClauseToken = this.jj_nt;
+                }
+                this.jj_la1[26] = this.jj_gen;
+            } else {
+                this.jj_la1[27] = this.jj_gen;
             }
+            proGuardConfigTreeState = this.jjtree;
 
             proGuardConfigTreeState.closeNodeScope(aSTAdaptResourceFilenamesOption);
             bl = false;
@@ -2267,21 +2220,12 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         try {
             this.PercentClause();
             ProGuardConfigToken proGuardConfigToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (proGuardConfigToken.s) {
-                    case 12: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[56] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (proGuardConfigToken.s == COMMA) {
                 this.jj_consume_token(12);
                 this.PercentClause();
                 proGuardConfigToken = this.jj_nt;
             }
+            this.jj_la1[56] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTProduction3);
             return;
         } catch (Throwable throwable) {
@@ -2302,47 +2246,36 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
     }
 
     public boolean jj_3_3() {
-        return this.jj_3R_10() ? true : this.jj_scan_token(LPAREN);
+        return ((this.jj_3R_10()) || (this.jj_scan_token(LPAREN)));
     }
 
-    public void jj_add_error_token(int ba, int jj_endpos) {
+    public void jj_add_error_token(int tokenKind, int jj_endpos) {
         if (jj_endpos < 100) {
             if (jj_endpos == this.jj_endpos + 1) {
-                this.jj_lasttokens[this.jj_endpos++] = ba;
+                this.jj_lasttokens[this.jj_endpos++] = tokenKind;
             } else if (this.jj_endpos != 0) {
                 this.jj_expentry = new int[this.jj_endpos];
-                int bc = 0;
-                int bg = 0;
+                int tokenIndex = 0;
+                int copyCursor = 0;
 
-                for (int i = this.jj_endpos; bg < i; i = this.jj_endpos) {
-                    this.jj_expentry[bc] = this.jj_lasttokens[bc];
-                    bg = ++bc;
+                for (int jj_endposValue = this.jj_endpos; copyCursor < jj_endposValue; jj_endposValue = this.jj_endpos) {
+                    this.jj_expentry[tokenIndex] = this.jj_lasttokens[tokenIndex];
+                    copyCursor = ++tokenIndex;
                 }
 
-                Iterator iterator = this.jj_expentries.iterator();
+                Iterator expectedSequences = this.jj_expentries.iterator();
 
-                label45:
-                while (iterator.hasNext()) {
-                    int[] bd = (int[]) iterator.next();
-                    if (bd.length == this.jj_expentry.length) {
-                        int be = 0;
-                        bg = be;
-
-                        for (int[] jj_expentry = this.jj_expentry; bg < jj_expentry.length; jj_expentry = this.jj_expentry) {
-                            if (bd[be] != this.jj_expentry[be]) {
-                                continue label45;
-                            }
-
-                            bg = ++be;
-                        }
-
+                while (expectedSequences.hasNext()) {
+                    int[] expectedTokens = (int[]) expectedSequences.next();
+                    if (expectedTokens.length == this.jj_expentry.length
+                            && java.util.Arrays.equals(expectedTokens, this.jj_expentry)) {
                         this.jj_expentries.add(this.jj_expentry);
                         break;
                     }
                 }
 
                 if (jj_endpos != 0) {
-                    this.jj_lasttokens[(this.jj_endpos = jj_endpos) - 1] = ba;
+                    this.jj_lasttokens[(this.jj_endpos = jj_endpos) - 1] = tokenKind;
                 }
             }
         }
@@ -2532,20 +2465,20 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
                 case 16:
                 case 125:
                     ProGuardConfigParser proGuardConfigParser1;
-                    byte ba;
+                    byte jj_kindValue;
                     switch (this.jj_nt.s) {
                         case 16:
                             this.BangClause();
                             proGuardConfigParser1 = this;
-                            ba = 125;
+                            jj_kindValue = 125;
                             break;
                         default:
                             this.jj_la1[35] = this.jj_gen;
                             proGuardConfigParser1 = this;
-                            ba = 125;
+                            jj_kindValue = 125;
                     }
 
-                    ProGuardConfigToken proGuardConfigToken1 = proGuardConfigParser1.jj_consume_token(ba);
+                    ProGuardConfigToken proGuardConfigToken1 = proGuardConfigParser1.jj_consume_token(jj_kindValue);
                     this.jjtree.closeNodeScope(aSTProduction4);
                     bl = false;
                     aSTProduction4.setValue(proGuardConfigToken1.M);
@@ -3143,29 +3076,19 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
             ProGuardConfigTreeState proGuardConfigTreeState;
             proGuardConfigToken = this.jj_consume_token(OPT_KEEPDIRECTORIES);
             this.lastOptionKind = 83;
-            label83:
-            switch (this.jj_nt.s) {
-                case 122:
+            if (this.jj_nt.s == QUOTE_122) {
+                this.Quote122Clause();
+                ProGuardConfigToken nextClauseToken = this.jj_nt;
+                while (nextClauseToken.s == COMMA) {
+                    this.jj_consume_token(COMMA);
                     this.Quote122Clause();
-                    ProGuardConfigToken proGuardConfigToken1 = this.jj_nt;
-
-                    while (true) {
-                        switch (proGuardConfigToken1.s) {
-                            case 12:
-                                this.jj_consume_token(COMMA);
-                                this.Quote122Clause();
-                                proGuardConfigToken1 = this.jj_nt;
-                                break;
-                            default:
-                                this.jj_la1[3] = this.jj_gen;
-                                proGuardConfigTreeState = this.jjtree;
-                                break label83;
-                        }
-                    }
-                default:
-                    this.jj_la1[4] = this.jj_gen;
-                    proGuardConfigTreeState = this.jjtree;
+                    nextClauseToken = this.jj_nt;
+                }
+                this.jj_la1[3] = this.jj_gen;
+            } else {
+                this.jj_la1[4] = this.jj_gen;
             }
+            proGuardConfigTreeState = this.jjtree;
 
             proGuardConfigTreeState.closeNodeScope(aSTKeepDirectoriesOption);
             bl = false;
@@ -3464,29 +3387,19 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
             ProGuardConfigTreeState proGuardConfigTreeState;
             proGuardConfigToken = this.jj_consume_token(OPT_ADAPTCLASSSTRINGS);
             this.lastOptionKind = 90;
-            label83:
-            switch (this.jj_nt.s) {
-                case 122:
+            if (this.jj_nt.s == QUOTE_122) {
+                this.Quote122Clause();
+                ProGuardConfigToken nextClauseToken = this.jj_nt;
+                while (nextClauseToken.s == COMMA) {
+                    this.jj_consume_token(COMMA);
                     this.Quote122Clause();
-                    ProGuardConfigToken proGuardConfigToken1 = this.jj_nt;
-
-                    while (true) {
-                        switch (proGuardConfigToken1.s) {
-                            case 12:
-                                this.jj_consume_token(COMMA);
-                                this.Quote122Clause();
-                                proGuardConfigToken1 = this.jj_nt;
-                                break;
-                            default:
-                                this.jj_la1[24] = this.jj_gen;
-                                proGuardConfigTreeState = this.jjtree;
-                                break label83;
-                        }
-                    }
-                default:
-                    this.jj_la1[25] = this.jj_gen;
-                    proGuardConfigTreeState = this.jjtree;
+                    nextClauseToken = this.jj_nt;
+                }
+                this.jj_la1[24] = this.jj_gen;
+            } else {
+                this.jj_la1[25] = this.jj_gen;
             }
+            proGuardConfigTreeState = this.jjtree;
 
             proGuardConfigTreeState.closeNodeScope(aSTAdaptClassStringsOption);
             bl = false;
@@ -3561,29 +3474,19 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
             ProGuardConfigTreeState proGuardConfigTreeState;
             proGuardConfigToken = this.jj_consume_token(OPT_KEEPPACKAGENAMES);
             this.lastOptionKind = 87;
-            label83:
-            switch (this.jj_nt.s) {
-                case 122:
+            if (this.jj_nt.s == QUOTE_122) {
+                this.Quote122Clause();
+                ProGuardConfigToken nextClauseToken = this.jj_nt;
+                while (nextClauseToken.s == COMMA) {
+                    this.jj_consume_token(COMMA);
                     this.Quote122Clause();
-                    ProGuardConfigToken proGuardConfigToken1 = this.jj_nt;
-
-                    while (true) {
-                        switch (proGuardConfigToken1.s) {
-                            case 12:
-                                this.jj_consume_token(COMMA);
-                                this.Quote122Clause();
-                                proGuardConfigToken1 = this.jj_nt;
-                                break;
-                            default:
-                                this.jj_la1[17] = this.jj_gen;
-                                proGuardConfigTreeState = this.jjtree;
-                                break label83;
-                        }
-                    }
-                default:
-                    this.jj_la1[18] = this.jj_gen;
-                    proGuardConfigTreeState = this.jjtree;
+                    nextClauseToken = this.jj_nt;
+                }
+                this.jj_la1[17] = this.jj_gen;
+            } else {
+                this.jj_la1[18] = this.jj_gen;
             }
+            proGuardConfigTreeState = this.jjtree;
 
             proGuardConfigTreeState.closeNodeScope(aSTKeepPackageNamesOption);
             bl = false;
@@ -3682,31 +3585,31 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         }
     }
 
-    public void jj_save(int ba) {
+    public void jj_save(int jj_2_rtnIndex) {
         com.zelix.klassmaster.proguard.ProGuardConfigParserJJCalls proGuardConfigParserJJCalls1 = null;
-        ProGuardConfigParserJJCalls proGuardConfigParserJJCalls = this.jj_2_rtns[ba];
-        int bb = proGuardConfigParserJJCalls.gen;
+        ProGuardConfigParserJJCalls proGuardConfigParserJJCalls = this.jj_2_rtns[jj_2_rtnIndex];
+        int genValue = proGuardConfigParserJJCalls.gen;
 
-        int bc;
+        int jj_genValue;
         while (true) {
-            if (bb <= this.jj_gen) {
+            if (genValue <= this.jj_gen) {
                 proGuardConfigParserJJCalls1 = proGuardConfigParserJJCalls;
-                bc = this.jj_gen;
+                jj_genValue = this.jj_gen;
                 break;
             }
 
             if (proGuardConfigParserJJCalls.next == null) {
                 proGuardConfigParserJJCalls = proGuardConfigParserJJCalls.next = new ProGuardConfigParserJJCalls();
                 proGuardConfigParserJJCalls1 = proGuardConfigParserJJCalls;
-                bc = this.jj_gen;
+                jj_genValue = this.jj_gen;
                 break;
             }
 
             proGuardConfigParserJJCalls = proGuardConfigParserJJCalls.next;
-            bb = proGuardConfigParserJJCalls.gen;
+            genValue = proGuardConfigParserJJCalls.gen;
         }
 
-        proGuardConfigParserJJCalls1.gen = bc + Integer.MAX_VALUE - this.jj_la;
+        proGuardConfigParserJJCalls1.gen = jj_genValue + Integer.MAX_VALUE - this.jj_la;
         proGuardConfigParserJJCalls.first = this.token;
         proGuardConfigParserJJCalls.arg = Integer.MAX_VALUE;
     }
@@ -3748,21 +3651,12 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         try {
             this.Quote122Clause();
             ProGuardConfigToken proGuardConfigToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (proGuardConfigToken.s) {
-                    case 12: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[40] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (proGuardConfigToken.s == COMMA) {
                 this.jj_consume_token(12);
                 this.Quote122Clause();
                 proGuardConfigToken = this.jj_nt;
             }
+            this.jj_la1[40] = this.jj_gen;
             this.jj_consume_token(11);
             this.jjtree.closeNodeScope(aSTProduction5);
             return;
@@ -3927,20 +3821,20 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
 
     public void jj_rescan_token() {
         this.jj_rescan = true;
-        int ba = 0;
-        int bb = 0;
+        int jj_2_rtnIndex = 0;
+        int genValue = 0;
 
-        for (byte bc = 6; bb < bc; bc = 6) {
+        for (byte bc = 6; genValue < bc; bc = 6) {
             try {
-                ProGuardConfigParserJJCalls proGuardConfigParserJJCalls = this.jj_2_rtns[ba];
-                bb = proGuardConfigParserJJCalls.gen;
+                ProGuardConfigParserJJCalls proGuardConfigParserJJCalls = this.jj_2_rtns[jj_2_rtnIndex];
+                genValue = proGuardConfigParserJJCalls.gen;
 
                 while (true) {
                     ProGuardConfigParserJJCalls proGuardConfigParserJJCalls1;
-                    if (bb > this.jj_gen) {
+                    if (genValue > this.jj_gen) {
                         this.jj_la = proGuardConfigParserJJCalls.arg;
                         this.jj_lastpos = this.jj_scanpos = proGuardConfigParserJJCalls.first;
-                        switch (ba) {
+                        switch (jj_2_rtnIndex) {
                             case 0:
                                 this.jj_3R_25();
                                 proGuardConfigParserJJCalls1 = proGuardConfigParserJJCalls.next;
@@ -3977,12 +3871,12 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
                         break;
                     }
 
-                    bb = proGuardConfigParserJJCalls.gen;
+                    genValue = proGuardConfigParserJJCalls.gen;
                 }
             } catch (ProGuardConfigParserLookaheadSuccess proGuardConfigParserLookaheadSuccess) {
             }
 
-            bb = ++ba;
+            genValue = ++jj_2_rtnIndex;
         }
 
         this.jj_rescan = false;
@@ -4165,82 +4059,82 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
 
     public ProGuardConfigParseException generateParseException() {
         this.jj_expentries.clear();
-        boolean[] bl = new boolean[130];
+        boolean[] booleanArray = new boolean[130];
         if (this.jj_kind >= 0) {
-            bl[this.jj_kind] = true;
+            booleanArray[this.jj_kind] = true;
             this.jj_kind = -1;
         }
 
-        int ba = 0;
-        int bi = ba;
+        int jj_expentryElement = 0;
+        int jj_expentryElementValue = jj_expentryElement;
 
-        for (byte bj = 71; bi < bj; bj = 71) {
-            if (this.jj_la1[ba] == this.jj_gen) {
-                int bb = 0;
-                bi = bb;
+        for (byte bj = 71; jj_expentryElementValue < bj; bj = 71) {
+            if (this.jj_la1[jj_expentryElement] == this.jj_gen) {
+                int jj_expentryElementValue2 = 0;
+                jj_expentryElementValue = jj_expentryElementValue2;
 
-                for (byte bg = 32; bi < bg; bg = 32) {
-                    if ((jj_la1_0[ba] & 1 << bb) != 0) {
-                        bl[bb] = true;
+                for (byte bg = 32; jj_expentryElementValue < bg; bg = 32) {
+                    if ((jj_la1_0[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[jj_expentryElementValue2] = true;
                     }
 
-                    if ((jj_la1_1[ba] & 1 << bb) != 0) {
-                        bl[32 + bb] = true;
+                    if ((jj_la1_1[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[32 + jj_expentryElementValue2] = true;
                     }
 
-                    int[] be;
-                    if ((jj_la1_2[ba] & 1 << bb) != 0) {
-                        bl[64 + bb] = true;
-                        be = jj_la1_3;
+                    int[] jj_la1_3Value;
+                    if ((jj_la1_2[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[64 + jj_expentryElementValue2] = true;
+                        jj_la1_3Value = jj_la1_3;
                     } else {
-                        be = jj_la1_3;
+                        jj_la1_3Value = jj_la1_3;
                     }
 
-                    int[] bf;
-                    if ((be[ba] & 1 << bb) != 0) {
-                        bl[96 + bb] = true;
-                        bf = jj_la1_4;
+                    int[] jj_la1_4Value;
+                    if ((jj_la1_3Value[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[96 + jj_expentryElementValue2] = true;
+                        jj_la1_4Value = jj_la1_4;
                     } else {
-                        bf = jj_la1_4;
+                        jj_la1_4Value = jj_la1_4;
                     }
 
-                    if ((bf[ba] & 1 << bb) != 0) {
-                        bl[128 + bb] = true;
+                    if ((jj_la1_4Value[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[128 + jj_expentryElementValue2] = true;
                     }
 
-                    bi = ++bb;
+                    jj_expentryElementValue = ++jj_expentryElementValue2;
                 }
             }
 
-            bi = ++ba;
+            jj_expentryElementValue = ++jj_expentryElement;
         }
 
-        ba = 0;
-        bi = 0;
+        jj_expentryElement = 0;
+        jj_expentryElementValue = 0;
 
-        for (short bh = 130; bi < bh; bh = 130) {
-            if (bl[ba]) {
+        for (short bh = 130; jj_expentryElementValue < bh; bh = 130) {
+            if (booleanArray[jj_expentryElement]) {
                 this.jj_expentry = new int[1];
-                this.jj_expentry[0] = ba;
+                this.jj_expentry[0] = jj_expentryElement;
                 this.jj_expentries.add(this.jj_expentry);
             }
 
-            bi = ++ba;
+            jj_expentryElementValue = ++jj_expentryElement;
         }
 
         this.jj_endpos = 0;
         this.jj_rescan_token();
         this.jj_add_error_token(0, 0);
-        int[][] bc = new int[this.jj_expentries.size()][];
-        int bd = 0;
-        bi = 0;
+        int[][] expectedTokenSequences = new int[this.jj_expentries.size()][];
+        int elementIndex = 0;
+        jj_expentryElementValue = 0;
 
-        for (List list1 = this.jj_expentries; bi < list1.size(); list1 = this.jj_expentries) {
-            bc[bd] = (int[]) this.jj_expentries.get(bd);
-            bi = ++bd;
+        for (List list1 = this.jj_expentries; jj_expentryElementValue < list1.size(); list1 = this.jj_expentries) {
+            expectedTokenSequences[elementIndex] = (int[]) this.jj_expentries.get(elementIndex);
+            jj_expentryElementValue = ++elementIndex;
         }
 
-        return new ProGuardConfigParseException(this.token, bc, ProGuardConfigConstants.TOKEN_IMAGE);
+        return new ProGuardConfigParseException(this.token, expectedTokenSequences, ProGuardConfigConstants.TOKEN_IMAGE);
     }
 
     public final void ForceProcessingOption() throws ProGuardConfigParseException {
@@ -4423,31 +4317,19 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
             ProGuardConfigTreeState proGuardConfigTreeState;
             proGuardConfigToken = this.jj_consume_token(OPT_KEEPATTRIBUTES);
             this.lastOptionKind = 80;
-            label83:
-            switch (this.jj_nt.s) {
-                case 16:
-                case 125:
-                case 126:
+            if (this.jj_nt.s == BANG || this.jj_nt.s == NAME || this.jj_nt.s == WILDCARD_NAME) {
+                this.Production4();
+                ProGuardConfigToken nextClauseToken = this.jj_nt;
+                while (nextClauseToken.s == COMMA) {
+                    this.jj_consume_token(COMMA);
                     this.Production4();
-                    ProGuardConfigToken proGuardConfigToken1 = this.jj_nt;
-
-                    while (true) {
-                        switch (proGuardConfigToken1.s) {
-                            case 12:
-                                this.jj_consume_token(COMMA);
-                                this.Production4();
-                                proGuardConfigToken1 = this.jj_nt;
-                                break;
-                            default:
-                                this.jj_la1[21] = this.jj_gen;
-                                proGuardConfigTreeState = this.jjtree;
-                                break label83;
-                        }
-                    }
-                default:
-                    this.jj_la1[22] = this.jj_gen;
-                    proGuardConfigTreeState = this.jjtree;
+                    nextClauseToken = this.jj_nt;
+                }
+                this.jj_la1[21] = this.jj_gen;
+            } else {
+                this.jj_la1[22] = this.jj_gen;
             }
+            proGuardConfigTreeState = this.jjtree;
 
             proGuardConfigTreeState.closeNodeScope(aSTKeepAttributesOption);
             bl = false;
@@ -4488,33 +4370,24 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
                     this.jj_la1[47] = this.jj_gen;
                 }
             }
-            block13:
-            while (true) {
-                switch (this.jj_nt.s) {
-                    case 16:
-                    case 28:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 37:
-                    case 38:
-                    case 42:
-                    case 43:
-                    case 48:
-                    case 50:
-                    case 52:
-                    case 54:
-                    case 68: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[48] = this.jj_gen;
-                        break block13;
-                    }
-                }
+            while (this.jj_nt.s == BANG
+                    || this.jj_nt.s == ENUM
+                    || this.jj_nt.s == FINAL
+                    || this.jj_nt.s == PUBLIC
+                    || this.jj_nt.s == STATIC
+                    || this.jj_nt.s == NATIVE
+                    || this.jj_nt.s == BRIDGE
+                    || this.jj_nt.s == PRIVATE
+                    || this.jj_nt.s == VOLATILE
+                    || this.jj_nt.s == STRICTFP
+                    || this.jj_nt.s == PROTECTED
+                    || this.jj_nt.s == ABSTRACT
+                    || this.jj_nt.s == TRANSIENT
+                    || this.jj_nt.s == SYNTHETIC
+                    || this.jj_nt.s == SYNCHRONIZED) {
                 this.PublicClause2();
             }
+            this.jj_la1[48] = this.jj_gen;
             if (this.jj_2_5()) {
                 this.LparenClause();
             } else if (this.jj_2_3()) {
@@ -4622,21 +4495,12 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         try {
             this.Quote122Clause();
             ProGuardConfigToken proGuardConfigToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (proGuardConfigToken.s) {
-                    case 12: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[41] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (proGuardConfigToken.s == COMMA) {
                 this.jj_consume_token(12);
                 this.Quote122Clause();
                 proGuardConfigToken = this.jj_nt;
             }
+            this.jj_la1[41] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTProduction7);
             return;
         } catch (Throwable throwable) {
@@ -5275,7 +5139,7 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
     }
 
     public boolean jj_3R_33() {
-        return this.jj_scan_token(STAR) ? true : this.jj_scan_token(SEMICOLON);
+        return ((this.jj_scan_token(STAR)) || (this.jj_scan_token(SEMICOLON)));
     }
 
     
@@ -5288,33 +5152,13 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
         boolean bl = true;
         this.jjtree.openNodeScope(aSTLbraceClause);
         try {
-            int n;
-            ProGuardConfigParser proGuardConfigParser;
-            block23:
-            {
-                block22:
-                {
-                    switch (this.jj_nt.s) {
-                        case 14: {
-                            this.AtClause();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[42] = this.jj_gen;
-                            break block22;
-                        }
-                    }
-                    proGuardConfigParser = this;
-                    n = Integer.MAX_VALUE;
-                    break block23;
-                }
-                proGuardConfigParser = this;
-                n = Integer.MAX_VALUE;
+            if (this.jj_nt.s == AT) {
+                this.AtClause();
+            } else {
+                this.jj_la1[42] = this.jj_gen;
             }
-            while (proGuardConfigParser.jj_2_4()) {
+            while (this.jj_2_4()) {
                 this.PublicClause();
-                proGuardConfigParser = this;
-                n = Integer.MAX_VALUE;
             }
             this.InterfaceClause();
             this.Production2();
@@ -5340,45 +5184,36 @@ public class ProGuardConfigParser implements ProGuardConfigTreeConstants, ProGua
                 case 22: {
                     this.jj_consume_token(22);
                     ProGuardConfigToken proGuardConfigToken = this.jj_nt;
-                    block20:
-                    while (true) {
-                        switch (proGuardConfigToken.s) {
-                            case 14:
-                            case 16:
-                            case 18:
-                            case 19:
-                            case 24:
-                            case 26:
-                            case 28:
-                            case 32:
-                            case 33:
-                            case 34:
-                            case 35:
-                            case 36:
-                            case 37:
-                            case 38:
-                            case 42:
-                            case 43:
-                            case 44:
-                            case 48:
-                            case 49:
-                            case 50:
-                            case 52:
-                            case 54:
-                            case 68:
-                            case 125:
-                            case 126:
-                            case 127: {
-                                break;
-                            }
-                            default: {
-                                this.jj_la1[45] = this.jj_gen;
-                                break block20;
-                            }
-                        }
+                    while (proGuardConfigToken.s == AT
+                            || proGuardConfigToken.s == BANG
+                            || proGuardConfigToken.s == PERCENT
+                            || proGuardConfigToken.s == STAR
+                            || proGuardConfigToken.s == DOUBLE_STAR
+                            || proGuardConfigToken.s == TRIPLE_STAR
+                            || proGuardConfigToken.s == ENUM
+                            || proGuardConfigToken.s == FINAL
+                            || proGuardConfigToken.s == PUBLIC
+                            || proGuardConfigToken.s == STATIC
+                            || proGuardConfigToken.s == NATIVE
+                            || proGuardConfigToken.s == INIT
+                            || proGuardConfigToken.s == BRIDGE
+                            || proGuardConfigToken.s == PRIVATE
+                            || proGuardConfigToken.s == VOLATILE
+                            || proGuardConfigToken.s == STRICTFP
+                            || proGuardConfigToken.s == FIELDS
+                            || proGuardConfigToken.s == PROTECTED
+                            || proGuardConfigToken.s == METHODS
+                            || proGuardConfigToken.s == ABSTRACT
+                            || proGuardConfigToken.s == TRANSIENT
+                            || proGuardConfigToken.s == SYNTHETIC
+                            || proGuardConfigToken.s == SYNCHRONIZED
+                            || proGuardConfigToken.s == NAME
+                            || proGuardConfigToken.s == WILDCARD_NAME
+                            || proGuardConfigToken.s == WILDCARD_TYPE) {
                         this.Production6();
                         proGuardConfigToken = this.jj_nt;
                     }
+                    this.jj_la1[45] = this.jj_gen;
                     this.jj_consume_token(23);
                     break;
                 }

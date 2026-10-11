@@ -356,7 +356,7 @@ public class LocalVariableInstruction extends Instruction {
     public boolean accessesLocal(int ba) {
         if (!this.isStoreTo(ba) && !this.isLoadFrom(ba)) {
             int realOpcode = this.getRealOpcode();
-            return realOpcode != 132 && realOpcode != 169 ? false : this.slot.getIndex() == ba;
+            return (!(realOpcode != 132 && realOpcode != 169) && (this.slot.getIndex() == ba));
         } else {
             return true;
         }
@@ -452,7 +452,7 @@ public class LocalVariableInstruction extends Instruction {
         new TruncatedStringDisplay((String) object);
         VerifierType[] verifierTypes = stackFrameState.getLocals();
         VerifierType[] verifierTypes1 = stackFrameState.getStack();
-        int ba = verifierTypes1.length;
+        int lengthValue = verifierTypes1.length;
         SubroutineLocalsBitSet subroutineLocalsBitSet = stackFrameState.getSubroutineLocals();
         Set set1 = stackFrameState.getHeldMonitors();
         int index = this.slot.getIndex();
@@ -506,45 +506,45 @@ public class LocalVariableInstruction extends Instruction {
         StackFrameState stackFrameState1;
         switch (LocalVarAccessKindSwitchMap.ACCESS_KIND_SWITCH_MAP[this.accessKind.ordinal()]) {
             case 1:
-                VerifierType[] verifierTypes8 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes8, 0, ba);
-                verifierTypes8[ba] = VerifierType.INT;
+                VerifierType[] verifierTypes8 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes8, 0, lengthValue);
+                verifierTypes8[lengthValue] = VerifierType.INT;
                 stackFrameState1 = new StackFrameState(verifierTypes8, verifierTypes, subroutineLocalsBitSet1, set1);
                 break;
             case 2:
-                VerifierType[] verifierTypes7 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes7, 0, ba);
-                verifierTypes7[ba] = VerifierType.LONG;
+                VerifierType[] verifierTypes7 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes7, 0, lengthValue);
+                verifierTypes7[lengthValue] = VerifierType.LONG;
                 stackFrameState1 = new StackFrameState(verifierTypes7, verifierTypes, subroutineLocalsBitSet1, set1);
                 break;
             case 3:
-                VerifierType[] verifierTypes6 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes6, 0, ba);
-                verifierTypes6[ba] = VerifierType.FLOAT;
+                VerifierType[] verifierTypes6 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes6, 0, lengthValue);
+                verifierTypes6[lengthValue] = VerifierType.FLOAT;
                 stackFrameState1 = new StackFrameState(verifierTypes6, verifierTypes, subroutineLocalsBitSet1, set1);
                 break;
             case 4:
-                VerifierType[] verifierTypes5 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes5, 0, ba);
-                verifierTypes5[ba] = VerifierType.DOUBLE;
+                VerifierType[] verifierTypes5 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes5, 0, lengthValue);
+                verifierTypes5[lengthValue] = VerifierType.DOUBLE;
                 stackFrameState1 = new StackFrameState(verifierTypes5, verifierTypes, subroutineLocalsBitSet1, set1);
                 break;
             case 5:
-                VerifierType[] verifierTypes4 = VerifierType.createArray(ba + 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes4, 0, ba);
-                verifierTypes4[ba] = verifierTypes[index];
+                VerifierType[] verifierTypes4 = VerifierType.createArray(lengthValue + 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes4, 0, lengthValue);
+                verifierTypes4[lengthValue] = verifierTypes[index];
                 stackFrameState1 = new StackFrameState(verifierTypes4, verifierTypes, subroutineLocalsBitSet1, set1);
                 break;
             case 6:
-                stackFrameState1 = this.applyNarrowStore(ba, verifierTypes1, verifierTypes, VerifierType.INT, subroutineLocalsBitSet1, set1);
+                stackFrameState1 = this.applyNarrowStore(lengthValue, verifierTypes1, verifierTypes, VerifierType.INT, subroutineLocalsBitSet1, set1);
                 break;
             case 7:
-                stackFrameState1 = this.applyNarrowStore(ba, verifierTypes1, verifierTypes, VerifierType.FLOAT, subroutineLocalsBitSet1, set1);
+                stackFrameState1 = this.applyNarrowStore(lengthValue, verifierTypes1, verifierTypes, VerifierType.FLOAT, subroutineLocalsBitSet1, set1);
                 break;
             case 8:
-                int bc = verifierTypes.length;
-                VerifierType[] verifierTypes3 = VerifierType.createArray(bc);
-                System.arraycopy(verifierTypes, 0, verifierTypes3, 0, bc);
+                int lengthValue2 = verifierTypes.length;
+                VerifierType[] verifierTypes3 = VerifierType.createArray(lengthValue2);
+                System.arraycopy(verifierTypes, 0, verifierTypes3, 0, lengthValue2);
                 if (verifierTypes3[index].equals(VerifierType.WIDE_SECOND_SLOT)
                         && (verifierTypes3[index - 1].equals(VerifierType.LONG) || verifierTypes3[index - 1].equals(VerifierType.DOUBLE))) {
                     verifierTypes3[index - 1] = VerifierType.TOP;
@@ -560,16 +560,16 @@ public class LocalVariableInstruction extends Instruction {
                     }
                 }
 
-                verifierTypes3[index] = verifierTypes1[ba - 1];
-                VerifierType[] verifierTypes2 = VerifierType.createArray(ba - 1);
-                System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, ba - 1);
+                verifierTypes3[index] = verifierTypes1[lengthValue - 1];
+                VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue - 1);
+                System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, lengthValue - 1);
                 stackFrameState1 = new StackFrameState(verifierTypes2, verifierTypes3, subroutineLocalsBitSet1, set1);
                 break;
             case 9:
-                stackFrameState1 = this.applyWideStore(ba, verifierTypes1, verifierTypes, VerifierType.LONG, subroutineLocalsBitSet1, set1);
+                stackFrameState1 = this.applyWideStore(lengthValue, verifierTypes1, verifierTypes, VerifierType.LONG, subroutineLocalsBitSet1, set1);
                 break;
             case 10:
-                stackFrameState1 = this.applyWideStore(ba, verifierTypes1, verifierTypes, VerifierType.DOUBLE, subroutineLocalsBitSet1, set1);
+                stackFrameState1 = this.applyWideStore(lengthValue, verifierTypes1, verifierTypes, VerifierType.DOUBLE, subroutineLocalsBitSet1, set1);
                 break;
             case 11:
                 if (subroutineLocalsBitSet1 != null && subroutineLocalsBitSet1 != subroutineLocalsBitSet) {
@@ -600,9 +600,9 @@ public class LocalVariableInstruction extends Instruction {
         int index = this.slot.getIndex();
         VerifierType[] verifierTypes2 = VerifierType.createArray(ba - 1);
         System.arraycopy(verifierTypes, 0, verifierTypes2, 0, ba - 1);
-        int bc = verifierTypes1.length;
-        VerifierType[] verifierTypes3 = VerifierType.createArray(bc);
-        System.arraycopy(verifierTypes1, 0, verifierTypes3, 0, bc);
+        int lengthValue = verifierTypes1.length;
+        VerifierType[] verifierTypes3 = VerifierType.createArray(lengthValue);
+        System.arraycopy(verifierTypes1, 0, verifierTypes3, 0, lengthValue);
         if (verifierTypes3[index].equals(VerifierType.WIDE_SECOND_SLOT)
                 && (verifierTypes3[index - 1].equals(VerifierType.LONG) || verifierTypes3[index - 1].equals(VerifierType.DOUBLE))) {
             verifierTypes3[index - 1] = VerifierType.TOP;
@@ -1040,14 +1040,14 @@ public class LocalVariableInstruction extends Instruction {
         }
 
         stringBuilder1.append(this.slot.getIndex());
-        String string = Instruction.getDescriptionComment(realOpcode);
-        string = Instruction.formatDescription(string, String.valueOf(this.slot.getIndex()));
+        String descriptionComment = Instruction.getDescriptionComment(realOpcode);
+        descriptionComment = Instruction.formatDescription(descriptionComment, String.valueOf(this.slot.getIndex()));
         if (realOpcode == 132) {
-            string = Instruction.formatDescription(string, String.valueOf(this.increment));
+            descriptionComment = Instruction.formatDescription(descriptionComment, String.valueOf(this.increment));
         }
 
-        if (string.length() > 0) {
-            stringBuilder1.append("\t" + string);
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);
@@ -1110,9 +1110,9 @@ public class LocalVariableInstruction extends Instruction {
         int index = this.slot.getIndex();
         VerifierType[] verifierTypes2 = VerifierType.createArray(ba - 1);
         System.arraycopy(verifierTypes, 0, verifierTypes2, 0, ba - 1);
-        int bc = verifierTypes1.length;
-        VerifierType[] verifierTypes3 = VerifierType.createArray(bc);
-        System.arraycopy(verifierTypes1, 0, verifierTypes3, 0, bc);
+        int lengthValue = verifierTypes1.length;
+        VerifierType[] verifierTypes3 = VerifierType.createArray(lengthValue);
+        System.arraycopy(verifierTypes1, 0, verifierTypes3, 0, lengthValue);
         if (verifierTypes3[index].equals(VerifierType.WIDE_SECOND_SLOT)
                 && (verifierTypes3[index - 1].equals(VerifierType.LONG) || verifierTypes3[index - 1].equals(VerifierType.DOUBLE))) {
             verifierTypes3[index - 1] = VerifierType.TOP;
@@ -1156,7 +1156,7 @@ public class LocalVariableInstruction extends Instruction {
 
     @Override
     public int getLength() {
-        int ba = 0;
+        int lengthValue = 0;
         switch (this.getRealOpcode()) {
             case 21:
             case 22:
@@ -1169,7 +1169,7 @@ public class LocalVariableInstruction extends Instruction {
             case 57:
             case 58:
             case 169:
-                ba = 2 + (this.requiresWidePrefix() ? 2 : 0);
+                lengthValue = 2 + (this.requiresWidePrefix() ? 2 : 0);
                 break;
             case 26:
             case 27:
@@ -1211,7 +1211,7 @@ public class LocalVariableInstruction extends Instruction {
             case 76:
             case 77:
             case 78:
-                ba = 1;
+                lengthValue = 1;
             case 46:
             case 47:
             case 48:
@@ -1312,10 +1312,10 @@ public class LocalVariableInstruction extends Instruction {
             default:
                 break;
             case 132:
-                ba = 3 + (this.requiresWidePrefix() ? 3 : 0);
+                lengthValue = 3 + (this.requiresWidePrefix() ? 3 : 0);
         }
 
-        return ba;
+        return lengthValue;
     }
 
     @Override

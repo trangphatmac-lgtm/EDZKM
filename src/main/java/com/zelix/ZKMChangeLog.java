@@ -53,23 +53,23 @@ public class ZKMChangeLog extends LineSeparatorHolder {
         }
     }
 
-    public String getNewFieldName(String string, String string1, String string2) {
+    public String getNewFieldName(String string, String nameArgument, String descriptor) {
         try {
             if (string == null) {
                 throw new IllegalArgumentException("Old class name must not be null.");
             }
 
             if (this.changeLogMapping.hasClassMapping(string)) {
-                if (this.changeLogMapping.containsFieldMapping(string, string1, string2)) {
+                if (this.changeLogMapping.containsFieldMapping(string, nameArgument, descriptor)) {
                     this.recordLogCounts();
-                    String string3 = this.changeLogMapping.getNewFieldName(string, string1, string2);
+                    String newFieldName = this.changeLogMapping.getNewFieldName(string, nameArgument, descriptor);
                     this.reportNewLogErrors();
-                    return string3 == null ? string1 : string3;
+                    return newFieldName == null ? nameArgument : newFieldName;
                 } else {
-                    return string1;
+                    return nameArgument;
                 }
             } else {
-                return string1;
+                return nameArgument;
             }
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
@@ -89,18 +89,18 @@ public class ZKMChangeLog extends LineSeparatorHolder {
                 throw new IllegalArgumentException("New class name must not be null.");
             }
 
-            String string1 = this.changeLogMapping.getNewPackageName(string);
-            return string1 == null ? string : ZkmUtils.slashesToDots(string1);
+            String newPackageName = this.changeLogMapping.getNewPackageName(string);
+            return newPackageName == null ? string : ZkmUtils.slashesToDots(newPackageName);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
     }
 
-    public List getOldMethodSignaturesForClass(String string) {
-        if (string == null) {
+    public List getOldMethodSignaturesForClass(String key) {
+        if (key == null) {
             throw new IllegalArgumentException("Old class name must not be null.");
         } else {
-            return this.changeLogMapping.listMethodEntries(string);
+            return this.changeLogMapping.listMethodEntries(key);
         }
     }
 
@@ -111,11 +111,11 @@ public class ZKMChangeLog extends LineSeparatorHolder {
             }
 
             if (this.changeLogMapping.hasClassMapping(string)) {
-                int ba = string1.indexOf(" ");
-                if (ba > 0 && ba < string1.length() - 1) {
-                    String string2 = string1.substring(0, ba);
-                    String string3 = string1.substring(ba + 1);
-                    return this.isOldFieldPresent(string, string3, string2);
+                int endIndex = string1.indexOf(" ");
+                if (endIndex > 0 && endIndex < string1.length() - 1) {
+                    String descriptor = string1.substring(0, endIndex);
+                    String nameArgumentValue = string1.substring(endIndex + 1);
+                    return this.isOldFieldPresent(string, nameArgumentValue, descriptor);
                 } else {
                     throw new IllegalArgumentException("'" + string1 + "' is not a valid field signature");
                 }
@@ -130,26 +130,26 @@ public class ZKMChangeLog extends LineSeparatorHolder {
     public ChangeLogMethodEntry parseMethodSignature(String string) {
         String string1 = string;
         string1 = string1.trim();
-        int ba = string1.indexOf(" ");
-        if (ba <= -1) {
+        int endIndex = string1.indexOf(" ");
+        if (endIndex <= -1) {
             throw new IllegalArgumentException("'" + string1 + "' is not a valid method signature (1)");
         }
 
-        String string2 = string1.substring(0, ba);
-        String string3 = string1.substring(ba + 1);
+        String returnTypeValue = string1.substring(0, endIndex);
+        String string3 = string1.substring(endIndex + 1);
         string3 = string3.trim();
         int bb = string3.indexOf("(");
         if (bb <= 0) {
             throw new IllegalArgumentException("'" + string1 + "' is not a valid method signature (2)");
         }
 
-        String string4 = string3.substring(0, bb);
-        int bc = string3.indexOf(")", bb);
-        if (bc <= -1) {
+        String methodNameValue = string3.substring(0, bb);
+        int endIndexValue = string3.indexOf(")", bb);
+        if (endIndexValue <= -1) {
             throw new IllegalArgumentException("'" + string1 + "' is not a valid method signature (3)");
         }
 
-        string3 = string3.substring(bb + 1, bc);
+        string3 = string3.substring(bb + 1, endIndexValue);
         ArrayList arrayList = new ArrayList();
         StringTokenizer stringTokenizer = new StringTokenizer(string3, ",");
 
@@ -157,30 +157,30 @@ public class ZKMChangeLog extends LineSeparatorHolder {
             arrayList.add(stringTokenizer.nextToken().trim());
         }
 
-        String[] strings = new String[arrayList.size()];
-        strings = ((java.lang.String[]) (arrayList.toArray(strings)));
-        return new ChangeLogMethodEntry(this, string2, string4, strings);
+        String[] argumentTypesValue = new String[arrayList.size()];
+        argumentTypesValue = ((java.lang.String[]) (arrayList.toArray(argumentTypesValue)));
+        return new ChangeLogMethodEntry(this, returnTypeValue, methodNameValue, argumentTypesValue);
     }
 
-    public String getNewMethodSignature(String string, String string1, String[] strings, String string2) {
+    public String getNewMethodSignature(String string, String methodNameArgument, String[] argumentTypesArgument, String returnTypeArgument) {
         try {
             if (string == null) {
                 throw new IllegalArgumentException("Old class name must not be null.");
             }
 
-            if (string1 == null) {
+            if (methodNameArgument == null) {
                 throw new IllegalArgumentException("Old method name must not be null.");
             }
 
-            if (string2 == null) {
+            if (returnTypeArgument == null) {
                 throw new IllegalArgumentException("Old method return type must not be null.");
             }
 
-            ChangeLogMethodEntry changeLogMethodEntry = new ChangeLogMethodEntry(this, string2, string1, strings);
+            ChangeLogMethodEntry changeLogMethodEntry = new ChangeLogMethodEntry(this, returnTypeArgument, methodNameArgument, argumentTypesArgument);
             if (this.changeLogMapping.hasClassMapping(string)) {
-                if (this.changeLogMapping.containsMethodMapping(string, string1, strings, string2)) {
+                if (this.changeLogMapping.containsMethodMapping(string, methodNameArgument, argumentTypesArgument, returnTypeArgument)) {
                     this.recordLogCounts();
-                    String string3 = this.changeLogMapping.describeNewMethod(string, string1, strings, string2);
+                    String string3 = this.changeLogMapping.describeNewMethod(string, methodNameArgument, argumentTypesArgument, returnTypeArgument);
                     this.reportNewLogErrors();
                     return string3 == null ? changeLogMethodEntry.getSignatureString() : string3;
                 } else {
@@ -197,16 +197,16 @@ public class ZKMChangeLog extends LineSeparatorHolder {
     public void reportNewLogErrors() {
         boolean bl = false;
         boolean bl1 = false;
-        int ba;
+        int baselineWarningCountValue;
         if (this.baselineFatalErrorCount >= this.scriptEnvironment.getSeriousErrorCount() && this.baselineErrorCount >= this.scriptEnvironment.getErrorCount()) {
-            ba = this.baselineWarningCount;
+            baselineWarningCountValue = this.baselineWarningCount;
         } else {
             bl = true;
             bl1 = true;
-            ba = this.baselineWarningCount;
+            baselineWarningCountValue = this.baselineWarningCount;
         }
 
-        if (ba < this.scriptEnvironment.getWarningCount() || this.baselineMessageCount < this.scriptEnvironment.getMessageCount()) {
+        if (baselineWarningCountValue < this.scriptEnvironment.getWarningCount() || this.baselineMessageCount < this.scriptEnvironment.getMessageCount()) {
             bl1 = true;
         }
 
@@ -224,11 +224,11 @@ public class ZKMChangeLog extends LineSeparatorHolder {
             if (string == null) {
                 throw new IllegalArgumentException("Old class name must not be null.");
             } else {
-                int ba = string1.indexOf(" ");
-                if (ba > 0 && ba < string1.length() - 1) {
-                    String string3 = string1.substring(0, ba);
-                    String string2 = string1.substring(ba + 1);
-                    return this.changeLogMapping.hasClassMapping(string) ? this.getNewFieldName(string, string2, string3) : string2;
+                int endIndex = string1.indexOf(" ");
+                if (endIndex > 0 && endIndex < string1.length() - 1) {
+                    String descriptor = string1.substring(0, endIndex);
+                    String nameArgumentValue = string1.substring(endIndex + 1);
+                    return this.changeLogMapping.hasClassMapping(string) ? this.getNewFieldName(string, nameArgumentValue, descriptor) : nameArgumentValue;
                 } else {
                     throw new IllegalArgumentException("'" + string1 + "' is not a valid field signature");
                 }
@@ -238,9 +238,9 @@ public class ZKMChangeLog extends LineSeparatorHolder {
         }
     }
 
-    public ZKMChangeLog(String string) throws Exception {
+    public ZKMChangeLog(String logFileNameArgument) throws Exception {
         this.scriptEnvironment.clearLoggedMessages();
-        this.logFileName = string;
+        this.logFileName = logFileNameArgument;
         this.recordLogCounts();
         this.parseChangeLog();
         this.reportNewLogErrors();
@@ -252,8 +252,8 @@ public class ZKMChangeLog extends LineSeparatorHolder {
                 throw new IllegalArgumentException("New class name must not be null.");
             }
 
-            String string1 = this.changeLogMapping.getOriginalClassName(string);
-            return string1 == null ? string : ZkmUtils.slashesToDots(string1);
+            String originalClassName = this.changeLogMapping.getOriginalClassName(string);
+            return originalClassName == null ? string : ZkmUtils.slashesToDots(originalClassName);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
@@ -268,9 +268,9 @@ public class ZKMChangeLog extends LineSeparatorHolder {
             if (this.changeLogMapping.isNewClassName(string)) {
                 if (this.changeLogMapping.hasOriginalMethod(string, string1, strings, string2)) {
                     this.recordLogCounts();
-                    String string3 = this.changeLogMapping.getOriginalMethodName(string, string1, strings, string2);
+                    String originalMethodName = this.changeLogMapping.getOriginalMethodName(string, string1, strings, string2);
                     this.reportNewLogErrors();
-                    return string3 == null ? string1 : string3;
+                    return originalMethodName == null ? string1 : originalMethodName;
                 } else {
                     return string1;
                 }
@@ -288,19 +288,19 @@ public class ZKMChangeLog extends LineSeparatorHolder {
                 throw new IllegalArgumentException("Old class name must not be null.");
             }
 
-            String string1 = this.changeLogMapping.getNewClassName(string);
-            return string1 == null ? string : ZkmUtils.slashesToDots(string1);
+            String newClassName = this.changeLogMapping.getNewClassName(string);
+            return newClassName == null ? string : ZkmUtils.slashesToDots(newClassName);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
     }
 
-    public boolean isOldFieldPresent(String string, String string1, String string2) {
+    public boolean isOldFieldPresent(String string, String nameArgument, String descriptor) {
         try {
             if (string == null) {
                 throw new IllegalArgumentException("Old class name must not be null.");
             } else {
-                return this.changeLogMapping.hasClassMapping(string) ? this.changeLogMapping.containsFieldMapping(string, string1, string2) : false;
+                return ((this.changeLogMapping.hasClassMapping(string)) && (this.changeLogMapping.containsFieldMapping(string, nameArgument, descriptor)));
             }
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
@@ -316,9 +316,9 @@ public class ZKMChangeLog extends LineSeparatorHolder {
             if (this.changeLogMapping.hasClassMapping(string)) {
                 if (this.changeLogMapping.containsMethodMapping(string, string1, strings, string2)) {
                     this.recordLogCounts();
-                    String string3 = this.changeLogMapping.getNewMethodName(string, string1, strings, string2);
+                    String newMethodName = this.changeLogMapping.getNewMethodName(string, string1, strings, string2);
                     this.reportNewLogErrors();
-                    return string3 == null ? string1 : string3;
+                    return newMethodName == null ? string1 : newMethodName;
                 } else {
                     return string1;
                 }
@@ -330,12 +330,12 @@ public class ZKMChangeLog extends LineSeparatorHolder {
         }
     }
 
-    public String getOldFieldName(String string, String string1, String string2) {
+    public String getOldFieldName(String originalClassName, String string1, String string2) {
         try {
-            if (string == null) {
+            if (originalClassName == null) {
                 throw new IllegalArgumentException("New class name must not be null.");
             } else {
-                return this.changeLogMapping.getOriginalFieldName(string, string1, string2);
+                return this.changeLogMapping.getOriginalFieldName(originalClassName, string1, string2);
             }
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
@@ -391,14 +391,14 @@ public class ZKMChangeLog extends LineSeparatorHolder {
             }
             try {
                 bufferedReader.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
-        } catch (final FileNotFoundException ex2) {
+        } catch (final FileNotFoundException fileNotFoundException) {
             throw new Exception("File Error : Couldn't open file \"" + this.logFileName + "\"");
         } catch (final ChangeLogTokenMgrError changeLogTokenMgrError) {
             throw new Exception("Lexical error while reading \"" + this.logFileName + "\" : \"" + changeLogTokenMgrError.getMessage() + "\"");
-        } catch (final ChangeLogParseException ex3) {
-            throw new Exception("Parse error while reading \"" + this.logFileName + "\" : \"" + ex3.getMessage() + "\"");
+        } catch (final ChangeLogParseException changeLogParseException) {
+            throw new Exception("Parse error while reading \"" + this.logFileName + "\" : \"" + changeLogParseException.getMessage() + "\"");
         } finally {
             if (input != null) {
                 input.dump();
@@ -406,7 +406,7 @@ public class ZKMChangeLog extends LineSeparatorHolder {
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex4) {
+                } catch (final IOException ioExceptionValue) {
                 }
             }
         }
@@ -425,7 +425,7 @@ public class ZKMChangeLog extends LineSeparatorHolder {
             if (string == null) {
                 throw new IllegalArgumentException("Old class name must not be null.");
             } else {
-                return this.changeLogMapping.hasClassMapping(string) ? this.changeLogMapping.containsMethodMapping(string, string1, strings, string2) : false;
+                return ((this.changeLogMapping.hasClassMapping(string)) && (this.changeLogMapping.containsMethodMapping(string, string1, strings, string2)));
             }
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
@@ -471,9 +471,9 @@ public class ZKMChangeLog extends LineSeparatorHolder {
     }
 
     public ArrayList toDottedNames(ArrayList arrayList) throws IOException {
-        for (int i = 0; i < arrayList.size(); i++) {
-            String string = ZkmUtils.slashesToDots((String) arrayList.get(i));
-            arrayList.set(i, string);
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            String string = ZkmUtils.slashesToDots((String) arrayList.get(elementIndex));
+            arrayList.set(elementIndex, string);
         }
 
         return arrayList;
@@ -506,11 +506,11 @@ public class ZKMChangeLog extends LineSeparatorHolder {
         }
     }
 
-    public List getOldFieldSignaturesForClass(String string) {
-        if (string == null) {
+    public List getOldFieldSignaturesForClass(String key) {
+        if (key == null) {
             throw new IllegalArgumentException("Old class name must not be null.");
         } else {
-            return this.changeLogMapping.listFieldEntries(string);
+            return this.changeLogMapping.listFieldEntries(key);
         }
     }
 

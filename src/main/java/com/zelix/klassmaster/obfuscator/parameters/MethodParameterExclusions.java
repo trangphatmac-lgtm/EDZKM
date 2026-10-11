@@ -384,8 +384,8 @@ public class MethodParameterExclusions extends ExclusionHandlerBase {
 
             for (MethodInfo methodInfo1 : programClass1.getMethodInfos()) {
                 if (methodInfo1.isSynthetic() && !methodInfo1.isRenamed()) {
-                    String string1 = methodInfo1.getSourceName();
-                    if (string1.startsWith("access$") && NumericStringUtil.isInteger(string1.substring("access$".length()))) {
+                    String sourceName = methodInfo1.getSourceName();
+                    if (sourceName.startsWith("access$") && NumericStringUtil.isInteger(sourceName.substring("access$".length()))) {
                         if (ba != 0
                                 && ba == 2
                                 && !nameExclusionSet.isPackageExcluded(programClass1.getPackagePath())
@@ -626,18 +626,18 @@ public class MethodParameterExclusions extends ExclusionHandlerBase {
     }
 
     public final void applyScriptParameters() throws ZkmException, IOException {
-        int ba;
+        int exclusionStatementsSize;
         if (super.exclusionStatements == null) {
-            ba = 0;
+            exclusionStatementsSize = 0;
         } else {
-            ba = super.exclusionStatements.size();
+            exclusionStatementsSize = super.exclusionStatements.size();
         }
 
         HashSet hashSet = ZkmUtils.createHashSet();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(i);
+        for (int elementIndex = 0; elementIndex < exclusionStatementsSize; elementIndex++) {
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -651,13 +651,13 @@ public class MethodParameterExclusions extends ExclusionHandlerBase {
         if (super.scriptEnvironment.isVerbose() && arrayList.size() > 0) {
             super.logWriter.println("\t" + (this.parameterObfuscation ? "methodParameterObfuscationInclude" : "methodParameterChangesInclude") + " parameters:");
 
-            for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t" + arrayList.get(i));
+            for (int elementIndexValue = arrayList.size() - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                super.logWriter.println("\t\t" + arrayList.get(elementIndexValue));
             }
         }
 
-        for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter4 = (ASTRenameFilterParameter) arrayList.get(i);
+        for (int elementIndexValue2 = arrayList.size() - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter4 = (ASTRenameFilterParameter) arrayList.get(elementIndexValue2);
             if (this.isValidExclusionParameter(
                     aSTRenameFilterParameter4, this.parameterObfuscation ? "methodParameterObfuscationInclude" : "methodParameterChangesInclude"
             )) {
@@ -668,18 +668,18 @@ public class MethodParameterExclusions extends ExclusionHandlerBase {
             }
         }
 
-        int be;
+        int unexclusionStatementsSize;
         if (super.unexclusionStatements == null) {
-            be = 0;
+            unexclusionStatementsSize = 0;
         } else {
-            be = super.unexclusionStatements.size();
+            unexclusionStatementsSize = super.unexclusionStatements.size();
         }
 
         HashSet hashSet1 = ZkmUtils.createHashSet();
         ArrayList arrayList1 = new ArrayList();
 
-        for (int i = 0; i < be; i++) {
-            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(i);
+        for (int elementIndexValue3 = 0; elementIndexValue3 < unexclusionStatementsSize; elementIndexValue3++) {
+            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(elementIndexValue3);
             Enumeration enumeration1 = parameterListStatement1.getRenameFilterParameters();
 
             while (enumeration1.hasMoreElements()) {
@@ -693,13 +693,13 @@ public class MethodParameterExclusions extends ExclusionHandlerBase {
         if (super.scriptEnvironment.isVerbose() && arrayList1.size() > 0) {
             super.logWriter.println("\t" + (this.parameterObfuscation ? "methodParameterObfuscationExclude" : "methodParameterChangesExclude") + " parameters:");
 
-            for (int i = arrayList1.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t\"" + arrayList1.get(i) + "\"");
+            for (int elementIndexValue4 = arrayList1.size() - 1; elementIndexValue4 >= 0; elementIndexValue4 += -1) {
+                super.logWriter.println("\t\t\"" + arrayList1.get(elementIndexValue4) + "\"");
             }
         }
 
-        for (int i = arrayList1.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter5 = (ASTRenameFilterParameter) arrayList1.get(i);
+        for (int elementIndexValue5 = arrayList1.size() - 1; elementIndexValue5 >= 0; elementIndexValue5 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter5 = (ASTRenameFilterParameter) arrayList1.get(elementIndexValue5);
             if (this.isValidExclusionParameter(
                     aSTRenameFilterParameter5, this.parameterObfuscation ? "methodParameterObfuscationExclude" : "methodParameterChangesExclude"
             )) {
@@ -728,13 +728,13 @@ public class MethodParameterExclusions extends ExclusionHandlerBase {
             if (super.scriptEnvironment.isVerbose() && arrayList2.size() > 0) {
                 super.logWriter.println("\tDefault method parameter " + (this.parameterObfuscation ? "obfuscation" : "changes") + " exclusion parameters:");
 
-                for (int i = arrayList2.size() - 1; i >= 0; i += -1) {
-                    super.logWriter.println("\t\t\"" + arrayList2.get(i) + "\"");
+                for (int elementIndexValue6 = arrayList2.size() - 1; elementIndexValue6 >= 0; elementIndexValue6 += -1) {
+                    super.logWriter.println("\t\t\"" + arrayList2.get(elementIndexValue6) + "\"");
                 }
             }
 
-            for (int i = arrayList2.size() - 1; i >= 0; i += -1) {
-                ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) arrayList2.get(i);
+            for (int elementIndexValue7 = arrayList2.size() - 1; elementIndexValue7 >= 0; elementIndexValue7 += -1) {
+                ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) arrayList2.get(elementIndexValue7);
                 if (this.isValidExclusionParameter(
                         aSTRenameFilterParameter3, this.parameterObfuscation ? "methodParameterObfuscationExclude" : "methodParameterChangesExclude"
                 )) {

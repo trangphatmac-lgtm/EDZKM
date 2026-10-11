@@ -11,8 +11,8 @@ public class ConstantDouble extends NumericConstantEntry {
     public static final ConstantPoolTag TAG = ConstantPoolTag.DOUBLE;
     public double value;
 
-    public ConstantDouble(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantDouble(int index, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(index, abstractConstantPool);
         this.value = classFileInputStream.readDouble();
     }
 
@@ -43,15 +43,15 @@ public class ConstantDouble extends NumericConstantEntry {
     }
 
     @Override
-    public void setValueFromString(String string) throws ZkmException, IOException {
-        double ba;
+    public void setValueFromString(String valueFromString) throws ZkmException, IOException {
+        double valueValue;
         try {
-            ba = Double.valueOf(string);
+            valueValue = Double.valueOf(valueFromString);
         } catch (NumberFormatException numberFormatException) {
-            throw new InvalidEditException(string + " is not a valid double");
+            throw new InvalidEditException(valueFromString + " is not a valid double");
         }
 
-        this.value = ba;
+        this.value = valueValue;
         this.notifyObservers();
     }
 

@@ -45,8 +45,8 @@ public abstract class LocalVariableTableBase extends Attribute {
 
     public void registerLabelTargets(SetMultiMap setMultiMap) {
         if (this.valid) {
-            for (int i = 0; i < this.entries.length; i++) {
-                this.entries[i].registerLabelTargets(setMultiMap);
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                this.entries[entryIndex].registerLabelTargets(setMultiMap);
             }
         }
     }
@@ -55,14 +55,14 @@ public abstract class LocalVariableTableBase extends Attribute {
         if (this.valid && hashSet.size() > 0) {
             ArrayList arrayList = new ArrayList(this.entries.length);
 
-            for (int i = 0; i < this.entries.length; i++) {
-                if (hashSet.contains(this.entries[i].getStartLabel()) && hashSet.contains(this.entries[i].getEndLabel())) {
-                    setMultiMap.removeValue(this.entries[i].getStartLabel(), this.entries[i]);
-                    setMultiMap.removeValue(this.entries[i].getEndLabel(), this.entries[i]);
-                    this.clearUnsharedLabelUsage(this.entries[i].getStartLabel(), setMultiMap);
-                    this.clearUnsharedLabelUsage(this.entries[i].getEndLabel(), setMultiMap);
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                if (hashSet.contains(this.entries[entryIndex].getStartLabel()) && hashSet.contains(this.entries[entryIndex].getEndLabel())) {
+                    setMultiMap.removeValue(this.entries[entryIndex].getStartLabel(), this.entries[entryIndex]);
+                    setMultiMap.removeValue(this.entries[entryIndex].getEndLabel(), this.entries[entryIndex]);
+                    this.clearUnsharedLabelUsage(this.entries[entryIndex].getStartLabel(), setMultiMap);
+                    this.clearUnsharedLabelUsage(this.entries[entryIndex].getEndLabel(), setMultiMap);
                 } else {
-                    arrayList.add(this.entries[i]);
+                    arrayList.add(this.entries[entryIndex]);
                 }
             }
 
@@ -91,8 +91,8 @@ public abstract class LocalVariableTableBase extends Attribute {
         int ba = (Integer) object1;
         HashMap hashMap = (HashMap) object2;
         if (this.valid) {
-            for (int i = 0; i < this.entries.length; i++) {
-                LocalVariableEntry localVariableEntry = this.entries[i];
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                LocalVariableEntry localVariableEntry = this.entries[entryIndex];
                 HashMap hashMap1 = hashMap;
                 Integer integer = ba;
                 localVariableEntry.remapDescriptorClassNames(bb, integer, hashMap1);
@@ -103,8 +103,8 @@ public abstract class LocalVariableTableBase extends Attribute {
     public final void writeEntries(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeShort(this.entries.length);
 
-        for (int i = 0; i < this.entries.length; i++) {
-            this.entries[i].writeTo(dataOutputStream);
+        for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+            this.entries[entryIndex].writeTo(dataOutputStream);
         }
     }
 
@@ -121,8 +121,8 @@ public abstract class LocalVariableTableBase extends Attribute {
         if (this.valid) {
             dataOutputStream.writeShort(this.entries.length);
 
-            for (int i = 0; i < this.entries.length; i++) {
-                this.entries[i].writeRemapped(dataOutputStream, map1);
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                this.entries[entryIndex].writeRemapped(dataOutputStream, map1);
             }
         } else {
             dataOutputStream.write(this.rawBytes);
@@ -160,8 +160,8 @@ public abstract class LocalVariableTableBase extends Attribute {
 
     public final void obfuscateNames() {
         if (this.valid) {
-            for (int i = 0; i < this.entries.length; i++) {
-                this.entries[i].obfuscateName();
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                this.entries[entryIndex].obfuscateName();
             }
         }
     }
@@ -170,8 +170,8 @@ public abstract class LocalVariableTableBase extends Attribute {
         if (this.valid) {
             ArrayList arrayList = new ArrayList(this.entries.length);
 
-            for (int i = 0; i < this.entries.length; i++) {
-                LocalVariableEntry localVariableEntry = this.entries[i];
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                LocalVariableEntry localVariableEntry = this.entries[entryIndex];
                 if (set1.contains(integerCache.valueOf(localVariableEntry.getLocalIndex()))) {
                     arrayList.add(localVariableEntry);
                 }
@@ -188,8 +188,8 @@ public abstract class LocalVariableTableBase extends Attribute {
 
     public LocalVariableTableBase(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             LocalVariableList localVariableList1,
             ListMultimap listMultimap,
@@ -197,11 +197,11 @@ public abstract class LocalVariableTableBase extends Attribute {
             ListMultimap listMultimap1,
             String string1
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         this.localVariableList = localVariableList1;
-        byte[] bb = new byte[this.length];
-        classFileInputStream.read(bb);
-        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(bb, false);
+        byte[] rawBytesValue = new byte[this.length];
+        classFileInputStream.read(rawBytesValue);
+        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(rawBytesValue, false);
 
         try {
             if (this.length >= 2) {
@@ -209,24 +209,24 @@ public abstract class LocalVariableTableBase extends Attribute {
                 if (this.entryCount * 10 + 2 == this.length) {
                     this.entries = new LocalVariableEntry[this.entryCount];
 
-                    for (int i = 0; i < this.entryCount; i++) {
-                        this.entries[i] = this.readEntry(classFileInputStream1, this.localVariableList, listMultimap, listMultimap1);
-                        if (this.valid && !this.entries[i].isValid()) {
+                    for (int entryIndex = 0; entryIndex < this.entryCount; entryIndex++) {
+                        this.entries[entryIndex] = this.readEntry(classFileInputStream1, this.localVariableList, listMultimap, listMultimap1);
+                        if (this.valid && !this.entries[entryIndex].isValid()) {
                             this.valid = false;
                             printWriter.println("ERROR: " + this.getLocationName() + " : " + string1 + " (C)");
-                            this.rawBytes = bb;
+                            this.rawBytes = rawBytesValue;
                             break;
                         }
                     }
                 } else {
                     this.valid = false;
                     printWriter.println("ERROR: " + this.getLocationName() + " : " + string1 + " (A) : count=" + this.entryCount + " length=" + this.length);
-                    this.rawBytes = bb;
+                    this.rawBytes = rawBytesValue;
                 }
             } else {
                 this.valid = false;
                 printWriter.println("ERROR: " + this.getLocationName() + " : " + string1 + " (B) : length=" + this.length);
-                this.rawBytes = bb;
+                this.rawBytes = rawBytesValue;
             }
         } finally {
             classFileInputStream1.close();
@@ -248,14 +248,14 @@ public abstract class LocalVariableTableBase extends Attribute {
         }
 
         Collections.sort(arrayList);
-        int ba = -1;
+        int rank = -1;
         Iterator iterator = arrayList.iterator();
 
         while (iterator.hasNext()) {
             RankedValue rankedValue = (RankedValue) iterator.next();
-            if (rankedValue.getRank() > ba) {
-                ba = rankedValue.getRank();
-                hashMap.put(integerCache.valueOf(ba), rankedValue.getValue());
+            if (rankedValue.getRank() > rank) {
+                rank = rankedValue.getRank();
+                hashMap.put(integerCache.valueOf(rank), rankedValue.getValue());
             }
         }
 
@@ -267,8 +267,8 @@ public abstract class LocalVariableTableBase extends Attribute {
         if (this.valid) {
             usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
 
-            for (int i = 0; i < this.entries.length; i++) {
-                this.entries[i].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+            for (int entryIndex = 0; entryIndex < this.entries.length; entryIndex++) {
+                this.entries[entryIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
             }
         }
     }

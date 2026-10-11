@@ -13,9 +13,9 @@ public abstract class ChangeLogValueListNode extends ChangeLogSimpleNode {
         FlowObfuscationDataNode flowObfuscationDataNode = (FlowObfuscationDataNode) changeLogNode;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            String string = ((ChangeLogValueNode) this.jjtGetChild(i)).getValue();
-            flowObfuscationDataNode.addValue(string);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            String value = ((ChangeLogValueNode) this.jjtGetChild(childrenElementIndex)).getValue();
+            flowObfuscationDataNode.addValue(value);
         }
     }
 

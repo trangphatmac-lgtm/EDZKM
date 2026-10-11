@@ -3,6 +3,7 @@ package com.zelix.klassmaster.util;
 import java.io.Serializable;
 
 public class MutableLong implements Comparable, Serializable {
+    /** value; the field name is retained for serialized settings compatibility. */
     public long f = 0L;
 
     public long getValue() {
@@ -18,8 +19,8 @@ public class MutableLong implements Comparable, Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        return object != null && object instanceof MutableLong ? this.f == ((MutableLong) object).f : false;
+    public boolean equals(Object other) {
+        return ((other != null && other instanceof MutableLong) && (this.f == ((MutableLong) other).f));
     }
 
     @Override
@@ -28,15 +29,15 @@ public class MutableLong implements Comparable, Serializable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareValue((MutableLong) object);
+    public int compareTo(Object other) {
+        return this.compareValue((MutableLong) other);
     }
 
     public MutableLong(long ba) {
     }
 
-    public void setValue(long ba) {
-        this.f = ba;
+    public void setValue(long value) {
+        this.f = value;
     }
 
     public MutableLong() {

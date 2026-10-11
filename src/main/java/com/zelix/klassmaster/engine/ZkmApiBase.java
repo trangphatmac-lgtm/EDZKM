@@ -318,14 +318,14 @@ public abstract class ZkmApiBase extends StartupErrorMessages {
         } catch (IllegalAccessException illegalAccessException) {
             throw new Exception("ZKM: Unexpected Error (B). Please report the problem to bugs2@zelix.com");
         } catch (NoClassDefFoundError noClassDefFoundError) {
-            String string10 = System.getProperty("java.class.path");
-            System.err.println("ZKM: Classpath is: \"" + string10 + "\"");
-            if (string10 != null) {
-                if (string10.indexOf("ZKM.jar") == -1) {
+            String property = System.getProperty("java.class.path");
+            System.err.println("ZKM: Classpath is: \"" + property + "\"");
+            if (property != null) {
+                if (property.indexOf("ZKM.jar") == -1) {
                     throw new Exception("ZKM: Startup Error. (Check that ZKM.jar is in classpath) (1)");
                 }
 
-                if (isZkmJarInClasspath(string10)) {
+                if (isZkmJarInClasspath(property)) {
                     throw new Exception("ZKM: Unexpected Error (C). Please report the problem to bugs2@zelix.com");
                 }
 

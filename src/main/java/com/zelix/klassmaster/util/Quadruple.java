@@ -3,9 +3,13 @@ package com.zelix.klassmaster.util;
 import java.io.Serializable;
 
 public class Quadruple implements Serializable {
+    /** first; the field name is retained for serialized settings compatibility. */
     public Object G;
+    /** second; the field name is retained for serialized settings compatibility. */
     public Object i;
+    /** third; the field name is retained for serialized settings compatibility. */
     public Object m;
+    /** fourth; the field name is retained for serialized settings compatibility. */
     public Object V;
 
     public Object getThird() {
@@ -23,26 +27,26 @@ public class Quadruple implements Serializable {
             ba ^= this.i.hashCode();
         }
 
-        Object object;
+        Object fourth;
         if (this.m != null) {
             ba ^= this.m.hashCode();
-            object = this.V;
+            fourth = this.V;
         } else {
-            object = this.V;
+            fourth = this.V;
         }
 
-        if (object != null) {
+        if (fourth != null) {
             ba ^= this.V.hashCode();
         }
 
         return ba;
     }
 
-    public Quadruple(Object object, Object object1, Object object2, Object object3) {
-        this.G = object;
-        this.i = object1;
-        this.m = object2;
-        this.V = object3;
+    public Quadruple(Object first, Object second, Object third, Object fourth) {
+        this.G = first;
+        this.i = second;
+        this.m = third;
+        this.V = fourth;
     }
 
     public Object getFirst() {
@@ -58,12 +62,12 @@ public class Quadruple implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Quadruple)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof Quadruple)) {
             return false;
         }
 
-        Quadruple quadruple1 = (Quadruple) object;
+        Quadruple quadruple1 = (Quadruple) other;
         return (this.G == null && quadruple1.G == null || this.G != null && quadruple1.G != null && this.G.equals(quadruple1.G))
                 && (this.i == null && quadruple1.i == null || this.i != null && quadruple1.i != null && this.i.equals(quadruple1.i))
                 && (this.m == null && quadruple1.m == null || this.m != null && quadruple1.m != null && this.m.equals(quadruple1.m))

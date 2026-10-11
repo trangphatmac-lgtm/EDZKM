@@ -27,8 +27,8 @@ public class MessageBoxDialog extends EscapeClosableDialog implements ClipboardO
     public JButton copyBtn;
     public FontMetrics fontMetrics;
 
-    public static void showMessage(Frame frame1, String string, String string1, boolean bl) {
-        ShowErrorDialogTask showErrorDialogTask = new ShowErrorDialogTask(frame1, string, string1);
+    public static void showMessage(Frame frame1, String title, String message, boolean bl) {
+        ShowErrorDialogTask showErrorDialogTask = new ShowErrorDialogTask(frame1, title, message);
         if (bl) {
             if (!SwingUtilities.isEventDispatchThread()) {
                 try {
@@ -37,7 +37,7 @@ public class MessageBoxDialog extends EscapeClosableDialog implements ClipboardO
                 } catch (InvocationTargetException invocationTargetException) {
                 }
             } else {
-                new MessageBoxDialog(frame1, string, string1);
+                new MessageBoxDialog(frame1, title, message);
             }
         } else {
             SwingUtilities.invokeLater(showErrorDialogTask);
@@ -104,7 +104,7 @@ public class MessageBoxDialog extends EscapeClosableDialog implements ClipboardO
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(this.msgLbl.getText()), this);
     }
 
-    public static void showMessageLater(Frame frame1, String string) {
-        showMessage(frame1, "Error", string, false);
+    public static void showMessageLater(Frame frame1, String message) {
+        showMessage(frame1, "Error", message, false);
     }
 }

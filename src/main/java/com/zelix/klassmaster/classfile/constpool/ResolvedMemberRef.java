@@ -30,28 +30,28 @@ public abstract class ResolvedMemberRef extends ConstantPoolEntry implements Nam
 
     public final void syncWithResolvedMember(ScriptEnvironment scriptEnvironment1, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
         if (this.resolvedMember != null) {
-            String string = this.resolvedMember.getClassName();
-            String string1 = this.nameAndType.getDescriptor();
-            String string2 = this.resolvedMember.getDescriptor();
-            if (!ClassHierarchyNode.isUnknownClass(string)) {
-                String string3 = this.nameAndType.getName();
-                String string4 = this.resolvedMember.getJvmName();
-                if (!string3.equals(string4)) {
-                    this.nameAndType.setName(string4);
+            String className = this.resolvedMember.getClassName();
+            String descriptorValue = this.nameAndType.getDescriptor();
+            String descriptorValue2 = this.resolvedMember.getDescriptor();
+            if (!ClassHierarchyNode.isUnknownClass(className)) {
+                String name = this.nameAndType.getName();
+                String jvmName = this.resolvedMember.getJvmName();
+                if (!name.equals(jvmName)) {
+                    this.nameAndType.setName(jvmName);
                 }
 
-                if (!string1.equals(string2)) {
-                    this.nameAndType.setDescriptor(string2);
+                if (!descriptorValue.equals(descriptorValue2)) {
+                    this.nameAndType.setDescriptor(descriptorValue2);
                 }
-            } else if (scriptEnvironment1 != null && !string1.equals(string2)) {
-                boolean bl = false;
+            } else if (scriptEnvironment1 != null && !descriptorValue.equals(descriptorValue2)) {
+                boolean signaturePolymorphic = false;
 
                 try {
-                    bl = MethodSignature.isSignaturePolymorphic(this.resolvedMember.getOriginalClassName(), this.resolvedMember.getSourceName(), classMemberLookup1);
+                    signaturePolymorphic = MethodSignature.isSignaturePolymorphic(this.resolvedMember.getOriginalClassName(), this.resolvedMember.getSourceName(), classMemberLookup1);
                 } catch (ClassFileLoadException classFileLoadException) {
                 }
 
-                if (!bl) {
+                if (!signaturePolymorphic) {
                     ClassFileBase classFileBase = this.resolvedMember.getOwningClass();
                     String string5 = this.resolvedMember.isField() ? "field" : "method";
                     String string6 = "Class '"
@@ -65,7 +65,7 @@ public abstract class ResolvedMemberRef extends ConstantPoolEntry implements Nam
                             + "'. However the descriptor of the "
                             + string5
                             + " needs to be changed to '"
-                            + ConstantPoolEntry.formatMemberSignature(this.resolvedMember.getSourceName(), string1)
+                            + ConstantPoolEntry.formatMemberSignature(this.resolvedMember.getSourceName(), descriptorValue)
                             + "'.  However this change cannot be made because class '"
                             + classFileBase.getOriginalDottedName()
                             + "' has not been opened for obfuscation.";

@@ -17,13 +17,13 @@ public class NamePatternEntry {
         return this.inList;
     }
 
-    public NamePatternEntry(String string, boolean negated, boolean inList) {
-        this.pattern = string;
+    public NamePatternEntry(String patternArgument, boolean negated, boolean inList) {
+        this.pattern = patternArgument;
         this.negated = negated;
         this.inList = inList;
     }
 
-    public void setPattern(String string) {
-        this.pattern = string;
+    public void setPattern(String patternArgument) {
+        this.pattern = patternArgument;
     }
 }

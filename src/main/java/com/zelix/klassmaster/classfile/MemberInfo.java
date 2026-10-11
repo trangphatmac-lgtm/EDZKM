@@ -64,8 +64,8 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
             return this.accessFlags.isBridge();
         }
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i].getAttributeName().equals("Bridge")) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex].getAttributeName().equals("Bridge")) {
                 return true;
             }
         }
@@ -80,21 +80,21 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
                 this.setSynthetic();
             }
 
-            for (int i = 0; i < this.attributeCount; i++) {
-                if (!(this.attributes[i] instanceof SyntheticAttribute)) {
-                    arrayList.add(this.attributes[i]);
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                if (!(this.attributes[attributeIndex] instanceof SyntheticAttribute)) {
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
             }
 
-            int bc = arrayList.size();
-            if (bc < this.attributeCount) {
-                this.attributes = new Attribute[bc];
+            int attributeCountValue = arrayList.size();
+            if (attributeCountValue < this.attributeCount) {
+                this.attributes = new Attribute[attributeCountValue];
 
-                for (int i = 0; i < bc; i++) {
-                    this.attributes[i] = (Attribute) arrayList.get(i);
+                for (int elementIndex = 0; elementIndex < attributeCountValue; elementIndex++) {
+                    this.attributes[elementIndex] = (Attribute) arrayList.get(elementIndex);
                 }
 
-                this.attributeCount = bc;
+                this.attributeCount = attributeCountValue;
                 this.onAttributesChanged();
             }
         }
@@ -109,8 +109,8 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     }
 
     public final void collectSignatureTypeReferences(Set set1, Set set2, Set set3, Set set4) throws ZkmProcessingException {
-        for (int i = 0; i < this.attributes.length; i++) {
-            Attribute attribute = this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            Attribute attribute = this.attributes[attributeIndex];
             if (attribute instanceof SignatureAttribute) {
                 ((SignatureAttribute) attribute).collectReferencedClasses(set2);
             } else if (attribute instanceof ReferencingAttribute) {
@@ -148,23 +148,23 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     public void trimAttributes(TrimProcessor trimProcessor1, TrimOptions trimOptions1, ScriptEnvironment scriptEnvironment1, PrintWriter printWriter) throws ZkmException, IOException {
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof DeprecatedAttribute) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof DeprecatedAttribute) {
                 if (!trimOptions1.b) {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
-            } else if (this.attributes[i] instanceof ReferencingAttribute) {
-                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[i];
+            } else if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[attributeIndex];
                 if (trimOptions1.d) {
                     if (trimProcessor1.hasAnnotationRetainedClasses() && !referencingAttribute.trimAnnotations(trimProcessor1, scriptEnvironment1, printWriter)) {
-                        arrayList.add(this.attributes[i]);
+                        arrayList.add(this.attributes[attributeIndex]);
                     }
                 } else {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
-            } else if (this.attributes[i] instanceof UnknownAttribute) {
+            } else if (this.attributes[attributeIndex] instanceof UnknownAttribute) {
                 if (trimOptions1.c) {
-                    UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[i];
+                    UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[attributeIndex];
                     printWriter.println(
                             "\tDeleting unknown attribute '"
                                     + unknownAttribute.getAttributeName()
@@ -185,11 +185,11 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
                                 );
                     }
                 } else {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
             } else {
-                this.trimAttribute(trimProcessor1, trimOptions1, this.attributes[i], scriptEnvironment1, printWriter);
-                arrayList.add(this.attributes[i]);
+                this.trimAttribute(trimProcessor1, trimOptions1, this.attributes[attributeIndex], scriptEnvironment1, printWriter);
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
@@ -203,9 +203,9 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     public void resolveAttributeReferences(
             ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
             }
         }
     }
@@ -215,9 +215,9 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     }
 
     public void collectAttributeReferences(Set set1) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).collectReferencedClasses(set1);
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).collectReferencedClasses(set1);
             }
         }
     }
@@ -229,10 +229,10 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     public MemberInfo(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream, ListMultimap listMultimap, PrintWriter printWriter) throws ClassFileFormatException, IOException {
         super(classFileComponent);
         this.accessFlags = new AccessFlags(this, classFileInputStream);
-        int ba = classFileInputStream.readUnsignedShort();
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(ba);
-        ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(bb);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
+        ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(constantPoolIndexValue);
         this.attributeCount = classFileInputStream.readUnsignedShort();
         this.setNameAndDescriptor(constantPoolEntry, constantPoolEntry1);
         if (listMultimap != null) {
@@ -257,10 +257,10 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     public abstract String toDisplayString();
 
     public final void remapDescriptor(HashMap hashMap) throws ZkmException, IOException {
-        String string = this.getDescriptor();
-        String string1 = ConstantPoolEntry.remapDescriptorClassNames(string, hashMap);
-        if (!string1.equals(string)) {
-            this.setDescriptor(string1);
+        String descriptor = this.getDescriptor();
+        String descriptorValue = ConstantPoolEntry.remapDescriptorClassNames(descriptor, hashMap);
+        if (!descriptorValue.equals(descriptor)) {
+            this.setDescriptor(descriptorValue);
         }
     }
 
@@ -268,14 +268,14 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
         return this.creationKind == 2;
     }
 
-    public void setDescriptor(String string) throws ZkmException, IOException {
-        this.descriptorConstant.setValue(string);
+    public void setDescriptor(String descriptor) throws ZkmException, IOException {
+        this.descriptorConstant.setValue(descriptor);
         this.setChanged();
         this.notifyObservers(new MutableInt(2), this, null);
     }
 
-    public void setAccessFlags(int ba) throws ZkmException, IOException {
-        this.accessFlags.setFlags(ba);
+    public void setAccessFlags(int accessFlagsArgument) throws ZkmException, IOException {
+        this.accessFlags.setFlags(accessFlagsArgument);
         this.setChanged();
         this.notifyObservers(new MutableInt(1), this, null);
     }
@@ -312,9 +312,9 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
 
         dataOutputStream.writeShort(this.attributeCount);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof UnknownAttribute && this.attributes[i].getLength() > 0) {
-                UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof UnknownAttribute && this.attributes[attributeIndex].getLength() > 0) {
+                UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[attributeIndex];
                 if (unknownAttribute.isCommonAcrossClasses()) {
                     scriptEnvironment1.logWarning(
                             "Class members contain unknown attribute '"
@@ -334,7 +334,7 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
                 }
             }
 
-            Attribute attribute = this.attributes[i];
+            Attribute attribute = this.attributes[attributeIndex];
             Map map2 = map1;
             ScriptEnvironment scriptEnvironment2 = scriptEnvironment1;
             Map map3 = map2;
@@ -359,9 +359,9 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     }
 
     public void updateAttributesAfterFieldRename() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyFieldRenames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyFieldRenames();
             }
         }
     }
@@ -371,14 +371,14 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     }
 
     public final void remapClassNames(int ba, int bb, HashMap hashMap, HashMap hashMap1) throws ZkmException, IOException {
-        String string = this.getDescriptor();
-        String string1 = ConstantPoolEntry.remapDescriptorClassNames(string, hashMap1);
-        if (!string1.equals(string)) {
-            this.setDescriptor(string1);
+        String descriptor = this.getDescriptor();
+        String descriptorValue = ConstantPoolEntry.remapDescriptorClassNames(descriptor, hashMap1);
+        if (!descriptorValue.equals(descriptor)) {
+            this.setDescriptor(descriptorValue);
         }
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            Attribute attribute = this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            Attribute attribute = this.attributes[attributeIndex];
             HashMap hashMap3 = hashMap1;
             HashMap hashMap2 = hashMap;
             Integer integer = bb;
@@ -443,9 +443,9 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     public abstract void trimAttribute(Object object, Object object1, Object object2, Object object3, Object object4) throws IOException;
 
     public void updateAttributesAfterMethodRename() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyMethodRenames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyMethodRenames();
             }
         }
     }
@@ -472,10 +472,10 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
         this.nameConstant.registerUsage(usedConstantsCollector, this, this.getParent());
         this.descriptorConstant.registerUsage(usedConstantsCollector, this, this.getParent());
         Attribute[] attributes1 = this.attributes;
-        int ba = attributes1.length;
+        int lengthValue = attributes1.length;
 
-        for (int i = 0; i < ba; i++) {
-            attributes1[i].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+        for (int attributes1ElementIndex = 0; attributes1ElementIndex < lengthValue; attributes1ElementIndex++) {
+            attributes1[attributes1ElementIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
         }
     }
 
@@ -492,8 +492,8 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
             return this.accessFlags.isSynthetic();
         }
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i].getAttributeName().equals("Synthetic")) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex].getAttributeName().equals("Synthetic")) {
                 return true;
             }
         }
@@ -508,12 +508,12 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     public Set getAnnotationTypes() {
         HashSet hashSet = ZkmUtils.createHashSet(13);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof AnnotationsAttribute) {
-                String[] strings = ((AnnotationsAttribute) this.attributes[i]).getAnnotationTypeNames();
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof AnnotationsAttribute) {
+                String[] annotationTypeNames = ((AnnotationsAttribute) this.attributes[attributeIndex]).getAnnotationTypeNames();
 
-                for (int j = 0; j < strings.length; j++) {
-                    hashSet.add(strings[j]);
+                for (int annotationTypeNameIndex = 0; annotationTypeNameIndex < annotationTypeNames.length; annotationTypeNameIndex++) {
+                    hashSet.add(annotationTypeNames[annotationTypeNameIndex]);
                 }
             }
         }
@@ -527,12 +527,12 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByLowerCaseName((MemberInfo) object);
+    public int compareTo(Object other) {
+        return this.compareByLowerCaseName((MemberInfo) other);
     }
 
-    public void setName(String string) throws ZkmException, IOException {
-        this.nameConstant.setValue(string);
+    public void setName(String name) throws ZkmException, IOException {
+        this.nameConstant.setValue(name);
         this.setChanged();
         this.notifyObservers(new MutableInt(0), this, null);
     }
@@ -540,9 +540,9 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     public Set collectAnnotationValues(String string, String string1, boolean bl) {
         HashSet hashSet = ZkmUtils.createHashSet(13);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof AnnotationsAttribute || this.attributes[i] instanceof ParameterAnnotationsAttribute) {
-                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof AnnotationsAttribute || this.attributes[attributeIndex] instanceof ParameterAnnotationsAttribute) {
+                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[attributeIndex];
                 AnnotationEntry annotationEntry;
                 if (referencingAttribute instanceof AnnotationsAttribute) {
                     annotationEntry = ((AnnotationsAttribute) referencingAttribute).findAnnotation(string, bl);
@@ -551,9 +551,9 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
                 }
 
                 if (annotationEntry != null) {
-                    String string2 = annotationEntry.getElementClassValue(string1, bl);
-                    if (string2 != null) {
-                        hashSet.add(string2);
+                    String elementClassValue = annotationEntry.getElementClassValue(string1, bl);
+                    if (elementClassValue != null) {
+                        hashSet.add(elementClassValue);
                     }
                 }
             }
@@ -575,8 +575,8 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
     public void visitOtherAttribute() {
     }
 
-    public final void setValid(boolean bl) {
-        if (bl) {
+    public final void setValid(boolean valid) {
+        if (valid) {
             this.clearStateFlag(1);
         } else {
             this.setStateFlag(1);
@@ -612,16 +612,16 @@ public abstract class MemberInfo extends ClassFileComponent implements Utf8Const
         while (enumeration.hasMoreElements()) {
             stringBuffer.append('@');
             String string = (String) enumeration.nextElement();
-            String string1 = classHierarchyQuery.getOriginalClassName(string);
-            stringBuffer.append(ZkmUtils.slashesToDots(string1));
+            String originalClassName = classHierarchyQuery.getOriginalClassName(string);
+            stringBuffer.append(ZkmUtils.slashesToDots(originalClassName));
             stringBuffer.append(" ");
         }
 
         return stringBuffer.toString();
     }
 
-    public void setStateFlag(int ba) {
-        this.stateFlags |= ba;
+    public void setStateFlag(int stateFlag) {
+        this.stateFlags |= stateFlag;
     }
 
     public final boolean isPackagePrivate() {

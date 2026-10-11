@@ -64,8 +64,8 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
         return new ExclusionDialogCancelAction(this);
     }
 
-    public final void removeParameter(String string) throws ZkmException, IOException {
-        this.removeParameterAt(this.paramIndexMap.indexOfKey(string));
+    public final void removeParameter(String key) throws ZkmException, IOException {
+        this.removeParameterAt(this.paramIndexMap.indexOfKey(key));
     }
 
     public boolean canAccept() throws ZkmException, IOException {
@@ -91,8 +91,8 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
         this.explanationArea.setCursor(cursor1);
     }
 
-    public final void initComponents(String string) throws ZkmException, IOException {
-        this.setTitle(string);
+    public final void initComponents(String title) throws ZkmException, IOException {
+        this.setTitle(title);
         Container container1 = this.getContentPane();
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
@@ -105,10 +105,10 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
         this.initToolTips();
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         this.setIconImage(KlassMaster.getLogoImage(this));
-        int bc = dimension.width;
-        int be = Math.min(600, bc);
-        int bd = dimension.height;
-        this.setSize(be, Math.min(500, bd));
+        int widthValue = dimension.width;
+        int be = Math.min(600, widthValue);
+        int heightValue = dimension.height;
+        this.setSize(be, Math.min(500, heightValue));
         Dimension dimension1 = this.getSize();
         Point point = this.mainWindow.getLocationOnScreen();
         Dimension dimension2 = this.mainWindow.getSize();
@@ -132,10 +132,10 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
     public final void modifySelectedParameter() throws ZkmException, IOException {
         this.editIndex = this.paramList.getSelectedIndex();
         if (this.editIndex != -1) {
-            String string = (String) ((DisableableListItem) this.paramList.getSelectedValue()).getItem();
-            RenameFilterModel renameFilterModel = this.parseParameter(string);
+            String item = (String) ((DisableableListItem) this.paramList.getSelectedValue()).getItem();
+            RenameFilterModel renameFilterModel = this.parseParameter(item);
             ParamDialogCallback paramDialogCallback = new ParamDialogCallback(this);
-            this.editParameter(renameFilterModel, string, paramDialogCallback);
+            this.editParameter(renameFilterModel, item, paramDialogCallback);
         }
     }
 
@@ -145,15 +145,15 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
         this.callback.onDialogCancelled();
     }
 
-    public void removeParameterAt(int ba) throws ZkmException, IOException {
-        if (ba > -1) {
+    public void removeParameterAt(int selectedIndexArgument) throws ZkmException, IOException {
+        if (selectedIndexArgument > -1) {
             this.removingItem = true;
-            this.paramListModel.remove(ba);
+            this.paramListModel.remove(selectedIndexArgument);
             this.removingItem = false;
-            this.paramIndexMap.removeAt(ba);
+            this.paramIndexMap.removeAt(selectedIndexArgument);
             int size = this.paramListModel.getSize();
-            if (ba < size) {
-                this.paramList.setSelectedIndex(ba);
+            if (selectedIndexArgument < size) {
+                this.paramList.setSelectedIndex(selectedIndexArgument);
             } else if (size > 0) {
                 this.paramList.setSelectedIndex(size - 1);
             }
@@ -173,9 +173,9 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
                 this.mainDeleteBtn.setEnabled(true);
             }
 
-            String string = (String) ((DisableableListItem) this.paramListModel.getElementAt(selectedIndex)).getItem();
-            String string1 = this.parseParameter(string).buildDescription(this.paramKind);
-            this.explanationArea.setText(string1);
+            String item = (String) ((DisableableListItem) this.paramListModel.getElementAt(selectedIndex)).getItem();
+            String text = this.parseParameter(item).buildDescription(this.paramKind);
+            this.explanationArea.setText(text);
             this.explanationArea.setCaretPosition(0);
         }
 
@@ -224,8 +224,8 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
 
     public abstract void loadParameters(Object object) throws ZkmException, IOException;
 
-    public final void addParameter(String string) {
-        this.addParameterItem(string, false);
+    public final void addParameter(String key) {
+        this.addParameterItem(key, false);
     }
 
     public void onParametersChanged() {
@@ -266,19 +266,19 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
         this.paramList.addKeyListener(paramListKeyListener);
     }
 
-    public final void updateEditedParameter(String string) throws ZkmException, IOException {
-        DisableableListItem disableableListItem = new DisableableListItem(string, false);
+    public final void updateEditedParameter(String key) throws ZkmException, IOException {
+        DisableableListItem disableableListItem = new DisableableListItem(key, false);
         this.paramListModel.setElementAt(disableableListItem, this.editIndex);
-        if (this.paramIndexMap.containsKey(string) && this.paramIndexMap.indexOfKey(string) != this.editIndex) {
+        if (this.paramIndexMap.containsKey(key) && this.paramIndexMap.indexOfKey(key) != this.editIndex) {
             this.removingItem = true;
             this.paramListModel.remove(this.editIndex);
             this.removingItem = false;
             this.paramIndexMap.removeAt(this.editIndex);
             this.paramList.setSelectedIndex(this.paramListModel.indexOf(disableableListItem));
         } else {
-            this.paramIndexMap.replaceEntryAt(this.editIndex, string, disableableListItem);
-            String string1 = this.parseParameter(string).buildDescription(this.paramKind);
-            this.explanationArea.setText(string1);
+            this.paramIndexMap.replaceEntryAt(this.editIndex, key, disableableListItem);
+            String text = this.parseParameter(key).buildDescription(this.paramKind);
+            this.explanationArea.setText(text);
             this.explanationArea.setCaretPosition(0);
         }
     }
@@ -290,11 +290,11 @@ public abstract class ParameterListDialog extends EscapeClosableFrame implements
         this.openParameterTypeDialog(parameterAddCallback);
     }
 
-    public final void addParameterItem(String string, Boolean boolean1) {
-        if (!this.paramIndexMap.containsKey(string)) {
-            DisableableListItem disableableListItem = new DisableableListItem(string, boolean1);
+    public final void addParameterItem(String key, Boolean boolean1) {
+        if (!this.paramIndexMap.containsKey(key)) {
+            DisableableListItem disableableListItem = new DisableableListItem(key, boolean1);
             this.paramListModel.addElement(disableableListItem);
-            this.paramIndexMap.put(string, disableableListItem);
+            this.paramIndexMap.put(key, disableableListItem);
             this.paramList.setSelectedIndex(this.paramListModel.indexOf(disableableListItem));
             if (this.paramList.getSelectedIndex() == -1) {
                 this.mainModifyBtn.setEnabled(false);

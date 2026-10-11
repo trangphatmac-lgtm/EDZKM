@@ -6,28 +6,28 @@ public class IntegerCache {
     private Integer[] cache = new Integer[1000];
     private int capacity = 1000;
 
-    public Integer valueOf(int ba) {
-        if (ba == -1) {
+    public Integer valueOf(int integerArgument) {
+        if (integerArgument == -1) {
             return MINUS_ONE;
         }
 
-        if (ba > 32767) {
-            return ba;
+        if (integerArgument > 32767) {
+            return integerArgument;
         }
 
         synchronized (this) {
-            if (ba >= this.capacity) {
-                int bb = ba * 2;
-                Integer[] integers = new Integer[bb];
+            if (integerArgument >= this.capacity) {
+                int capacityValue = integerArgument * 2;
+                Integer[] integers = new Integer[capacityValue];
                 System.arraycopy(this.cache, 0, integers, 0, this.capacity);
                 this.cache = integers;
-                this.capacity = bb;
+                this.capacity = capacityValue;
             }
 
-            Integer integer = this.cache[ba];
+            Integer integer = this.cache[integerArgument];
             if (integer == null) {
-                integer = ba;
-                this.cache[ba] = integer;
+                integer = integerArgument;
+                this.cache[integerArgument] = integer;
             }
 
             return integer;

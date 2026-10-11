@@ -11,8 +11,8 @@ public class StackTraceClasspathDialog extends ClasspathDialog {
     private static final String HELP_PAGE_ID = "038";
 
     @Override
-    public void saveClasspathPreference(String string) {
-        super.userPreferences.setBytecodeClasspath(string);
+    public void saveClasspathPreference(String bytecodeClasspath) {
+        super.userPreferences.setBytecodeClasspath(bytecodeClasspath);
         super.userPreferences.savePreferences();
     }
 

@@ -26,8 +26,8 @@ public class SimpleNamePattern implements ClassNamePattern {
         return false;
     }
 
-    public SimpleNamePattern(String string) {
-        this.namePattern = string;
+    public SimpleNamePattern(String namePatternArgument) {
+        this.namePattern = namePatternArgument;
     }
 
     @Override

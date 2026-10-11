@@ -24,17 +24,17 @@ public abstract class ListItemWrapper {
         return this.item.hashCode();
     }
 
-    public ListItemWrapper(Object object) {
-        this.item = object;
+    public ListItemWrapper(Object itemArgument) {
+        this.item = itemArgument;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         int invertedControlValue = EscapeClosableFrame.getInvertedControlValue();
-        boolean bl = object instanceof ListItemWrapper;
+        boolean bl = other instanceof ListItemWrapper;
         if (invertedControlValue == 0) {
             if (bl) {
-                return this.item.equals(((ListItemWrapper) object).item);
+                return this.item.equals(((ListItemWrapper) other).item);
             }
 
             bl = false;

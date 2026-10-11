@@ -12,14 +12,14 @@ public abstract class ProGuardMappingSimpleNode implements ProGuardMappingNode {
     public void translate(Object object, ProGuardMappingTranslator proGuardMappingTranslator) {
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).translate(this, proGuardMappingTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardMappingTranslator);
         }
     }
 
     @Override
-    public ProGuardMappingNode jjtGetChild(int ba) {
-        return this.children[ba];
+    public ProGuardMappingNode jjtGetChild(int childrenElementIndex) {
+        return this.children[childrenElementIndex];
     }
 
     @Override
@@ -32,13 +32,13 @@ public abstract class ProGuardMappingSimpleNode implements ProGuardMappingNode {
     }
 
     @Override
-    public void jjtAddChild(ProGuardMappingNode proGuardMappingNode, int ba) {
+    public void jjtAddChild(ProGuardMappingNode proGuardMappingNode, int proGuardMappingNodes1ElementIndex) {
         ProGuardMappingNode[] proGuardMappingNodes1;
         if (this.children == null) {
-            this.children = new ProGuardMappingNode[ba + 1];
+            this.children = new ProGuardMappingNode[proGuardMappingNodes1ElementIndex + 1];
             proGuardMappingNodes1 = this.children;
-        } else if (ba >= this.children.length) {
-            ProGuardMappingNode[] proGuardMappingNodes = new ProGuardMappingNode[ba + 1];
+        } else if (proGuardMappingNodes1ElementIndex >= this.children.length) {
+            ProGuardMappingNode[] proGuardMappingNodes = new ProGuardMappingNode[proGuardMappingNodes1ElementIndex + 1];
             System.arraycopy(this.children, 0, proGuardMappingNodes, 0, this.children.length);
             this.children = proGuardMappingNodes;
             proGuardMappingNodes1 = this.children;
@@ -46,7 +46,7 @@ public abstract class ProGuardMappingSimpleNode implements ProGuardMappingNode {
             proGuardMappingNodes1 = this.children;
         }
 
-        proGuardMappingNodes1[ba] = proGuardMappingNode;
+        proGuardMappingNodes1[proGuardMappingNodes1ElementIndex] = proGuardMappingNode;
     }
 
     @Override
@@ -54,8 +54,8 @@ public abstract class ProGuardMappingSimpleNode implements ProGuardMappingNode {
         return ProGuardMappingTreeConstants.jjtNodeName[this.id];
     }
 
-    public static void setFlowState(int[] ba) {
-        flowState = ba;
+    public static void setFlowState(int[] flowStateArgument) {
+        flowState = flowStateArgument;
     }
 
     @Override

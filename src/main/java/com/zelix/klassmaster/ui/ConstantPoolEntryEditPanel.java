@@ -72,16 +72,16 @@ public class ConstantPoolEntryEditPanel extends ObservingPanel implements Proper
     }
 
     @Override
-    public void handleObservedChange(ObservableModel observableModel1, Object object, Object object1, Object object2) throws ZkmException, IOException {
-        new EdtCallbackInvoker(this, observableModel1, object, object1, object2);
+    public void handleObservedChange(ObservableModel observableModel1, Object changeArg1, Object changeArg2, Object changeArg3) throws ZkmException, IOException {
+        new EdtCallbackInvoker(this, observableModel1, changeArg1, changeArg2, changeArg3);
     }
 
     public void applyValueChange() throws ZkmException, IOException {
-        String string = this.propertyEditFld.getText();
-        if (!string.equals(this.currentValue)) {
+        String currentValueValue = this.propertyEditFld.getText();
+        if (!currentValueValue.equals(this.currentValue)) {
             try {
                 synchronized (this.classRepository) {
-                    this.constant.setValueFromString(string);
+                    this.constant.setValueFromString(currentValueValue);
                     Set set1 = this.linkedStringConstants.getValues(this.constant);
                     JLabel jLabel;
                     if (set1 == null) {
@@ -90,18 +90,18 @@ public class ConstantPoolEntryEditPanel extends ObservingPanel implements Proper
                         Iterator iterator = set1.iterator();
 
                         while (iterator.hasNext()) {
-                            ((ResolvedStringConstant) iterator.next()).setValueFromString(string);
+                            ((ResolvedStringConstant) iterator.next()).setValueFromString(currentValueValue);
                         }
 
                         jLabel = this.existingValueLbl;
                     }
 
-                    jLabel.setText(string);
+                    jLabel.setText(currentValueValue);
                     this.chngBtn.setEnabled(false);
                     this.undoBtn.setEnabled(false);
-                    this.currentValue = string;
+                    this.currentValue = currentValueValue;
                     int selectedIndex = this.constantsList.getSelectedIndex();
-                    ((DefaultListModel) this.constantsList.getModel()).setElementAt(string, selectedIndex);
+                    ((DefaultListModel) this.constantsList.getModel()).setElementAt(currentValueValue, selectedIndex);
                     this.constantsList.setSelectedIndex(selectedIndex);
                     this.constantsList.ensureIndexIsVisible(selectedIndex);
                     SwingUtils.requestFocusOnEdt(this.propertyEditFld);
@@ -169,8 +169,8 @@ public class ConstantPoolEntryEditPanel extends ObservingPanel implements Proper
     @Override
     public void handleChangeOnEdt(Object object, Object object1, Object object2, Object object3) throws ZkmException, IOException {
         this.currentValue = this.constant.getEditableValue();
-        String string = this.constant.getTypeName() + " Pool Entry #" + ((ConstantPoolEntry) this.constant).getIndex();
-        this.entryDetailsLbl.setText(string);
+        String text = this.constant.getTypeName() + " Pool Entry #" + ((ConstantPoolEntry) this.constant).getIndex();
+        this.entryDetailsLbl.setText(text);
         this.existingValueLbl.setText(this.currentValue);
         this.propertyEditFld.setText(this.currentValue);
         this.undoBtn.setEnabled(false);

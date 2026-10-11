@@ -16,8 +16,8 @@ public class ChangeLogASTNewMethodName extends ChangeLogSimpleNode implements Ch
     }
 
     @Override
-    public void setParsedName(Object object) {
-        this.newMethodName = (String) object;
+    public void setParsedName(Object parsedName) {
+        this.newMethodName = (String) parsedName;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ChangeLogASTNewMethodName extends ChangeLogSimpleNode implements Ch
         int bg = (int) (bi << 48 >>> 48);
         this.jjtGetChild(0).interpret(this, be, bf, bg, abstractChangeLog);
         ChangeLogASTMethodNameChange changeLogASTMethodNameChange = (ChangeLogASTMethodNameChange) changeLogNode;
-        String string = this.newMethodName;
-        changeLogASTMethodNameChange.setNewMethodName(string);
+        String newMethodNameValue = this.newMethodName;
+        changeLogASTMethodNameChange.setNewMethodName(newMethodNameValue);
     }
 }

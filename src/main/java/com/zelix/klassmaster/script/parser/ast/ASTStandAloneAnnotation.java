@@ -25,17 +25,17 @@ public class ASTStandAloneAnnotation extends ZkmScriptSimpleNode implements Type
         ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) object;
         if (this.annotationName != null) {
             aSTRenameFilterParameter.markStandaloneAnnotation();
-            String string = ClassFileBase.getPackagePath(this.annotationName);
-            String string1 = ClassFileBase.stripPackage(this.annotationName);
-            if (string.length() > 0) {
-                PackageNamePattern packageNamePattern = new PackageNamePattern(string);
+            String packagePath = ClassFileBase.getPackagePath(this.annotationName);
+            String namePattern = ClassFileBase.stripPackage(this.annotationName);
+            if (packagePath.length() > 0) {
+                PackageNamePattern packageNamePattern = new PackageNamePattern(packagePath);
                 aSTRenameFilterParameter.setPackagePattern(packageNamePattern);
             }
 
             ASTRenameFilterParameter aSTRenameFilterParameter1;
             String string2;
-            if (string1.length() > 0) {
-                SimpleNamePattern simpleNamePattern = new SimpleNamePattern(string1);
+            if (namePattern.length() > 0) {
+                SimpleNamePattern simpleNamePattern = new SimpleNamePattern(namePattern);
                 aSTRenameFilterParameter.setClassNamePattern(simpleNamePattern);
                 aSTRenameFilterParameter1 = aSTRenameFilterParameter;
                 string2 = "java/lang/annotation/Annotation";
@@ -51,7 +51,7 @@ public class ASTStandAloneAnnotation extends ZkmScriptSimpleNode implements Type
     }
 
     @Override
-    public void setTypeText(Object object) {
-        this.annotationName = (String) object;
+    public void setTypeText(Object typeText) {
+        this.annotationName = (String) typeText;
     }
 }

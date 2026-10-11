@@ -42,8 +42,8 @@ public class NestMembersAttribute extends ParsedAttributeBase implements Utf8Con
         if (super.valid) {
             final ArrayList list = new ArrayList(this.memberClasses.length);
             final ResolvedClassConstant[] memberClasses = this.memberClasses;
-            for (int length = memberClasses.length, i = 0; i < length; ++i) {
-                final ResolvedClassConstant resolvedClassConstant = memberClasses[i];
+            for (int length = memberClasses.length, memberClasseIndex = 0; memberClasseIndex < length; ++memberClasseIndex) {
+                final ResolvedClassConstant resolvedClassConstant = memberClasses[memberClasseIndex];
                 final ProgramClass programClass = ClassHierarchyNode.findProgramClass(resolvedClassConstant.getClassName());
                 if (programClass == null || trimProcessor.isClassOrOuterExcluded(programClass)) {
                     list.add(resolvedClassConstant);
@@ -62,8 +62,8 @@ public class NestMembersAttribute extends ParsedAttributeBase implements Utf8Con
         if (super.valid) {
             dataOutputStream.writeShort(this.memberClasses.length);
             final ResolvedClassConstant[] memberClasses = this.memberClasses;
-            for (int length = memberClasses.length, i = 0; i < length; ++i) {
-                final ResolvedClassConstant resolvedClassConstant = memberClasses[i];
+            for (int length = memberClasses.length, memberClasseIndex = 0; memberClasseIndex < length; ++memberClasseIndex) {
+                final ResolvedClassConstant resolvedClassConstant = memberClasses[memberClasseIndex];
                 final ConstantPoolEntry constantPoolEntry = ((com.zelix.klassmaster.classfile.constpool.ConstantPoolEntry) (((Map) o).get(resolvedClassConstant)));
                 if (constantPoolEntry != null) {
                     dataOutputStream.writeShort(constantPoolEntry.getIndex());
@@ -76,87 +76,77 @@ public class NestMembersAttribute extends ParsedAttributeBase implements Utf8Con
         }
     }
 
-    public NestMembersAttribute(final ClassFileComponent classFileComponent, final int n, final String s, final ClassFileInputStream classFileInputStream, final ListMultimap listMultimap) throws ClassFileFormatException, IOException {
-        super(classFileComponent, n, s, classFileInputStream, listMultimap);
+    public NestMembersAttribute(final ClassFileComponent classFileComponent, final int constantPoolIndex, final String attributeName, final ClassFileInputStream classFileInputStream, final ListMultimap listMultimap) throws ClassFileFormatException, IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         classFileInputStream.read(super.rawBytes = new byte[this.length]);
         final ClassFileInputStream fromBytes = ClassFileInputStream.fromBytes(super.rawBytes, false);
-        Throwable t = null;
-        ResolvedClassConstant[] array = null;
-        Label_0333:
-        {
-            Label_0329:
-            {
-                try {
-                    final int unsignedShort = fromBytes.readUnsignedShort();
-                    this.memberClasses = new ResolvedClassConstant[unsignedShort];
-                    for (int i = 0; i < unsignedShort; ++i) {
-                        final int unsignedShort2 = fromBytes.readUnsignedShort();
-                        final ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(unsignedShort2);
-                        if (constantPoolEntry == null) {
-                            super.valid = false;
-                            throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in '" + "NestMembers" + "' attribute : " + unsignedShort2 + " : '" + this.getLocationName() + "' : File is probably corrupt (AX)");
-                        }
-                        if (!(constantPoolEntry instanceof ResolvedClassConstant)) {
-                            super.valid = false;
-                            throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid '" + "NestMembers" + "' attribute : " + unsignedShort2 + " : '" + this.getLocationName() + "' : File is probably corrupt (AY)");
-                        }
-                        this.memberClasses[i] = (ResolvedClassConstant) constantPoolEntry;
-                    }
-                    if (fromBytes != null) {
-                        fromBytes.close();
-                        break Label_0329;
-                    }
-                } catch (final Throwable t2) {
-                    t = t2;
-                    throw t2;
-                } finally {
-                    if (fromBytes != null) {
-                        if (t != null) {
-                            try {
-                                fromBytes.close();
-                            } catch (final Throwable exception) {
-                                t.addSuppressed(exception);
-                            }
-                        } else {
-                            fromBytes.close();
-                        }
-                    }
+        Throwable throwableValue = null;
+        try {
+            final int unsignedShort = fromBytes.readUnsignedShort();
+            this.memberClasses = new ResolvedClassConstant[unsignedShort];
+            for (int memberClasseIndex = 0; memberClasseIndex < unsignedShort; ++memberClasseIndex) {
+                final int unsignedShort2 = fromBytes.readUnsignedShort();
+                final ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(unsignedShort2);
+                if (constantPoolEntry == null) {
+                    super.valid = false;
+                    throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in '" + "NestMembers" + "' attribute : " + unsignedShort2 + " : '" + this.getLocationName() + "' : File is probably corrupt (AX)");
                 }
-                array = this.memberClasses;
-                break Label_0333;
+                if (!(constantPoolEntry instanceof ResolvedClassConstant)) {
+                    super.valid = false;
+                    throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid '" + "NestMembers" + "' attribute : " + unsignedShort2 + " : '" + this.getLocationName() + "' : File is probably corrupt (AY)");
+                }
+                this.memberClasses[memberClasseIndex] = (ResolvedClassConstant) constantPoolEntry;
             }
-            array = this.memberClasses;
+            if (fromBytes != null) {
+                fromBytes.close();
+            }
+        } catch (final Throwable throwable) {
+            throwableValue = throwable;
+            throw throwable;
+        } finally {
+            if (fromBytes != null) {
+                if (throwableValue != null) {
+                    try {
+                        fromBytes.close();
+                    } catch (final Throwable exception) {
+                        throwableValue.addSuppressed(exception);
+                    }
+                } else {
+                    fromBytes.close();
+                }
+            }
         }
+        ResolvedClassConstant[] array = this.memberClasses;
         if (!ZkmUtils.allUnique(array)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append("Invalid 'NestMembers' attribute in class '");
-            sb.append(this.getLocationName());
-            sb.append("' : Duplicate class names : ");
-            int n2 = 0;
+            final StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Invalid 'NestMembers' attribute in class '");
+            stringBuilder.append(this.getLocationName());
+            stringBuilder.append("' : Duplicate class names : ");
+            int memberClasseIndexValue = 0;
             int j = 0;
             ResolvedClassConstant[] array2 = this.memberClasses;
             while (j < array2.length) {
-                sb.append(this.memberClasses[n2].getValueString());
-                if (n2 < this.memberClasses.length - 1) {
-                    sb.append(", ");
+                stringBuilder.append(this.memberClasses[memberClasseIndexValue].getValueString());
+                if (memberClasseIndexValue < this.memberClasses.length - 1) {
+                    stringBuilder.append(", ");
                 }
-                n2 = (j = n2 + 1);
+                memberClasseIndexValue = (j = memberClasseIndexValue + 1);
                 array2 = this.memberClasses;
             }
-            ZkmAssert.assertTrue(false, new String[]{sb.toString()});
+            ZkmAssert.assertTrue(false, new String[]{stringBuilder.toString()});
         }
     }
 
     @Override
     public void replaceClassConstant(final ResolvedClassConstant resolvedClassConstant, final ResolvedClassConstant resolvedClassConstant2) {
-        int n = 0;
+        int memberClasseIndex = 0;
         int i = 0;
         ResolvedClassConstant[] array = this.memberClasses;
         while (i < array.length) {
-            if (this.memberClasses[n] == resolvedClassConstant) {
-                this.memberClasses[n] = resolvedClassConstant2;
+            if (this.memberClasses[memberClasseIndex] == resolvedClassConstant) {
+                this.memberClasses[memberClasseIndex] = resolvedClassConstant2;
             }
-            n = (i = n + 1);
+            memberClasseIndex = (i = memberClasseIndex + 1);
             array = this.memberClasses;
         }
     }
@@ -166,11 +156,11 @@ public class NestMembersAttribute extends ParsedAttributeBase implements Utf8Con
         this.nameConstant.registerUsage(usedConstantsCollector, this, this.getParent());
         if (super.valid) {
             int i;
-            int n2 = i = 0;
+            int memberClasseIndex = i = 0;
             ResolvedClassConstant[] array = this.memberClasses;
             while (i < array.length) {
-                this.memberClasses[n2].registerUsage(usedConstantsCollector, this, this.getParent());
-                n2 = (i = n2 + 1);
+                this.memberClasses[memberClasseIndex].registerUsage(usedConstantsCollector, this, this.getParent());
+                memberClasseIndex = (i = memberClasseIndex + 1);
                 array = this.memberClasses;
             }
         }
@@ -182,8 +172,8 @@ public class NestMembersAttribute extends ParsedAttributeBase implements Utf8Con
         if (super.valid) {
             dataOutputStream.writeShort(this.memberClasses.length);
             final ResolvedClassConstant[] memberClasses = this.memberClasses;
-            for (int length = memberClasses.length, i = 0; i < length; ++i) {
-                dataOutputStream.writeShort(memberClasses[i].getIndex());
+            for (int length = memberClasses.length, memberClasseIndex = 0; memberClasseIndex < length; ++memberClasseIndex) {
+                dataOutputStream.writeShort(memberClasses[memberClasseIndex].getIndex());
             }
         } else {
             dataOutputStream.write(super.rawBytes);

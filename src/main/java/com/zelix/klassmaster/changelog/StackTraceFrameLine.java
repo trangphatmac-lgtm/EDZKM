@@ -25,11 +25,11 @@ public class StackTraceFrameLine implements StackTraceLineInfo {
 
     public boolean parseQualifiedMethodName(String string) {
         String string1 = string;
-        int ba = string1.indexOf("/");
-        if (ba > -1) {
-            ZkmAssert.assertTrue(ba > 0 && ba < string1.length() - 2, new String[]{"Invalid stack trace line '" + string1 + "' : " + ba + " : '" + string1 + "'"});
-            this.modulePrefix = string1.substring(ba);
-            string1 = string1.substring(ba + 1);
+        int beginIndex = string1.indexOf("/");
+        if (beginIndex > -1) {
+            ZkmAssert.assertTrue(beginIndex > 0 && beginIndex < string1.length() - 2, new String[]{"Invalid stack trace line '" + string1 + "' : " + beginIndex + " : '" + string1 + "'"});
+            this.modulePrefix = string1.substring(beginIndex);
+            string1 = string1.substring(beginIndex + 1);
         }
 
         StringTokenizer stringTokenizer = new StringTokenizer(string1, ".");
@@ -44,9 +44,9 @@ public class StackTraceFrameLine implements StackTraceLineInfo {
                     stringBuilder.append(string2);
                 } else if (bc == bb - 1) {
                     this.methodName = string2.trim();
-                    int bd = this.methodName.indexOf(" ");
-                    if (bd > -1) {
-                        this.methodName = this.methodName.substring(0, bd);
+                    int endIndex = this.methodName.indexOf(" ");
+                    if (endIndex > -1) {
+                        this.methodName = this.methodName.substring(0, endIndex);
                     }
                 } else {
                     stringBuilder.append("." + string2);
@@ -70,10 +70,10 @@ public class StackTraceFrameLine implements StackTraceLineInfo {
 
     public StackTraceFrameLine(String string) {
         this.lineText = string.trim();
-        int ba = this.findAtIndex();
-        if (ba > -1) {
-            this.leadingText = this.lineText.substring(0, ba);
-            String string1 = this.lineText.substring(ba + "at ".length()).trim();
+        int endIndex = this.findAtIndex();
+        if (endIndex > -1) {
+            this.leadingText = this.lineText.substring(0, endIndex);
+            String string1 = this.lineText.substring(endIndex + "at ".length()).trim();
             int bb = string1.indexOf("(");
             if (bb > -1) {
                 if (this.parseQualifiedMethodName(string1.substring(0, bb).trim())) {
@@ -105,40 +105,40 @@ public class StackTraceFrameLine implements StackTraceLineInfo {
 
     public void parseLocation(String string) {
         if (string.length() >= 2) {
-            String string1 = string;
-            int ba = string1.indexOf("(", 1);
-            int bb = string1.indexOf(")");
+            String locationPrefixValue = string;
+            int ba = locationPrefixValue.indexOf("(", 1);
+            int bb = locationPrefixValue.indexOf(")");
             if (ba > bb) {
-                String string2 = string1.substring(0, ba).trim();
-                if (ConstantPoolEntry.isValidMethodDescriptor(string2)) {
-                    this.methodDescriptor = string2;
-                    string1 = string1.substring(ba);
+                String methodDescriptorValue = locationPrefixValue.substring(0, ba).trim();
+                if (ConstantPoolEntry.isValidMethodDescriptor(methodDescriptorValue)) {
+                    this.methodDescriptor = methodDescriptorValue;
+                    locationPrefixValue = locationPrefixValue.substring(ba);
                 }
             }
 
-            int be = string1.indexOf(":");
-            int bc = string1.lastIndexOf(")");
+            int be = locationPrefixValue.indexOf(":");
+            int bc = locationPrefixValue.lastIndexOf(")");
             if (be > -1) {
                 if (bc > -1) {
                     if (bc > be) {
-                        String string3 = string1.substring(be + 1, bc).trim();
+                        String string3 = locationPrefixValue.substring(be + 1, bc).trim();
 
                         try {
-                            int bd = Integer.parseInt(string3);
-                            this.lineNumber = new MutableInt(bd);
-                            this.locationPrefix = string1.substring(0, be + 1);
-                            this.locationSuffix = string1.substring(bc);
+                            int value = Integer.parseInt(string3);
+                            this.lineNumber = new MutableInt(value);
+                            this.locationPrefix = locationPrefixValue.substring(0, be + 1);
+                            this.locationSuffix = locationPrefixValue.substring(bc);
                         } catch (NumberFormatException numberFormatException) {
-                            this.locationPrefix = string1;
+                            this.locationPrefix = locationPrefixValue;
                         }
                     } else {
-                        this.locationPrefix = string1;
+                        this.locationPrefix = locationPrefixValue;
                     }
                 } else {
-                    this.locationPrefix = string1;
+                    this.locationPrefix = locationPrefixValue;
                 }
             } else {
-                this.locationPrefix = string1;
+                this.locationPrefix = locationPrefixValue;
             }
         }
     }
@@ -178,8 +178,8 @@ public class StackTraceFrameLine implements StackTraceLineInfo {
         return this.methodDescriptor;
     }
 
-    public void setErrorMessage(String string) {
-        this.errorMessage = string;
+    public void setErrorMessage(String errorMessageArgument) {
+        this.errorMessage = errorMessageArgument;
     }
 
     @Override

@@ -54,8 +54,8 @@ public class ClassNameSpecifierPanel extends ExcludeParamTabPanel implements Foc
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = actionEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
@@ -63,31 +63,31 @@ public class ClassNameSpecifierPanel extends ExcludeParamTabPanel implements Foc
 
     public void commitFieldValue(Object object) throws ZkmException, IOException {
         if (object == this.nameFld) {
-            String string = this.nameFld.getText().trim();
-            if (string.length() == 0) {
+            String linkedClassSuffix = this.nameFld.getText().trim();
+            if (linkedClassSuffix.length() == 0) {
                 this.nameFld.setText(super.filterModel.getLinkSuffix());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Class suffix must be specified. Field restored.");
-            } else if (string.indexOf("*") != -1) {
+            } else if (linkedClassSuffix.indexOf("*") != -1) {
                 this.nameFld.setText(super.filterModel.getLinkSuffix());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Class suffix cannot contain wildcards. Field restored.");
             } else {
-                super.filterModel.setLinkedClassSuffix(string);
+                super.filterModel.setLinkedClassSuffix(linkedClassSuffix);
             }
         } else if (object == this.extendsFld) {
-            String string1 = this.extendsFld.getText().trim();
-            if (string1.indexOf("*") != -1) {
+            String superclassName = this.extendsFld.getText().trim();
+            if (superclassName.indexOf("*") != -1) {
                 this.extendsFld.setText(super.filterModel.getSuperclassName());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Extends class name cannot contain wildcards. Field restored.");
             } else {
-                super.filterModel.setSuperclassName(string1);
+                super.filterModel.setSuperclassName(superclassName);
             }
         } else if (object == this.implementsFld) {
-            String string2 = this.implementsFld.getText().trim();
-            if (string2.indexOf("*") != -1) {
+            String interfaceNames = this.implementsFld.getText().trim();
+            if (interfaceNames.indexOf("*") != -1) {
                 this.implementsFld.setText(super.filterModel.getInterfaceNamesText());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Implements class names cannot contain wildcards. Field restored.");
             } else {
-                super.filterModel.setInterfaceNames(string2);
+                super.filterModel.setInterfaceNames(interfaceNames);
             }
         } else if (object == this.annotatedByFld) {
             super.filterModel.setClassAnnotation(this.annotatedByFld.getText().trim());
@@ -96,14 +96,14 @@ public class ClassNameSpecifierPanel extends ExcludeParamTabPanel implements Foc
 
     @Override
     public void focusGained(FocusEvent focusEvent) {
-        Object object = focusEvent.getSource();
-        if (object == this.nameFld) {
+        Object source = focusEvent.getSource();
+        if (source == this.nameFld) {
             super.hintLabel.setText("Enter the class name suffix. No wildcards.");
-        } else if (object == this.extendsFld) {
+        } else if (source == this.extendsFld) {
             super.hintLabel.setText("Enter fully qualified class name. May not contain wildcards.");
-        } else if (object == this.implementsFld) {
+        } else if (source == this.implementsFld) {
             super.hintLabel.setText("Enter comma separated list of fully qualified class names. May not contain wildcards.");
-        } else if (object == this.annotatedByFld) {
+        } else if (source == this.annotatedByFld) {
             super.hintLabel.setText("Enter fully qualified class name. May contain the \"*\" wildcard.");
         }
     }
@@ -112,15 +112,15 @@ public class ClassNameSpecifierPanel extends ExcludeParamTabPanel implements Foc
     public void focusLost(FocusEvent focusEvent) {
         try {
             super.hintLabel.setText(" ");
-            Object object = focusEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = focusEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
     }
 
-    public ClassNameSpecifierPanel(JFrame jFrame, RenameFilterModel renameFilterModel, int ba) {
-        super(jFrame, renameFilterModel, ba);
+    public ClassNameSpecifierPanel(JFrame jFrame, RenameFilterModel renameFilterModel, int exclusionType) {
+        super(jFrame, renameFilterModel, exclusionType);
         this.buildPanel();
     }
 

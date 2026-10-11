@@ -33,10 +33,10 @@ public class SipushInstruction extends Instruction {
     public void printDisassembly(PrintWriter printWriter, StringBuilder stringBuilder) throws UnknownOpcodeException {
         StringBuilder stringBuilder1 = new StringBuilder(100);
         stringBuilder1.append(this.toAssembly());
-        String string = this.getDescriptionComment();
-        string = Instruction.formatDescription(string, String.valueOf(this.value));
-        if (string.length() > 0) {
-            stringBuilder1.append("\t" + string);
+        String descriptionComment = this.getDescriptionComment();
+        descriptionComment = Instruction.formatDescription(descriptionComment, String.valueOf(this.value));
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);
@@ -96,10 +96,10 @@ public class SipushInstruction extends Instruction {
     public StackFrameState computeFrameAfter(StackFrameState stackFrameState, Object object, Object object1, Object object2) throws ZkmException, IOException {
         VerifierType[] verifierTypes = stackFrameState.getLocals();
         VerifierType[] verifierTypes1 = stackFrameState.getStack();
-        int ba = verifierTypes1.length;
-        VerifierType[] verifierTypes2 = VerifierType.createArray(ba + 1);
-        System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, ba);
-        verifierTypes2[ba] = VerifierType.INT;
+        int lengthValue = verifierTypes1.length;
+        VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue + 1);
+        System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, lengthValue);
+        verifierTypes2[lengthValue] = VerifierType.INT;
         return new StackFrameState(verifierTypes2, verifierTypes, stackFrameState.getSubroutineLocals(), stackFrameState.getHeldMonitors());
     }
 

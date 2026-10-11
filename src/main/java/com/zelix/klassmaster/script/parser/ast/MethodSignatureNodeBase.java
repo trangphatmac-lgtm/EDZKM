@@ -7,8 +7,8 @@ public abstract class MethodSignatureNodeBase extends ZkmScriptSimpleNode {
     public MethodArgsPattern argsPattern;
     public ASTComplexAnnotationSpecifier[] parameterAnnotations;
 
-    public MethodSignatureNodeBase(int ba) {
-        super(ba);
+    public MethodSignatureNodeBase(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     public final void setParameterAnnotations(ASTComplexAnnotationSpecifier[] aSTComplexAnnotationSpecifiers) {

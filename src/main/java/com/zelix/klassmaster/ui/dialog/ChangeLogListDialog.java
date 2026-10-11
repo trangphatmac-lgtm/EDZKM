@@ -34,10 +34,10 @@ public class ChangeLogListDialog extends PathListDialog {
     public DialogCallback dialogCallback;
     public UserPreferences userPreferences;
 
-    public ChangeLogListDialog(JFrame jFrame, List list1, String string, String string1, UserPreferences userPreferences1, DialogCallback dialogCallback1) {
+    public ChangeLogListDialog(JFrame jFrame, List list1, String initialPathsTextArgument, String string1, UserPreferences userPreferences1, DialogCallback dialogCallback1) {
         super(jFrame, "Change logs", list1, string1, "OK", "OK");
         this.initialPaths = list1;
-        this.initialPathsText = string;
+        this.initialPathsText = initialPathsTextArgument;
         this.dialogCallback = dialogCallback1;
         this.userPreferences = userPreferences1;
         this.showCenteredOnOwner();
@@ -59,25 +59,25 @@ public class ChangeLogListDialog extends PathListDialog {
         if (fileSelector1.showOpenDialog(this, "Select Change Log") == 1) {
             File[] files = fileSelector1.getSelectedFiles();
 
-            for (int i = 0; i < files.length; i++) {
-                File file3 = files[i];
-                String string = file3.getAbsolutePath();
+            for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+                File file3 = files[fileIndex];
+                String absolutePath = file3.getAbsolutePath();
                 if (!file3.exists()) {
-                    new MessageBoxDialog(this, "File Error", "'" + string + "' does not exist");
+                    new MessageBoxDialog(this, "File Error", "'" + absolutePath + "' does not exist");
                     break;
                 }
 
-                String string2;
-                if (this.addPath(string)) {
+                String parent;
+                if (this.addPath(absolutePath)) {
                     this.updateButtonStates();
-                    string2 = file3.getParent();
+                    parent = file3.getParent();
                 } else {
-                    string2 = file3.getParent();
+                    parent = file3.getParent();
                 }
 
-                String string1 = string2;
-                if (string1 != null) {
-                    this.userPreferences.setChangeLogDirectory(string1);
+                String changeLogDirectory = parent;
+                if (changeLogDirectory != null) {
+                    this.userPreferences.setChangeLogDirectory(changeLogDirectory);
                     this.userPreferences.savePreferences();
                 }
             }
@@ -114,7 +114,7 @@ public class ChangeLogListDialog extends PathListDialog {
         List list1 = (List) object;
         String string = (String) object1;
         String string1 = (String) object2;
-        String string2 = (String) object3;
+        String toolTipText = (String) object3;
         Container container1 = this.getContentPane();
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
@@ -129,8 +129,8 @@ public class ChangeLogListDialog extends PathListDialog {
             Iterator iterator = list1.iterator();
 
             while (iterator.hasNext()) {
-                String string3 = (String) iterator.next();
-                this.addPath(string3);
+                String key = (String) iterator.next();
+                this.addPath(key);
             }
         }
 
@@ -164,7 +164,7 @@ public class ChangeLogListDialog extends PathListDialog {
         StringBuffer stringBuffer = new StringBuffer(
                 "layout.minWidth=btnWidth*6+25;layout.minHeight=250;listPnl.top=5;listPnl.left=5;listPnl.right=container.right-5;listPnl.bottom=container.bottom-btnHeight-20;"
         );
-        this.createMainButtons(string1, string2, stringBuffer, container1);
+        this.createMainButtons(string1, toolTipText, stringBuffer, container1);
         constraintLayout1.parseConstraints(stringBuffer.toString());
         this.setIconImage(KlassMaster.getLogoImage(this));
         SwingUtils.packOnEdt(this);

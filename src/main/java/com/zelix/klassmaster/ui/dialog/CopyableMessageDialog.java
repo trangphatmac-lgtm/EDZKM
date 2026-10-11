@@ -41,8 +41,8 @@ public class CopyableMessageDialog extends EscapeClosableDialog {
     public JButton okBtn;
     public JButton copyBtn;
 
-    public static void showMessage(JFrame jFrame, String string, String string1, String string2) {
-        ShowMessageDialogTask showMessageDialogTask = new ShowMessageDialogTask(jFrame, string, string1, string2);
+    public static void showMessage(JFrame jFrame, String title, String message, String details) {
+        ShowMessageDialogTask showMessageDialogTask = new ShowMessageDialogTask(jFrame, title, message, details);
         if (!SwingUtilities.isEventDispatchThread()) {
             try {
                 SwingUtilities.invokeAndWait(showMessageDialogTask);
@@ -50,7 +50,7 @@ public class CopyableMessageDialog extends EscapeClosableDialog {
             } catch (InvocationTargetException invocationTargetException) {
             }
         } else {
-            new CopyableMessageDialog(jFrame, string, string1, string2);
+            new CopyableMessageDialog(jFrame, title, message, details);
         }
     }
 
@@ -59,19 +59,19 @@ public class CopyableMessageDialog extends EscapeClosableDialog {
         this.messagePane.copy();
     }
 
-    public CopyableMessageDialog(JFrame jFrame, String string, String string1, String string2) {
+    public CopyableMessageDialog(JFrame jFrame, String string, String string1, String text) {
         super(jFrame, string);
         if (jFrame.isVisible()) {
             Container container1 = this.getContentPane();
             ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
             container1.setLayout(constraintLayout1);
             this.msgLbl = new JLabel(string1);
-            string2 = ZkmStringUtils.replaceAll(string2, "<", "&LT;");
-            string2 = ZkmStringUtils.replaceAll(string2, ">", "&GT;");
-            string2 = ZkmStringUtils.replaceAll(string2, LINE_SEPARATOR, "<br>");
+            text = ZkmStringUtils.replaceAll(text, "<", "&LT;");
+            text = ZkmStringUtils.replaceAll(text, ">", "&GT;");
+            text = ZkmStringUtils.replaceAll(text, LINE_SEPARATOR, "<br>");
             this.messagePane = new JEditorPane();
             this.messagePane.setEditable(false);
-            SwingUtils.setHtmlTextOnEdt(this.messagePane, string2);
+            SwingUtils.setHtmlTextOnEdt(this.messagePane, text);
             container1.add(this.msgLbl, "msgLbl");
             container1.add(new ZkmScrollPane(this.messagePane), "msgPane");
             this.okBtn = new JButton("OK");

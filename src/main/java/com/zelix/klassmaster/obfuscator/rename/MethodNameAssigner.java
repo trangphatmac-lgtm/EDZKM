@@ -33,15 +33,15 @@ public class MethodNameAssigner extends MethodNameGeneratorBase {
             MethodParameterExclusions methodParameterExclusions,
             boolean asciiNames,
             boolean letterStartNames,
-            boolean bl2,
-            String string,
+            boolean randomizeNamesArgument,
+            String namePrefixArgument,
             boolean reuseNames,
             List list1
     ) {
-        super(methodRenamer1, nameExclusionSet, methodParameterExclusions, bl2);
+        super(methodRenamer1, nameExclusionSet, methodParameterExclusions, randomizeNamesArgument);
         this.asciiNames = asciiNames;
         this.letterStartNames = letterStartNames;
-        this.namePrefix = string;
+        this.namePrefix = namePrefixArgument;
         this.reuseNames = reuseNames;
         this.generatorsByDescriptor = ZkmUtils.createHashMap();
         this.nameFileNames = list1;
@@ -76,8 +76,8 @@ public class MethodNameAssigner extends MethodNameGeneratorBase {
         if (this.reuseNames) {
             List list1 = listMultimap.getValues(string1);
             if (list1 != null) {
-                for (int i = 0; i < list1.size(); i++) {
-                    String string = (String) list1.get(i);
+                for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                    String string = (String) list1.get(elementIndex);
                     MethodSignature methodSignature2 = new MethodSignature(string, methodSignature1.getDescriptor());
                     MethodSignature methodSignature3 = new MethodSignature(string, string1);
                     if (!methodSignature2.equals(methodSignature1)
@@ -116,7 +116,7 @@ public class MethodNameAssigner extends MethodNameGeneratorBase {
     }
 
     @Override
-    public String nextCandidateName(ClassHierarchyNode classHierarchyNode, String string) {
+    public String nextCandidateName(ClassHierarchyNode classHierarchyNode, String key) {
         Map map1;
         if (classHierarchyNode != this.currentClassNode) {
             this.generatorsByDescriptor.clear();
@@ -126,7 +126,7 @@ public class MethodNameAssigner extends MethodNameGeneratorBase {
             map1 = this.generatorsByDescriptor;
         }
 
-        SequentialNameGenerator sequentialNameGenerator = (SequentialNameGenerator) map1.get(string);
+        SequentialNameGenerator sequentialNameGenerator = (SequentialNameGenerator) map1.get(key);
         if (sequentialNameGenerator == null) {
             if (!this.asciiNames) {
                 sequentialNameGenerator = new SequentialNameGenerator(
@@ -152,7 +152,7 @@ public class MethodNameAssigner extends MethodNameGeneratorBase {
                 map1 = this.generatorsByDescriptor;
             }
 
-            map1.put(string, sequentialNameGenerator);
+            map1.put(key, sequentialNameGenerator);
         }
 
         return sequentialNameGenerator.nextPrefixedName(this.namePrefix);

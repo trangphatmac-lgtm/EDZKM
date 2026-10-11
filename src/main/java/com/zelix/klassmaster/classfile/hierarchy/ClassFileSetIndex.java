@@ -25,59 +25,59 @@ public class ClassFileSetIndex {
 
     public synchronized List findSubclasses(Object object) {
         ArrayList arrayList = null;
-        int ba = 0;
+        int classFileIndex = 0;
         int bb = 0;
 
         for (ClasspathClassFile[] classpathClassFiles = this.classFiles; bb < classpathClassFiles.length; classpathClassFiles = this.classFiles) {
-            ClassFileBase classFileBase = this.classFiles[ba];
+            ClassFileBase classFileBase = this.classFiles[classFileIndex];
 
             do {
-                String string = classFileBase.getSuperclassName();
-                if (string.equals(object)) {
+                String superclassName = classFileBase.getSuperclassName();
+                if (superclassName.equals(object)) {
                     if (arrayList == null) {
                         arrayList = new ArrayList();
                     }
 
-                    arrayList.add(this.classFiles[ba]);
+                    arrayList.add(this.classFiles[classFileIndex]);
                     break;
                 }
 
-                if (string.equals("java/lang/Object")) {
+                if (superclassName.equals("java/lang/Object")) {
                     break;
                 }
 
-                classFileBase = (ClassFileBase) this.classesByName.get(string);
+                classFileBase = (ClassFileBase) this.classesByName.get(superclassName);
             } while (classFileBase != null);
 
-            bb = ++ba;
+            bb = ++classFileIndex;
         }
 
         return arrayList;
     }
 
-    public List getClassesDeclaringMethod(Object object) {
-        List list1 = this.classesByMethodKey.getValues(object);
+    public List getClassesDeclaringMethod(Object key) {
+        List list1 = this.classesByMethodKey.getValues(key);
         return list1 == null ? null : new ArrayList(list1);
     }
 
     public ClassFileSetIndex(File[] files) throws ZkmProcessingException {
         ArrayList arrayList = new ArrayList(Math.max(files.length * 5, 10));
 
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].exists() && files[i].isDirectory()) {
-                String string1 = files[i].getAbsolutePath();
-                String[] strings = files[i].list(new ClassFileNameFilter());
+        for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+            if (files[fileIndex].exists() && files[fileIndex].isDirectory()) {
+                String absolutePath = files[fileIndex].getAbsolutePath();
+                String[] strings = files[fileIndex].list(new ClassFileNameFilter());
                 if (strings != null) {
                     for (int j = 0; j < strings.length; j++) {
-                        String string = string1
-                                + (string1.endsWith(SystemEnvironmentConstants.FILE_SEPARATOR) ? "" : SystemEnvironmentConstants.FILE_SEPARATOR)
+                        String string = absolutePath
+                                + (absolutePath.endsWith(SystemEnvironmentConstants.FILE_SEPARATOR) ? "" : SystemEnvironmentConstants.FILE_SEPARATOR)
                                 + strings[j];
                         arrayList.add(new InputFileLocation(string));
                     }
                 }
             } else {
                 try {
-                    ArchiveZipFile archiveZipFile = new ArchiveZipFile(files[i]);
+                    ArchiveZipFile archiveZipFile = new ArchiveZipFile(files[fileIndex]);
                     Enumeration<? extends ZipEntry> enumeration = archiveZipFile.entries();
 
                     while (enumeration.hasMoreElements()) {
@@ -87,7 +87,7 @@ public class ClassFileSetIndex {
                         }
                     }
                 } catch (IOException iOException) {
-                    throw new ZkmProcessingException(iOException.toString() + " while reading " + files[i]);
+                    throw new ZkmProcessingException(iOException.toString() + " while reading " + files[fileIndex]);
                 }
             }
         }
@@ -96,20 +96,20 @@ public class ClassFileSetIndex {
         this.classesByName = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(arrayList.size()));
         this.classesByMethodKey = new ListMultimap();
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            InputFileLocation inputFileLocation = (InputFileLocation) arrayList.get(i);
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            InputFileLocation inputFileLocation = (InputFileLocation) arrayList.get(elementIndex);
             ClasspathClassFile classpathClassFile = ClasspathClassLoader.readClassFile(inputFileLocation);
-            this.classFiles[i] = classpathClassFile;
+            this.classFiles[elementIndex] = classpathClassFile;
             this.classesByName.put(classpathClassFile.getClassName(), classpathClassFile);
             LibraryMethod[] libraryMethods = classpathClassFile.getMethods();
 
-            for (int j = 0; j < libraryMethods.length; j++) {
-                this.classesByMethodKey.addValue(libraryMethods[j].getSourceNameAndDescriptor(), classpathClassFile);
+            for (int libraryMethodIndex = 0; libraryMethodIndex < libraryMethods.length; libraryMethodIndex++) {
+                this.classesByMethodKey.addValue(libraryMethods[libraryMethodIndex].getSourceNameAndDescriptor(), classpathClassFile);
             }
         }
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            InputFileLocation inputFileLocation1 = (InputFileLocation) arrayList.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+            InputFileLocation inputFileLocation1 = (InputFileLocation) arrayList.get(elementIndexValue);
             inputFileLocation1.releaseResources();
         }
     }

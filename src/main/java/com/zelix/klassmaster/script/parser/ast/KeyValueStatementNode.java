@@ -22,16 +22,16 @@ public abstract class KeyValueStatementNode extends SummarizingStatementNode {
         int warningCount = scriptEnvironment1.getWarningCount();
         int errorCount = scriptEnvironment1.getErrorCount();
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptNode zkmScriptNode = this.jjtGetChild(childrenElementIndex);
             if (zkmScriptNode instanceof DelegatingParameterNode) {
                 DelegatingParameterNode delegatingParameterNode = (DelegatingParameterNode) zkmScriptNode;
                 delegatingParameterNode.execute(this, scriptEnvironment1);
-                String string = delegatingParameterNode.getParameterName();
-                if (this.parameterValues.containsKey(string)) {
+                String parameterName = delegatingParameterNode.getParameterName();
+                if (this.parameterValues.containsKey(parameterName)) {
                     scriptEnvironment1.logWarning(
                             "\""
-                                    + string
+                                    + parameterName
                                     + "\" appears more than once in \""
                                     + this.getStatementName()
                                     + "\" statement at line "
@@ -42,12 +42,12 @@ public abstract class KeyValueStatementNode extends SummarizingStatementNode {
                     int valueCount = delegatingParameterNode.getValueCount();
 
                     for (int j = 0; j < valueCount; j++) {
-                        this.parameterValues.addValue(string, delegatingParameterNode.getValue(j));
+                        this.parameterValues.addValue(parameterName, delegatingParameterNode.getValue(j));
                     }
                 }
             } else {
                 scriptEnvironment1.logFatalError(
-                        this.getClass().getName() + " had " + zkmScriptNode.getClass().getName() + " as child " + i + " at line " + this.getStatementLine() + "."
+                        this.getClass().getName() + " had " + zkmScriptNode.getClass().getName() + " as child " + childrenElementIndex + " at line " + this.getStatementLine() + "."
                 );
             }
         }
@@ -57,8 +57,8 @@ public abstract class KeyValueStatementNode extends SummarizingStatementNode {
         this.executeStatement(scriptEnvironment1, messageCount, integer, integer1);
     }
 
-    public KeyValueStatementNode(int ba) {
-        super(ba);
+    public KeyValueStatementNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     static {

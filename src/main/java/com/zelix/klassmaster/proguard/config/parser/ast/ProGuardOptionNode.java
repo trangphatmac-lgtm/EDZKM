@@ -27,8 +27,8 @@ public abstract class ProGuardOptionNode extends ProGuardConfigOptionBase {
             );
         }
 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < this.jjtGetNumChildren(); childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
 
         proGuardConfigTranslator.getMessageCount();

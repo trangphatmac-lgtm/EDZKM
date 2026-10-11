@@ -68,12 +68,12 @@ public class AnnotationDefaultAttribute extends AnnotationAttributeBase {
     }
 
     public AnnotationDefaultAttribute(
-            ClassFileComponent classFileComponent, int ba, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap
+            ClassFileComponent classFileComponent, int constantPoolIndex, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        byte[] bb = new byte[this.length];
-        classFileInputStream.read(bb);
-        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(bb, false);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
+        byte[] byteArray = new byte[this.length];
+        classFileInputStream.read(byteArray);
+        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(byteArray, false);
 
         try {
             this.defaultValue = AnnotationElementValue.readElementValue(this, classFileInputStream1, listMultimap);

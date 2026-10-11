@@ -22,9 +22,9 @@ public class PackageTreeNode extends PackageTreeNodeBase {
     public final PackageTreeNodeBase parent;
     public final String simpleName;
 
-    public PackageTreeNode(PackageTreeNodeBase packageTreeNodeBase, String string, boolean bl) {
+    public PackageTreeNode(PackageTreeNodeBase packageTreeNodeBase, String simpleNameArgument, boolean bl) {
         this.parent = packageTreeNodeBase;
-        this.simpleName = string;
+        this.simpleName = simpleNameArgument;
         if (!bl) {
             this.setArchiveOnly(false);
         }
@@ -34,22 +34,22 @@ public class PackageTreeNode extends PackageTreeNodeBase {
         Iterator iterator = super.children.iterator();
 
         while (iterator.hasNext()) {
-            String string1 = string;
+            String value = string;
             PackageTreeNode packageTreeNode1 = (PackageTreeNode) iterator.next();
-            String string2 = packageTreeNode1.getPackagePath();
-            if (changeLogMapping1 != null && changeLogMapping1.hasPackageMapping(string2)) {
-                String string3 = changeLogMapping1.getNewPackageName(string2);
-                if (string3 != null) {
-                    string1 = string3;
+            String packagePath = packageTreeNode1.getPackagePath();
+            if (changeLogMapping1 != null && changeLogMapping1.hasPackageMapping(packagePath)) {
+                String newPackageName = changeLogMapping1.getNewPackageName(packagePath);
+                if (newPackageName != null) {
+                    value = newPackageName;
                 } else {
-                    string1 = string2;
+                    value = packagePath;
                 }
-            } else if (nameExclusionSet.isPackageExcluded(string2)) {
-                string1 = string2;
+            } else if (nameExclusionSet.isPackageExcluded(packagePath)) {
+                value = packagePath;
             }
 
-            map1.put(string2, string1);
-            packageTreeNode1.collectRetainedPackageNames(map1, nameExclusionSet, changeLogMapping1, string1);
+            map1.put(packagePath, value);
+            packageTreeNode1.collectRetainedPackageNames(map1, nameExclusionSet, changeLogMapping1, value);
         }
     }
 
@@ -60,8 +60,8 @@ public class PackageTreeNode extends PackageTreeNodeBase {
 
     @Override
     public void indexInto(Object object) {
-        String string = this.getPackagePath();
-        ((Map) object).put(string, this);
+        String packagePath = this.getPackagePath();
+        ((Map) object).put(packagePath, this);
     }
 
     public PackageTreeNode getTopLevelAncestor() {
@@ -85,44 +85,32 @@ public class PackageTreeNode extends PackageTreeNodeBase {
         HashSet hashSet = ZkmUtils.createHashSet();
         List list1 = listMultimap1.getValues(this.parent.getPackagePath());
         if (list1 != null) {
-            for (int i = 0; i < list1.size(); i++) {
-                ProgramClass programClass1 = (ProgramClass) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                ProgramClass programClass1 = (ProgramClass) list1.get(elementIndex);
                 if (nameExclusionSet.isClassExcluded(programClass1)) {
                     hashSet.add(programClass1.getSimpleName());
                 }
             }
         }
 
-        PackageTreeNode[] packageTreeNodes;
-        label32:
-        {
-            this.assignNewName(nameExclusionSet, changeLogMapping1, packageNameGeneratorBase, map1, listMultimap, twoKeyMap, hashSet);
-            packageTreeNodes = ((com.zelix.klassmaster.obfuscator.rename.PackageTreeNode[]) (super.children.toArray(new PackageTreeNode[super.children.size()])));
-            List list2;
-            if (!bl) {
-                if (!HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
-                    Arrays.sort(packageTreeNodes);
-                    break label32;
-                }
-
-                list2 = Arrays.asList(packageTreeNodes);
-            } else {
-                list2 = Arrays.asList(packageTreeNodes);
-            }
-
-            ZkmUtils.shuffleList(list2, ZkmUtils.createRandom(16));
+        this.assignNewName(nameExclusionSet, changeLogMapping1, packageNameGeneratorBase, map1, listMultimap, twoKeyMap, hashSet);
+        PackageTreeNode[] packageTreeNodes = (PackageTreeNode[]) super.children.toArray(new PackageTreeNode[super.children.size()]);
+        if (!bl && !HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
+            Arrays.sort(packageTreeNodes);
+        } else {
+            ZkmUtils.shuffleList(Arrays.asList(packageTreeNodes), ZkmUtils.createRandom(16));
         }
 
-        for (int i = 0; i < packageTreeNodes.length; i++) {
-            packageTreeNodes[i]
+        for (int packageTreeNodeIndex = 0; packageTreeNodeIndex < packageTreeNodes.length; packageTreeNodeIndex++) {
+            packageTreeNodes[packageTreeNodeIndex]
                     .assignNewNamesRecursively(nameExclusionSet, changeLogMapping1, packageNameGeneratorBase, map1, listMultimap, twoKeyMap, listMultimap1, bl);
         }
     }
 
     @Override
     public void collectPath(Object object) {
-        String string = this.getPackagePath();
-        ((ArrayList) object).add(string);
+        String packagePath = this.getPackagePath();
+        ((ArrayList) object).add(packagePath);
     }
 
     public void assignNewName(
@@ -134,20 +122,20 @@ public class PackageTreeNode extends PackageTreeNodeBase {
             TwoKeyMap twoKeyMap,
             Set set1
     ) throws IOException {
-        String string = this.getPackagePath();
+        String packagePath = this.getPackagePath();
         boolean bl = this.isTopLevel() && this.requireLowerCaseStart;
-        if (!map1.containsKey(string)) {
-            String string1 = (String) map1.get(this.parent.getPackagePath());
-            if (string1 == null) {
-                string1 = this.parent.getPackagePath();
+        if (!map1.containsKey(packagePath)) {
+            String packagePathValue = (String) map1.get(this.parent.getPackagePath());
+            if (packagePathValue == null) {
+                packagePathValue = this.parent.getPackagePath();
             }
 
             String string2 = packageNameGeneratorBase.generatePackageName(
-                    string1, this.isArchiveOnly(), bl, listMultimap, twoKeyMap, set1, changeLogMapping1, nameExclusionSet
+                    packagePathValue, this.isArchiveOnly(), bl, listMultimap, twoKeyMap, set1, changeLogMapping1, nameExclusionSet
             );
-            String string3 = (string1.length() > 0 ? string1 + "/" : "") + string2;
-            map1.put(string, string3);
-            listMultimap.addValue(string3, string);
+            String value = (packagePathValue.length() > 0 ? packagePathValue + "/" : "") + string2;
+            map1.put(packagePath, value);
+            listMultimap.addValue(value, packagePath);
         }
     }
 
@@ -162,18 +150,18 @@ public class PackageTreeNode extends PackageTreeNodeBase {
     @Override
     public String getPackagePath() {
         String string = this.parent == null ? null : this.parent.getPackagePath();
-        String string1;
+        String simpleNameValue;
         if (string != null) {
             if (string.length() > 0) {
                 return string + "/" + this.simpleName;
             }
 
-            string1 = this.simpleName;
+            simpleNameValue = this.simpleName;
         } else {
-            string1 = this.simpleName;
+            simpleNameValue = this.simpleName;
         }
 
-        return string1;
+        return simpleNameValue;
     }
 
     static {

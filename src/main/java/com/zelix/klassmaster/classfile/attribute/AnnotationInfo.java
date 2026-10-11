@@ -47,30 +47,30 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
         this.typeTarget.write(bg, dataOutputStream, (char) bh, (char) bi);
         dataOutputStream.writeShort(this.typeConstant.getIndex());
         dataOutputStream.writeShort(this.elementCount);
-        int bj = 0;
+        int elementIndex = 0;
         int bk = 0;
         int elementCount = this.elementCount;
 
         while (true) {
             if (bk < elementCount) {
-                this.elements[bj].write(bd, dataOutputStream, (char) be, (char) bf);
+                this.elements[elementIndex].write(bd, dataOutputStream, (char) be, (char) bf);
             } else if (bb > 0) {
                 return;
             }
 
-            bk = ++bj;
+            bk = ++elementIndex;
             elementCount = this.elementCount;
         }
     }
 
     @Override
     public void updateAfterFieldRename() {
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
-        for (int i = this.elementCount; bb < i; i = this.elementCount) {
-            this.elements[ba].updateAfterFieldRename();
-            bb = ++ba;
+        for (int elementCountValue = this.elementCount; bb < elementCountValue; elementCountValue = this.elementCount) {
+            this.elements[elementIndex].updateAfterFieldRename();
+            bb = ++elementIndex;
         }
     }
 
@@ -83,29 +83,29 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
             this.valid = false;
             this.errorMessage = this.typeTarget.getErrorMessage();
         } else {
-            int ba = classFileInputStream.readUnsignedShort();
-            ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(ba);
+            int constantPoolIndex = classFileInputStream.readUnsignedShort();
+            ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
             if (constantPoolEntry != null) {
                 if (constantPoolEntry instanceof ConstantUtf8) {
                     this.typeConstant = (ConstantUtf8) constantPoolEntry;
-                    String string = this.typeConstant.getValue();
-                    if (string.startsWith("L")) {
-                        if (string.endsWith(";")) {
+                    String value = this.typeConstant.getValue();
+                    if (value.startsWith("L")) {
+                        if (value.endsWith(";")) {
                             listMultimap.addValue(this.typeConstant, this);
                             this.elementCount = classFileInputStream.readUnsignedShort();
                             this.elements = new AnnotationElementPair[this.elementCount];
-                            int bb = 0;
+                            int elementIndex = 0;
                             int bc = 0;
 
-                            for (int i = this.elementCount; bc < i; i = this.elementCount) {
-                                this.elements[bb] = new AnnotationElementPair(this, classFileInputStream, listMultimap);
-                                if (!this.elements[bb].isValid()) {
+                            for (int elementCountValue = this.elementCount; bc < elementCountValue; elementCountValue = this.elementCount) {
+                                this.elements[elementIndex] = new AnnotationElementPair(this, classFileInputStream, listMultimap);
+                                if (!this.elements[elementIndex].isValid()) {
                                     this.valid = false;
-                                    this.errorMessage = this.elements[bb].getErrorMessage();
+                                    this.errorMessage = this.elements[elementIndex].getErrorMessage();
                                     return;
                                 }
 
-                                bc = ++bb;
+                                bc = ++elementIndex;
                             }
 
                             return;
@@ -116,7 +116,7 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
                         this.valid = false;
                     }
 
-                    this.errorMessage = "Invalid annotation type '" + string + "'";
+                    this.errorMessage = "Invalid annotation type '" + value + "'";
                     return;
                 }
 
@@ -126,29 +126,29 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
             }
 
             this.errorMessage = "Invalid type index : "
-                    + ba
+                    + constantPoolIndex
                     + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() + " : \"" + constantPoolEntry.getDisplayString() + "\"" : "");
         }
     }
 
     public void resolveReferences(ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
         MutableInt mutableInt = new MutableInt(0);
-        String string = ClassFileBase.extractClassName(this.typeConstant.getValue(), mutableInt);
-        if (string != null) {
+        String key = ClassFileBase.extractClassName(this.typeConstant.getValue(), mutableInt);
+        if (key != null) {
             ClassFileBase classFileBase = this.getOwningClass();
             Integer integer = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : null;
             this.annotationClass = classResolver1.getVersionedClass(
-                    string, integer, "analyzing annotations in class '" + this.getDisplayLocationName() + "' (D)", ignoreMissingReferencesSpec1
+                    key, integer, "analyzing annotations in class '" + this.getDisplayLocationName() + "' (D)", ignoreMissingReferencesSpec1
             );
         }
 
         this.arrayDimensions = mutableInt.getValue();
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
-        for (int i = this.elementCount; bb < i; i = this.elementCount) {
-            this.elements[ba].resolveReferences(this.annotationClass, classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
-            bb = ++ba;
+        for (int elementCountValue = this.elementCount; bb < elementCountValue; elementCountValue = this.elementCount) {
+            this.elements[elementIndex].resolveReferences(this.annotationClass, classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+            bb = ++elementIndex;
         }
     }
 
@@ -160,16 +160,16 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
     public void collectUsedConstants(char ba, int be, UsedConstantsCollector usedConstantsCollector, char bf) {
         ClassFileComponent.getFlowGuardNodes();
         this.typeConstant.registerUsage(usedConstantsCollector, this, this.getParent());
-        int bb = 0;
-        int bc = 0;
+        int elementIndex = 0;
+        int elementIndexValue = 0;
 
-        for (int i = this.elementCount; bc < i; i = this.elementCount) {
+        for (int elementCountValue = this.elementCount; elementIndexValue < elementCountValue; elementCountValue = this.elementCount) {
             if (ba >= 0) {
-                this.elements[bb].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
-                bb++;
+                this.elements[elementIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+                elementIndex++;
             }
 
-            bc = bb;
+            elementIndexValue = elementIndex;
         }
 
         this.typeTarget.collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
@@ -182,24 +182,24 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
         this.typeTarget.writeRemapped(dataOutputStream, map1, scriptEnvironment1);
         ConstantUtf8 constantUtf8 = (ConstantUtf8) map1.get(this.typeConstant);
         DataOutputStream dataOutputStream1;
-        int bd;
+        int elementCountValue;
         if (constantUtf8 != null) {
             dataOutputStream.writeShort(constantUtf8.getIndex());
             dataOutputStream1 = dataOutputStream;
-            bd = this.elementCount;
+            elementCountValue = this.elementCount;
         } else {
             dataOutputStream.writeShort(this.typeConstant.getIndex());
             dataOutputStream1 = dataOutputStream;
-            bd = this.elementCount;
+            elementCountValue = this.elementCount;
         }
 
-        dataOutputStream1.writeShort(bd);
-        int ba = 0;
+        dataOutputStream1.writeShort(elementCountValue);
+        int elementIndex = 0;
         int bb = 0;
 
-        for (int i = this.elementCount; bb < i; i = this.elementCount) {
-            this.elements[ba].writeRemapped(dataOutputStream, map1, scriptEnvironment1);
-            bb = ++ba;
+        for (int elementCountValue2 = this.elementCount; bb < elementCountValue2; elementCountValue2 = this.elementCount) {
+            this.elements[elementIndex].writeRemapped(dataOutputStream, map1, scriptEnvironment1);
+            bb = ++elementIndex;
         }
     }
 
@@ -207,12 +207,12 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
     public int getByteLength() {
         int byteLength = this.typeTarget.getByteLength();
         byteLength += 4;
-        int bb = 0;
+        int elementIndex = 0;
         int bc = 0;
 
-        for (int i = this.elementCount; bc < i; i = this.elementCount) {
-            byteLength += this.elements[bb].getByteLength();
-            bc = ++bb;
+        for (int elementCountValue = this.elementCount; bc < elementCountValue; elementCountValue = this.elementCount) {
+            byteLength += this.elements[elementIndex].getByteLength();
+            bc = ++elementIndex;
         }
 
         return byteLength;
@@ -224,12 +224,12 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
 
     @Override
     public void updateAfterMethodRename() {
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
-        for (int i = this.elementCount; bb < i; i = this.elementCount) {
-            this.elements[ba].updateAfterMethodRename();
-            bb = ++ba;
+        for (int elementCountValue = this.elementCount; bb < elementCountValue; elementCountValue = this.elementCount) {
+            this.elements[elementIndex].updateAfterMethodRename();
+            bb = ++elementIndex;
         }
     }
 
@@ -249,17 +249,17 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
         if (this.annotationClass != null) {
             String string = ClassFileBase.extractClassName(this.typeConstant.getValue());
             if (!this.annotationClass.getClassName().equals(string)) {
-                String string1 = ClassFileBase.toTypeDescriptor(this.annotationClass.getClassName(), this.arrayDimensions);
-                this.typeConstant.setValue(string1);
+                String value = ClassFileBase.toTypeDescriptor(this.annotationClass.getClassName(), this.arrayDimensions);
+                this.typeConstant.setValue(value);
             }
         }
 
-        int ba = 0;
-        int bb = ba;
+        int elementIndex = 0;
+        int elementIndexValue = elementIndex;
 
-        for (int i = this.elementCount; bb < i; i = this.elementCount) {
-            this.elements[ba].updateAfterClassRename(hashMap, hashMap1);
-            bb = ++ba;
+        for (int elementCountValue = this.elementCount; elementIndexValue < elementCountValue; elementCountValue = this.elementCount) {
+            this.elements[elementIndex].updateAfterClassRename(hashMap, hashMap1);
+            elementIndexValue = ++elementIndex;
         }
     }
 
@@ -271,12 +271,12 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
                 set1.add(this.annotationClass);
             }
 
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
-            for (int i = this.elementCount; bb < i; i = this.elementCount) {
-                this.elements[ba].collectReferencedClasses(set1);
-                bb = ++ba;
+            for (int elementCountValue = this.elementCount; bb < elementCountValue; elementCountValue = this.elementCount) {
+                this.elements[elementIndex].collectReferencedClasses(set1);
+                bb = ++elementIndex;
             }
 
             this.typeTarget.collectReferencedClasses(set1);
@@ -307,12 +307,12 @@ public class AnnotationInfo extends ClassFileComponent implements AnnotationElem
             set1.add((ProgramClass) this.annotationClass);
         }
 
-        int ba = 0;
-        int bb = ba;
+        int elementIndex = 0;
+        int elementIndexValue = elementIndex;
 
-        for (int i = this.elementCount; bb < i; i = this.elementCount) {
-            this.elements[ba].collectReferencedMembers(this.annotationClass, set1, set2, set3, set4);
-            bb = ++ba;
+        for (int elementCountValue = this.elementCount; elementIndexValue < elementCountValue; elementCountValue = this.elementCount) {
+            this.elements[elementIndex].collectReferencedMembers(this.annotationClass, set1, set2, set3, set4);
+            elementIndexValue = ++elementIndex;
         }
 
         this.typeTarget.finishReferenceCollection();

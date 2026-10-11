@@ -24,31 +24,31 @@ public class ClassParameterPartDialog extends ExcludeParameterDialogBase {
     @Override
     public void buildTabs() {
         boolean bl1;
-        int bb;
+        int exclusionTypeValue;
         if (super.exclusionType == 1) {
             bl1 = true;
-            bb = super.exclusionType;
+            exclusionTypeValue = super.exclusionType;
         } else {
             bl1 = false;
-            bb = super.exclusionType;
+            exclusionTypeValue = super.exclusionType;
         }
 
-        int ba = bb;
-        boolean bl = bl1;
+        int exclusionTypeValue2 = exclusionTypeValue;
+        boolean showHigherLevelOption = bl1;
         RenameFilterModel renameFilterModel = super.filterModel;
         ClassParameterPartDialog classParameterPartDialog1 = this;
-        this.packagePanel = new PackageNameParamPanel(classParameterPartDialog1, renameFilterModel, bl, ba);
+        this.packagePanel = new PackageNameParamPanel(classParameterPartDialog1, renameFilterModel, showHigherLevelOption, exclusionTypeValue2);
         this.classPanel = new ClassSpecifierPanel(this, super.filterModel, false, super.exclusionType);
         JTabbedPane jTabbedPane = super.tabbedPane;
         PackageNameParamPanel packageNameParamPanel1 = this.packagePanel;
-        String string = GuiResources.getTooltipText("CONTAINING_PACKAGE_PART_OF_PARAM");
+        String tooltipText = GuiResources.getTooltipText("CONTAINING_PACKAGE_PART_OF_PARAM");
         PackageNameParamPanel packageNameParamPanel = packageNameParamPanel1;
-        jTabbedPane.addTab("Containing package", (Icon) null, packageNameParamPanel, string);
+        jTabbedPane.addTab("Containing package", (Icon) null, packageNameParamPanel, tooltipText);
         jTabbedPane = super.tabbedPane;
         ExcludeParamTabPanel excludeParamTabPanel1 = this.classPanel;
-        String string1 = GuiResources.getTooltipText("CLASS_PART_OF_PARAM");
+        String tooltipTextValue = GuiResources.getTooltipText("CLASS_PART_OF_PARAM");
         ExcludeParamTabPanel excludeParamTabPanel = excludeParamTabPanel1;
-        jTabbedPane.addTab("Class", (Icon) null, excludeParamTabPanel, string1);
+        jTabbedPane.addTab("Class", (Icon) null, excludeParamTabPanel, tooltipTextValue);
         super.tabbedPane.setSelectedComponent(this.classPanel);
     }
 

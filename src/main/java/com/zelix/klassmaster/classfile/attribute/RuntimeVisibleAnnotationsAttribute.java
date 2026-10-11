@@ -12,12 +12,12 @@ public class RuntimeVisibleAnnotationsAttribute extends AnnotationsAttribute {
 
     public RuntimeVisibleAnnotationsAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             PrintWriter printWriter
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap, printWriter, ATTRIBUTE_NAME);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap, printWriter, ATTRIBUTE_NAME);
     }
 }

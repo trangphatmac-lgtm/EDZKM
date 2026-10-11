@@ -23,36 +23,36 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append(this.getProject().replaceProperties(string));
     }
 
-    public void setRenamesourcefileattribute(String string) {
+    public void setRenamesourcefileattribute(String renamesourcefileattributeArgument) {
         if (this.proGuardOptions.length() > 0) {
             this.proGuardOptions.append(' ');
         }
 
         this.proGuardOptions.append("-renamesourcefileattribute");
-        if (string != null) {
+        if (renamesourcefileattributeArgument != null) {
             this.proGuardOptions.append(' ');
             this.proGuardOptions.append('"');
-            this.proGuardOptions.append(string);
+            this.proGuardOptions.append(renamesourcefileattributeArgument);
             this.proGuardOptions.append('"');
         }
     }
 
-    public void setFlattenpackagehierarchy(String string) {
+    public void setFlattenpackagehierarchy(String flattenpackagehierarchyArgument) {
         if (this.proGuardOptions.length() > 0) {
             this.proGuardOptions.append(' ');
         }
 
         this.proGuardOptions.append("-flattenpackagehierarchy");
-        if (string != null) {
+        if (flattenpackagehierarchyArgument != null) {
             this.proGuardOptions.append(' ');
             this.proGuardOptions.append('"');
-            this.proGuardOptions.append(string);
+            this.proGuardOptions.append(flattenpackagehierarchyArgument);
             this.proGuardOptions.append('"');
         }
     }
 
-    public void setMergeinterfacesaggressively(boolean bl) {
-        if (bl) {
+    public void setMergeinterfacesaggressively(boolean mergeinterfacesaggressivelyArgument) {
+        if (mergeinterfacesaggressivelyArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -61,7 +61,7 @@ public class ZKM_PG_Task extends Task {
         }
     }
 
-    public void setOptimizationpasses(int ba) {
+    public void setOptimizationpasses(int optimizationpassesArgument) {
         StringBuilder stringBuilder;
         if (this.proGuardOptions.length() > 0) {
             this.proGuardOptions.append(' ');
@@ -72,7 +72,7 @@ public class ZKM_PG_Task extends Task {
 
         stringBuilder.append("-optimizationpasses");
         this.proGuardOptions.append(' ');
-        this.proGuardOptions.append(ba);
+        this.proGuardOptions.append(optimizationpassesArgument);
     }
 
     public void setConfiguration(File file1) {
@@ -95,8 +95,8 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append('"');
     }
 
-    public void setVerbose(boolean bl) {
-        if (bl) {
+    public void setVerbose(boolean verboseArgument) {
+        if (verboseArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -105,8 +105,8 @@ public class ZKM_PG_Task extends Task {
         }
     }
 
-    public void setMicroedition(boolean bl) {
-        if (!bl) {
+    public void setMicroedition(boolean microeditionArgument) {
+        if (!microeditionArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -145,8 +145,8 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append('"');
     }
 
-    public void setNote(boolean bl) {
-        if (!bl) {
+    public void setNote(boolean note) {
+        if (!note) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -155,8 +155,8 @@ public class ZKM_PG_Task extends Task {
         }
     }
 
-    public void setWarn(boolean bl) {
-        if (!bl) {
+    public void setWarn(boolean warn) {
+        if (!warn) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -181,8 +181,8 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append('"');
     }
 
-    public void setPreverify(boolean bl) {
-        if (!bl) {
+    public void setPreverify(boolean preverify) {
+        if (!preverify) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -191,8 +191,8 @@ public class ZKM_PG_Task extends Task {
         }
     }
 
-    public void setAllowaccessmodification(boolean bl) {
-        if (bl) {
+    public void setAllowaccessmodification(boolean allowaccessmodificationArgument) {
+        if (allowaccessmodificationArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -201,8 +201,8 @@ public class ZKM_PG_Task extends Task {
         }
     }
 
-    public void setSkipnonpubliclibraryclassmembers(boolean bl) {
-        if (!bl) {
+    public void setSkipnonpubliclibraryclassmembers(boolean skipnonpubliclibraryclassmembers) {
+        if (!skipnonpubliclibraryclassmembers) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -211,12 +211,12 @@ public class ZKM_PG_Task extends Task {
         }
     }
 
-    public void setDefaultpackage(String string) {
-        this.setRepackageclasses(string);
+    public void setDefaultpackage(String defaultpackage) {
+        this.setRepackageclasses(defaultpackage);
     }
 
-    public void setObfuscate(boolean bl) {
-        if (!bl) {
+    public void setObfuscate(boolean obfuscate) {
+        if (!obfuscate) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -241,8 +241,8 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append('"');
     }
 
-    public void setUsemixedcaseclassnames(boolean bl) {
-        if (!bl) {
+    public void setUsemixedcaseclassnames(boolean usemixedcaseclassnames) {
+        if (!usemixedcaseclassnames) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -267,8 +267,8 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append('"');
     }
 
-    public void setForceprocessing(boolean bl) {
-        if (bl) {
+    public void setForceprocessing(boolean forceprocessingArgument) {
+        if (forceprocessingArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -293,7 +293,7 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append('"');
     }
 
-    public void setTarget(String string) {
+    public void setTarget(String targetArgument) {
         StringBuilder stringBuilder;
         if (this.proGuardOptions.length() > 0) {
             this.proGuardOptions.append(' ');
@@ -304,11 +304,11 @@ public class ZKM_PG_Task extends Task {
 
         stringBuilder.append("-target");
         this.proGuardOptions.append(' ');
-        this.proGuardOptions.append(string);
+        this.proGuardOptions.append(targetArgument);
     }
 
-    public void setOptimize(boolean bl) {
-        if (!bl) {
+    public void setOptimize(boolean optimize) {
+        if (!optimize) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -331,20 +331,20 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append(proGuardTaskPath.getFileName());
     }
 
-    public void setSkipnonpubliclibraryclasses(boolean bl) {
+    public void setSkipnonpubliclibraryclasses(boolean skipnonpubliclibraryclassesArgument) {
         if (this.proGuardOptions.length() > 0) {
             this.proGuardOptions.append(' ');
         }
 
-        if (bl) {
+        if (skipnonpubliclibraryclassesArgument) {
             this.proGuardOptions.append("-skipnonpubliclibraryclasses");
         } else {
             this.proGuardOptions.append("-dontskipnonpubliclibraryclasses");
         }
     }
 
-    public void setShrink(boolean bl) {
-        if (!bl) {
+    public void setShrink(boolean shrink) {
+        if (!shrink) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -369,8 +369,8 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append('"');
     }
 
-    public void setIgnorewarnings(boolean bl) {
-        if (bl) {
+    public void setIgnorewarnings(boolean ignorewarningsArgument) {
+        if (ignorewarningsArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -385,43 +385,43 @@ public class ZKM_PG_Task extends Task {
         }
 
         try {
-            String string3;
+            String absolutePathValue2;
             Project project;
             if (this.proGuardOptions.length() > 0) {
-                String string1;
+                String text;
                 if (this.configurationFile == null) {
-                    string1 = this.proGuardOptions.toString();
+                    text = this.proGuardOptions.toString();
                 } else {
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.append(this.proGuardOptions.toString());
                     stringBuilder.append(ZkmFileUtils.LINE_SEPARATOR);
                     stringBuilder.append(ZkmFileUtils.readFileAsString(this.configurationFile));
-                    string1 = stringBuilder.toString();
+                    text = stringBuilder.toString();
                 }
 
                 ObservableHolder observableHolder = new ObservableHolder();
-                String string = ZkmFileUtils.writeStringToTempFile(string1, observableHolder).getAbsolutePath();
+                String absolutePath = ZkmFileUtils.writeStringToTempFile(text, observableHolder).getAbsolutePath();
                 if (!observableHolder.isValueNull()) {
                     throw new BuildException((String) observableHolder.getValue());
                 }
 
-                string3 = string;
+                absolutePathValue2 = absolutePath;
                 project = this.getProject();
             } else {
-                String string2 = this.configurationFile.getAbsolutePath();
-                string3 = string2;
+                String absolutePathValue = this.configurationFile.getAbsolutePath();
+                absolutePathValue2 = absolutePathValue;
                 project = this.getProject();
             }
 
-            ZkmApiBase.run(string3, project.getProperties());
+            ZkmApiBase.run(absolutePathValue2, project.getProperties());
         } catch (Exception exception) {
             exception.printStackTrace();
             throw new BuildException(exception.toString());
         }
     }
 
-    public void setUseuniqueclassmembernames(boolean bl) {
-        if (bl) {
+    public void setUseuniqueclassmembernames(boolean useuniqueclassmembernamesArgument) {
+        if (useuniqueclassmembernamesArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -430,8 +430,8 @@ public class ZKM_PG_Task extends Task {
         }
     }
 
-    public void setKeepparameternames(boolean bl) {
-        if (bl) {
+    public void setKeepparameternames(boolean keepparameternamesArgument) {
+        if (keepparameternamesArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -472,16 +472,16 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append('"');
     }
 
-    public void setRepackageclasses(String string) {
+    public void setRepackageclasses(String repackageclassesArgument) {
         if (this.proGuardOptions.length() > 0) {
             this.proGuardOptions.append(' ');
         }
 
         this.proGuardOptions.append("-repackageclasses");
-        if (string != null) {
+        if (repackageclassesArgument != null) {
             this.proGuardOptions.append(' ');
             this.proGuardOptions.append('"');
-            this.proGuardOptions.append(string);
+            this.proGuardOptions.append(repackageclassesArgument);
             this.proGuardOptions.append('"');
         }
     }
@@ -500,8 +500,8 @@ public class ZKM_PG_Task extends Task {
         this.proGuardOptions.append(proGuardTaskPath.getFileName());
     }
 
-    public void setAndroid(boolean bl) {
-        if (!bl) {
+    public void setAndroid(boolean androidArgument) {
+        if (!androidArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }
@@ -510,8 +510,8 @@ public class ZKM_PG_Task extends Task {
         }
     }
 
-    public void setOverloadaggressively(boolean bl) {
-        if (bl) {
+    public void setOverloadaggressively(boolean overloadaggressivelyArgument) {
+        if (overloadaggressivelyArgument) {
             if (this.proGuardOptions.length() > 0) {
                 this.proGuardOptions.append(' ');
             }

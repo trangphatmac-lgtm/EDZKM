@@ -21,25 +21,25 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
     public static final DescriptorMatcher GETTER_DESCRIPTOR = new WildcardStringMatcher("()*");
     public static final DescriptorMatcher BOOLEAN_GETTER_DESCRIPTOR = new WildcardStringMatcher("()Z");
 
-    public void addPropertyAccessorReferences(ProgramClass programClass1, String string, Map map1, TwoKeyMap twoKeyMap, String string1) throws ZkmException, IOException {
-        Object object = new Object();
-        String string2 = "set";
-        String string3 = XmlConfigFileHandler.buildAccessorName(string2, string);
-        this.addHierarchyMethodReferences(programClass1, string3, string2, object, SETTER_DESCRIPTOR, map1, twoKeyMap, string1);
-        string2 = "get";
-        String string4 = XmlConfigFileHandler.buildAccessorName(string2, string);
-        this.addHierarchyMethodReferences(programClass1, string4, string2, object, GETTER_DESCRIPTOR, map1, twoKeyMap, string1);
-        string2 = "is";
-        String string5 = XmlConfigFileHandler.buildAccessorName(string2, string);
+    public void addPropertyAccessorReferences(ProgramClass programClass1, String string, Map map1, TwoKeyMap twoKeyMap, String value) throws ZkmException, IOException {
+        Object valueValue = new Object();
+        String key = "set";
+        String string3 = XmlConfigFileHandler.buildAccessorName(key, string);
+        this.addHierarchyMethodReferences(programClass1, string3, key, valueValue, SETTER_DESCRIPTOR, map1, twoKeyMap, value);
+        key = "get";
+        String string4 = XmlConfigFileHandler.buildAccessorName(key, string);
+        this.addHierarchyMethodReferences(programClass1, string4, key, valueValue, GETTER_DESCRIPTOR, map1, twoKeyMap, value);
+        key = "is";
+        String string5 = XmlConfigFileHandler.buildAccessorName(key, string);
         this.addHierarchyMethodReferences(
                 programClass1,
                 string5,
-                string2,
-                object,
+                key,
+                valueValue,
                 HiddenOptionFlags.USE_BOOLEAN_IS_GETTER_TYPE ? BOOLEAN_GETTER_DESCRIPTOR : GETTER_DESCRIPTOR,
                 map1,
                 twoKeyMap,
-                string1
+                value
         );
     }
 
@@ -61,13 +61,13 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
     }
 
     public void resolveRenamedPropertyName(String string, String string1, String string2, ObservableHolder observableHolder) throws ZkmException, IOException {
-        String string3 = null;
+        String propertyNameFromAccessorValue3 = null;
         String string4 = XmlConfigFileHandler.buildAccessorName("set", string2);
         String string5 = this.lookupRenamedMethodName(string, string4, SETTER_DESCRIPTOR, 1);
         String string13;
         if (string5 != null) {
-            String string6 = this.getPropertyNameFromAccessor("set", string5, string2);
-            if (string6 == null) {
+            String propertyNameFromAccessor = this.getPropertyNameFromAccessor("set", string5, string2);
+            if (propertyNameFromAccessor == null) {
                 super.messageReporter
                         .reportError(
                                 "ERROR:",
@@ -85,8 +85,8 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
                         );
                 string13 = "get";
             } else {
-                string3 = string6;
-                observableHolder.setValue(string6);
+                propertyNameFromAccessorValue3 = propertyNameFromAccessor;
+                observableHolder.setValue(propertyNameFromAccessor);
                 string13 = "get";
             }
         } else {
@@ -96,8 +96,8 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
         String string11 = XmlConfigFileHandler.buildAccessorName(string13, string2);
         String string7 = this.lookupRenamedMethodName(string, string11, GETTER_DESCRIPTOR, 1);
         if (string7 != null) {
-            String string8 = this.getPropertyNameFromAccessor("get", string7, string2);
-            if (string8 == null) {
+            String propertyNameFromAccessorValue = this.getPropertyNameFromAccessor("get", string7, string2);
+            if (propertyNameFromAccessorValue == null) {
                 super.messageReporter
                         .reportError(
                                 "ERROR:",
@@ -114,19 +114,19 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
                                         + "' (2)"
                         );
             } else {
-                if (string3 == null) {
-                    string3 = string8;
+                if (propertyNameFromAccessorValue3 == null) {
+                    propertyNameFromAccessorValue3 = propertyNameFromAccessorValue;
                 } else {
-                    boolean bl = string3.equals(string8);
+                    boolean bl = propertyNameFromAccessorValue3.equals(propertyNameFromAccessorValue);
                     String[] strings = new String[]{
                             "Could not retain bean format for property '"
                                     + string2
                                     + "' in  XML file '"
                                     + super.resourceName
                                     + "' : Clashing new values '"
-                                    + string3
+                                    + propertyNameFromAccessorValue3
                                     + "' '"
-                                    + string8
+                                    + propertyNameFromAccessorValue
                                     + "' : '"
                                     + string1
                                     + "' (C)"
@@ -134,7 +134,7 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
                     ZkmAssert.assertTrue(bl, strings);
                 }
 
-                observableHolder.setValue(string8);
+                observableHolder.setValue(propertyNameFromAccessorValue);
             }
         }
 
@@ -143,8 +143,8 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
                 string, string12, HiddenOptionFlags.USE_BOOLEAN_IS_GETTER_TYPE ? BOOLEAN_GETTER_DESCRIPTOR : GETTER_DESCRIPTOR, 1
         );
         if (string9 != null) {
-            String string10 = this.getPropertyNameFromAccessor("is", string9, string2);
-            if (string10 == null) {
+            String propertyNameFromAccessorValue2 = this.getPropertyNameFromAccessor("is", string9, string2);
+            if (propertyNameFromAccessorValue2 == null) {
                 super.messageReporter
                         .reportError(
                                 "ERROR:",
@@ -161,17 +161,17 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
                                         + "' (3)"
                         );
             } else {
-                if (string3 != null) {
-                    boolean bl1 = string3.equals(string10);
+                if (propertyNameFromAccessorValue3 != null) {
+                    boolean bl1 = propertyNameFromAccessorValue3.equals(propertyNameFromAccessorValue2);
                     String[] strings1 = new String[]{
                             "Could not retain bean format for property '"
                                     + string2
                                     + "' in  XML file '"
                                     + super.resourceName
                                     + "' : Clashing new values '"
-                                    + string3
+                                    + propertyNameFromAccessorValue3
                                     + "' '"
-                                    + string10
+                                    + propertyNameFromAccessorValue2
                                     + "' : '"
                                     + string1
                                     + "' (D)"
@@ -179,7 +179,7 @@ public class BeanPropertyXmlHandler extends GenericXmlFileHandler {
                     ZkmAssert.assertTrue(bl1, strings1);
                 }
 
-                observableHolder.setValue(string10);
+                observableHolder.setValue(propertyNameFromAccessorValue2);
             }
         }
     }

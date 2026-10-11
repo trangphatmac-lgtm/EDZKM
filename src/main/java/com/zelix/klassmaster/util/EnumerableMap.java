@@ -15,8 +15,8 @@ public class EnumerableMap implements Map {
     }
 
     @Override
-    public final Object get(Object object) {
-        return this.map.get(object);
+    public final Object get(Object key) {
+        return this.map.get(key);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class EnumerableMap implements Map {
     }
 
     @Override
-    public final boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public final boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class EscapeClosableFrame extends JFrame implements NodeVisitor {
     public void onShown() {
     }
 
-    public static void setControlValue(int ba) {
+    public static void setControlValue(int controlValueArgument) {
         controlValue = 21;
     }
 
@@ -70,9 +70,9 @@ public class EscapeClosableFrame extends JFrame implements NodeVisitor {
     }
 
     @Override
-    public void setVisible(boolean bl) {
-        super.setVisible(bl);
-        if (bl) {
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible) {
             this.onShown();
         }
     }

@@ -13,8 +13,8 @@ public class ZkmScriptASTImplementsClause extends ZkmScriptSimpleNode implements
     public ArrayList interfaceNames = new ArrayList();
 
     @Override
-    public void setTypeText(Object object) {
-        this.interfaceNames.add(object);
+    public void setTypeText(Object typeText) {
+        this.interfaceNames.add(typeText);
     }
 
     @Override
@@ -23,23 +23,23 @@ public class ZkmScriptASTImplementsClause extends ZkmScriptSimpleNode implements
         ZkmScriptNode zkmScriptNode = (ZkmScriptNode) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) zkmScriptNode;
-        int bc = 0;
+        int elementIndex = 0;
         int be = 0;
 
         for (ArrayList arrayList = this.interfaceNames; be < arrayList.size(); arrayList = this.interfaceNames) {
-            aSTRenameFilterParameter.addImplementsName((String) this.interfaceNames.get(bc));
-            be = ++bc;
+            aSTRenameFilterParameter.addImplementsName((String) this.interfaceNames.get(elementIndex));
+            be = ++elementIndex;
         }
 
         boolean bl = false;
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode1 = this.jjtGetChild(i);
+        for (int childrenElementIndexValue = 0; childrenElementIndexValue < ba; childrenElementIndexValue++) {
+            ZkmScriptNode zkmScriptNode1 = this.jjtGetChild(childrenElementIndexValue);
             if (zkmScriptNode1 instanceof ASTComplexAnnotationSpecifier) {
                 aSTRenameFilterParameter.addImplementsAnnotation((ASTComplexAnnotationSpecifier) zkmScriptNode1);
                 bl = true;

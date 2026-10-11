@@ -17,11 +17,11 @@ public class EquivalenceGroup implements Set {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == null) {
+    public boolean equals(Object other) {
+        if (other == null) {
             return false;
         } else {
-            return !(object instanceof EquivalenceGroup) ? false : this.members == ((EquivalenceGroup) object).getMembers();
+            return (!(!(other instanceof EquivalenceGroup)) && (this.members == ((EquivalenceGroup) other).getMembers()));
         }
     }
 

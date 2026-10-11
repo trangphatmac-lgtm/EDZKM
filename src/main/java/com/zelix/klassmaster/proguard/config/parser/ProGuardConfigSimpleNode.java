@@ -12,13 +12,13 @@ public class ProGuardConfigSimpleNode implements ProGuardConfigNode {
     public int id;
 
     @Override
-    public void jjtAddChild(ProGuardConfigNode proGuardConfigNode, int ba) {
+    public void jjtAddChild(ProGuardConfigNode proGuardConfigNode, int proGuardConfigNodes1ElementIndex) {
         ProGuardConfigNode[] proGuardConfigNodes1;
         if (this.children == null) {
-            this.children = new ProGuardConfigNode[ba + 1];
+            this.children = new ProGuardConfigNode[proGuardConfigNodes1ElementIndex + 1];
             proGuardConfigNodes1 = this.children;
-        } else if (ba >= this.children.length) {
-            ProGuardConfigNode[] proGuardConfigNodes = new ProGuardConfigNode[ba + 1];
+        } else if (proGuardConfigNodes1ElementIndex >= this.children.length) {
+            ProGuardConfigNode[] proGuardConfigNodes = new ProGuardConfigNode[proGuardConfigNodes1ElementIndex + 1];
             System.arraycopy(this.children, 0, proGuardConfigNodes, 0, this.children.length);
             this.children = proGuardConfigNodes;
             proGuardConfigNodes1 = this.children;
@@ -26,7 +26,7 @@ public class ProGuardConfigSimpleNode implements ProGuardConfigNode {
             proGuardConfigNodes1 = this.children;
         }
 
-        proGuardConfigNodes1[ba] = proGuardConfigNode;
+        proGuardConfigNodes1[proGuardConfigNodes1ElementIndex] = proGuardConfigNode;
     }
 
     @Override
@@ -51,8 +51,8 @@ public class ProGuardConfigSimpleNode implements ProGuardConfigNode {
     }
 
     @Override
-    public ProGuardConfigNode jjtGetChild(int ba) {
-        return this.children[ba];
+    public ProGuardConfigNode jjtGetChild(int childrenElementIndex) {
+        return this.children[childrenElementIndex];
     }
 
     @Override
@@ -73,8 +73,8 @@ public class ProGuardConfigSimpleNode implements ProGuardConfigNode {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
     }
 

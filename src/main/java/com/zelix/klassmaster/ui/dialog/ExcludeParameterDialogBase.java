@@ -86,12 +86,12 @@ public abstract class ExcludeParameterDialogBase extends OwnedFrameDialogBase im
     @Override
     public final void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.okBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.okBtn) {
                 this.acceptParameter();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
             }
         } catch (Throwable throwable) {
@@ -145,10 +145,10 @@ public abstract class ExcludeParameterDialogBase extends OwnedFrameDialogBase im
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int ba = dimension.width;
-        int bc = Math.min(500, ba);
-        int bb = dimension.height;
-        this.setSize(bc, Math.min(450, bb));
+        int widthValue = dimension.width;
+        int bc = Math.min(500, widthValue);
+        int heightValue = dimension.height;
+        this.setSize(bc, Math.min(450, heightValue));
         this.okBtn = new JButton("OK");
         this.okBtn.setToolTipText(GuiResources.getTooltipText("PARAMETER_COMPLETE"));
         this.cancelBtn = new JButton("Cancel");

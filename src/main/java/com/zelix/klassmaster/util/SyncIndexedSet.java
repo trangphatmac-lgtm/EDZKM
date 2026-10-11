@@ -51,11 +51,11 @@ public class SyncIndexedSet implements Serializable, Set {
         }
     }
 
-    public synchronized Object getElementAt(int ba) {
-        if (ba >= 0 && ba < this.y.size()) {
-            return this.y.get(ba);
+    public synchronized Object getElementAt(int elementIndex) {
+        if (elementIndex >= 0 && elementIndex < this.y.size()) {
+            return this.y.get(elementIndex);
         } else {
-            throw new IllegalArgumentException("Index " + ba + " out of range : " + this.y.size());
+            throw new IllegalArgumentException("Index " + elementIndex + " out of range : " + this.y.size());
         }
     }
 

@@ -45,9 +45,9 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
 
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string = programClass1.getSuperclassName();
-            if (string != null) {
-                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string);
+            String superclassName = programClass1.getSuperclassName();
+            if (superclassName != null) {
+                ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(superclassName);
                 if (programClass2 != null) {
                     this.registerClassDependency(programClass2, programClass1);
                     if (!this.isClassExcluded(programClass2)) {
@@ -56,11 +56,11 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
                 }
             }
 
-            String[] strings = programClass1.getInterfaceNames();
+            String[] interfaceNames = programClass1.getInterfaceNames();
 
-            for (int i = 0; i < strings.length; i++) {
-                String string1 = strings[i];
-                ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(string1);
+            for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+                String interfaceName = interfaceNames[interfaceNameIndex];
+                ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(interfaceName);
                 if (programClass3 != null) {
                     this.registerClassDependency(programClass3, programClass1);
                     if (!this.isClassExcluded(programClass3)) {
@@ -71,14 +71,14 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
 
             FieldInfo[] fieldInfos = programClass1.getFieldInfos();
 
-            for (int i = 0; i < fieldInfos.length; i++) {
-                this.excludeDependentField(fieldInfos[i], programClass1);
+            for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+                this.excludeDependentField(fieldInfos[fieldInfoIndex], programClass1);
             }
 
             MethodInfo[] methodInfos = programClass1.getMethodInfos();
 
-            for (int i = 0; i < methodInfos.length; i++) {
-                this.excludeDependentMethod(methodInfos[i], programClass1);
+            for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+                this.excludeDependentMethod(methodInfos[methodInfoIndex], programClass1);
             }
 
             HashSet hashSet2 = ZkmUtils.createHashSet();
@@ -147,12 +147,12 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
     }
 
     public final void processExclusionParameters() throws ZkmException, IOException {
-        int ba = super.exclusionStatements.size();
+        int exclusionStatementsSize = super.exclusionStatements.size();
         HashMap hashMap = ZkmUtils.createHashMap();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(i);
+        for (int elementIndex = 0; elementIndex < exclusionStatementsSize; elementIndex++) {
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -167,13 +167,13 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
         if (super.scriptEnvironment.isVerbose() && arrayList.size() > 0) {
             super.logWriter.println("\tFixed classes parameters:");
 
-            for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t" + arrayList.get(i));
+            for (int elementIndexValue = arrayList.size() - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                super.logWriter.println("\t\t" + arrayList.get(elementIndexValue));
             }
         }
 
-        for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter1 = (ASTRenameFilterParameter) arrayList.get(i);
+        for (int elementIndexValue2 = arrayList.size() - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter1 = (ASTRenameFilterParameter) arrayList.get(elementIndexValue2);
             if (!aSTRenameFilterParameter1.isClassSpecifier()) {
                 super.scriptEnvironment
                         .logWarning(
@@ -203,8 +203,8 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
             this.excludedMethods.put(methodInfo1, programClass1);
             ArrayList arrayList = methodInfo1.getDescriptorProgramClasses();
             if (arrayList != null) {
-                for (int i = 0; i < arrayList.size(); i++) {
-                    ProgramClass programClass2 = (ProgramClass) arrayList.get(i);
+                for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                    ProgramClass programClass2 = (ProgramClass) arrayList.get(elementIndex);
                     if (!this.isClassExcluded(programClass2)) {
                         this.markClassExcluded(programClass2, programClass1);
                     }
@@ -299,11 +299,11 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
     }
 
     public void reportClassRenamed(ProgramClass programClass1, String string) {
-        String string1 = programClass1.getDottedClassName();
+        String dottedClassName = programClass1.getDottedClassName();
         if (this.isMatchedClass(programClass1) && !this.brokenFixedClassReasons.containsKey(programClass1)) {
-            this.brokenFixedClassReasons.put(programClass1, "'" + string1 + "' given a new name by the input change log '" + string + "'");
+            this.brokenFixedClassReasons.put(programClass1, "'" + dottedClassName + "' given a new name by the input change log '" + string + "'");
             super.scriptEnvironment
-                    .logWarning("Class '" + string1 + "' was specified as 'fixed' but it has been given a new name by the input change log '" + string + "'");
+                    .logWarning("Class '" + dottedClassName + "' was specified as 'fixed' but it has been given a new name by the input change log '" + string + "'");
         }
 
         if (this.hasClassDependents(programClass1)) {
@@ -314,7 +314,7 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
                 while (iterator.hasNext()) {
                     ProgramClass programClass2 = (ProgramClass) iterator.next();
                     if (!this.brokenFixedClassReasons.containsKey(programClass2)) {
-                        this.brokenFixedClassReasons.put(programClass2, "Class '" + string1 + "' given a new name by the input change log '" + string + "'");
+                        this.brokenFixedClassReasons.put(programClass2, "Class '" + dottedClassName + "' given a new name by the input change log '" + string + "'");
                         super.scriptEnvironment
                                 .logWarning(
                                         "Class '"
@@ -331,8 +331,8 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
         }
     }
 
-    public boolean hasClassDependents(Object object) {
-        Map map1 = this.classDependents.getInnerMap(object);
+    public boolean hasClassDependents(Object key) {
+        Map map1 = this.classDependents.getInnerMap(key);
         return map1 != null && map1.size() > 0;
     }
 
@@ -373,14 +373,14 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
     }
 
     public void registerClassDependency(ProgramClass programClass1, ProgramClass programClass2) {
-        String string = programClass1.getPackagePath();
+        String packagePath = programClass1.getPackagePath();
         TwoKeyMap twoKeyMap;
-        if (string.length() > 0) {
-            this.packageDependents.putValue(string, programClass2, programClass1);
-            String[] strings = RootPackageNode.getParentPackagePaths(string);
+        if (packagePath.length() > 0) {
+            this.packageDependents.putValue(packagePath, programClass2, programClass1);
+            String[] parentPackagePaths = RootPackageNode.getParentPackagePaths(packagePath);
 
-            for (int i = 0; i < strings.length; i++) {
-                this.packageDependents.putValue(strings[i], programClass2, programClass1);
+            for (int parentPackagePathIndex = 0; parentPackagePathIndex < parentPackagePaths.length; parentPackagePathIndex++) {
+                this.packageDependents.putValue(parentPackagePaths[parentPackagePathIndex], programClass2, programClass1);
             }
 
             twoKeyMap = this.classDependents;
@@ -432,8 +432,8 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
         }
     }
 
-    public String getBrokenReason(Object object) {
-        return (String) this.brokenFixedClassReasons.get(object);
+    public String getBrokenReason(Object key) {
+        return (String) this.brokenFixedClassReasons.get(key);
     }
 
     public void applyExclusions(
@@ -452,9 +452,9 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
             ProgramClass programClass2 = (ProgramClass) super.excludedClasses.get(programClass1);
             String string = "Fixed class '" + this.describeClass(programClass2) + "'";
-            String string1 = programClass1.getPackagePath();
-            if (string1 != null && string1.length() > 0) {
-                nameExclusionSet.excludePackage(string1, string);
+            String packagePath = programClass1.getPackagePath();
+            if (packagePath != null && packagePath.length() > 0) {
+                nameExclusionSet.excludePackage(packagePath, string);
             }
 
             nameExclusionSet.excludeClass(programClass1, string);
@@ -505,8 +505,8 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
         }
     }
 
-    public boolean isFixedClassBroken(Object object) {
-        return this.brokenFixedClassReasons.containsKey(object);
+    public boolean isFixedClassBroken(Object key) {
+        return this.brokenFixedClassReasons.containsKey(key);
     }
 
     public final void excludeDependentField(FieldInfo fieldInfo, ProgramClass programClass1) {
@@ -521,9 +521,9 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
         this.fieldDependents.putValue(fieldInfo, programClass1, programClass1);
     }
 
-    public void reportPackageRenamed(String string, String string1) {
-        if (this.hasPackageDependents(string)) {
-            Map map1 = this.packageDependents.getInnerMap(string);
+    public void reportPackageRenamed(String key, String string1) {
+        if (this.hasPackageDependents(key)) {
+            Map map1 = this.packageDependents.getInnerMap(key);
             if (map1 != null) {
                 Iterator iterator = map1.entrySet().iterator();
 
@@ -557,8 +557,8 @@ public class FixedClassesExclusionSet extends FixedClassMatchHandler {
         }
     }
 
-    public boolean hasPackageDependents(Object object) {
-        Map map1 = this.packageDependents.getInnerMap(object);
+    public boolean hasPackageDependents(Object key) {
+        Map map1 = this.packageDependents.getInnerMap(key);
         return map1 != null && map1.size() > 0;
     }
 }

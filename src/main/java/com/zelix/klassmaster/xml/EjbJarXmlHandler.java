@@ -38,7 +38,7 @@ public class EjbJarXmlHandler extends XmlConfigFileHandler {
             throw new XmlContentException("Character data outside of tag : '" + ZkmStringUtils.escapeJavaString(string) + "' (4a)");
         }
 
-        String string2 = "reference in '" + super.resourceName + "' by '" + string1 + "' tag";
+        String value = "reference in '" + super.resourceName + "' by '" + string1 + "' tag";
         if (string1.equals("ejb-class")
                 || string1.equals("home")
                 || string1.equals("remote")
@@ -47,18 +47,18 @@ public class EjbJarXmlHandler extends XmlConfigFileHandler {
                 || string1.equals("prim-key-class")
                 || string1.equals("res-type")
                 || string1.equals("dependent-class")) {
-            String string3 = this.addClassReference(string, map1, string2);
+            String currentEjbClassValue = this.addClassReference(string, map1, value);
             if (string1.equals("ejb-class")) {
-                this.currentEjbClass = string3;
+                this.currentEjbClass = currentEjbClassValue;
             }
         } else if (string1.equals("method-param")) {
-            this.addTypeReference(string, map1, string2);
+            this.addTypeReference(string, map1, value);
         } else if (!string1.equals("small-icon") && !string1.equals("large-icon")) {
             if (!string1.equals("field-name") && !string1.equals("primkey-field")) {
-                this.addClassNameReferences(string, map1, string2, string1, true);
+                this.addClassNameReferences(string, map1, value, string1, true);
             } else if ((this.isWithinElement("entity") || this.isWithinElement("session") || this.isWithinElement("message-driven"))
                     && this.currentEjbClass != null) {
-                this.addFieldReferenceByClassName(this.currentEjbClass, string, map2, string2);
+                this.addFieldReferenceByClassName(this.currentEjbClass, string, map2, value);
             }
         }
     }
@@ -90,12 +90,12 @@ public class EjbJarXmlHandler extends XmlConfigFileHandler {
                 || string1.equals("prim-key-class")
                 || string1.equals("res-type")
                 || string1.equals("dependent-class")) {
-            String string3 = this.getRenamedClassName(string);
+            String currentEjbClassValue = this.getRenamedClassName(string);
             if (string1.equals("ejb-class")) {
-                this.currentEjbClass = string3;
+                this.currentEjbClass = currentEjbClassValue;
             }
 
-            list1.add(string3);
+            list1.add(currentEjbClassValue);
         } else if (string1.equals("method-param")) {
             list1.add(this.getRenamedTypeName(string));
         } else {

@@ -9,24 +9,24 @@ import java.io.IOException;
 public class ClassResolver {
     public ClasspathClassLoader classLoader;
 
-    public ClassFileBase getVersionedClass(String string, Integer integer, String string1) throws ZkmException, IOException {
-        return this.findVersionedClass(string, integer, string1);
+    public ClassFileBase getVersionedClass(String key, Integer integer, String string1) throws ZkmException, IOException {
+        return this.findVersionedClass(key, integer, string1);
     }
 
-    public ClassFileBase getClassFile(String string) throws ZkmException, IOException {
-        return this.findClassFile(string, true, (String) null);
+    public ClassFileBase getClassFile(String key) throws ZkmException, IOException {
+        return this.findClassFile(key, true, (String) null);
     }
 
-    public ClassFileBase getVersionedClass(String string, Integer integer, String string1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
-        return this.resolveClass(string, integer, true, string1, ignoreMissingReferencesSpec1);
+    public ClassFileBase getVersionedClass(String key, Integer integer, String string1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
+        return this.resolveClass(key, integer, true, string1, ignoreMissingReferencesSpec1);
     }
 
-    public ClassFileBase getClassFile(String string, String string1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
-        return this.resolveClass(string, null, true, string1, ignoreMissingReferencesSpec1);
+    public ClassFileBase getClassFile(String key, String string1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
+        return this.resolveClass(key, null, true, string1, ignoreMissingReferencesSpec1);
     }
 
-    public ClassFileBase findClassFile(String string) throws ZkmException, IOException {
-        return this.findClassFile(string, false, (String) null);
+    public ClassFileBase findClassFile(String key) throws ZkmException, IOException {
+        return this.findClassFile(key, false, (String) null);
     }
 
     public void releaseLoader() {
@@ -35,16 +35,16 @@ public class ClassResolver {
         }
     }
 
-    public ClassFileBase findClassFile(String string, boolean bl, String string1) throws ZkmException, IOException {
-        return this.resolveClass(string, null, bl, string1, null);
+    public ClassFileBase findClassFile(String key, boolean bl, String string1) throws ZkmException, IOException {
+        return this.resolveClass(key, null, bl, string1, null);
     }
 
-    public ClassFileBase resolveClass(String string, Integer integer, boolean bl, String string1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
-        ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string);
+    public ClassFileBase resolveClass(String key, Integer integer, boolean bl, String string1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1) throws ZkmException, IOException {
+        ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(key);
         if (classFileBase != null) {
             return integer != null && classFileBase.hasVersionedVariants() ? classFileBase.selectVersionForRelease(integer) : classFileBase;
         } else {
-            return this.classLoader.loadClassFile(string, integer, bl, string1, ignoreMissingReferencesSpec1);
+            return this.classLoader.loadClassFile(key, integer, bl, string1, ignoreMissingReferencesSpec1);
         }
     }
 
@@ -52,15 +52,15 @@ public class ClassResolver {
         this.classLoader = classpathClassLoader1;
     }
 
-    public ClassFileBase findVersionedClass(String string, Integer integer, String string1) throws ZkmException, IOException {
-        return this.resolveClass(string, integer, true, string1, null);
+    public ClassFileBase findVersionedClass(String key, Integer integer, String string1) throws ZkmException, IOException {
+        return this.resolveClass(key, integer, true, string1, null);
     }
 
-    public ClassFileBase getClassFile(String string, String string1) throws ZkmException, IOException {
-        return this.findClassFile(string, true, string1);
+    public ClassFileBase getClassFile(String key, String string1) throws ZkmException, IOException {
+        return this.findClassFile(key, true, string1);
     }
 
-    public ClassFileBase getVersionedClass(String string, Integer integer) throws ZkmException, IOException {
-        return this.findVersionedClass(string, integer, (String) null);
+    public ClassFileBase getVersionedClass(String key, Integer integer) throws ZkmException, IOException {
+        return this.findVersionedClass(key, integer, (String) null);
     }
 }

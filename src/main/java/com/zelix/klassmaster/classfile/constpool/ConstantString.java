@@ -57,8 +57,8 @@ public class ConstantString extends ConstantPoolEntry implements ResolvableConst
         return true;
     }
 
-    public ConstantString(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantString(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, abstractConstantPool);
         this.utf8Index = classFileInputStream.readUnsignedShort();
     }
 }

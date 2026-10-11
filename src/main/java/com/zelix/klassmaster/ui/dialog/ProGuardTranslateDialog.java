@@ -274,9 +274,9 @@ public class ProGuardTranslateDialog extends OwnedFrameDialogBase implements Act
 
     public void initPreferences(UserPreferences userPreferences1) {
         this.userPreferences = userPreferences1;
-        String string = userPreferences1.getBytecodeClasspath();
-        if (string != null) {
-            string.trim();
+        String bytecodeClasspath = userPreferences1.getBytecodeClasspath();
+        if (bytecodeClasspath != null) {
+            bytecodeClasspath.trim();
         }
 
         this.showCentered(super.ownerFrame != null);
@@ -317,15 +317,15 @@ public class ProGuardTranslateDialog extends OwnedFrameDialogBase implements Act
                 }
                 try {
                     bufferedWriter.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
-            } catch (final IOException ex2) {
-                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Couldn't save \"" + selectedFile.getAbsolutePath() + "\" : " + ex2.getMessage());
+            } catch (final IOException ioExceptionValue) {
+                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Couldn't save \"" + selectedFile.getAbsolutePath() + "\" : " + ioExceptionValue.getMessage());
             } finally {
                 if (bufferedWriter != null) {
                     try {
                         bufferedWriter.close();
-                    } catch (final IOException ex3) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }
@@ -341,8 +341,8 @@ public class ProGuardTranslateDialog extends OwnedFrameDialogBase implements Act
         this.closeFrame();
     }
 
-    public void showTranslationResult(String string) {
-        this.resultsArea.setText(string);
+    public void showTranslationResult(String textArgument) {
+        this.resultsArea.setText(textArgument);
         this.resultsArea.setCaretPosition(0);
         this.showDefaultCursor();
         this.statusLabel.setText(" ");
@@ -359,22 +359,22 @@ public class ProGuardTranslateDialog extends OwnedFrameDialogBase implements Act
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.proGuardScriptOpenBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.proGuardScriptOpenBtn) {
                 this.openProGuardFile();
-            } else if (object == this.resultsAreaSaveBtn) {
+            } else if (source == this.resultsAreaSaveBtn) {
                 this.saveResults();
-            } else if (object == this.proGuardAreaPasteBtn) {
+            } else if (source == this.proGuardAreaPasteBtn) {
                 this.pasteProGuardConfig();
-            } else if (object == this.resultsAreaCopyBtn) {
+            } else if (source == this.resultsAreaCopyBtn) {
                 this.copyResults();
-            } else if (object == this.translateBtn) {
+            } else if (source == this.translateBtn) {
                 this.startTranslation();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
-            } else if ((object == this.proGuardScriptFileNameFld || object == this.proGuardArea) && this.translateBtn.isEnabled()) {
+            } else if ((source == this.proGuardScriptFileNameFld || source == this.proGuardArea) && this.translateBtn.isEnabled()) {
                 this.startTranslation();
             }
         } catch (Throwable throwable) {
@@ -412,25 +412,17 @@ public class ProGuardTranslateDialog extends OwnedFrameDialogBase implements Act
         if (fileSelector1.showOpenDialog(this, "Select a ProGuard Configuration File") == 1) {
             File file3 = fileSelector1.getSelectedFile();
 
-            File file5;
-            label28:
-            {
-                try {
-                    String string = ZkmFileUtils.readFileAsString(file3);
-                    this.proGuardScriptFileNameFld.setText(file3.getAbsolutePath());
-                    this.proGuardScriptFileNameFld.setCaretPosition(0);
-                    this.proGuardArea.setText(string);
-                    this.proGuardArea.setCaretPosition(0);
-                } catch (IOException iOException) {
-                    new MessageBoxDialog(this, "File Error", "'" + file3.getAbsolutePath() + "' : '" + iOException.getMessage() + "'");
-                    file5 = file3.getParentFile();
-                    break label28;
-                }
-
-                file5 = file3.getParentFile();
+            try {
+                String configurationText = ZkmFileUtils.readFileAsString(file3);
+                this.proGuardScriptFileNameFld.setText(file3.getAbsolutePath());
+                this.proGuardScriptFileNameFld.setCaretPosition(0);
+                this.proGuardArea.setText(configurationText);
+                this.proGuardArea.setCaretPosition(0);
+            } catch (IOException readException) {
+                new MessageBoxDialog(this, "File Error", "'" + file3.getAbsolutePath() + "' : '" + readException.getMessage() + "'");
             }
 
-            File file4 = file5;
+            File file4 = file3.getParentFile();
             if (file4 != null && !file4.equals(file1)) {
                 this.userPreferences.setProGuardConfigDirectory(file4.getAbsolutePath());
                 this.userPreferences.savePreferences();

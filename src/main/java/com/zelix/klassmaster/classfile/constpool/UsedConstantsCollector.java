@@ -336,23 +336,23 @@ public class UsedConstantsCollector {
     }
 
     public UsedConstantsCollector(int ba, boolean trackLdcUsage) {
-        int bb = ZkmUtils.getPrimeCapacity(ba);
-        this.usedUtf8s = ZkmUtils.createHashSet(bb);
-        this.usedNameAndTypes = ZkmUtils.createHashSet(bb);
-        this.usedMemberRefs = ZkmUtils.createHashSet(bb);
-        this.usedClasses = ZkmUtils.createHashSet(bb);
-        this.usedStrings = ZkmUtils.createHashSet(bb);
-        this.usedLiterals = ZkmUtils.createHashSet(bb);
-        this.usedConstantDynamics = ZkmUtils.createHashSet(bb);
-        this.usedInvokeDynamics = ZkmUtils.createHashSet(bb);
-        this.usedMethodTypes = ZkmUtils.createHashSet(bb);
-        this.usedMethodHandles = ZkmUtils.createHashSet(bb);
-        this.usedModules = ZkmUtils.createHashSet(bb);
-        this.usedPackages = ZkmUtils.createHashSet(bb);
+        int primeCapacity = ZkmUtils.getPrimeCapacity(ba);
+        this.usedUtf8s = ZkmUtils.createHashSet(primeCapacity);
+        this.usedNameAndTypes = ZkmUtils.createHashSet(primeCapacity);
+        this.usedMemberRefs = ZkmUtils.createHashSet(primeCapacity);
+        this.usedClasses = ZkmUtils.createHashSet(primeCapacity);
+        this.usedStrings = ZkmUtils.createHashSet(primeCapacity);
+        this.usedLiterals = ZkmUtils.createHashSet(primeCapacity);
+        this.usedConstantDynamics = ZkmUtils.createHashSet(primeCapacity);
+        this.usedInvokeDynamics = ZkmUtils.createHashSet(primeCapacity);
+        this.usedMethodTypes = ZkmUtils.createHashSet(primeCapacity);
+        this.usedMethodHandles = ZkmUtils.createHashSet(primeCapacity);
+        this.usedModules = ZkmUtils.createHashSet(primeCapacity);
+        this.usedPackages = ZkmUtils.createHashSet(primeCapacity);
         this.trackLdcUsage = trackLdcUsage;
         if (trackLdcUsage) {
-            this.ldcConstantToMethods = new SetMultiMap(bb);
-            this.ldcWideConstantToMethods = new SetMultiMap(bb);
+            this.ldcConstantToMethods = new SetMultiMap(primeCapacity);
+            this.ldcWideConstantToMethods = new SetMultiMap(primeCapacity);
             this.methodToLdcConstants = new SetMultiMap();
             this.methodToLdcWideConstants = new SetMultiMap();
         }

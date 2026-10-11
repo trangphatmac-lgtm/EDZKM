@@ -9,8 +9,8 @@ public class ASTJarQualifier extends ZkmScriptSimpleNode {
     @Override
     public void execute(Object object, Object object1) throws ZkmException, IOException {
         this.jjtGetNumChildren();
-        String string = ((ZkmScriptASTStringLiteral) this.jjtGetChild(0)).getValue();
-        ((ASTRenameFilterParameter) object).setArchivePathPattern(string);
+        String value = ((ZkmScriptASTStringLiteral) this.jjtGetChild(0)).getValue();
+        ((ASTRenameFilterParameter) object).setArchivePathPattern(value);
     }
 
     public ASTJarQualifier() {

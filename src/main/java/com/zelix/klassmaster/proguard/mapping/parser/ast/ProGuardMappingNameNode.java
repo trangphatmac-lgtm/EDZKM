@@ -5,8 +5,8 @@ import com.zelix.klassmaster.proguard.mapping.parser.ProGuardMappingSimpleNode;
 public abstract class ProGuardMappingNameNode extends ProGuardMappingSimpleNode {
     public String name;
 
-    public final void setName(String string) {
-        this.name = string.trim();
+    public final void setName(String nameArgument) {
+        this.name = nameArgument.trim();
     }
 
     public ProGuardMappingNameNode(int ba) {

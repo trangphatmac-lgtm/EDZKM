@@ -41,7 +41,7 @@ public class StaticInitCalleeAnalyzer {
     public final ListMultimap initDependenciesByClass;
 
     public Set getDependentSubclasses(MethodInfo methodInfo1) throws ZkmException, IOException {
-        String string = methodInfo1.getClassName();
+        String className = methodInfo1.getClassName();
         HashSet hashSet = ZkmUtils.createHashSet();
         List list1 = this.initDependenciesByClass.getValues(methodInfo1.getOwnerProgramClass());
         if (list1 != null) {
@@ -49,7 +49,7 @@ public class StaticInitCalleeAnalyzer {
 
             while (iterator.hasNext()) {
                 ClassFileBase classFileBase = (ClassFileBase) iterator.next();
-                if (classFileBase.isProgramClass() && this.classRepository.isSubclass(classFileBase.getClassName(), string)) {
+                if (classFileBase.isProgramClass() && this.classRepository.isSubclass(classFileBase.getClassName(), className)) {
                     hashSet.add((ProgramClass) classFileBase);
                 }
             }
@@ -132,9 +132,9 @@ public class StaticInitCalleeAnalyzer {
         }
     }
 
-    public boolean isInitDependencyLeaf(Object object) {
-        List list1 = this.initDependenciesByClass.getValues(object);
-        boolean bl = true;
+    public boolean isInitDependencyLeaf(Object key) {
+        List list1 = this.initDependenciesByClass.getValues(key);
+        boolean initDependencyLeaf = true;
         if (list1 != null && !list1.isEmpty()) {
             Iterator iterator = list1.iterator();
 
@@ -142,17 +142,17 @@ public class StaticInitCalleeAnalyzer {
                 ClassFileBase classFileBase = (ClassFileBase) iterator.next();
                 List list2 = this.initDependenciesByClass.getValues(classFileBase);
                 if (list2 != null && !list2.isEmpty()) {
-                    bl = false;
+                    initDependencyLeaf = false;
                     break;
                 }
             }
         }
 
-        return bl;
+        return initDependencyLeaf;
     }
 
     public boolean isInitializerOrCallee(MethodInfo methodInfo1) {
-        return this.staticInitializers.contains(methodInfo1) ? true : this.isCalledByInitializer(methodInfo1);
+        return ((this.staticInitializers.contains(methodInfo1)) || (this.isCalledByInitializer(methodInfo1)));
     }
 
     public void propagateInitDependencies(ClassHierarchyNode classHierarchyNode, Set set1, SetMultiMap setMultiMap, SetMultiMap setMultiMap1) {
@@ -197,14 +197,14 @@ public class StaticInitCalleeAnalyzer {
     }
 
     public boolean isCalledBySubclassInitializer(MethodInfo methodInfo1) throws ZkmException, IOException {
-        String string = methodInfo1.getClassName();
+        String className = methodInfo1.getClassName();
         List list1 = this.initializersByCallee.getValues(methodInfo1);
         if (list1 != null) {
             Iterator iterator = list1.iterator();
 
             while (iterator.hasNext()) {
-                String string1 = ((AbstractMethodInfo) iterator.next()).getClassName();
-                if (this.classRepository.isSubclass(string, string1)) {
+                String classNameValue = ((AbstractMethodInfo) iterator.next()).getClassName();
+                if (this.classRepository.isSubclass(className, classNameValue)) {
                     return true;
                 }
             }
@@ -237,8 +237,8 @@ public class StaticInitCalleeAnalyzer {
         MethodNameDescComparator methodNameDescComparator = new MethodNameDescComparator(this);
         Collections.sort(list1, methodNameDescComparator);
 
-        for (int i = 0; i < list1.size(); i++) {
-            AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) list1.get(elementIndex);
             if (abstractMethodInfo.isProgramMember()) {
                 MethodInfo methodInfo1 = (MethodInfo) abstractMethodInfo;
                 if (flowObfuscationExclusions == null

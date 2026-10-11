@@ -21,8 +21,8 @@ public class RawCodeAttribute extends Attribute {
         return this.attributeCount;
     }
 
-    public RawCodeAttribute(ClassFileComponent classFileComponent, int ba, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+    public RawCodeAttribute(ClassFileComponent classFileComponent, int constantPoolIndex, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         this.maxStack = classFileInputStream.readUnsignedShort();
         this.maxLocals = classFileInputStream.readUnsignedShort();
         this.codeLength = classFileInputStream.readInt();

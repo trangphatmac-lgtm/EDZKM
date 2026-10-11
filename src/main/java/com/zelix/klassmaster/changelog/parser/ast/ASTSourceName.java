@@ -33,8 +33,8 @@ public class ASTSourceName extends ChangeLogSimpleNode implements ChangeLogNameH
     }
 
     @Override
-    public void setParsedName(Object object) {
-        this.sourceName = (String) object;
+    public void setParsedName(Object parsedName) {
+        this.sourceName = (String) parsedName;
     }
 
     public void applyToClassChange(ASTClassChange aSTClassChange) {

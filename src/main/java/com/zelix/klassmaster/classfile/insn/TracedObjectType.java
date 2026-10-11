@@ -5,12 +5,12 @@ public class TracedObjectType implements TrackedValue {
     public Instruction sourceInstruction;
     public String className;
 
-    public TracedObjectType(Instruction instruction1, String string) {
-        this.sourceInstruction = instruction1;
-        if (string.startsWith("[")) {
+    public TracedObjectType(Instruction sourceInstruction, String className) {
+        this.sourceInstruction = sourceInstruction;
+        if (className.startsWith("[")) {
             this.className = OBJECT_CLASS_NAME;
         } else {
-            this.className = string;
+            this.className = className;
         }
     }
 
@@ -22,24 +22,14 @@ public class TracedObjectType implements TrackedValue {
     @Override
     public int hashCode() {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        int ba = 0;
-        boolean bl = strictMergeDisabled;
-        String string;
-        if (!bl) {
-            if (this.sourceInstruction != null) {
-                ba = this.sourceInstruction.hashCode();
-            }
-
-            string = this.className;
-        } else {
-            string = this.className;
+        int hash = 0;
+        if (!strictMergeDisabled && this.sourceInstruction != null) {
+            hash = this.sourceInstruction.hashCode();
         }
-
-        if (string != null) {
-            ba ^= this.className.hashCode();
+        if (this.className != null) {
+            hash ^= this.className.hashCode();
         }
-
-        return ba;
+        return hash;
     }
 
     @Override
@@ -48,86 +38,29 @@ public class TracedObjectType implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeEnabled = StackFrameState.isStrictMergeEnabled();
-        boolean bl2 = object instanceof TracedObjectType;
-        if (strictMergeEnabled) {
-            if (bl2) {
-                boolean bl1;
-                TracedObjectType tracedObjectType1;
-                label75:
-                {
-                    tracedObjectType1 = (TracedObjectType) object;
-                    TracedObjectType tracedObjectType2 = this;
-                    if (strictMergeEnabled) {
-                        if (this.sourceInstruction != null) {
-                            label63:
-                            {
-                                Instruction instruction1;
-                                if (strictMergeEnabled) {
-                                    if (tracedObjectType1.sourceInstruction == null) {
-                                        break label63;
-                                    }
-
-                                    instruction1 = this.sourceInstruction;
-                                } else {
-                                    instruction1 = tracedObjectType1.sourceInstruction;
-                                }
-
-                                bl1 = instruction1.equals(tracedObjectType1.sourceInstruction);
-                                if (strictMergeEnabled) {
-                                    break label75;
-                                }
-                            }
-
-                            bl1 = false;
-                            if (strictMergeEnabled) {
-                                break label75;
-                            }
-                        }
-
-                        tracedObjectType2 = tracedObjectType1;
-                    }
-
-                    bl1 = tracedObjectType2.sourceInstruction == null;
-                }
-
-                bl2 = bl1;
-                if (strictMergeEnabled) {
-                    if (bl1) {
-                        TracedObjectType tracedObjectType3 = this;
-                        if (strictMergeEnabled) {
-                            if (this.className != null) {
-                                String string;
-                                if (strictMergeEnabled) {
-                                    if (tracedObjectType1.className == null) {
-                                        return false;
-                                    }
-
-                                    string = this.className;
-                                } else {
-                                    string = tracedObjectType1.className;
-                                }
-
-                                return string.equals(tracedObjectType1.className);
-                            }
-
-                            tracedObjectType3 = tracedObjectType1;
-                        }
-
-                        return tracedObjectType3.className == null;
-                    }
-
-                    bl2 = false;
-                }
-
-                return bl2;
-            }
-
-            bl2 = false;
+        if (!(other instanceof TracedObjectType)) {
+            return false;
+        }
+        if (!strictMergeEnabled) {
+            return true;
         }
 
-        return bl2;
+        TracedObjectType otherType = (TracedObjectType) other;
+        if (this.sourceInstruction != null) {
+            if (otherType.sourceInstruction == null
+                    || !this.sourceInstruction.equals(otherType.sourceInstruction)) {
+                return false;
+            }
+        } else if (otherType.sourceInstruction != null) {
+            return false;
+        }
+
+        if (this.className != null) {
+            return otherType.className != null && this.className.equals(otherType.className);
+        }
+        return otherType.className == null;
     }
 
     @Override

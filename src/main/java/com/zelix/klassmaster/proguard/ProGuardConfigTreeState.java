@@ -9,61 +9,53 @@ public class ProGuardConfigTreeState {
     public boolean nodeCreated;
     public List nodes = new ArrayList();
     public List marks = new ArrayList();
-    public int sp = 0;
-    public int mk = 0;
+    public int stackPointer = 0;
+    public int scopeMark = 0;
 
-    public void closeNodeScope(ProGuardConfigNode proGuardConfigNode) {
-        int ba = this.nodeArity();
-        this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
+    public void closeNodeScope(ProGuardConfigNode parentNode) {
+        int remainingChildren = this.nodeArity();
+        this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
 
-        while (true) {
-            int bb = ba;
-            ba += -1;
-            if (bb <= 0) {
-                proGuardConfigNode.jjtOpen();
-                this.pushNode(proGuardConfigNode);
-                this.nodeCreated = true;
-                return;
-            }
-
-            ProGuardConfigNode proGuardConfigNode1 = this.popNode();
-            proGuardConfigNode1.jjtSetParent(proGuardConfigNode);
-            proGuardConfigNode.jjtAddChild(proGuardConfigNode1, ba);
+        while (remainingChildren > 0) {
+            remainingChildren--;
+            ProGuardConfigNode childNode = this.popNode();
+            childNode.jjtSetParent(parentNode);
+            parentNode.jjtAddChild(childNode, remainingChildren);
         }
+
+        parentNode.jjtOpen();
+        this.pushNode(parentNode);
+        this.nodeCreated = true;
     }
 
     public void clearNodeScope() {
-        for (int i = this.sp; i > this.mk; i = this.sp) {
+        for (int stackPointerValue = this.stackPointer; stackPointerValue > this.scopeMark; stackPointerValue = this.stackPointer) {
             this.popNode();
         }
 
-        this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
+        this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
     }
 
     public ProGuardConfigNode popNode() {
-        List list1;
-        if (--this.sp < this.mk) {
-            this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
-            list1 = this.nodes;
-        } else {
-            list1 = this.nodes;
+        if (--this.stackPointer < this.scopeMark) {
+            this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
         }
 
-        return (ProGuardConfigNode) list1.remove(this.nodes.size() - 1);
+        return (ProGuardConfigNode) this.nodes.remove(this.nodes.size() - 1);
     }
 
     public int nodeArity() {
-        return this.sp - this.mk;
+        return this.stackPointer - this.scopeMark;
     }
 
     public void openNodeScope(ProGuardConfigNode proGuardConfigNode) {
-        this.marks.add(this.mk);
-        this.mk = this.sp;
+        this.marks.add(this.scopeMark);
+        this.scopeMark = this.stackPointer;
         proGuardConfigNode.jjtClose();
     }
 
     public void pushNode(Object object) {
         this.nodes.add(object);
-        this.sp++;
+        this.stackPointer++;
     }
 }

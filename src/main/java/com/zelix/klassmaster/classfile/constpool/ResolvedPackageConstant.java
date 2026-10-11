@@ -47,10 +47,10 @@ public class ResolvedPackageConstant extends ConstantPoolEntry implements Utf8Co
     }
 
     public void remapName(Map map1) {
-        String string = this.nameUtf8.getValue();
-        String string1 = (String) ZkmUtils.mapOrSelf(string, map1);
-        if (!string.equals(string1)) {
-            this.nameUtf8.setValue(string1);
+        String value = this.nameUtf8.getValue();
+        String valueValue = (String) ZkmUtils.mapOrSelf(value, map1);
+        if (!value.equals(valueValue)) {
+            this.nameUtf8.setValue(valueValue);
         }
     }
 
@@ -63,12 +63,12 @@ public class ResolvedPackageConstant extends ConstantPoolEntry implements Utf8Co
 
     @Override
     public String getAbbreviatedValue() {
-        String string = ZkmUtils.escapeJavaString(this.getValueString());
-        if (string.length() > 200) {
-            string = string.substring(0, 50) + "...<" + (string.length() - 100) + " CHARS>..." + string.substring(string.length() - 50);
+        String abbreviatedValue = ZkmUtils.escapeJavaString(this.getValueString());
+        if (abbreviatedValue.length() > 200) {
+            abbreviatedValue = abbreviatedValue.substring(0, 50) + "...<" + (abbreviatedValue.length() - 100) + " CHARS>..." + abbreviatedValue.substring(abbreviatedValue.length() - 50);
         }
 
-        return string;
+        return abbreviatedValue;
     }
 
     @Override

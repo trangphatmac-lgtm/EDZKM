@@ -8,12 +8,12 @@ public abstract class SingleValueParameterNode extends ZkmScriptParameterNode {
     public ScriptValueNode valueNode;
     public String parameterName;
 
-    public void setParameterName(String string) {
-        this.parameterName = string;
+    public void setParameterName(String parameterNameArgument) {
+        this.parameterName = parameterNameArgument;
     }
 
-    public SingleValueParameterNode(int ba) {
-        super(ba);
+    public SingleValueParameterNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     @Override

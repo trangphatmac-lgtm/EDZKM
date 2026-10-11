@@ -58,28 +58,28 @@ public class ModuleProvidesEntry extends ClassFileComponent implements ClassCons
             this.serviceInterface = resolvedClassConstant1;
         }
 
-        int ba = 0;
+        int implementationIndex = 0;
         int bb = 0;
 
         for (ResolvedClassConstant[] resolvedClassConstants = this.implementations;
              bb < resolvedClassConstants.length;
              resolvedClassConstants = this.implementations
         ) {
-            if (this.implementations[ba] == resolvedClassConstant) {
-                this.implementations[ba] = resolvedClassConstant1;
+            if (this.implementations[implementationIndex] == resolvedClassConstant) {
+                this.implementations[implementationIndex] = resolvedClassConstant1;
             }
 
-            bb = ++ba;
+            bb = ++implementationIndex;
         }
     }
 
     public ModuleProvidesEntry(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws ClassFileFormatException, IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(ba);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry == null) {
             throw new ClassFileFormatException(
-                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + ba + " : File is probably corrupt (AF)"
+                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + constantPoolIndex + " : File is probably corrupt (AF)"
             );
         }
 
@@ -87,7 +87,7 @@ public class ModuleProvidesEntry extends ClassFileComponent implements ClassCons
             throw new ClassFileFormatException(
                     classFileComponent.getOwningClass().getLocationName()
                             + " : Invalid attribute : "
-                            + ba
+                            + constantPoolIndex
                             + " : '"
                             + constantPoolEntry.getClass().getName()
                             + "' : File is probably corrupt (AG)"
@@ -99,14 +99,14 @@ public class ModuleProvidesEntry extends ClassFileComponent implements ClassCons
         int bb = classFileInputStream.readUnsignedShort();
         this.implementations = new ResolvedClassConstant[bb];
 
-        for (int i = 0; i < bb; i++) {
-            int bd = classFileInputStream.readUnsignedShort();
-            constantPoolEntry = classFileComponent.getConstantPoolEntry(bd);
+        for (int implementationIndex = 0; implementationIndex < bb; implementationIndex++) {
+            int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+            constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndexValue);
             if (constantPoolEntry == null) {
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Illegal constant pool index in attribute : "
-                                + bd
+                                + constantPoolIndexValue
                                 + " : File is probably corrupt (AH)"
                 );
             }
@@ -115,15 +115,15 @@ public class ModuleProvidesEntry extends ClassFileComponent implements ClassCons
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Invalid attribute : "
-                                + bd
+                                + constantPoolIndexValue
                                 + " : '"
                                 + constantPoolEntry.getClass().getName()
                                 + "' : File is probably corrupt (AI)"
                 );
             }
 
-            this.implementations[i] = (ResolvedClassConstant) constantPoolEntry;
-            listMultimap.addValue(this.implementations[i], this);
+            this.implementations[implementationIndex] = (ResolvedClassConstant) constantPoolEntry;
+            listMultimap.addValue(this.implementations[implementationIndex], this);
         }
     }
 

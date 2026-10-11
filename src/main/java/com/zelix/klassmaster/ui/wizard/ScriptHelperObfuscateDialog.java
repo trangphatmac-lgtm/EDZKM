@@ -9,7 +9,7 @@ import com.zelix.klassmaster.util.DialogCallback;
 
 public class ScriptHelperObfuscateDialog extends BuildHelperObfuscateOptionsDialog {
     public ScriptHelperObfuscateDialog(
-            String string,
+            String toolTipText,
             ZkmMainWindow zkmMainWindow,
             ObfuscateOptions obfuscateOptions1,
             ExclusionWizardSettings exclusionWizardSettings,
@@ -17,7 +17,7 @@ public class ScriptHelperObfuscateDialog extends BuildHelperObfuscateOptionsDial
             DialogCallback dialogCallback1
     ) {
         super(
-                "ZKM Script Helper - \"obfuscate\" Statement", string, zkmMainWindow, obfuscateOptions1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1
+                "ZKM Script Helper - \"obfuscate\" Statement", toolTipText, zkmMainWindow, obfuscateOptions1, exclusionWizardSettings, scriptEnvironment1, dialogCallback1
         );
     }
 

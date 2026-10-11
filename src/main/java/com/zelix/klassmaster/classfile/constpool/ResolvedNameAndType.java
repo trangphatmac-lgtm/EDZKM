@@ -54,21 +54,21 @@ public class ResolvedNameAndType extends ConstantPoolEntry implements ConstantRe
 
     @Override
     public String getValueString() {
-        String string = this.descriptorUtf8.getValueString();
-        String string1 = this.nameUtf8.getValueString();
-        String string2 = ConstantPoolEntry.descriptorToJavaType(string) + " " + string1;
-        if (string.indexOf(40) == 0) {
-            string2 = string2 + "(";
-            List list1 = ConstantPoolEntry.getParameterTypes(string);
+        String valueString = this.descriptorUtf8.getValueString();
+        String valueStringValue = this.nameUtf8.getValueString();
+        String valueStringValue2 = ConstantPoolEntry.descriptorToJavaType(valueString) + " " + valueStringValue;
+        if (valueString.indexOf(40) == 0) {
+            valueStringValue2 = valueStringValue2 + "(";
+            List list1 = ConstantPoolEntry.getParameterTypes(valueString);
 
-            for (int i = 0; i < list1.size(); i++) {
-                string2 = string2 + ConstantPoolEntry.descriptorToJavaType((String) list1.get(i)) + (i < list1.size() - 1 ? ", " : "");
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                valueStringValue2 = valueStringValue2 + ConstantPoolEntry.descriptorToJavaType((String) list1.get(elementIndex)) + (elementIndex < list1.size() - 1 ? ", " : "");
             }
 
-            string2 = string2 + ")";
+            valueStringValue2 = valueStringValue2 + ")";
         }
 
-        return string2;
+        return valueStringValue2;
     }
 
     @Override
@@ -97,21 +97,21 @@ public class ResolvedNameAndType extends ConstantPoolEntry implements ConstantRe
 
     @Override
     public String getDisplayString() {
-        String string = this.nameUtf8.getValueString();
-        String string1 = this.descriptorUtf8.getValueString();
-        String string2 = string;
-        if (string1.indexOf(40) == 0) {
-            string2 = string2 + "(";
-            List list1 = ConstantPoolEntry.getParameterTypes(string1);
+        String valueString = this.nameUtf8.getValueString();
+        String valueStringValue = this.descriptorUtf8.getValueString();
+        String displayString = valueString;
+        if (valueStringValue.indexOf(40) == 0) {
+            displayString = displayString + "(";
+            List list1 = ConstantPoolEntry.getParameterTypes(valueStringValue);
 
-            for (int i = 0; i < list1.size(); i++) {
-                string2 = string2 + ConstantPoolEntry.descriptorToJavaType((String) list1.get(i)) + (i < list1.size() - 1 ? ", " : "");
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                displayString = displayString + ConstantPoolEntry.descriptorToJavaType((String) list1.get(elementIndex)) + (elementIndex < list1.size() - 1 ? ", " : "");
             }
 
-            string2 = string2 + ")";
+            displayString = displayString + ")";
         }
 
-        return string2;
+        return displayString;
     }
 
     public String getDescriptor() {
@@ -119,17 +119,17 @@ public class ResolvedNameAndType extends ConstantPoolEntry implements ConstantRe
     }
 
     public void remapDescriptor(HashMap hashMap) {
-        String string = this.descriptorUtf8.getValue();
-        String string1 = ConstantPoolEntry.remapDescriptorClassNames(string, hashMap);
-        if (string1 != string) {
-            this.descriptorUtf8.setValue(string1);
+        String value = this.descriptorUtf8.getValue();
+        String valueValue = ConstantPoolEntry.remapDescriptorClassNames(value, hashMap);
+        if (valueValue != value) {
+            this.descriptorUtf8.setValue(valueValue);
         }
     }
 
     public ResolvedNameAndType(
-            int ba, AbstractConstantPool abstractConstantPool, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, ListMultimap listMultimap
+            int indexArgument, AbstractConstantPool abstractConstantPool, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, ListMultimap listMultimap
     ) {
-        super(ba, abstractConstantPool);
+        super(indexArgument, abstractConstantPool);
         this.nameUtf8 = constantUtf8;
         this.descriptorUtf8 = constantUtf81;
         if (listMultimap != null) {
@@ -138,12 +138,12 @@ public class ResolvedNameAndType extends ConstantPoolEntry implements ConstantRe
         }
     }
 
-    public final void setDescriptor(String string) {
-        this.descriptorUtf8.setValue(string);
+    public final void setDescriptor(String descriptor) {
+        this.descriptorUtf8.setValue(descriptor);
     }
 
-    public final void setName(String string) {
-        this.nameUtf8.setValue(string);
+    public final void setName(String name) {
+        this.nameUtf8.setValue(name);
     }
 
     @Override

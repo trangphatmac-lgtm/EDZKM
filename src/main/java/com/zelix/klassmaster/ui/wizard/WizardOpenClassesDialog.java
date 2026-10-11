@@ -28,14 +28,14 @@ public class WizardOpenClassesDialog extends OpenClassesDialog implements Helper
     public void keyPressed(KeyEvent keyEvent) {
         try {
             if (keyEvent.getKeyCode() == 10) {
-                Object object = keyEvent.getSource();
-                if (object == this.previousBtn) {
+                Object source = keyEvent.getSource();
+                if (source == this.previousBtn) {
                     this.goToPreviousStep();
-                } else if (object == super.okBtn) {
+                } else if (source == super.okBtn) {
                     this.confirmOpen();
-                } else if (object == super.cancelBtn) {
+                } else if (source == super.cancelBtn) {
                     this.cancelOpen();
-                } else if (object == super.helpBtn) {
+                } else if (source == super.helpBtn) {
                     this.showHelp();
                 }
             }
@@ -47,7 +47,7 @@ public class WizardOpenClassesDialog extends OpenClassesDialog implements Helper
     public void goToPreviousStep() throws ZkmException, IOException {
         super.closedByButton = true;
         this.closeFrame();
-        String string = super.fileSelector.getCurrentDirectoryPath();
+        String currentDirectoryPath = super.fileSelector.getCurrentDirectoryPath();
         super.callback
                 .onDialogResult(
                         super.classLocations,
@@ -55,7 +55,7 @@ public class WizardOpenClassesDialog extends OpenClassesDialog implements Helper
                         (InputFileLocation[]) null,
                         (InputFileLocation[]) null,
                         (InputFileLocation[]) null,
-                        new ObservableHolder(string)
+                        new ObservableHolder(currentDirectoryPath)
                 );
     }
 
@@ -89,14 +89,14 @@ public class WizardOpenClassesDialog extends OpenClassesDialog implements Helper
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == super.okBtn) {
+            Object source = actionEvent.getSource();
+            if (source == super.okBtn) {
                 this.confirmOpen();
-            } else if (object == super.cancelBtn) {
+            } else if (source == super.cancelBtn) {
                 this.cancelOpen();
-            } else if (object == this.previousBtn) {
+            } else if (source == this.previousBtn) {
                 this.goToPreviousStep();
-            } else if (object == super.helpBtn) {
+            } else if (source == super.helpBtn) {
                 this.showHelp();
             }
         } catch (Throwable throwable) {
@@ -106,15 +106,15 @@ public class WizardOpenClassesDialog extends OpenClassesDialog implements Helper
 
     public WizardOpenClassesDialog(
             JFrame jFrame,
-            String string,
+            String title,
             String string1,
-            boolean bl,
+            boolean expandToClassFiles,
             String string2,
-            boolean bl1,
+            boolean selected,
             InputFileLocation[] inputFileLocations,
             DialogCallback dialogCallback1
     ) {
-        super(jFrame, string, string1, bl, string2, bl1, inputFileLocations, dialogCallback1);
+        super(jFrame, title, string1, expandToClassFiles, string2, selected, inputFileLocations, dialogCallback1);
     }
 
     @Override

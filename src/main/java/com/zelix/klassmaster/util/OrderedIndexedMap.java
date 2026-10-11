@@ -38,40 +38,40 @@ public class OrderedIndexedMap implements Serializable, Map {
         int ba = this.B.size();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            ObjectPair objectPair = (ObjectPair) this.B.get(i);
+        for (int elementIndex = 0; elementIndex < ba; elementIndex++) {
+            ObjectPair objectPair = (ObjectPair) this.B.get(elementIndex);
             arrayList.add(objectPair.getFirst());
         }
 
         return arrayList;
     }
 
-    public synchronized Object getKeyAt(int ba) {
-        if (ba >= 0 && ba < this.B.size()) {
-            return ((ObjectPair) this.B.get(ba)).getFirst();
+    public synchronized Object getKeyAt(int elementIndex) {
+        if (elementIndex >= 0 && elementIndex < this.B.size()) {
+            return ((ObjectPair) this.B.get(elementIndex)).getFirst();
         } else {
-            throw new IllegalArgumentException("Index " + ba + " out of range : " + this.B.size());
+            throw new IllegalArgumentException("Index " + elementIndex + " out of range : " + this.B.size());
         }
     }
 
     @Override
-    public synchronized Object remove(Object object) {
-        Object object1 = null;
-        ObjectPair objectPair = (ObjectPair) this.Z.remove(object);
+    public synchronized Object remove(Object keyArgument) {
+        Object second = null;
+        ObjectPair objectPair = (ObjectPair) this.Z.remove(keyArgument);
         if (objectPair != null) {
             int ba = this.B.size();
 
-            for (int i = 0; i < ba; i++) {
-                if (((ObjectPair) this.B.get(i)).getFirst().equals(object)) {
-                    this.B.remove(i);
+            for (int elementIndex = 0; elementIndex < ba; elementIndex++) {
+                if (((ObjectPair) this.B.get(elementIndex)).getFirst().equals(keyArgument)) {
+                    this.B.remove(elementIndex);
                     break;
                 }
             }
 
-            object1 = objectPair.getSecond();
+            second = objectPair.getSecond();
         }
 
-        return object1;
+        return second;
     }
 
     @Override
@@ -84,13 +84,13 @@ public class OrderedIndexedMap implements Serializable, Map {
         return new OrderedIndexedMap(this);
     }
 
-    public int indexOfKey(Object object) {
-        if (this.Z.containsKey(object)) {
+    public int indexOfKey(Object keyArgument) {
+        if (this.Z.containsKey(keyArgument)) {
             int ba = this.B.size();
 
-            for (int i = 0; i < ba; i++) {
-                if (((ObjectPair) this.B.get(i)).getFirst().equals(object)) {
-                    return i;
+            for (int elementIndex = 0; elementIndex < ba; elementIndex++) {
+                if (((ObjectPair) this.B.get(elementIndex)).getFirst().equals(keyArgument)) {
+                    return elementIndex;
                 }
             }
         }
@@ -131,8 +131,8 @@ public class OrderedIndexedMap implements Serializable, Map {
     public synchronized boolean containsValue(Object object) {
         int ba = this.B.size();
 
-        for (int i = 0; i < ba; i++) {
-            if (((ObjectPair) this.B.get(i)).getSecond().equals(object)) {
+        for (int elementIndex = 0; elementIndex < ba; elementIndex++) {
+            if (((ObjectPair) this.B.get(elementIndex)).getSecond().equals(object)) {
                 return true;
             }
         }
@@ -148,59 +148,59 @@ public class OrderedIndexedMap implements Serializable, Map {
         int ba = this.B.size();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            ObjectPair objectPair = (ObjectPair) this.B.get(i);
+        for (int elementIndex = 0; elementIndex < ba; elementIndex++) {
+            ObjectPair objectPair = (ObjectPair) this.B.get(elementIndex);
             arrayList.add(objectPair.getSecond());
         }
 
         return arrayList;
     }
 
-    public synchronized Object removeAt(int ba) {
-        if (ba >= 0 && ba < this.B.size()) {
-            ObjectPair objectPair = (ObjectPair) this.B.remove(ba);
+    public synchronized Object removeAt(int elementIndex) {
+        if (elementIndex >= 0 && elementIndex < this.B.size()) {
+            ObjectPair objectPair = (ObjectPair) this.B.remove(elementIndex);
             return ((ObjectPair) this.Z.remove(objectPair.getFirst())).getSecond();
         } else {
-            throw new IllegalArgumentException("Index " + ba + " out of range : " + this.B.size());
+            throw new IllegalArgumentException("Index " + elementIndex + " out of range : " + this.B.size());
         }
     }
 
-    public synchronized Object replaceEntryAt(int ba, Object object, Object object1) {
-        if (ba < 0 || ba >= this.B.size()) {
-            throw new IllegalArgumentException("Index " + ba + " out of range : " + this.B.size());
+    public synchronized Object replaceEntryAt(int elementIndex, Object keyArgument, Object second) {
+        if (elementIndex < 0 || elementIndex >= this.B.size()) {
+            throw new IllegalArgumentException("Index " + elementIndex + " out of range : " + this.B.size());
         }
 
-        if (this.Z.containsKey(object)) {
-            if (((ObjectPair) this.Z.get(object)).equals(this.B.get(ba))) {
-                return ((ObjectPair) this.B.get(ba)).getSecond();
+        if (this.Z.containsKey(keyArgument)) {
+            if (((ObjectPair) this.Z.get(keyArgument)).equals(this.B.get(elementIndex))) {
+                return ((ObjectPair) this.B.get(elementIndex)).getSecond();
             } else {
-                throw new IllegalArgumentException("'" + object + "' is not a unique key");
+                throw new IllegalArgumentException("'" + keyArgument + "' is not a unique key");
             }
         } else {
-            ObjectPair objectPair = new ObjectPair(object, object1);
-            ObjectPair objectPair1 = ((com.zelix.klassmaster.util.ObjectPair) (this.B.set(ba, objectPair)));
+            ObjectPair objectPair = new ObjectPair(keyArgument, second);
+            ObjectPair objectPair1 = ((com.zelix.klassmaster.util.ObjectPair) (this.B.set(elementIndex, objectPair)));
             ObjectPair objectPair2 = (ObjectPair) this.Z.remove(objectPair1.getFirst());
-            this.Z.put(object, objectPair);
+            this.Z.put(keyArgument, objectPair);
             return objectPair2.getSecond();
         }
     }
 
     @Override
-    public synchronized Object get(Object object) {
-        ObjectPair objectPair = (ObjectPair) this.Z.get(object);
+    public synchronized Object get(Object keyArgument) {
+        ObjectPair objectPair = (ObjectPair) this.Z.get(keyArgument);
         return objectPair == null ? null : objectPair.getSecond();
     }
 
     @Override
-    public synchronized Object put(Object object, Object object1) {
+    public synchronized Object put(Object keyArgument, Object second) {
         Object object2 = null;
-        ObjectPair objectPair = (ObjectPair) this.Z.get(object);
+        ObjectPair objectPair = (ObjectPair) this.Z.get(keyArgument);
         if (objectPair == null) {
-            objectPair = new ObjectPair(object, object1);
-            this.Z.put(object, objectPair);
+            objectPair = new ObjectPair(keyArgument, second);
+            this.Z.put(keyArgument, objectPair);
             this.B.add(objectPair);
         } else {
-            object2 = objectPair.setSecond(object1);
+            object2 = objectPair.setSecond(second);
         }
 
         return object2;
@@ -209,21 +209,21 @@ public class OrderedIndexedMap implements Serializable, Map {
     public OrderedIndexedMap(OrderedIndexedMap orderedIndexedMap1) {
         this(orderedIndexedMap1.size());
         synchronized (orderedIndexedMap1) {
-            int ba = orderedIndexedMap1.size();
+            int orderedIndexedMap1Size = orderedIndexedMap1.size();
 
-            for (int i = 0; i < ba; i++) {
-                ObjectPair objectPair = (ObjectPair) orderedIndexedMap1.B.get(i);
-                Object object = objectPair.getFirst();
-                Object object1 = objectPair.getSecond();
-                ObjectPair objectPair1 = new ObjectPair(object, object1);
-                this.Z.put(object, objectPair1);
+            for (int elementIndex = 0; elementIndex < orderedIndexedMap1Size; elementIndex++) {
+                ObjectPair objectPair = (ObjectPair) orderedIndexedMap1.B.get(elementIndex);
+                Object first = objectPair.getFirst();
+                Object second = objectPair.getSecond();
+                ObjectPair objectPair1 = new ObjectPair(first, second);
+                this.Z.put(first, objectPair1);
                 this.B.add(objectPair1);
             }
         }
     }
 
     @Override
-    public synchronized boolean containsKey(Object object) {
-        return this.Z.containsKey(object);
+    public synchronized boolean containsKey(Object keyArgument) {
+        return this.Z.containsKey(keyArgument);
     }
 }

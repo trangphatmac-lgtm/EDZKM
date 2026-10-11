@@ -24,13 +24,13 @@ public class FxmlReferenceHandler implements XmlClassReferenceHandler {
 
     @Override
     public boolean handleControllerFieldId(
-            XmlElementNode xmlElementNode, ProgramClass programClass1, ClassFileBase classFileBase, Object object, String string, ObservableHolder observableHolder
+            XmlElementNode xmlElementNode, ProgramClass programClass1, ClassFileBase classFileBase, Object object, String name, ObservableHolder observableHolder
     ) throws ZkmException, IOException {
         String string1 = (String) object;
-        String string2 = ZkmUtils.concatStrings(
+        String valueValue = ZkmUtils.concatStrings(
                 new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string1, "' attribute '", (String) observableHolder.getValue(), "' value"}
         );
-        return this.fxmlUpdater.addTypedFieldReference(programClass1, classFileBase, string, this.fieldReferences, string2);
+        return this.fxmlUpdater.addTypedFieldReference(programClass1, classFileBase, name, this.fieldReferences, valueValue);
     }
 
     @Override
@@ -77,8 +77,8 @@ public class FxmlReferenceHandler implements XmlClassReferenceHandler {
 
     @Override
     public void handlePropertyAttribute(XmlElementNode xmlElementNode, ProgramClass programClass1, String string) throws ZkmException, IOException {
-        String string1 = ZkmUtils.concatStrings(new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string, "' attribute"});
-        this.fxmlUpdater.addPropertyAccessorReferences(programClass1, string, this.methodReferences, this.methodNameReferences, string1);
+        String valueValue = ZkmUtils.concatStrings(new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string, "' attribute"});
+        this.fxmlUpdater.addPropertyAccessorReferences(programClass1, string, this.methodReferences, this.methodNameReferences, valueValue);
     }
 
     @Override
@@ -89,15 +89,15 @@ public class FxmlReferenceHandler implements XmlClassReferenceHandler {
         );
         FxmlFileUpdater fxmlFileUpdater = this.fxmlUpdater;
         JavaFxHandlerSignatureFilter javaFxHandlerSignatureFilter1 = FxmlFileUpdater.getHandlerSignatureFilter(this.fxmlUpdater);
-        String string3 = string2;
+        String valueValue = string2;
         TwoKeyMap twoKeyMap = this.methodNameReferences;
         Map map2 = this.methodReferences;
         Map map1 = this.classReferences;
         Integer integer = 0;
         JavaFxHandlerSignatureFilter javaFxHandlerSignatureFilter = javaFxHandlerSignatureFilter1;
-        Object object1 = null;
+        Object valueValue2 = null;
         return fxmlFileUpdater.addMatchingMethodReferences(
-                string, (String) null, object1, javaFxHandlerSignatureFilter, "javafx/fxml/FXML", integer, map1, map2, twoKeyMap, string3
+                string, (String) null, valueValue2, javaFxHandlerSignatureFilter, "javafx/fxml/FXML", integer, map1, map2, twoKeyMap, valueValue
         );
     }
 
@@ -111,49 +111,49 @@ public class FxmlReferenceHandler implements XmlClassReferenceHandler {
         );
         FxmlFileUpdater fxmlFileUpdater = this.fxmlUpdater;
         JavaFxHandlerSignatureFilter javaFxHandlerSignatureFilter1 = FxmlFileUpdater.getHandlerSignatureFilter(this.fxmlUpdater);
-        String string3 = string2;
+        String valueValue = string2;
         TwoKeyMap twoKeyMap = this.methodNameReferences;
         Map map1 = this.methodReferences;
         JavaFxHandlerSignatureFilter javaFxHandlerSignatureFilter = javaFxHandlerSignatureFilter1;
-        Object object1 = null;
-        return fxmlFileUpdater.addHierarchyMethodReferences(programClass1, string, (String) null, object1, javaFxHandlerSignatureFilter, map1, twoKeyMap, string3);
+        Object valueValue2 = null;
+        return fxmlFileUpdater.addHierarchyMethodReferences(programClass1, string, (String) null, valueValue2, javaFxHandlerSignatureFilter, map1, twoKeyMap, valueValue);
     }
 
     @Override
     public boolean handleAnnotatedFieldId(
-            XmlElementNode xmlElementNode, ClassFileBase classFileBase, Object object, String string, ObservableHolder observableHolder
+            XmlElementNode xmlElementNode, ClassFileBase classFileBase, Object object, String name, ObservableHolder observableHolder
     ) throws ZkmException, IOException {
         String string1 = (String) object;
-        String string2 = ZkmUtils.concatStrings(
+        String valueValue = ZkmUtils.concatStrings(
                 new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string1, "' attribute '", (String) observableHolder.getValue(), "' value"}
         );
-        return this.fxmlUpdater.addMatchingFieldReferences(classFileBase, string, this.fieldReferences, string2);
+        return this.fxmlUpdater.addMatchingFieldReferences(classFileBase, name, this.fieldReferences, valueValue);
     }
 
     @Override
     public void handleFactoryAttribute(Object object, ProgramClass programClass1, Object object1, ObservableHolder observableHolder) throws ZkmException, IOException {
         XmlElementNode xmlElementNode = (XmlElementNode) object;
         String string = (String) object1;
-        String string1 = (String) observableHolder.getValue();
+        String valueValue = (String) observableHolder.getValue();
         String string2 = ZkmUtils.concatStrings(
-                new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string, "' attribute '", string1, "' value"}
+                new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string, "' attribute '", valueValue, "' value"}
         );
         FxmlFileUpdater fxmlFileUpdater = this.fxmlUpdater;
         JavaFxHandlerSignatureFilter javaFxHandlerSignatureFilter1 = FxmlFileUpdater.getHandlerSignatureFilter(this.fxmlUpdater);
-        String string3 = string2;
+        String valueValue2 = string2;
         TwoKeyMap twoKeyMap = this.methodNameReferences;
         Map map1 = this.methodReferences;
         JavaFxHandlerSignatureFilter javaFxHandlerSignatureFilter = javaFxHandlerSignatureFilter1;
-        Object object2 = null;
-        fxmlFileUpdater.addHierarchyMethodReferences(programClass1, string1, (String) null, object2, javaFxHandlerSignatureFilter, map1, twoKeyMap, string3);
+        Object valueValue3 = null;
+        fxmlFileUpdater.addHierarchyMethodReferences(programClass1, valueValue, (String) null, valueValue3, javaFxHandlerSignatureFilter, map1, twoKeyMap, valueValue2);
     }
 
     @Override
-    public void handleControllerAttribute(Object object, Object object1, Object object2, Object object3) throws ZkmException, IOException {
+    public void handleControllerAttribute(Object object, Object key, Object object2, Object object3) throws ZkmException, IOException {
         String string = (String) object2;
         XmlElementNode xmlElementNode = (XmlElementNode) object;
-        String string1 = ZkmUtils.concatStrings(new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string, "' attribute"});
-        this.classReferences.put(object1, string1);
+        String valueValue = ZkmUtils.concatStrings(new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string, "' attribute"});
+        this.classReferences.put(key, valueValue);
     }
 
     @Override
@@ -177,9 +177,9 @@ public class FxmlReferenceHandler implements XmlClassReferenceHandler {
     @Override
     public void handleStaticPropertyAttribute(XmlElementNode xmlElementNode, ProgramClass programClass1, String string, Object object, String string1) throws ZkmException, IOException {
         programClass1.markReferencedFromXml();
-        String string2 = ZkmUtils.concatStrings(new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string, "' attribute"});
-        this.classReferences.put(programClass1, string2);
-        this.fxmlUpdater.addPropertyAccessorReferences(programClass1, string1, this.methodReferences, this.methodNameReferences, string2);
+        String valueValue = ZkmUtils.concatStrings(new String[]{this.referencePrefix, xmlElementNode.getTagName(), "' tag '", string, "' attribute"});
+        this.classReferences.put(programClass1, valueValue);
+        this.fxmlUpdater.addPropertyAccessorReferences(programClass1, string1, this.methodReferences, this.methodNameReferences, valueValue);
     }
 
     public FxmlReferenceHandler(FxmlFileUpdater fxmlFileUpdater, Map map1, Map map2, Map map3, TwoKeyMap twoKeyMap) {

@@ -14,22 +14,22 @@ import java.util.Map;
 public class StackMapAttribute extends AbstractStackMapAttribute {
     public StackMapAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
             PrintWriter printWriter,
             ListMultimap listMultimap2
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         if (this.length >= 2) {
             this.frameCount = classFileInputStream.readUnsignedShort();
             this.frames = new StackMapEntry[this.frameCount];
 
-            for (int i = 0; i < this.frameCount; i++) {
-                this.frames[i] = new StackMapEntry(this, classFileInputStream, listMultimap2, listMultimap1, printWriter);
-                if (!this.frames[i].isValid()) {
+            for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+                this.frames[frameIndex] = new StackMapEntry(this, classFileInputStream, listMultimap2, listMultimap1, printWriter);
+                if (!this.frames[frameIndex].isValid()) {
                     super.parsed = false;
                 }
             }
@@ -53,8 +53,8 @@ public class StackMapAttribute extends AbstractStackMapAttribute {
     public void writeFrames(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeShort(this.frameCount);
 
-        for (int i = 0; i < this.frameCount; i++) {
-            ((StackMapEntry) this.frames[i]).writeTo(dataOutputStream);
+        for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+            ((StackMapEntry) this.frames[frameIndex]).writeTo(dataOutputStream);
         }
     }
 
@@ -66,8 +66,8 @@ public class StackMapAttribute extends AbstractStackMapAttribute {
     public void writeFramesRemapped(DataOutputStream dataOutputStream, Map map1) throws IOException {
         dataOutputStream.writeShort(this.frameCount);
 
-        for (int i = 0; i < this.frameCount; i++) {
-            ((StackMapEntry) this.frames[i]).writeRemapped(dataOutputStream, map1);
+        for (int frameIndex = 0; frameIndex < this.frameCount; frameIndex++) {
+            ((StackMapEntry) this.frames[frameIndex]).writeRemapped(dataOutputStream, map1);
         }
     }
 }

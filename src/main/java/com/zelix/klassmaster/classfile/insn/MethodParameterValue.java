@@ -20,12 +20,12 @@ public class MethodParameterValue implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        boolean bl1 = object instanceof MethodParameterValue;
+        boolean bl1 = other instanceof MethodParameterValue;
         if (!strictMergeDisabled) {
             if (bl1) {
-                MethodParameterValue methodParameterValue1 = (MethodParameterValue) object;
+                MethodParameterValue methodParameterValue1 = (MethodParameterValue) other;
                 MethodParameterValue methodParameterValue2 = this;
                 if (!strictMergeDisabled) {
                     if (this.methodBytecode != methodParameterValue1.methodBytecode) {

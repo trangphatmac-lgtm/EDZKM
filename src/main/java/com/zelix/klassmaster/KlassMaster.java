@@ -114,21 +114,21 @@ public class KlassMaster extends LicenseDetails {
                 if (s2.indexOf("-injars") > -1) {
                     try {
                         bufferedReader.close();
-                    } catch (final IOException ex) {
+                    } catch (final IOException ioException) {
                     }
                     return true;
                 }
             }
             try {
                 bufferedReader.close();
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
-        } catch (final IOException ex3) {
+        } catch (final IOException ioExceptionValue2) {
         } finally {
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex4) {
+                } catch (final IOException ioExceptionValue3) {
                 }
             }
         }
@@ -156,24 +156,24 @@ public class KlassMaster extends LicenseDetails {
     public void printBanner(PrintStream printStream) {
         printStream.println(this.bannerTitle);
         if (this.bannerLines != null) {
-            int ba = 0;
+            int bannerLineIndex = 0;
             int bb = 0;
 
-            for (String[] strings = this.bannerLines; bb < strings.length; strings = this.bannerLines) {
-                String string = this.bannerLines[ba];
+            for (String[] bannerLinesValue = this.bannerLines; bb < bannerLinesValue.length; bannerLinesValue = this.bannerLines) {
+                String bannerLine = this.bannerLines[bannerLineIndex];
                 printStream.println(ZkmStringUtils.pad(
-                        string, 82, string.length() + ZkmUtils.getBracketedTimestamp().length() + 1, 32
+                        bannerLine, 82, bannerLine.length() + ZkmUtils.getBracketedTimestamp().length() + 1, 32
                 ));
-                bb = ++ba;
+                bb = ++bannerLineIndex;
             }
         }
     }
 
     @Override
     public String getLicenseField(Object object1, Object object) {
-        int ba = (Integer) object;
-        String string = this.getLicenseToken();
-        return "58#\\u0001\\u00031*\\u0001<\\u000erm".equals(string) ? this.getRawLicenseField(ba).trim() : null;
+        int licenseFieldIndex = (Integer) object;
+        String licenseToken = this.getLicenseToken();
+        return "58#\\u0001\\u00031*\\u0001<\\u000erm".equals(licenseToken) ? this.getRawLicenseField(licenseFieldIndex).trim() : null;
     }
 
     public void reportFatalError(String string, boolean bl) {
@@ -209,139 +209,139 @@ public class KlassMaster extends LicenseDetails {
     }
 
     public static String getSavedClasspath() {
-        String string = HiddenOptionFlags.USER_PREFERENCES.getClasspath();
-        if (string != null && string.length() > 0) {
-            string = filterExistingPaths(string);
+        String classpathValue = HiddenOptionFlags.USER_PREFERENCES.getClasspath();
+        if (classpathValue != null && classpathValue.length() > 0) {
+            classpathValue = filterExistingPaths(classpathValue);
         } else {
-            string = System.getProperty("java.class.path");
+            classpathValue = System.getProperty("java.class.path");
         }
 
-        return string;
+        return classpathValue;
     }
 
-    public KlassMaster(String[] strings, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public KlassMaster(String[] arrayArgument, ObservableHolder observableHolder) throws ZkmException, IOException {
         acquireInstanceLock();
         ObservableHolder observableHolder1 = new ObservableHolder();
-        if (strings.length == 0) {
+        if (arrayArgument.length == 0) {
             this.startGui(observableHolder);
-        } else if (!HiddenOptionFlags.PROGUARD_STYLE && !this.isProGuardStyleInput(strings, observableHolder1)) {
-            String string9 = null;
-            String string1 = null;
-            String string2 = null;
-            String string3 = null;
-            String string4 = null;
-            String string5 = null;
-            String string6 = null;
-            String string7 = null;
+        } else if (!HiddenOptionFlags.PROGUARD_STYLE && !this.isProGuardStyleInput(arrayArgument, observableHolder1)) {
+            String arrayElement = null;
+            String arrayElementValue = null;
+            String arrayElementValue2 = null;
+            String arrayElementValue3 = null;
+            String arrayElementValue4 = null;
+            String arrayElementValue5 = null;
+            String arrayElementValue6 = null;
+            String arrayElementValue7 = null;
             boolean bl = false;
-            boolean bl1 = false;
-            String string8 = null;
+            boolean verboseValue = false;
+            String arrayElementValue8 = null;
 
-            for (int i = 0; i < strings.length; i++) {
-                if (i == strings.length - 1) {
-                    if (strings[i].equalsIgnoreCase("-?")) {
+            for (int arrayArgumentElementIndex = 0; arrayArgumentElementIndex < arrayArgument.length; arrayArgumentElementIndex++) {
+                if (arrayArgumentElementIndex == arrayArgument.length - 1) {
+                    if (arrayArgument[arrayArgumentElementIndex].equalsIgnoreCase("-?")) {
                         this.printUsageAndExit();
-                    } else if (strings[i].startsWith("-")) {
-                        this.failWithUsage("\"" + strings[i] + "\" is not a valid ZKM Script file name");
+                    } else if (arrayArgument[arrayArgumentElementIndex].startsWith("-")) {
+                        this.failWithUsage("\"" + arrayArgument[arrayArgumentElementIndex] + "\" is not a valid ZKM Script file name");
                     }
 
-                    string9 = strings[i];
-                } else if (strings[i].equalsIgnoreCase("-p")) {
+                    arrayElement = arrayArgument[arrayArgumentElementIndex];
+                } else if (arrayArgument[arrayArgumentElementIndex].equalsIgnoreCase("-p")) {
                     bl = true;
-                } else if (strings[i].equalsIgnoreCase("-v")) {
-                    bl1 = true;
-                } else if (strings[i].equalsIgnoreCase("-?")) {
+                } else if (arrayArgument[arrayArgumentElementIndex].equalsIgnoreCase("-v")) {
+                    verboseValue = true;
+                } else if (arrayArgument[arrayArgumentElementIndex].equalsIgnoreCase("-?")) {
                     this.printUsageAndExit();
-                } else if (strings[i].toLowerCase().startsWith("-l")) {
-                    if (++i < strings.length) {
-                        string1 = strings[i];
-                        if (string1.startsWith("-")) {
-                            this.failWithUsage("\"" + string1 + "\" is not a valid log file name");
+                } else if (arrayArgument[arrayArgumentElementIndex].toLowerCase().startsWith("-l")) {
+                    if (++arrayArgumentElementIndex < arrayArgument.length) {
+                        arrayElementValue = arrayArgument[arrayArgumentElementIndex];
+                        if (arrayElementValue.startsWith("-")) {
+                            this.failWithUsage("\"" + arrayElementValue + "\" is not a valid log file name");
                         }
                     } else {
                         this.failWithUsage("Missing log file name");
                     }
-                } else if (strings[i].toLowerCase().startsWith("-tl")) {
-                    if (++i < strings.length) {
-                        string2 = strings[i];
-                        if (string2.startsWith("-")) {
-                            this.failWithUsage("\"" + string2 + "\" is not a valid trim log file name");
+                } else if (arrayArgument[arrayArgumentElementIndex].toLowerCase().startsWith("-tl")) {
+                    if (++arrayArgumentElementIndex < arrayArgument.length) {
+                        arrayElementValue2 = arrayArgument[arrayArgumentElementIndex];
+                        if (arrayElementValue2.startsWith("-")) {
+                            this.failWithUsage("\"" + arrayElementValue2 + "\" is not a valid trim log file name");
                         }
                     } else {
                         this.failWithUsage("Missing trim log file name");
                     }
-                } else if (strings[i].toLowerCase().startsWith("-de")) {
-                    if (++i < strings.length) {
-                        string3 = strings[i];
-                        if (string3.startsWith("-")) {
-                            this.failWithUsage("\"" + string3 + "\" is not a valid default exclude file name");
+                } else if (arrayArgument[arrayArgumentElementIndex].toLowerCase().startsWith("-de")) {
+                    if (++arrayArgumentElementIndex < arrayArgument.length) {
+                        arrayElementValue3 = arrayArgument[arrayArgumentElementIndex];
+                        if (arrayElementValue3.startsWith("-")) {
+                            this.failWithUsage("\"" + arrayElementValue3 + "\" is not a valid default exclude file name");
                         }
                     } else {
                         this.failWithUsage("Missing default exclude file name");
                     }
-                } else if (strings[i].toLowerCase().startsWith("-dte")) {
-                    if (++i < strings.length) {
-                        string4 = strings[i];
-                        if (string4.startsWith("-")) {
-                            this.failWithUsage("\"" + string4 + "\" is not a valid default trim exclude file name");
+                } else if (arrayArgument[arrayArgumentElementIndex].toLowerCase().startsWith("-dte")) {
+                    if (++arrayArgumentElementIndex < arrayArgument.length) {
+                        arrayElementValue4 = arrayArgument[arrayArgumentElementIndex];
+                        if (arrayElementValue4.startsWith("-")) {
+                            this.failWithUsage("\"" + arrayElementValue4 + "\" is not a valid default trim exclude file name");
                         }
                     } else {
                         this.failWithUsage("Missing default trim exclude file name");
                     }
-                } else if (strings[i].toLowerCase().startsWith("-dpe")) {
-                    if (++i < strings.length) {
-                        string5 = strings[i];
-                        if (string5.startsWith("-")) {
-                            this.failWithUsage("\"" + string5 + "\" is not a valid default method parameter changes exclude file name");
+                } else if (arrayArgument[arrayArgumentElementIndex].toLowerCase().startsWith("-dpe")) {
+                    if (++arrayArgumentElementIndex < arrayArgument.length) {
+                        arrayElementValue5 = arrayArgument[arrayArgumentElementIndex];
+                        if (arrayElementValue5.startsWith("-")) {
+                            this.failWithUsage("\"" + arrayElementValue5 + "\" is not a valid default method parameter changes exclude file name");
                         }
                     } else {
                         this.failWithUsage("Missing default method parameter changes exclude file name");
                     }
-                } else if (strings[i].toLowerCase().startsWith("-dpo")) {
-                    if (++i < strings.length) {
-                        string6 = strings[i];
-                        if (string6.startsWith("-")) {
-                            this.failWithUsage("\"" + string6 + "\" is not a valid default method parameter obfuscation exclude file name");
+                } else if (arrayArgument[arrayArgumentElementIndex].toLowerCase().startsWith("-dpo")) {
+                    if (++arrayArgumentElementIndex < arrayArgument.length) {
+                        arrayElementValue6 = arrayArgument[arrayArgumentElementIndex];
+                        if (arrayElementValue6.startsWith("-")) {
+                            this.failWithUsage("\"" + arrayElementValue6 + "\" is not a valid default method parameter obfuscation exclude file name");
                         }
                     } else {
                         this.failWithUsage("Missing default method parameter changes exclude file name");
                     }
-                } else if (strings[i].toLowerCase().startsWith("-dd")) {
-                    if (++i < strings.length) {
-                        string7 = strings[i];
-                        if (string7.startsWith("-")) {
-                            this.failWithUsage("\"" + string7 + "\" is not a valid 'default directory' name");
+                } else if (arrayArgument[arrayArgumentElementIndex].toLowerCase().startsWith("-dd")) {
+                    if (++arrayArgumentElementIndex < arrayArgument.length) {
+                        arrayElementValue7 = arrayArgument[arrayArgumentElementIndex];
+                        if (arrayElementValue7.startsWith("-")) {
+                            this.failWithUsage("\"" + arrayElementValue7 + "\" is not a valid 'default directory' name");
                         }
                     } else {
                         this.failWithUsage("Missing 'files directory' name");
                     }
-                } else if (strings[i].toLowerCase().startsWith("-ro")) {
-                    if (++i < strings.length) {
-                        string8 = strings[i];
-                        if (string8.startsWith("-")) {
-                            this.failWithUsage("\"" + string8 + "\" is not a valid stdout redirect file name");
+                } else if (arrayArgument[arrayArgumentElementIndex].toLowerCase().startsWith("-ro")) {
+                    if (++arrayArgumentElementIndex < arrayArgument.length) {
+                        arrayElementValue8 = arrayArgument[arrayArgumentElementIndex];
+                        if (arrayElementValue8.startsWith("-")) {
+                            this.failWithUsage("\"" + arrayElementValue8 + "\" is not a valid stdout redirect file name");
                         }
                     } else {
                         this.failWithUsage("Missing stdout redirect file name");
                     }
                 } else {
-                    this.failWithUsage("\"" + strings[i] + "\" is not a valid parameter");
+                    this.failWithUsage("\"" + arrayArgument[arrayArgumentElementIndex] + "\" is not a valid parameter");
                 }
             }
 
-            if (string9 == null) {
+            if (arrayElement == null) {
                 this.failWithUsage("Missing ZKM Script file name");
             }
 
             Integer integer = 3;
-            String string10 = this.getLicenseField(30828586125445L, integer);
-            boolean bl2 = string10.indexOf(evaluationMarker) != -1;
+            String licenseField = this.getLicenseField(30828586125445L, integer);
+            boolean bl2 = licenseField.indexOf(evaluationMarker) != -1;
             ObservableHolder observableHolder2 = new ObservableHolder();
             ObservableHolder observableHolder3 = new ObservableHolder();
 
             try {
-                if (string8 != null) {
-                    redirectStdout(string8);
+                if (arrayElementValue8 != null) {
+                    redirectStdout(arrayElementValue8);
                 }
 
                 Object object = null;
@@ -353,15 +353,15 @@ public class KlassMaster extends LicenseDetails {
                 ObservableHolder observableHolder6 = observableHolder3;
                 ObservableHolder observableHolder5 = observableHolder2;
                 this.executeScript(
-                        string9,
-                        string1,
-                        string2,
-                        string3,
-                        string4,
-                        string5,
-                        string6,
-                        string7,
-                        bl1,
+                        arrayElement,
+                        arrayElementValue,
+                        arrayElementValue2,
+                        arrayElementValue3,
+                        arrayElementValue4,
+                        arrayElementValue5,
+                        arrayElementValue6,
+                        arrayElementValue7,
+                        verboseValue,
                         bl,
                         (Properties) null,
                         observableHolder5,
@@ -418,20 +418,20 @@ public class KlassMaster extends LicenseDetails {
                 System.exit(0);
             }
         } else {
-            String string;
+            String value;
             PrintStream printStream;
             if (observableHolder1.isValueNull()) {
-                string = "System property 'ZKM_PROGUARD_STYLE' is set to 'true'.";
+                value = "System property 'ZKM_PROGUARD_STYLE' is set to 'true'.";
                 printStream = System.out;
             } else {
-                string = (String) observableHolder1.getValue();
+                value = (String) observableHolder1.getValue();
                 printStream = System.out;
             }
 
-            printStream.println(ZkmUtils.getBracketedTimestamp() + " Treating input as " + "ProGuard" + " style input because " + string);
+            printStream.println(ZkmUtils.getBracketedTimestamp() + " Treating input as " + "ProGuard" + " style input because " + value);
             Boolean boolean1 = true;
             ObservableHolder observableHolder4 = observableHolder;
-            this.runProGuardStyle(strings, (Properties) null, observableHolder4, boolean1);
+            this.runProGuardStyle(arrayArgument, (Properties) null, observableHolder4, boolean1);
         }
     }
 
@@ -460,23 +460,23 @@ public class KlassMaster extends LicenseDetails {
         if (this.bannerTitle == null || this.bannerLines == null) {
             String string = "Zelix KlassMaster" + EVALUATION_SUFFIX + " " + "27.0.0";
             Integer integer = 1;
-            String string1 = this.getLicenseField(30828586125445L, integer);
-            this.bannerTitle = ZkmUtils.getBracketedTimestamp() + " " + string + (string1 != null && !string1.equals("none") ? " - License #" + string1 : "");
+            String licenseField = this.getLicenseField(30828586125445L, integer);
+            this.bannerTitle = ZkmUtils.getBracketedTimestamp() + " " + string + (licenseField != null && !licenseField.equals("none") ? " - License #" + licenseField : "");
             Integer integer1 = 3;
-            String string2 = this.getLicenseField(30828586125445L, integer1);
-            String string3 = checkEvaluationExpiry(this.getEncodedExpiryTime(), this.getEncodedEvaluationPeriod(), this.getEncodedGracePeriod(), this);
-            string2 = string2 + " " + string3;
+            String bannerLine = this.getLicenseField(30828586125445L, integer1);
+            String bannerLineValue = checkEvaluationExpiry(this.getEncodedExpiryTime(), this.getEncodedEvaluationPeriod(), this.getEncodedGracePeriod(), this);
+            bannerLine = bannerLine + " " + bannerLineValue;
             Integer integer2 = 5;
-            string3 = this.getLicenseField(30828586125445L, integer2);
+            bannerLineValue = this.getLicenseField(30828586125445L, integer2);
             Integer integer3 = 7;
-            String string4 = this.getLicenseField(30828586125445L, integer3);
-            if (string2 != null) {
-                int ba = string2.indexOf("(");
+            String bannerLineValue2 = this.getLicenseField(30828586125445L, integer3);
+            if (bannerLine != null) {
+                int ba = bannerLine.indexOf("(");
                 if (ba == -1) {
                     this.bannerLines = new String[8];
-                    this.bannerLines[0] = string2;
-                    this.bannerLines[1] = string3;
-                    this.bannerLines[2] = string4;
+                    this.bannerLines[0] = bannerLine;
+                    this.bannerLines[1] = bannerLineValue;
+                    this.bannerLines[2] = bannerLineValue2;
                     this.bannerLines[3] = "Copyright 1997-2026 Zelix Pty Ltd (47 078 740 093)";
                     this.bannerLines[4] = "All rights reserved";
                     this.bannerLines[5] = "OpenSource by NoHackClient (https://github.com/NoHackClient)";
@@ -484,10 +484,10 @@ public class KlassMaster extends LicenseDetails {
                     this.bannerLines[7] = "if u cant open this github repo, that means getting DMCA";
                 } else {
                     this.bannerLines = new String[9];
-                    this.bannerLines[0] = string2.substring(0, ba);
-                    this.bannerLines[1] = string2.substring(ba);
-                    this.bannerLines[2] = string3;
-                    this.bannerLines[3] = string4;
+                    this.bannerLines[0] = bannerLine.substring(0, ba);
+                    this.bannerLines[1] = bannerLine.substring(ba);
+                    this.bannerLines[2] = bannerLineValue;
+                    this.bannerLines[3] = bannerLineValue2;
                     this.bannerLines[4] = "Copyright 1997-2026 Zelix Pty Ltd (47 078 740 093)";
                     this.bannerLines[5] = "All rights reserved";
                     this.bannerLines[6] = "OpenSource by NoHackClient (https://github.com/NoHackClient)";
@@ -527,7 +527,7 @@ public class KlassMaster extends LicenseDetails {
                     if (openReader != null) {
                         try {
                             openReader.close();
-                        } catch (final IOException ex) {
+                        } catch (final IOException ioException) {
                         }
                     }
                 }
@@ -548,7 +548,7 @@ public class KlassMaster extends LicenseDetails {
 
     public void runProGuardStyle(final String[] array, final Properties properties, final ObservableHolder observableHolder, final boolean b) throws ZkmException, IOException {
         acquireInstanceLock();
-        final boolean b2 = this.getLicenseField(30828586125445L, 3).indexOf(KlassMaster.evaluationMarker) != -1;
+        final boolean editionFlag = this.getLicenseField(30828586125445L, 3).indexOf(KlassMaster.evaluationMarker) != -1;
         final ObservableHolder observableHolder2 = new ObservableHolder();
         final ObservableHolder observableHolder3 = new ObservableHolder();
         final ObservableHolder observableHolder4 = new ObservableHolder();
@@ -568,9 +568,9 @@ public class KlassMaster extends LicenseDetails {
             writeEnvironmentInfo(printWriter, null);
             this.initBannerText();
             this.writeBanner(printWriter);
-            final ClassRepository executeScript = this.executeScript(ProGuardInputTranslator.translateCommandLine(array, properties, observableHolder6, observableHolder7, observableHolder8, booleanFlag, file.getAbsolutePath(), printWriter, b), observableHolder6.isValueNull() ? "ZKM_log.txt" : ((String) observableHolder6.getValue()), observableHolder7.isValueNull() ? "ZKM_TrimLog.txt" : ((String) observableHolder7.getValue()), null, null, null, null, (String) observableHolder8.getValue(), booleanFlag.getValue(), false, null, observableHolder2, observableHolder3, !b, b2, false, observableHolder, true, printWriter);
+            final ClassRepository executeScript = this.executeScript(ProGuardInputTranslator.translateCommandLine(array, properties, observableHolder6, observableHolder7, observableHolder8, booleanFlag, file.getAbsolutePath(), printWriter, b), observableHolder6.isValueNull() ? "ZKM_log.txt" : ((String) observableHolder6.getValue()), observableHolder7.isValueNull() ? "ZKM_TrimLog.txt" : ((String) observableHolder7.getValue()), null, null, null, null, (String) observableHolder8.getValue(), booleanFlag.getValue(), false, null, observableHolder2, observableHolder3, !b, editionFlag, false, observableHolder, true, printWriter);
             try (final BufferedReader bufferedReader = (BufferedReader) observableHolder3.getValue()) {
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
             if (executeScript != null) {
                 executeScript.releaseResources();
@@ -581,17 +581,17 @@ public class KlassMaster extends LicenseDetails {
             }
             printWriter.close();
             releaseInstanceLock();
-        } catch (final IOException ex2) {
+        } catch (final IOException ioExceptionValue) {
             final ScriptEnvironment scriptEnvironment2 = (ScriptEnvironment) observableHolder2.getValue();
             if (scriptEnvironment2 != null) {
-                scriptEnvironment2.getLogWriter().println(ex2.getMessage());
+                scriptEnvironment2.getLogWriter().println(ioExceptionValue.getMessage());
             }
             if (b) {
-                System.err.println(ex2.toString());
+                System.err.println(ioExceptionValue.toString());
                 System.exit(1);
                 return;
             }
-            throw new ZkmRuntimeException(ex2.toString());
+            throw new ZkmRuntimeException(ioExceptionValue.toString());
         } catch (final ZkmScriptTokenMgrError zkmScriptTokenMgrError) {
             final ScriptEnvironment scriptEnvironment3 = (ScriptEnvironment) observableHolder2.getValue();
             if (scriptEnvironment3 != null) {
@@ -603,31 +603,31 @@ public class KlassMaster extends LicenseDetails {
                 return;
             }
             throw new ZkmRuntimeException(zkmScriptTokenMgrError.toString());
-        } catch (final ZkmScriptParseException ex3) {
+        } catch (final ZkmScriptParseException zkmScriptParseExceptionValue) {
             final ScriptEnvironment scriptEnvironment4 = (ScriptEnvironment) observableHolder2.getValue();
             if (scriptEnvironment4 != null) {
-                scriptEnvironment4.getLogWriter().println(ex3.getMessage());
+                scriptEnvironment4.getLogWriter().println(zkmScriptParseExceptionValue.getMessage());
             }
             if (b) {
-                System.err.println(ex3.toString());
+                System.err.println(zkmScriptParseExceptionValue.toString());
                 System.exit(1);
                 return;
             }
-            throw new ZkmRuntimeException(ex3.toString());
-        } catch (final ZkmProcessingException ex4) {
+            throw new ZkmRuntimeException(zkmScriptParseExceptionValue.toString());
+        } catch (final ZkmProcessingException zkmProcessingExceptionValue) {
             final ScriptEnvironment scriptEnvironment5 = (ScriptEnvironment) observableHolder2.getValue();
             if (scriptEnvironment5 != null) {
-                scriptEnvironment5.getLogWriter().println(ex4.getMessage());
+                scriptEnvironment5.getLogWriter().println(zkmProcessingExceptionValue.getMessage());
             }
             if (b) {
-                System.err.println(ex4.toString());
+                System.err.println(zkmProcessingExceptionValue.toString());
                 System.exit(1);
                 return;
             }
-            throw new ZkmRuntimeException(ex4.toString());
+            throw new ZkmRuntimeException(zkmProcessingExceptionValue.toString());
         } finally {
             try (final BufferedReader bufferedReader2 = (BufferedReader) observableHolder3.getValue()) {
-            } catch (final IOException ex5) {
+            } catch (final IOException ioExceptionValue2) {
             }
             final ScriptEnvironment scriptEnvironment6 = (ScriptEnvironment) observableHolder2.getValue();
             if (scriptEnvironment6 != null) {
@@ -646,12 +646,12 @@ public class KlassMaster extends LicenseDetails {
     public void writeBanner(PrintWriter printWriter) {
         printWriter.println(this.bannerTitle);
         if (this.bannerLines != null) {
-            int ba = 0;
+            int bannerLineIndex = 0;
             int bb = 0;
 
-            for (String[] strings = this.bannerLines; bb < strings.length; strings = this.bannerLines) {
-                printWriter.println(ZkmStringUtils.pad(this.bannerLines[ba], 82, this.bannerLines[ba].length() + ZkmUtils.getBracketedTimestamp().length() + 1, 32));
-                bb = ++ba;
+            for (String[] bannerLinesValue = this.bannerLines; bb < bannerLinesValue.length; bannerLinesValue = this.bannerLines) {
+                printWriter.println(ZkmStringUtils.pad(this.bannerLines[bannerLineIndex], 82, this.bannerLines[bannerLineIndex].length() + ZkmUtils.getBracketedTimestamp().length() + 1, 32));
+                bb = ++bannerLineIndex;
             }
         }
     }
@@ -672,20 +672,20 @@ public class KlassMaster extends LicenseDetails {
     }
 
     public KlassMaster(String string, Properties properties1, ObservableHolder observableHolder) throws ZkmException, IOException {
-        String[] strings = new String[]{"-include", string};
-        this.runProGuardStyle(strings, properties1, observableHolder, true);
+        String[] arrayValue = new String[]{"-include", string};
+        this.runProGuardStyle(arrayValue, properties1, observableHolder, true);
     }
 
-    public KlassMaster(File file1, String string, File file2, String string1, String string2, boolean bl, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public KlassMaster(File file1, String str2Argument, File file2, String strArgument, String parentArgument, boolean verboseArgument, ObservableHolder observableHolder) throws ZkmException, IOException {
         acquireInstanceLock();
         Integer integer = 3;
-        boolean bl1 = this.getLicenseField(30828586125445L, integer).indexOf(evaluationMarker) != -1;
+        boolean editionFlag = this.getLicenseField(30828586125445L, integer).indexOf(evaluationMarker) != -1;
         ObservableHolder observableHolder1 = new ObservableHolder();
         ObservableHolder observableHolder2 = new ObservableHolder();
         ClassRepository classRepository1 = null;
 
         try {
-            String string3 = this.writeGeneratedScript(string2, string1, file1, string);
+            String string3 = this.writeGeneratedScript(parentArgument, strArgument, file1, str2Argument);
             classRepository1 = this.executeScript(
                     string3,
                     "ZKM_log.txt",
@@ -694,14 +694,14 @@ public class KlassMaster extends LicenseDetails {
                     (String) null,
                     (String) null,
                     (String) null,
-                    string2,
-                    bl,
+                    parentArgument,
+                    verboseArgument,
                     false,
                     (Properties) null,
                     observableHolder1,
                     observableHolder2,
                     true,
-                    bl1,
+                    editionFlag,
                     true,
                     observableHolder,
                     false,
@@ -709,11 +709,11 @@ public class KlassMaster extends LicenseDetails {
             );
             ScriptEnvironment scriptEnvironment6 = (ScriptEnvironment) observableHolder1.getValue();
             PrintWriter printWriter = scriptEnvironment6.getLogWriter();
-            String string4 = ZkmUtils.getBracketedTimestamp();
-            ConsoleLogReporter consoleLogReporter = new ConsoleLogReporter(printWriter, string4.length(), scriptEnvironment6);
+            String bracketedTimestamp = ZkmUtils.getBracketedTimestamp();
+            ConsoleLogReporter consoleLogReporter = new ConsoleLogReporter(printWriter, bracketedTimestamp.length(), scriptEnvironment6);
             NoOpCallback noOpCallback = NoOpCallback.getInstance();
-            printWriter.println(string4 + " Saving all classes into \"" + file2 + "\"");
-            System.out.println(string4 + " Saving " + classRepository1.getTotalClassCount() + " classes...");
+            printWriter.println(bracketedTimestamp + " Saving all classes into \"" + file2 + "\"");
+            System.out.println(bracketedTimestamp + " Saving " + classRepository1.getTotalClassCount() + " classes...");
             classRepository1.saveAll(3, false, false, (String) null, file2.getParentFile(), consoleLogReporter, scriptEnvironment6, noOpCallback);
         } catch (IOException iOException1) {
             ScriptEnvironment scriptEnvironment5 = (ScriptEnvironment) observableHolder1.getValue();
@@ -806,17 +806,17 @@ public class KlassMaster extends LicenseDetails {
 
     
     
-    public static String checkEvaluationExpiry(String string, String string1, String string2, Object object) throws ZkmException, IOException {
+    public static String checkEvaluationExpiry(String validatedExpiryCodeArgument, String string1, String string2, Object object) throws ZkmException, IOException {
         if (isPermanentLicense()) {
-            validatedExpiryCode = string;
+            validatedExpiryCode = validatedExpiryCodeArgument;
             return "unlimited";
         }
         try {
-            String string3 = object.getClass().getName();
+            String nameValue = object.getClass().getName();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM yyyy");
             TimeZone timeZone = TimeZone.getDefault();
             simpleDateFormat.setTimeZone(timeZone);
-            long ba = ObfuscatedLongDecoder.decodeLong(string);
+            long ba = ObfuscatedLongDecoder.decodeLong(validatedExpiryCodeArgument);
             long bb = ObfuscatedLongDecoder.decodeLong(string1);
             long bc = ObfuscatedLongDecoder.decodeLong(string2);
             Date date = new Date(ba);
@@ -837,20 +837,20 @@ public class KlassMaster extends LicenseDetails {
                 throw new LicenseExpiredException(string7);
             }
 
-            validatedExpiryCode = string;
+            validatedExpiryCode = validatedExpiryCodeArgument;
             long be = bd + bc;
             ClassPathResolver classPathResolver1 = new ClassPathResolver(System.getProperty("java.class.path"));
-            Object[] objects = classPathResolver1.getEntries();
+            Object[] entries = classPathResolver1.getEntries();
 
-            for (int i = 0; i < objects.length; i++) {
-                if (objects[i] instanceof File) {
-                    long bh = ((File) objects[i]).lastModified();
+            for (int entryIndex = 0; entryIndex < entries.length; entryIndex++) {
+                if (entries[entryIndex] instanceof File) {
+                    long bh = ((File) entries[entryIndex]).lastModified();
                     if (bh > be) {
                         String string8 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (04)" : "");
                         throw new LicenseExpiredException(string8);
                     }
                 } else {
-                    File file1 = new File(((ZipFile) objects[i]).getName());
+                    File file1 = new File(((ZipFile) entries[entryIndex]).getName());
                     if (file1.exists()) {
                         if (file1.lastModified() > be) {
                             String string9 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (05)" : "");
@@ -859,69 +859,37 @@ public class KlassMaster extends LicenseDetails {
 
                         if (file1.getName().endsWith("ZKM.jar")) {
                             ArchiveZipFile archiveZipFile = null;
-                            boolean bl = false ;
-
-                            label204:
-                            {
-                                try {
-                                    bl = true;
-                                    archiveZipFile = new ArchiveZipFile(file1);
-                                    ZipEntry zipEntry1 = archiveZipFile.getEntry(string3.replace('.', '/') + ".class");
-                                    if (zipEntry1 != null) {
-                                        long time = zipEntry1.getTime();
-                                        if (time > be) {
-                                            String string10 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (06)" : "");
-                                            throw new LicenseExpiredException(string10);
-                                        }
-
-                                        if (time != -1L) {
-                                            if (bd > time + bb) {
-                                                String string11 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (07)" : "");
-                                                throw new LicenseExpiredException(string11);
-                                            }
-
-                                            archiveZipFile.close();
-                                            bl = false;
-                                        } else {
-                                            archiveZipFile.close();
-                                            bl = false;
-                                        }
-                                    } else {
-                                        bl = false;
-                                    }
-                                    break label204;
-                                } catch (IOException iOException3) {
-                                    bl = false;
-                                } finally {
-                                    if (bl) {
-                                        if (archiveZipFile != null) {
-                                            try {
-                                                com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                                archiveZipFile.close();
-                                            } catch (IOException iOException) {
-                                            }
-                                        }
-                                    }
-                                }
-
-                                try {
-                                    if (archiveZipFile != null) {
-                                        try {
-                                            com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                            archiveZipFile.close();
-                                        } catch (IOException iOException1) {
-                                        }
-                                    }
-                                    continue;
-                                } catch (NumberFormatException numberFormatException) {
-                                    throw numberFormatException;
-                                }
-                            }
-
                             try {
-                                com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                archiveZipFile.close();
-                            } catch (IOException iOException2) {
+                                archiveZipFile = new ArchiveZipFile(file1);
+                                ZipEntry zipEntry1 = archiveZipFile.getEntry(nameValue.replace('.', '/') + ".class");
+                                if (zipEntry1 != null) {
+                                    long time = zipEntry1.getTime();
+                                    if (time > be) {
+                                        String string10 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (06)" : "");
+                                        throw new LicenseExpiredException(string10);
+                                    }
+
+                                    if (time != -1L) {
+                                        if (bd > time + bb) {
+                                            String string11 = string4 + (HiddenOptionFlags.SHOW_EXPIRY_ERROR_CODES ? " (07)" : "");
+                                            throw new LicenseExpiredException(string11);
+                                        }
+
+                                        archiveZipFile.close();
+                                    } else {
+                                        archiveZipFile.close();
+                                    }
+                                } else {
+                                }
+                            } catch (IOException exception) {
+                            } finally {
+                                if (archiveZipFile != null) {
+                                    try {
+                                        com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
+                                        archiveZipFile.close();
+                                    } catch (IOException exception) {
+                                    }
+                                }
                             }
                         }
                     }
@@ -994,7 +962,7 @@ public class KlassMaster extends LicenseDetails {
 
     public void startGui(ObservableHolder observableHolder) throws ZkmException, IOException {
         Integer integer = 3;
-        boolean bl = this.getLicenseField(30828586125445L, integer).indexOf(evaluationMarker) != -1;
+        boolean editionFlag = this.getLicenseField(30828586125445L, integer).indexOf(evaluationMarker) != -1;
         boolean bl1 = false;
         if (HiddenOptionFlags.LAF_NAME != null) {
             try {
@@ -1021,20 +989,20 @@ public class KlassMaster extends LicenseDetails {
         }
 
         ObservableHolder observableHolder1 = new ObservableHolder();
-        String string1 = getSavedClasspath();
-        ZkmClasspath zkmClasspath = new ZkmClasspath(string1);
-        ClassRepository classRepository1 = new ClassRepository(observableHolder1, zkmClasspath, false, bl, ZkmFileUtils.caseSensitiveFileSystem, false, this);
+        String savedClasspath = getSavedClasspath();
+        ZkmClasspath zkmClasspath = new ZkmClasspath(savedClasspath);
+        ClassRepository classRepository1 = new ClassRepository(observableHolder1, zkmClasspath, false, editionFlag, ZkmFileUtils.caseSensitiveFileSystem, false, this);
         BooleanFlag booleanFlag = new BooleanFlag(false);
         ObservableHolder observableHolder2 = new ObservableHolder();
         ObservableHolder observableHolder3 = new ObservableHolder();
-        boolean bl2 = zkmClasspath.locateRuntimeClasses(observableHolder3, observableHolder2);
-        if (bl2) {
+        boolean value = zkmClasspath.locateRuntimeClasses(observableHolder3, observableHolder2);
+        if (value) {
             HiddenOptionFlags.USER_PREFERENCES.setClasspath(zkmClasspath.getClasspath());
             HiddenOptionFlags.USER_PREFERENCES.savePreferences();
             classRepository1.loadObjectMethods();
         }
 
-        booleanFlag.setValue(bl2);
+        booleanFlag.setValue(value);
         ConsoleMessageReporter consoleMessageReporter = new ConsoleMessageReporter();
         NoOpCallback noOpCallback = NoOpCallback.getInstance();
         ObservableHolder observableHolder4 = new ObservableHolder();
@@ -1084,7 +1052,7 @@ public class KlassMaster extends LicenseDetails {
         this.initBannerText();
         this.printBanner(System.out);
         this.writeBanner(printWriter1);
-        if (bl2) {
+        if (value) {
             if (!observableHolder3.isValueNull()) {
                 printWriter1.println(ZkmUtils.getBracketedTimestamp() + " Using \"" + (String) observableHolder3.getValue() + "\" as path to java.lang.Object (A)");
             } else if (!observableHolder2.isValueNull()) {
@@ -1161,19 +1129,19 @@ public class KlassMaster extends LicenseDetails {
         this.printUsageAndFail();
     }
 
-    public KlassMaster(final String s, final String s2, final String s3, final String s4, final String s5, final String s6, final String s7, final String s8, final boolean b, final boolean b2, final Properties properties, final ObservableHolder observableHolder) throws ZkmException, IOException {
+    public KlassMaster(final String s, final String s2, final String s3, final String s4, final String s5, final String s6, final String s7, final String s8, final boolean verboseArgument, final boolean b2, final Properties properties, final ObservableHolder observableHolder) throws ZkmException, IOException {
         acquireInstanceLock();
-        final boolean b3 = this.getLicenseField(30828586125445L, 3).indexOf(KlassMaster.evaluationMarker) != -1;
+        final boolean editionFlag = this.getLicenseField(30828586125445L, 3).indexOf(KlassMaster.evaluationMarker) != -1;
         final ObservableHolder observableHolder2 = new ObservableHolder();
         final ObservableHolder observableHolder3 = new ObservableHolder();
         try {
-            final ClassRepository executeScript = this.executeScript(s, s2, s3, s4, s5, s6, s7, s8, b, b2, properties, observableHolder2, observableHolder3, true, b3, false, observableHolder, false, null);
+            final ClassRepository executeScript = this.executeScript(s, s2, s3, s4, s5, s6, s7, s8, verboseArgument, b2, properties, observableHolder2, observableHolder3, true, editionFlag, false, observableHolder, false, null);
             try {
                 final BufferedReader bufferedReader = (BufferedReader) observableHolder3.getValue();
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
             if (executeScript != null) {
                 executeScript.releaseResources();
@@ -1185,25 +1153,25 @@ public class KlassMaster extends LicenseDetails {
                 scriptEnvironment.getLogWriter().println(zkmScriptTokenMgrError.getMessage());
             }
             throw new ZkmRuntimeException(zkmScriptTokenMgrError.getMessage());
-        } catch (final ZkmScriptParseException ex2) {
+        } catch (final ZkmScriptParseException zkmScriptParseExceptionValue) {
             final ScriptEnvironment scriptEnvironment2 = (ScriptEnvironment) observableHolder2.getValue();
             if (scriptEnvironment2 != null) {
-                scriptEnvironment2.getLogWriter().println(ex2.getMessage());
+                scriptEnvironment2.getLogWriter().println(zkmScriptParseExceptionValue.getMessage());
             }
-            throw new ZkmRuntimeException(ex2.getMessage());
-        } catch (final ZkmProcessingException ex3) {
+            throw new ZkmRuntimeException(zkmScriptParseExceptionValue.getMessage());
+        } catch (final ZkmProcessingException zkmProcessingExceptionValue) {
             final ScriptEnvironment scriptEnvironment3 = (ScriptEnvironment) observableHolder2.getValue();
             if (scriptEnvironment3 != null) {
-                scriptEnvironment3.getLogWriter().println(ex3.getMessage());
+                scriptEnvironment3.getLogWriter().println(zkmProcessingExceptionValue.getMessage());
             }
-            throw new ZkmRuntimeException(ex3.getMessage());
+            throw new ZkmRuntimeException(zkmProcessingExceptionValue.getMessage());
         } finally {
             try {
                 final BufferedReader bufferedReader2 = (BufferedReader) observableHolder3.getValue();
                 if (bufferedReader2 != null) {
                     bufferedReader2.close();
                 }
-            } catch (final IOException ex4) {
+            } catch (final IOException ioExceptionValue) {
             }
             releaseInstanceLock();
         }
@@ -1222,26 +1190,26 @@ public class KlassMaster extends LicenseDetails {
             String string5,
             String string6,
             String string7,
-            boolean bl,
+            boolean verboseArgument,
             boolean bl1,
             Properties properties1,
             ObservableHolder observableHolder,
             ObservableHolder observableHolder1,
-            boolean bl2,
-            boolean bl3,
-            boolean bl4,
+            boolean throwOnFatalError,
+            boolean editionFlag,
+            boolean skipMidpPreverification,
             ObservableHolder observableHolder2,
             boolean bl5,
             PrintWriter printWriter
     ) throws ZkmException, ZkmScriptParseException, IOException {
         ObservableHolder observableHolder3 = new ObservableHolder();
         ZkmClasspath zkmClasspath = new ZkmClasspath(System.getProperty("java.class.path"));
-        ClassRepository classRepository1 = new ClassRepository(observableHolder3, zkmClasspath, bl, bl3, ZkmFileUtils.caseSensitiveFileSystem, bl5, this);
+        ClassRepository classRepository1 = new ClassRepository(observableHolder3, zkmClasspath, verboseArgument, editionFlag, ZkmFileUtils.caseSensitiveFileSystem, bl5, this);
         ScriptEnvironment scriptEnvironment1 = new ScriptEnvironment(
-                classRepository1, zkmClasspath, bl, string1, string2, string3, string4, string5, string6, string7, bl2, bl4, bl5
+                classRepository1, zkmClasspath, verboseArgument, string1, string2, string3, string4, string5, string6, string7, throwOnFatalError, skipMidpPreverification, bl5
         );
         observableHolder.setValue(scriptEnvironment1);
-        String string8 = scriptEnvironment1.getLogFileName();
+        String logFileNameValue = scriptEnvironment1.getLogFileName();
         File file1 = scriptEnvironment1.getDefaultDirectory();
         String string9 = ZkmFileUtils.resolveDotRelativePath(ZkmFileUtils.normalizeSeparators(string), file1);
         File file2;
@@ -1265,10 +1233,10 @@ public class KlassMaster extends LicenseDetails {
             printWriter.println(
                     ZkmUtils.getBracketedTimestamp() + " Default directory set to '" + scriptEnvironment1.getDefaultDirectory().getAbsolutePath() + "'"
             );
-            printWriter.println(ZkmUtils.getBracketedTimestamp() + ' ' + "Zelix KlassMaster" + " log file is '" + string8 + "'");
+            printWriter.println(ZkmUtils.getBracketedTimestamp() + ' ' + "Zelix KlassMaster" + " log file is '" + logFileNameValue + "'");
         }
 
-        if (bl) {
+        if (verboseArgument) {
             writeEnvironmentInfo(printWriter1, properties1);
         }
 
@@ -1291,7 +1259,7 @@ public class KlassMaster extends LicenseDetails {
         BufferedReader bufferedReader = scriptPreprocessor.createReader();
         observableHolder1.setValue(bufferedReader);
         PrintStream printStream;
-        if (bl) {
+        if (verboseArgument) {
             printWriter1.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
             printWriter1.println(scriptPreprocessor.getProcessedText());
             printWriter1.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
@@ -1305,30 +1273,30 @@ public class KlassMaster extends LicenseDetails {
         printWriter1.println(ZkmUtils.getBracketedTimestamp() + " Parsing ZKM Script file \"" + file2.getAbsolutePath() + "\"");
 
         try {
-            ZkmFileUtils.copyStreamToTempFile(new BufferedInputStream(new FileInputStream(new File(string8))), string8);
+            ZkmFileUtils.copyStreamToTempFile(new BufferedInputStream(new FileInputStream(new File(logFileNameValue))), logFileNameValue);
         } catch (IOException iOException) {
         }
 
         ZkmScriptASTInput zkmScriptASTInput = (ZkmScriptASTInput) new ZkmScriptParser(bufferedReader).Input();
-        if (bl4) {
+        if (skipMidpPreverification) {
             File file3 = new File(string7, "script.txt");
             if (zkmScriptASTInput.countSaveStatements() > 0) {
                 printStream = System.out;
                 StringBuilder stringBuilder1 = new StringBuilder();
-                int bb = ZkmUtils.getBracketedTimestamp().length();
+                int bracketedTimestampLength = ZkmUtils.getBracketedTimestamp().length();
                 Integer integer = 32;
                 printStream.println(
-                        stringBuilder1.append(ZkmStringUtils.repeatChar(bb, integer))
+                        stringBuilder1.append(ZkmStringUtils.repeatChar(bracketedTimestampLength, integer))
                                 .append("WARNING: Detected a save statement in '")
                                 .append(file3)
                                 .append("'. It is unnecessary when using the plugin.")
                                 .toString()
                 );
                 stringBuilder1 = new StringBuilder();
-                bb = ZkmUtils.getBracketedTimestamp().length();
+                bracketedTimestampLength = ZkmUtils.getBracketedTimestamp().length();
                 Integer integer1 = 32;
                 printWriter1.println(
-                        stringBuilder1.append(ZkmStringUtils.repeatChar(bb, integer1))
+                        stringBuilder1.append(ZkmStringUtils.repeatChar(bracketedTimestampLength, integer1))
                                 .append("WARNING: Detected a save statement in '")
                                 .append(file3)
                                 .append("'. It is unnecessary when using the plugin.")
@@ -1339,20 +1307,20 @@ public class KlassMaster extends LicenseDetails {
             if (zkmScriptASTInput.countLoadStatements() > 1) {
                 printStream = System.err;
                 StringBuilder stringBuilder = new StringBuilder();
-                int ba = ZkmUtils.getBracketedTimestamp().length();
+                int bracketedTimestampLengthValue = ZkmUtils.getBracketedTimestamp().length();
                 Integer integer2 = 32;
                 printStream.println(
-                        stringBuilder.append(ZkmStringUtils.repeatChar(ba, integer2))
+                        stringBuilder.append(ZkmStringUtils.repeatChar(bracketedTimestampLengthValue, integer2))
                                 .append("ERROR: Detected an 'open' statement in '")
                                 .append(file3)
                                 .append("'. The plugin MUST specify the JAR to be opened.")
                                 .toString()
                 );
                 stringBuilder = new StringBuilder();
-                ba = ZkmUtils.getBracketedTimestamp().length();
+                bracketedTimestampLengthValue = ZkmUtils.getBracketedTimestamp().length();
                 Integer integer3 = 32;
                 printWriter1.println(
-                        stringBuilder.append(ZkmStringUtils.repeatChar(ba, integer3))
+                        stringBuilder.append(ZkmStringUtils.repeatChar(bracketedTimestampLengthValue, integer3))
                                 .append("ERROR: Detected an 'open' statement in '")
                                 .append(file3)
                                 .append("'. The plugin MUST specify the JAR to be opened.")
@@ -1372,7 +1340,7 @@ public class KlassMaster extends LicenseDetails {
 
         String string10 = ZkmUtils.getBracketedTimestamp() + " Terminating normally.";
         string10 = string10 + scriptEnvironment1.takeMessageSuffix();
-        System.out.println(string10 + " See \"" + string8 + "\" for more detail.");
+        System.out.println(string10 + " See \"" + logFileNameValue + "\" for more detail.");
         printWriter1.println(string10);
         return classRepository1;
     }

@@ -62,22 +62,22 @@ public abstract class StackTraceLine {
     }
 
     public String translateTypeName(String string, LoadedChangeLog loadedChangeLog) {
-        String string1 = string;
-        int ba = string1.indexOf("[");
+        String newClassNameValue = string;
+        int ba = newClassNameValue.indexOf("[");
         String string2;
         if (ba != -1) {
-            string2 = string1.substring(ba);
-            string1 = string1.substring(0, ba);
+            string2 = newClassNameValue.substring(ba);
+            newClassNameValue = newClassNameValue.substring(0, ba);
         } else {
             string2 = "";
         }
 
-        String string3 = loadedChangeLog.getNewClassName(string1);
-        if (string3 == null) {
-            string3 = string1;
+        String newClassName = loadedChangeLog.getNewClassName(newClassNameValue);
+        if (newClassName == null) {
+            newClassName = newClassNameValue;
         }
 
-        return string3 + string2;
+        return newClassName + string2;
     }
 
     public boolean isValidFrame() {
@@ -85,14 +85,14 @@ public abstract class StackTraceLine {
     }
 
     public String[] translateArgumentTypes(List list1, StringBuilder stringBuilder, LoadedChangeLog loadedChangeLog) {
-        int ba = list1.size();
-        String[] strings = new String[ba];
+        int list1Size = list1.size();
+        String[] strings = new String[list1Size];
 
-        for (int i = 0; i < ba; i++) {
-            String string = (String) list1.get(i);
-            strings[i] = this.translateTypeName(string, loadedChangeLog);
-            stringBuilder.append(strings[i]);
-            if (i < ba - 1) {
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            String string = (String) list1.get(elementIndex);
+            strings[elementIndex] = this.translateTypeName(string, loadedChangeLog);
+            stringBuilder.append(strings[elementIndex]);
+            if (elementIndex < list1Size - 1) {
                 stringBuilder.append(", ");
             }
         }
@@ -109,9 +109,9 @@ public abstract class StackTraceLine {
             arrayList.add(string1);
         }
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            String string2 = (String) arrayList.get(i);
-            switch (string2) {
+        for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+            String keyValue2 = (String) arrayList.get(elementIndex);
+            switch (keyValue2) {
                 case "@":
                 case ":":
                 case " ":
@@ -119,122 +119,122 @@ public abstract class StackTraceLine {
                 case ",":
                 case "\"":
                 case "(":
-                    stringBuffer.append(string2);
+                    stringBuffer.append(keyValue2);
                     break;
                 default:
-                    boolean bl = string2.indexOf("/") > -1;
-                    int ba = 0;
-                    String string3;
+                    boolean bl = keyValue2.indexOf("/") > -1;
+                    int characterIndex = 0;
+                    String key;
                     if (bl) {
-                        string3 = string2.replace('/', '.');
+                        key = keyValue2.replace('/', '.');
                     } else {
-                        string3 = string2;
+                        key = keyValue2;
                     }
 
-                    if (string3.startsWith("[") && string3.endsWith(";")) {
-                        while (string3.charAt(ba) == '[') {
-                            ba++;
+                    if (key.startsWith("[") && key.endsWith(";")) {
+                        while (key.charAt(characterIndex) == '[') {
+                            characterIndex++;
                         }
 
-                        if (string3.charAt(ba) == 'L') {
-                            string3 = string3.substring(ba + 1, string3.length() - 1);
+                        if (key.charAt(characterIndex) == 'L') {
+                            key = key.substring(characterIndex + 1, key.length() - 1);
                         }
                     }
 
-                    if (string3.indexOf(46) > 0 && string3.indexOf(46) < string3.length() - 1) {
+                    if (key.indexOf(46) > 0 && key.indexOf(46) < key.length() - 1) {
                         boolean bl1 = false;
-                        int bb = string3.lastIndexOf(".");
-                        if (arrayList.size() > i + 1
-                                && ((String) arrayList.get(i + 1)).equals("(")
-                                && arrayList.indexOf(")") > i + 1
-                                && ZkmStringUtils.countChar(string3, '.') > 1
-                                && bb < string3.length() - 1) {
-                            String string4 = string3.substring(0, bb);
-                            String string5 = loadedChangeLog.getNewClassName(string4);
-                            if (string5 != null) {
-                                String string6 = string3.substring(bb + 1);
+                        int bb = key.lastIndexOf(".");
+                        if (arrayList.size() > elementIndex + 1
+                                && ((String) arrayList.get(elementIndex + 1)).equals("(")
+                                && arrayList.indexOf(")") > elementIndex + 1
+                                && ZkmStringUtils.countChar(key, '.') > 1
+                                && bb < key.length() - 1) {
+                            String keyValue = key.substring(0, bb);
+                            String newClassName = loadedChangeLog.getNewClassName(keyValue);
+                            if (newClassName != null) {
+                                String keyValue3 = key.substring(bb + 1);
                                 StringBuilder stringBuilder = new StringBuilder();
-                                int bc = i + 2;
-                                int bf = bc;
+                                int elementIndexValue = elementIndex + 2;
+                                int elementIndexValue2 = elementIndexValue;
 
-                                for (int j = arrayList.indexOf(")"); bf < j; j = arrayList.indexOf(")")) {
-                                    String string7 = (String) arrayList.get(bc);
-                                    String string8 = loadedChangeLog.toNewTypeName(string7);
+                                for (int j = arrayList.indexOf(")"); elementIndexValue2 < j; j = arrayList.indexOf(")")) {
+                                    String keyValue5 = (String) arrayList.get(elementIndexValue);
+                                    String string8 = loadedChangeLog.toNewTypeName(keyValue5);
                                     stringBuilder.append(string8);
-                                    bf = ++bc;
+                                    elementIndexValue2 = ++elementIndexValue;
                                 }
 
-                                String string9 = stringBuilder.toString();
-                                String[] strings = loadedChangeLog.findOriginalMethodNames(string5, string6, (String) null, string9);
+                                String keyValue4 = stringBuilder.toString();
+                                String[] strings = loadedChangeLog.findOriginalMethodNames(newClassName, keyValue3, (String) null, keyValue4);
                                 String string11;
                                 if (strings != null && strings.length > 0) {
                                     string11 = "." + strings[0];
                                 } else {
-                                    string11 = string3.substring(bb);
+                                    string11 = key.substring(bb);
                                 }
 
                                 if (bl) {
-                                    string5 = string5.replace('.', '/');
+                                    newClassName = newClassName.replace('.', '/');
                                 }
 
-                                stringBuffer.append(string5);
+                                stringBuffer.append(newClassName);
                                 stringBuffer.append(string11);
                                 bl1 = true;
                             }
                         }
 
                         if (!bl1) {
-                            if (arrayList.size() > i + 1 && ((String) arrayList.get(i + 1)).equals("(")) {
-                                stringBuffer.append(string2);
+                            if (arrayList.size() > elementIndex + 1 && ((String) arrayList.get(elementIndex + 1)).equals("(")) {
+                                stringBuffer.append(keyValue2);
                             } else {
-                                String string10 = loadedChangeLog.getNewClassName(string3);
-                                if (string10 != null) {
+                                String newClassNameValue = loadedChangeLog.getNewClassName(key);
+                                if (newClassNameValue != null) {
                                     if (bl) {
-                                        string10 = string10.replace('.', '/');
+                                        newClassNameValue = newClassNameValue.replace('.', '/');
                                     }
 
-                                    stringBuffer.append(string10);
-                                    if (ba > 0) {
-                                        for (int j = 0; j < ba; j++) {
+                                    stringBuffer.append(newClassNameValue);
+                                    if (characterIndex > 0) {
+                                        for (int j = 0; j < characterIndex; j++) {
                                             stringBuffer.append("[]");
                                         }
                                     }
                                 } else {
-                                    stringBuffer.append(string2);
+                                    stringBuffer.append(keyValue2);
                                 }
                             }
                         }
                     } else {
-                        stringBuffer.append(string2);
+                        stringBuffer.append(keyValue2);
                     }
             }
         }
     }
 
     public final boolean resolveClassAndLine(StackTraceLineInfo stackTraceLineInfo, LoadedChangeLog loadedChangeLog) throws StackTraceTranslateException {
-        String string = stackTraceLineInfo.getClassName();
-        String string1 = loadedChangeLog.getNewClassName(string);
-        if (string1 != null) {
+        String classNameValue = stackTraceLineInfo.getClassName();
+        String classNameValue2 = loadedChangeLog.getNewClassName(classNameValue);
+        if (classNameValue2 != null) {
             this.classMapped = true;
-            this.className = string1;
-            String string2 = loadedChangeLog.getSourceName(string1);
-            if (string2 != null) {
-                this.sourceFileName = string2;
+            this.className = classNameValue2;
+            String sourceFileNameValue = loadedChangeLog.getSourceName(classNameValue2);
+            if (sourceFileNameValue != null) {
+                this.sourceFileName = sourceFileNameValue;
             }
 
             if (stackTraceLineInfo.hasLineNumber()) {
                 Long long1 = 121982683753216L;
-                int ba = stackTraceLineInfo.getLineNumber(0, long1);
-                if (ba < 0) {
-                    throw new StackTraceTranslateException("Line number \"" + ba + "\" is negative in '" + stackTraceLineInfo.getLineText() + "'.");
+                int lineNumberValue = stackTraceLineInfo.getLineNumber(0, long1);
+                if (lineNumberValue < 0) {
+                    throw new StackTraceTranslateException("Line number \"" + lineNumberValue + "\" is negative in '" + stackTraceLineInfo.getLineText() + "'.");
                 }
 
-                if (loadedChangeLog.hasLineNumberMappings(string1)) {
-                    Integer integer = loadedChangeLog.lookupLineNumber(string1, ba);
+                if (loadedChangeLog.hasLineNumberMappings(classNameValue2)) {
+                    Integer integer = loadedChangeLog.lookupLineNumber(classNameValue2, lineNumberValue);
                     if (integer == null) {
                         throw new StackTraceTranslateException(
                                 "Line number '"
-                                        + ba
+                                        + lineNumberValue
                                         + "' in '"
                                         + stackTraceLineInfo.getLineText()
                                         + "' could not be matched. Change log does not correspond to obfuscated bytecode."
@@ -244,7 +244,7 @@ public abstract class StackTraceLine {
                     this.lineNumber = integer;
                     this.translated = true;
                 } else {
-                    this.lineNumber = ba;
+                    this.lineNumber = lineNumberValue;
                     this.translated = true;
                 }
             } else {
@@ -253,7 +253,7 @@ public abstract class StackTraceLine {
 
             return true;
         } else {
-            this.className = string;
+            this.className = classNameValue;
             this.classMapped = false;
             this.translated = false;
             return false;
@@ -277,64 +277,44 @@ public abstract class StackTraceLine {
                     int bc = stringBuffer.length() + 1;
                     Integer integer = 32;
                     String string1 = ZkmStringUtils.repeatChar(bc, integer);
-                    int bb = 0;
+                    int methodCandidateIndex = 0;
                     bc = 0;
 
                     for (MethodNameAndArgs[] methodNameAndArgs = this.methodCandidates; bc < methodNameAndArgs.length; methodNameAndArgs = this.methodCandidates) {
-                        if (bb == 0) {
+                        if (methodCandidateIndex == 0) {
                             stringBuffer.append(".");
                         } else {
                             stringBuffer.append(string1);
                         }
 
-                        stringBuffer.append(this.methodCandidates[bb].getMethodName());
-                        this.appendArguments(this.methodCandidates[bb], ba, stringBuffer);
-                        if (bb == 0) {
+                        stringBuffer.append(this.methodCandidates[methodCandidateIndex].getMethodName());
+                        this.appendArguments(this.methodCandidates[methodCandidateIndex], ba, stringBuffer);
+                        if (methodCandidateIndex == 0) {
                             this.appendSourceLocation(stringBuffer);
                             stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
-                        } else if (bb < this.methodCandidates.length - 1) {
+                        } else if (methodCandidateIndex < this.methodCandidates.length - 1) {
                             stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
                         }
 
-                        bc = ++bb;
+                        bc = ++methodCandidateIndex;
                     }
                 }
             }
 
             stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
         } else {
-            label90:
-            {
-                String string = this.frameLine.getLineText();
-                StringBuffer stringBuffer1;
-                String string2;
-                if (!this.frameLine.hasError()) {
-                    if (!this.frameLine.isValidFrame() || this.classMapped) {
-                        if (loadedChangeLog != null) {
-                            if (string.indexOf("Exception in ") > -1
-                                    && string.indexOf("java.lang.NullPointerException") > -1
-                                    && string.indexOf("Cannot invoke \"") > -1) {
-                                this.translateNullPointerMessage(stringBuffer, string, loadedChangeLog, classpathClassResolver);
-                                break label90;
-                            }
-
-                            this.translateFreeText(stringBuffer, string, loadedChangeLog);
-                            break label90;
-                        }
-
-                        stringBuffer.append(string);
-                        break label90;
-                    }
-
-                    stringBuffer1 = stringBuffer;
-                    string2 = indent;
-                } else {
-                    stringBuffer1 = stringBuffer;
-                    string2 = indent;
-                }
-
-                stringBuffer1.append(string2);
-                stringBuffer.append(string);
+            String lineText = this.frameLine.getLineText();
+            if (this.frameLine.hasError() || this.frameLine.isValidFrame() && !this.classMapped) {
+                stringBuffer.append(indent);
+                stringBuffer.append(lineText);
+            } else if (loadedChangeLog == null) {
+                stringBuffer.append(lineText);
+            } else if (lineText.indexOf("Exception in ") > -1
+                    && lineText.indexOf("java.lang.NullPointerException") > -1
+                    && lineText.indexOf("Cannot invoke \"") > -1) {
+                this.translateNullPointerMessage(stringBuffer, lineText, loadedChangeLog, classpathClassResolver);
+            } else {
+                this.translateFreeText(stringBuffer, lineText, loadedChangeLog);
             }
 
             stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR);
@@ -355,18 +335,18 @@ public abstract class StackTraceLine {
             return abstractMethodInfos;
         }
 
-        String string = programClass1.getSuperclassName();
-        if (!string.equals("java/lang/Object")) {
-            ProgramClass programClass2 = classpathClassResolver.loadProgramClass(string);
+        String superclassName = programClass1.getSuperclassName();
+        if (!superclassName.equals("java/lang/Object")) {
+            ProgramClass programClass2 = classpathClassResolver.loadProgramClass(superclassName);
             abstractMethodInfos = this.findMethodsInHierarchy(programClass2, fieldNameTypeSignature, classpathClassResolver);
             if (abstractMethodInfos != null && abstractMethodInfos.length > 0) {
                 return abstractMethodInfos;
             }
         }
 
-        String[] strings = programClass1.getInterfaceNames();
+        String[] interfaceNames = programClass1.getInterfaceNames();
 
-        for (String string1 : strings) {
+        for (String string1 : interfaceNames) {
             ProgramClass programClass3 = classpathClassResolver.loadProgramClass(string1);
             abstractMethodInfos = this.findMethodsInHierarchy(programClass3, fieldNameTypeSignature, classpathClassResolver);
             if (abstractMethodInfos != null && abstractMethodInfos.length > 0) {
@@ -382,25 +362,25 @@ public abstract class StackTraceLine {
     }
 
     public void appendArguments(MethodNameAndArgs methodNameAndArgs, int ba, StringBuffer stringBuffer) {
-        String[] strings = methodNameAndArgs.getArgumentTypes();
-        if (ba != 1 && strings != null) {
+        String[] argumentTypes = methodNameAndArgs.getArgumentTypes();
+        if (ba != 1 && argumentTypes != null) {
             if (ba == 2 || ba == 3) {
                 stringBuffer.append("(");
 
-                for (int i = 0; i < strings.length; i++) {
+                for (int argumentTypeIndex = 0; argumentTypeIndex < argumentTypes.length; argumentTypeIndex++) {
                     if (ba == 3) {
-                        stringBuffer.append(strings[i]);
+                        stringBuffer.append(argumentTypes[argumentTypeIndex]);
                     } else if (ba == 2) {
-                        String string = strings[i];
-                        int bc = string.lastIndexOf(".");
+                        String argumentType = argumentTypes[argumentTypeIndex];
+                        int bc = argumentType.lastIndexOf(".");
                         if (bc > -1) {
-                            string = string.substring(bc + 1);
+                            argumentType = argumentType.substring(bc + 1);
                         }
 
-                        stringBuffer.append(string);
+                        stringBuffer.append(argumentType);
                     }
 
-                    if (i < strings.length - 1) {
+                    if (argumentTypeIndex < argumentTypes.length - 1) {
                         stringBuffer.append(", ");
                     }
                 }
@@ -430,16 +410,16 @@ public abstract class StackTraceLine {
                 int bb = string.indexOf("\"", ba + "Cannot invoke \"".length());
                 if (bb > -1) {
                     string1 = string.substring(ba + "Cannot invoke \"".length(), bb);
-                    int bc = string1.indexOf(40);
-                    if (bc > 1) {
-                        int bd = string1.indexOf(41);
-                        if (bd == string1.length() - 1) {
-                            String string2 = string1.substring(0, bc);
-                            int be = string2.lastIndexOf(".");
-                            if (be > 0 && be < string2.length() - 1) {
-                                String string3 = string2.substring(0, be);
-                                String string4 = string2.substring(be + 1);
-                                String string5 = string1.substring(bc + 1, bd);
+                    int endIndex = string1.indexOf(40);
+                    if (endIndex > 1) {
+                        int endIndexValue = string1.indexOf(41);
+                        if (endIndexValue == string1.length() - 1) {
+                            String string2 = string1.substring(0, endIndex);
+                            int endIndexValue2 = string2.lastIndexOf(".");
+                            if (endIndexValue2 > 0 && endIndexValue2 < string2.length() - 1) {
+                                String newClassNameValue2 = string2.substring(0, endIndexValue2);
+                                String key = string2.substring(endIndexValue2 + 1);
+                                String string5 = string1.substring(endIndex + 1, endIndexValue);
                                 StringBuilder stringBuilder = new StringBuilder();
                                 StringTokenizer stringTokenizer = new StringTokenizer(string5, " ,");
 
@@ -451,29 +431,29 @@ public abstract class StackTraceLine {
                                     }
                                 }
 
-                                String string10 = loadedChangeLog.getNewClassName(string3);
-                                if (string10 == null) {
-                                    string10 = string3;
+                                String newClassName = loadedChangeLog.getNewClassName(newClassNameValue2);
+                                if (newClassName == null) {
+                                    newClassName = newClassNameValue2;
                                 }
 
                                 if (classpathClassResolver != null) {
                                     ProgramClass programClass1 = null;
 
                                     try {
-                                        programClass1 = classpathClassResolver.loadProgramClass(ZkmUtils.dotsToSlashes(string3));
+                                        programClass1 = classpathClassResolver.loadProgramClass(ZkmUtils.dotsToSlashes(newClassNameValue2));
                                     } catch (ClassLookupException classLookupException) {
                                     }
 
                                     if (programClass1 != null) {
-                                        AbstractMethodInfo[] abstractMethodInfos = this.findMethods(programClass1, string4, string5, classpathClassResolver);
+                                        AbstractMethodInfo[] abstractMethodInfos = this.findMethods(programClass1, key, string5, classpathClassResolver);
                                         if (abstractMethodInfos != null && abstractMethodInfos.length == 1) {
                                             AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[0];
                                             if (abstractMethodInfo.isProgramMember()) {
-                                                String string7 = loadedChangeLog.getNewClassName(abstractMethodInfo.getDottedClassName());
-                                                String string8 = stringBuilder.toString();
-                                                String[] strings = loadedChangeLog.findOriginalMethodNames(string7, string4, (String) null, string8);
+                                                String newClassNameValue = loadedChangeLog.getNewClassName(abstractMethodInfo.getDottedClassName());
+                                                String keyValue = stringBuilder.toString();
+                                                String[] strings = loadedChangeLog.findOriginalMethodNames(newClassNameValue, key, (String) null, keyValue);
                                                 stringBuffer.append(string.substring(0, ba + "Cannot invoke \"".length()));
-                                                stringBuffer.append(string10);
+                                                stringBuffer.append(newClassName);
                                                 stringBuffer.append(".");
                                                 stringBuffer.append(strings[0]);
                                                 stringBuffer.append('(');
@@ -485,11 +465,11 @@ public abstract class StackTraceLine {
                                         }
                                     }
                                 } else {
-                                    String string9 = stringBuilder.toString();
-                                    String[] strings1 = loadedChangeLog.findOriginalMethodNames(string10, string4, (String) null, string9);
+                                    String keyValue2 = stringBuilder.toString();
+                                    String[] strings1 = loadedChangeLog.findOriginalMethodNames(newClassName, key, (String) null, keyValue2);
                                     if (strings1 != null && strings1.length == 1) {
                                         stringBuffer.append(string.substring(0, ba + "Cannot invoke \"".length()));
-                                        stringBuffer.append(string10);
+                                        stringBuffer.append(newClassName);
                                         stringBuffer.append(".");
                                         stringBuffer.append(strings1[0]);
                                         stringBuffer.append('(');

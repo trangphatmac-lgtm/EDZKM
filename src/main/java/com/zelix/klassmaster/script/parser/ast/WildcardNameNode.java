@@ -9,8 +9,8 @@ public class WildcardNameNode extends ScriptValueNode implements QualifiedNameMa
         return ZkmStringUtils.matchesWildcard(string, this.value);
     }
 
-    public WildcardNameNode(int ba) {
-        super(ba);
+    public WildcardNameNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     @Override

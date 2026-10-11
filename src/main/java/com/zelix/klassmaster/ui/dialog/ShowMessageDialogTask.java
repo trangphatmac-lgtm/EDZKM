@@ -13,10 +13,10 @@ public class ShowMessageDialogTask implements Runnable {
         new CopyableMessageDialog(this.ownerFrame, this.title, this.message, this.details);
     }
 
-    public ShowMessageDialogTask(JFrame jFrame, String string, String string1, String string2) {
+    public ShowMessageDialogTask(JFrame jFrame, String titleArgument, String messageArgument, String detailsArgument) {
         this.ownerFrame = jFrame;
-        this.title = string;
-        this.message = string1;
-        this.details = string2;
+        this.title = titleArgument;
+        this.message = messageArgument;
+        this.details = detailsArgument;
     }
 }

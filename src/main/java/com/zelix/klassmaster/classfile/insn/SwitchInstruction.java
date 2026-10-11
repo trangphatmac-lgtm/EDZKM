@@ -54,12 +54,12 @@ public abstract class SwitchInstruction extends Instruction implements JumpingIn
 
     @Override
     public void bindLabel(Integer integer, LabelInstruction labelInstruction) {
-        int ba = this.targetLabels.length;
+        int lengthValue = this.targetLabels.length;
         labelInstruction.setVisible();
 
-        for (int i = 0; i < ba; i++) {
-            if (((Integer) this.targetOffsets.get(i)).equals(integer) && this.targetLabels[i] == null) {
-                this.targetLabels[i] = labelInstruction;
+        for (int elementIndex = 0; elementIndex < lengthValue; elementIndex++) {
+            if (((Integer) this.targetOffsets.get(elementIndex)).equals(integer) && this.targetLabels[elementIndex] == null) {
+                this.targetLabels[elementIndex] = labelInstruction;
             }
         }
     }
@@ -76,8 +76,8 @@ public abstract class SwitchInstruction extends Instruction implements JumpingIn
     @Override
     public void setOffset(int switchOffset) {
         this.switchOffset = switchOffset;
-        int bb = computePadding(switchOffset);
-        this.paddingSize = bb;
+        int paddingSizeValue = computePadding(switchOffset);
+        this.paddingSize = paddingSizeValue;
     }
 
     @Override
@@ -92,8 +92,8 @@ public abstract class SwitchInstruction extends Instruction implements JumpingIn
         return false;
     }
 
-    public SwitchInstruction(int ba, ClassFileInputStream classFileInputStream, int switchOffset) throws IOException {
-        super(ba);
+    public SwitchInstruction(int opcode, ClassFileInputStream classFileInputStream, int switchOffset) throws IOException {
+        super(opcode);
         this.switchOffset = switchOffset;
         this.paddingSize = computePadding(switchOffset);
         classFileInputStream.skip(this.paddingSize);
@@ -105,7 +105,7 @@ public abstract class SwitchInstruction extends Instruction implements JumpingIn
         int ba = 0;
         int bb = 0;
 
-        for (int i = this.paddingSize; bb < i; i = this.paddingSize) {
+        for (int paddingSizeValue = this.paddingSize; bb < paddingSizeValue; paddingSizeValue = this.paddingSize) {
             dataOutputStream.writeByte(0);
             bb = ++ba;
         }
@@ -143,9 +143,9 @@ public abstract class SwitchInstruction extends Instruction implements JumpingIn
     public final StackFrameState computeFrameAfter(StackFrameState stackFrameState, Object object, Object object1, Object object2) throws ZkmException, IOException {
         VerifierType[] verifierTypes = stackFrameState.getStack();
         VerifierType[] verifierTypes1 = stackFrameState.getLocals();
-        int ba = verifierTypes.length;
-        VerifierType[] verifierTypes2 = VerifierType.createArray(ba - 1);
-        System.arraycopy(verifierTypes, 0, verifierTypes2, 0, ba - 1);
+        int lengthValue = verifierTypes.length;
+        VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue - 1);
+        System.arraycopy(verifierTypes, 0, verifierTypes2, 0, lengthValue - 1);
         return new StackFrameState(verifierTypes2, verifierTypes1, stackFrameState.getSubroutineLocals(), stackFrameState.getHeldMonitors());
     }
 
@@ -153,8 +153,8 @@ public abstract class SwitchInstruction extends Instruction implements JumpingIn
     public final void addSuccessorBlocks(Map map1, ListMultimap listMultimap, List list1) {
         this.targetOffsets = null;
 
-        for (int i = 0; i < this.targetLabels.length; i++) {
-            LabelInstruction labelInstruction = this.targetLabels[i];
+        for (int targetLabelIndex = 0; targetLabelIndex < this.targetLabels.length; targetLabelIndex++) {
+            LabelInstruction labelInstruction = this.targetLabels[targetLabelIndex];
             BasicBlock basicBlock;
             if ((basicBlock = (BasicBlock) map1.get(labelInstruction)) == null) {
                 basicBlock = new BasicBlock();

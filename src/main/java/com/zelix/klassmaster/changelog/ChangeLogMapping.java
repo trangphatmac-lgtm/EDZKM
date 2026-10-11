@@ -197,18 +197,18 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public void putPackageMapping(String string, String string1, boolean bl) {
+    public void putPackageMapping(String value, String key, boolean bl) {
         com.zelix.klassmaster.util.TwoKeyMap twoKeyMap = null;
         if (this.packageMappings == null) {
-            int ba = ZkmUtils.getPrimeCapacity(Math.min(this.packageCount, 5));
-            this.packageMappings = ZkmUtils.createHashMap(ba);
-            this.reversePackageMappings = new TwoKeyMap(ba);
+            int primeCapacity = ZkmUtils.getPrimeCapacity(Math.min(this.packageCount, 5));
+            this.packageMappings = ZkmUtils.createHashMap(primeCapacity);
+            this.reversePackageMappings = new TwoKeyMap(primeCapacity);
         }
 
         Map map1;
-        if (string.length() > 0) {
-            if (string1.length() == 0) {
-                this.reportError("Default package is mapped to \"" + string + "\". Current version cannot handle remapping of default package name.");
+        if (value.length() > 0) {
+            if (key.length() == 0) {
+                this.reportError("Default package is mapped to \"" + value + "\". Current version cannot handle remapping of default package name.");
                 map1 = this.packageMappings;
             } else {
                 map1 = this.packageMappings;
@@ -217,13 +217,13 @@ public class ChangeLogMapping extends AbstractChangeLog {
             map1 = this.packageMappings;
         }
 
-        String string4 = ((java.lang.String) (map1.put(string1, string)));
-        if (string4 != null && !string4.equals(string)) {
-            this.reportError("Package \"" + string1 + "\" is mapped to \"" + string4 + "\" and \"" + string + "\"");
+        String string4 = ((java.lang.String) (map1.put(key, value)));
+        if (string4 != null && !string4.equals(value)) {
+            this.reportError("Package \"" + key + "\" is mapped to \"" + string4 + "\" and \"" + value + "\"");
         }
 
-        StringTokenizer stringTokenizer = new StringTokenizer(string1, ".");
-        StringBuffer stringBuffer = new StringBuffer(string1.length());
+        StringTokenizer stringTokenizer = new StringTokenizer(key, ".");
+        StringBuffer stringBuffer = new StringBuffer(key.length());
 
         while (true) {
             if (!stringTokenizer.hasMoreTokens()) {
@@ -237,7 +237,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
             }
 
             stringBuffer.append(string2);
-            if (stringBuffer.length() == string1.length()) {
+            if (stringBuffer.length() == key.length()) {
                 twoKeyMap = this.reversePackageMappings;
                 break;
             }
@@ -245,7 +245,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
             String string3 = stringBuffer.toString();
             if (!this.packageMappings.containsKey(string3)) {
                 if (bl) {
-                    this.reportError("Package \"" + string1 + "\" is not preceded by a mapping for \"" + string3 + "\"");
+                    this.reportError("Package \"" + key + "\" is not preceded by a mapping for \"" + string3 + "\"");
                 } else {
                     this.packageMappings.put(string3, string3);
                     this.reversePackageMappings.putValue(string3, string3, string3);
@@ -253,7 +253,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
             }
         }
 
-        String string5 = (String) twoKeyMap.putValue(string, string1, string1);
+        String string5 = (String) twoKeyMap.putValue(value, key, key);
     }
 
     public void resolveMethodMappings(
@@ -288,102 +288,102 @@ public class ChangeLogMapping extends AbstractChangeLog {
             Enumeration enumeration = nestedMultiMap.keys();
 
             while (enumeration.hasMoreElements()) {
-                String string11 = (String) enumeration.nextElement();
-                String string12 = ZkmUtils.dotsToSlashes(string11);
-                String string1 = (String) hashMap.get(string12);
-                String string;
-                if (string1 == null) {
-                    string1 = string12;
-                    string = string11;
+                String keyValue = (String) enumeration.nextElement();
+                String key = ZkmUtils.dotsToSlashes(keyValue);
+                String keyValue2 = (String) hashMap.get(key);
+                String keyValue3;
+                if (keyValue2 == null) {
+                    keyValue2 = key;
+                    keyValue3 = keyValue;
                 } else {
-                    string = ZkmUtils.slashesToDots(string1);
+                    keyValue3 = ZkmUtils.slashesToDots(keyValue2);
                 }
 
-                String string2 = ClassFileBase.stripPackage(string12);
-                ClassFileBase.stripPackage(string1);
-                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string1);
+                String string2 = ClassFileBase.stripPackage(key);
+                ClassFileBase.stripPackage(keyValue2);
+                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(keyValue2);
                 if (classFileBase == null) {
-                    classFileBase = classpathClassLoader1.findClassFile(string12);
+                    classFileBase = classpathClassLoader1.findClassFile(key);
                     nestedMultiMap = this.rawMethodMappings;
                 } else {
                     nestedMultiMap = this.rawMethodMappings;
                 }
 
-                Iterator iterator1 = nestedMultiMap.getMultimap(string11).entrySet().iterator();
+                Iterator iterator1 = nestedMultiMap.getMultimap(keyValue).entrySet().iterator();
 
                 while (iterator1.hasNext()) {
                     Entry entry1 = (Entry) iterator1.next();
                     ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) entry1.getKey();
-                    String string3 = changeLogMemberKey.getName();
-                    String string4 = changeLogMemberKey.getType();
-                    String string5 = changeLogMemberKey.getParameterTypes();
-                    String string6 = MethodSignature.parseParameterList(string5, hashMap);
+                    String nameValue = changeLogMemberKey.getName();
+                    String typeValue = changeLogMemberKey.getType();
+                    String parameterTypes = changeLogMemberKey.getParameterTypes();
+                    String string6 = MethodSignature.parseParameterList(parameterTypes, hashMap);
                     List list1 = (List) entry1.getValue();
                     if (this.methodsHaveReturnTypes) {
-                        int bc = list1.size();
-                        if (bc == 1) {
+                        int list1Size = list1.size();
+                        if (list1Size == 1) {
                             NewNameMapping newNameMapping2 = (NewNameMapping) list1.get(0);
-                            String string13 = MethodSignature.javaTypeToDescriptor(string4, hashMap);
-                            String string14 = changeLogMemberKey.getName();
-                            String string15 = newNameMapping2.getNewName();
+                            String string13 = MethodSignature.javaTypeToDescriptor(typeValue, hashMap);
+                            String nameValue2 = changeLogMemberKey.getName();
+                            String newName = newNameMapping2.getNewName();
                             ChangeLogMethodSignature changeLogMethodSignature1 = new ChangeLogMethodSignature(
-                                    string15, string6, string13, newNameMapping2.isParametersObfuscated()
+                                    newName, string6, string13, newNameMapping2.isParametersObfuscated()
                             );
-                            MethodSignature methodSignature2 = new MethodSignature(string14, string6, string13);
+                            MethodSignature methodSignature2 = new MethodSignature(nameValue2, string6, string13);
                             if (classFileBase.isProgramClass()) {
                                 if (classMemberLookup1.declaresMethod(methodSignature2, (ProgramClass) classFileBase)) {
                                     this.putResolvedMethodMapping(
-                                            string11, string, methodSignature2, changeLogMethodSignature1, hashMap1, twoKeyMap, twoKeyMap1, twoKeyMap2
+                                            keyValue, keyValue3, methodSignature2, changeLogMethodSignature1, hashMap1, twoKeyMap, twoKeyMap1, twoKeyMap2
                                     );
                                 }
                             } else {
                                 AbstractMethodInfo abstractMethodInfo1 = classFileBase.findMethod(methodSignature2);
                                 if (abstractMethodInfo1 != null) {
                                     this.putResolvedMethodMapping(
-                                            string11, string, methodSignature2, changeLogMethodSignature1, hashMap1, twoKeyMap, twoKeyMap1, twoKeyMap2
+                                            keyValue, keyValue3, methodSignature2, changeLogMethodSignature1, hashMap1, twoKeyMap, twoKeyMap1, twoKeyMap2
                                     );
-                                } else if (!changeLogMemberKey.isPrivate() && !string14.equals("<clinit>")) {
+                                } else if (!changeLogMemberKey.isPrivate() && !nameValue2.equals("<clinit>")) {
                                     this.logWarning(
                                             "Contains method '"
                                                     + methodSignature2.formatDeclaration(hashMap1)
                                                     + "' in class '"
-                                                    + string11
+                                                    + keyValue
                                                     + "' but there is no corresponding method in "
                                                     + classFileBase.getLocationName()
                                                     + " (1)."
                                     );
                                 }
                             }
-                        } else if (bc > 1) {
+                        } else if (list1Size > 1) {
                             this.reportError(
                                     "Methods with the signature \""
-                                            + string3
+                                            + nameValue
                                             + "("
-                                            + string5
+                                            + parameterTypes
                                             + ")\" in class \""
-                                            + string11
+                                            + keyValue
                                             + "\" appears "
-                                            + bc
+                                            + list1Size
                                             + " times but there are no method return types to distinguish them."
                             );
                         }
                     } else {
-                        String string7 = null;
+                        String newNameValue = null;
 
-                        for (int i = 0; i < list1.size(); i++) {
-                            NewNameMapping newNameMapping = (NewNameMapping) list1.get(i);
-                            if (string7 == null) {
-                                string7 = newNameMapping.getNewName();
-                            } else if (!newNameMapping.getNewName().equals(string7)) {
+                        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                            NewNameMapping newNameMapping = (NewNameMapping) list1.get(elementIndex);
+                            if (newNameValue == null) {
+                                newNameValue = newNameMapping.getNewName();
+                            } else if (!newNameMapping.getNewName().equals(newNameValue)) {
                                 this.reportError(
                                         "Two methods with the signature \""
-                                                + string3
+                                                + nameValue
                                                 + "("
-                                                + string5
+                                                + parameterTypes
                                                 + ")\" in class \""
-                                                + string11
+                                                + keyValue
                                                 + "\" are mapped to the different new method names \""
-                                                + string7
+                                                + newNameValue
                                                 + "\" and \""
                                                 + newNameMapping.getNewName()
                                                 + "\""
@@ -391,7 +391,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             }
                         }
 
-                        FieldNameTypeSignature fieldNameTypeSignature = new FieldNameTypeSignature(string3, string6);
+                        FieldNameTypeSignature fieldNameTypeSignature = new FieldNameTypeSignature(nameValue, string6);
                         AbstractMethodInfo[] abstractMethodInfos;
                         if (classFileBase.isProgramClass()) {
                             abstractMethodInfos = classMemberLookup1.findMatchingMethods((ProgramClass) classFileBase, fieldNameTypeSignature);
@@ -405,7 +405,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                         "Contains method '"
                                                 + fieldNameTypeSignature.getNameWithParameters(hashMap1)
                                                 + "' in class '"
-                                                + string11
+                                                + keyValue
                                                 + "' but there is no corresponding method in "
                                                 + classFileBase.getLocationName()
                                                 + " (2)."
@@ -425,21 +425,21 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             };
                             Arrays.sort(abstractMethodInfos, comparator1);
 
-                            for (int i = 0; i < list1.size(); i++) {
-                                if (i < abstractMethodInfos.length) {
-                                    String string8 = abstractMethodInfos[0].getSignature().getReturnDescriptor();
-                                    NewNameMapping newNameMapping1 = (NewNameMapping) list1.get(i);
-                                    String string9 = changeLogMemberKey.getName();
-                                    String string10 = newNameMapping1.getNewName();
-                                    if (string9.equals(string2)) {
-                                        string9 = "<init>";
-                                        string10 = "<init>";
+                            for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+                                if (elementIndexValue < abstractMethodInfos.length) {
+                                    String returnDescriptor = abstractMethodInfos[0].getSignature().getReturnDescriptor();
+                                    NewNameMapping newNameMapping1 = (NewNameMapping) list1.get(elementIndexValue);
+                                    String nameValue3 = changeLogMemberKey.getName();
+                                    String newNameValue2 = newNameMapping1.getNewName();
+                                    if (nameValue3.equals(string2)) {
+                                        nameValue3 = "<init>";
+                                        newNameValue2 = "<init>";
                                     }
 
-                                    MethodSignature methodSignature1 = new MethodSignature(string9, string6, string8);
-                                    ChangeLogMethodSignature changeLogMethodSignature = new ChangeLogMethodSignature(string10, string6, string8, false);
+                                    MethodSignature methodSignature1 = new MethodSignature(nameValue3, string6, returnDescriptor);
+                                    ChangeLogMethodSignature changeLogMethodSignature = new ChangeLogMethodSignature(newNameValue2, string6, returnDescriptor, false);
                                     this.putResolvedMethodMapping(
-                                            string11, string, methodSignature1, changeLogMethodSignature, hashMap1, twoKeyMap, twoKeyMap1, twoKeyMap2
+                                            keyValue, keyValue3, methodSignature1, changeLogMethodSignature, hashMap1, twoKeyMap, twoKeyMap1, twoKeyMap2
                                     );
                                 }
                             }
@@ -456,8 +456,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return this.referenceObfuscationClass;
     }
 
-    public MethodSignature withAddedParameters(MethodSignature methodSignature1, Object object, TwoKeyMap twoKeyMap) {
-        AddedParameter[] addedParameters1 = (AddedParameter[]) twoKeyMap.getValue(object, methodSignature1);
+    public MethodSignature withAddedParameters(MethodSignature methodSignature1, Object key, TwoKeyMap twoKeyMap) {
+        AddedParameter[] addedParameters1 = (AddedParameter[]) twoKeyMap.getValue(key, methodSignature1);
         if (addedParameters1 == null) {
             return methodSignature1;
         }
@@ -470,27 +470,27 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
     @Override
     public void addMemberFlowObfuscationData(Object object, Object object1) {
-        String string = (String) object;
+        String key = (String) object;
         ChangeLogSimpleNode.getOpaqueStrings();
-        if (this.classMappings != null && this.classMappings.containsKey(string)) {
-            String string1 = (String) this.classMappings.get(string);
+        if (this.classMappings != null && this.classMappings.containsKey(key)) {
+            String string1 = (String) this.classMappings.get(key);
             String string2 = (String) ((List) object1).get(0);
 
             try {
-                int[] ba = AbstractChangeLog.decodeIntPair(string2, ZkmUtils.dotsToSlashes(string1));
-                ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) this.flowEntryList.get(ba[0]);
-                ChangeLogMemberEntry changeLogMemberEntry1 = (ChangeLogMemberEntry) this.flowEntryList.get(ba[1]);
+                int[] integerArray = AbstractChangeLog.decodeIntPair(string2, ZkmUtils.dotsToSlashes(string1));
+                ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) this.flowEntryList.get(integerArray[0]);
+                ChangeLogMemberEntry changeLogMemberEntry1 = (ChangeLogMemberEntry) this.flowEntryList.get(integerArray[1]);
                 if (changeLogMemberEntry != null && changeLogMemberEntry1 != null) {
                     ObjectPair objectPair = new ObjectPair(changeLogMemberEntry, changeLogMemberEntry1);
-                    this.memberClassEntries.put(string, objectPair);
+                    this.memberClassEntries.put(key, objectPair);
                 }
             } catch (NumberFormatException numberFormatException) {
-                this.reportError("Corrupt Data:  '" + string2 + "' for " + "MemberClass:" + " '" + string + "' => '" + string1 + "' (D)");
+                this.reportError("Corrupt Data:  '" + string2 + "' for " + "MemberClass:" + " '" + key + "' => '" + string1 + "' (D)");
             } catch (IndexOutOfBoundsException indexOutOfBoundsException) {
-                this.reportError("Corrupt Data:  '" + string2 + "' for " + "MemberClass:" + " '" + string + "' => '" + string1 + "' (E)");
+                this.reportError("Corrupt Data:  '" + string2 + "' for " + "MemberClass:" + " '" + key + "' => '" + string1 + "' (E)");
             }
         } else {
-            String string3 = "MemberClass: '" + string + "' does not exist in the main body of the change log";
+            String string3 = "MemberClass: '" + key + "' does not exist in the main body of the change log";
             this.reportError(string3);
         }
     }
@@ -501,17 +501,17 @@ public class ChangeLogMapping extends AbstractChangeLog {
         } else {
             ArrayList arrayList = new ArrayList(changeLogMapping2.traceBackEntries);
             Collections.sort(arrayList);
-            String string = null;
+            String classNameValue = null;
             ListMultimap listMultimap = groupEntriesByClass(this.traceBackEntries);
             ArrayList arrayList1 = null;
             Iterator iterator = arrayList.iterator();
 
             while (iterator.hasNext()) {
                 ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) iterator.next();
-                String string1 = changeLogMemberEntry.getClassName();
-                if (string == null || !string1.equals(string)) {
-                    string = string1;
-                    List list1 = listMultimap.getValues(string1);
+                String className = changeLogMemberEntry.getClassName();
+                if (classNameValue == null || !className.equals(classNameValue)) {
+                    classNameValue = className;
+                    List list1 = listMultimap.getValues(className);
                     if (list1 != null) {
                         arrayList1 = new ArrayList(list1);
                         Collections.sort(arrayList1);
@@ -530,9 +530,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         }
 
                         ChangeLogMemberEntry changeLogMemberEntry2 = null;
-                        int ba = arrayList1.indexOf(changeLogMemberEntry);
-                        if (ba > -1) {
-                            changeLogMemberEntry2 = (ChangeLogMemberEntry) arrayList1.remove(ba);
+                        int elementIndex = arrayList1.indexOf(changeLogMemberEntry);
+                        if (elementIndex > -1) {
+                            changeLogMemberEntry2 = (ChangeLogMemberEntry) arrayList1.remove(elementIndex);
                         }
 
                         if (changeLogMemberEntry2 != null) {
@@ -541,7 +541,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                         "Field '"
                                                 + changeLogMemberEntry2.getFieldName()
                                                 + "' in class '"
-                                                + string1
+                                                + className
                                                 + "' has type '"
                                                 + ConstantPoolEntry.descriptorToJavaType(changeLogMemberEntry2.getFieldDescriptor())
                                                 + "' in this log but type '"
@@ -561,7 +561,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                         + '('
                                                         + changeLogMemberEntry2.getFieldTypeName()
                                                         + ")' in class '"
-                                                        + string1
+                                                        + className
                                                         + "' in this log is inconsistent with method '"
                                                         + changeLogMemberEntry.getSetterMethodName()
                                                         + '('
@@ -579,7 +579,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                         + " "
                                                         + changeLogMemberEntry2.getGetterMethodName()
                                                         + "()' in class '"
-                                                        + string1
+                                                        + className
                                                         + "' in this log is inconsistent with method '"
                                                         + changeLogMemberEntry.getFieldTypeName()
                                                         + " "
@@ -598,7 +598,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                         + " "
                                                         + changeLogMemberEntry2.getAltGetterMethodName()
                                                         + "()' in class '"
-                                                        + string1
+                                                        + className
                                                         + "' in this log is inconsistent with method '"
                                                         + changeLogMemberEntry.getFieldTypeName()
                                                         + " "
@@ -614,7 +614,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                 "Field '"
                                                         + changeLogMemberEntry2.getFieldName()
                                                         + "' in class '"
-                                                        + string1
+                                                        + className
                                                         + "' in this log is inconsistent in nature with the equivalent field in '"
                                                         + changeLogMapping2.changeLogName
                                                         + "'. Logs could not be fully merged. You must distribute this application as a whole. (1)"
@@ -669,12 +669,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     @Override
-    public void addSourceNameMapping(Object object, Object object1) {
+    public void addSourceNameMapping(Object key, Object value) {
         if (this.sourceNameMappings == null) {
             this.sourceNameMappings = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(this.classCount));
         }
 
-        this.sourceNameMappings.put(object, object1);
+        this.sourceNameMappings.put(key, value);
     }
 
     public ArrayList getOldClassNames() {
@@ -695,9 +695,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
     public void addPackageFlowObfuscationData(Object object, Object object1, Object object2) throws ZkmException, IOException {
         String string = (String) object;
         List list1 = (List) object2;
-        String string1 = (String) object1;
+        String key = (String) object1;
         if (!this.errorsFound) {
-            this.addFlowObfuscationEntry(string1, list1, false, "ForwardClass:", string);
+            this.addFlowObfuscationEntry(key, list1, false, "ForwardClass:", string);
         }
     }
 
@@ -724,26 +724,26 @@ public class ChangeLogMapping extends AbstractChangeLog {
             return null;
         }
 
-        String string1 = ZkmUtils.slashesToDots(string);
-        String string2 = (String) this.classMappings.get(string1);
-        return string2 != null && !string2.equals(string1) ? ZkmUtils.dotsToSlashes(string2) : null;
+        String key = ZkmUtils.slashesToDots(string);
+        String string2 = (String) this.classMappings.get(key);
+        return string2 != null && !string2.equals(key) ? ZkmUtils.dotsToSlashes(string2) : null;
     }
 
-    public String getModuleReferenceObfuscationClass(Object object) {
-        return (String) this.moduleReferenceObfuscationClasses.get(object);
+    public String getModuleReferenceObfuscationClass(Object key) {
+        return (String) this.moduleReferenceObfuscationClasses.get(key);
     }
 
     public boolean hasLineNumberMappings() {
         return this.lineNumberMappings != null && this.lineNumberMappings.getKeyCount() > 0;
     }
 
-    public boolean hasAddedParameters(Object object) {
+    public boolean hasAddedParameters(Object key) {
         if (this.addedParametersByMethod == null) {
             return false;
         }
 
-        AddedParameter[] addedParameters1 = (AddedParameter[]) this.addedParametersByMethod.get(object);
-        return addedParameters1 == null ? false : addedParameters1.length > 0;
+        AddedParameter[] addedParameters1 = (AddedParameter[]) this.addedParametersByMethod.get(key);
+        return (!(addedParameters1 == null) && (addedParameters1.length > 0));
     }
 
     @Override
@@ -758,7 +758,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     @Override
-    public void addModuleMethodParameterChangeClasses(Object object, Object object1) {
+    public void addModuleMethodParameterChangeClasses(Object object, Object key) {
         List list1 = (List) object;
         ObjectTriple objectTriple = new ObjectTriple(list1.get(0), list1.get(1), list1.get(2));
         Map map1;
@@ -769,7 +769,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
             map1 = this.moduleMethodParameterChangeClasses;
         }
 
-        map1.put(object1, objectTriple);
+        map1.put(key, objectTriple);
     }
 
     public Set getPackagesMappedTo(String string) throws IOException {
@@ -795,13 +795,13 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
     public boolean containsMethodMapping(String string, String string1, String[] strings, String string2) throws IOException {
         if (this.rawMethodMappings != null) {
-            String string3 = ZkmUtils.slashesToDots(string);
+            String key = ZkmUtils.slashesToDots(string);
             String string4 = this.joinTypeNames(strings);
             String string5 = string2;
             String string6 = string4;
             String string7 = string1;
             ChangeLogMemberKey changeLogMemberKey = this.createMethodKey(string7, string6, string5);
-            return this.rawMethodMappings.containsInnerKey(string3, changeLogMemberKey);
+            return this.rawMethodMappings.containsInnerKey(key, changeLogMemberKey);
         } else {
             return false;
         }
@@ -864,39 +864,39 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     public ChangeLogMethodSignature reconcileInheritedMethodMapping(
-            String string, String string1, MethodSignature methodSignature1, ChangeLogMethodSignature changeLogMethodSignature, HashMap hashMap
+            String key, String keyArgument, MethodSignature methodSignature1, ChangeLogMethodSignature changeLogMethodSignature, HashMap hashMap
     ) throws IOException {
-        String string2 = ZkmUtils.slashesToDots(string1);
-        String string3 = ZkmUtils.slashesToDots(string);
-        MethodSignature methodSignature2 = (MethodSignature) this.methodMappings.removeValue(string3, methodSignature1);
+        String keyValue = ZkmUtils.slashesToDots(keyArgument);
+        String keyValue2 = ZkmUtils.slashesToDots(key);
+        MethodSignature methodSignature2 = (MethodSignature) this.methodMappings.removeValue(keyValue2, methodSignature1);
         ChangeLogMethodSignature changeLogMethodSignature1 = (ChangeLogMethodSignature) this.methodMappings
-                .putValue(string2, methodSignature1, changeLogMethodSignature);
+                .putValue(keyValue, methodSignature1, changeLogMethodSignature);
         if (changeLogMethodSignature1 != null && !changeLogMethodSignature1.equals(changeLogMethodSignature)) {
-            String string4 = (String) hashMap.get(string);
-            if (string4 == null) {
-                string4 = string3;
+            String keyValue3 = (String) hashMap.get(key);
+            if (keyValue3 == null) {
+                keyValue3 = keyValue2;
             }
 
-            String string5 = (String) hashMap.get(string1);
-            if (string5 == null) {
-                string5 = string2;
+            String keyValue4 = (String) hashMap.get(keyArgument);
+            if (keyValue4 == null) {
+                keyValue4 = keyValue;
             }
 
             String string6 = "Method '"
                     + methodSignature1.getNameWithParameters(hashMap)
                     + " in class '"
-                    + string4
+                    + keyValue3
                     + "' is mapped to new name '"
                     + changeLogMethodSignature.getName()
                     + "' but the corresponding method in class '"
-                    + string5
+                    + keyValue4
                     + "' is mapped to new name '"
                     + changeLogMethodSignature1.getName()
                     + "'. Using mapping of '"
                     + changeLogMethodSignature1.getName()
                     + "' for both methods.";
             this.logWarning(string6);
-            this.methodMappings.putValue(string2, methodSignature1, changeLogMethodSignature1);
+            this.methodMappings.putValue(keyValue, methodSignature1, changeLogMethodSignature1);
             return changeLogMethodSignature1;
         } else {
             return changeLogMethodSignature;
@@ -908,8 +908,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
         Enumeration enumeration = this.forwardClassEntries.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            Set set1 = this.forwardClassEntries.getValues(string);
+            String key = (String) enumeration.nextElement();
+            Set set1 = this.forwardClassEntries.getValues(key);
             ArrayList arrayList = new ArrayList(set1.size());
             Iterator iterator = set1.iterator();
 
@@ -919,17 +919,17 @@ public class ChangeLogMapping extends AbstractChangeLog {
             }
 
             Collections.sort(arrayList);
-            listMultimap.putValues(string, arrayList);
+            listMultimap.putValues(key, arrayList);
         }
 
         return listMultimap;
     }
 
-    public MethodSignature getNewMethodSignature(String string, Object object) throws IOException {
+    public MethodSignature getNewMethodSignature(String string, Object key) throws IOException {
         if (this.methodMappings == null) {
             return null;
         } else {
-            ChangeLogMethodSignature changeLogMethodSignature = (ChangeLogMethodSignature) this.methodMappings.getValue(ZkmUtils.slashesToDots(string), object);
+            ChangeLogMethodSignature changeLogMethodSignature = (ChangeLogMethodSignature) this.methodMappings.getValue(ZkmUtils.slashesToDots(string), key);
             if (changeLogMethodSignature != null) {
                 return changeLogMethodSignature.isParametersObfuscated()
                         ? new MethodSignature(changeLogMethodSignature.getName(), "([Ljava/lang/Object;)", changeLogMethodSignature.getReturnDescriptor())
@@ -942,8 +942,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public ChangeLogClassKey findFieldKeyByHash(String string, Object object) {
-        Iterator iterator = this.rawFieldMappings.getMultimap(string).keySet().iterator();
+    public ChangeLogClassKey findFieldKeyByHash(String key, Object object) {
+        Iterator iterator = this.rawFieldMappings.getMultimap(key).keySet().iterator();
 
         while (iterator.hasNext()) {
             ChangeLogClassKey changeLogClassKey = (ChangeLogClassKey) iterator.next();
@@ -956,12 +956,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return null;
     }
 
-    public void putRawMethodMapping(Object object, ChangeLogMemberKey changeLogMemberKey, Object object1) {
+    public void putRawMethodMapping(Object key, ChangeLogMemberKey changeLogMemberKey, Object object1) {
         if (this.rawMethodMappings == null) {
             this.rawMethodMappings = new NestedMultiMap(this.classCount, 5, 5);
         }
 
-        this.rawMethodMappings.addValue(object, changeLogMemberKey, object1);
+        this.rawMethodMappings.addValue(key, changeLogMemberKey, object1);
         if (changeLogMemberKey.getType() != null) {
             this.methodsHaveReturnTypes = true;
         } else {
@@ -969,10 +969,10 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public ArrayList listFieldEntries(String string) {
+    public ArrayList listFieldEntries(String key) {
         ArrayList arrayList = new ArrayList();
         if (this.rawFieldMappings != null) {
-            ListMultimap listMultimap = this.rawFieldMappings.getMultimap(string);
+            ListMultimap listMultimap = this.rawFieldMappings.getMultimap(key);
             if (listMultimap != null) {
                 Enumeration enumeration = listMultimap.keys();
 
@@ -990,8 +990,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return arrayList;
     }
 
-    public ObjectTriple getModuleMethodParameterChangeClasses(Object object) {
-        return (ObjectTriple) this.moduleMethodParameterChangeClasses.get(object);
+    public ObjectTriple getModuleMethodParameterChangeClasses(Object key) {
+        return (ObjectTriple) this.moduleMethodParameterChangeClasses.get(key);
     }
 
     public boolean hasFlowData(String string) throws IOException {
@@ -1002,9 +1002,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
             AbstractMethodInfo abstractMethodInfo, AbstractMethodInfo abstractMethodInfo1, AddedParameter[] addedParameters1
     ) {
         AddedParameter[] addedParameters3 = (AddedParameter[]) this.addedParametersByMethod.remove(abstractMethodInfo);
-        boolean bl = this.hasAddedParametersEntry(abstractMethodInfo1);
+        boolean addedParametersEntry = this.hasAddedParametersEntry(abstractMethodInfo1);
         AddedParameter[] addedParameters2 = ((com.zelix.klassmaster.obfuscator.parameters.AddedParameter[]) (this.addedParametersByMethod.put(abstractMethodInfo1, addedParameters1)));
-        if (bl) {
+        if (addedParametersEntry) {
             if (addedParameters1.length == 0 && addedParameters2.length > 0) {
                 MethodSignature methodSignature4 = createChangedMethodSignature(abstractMethodInfo1, addedParameters1);
                 String string2 = "Method '"
@@ -1082,21 +1082,21 @@ public class ChangeLogMapping extends AbstractChangeLog {
                     return null;
             }
         } else {
-            int bb = AbstractChangeLog.getNonDigitPrefixLength(string);
-            int bc = (int) ZkmUtils.parseCustomBase(string.substring(0, bb), "MQoSAkmVrHyDwxKuhLPOURetTIFYqWnpbzfjEsXcZlNCdvgJGBia");
-            String string2;
-            if (bc < list1.size() && list1.get(bc) != null) {
-                ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) list1.get(bc);
-                string2 = changeLogMemberEntry.getInternalClassName();
+            int nonDigitPrefixLength = AbstractChangeLog.getNonDigitPrefixLength(string);
+            int elementIndex = (int) ZkmUtils.parseCustomBase(string.substring(0, nonDigitPrefixLength), "MQoSAkmVrHyDwxKuhLPOURetTIFYqWnpbzfjEsXcZlNCdvgJGBia");
+            String internalClassName;
+            if (elementIndex < list1.size() && list1.get(elementIndex) != null) {
+                ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) list1.get(elementIndex);
+                internalClassName = changeLogMemberEntry.getInternalClassName();
             } else {
-                if (bc != list1.size()) {
+                if (elementIndex != list1.size()) {
                     return null;
                 }
 
-                string2 = ZkmUtils.dotsToSlashes(string1);
+                internalClassName = ZkmUtils.dotsToSlashes(string1);
             }
 
-            return "[L" + string2 + ';';
+            return "[L" + internalClassName + ';';
         }
     }
 
@@ -1109,10 +1109,10 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     public Enumeration getRenamedFields(String string) throws IOException {
-        String string1 = string;
-        string1 = ZkmUtils.slashesToDots(string1);
+        String key = string;
+        key = ZkmUtils.slashesToDots(key);
         if (this.reverseFieldMappings != null) {
-            Map map1 = this.reverseFieldMappings.getInnerMap(string1);
+            Map map1 = this.reverseFieldMappings.getInnerMap(key);
             if (map1 != null) {
                 ArrayList arrayList = new ArrayList(map1.size());
                 Iterator iterator = map1.entrySet().iterator();
@@ -1136,17 +1136,17 @@ public class ChangeLogMapping extends AbstractChangeLog {
     public void mergePackageMappings(ChangeLogMapping changeLogMapping2) {
         ArrayList arrayList = new ArrayList(changeLogMapping2.packageMappings.keySet());
         Collections.sort(arrayList);
-        int ba = arrayList.size();
+        int arrayListSize = arrayList.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string = (String) arrayList.get(i);
-            if (this.packageMappings != null && this.packageMappings.containsKey(string)) {
-                String string7 = (String) this.packageMappings.get(string);
-                String string8 = (String) changeLogMapping2.packageMappings.get(string);
+        for (int elementIndex = 0; elementIndex < arrayListSize; elementIndex++) {
+            String key = (String) arrayList.get(elementIndex);
+            if (this.packageMappings != null && this.packageMappings.containsKey(key)) {
+                String string7 = (String) this.packageMappings.get(key);
+                String string8 = (String) changeLogMapping2.packageMappings.get(key);
                 if (!string7.equals(string8)) {
                     this.logWarning(
                             "Package name \""
-                                    + string
+                                    + key
                                     + "\" mapping clash while merging with \""
                                     + changeLogMapping2.changeLogName
                                     + "\". Will be mapped to \""
@@ -1157,51 +1157,51 @@ public class ChangeLogMapping extends AbstractChangeLog {
                     );
                 }
             } else {
-                String string1 = (String) changeLogMapping2.packageMappings.get(string);
-                int bc = string.lastIndexOf(46);
-                if (bc == -1) {
-                    this.putPackageMapping(string1, string, false);
+                String value = (String) changeLogMapping2.packageMappings.get(key);
+                int endIndex = key.lastIndexOf(46);
+                if (endIndex == -1) {
+                    this.putPackageMapping(value, key, false);
                 } else {
-                    String string2 = string.substring(0, bc);
-                    String string3 = (String) this.packageMappings.get(string2);
-                    String string4 = (String) changeLogMapping2.packageMappings.get(string2);
-                    if (string4.equals(string1)) {
-                        this.putPackageMapping(string3, string, false);
-                        if (!string1.equals(string3)) {
+                    String keyValue = key.substring(0, endIndex);
+                    String valueValue = (String) this.packageMappings.get(keyValue);
+                    String string4 = (String) changeLogMapping2.packageMappings.get(keyValue);
+                    if (string4.equals(value)) {
+                        this.putPackageMapping(valueValue, key, false);
+                        if (!value.equals(valueValue)) {
                             this.logWarning(
                                     "Package name \""
-                                            + string
+                                            + key
                                             + "\" partial mapping clash (A) while merging with \""
                                             + changeLogMapping2.changeLogName
                                             + "\". Will be mapped to \""
-                                            + string3
+                                            + valueValue
                                             + "\" and not \""
-                                            + string1
+                                            + value
                                             + "\""
                             );
                         }
                     } else {
-                        int bd = ZkmStringUtils.countChar(string1, '.') + 1;
-                        String string5;
+                        int bd = ZkmStringUtils.countChar(value, '.') + 1;
+                        String valueValue2;
                         if (ZkmStringUtils.countChar(string4, '.') + 1 >= bd) {
-                            string5 = string3;
+                            valueValue2 = valueValue;
                         } else {
-                            int be = string1.lastIndexOf(46);
-                            String string6 = string1.substring(be + 1);
-                            string5 = string3 + "." + string6;
+                            int be = value.lastIndexOf(46);
+                            String string6 = value.substring(be + 1);
+                            valueValue2 = valueValue + "." + string6;
                         }
 
-                        this.putPackageMapping(string5, string, false);
-                        if (!string1.equals(string5)) {
+                        this.putPackageMapping(valueValue2, key, false);
+                        if (!value.equals(valueValue2)) {
                             this.logWarning(
                                     "Package name \""
-                                            + string
+                                            + key
                                             + "\" partial mapping clash (B) while merging with \""
                                             + changeLogMapping2.changeLogName
                                             + "\". Will be mapped to \""
-                                            + string5
+                                            + valueValue2
                                             + "\" and not \""
-                                            + string1
+                                            + value
                                             + "\""
                             );
                         }
@@ -1211,15 +1211,15 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public ChangeLogMethodSignature lookupMethodMapping(String string, Object object) throws IOException {
-        return this.methodMappings == null ? null : (ChangeLogMethodSignature) this.methodMappings.getValue(ZkmUtils.slashesToDots(string), object);
+    public ChangeLogMethodSignature lookupMethodMapping(String string, Object key) throws IOException {
+        return this.methodMappings == null ? null : (ChangeLogMethodSignature) this.methodMappings.getValue(ZkmUtils.slashesToDots(string), key);
     }
 
     public ArrayList getMethodMappingPairs(String string) throws IOException {
-        String string1 = string;
-        string1 = ZkmUtils.slashesToDots(string1);
+        String key = string;
+        key = ZkmUtils.slashesToDots(key);
         if (this.methodMappings != null) {
-            Map map1 = this.methodMappings.getInnerMap(string1);
+            Map map1 = this.methodMappings.getInnerMap(key);
             if (map1 != null) {
                 ArrayList arrayList = new ArrayList();
                 Iterator iterator = map1.entrySet().iterator();
@@ -1245,70 +1245,70 @@ public class ChangeLogMapping extends AbstractChangeLog {
             Enumeration enumeration = this.rawFieldMappings.keys();
 
             while (enumeration.hasMoreElements()) {
-                String string = (String) enumeration.nextElement();
-                String string1 = ZkmUtils.dotsToSlashes(string);
-                String string3 = (String) hashMap.get(string1);
-                String string2;
-                if (string3 == null) {
-                    string3 = string1;
-                    string2 = string;
+                String keyValue = (String) enumeration.nextElement();
+                String key = ZkmUtils.dotsToSlashes(keyValue);
+                String keyValue2 = (String) hashMap.get(key);
+                String keyValue3;
+                if (keyValue2 == null) {
+                    keyValue2 = key;
+                    keyValue3 = keyValue;
                 } else {
-                    string2 = ZkmUtils.slashesToDots(string3);
+                    keyValue3 = ZkmUtils.slashesToDots(keyValue2);
                 }
 
-                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string3);
+                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(keyValue2);
                 if (classFileBase == null) {
-                    classFileBase = classpathClassLoader1.findClassFile(string1);
+                    classFileBase = classpathClassLoader1.findClassFile(key);
                 }
 
                 boolean programClass = classFileBase.isProgramClass();
-                ListMultimap listMultimap = this.rawFieldMappings.getMultimap(string);
+                ListMultimap listMultimap = this.rawFieldMappings.getMultimap(keyValue);
                 Enumeration enumeration1 = listMultimap.keys();
 
-                label103:
                 while (enumeration1.hasMoreElements()) {
                     ChangeLogClassKey changeLogClassKey = (ChangeLogClassKey) enumeration1.nextElement();
-                    String string4 = changeLogClassKey.getName();
-                    String string5 = changeLogClassKey.getType();
+                    String nameValue = changeLogClassKey.getName();
+                    String typeValue = changeLogClassKey.getType();
                     List list1 = listMultimap.getValues(changeLogClassKey);
-                    int ba = list1.size();
+                    int list1Size = list1.size();
                     if (this.fieldsHaveTypes) {
-                        if (ba > 1) {
-                            this.reportFatalError("Field \"" + string5 + " " + string4 + "\" in class \"" + string + "\" appears more than once in log.");
+                        if (list1Size > 1) {
+                            this.reportFatalError("Field \"" + typeValue + " " + nameValue + "\" in class \"" + keyValue + "\" appears more than once in log.");
                         }
 
-                        String string7 = (String) list1.get(0);
-                        String string8 = MethodSignature.javaTypeToDescriptor(string5, hashMap);
+                        String nameValue2 = (String) list1.get(0);
+                        String descriptorValue = MethodSignature.javaTypeToDescriptor(typeValue, hashMap);
                         AbstractFieldInfo abstractFieldInfo;
                         if (programClass) {
-                            abstractFieldInfo = classMemberLookup1.findField(string3, string4, string8);
+                            abstractFieldInfo = classMemberLookup1.findField(keyValue2, nameValue, descriptorValue);
                         } else {
-                            abstractFieldInfo = classFileBase.findField(string4, string8);
+                            abstractFieldInfo = classFileBase.findField(nameValue, descriptorValue);
                         }
 
-                        FieldSignature fieldSignature3 = new FieldSignature(string4, string8);
+                        FieldSignature fieldSignature3 = new FieldSignature(nameValue, descriptorValue);
                         if (abstractFieldInfo == null && (programClass || setMultiMap == null || !setMultiMap.containsValue(classFileBase, fieldSignature3))) {
                             if (!programClass && !changeLogClassKey.isPrivate()) {
                                 this.logWarning(
                                         "Contains field '"
                                                 + fieldSignature3.formatDeclaration(hashMap1)
                                                 + "' in class '"
-                                                + string
+                                                + keyValue
                                                 + "' but there is no corresponding field in "
                                                 + classFileBase.getLocationName()
                                                 + " (1)."
                                 );
                             }
                         } else {
-                            FieldSignature fieldSignature5 = new FieldSignature(string7, string8);
-                            this.putResolvedFieldMapping(string, string2, fieldSignature3, fieldSignature5, hashMap1);
+                            FieldSignature fieldSignature5 = new FieldSignature(nameValue2, descriptorValue);
+                            this.putResolvedFieldMapping(keyValue, keyValue3, fieldSignature3, fieldSignature5, hashMap1);
                         }
-                    } else if (ba > 1) {
+                    } else if (list1Size > 1) {
                         this.reportError(
-                                "There are " + ba + " field entries named \"" + string4 + "\" for class \"" + string + "\" but no field types are present in log."
+                                "There are " + list1Size + " field entries named \"" + nameValue + "\" for class \"" + keyValue + "\" but no field types are present in log."
                         );
                     } else {
-                        String string6 = (String) list1.get(0);
+                        String nameValue3 = (String) list1.get(0);
+                        boolean mappedExcludedField = false;
                         if (!programClass && setMultiMap != null) {
                             Set set1 = setMultiMap.getValues(classFileBase);
                             if (set1 != null) {
@@ -1316,46 +1316,50 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
                                 while (iterator.hasNext()) {
                                     FieldSignature fieldSignature = (FieldSignature) iterator.next();
-                                    if (fieldSignature.getName().equals(string4)) {
-                                        FieldSignature fieldSignature1 = new FieldSignature(string6, fieldSignature.getDescriptor());
-                                        this.putResolvedFieldMapping(string, string2, fieldSignature, fieldSignature1, hashMap1);
-                                        continue label103;
+                                    if (fieldSignature.getName().equals(nameValue)) {
+                                        FieldSignature fieldSignature1 = new FieldSignature(nameValue3, fieldSignature.getDescriptor());
+                                        this.putResolvedFieldMapping(keyValue, keyValue3, fieldSignature, fieldSignature1, hashMap1);
+                                        mappedExcludedField = true;
+                                        break;
                                     }
                                 }
                             }
                         }
 
+                        if (mappedExcludedField) {
+                            continue;
+                        }
                         AbstractFieldInfo[] abstractFieldInfos;
                         if (programClass) {
-                            abstractFieldInfos = classMemberLookup1.findFieldsByName(string3, string4);
+                            abstractFieldInfos = classMemberLookup1.findFieldsByName(keyValue2, nameValue);
                         } else {
-                            abstractFieldInfos = classFileBase.findFieldsByName(string4);
+                            abstractFieldInfos = classFileBase.findFieldsByName(nameValue);
                         }
 
                         if (abstractFieldInfos != null && abstractFieldInfos.length != 0) {
                             if (abstractFieldInfos.length == 1) {
                                 AbstractFieldInfo abstractFieldInfo1 = abstractFieldInfos[0];
-                                String string9 = abstractFieldInfo1.getDescriptor();
-                                FieldSignature fieldSignature4 = new FieldSignature(string4, string9);
-                                FieldSignature fieldSignature2 = new FieldSignature(string6, string9);
-                                this.putResolvedFieldMapping(string, string2, fieldSignature4, fieldSignature2, hashMap1);
+                                String descriptor = abstractFieldInfo1.getDescriptor();
+                                FieldSignature fieldSignature4 = new FieldSignature(nameValue, descriptor);
+                                FieldSignature fieldSignature2 = new FieldSignature(nameValue3, descriptor);
+                                this.putResolvedFieldMapping(keyValue, keyValue3, fieldSignature4, fieldSignature2, hashMap1);
                             } else {
                                 this.reportError(
                                         "There are "
                                                 + abstractFieldInfos.length
                                                 + " fields named \""
-                                                + string4
+                                                + nameValue
                                                 + "\" in class \""
-                                                + string
+                                                + keyValue
                                                 + "\" but no field types are present in log."
                                 );
                             }
                         } else if (!classFileBase.isProgramClass()) {
                             this.logWarning(
                                     "Contains field '"
-                                            + string4
+                                            + nameValue
                                             + "' in class '"
-                                            + string
+                                            + keyValue
                                             + "' but there is no corresponding field in "
                                             + classFileBase.getLocationName()
                                             + " (2)."
@@ -1374,8 +1378,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
         ArrayList arrayList = new ArrayList();
         if (this.reverseMethodMappings != null) {
-            String string1 = ZkmUtils.slashesToDots(string);
-            NestedMultiMap nestedMultiMap = this.reverseMethodMappings.getNestedMultiMap(string1);
+            String key = ZkmUtils.slashesToDots(string);
+            NestedMultiMap nestedMultiMap = this.reverseMethodMappings.getNestedMultiMap(key);
             Enumeration enumeration = nestedMultiMap.keys();
 
             while (enumeration.hasMoreElements()) {
@@ -1385,9 +1389,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
                     Enumeration enumeration1 = listMultimap.keys();
 
                     while (enumeration1.hasMoreElements()) {
-                        String string2 = (String) enumeration1.nextElement();
-                        String string3 = this.mapTypeList(string2, this.reverseClassMappings);
-                        Iterator iterator = listMultimap.getValues(string2).iterator();
+                        String keyValue = (String) enumeration1.nextElement();
+                        String string3 = this.mapTypeList(keyValue, this.reverseClassMappings);
+                        Iterator iterator = listMultimap.getValues(keyValue).iterator();
 
                         while (iterator.hasNext()) {
                             String string4 = (String) iterator.next();
@@ -1410,29 +1414,29 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return true;
     }
 
-    public String getOriginalFieldName(String string, String string1, String string2) throws IOException {
-        return this.lookupOriginalFieldName(string, string1, string2, this.rawFieldMappings);
+    public String getOriginalFieldName(String originalClassName, String string1, String string2) throws IOException {
+        return this.lookupOriginalFieldName(originalClassName, string1, string2, this.rawFieldMappings);
     }
 
-    public String lookupNewFieldName(String string, String string1, String string2, NestedMultiMap nestedMultiMap) throws IOException {
+    public String lookupNewFieldName(String string, String nameArgument, String descriptor, NestedMultiMap nestedMultiMap) throws IOException {
         if (nestedMultiMap != null) {
-            String string3 = ZkmUtils.slashesToDots(string);
-            ChangeLogClassKey changeLogClassKey = this.createFieldKey(string1, string2);
-            List list1 = nestedMultiMap.getValues(string3, changeLogClassKey);
+            String key = ZkmUtils.slashesToDots(string);
+            ChangeLogClassKey changeLogClassKey = this.createFieldKey(nameArgument, descriptor);
+            List list1 = nestedMultiMap.getValues(key, changeLogClassKey);
             if (list1 == null) {
                 return null;
             }
 
             if (list1.size() == 1) {
                 String string5 = (String) list1.get(0);
-                return string1.equals(string5) ? null : string5;
+                return nameArgument.equals(string5) ? null : string5;
             }
 
             if (this.methodsHaveReturnTypes) {
-                String string4 = string2;
-                this.reportFatalError("Class '" + string3 + "' has multiple fields '" + string4 + " " + string1 + "'.");
+                String descriptorValue = descriptor;
+                this.reportFatalError("Class '" + key + "' has multiple fields '" + descriptorValue + " " + nameArgument + "'.");
             } else {
-                this.reportFatalError("Class '" + string3 + "' has multiple fields named '" + string1 + "' but field type not present.");
+                this.reportFatalError("Class '" + key + "' has multiple fields named '" + nameArgument + "' but field type not present.");
             }
 
             return null;
@@ -1452,21 +1456,21 @@ public class ChangeLogMapping extends AbstractChangeLog {
             Enumeration enumeration = changeLogMapping2.forwardClassEntries.keys();
 
             while (enumeration.hasMoreElements()) {
-                String string = (String) enumeration.nextElement();
-                Set set1 = changeLogMapping2.forwardClassEntries.getValues(string);
-                if (this.forwardClassEntries.containsKey(string)) {
+                String key = (String) enumeration.nextElement();
+                Set set1 = changeLogMapping2.forwardClassEntries.getValues(key);
+                if (this.forwardClassEntries.containsKey(key)) {
                     ArrayList arrayList = new ArrayList(set1);
                     Collections.sort(arrayList);
-                    String string1 = null;
-                    ListMultimap listMultimap = groupEntriesByClass(this.forwardClassEntries.getValues(string));
+                    String classNameValue = null;
+                    ListMultimap listMultimap = groupEntriesByClass(this.forwardClassEntries.getValues(key));
                     ArrayList arrayList1 = null;
 
-                    for (int i = 0; i < arrayList.size(); i++) {
-                        ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) arrayList.get(i);
-                        String string2 = changeLogMemberEntry.getClassName();
-                        if (string1 == null || !string2.equals(string1)) {
-                            string1 = string2;
-                            List list1 = listMultimap.getValues(string2);
+                    for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                        ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) arrayList.get(elementIndex);
+                        String className = changeLogMemberEntry.getClassName();
+                        if (classNameValue == null || !className.equals(classNameValue)) {
+                            classNameValue = className;
+                            List list1 = listMultimap.getValues(className);
                             if (list1 != null) {
                                 arrayList1 = new ArrayList(list1);
                                 Collections.sort(arrayList1);
@@ -1480,14 +1484,14 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             if (arrayList1.size() > 0) {
                                 if (changeLogMemberEntry.getFieldName() == null) {
                                     ChangeLogMemberEntry changeLogMemberEntry3 = (ChangeLogMemberEntry) arrayList1.remove(0);
-                                    twoKeyMap.putValue(string, new IdentityValueHolder(changeLogMemberEntry), new IdentityValueHolder(changeLogMemberEntry3));
+                                    twoKeyMap.putValue(key, new IdentityValueHolder(changeLogMemberEntry), new IdentityValueHolder(changeLogMemberEntry3));
                                     continue;
                                 }
 
                                 ChangeLogMemberEntry changeLogMemberEntry2 = null;
-                                int bb = arrayList1.indexOf(changeLogMemberEntry);
-                                if (bb > -1) {
-                                    changeLogMemberEntry2 = (ChangeLogMemberEntry) arrayList1.remove(bb);
+                                int elementIndexValue = arrayList1.indexOf(changeLogMemberEntry);
+                                if (elementIndexValue > -1) {
+                                    changeLogMemberEntry2 = (ChangeLogMemberEntry) arrayList1.remove(elementIndexValue);
                                 }
 
                                 if (changeLogMemberEntry2 != null) {
@@ -1496,7 +1500,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                 "Field '"
                                                         + changeLogMemberEntry2.getFieldName()
                                                         + "' in class '"
-                                                        + string2
+                                                        + className
                                                         + "' has type '"
                                                         + ConstantPoolEntry.descriptorToJavaType(changeLogMemberEntry2.getFieldDescriptor())
                                                         + "' in this log but type '"
@@ -1514,7 +1518,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                                     + '('
                                                                     + changeLogMemberEntry2.getFieldTypeName()
                                                                     + ")' in class '"
-                                                                    + string2
+                                                                    + className
                                                                     + "' in this log is inconsistent with method '"
                                                                     + changeLogMemberEntry.getSetterMethodName()
                                                                     + '('
@@ -1532,7 +1536,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                                     + " "
                                                                     + changeLogMemberEntry2.getGetterMethodName()
                                                                     + "()' in class '"
-                                                                    + string2
+                                                                    + className
                                                                     + "' in this log is inconsistent with method '"
                                                                     + changeLogMemberEntry.getFieldTypeName()
                                                                     + " "
@@ -1551,7 +1555,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                                     + " "
                                                                     + changeLogMemberEntry2.getAltGetterMethodName()
                                                                     + "()' in class '"
-                                                                    + string2
+                                                                    + className
                                                                     + "' in this log is inconsistent with method '"
                                                                     + changeLogMemberEntry.getFieldTypeName()
                                                                     + " "
@@ -1567,7 +1571,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                             "Field '"
                                                                     + changeLogMemberEntry2.getFieldName()
                                                                     + "' in class '"
-                                                                    + string2
+                                                                    + className
                                                                     + "' in this log is inconsistent in nature with the equivalent field in '"
                                                                     + changeLogMapping2.changeLogName
                                                                     + "'. Logs could not be fully merged. You must distribute this application as a whole. (1)"
@@ -1585,7 +1589,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                         }
                                     }
 
-                                    twoKeyMap.putValue(string, new IdentityValueHolder(changeLogMemberEntry), new IdentityValueHolder(changeLogMemberEntry2));
+                                    twoKeyMap.putValue(key, new IdentityValueHolder(changeLogMemberEntry), new IdentityValueHolder(changeLogMemberEntry2));
                                     continue;
                                 }
 
@@ -1600,11 +1604,11 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                 }
 
                                 if (changeLogMemberEntry2 != null) {
-                                    this.forwardClassEntries.removeValue(string, changeLogMemberEntry2);
-                                    this.forwardClassEntries.addValue(string, changeLogMemberEntry);
-                                    twoKeyMap.putValue(string, new IdentityValueHolder(changeLogMemberEntry2), new IdentityValueHolder(changeLogMemberEntry));
+                                    this.forwardClassEntries.removeValue(key, changeLogMemberEntry2);
+                                    this.forwardClassEntries.addValue(key, changeLogMemberEntry);
+                                    twoKeyMap.putValue(key, new IdentityValueHolder(changeLogMemberEntry2), new IdentityValueHolder(changeLogMemberEntry));
                                 } else {
-                                    this.forwardClassEntries.addValue(string, changeLogMemberEntry);
+                                    this.forwardClassEntries.addValue(key, changeLogMemberEntry);
                                 }
                                 continue;
                             }
@@ -1614,18 +1618,18 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             setMultiMap = this.forwardClassEntries;
                         }
 
-                        setMultiMap.addValue(string, changeLogMemberEntry);
+                        setMultiMap.addValue(key, changeLogMemberEntry);
                     }
                 } else {
-                    this.forwardClassEntries.addValues(string, set1);
+                    this.forwardClassEntries.addValues(key, set1);
                 }
             }
         }
     }
 
     @Override
-    public void setAutoReflectionClass(Object object) {
-        this.autoReflectionClass = (String) object;
+    public void setAutoReflectionClass(Object autoReflectionClassArgument) {
+        this.autoReflectionClass = (String) autoReflectionClassArgument;
     }
 
     public void removeExcludedParameterObfuscatedMethods(MethodParameterExclusions methodParameterExclusions, MethodOverrideAnalyzer methodOverrideAnalyzer) {
@@ -1658,8 +1662,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public String getModuleAutoReflectionClass(Object object) {
-        return (String) this.moduleAutoReflectionClasses.get(object);
+    public String getModuleAutoReflectionClass(Object key) {
+        return (String) this.moduleAutoReflectionClasses.get(key);
     }
 
     public static String getSimpleName(String string) {
@@ -1679,10 +1683,10 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
+                String key = (String) entry.getKey();
                 ObjectPair objectPair = (ObjectPair) entry.getValue();
-                if (!this.memberClassEntries.containsKey(string)) {
-                    this.memberClassEntries.put(string, objectPair);
+                if (!this.memberClassEntries.containsKey(key)) {
+                    this.memberClassEntries.put(key, objectPair);
                 }
             }
 
@@ -1691,8 +1695,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator1.hasNext()) {
                 Entry entry1 = (Entry) iterator1.next();
-                String string2 = (String) entry1.getKey();
-                String string1 = getPackageName(string2);
+                String keyValue = (String) entry1.getKey();
+                String packageName = getPackageName(keyValue);
                 ObjectPair objectPair1 = (ObjectPair) entry1.getValue();
                 ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) objectPair1.getFirst();
                 ChangeLogMemberEntry changeLogMemberEntry1 = (ChangeLogMemberEntry) objectPair1.getSecond();
@@ -1703,15 +1707,15 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 }
 
                 identityValueHolder1.setValue(changeLogMemberEntry1);
-                if ((identityValueHolder = (IdentityValueHolder) twoKeyMap.getValue(string1, identityValueHolder1)) != null) {
+                if ((identityValueHolder = (IdentityValueHolder) twoKeyMap.getValue(packageName, identityValueHolder1)) != null) {
                     objectPair1.setSecond(identityValueHolder.getValue());
                 }
             }
         }
     }
 
-    public static String substringAfterLast(String string, int ba) {
-        int bb = string.lastIndexOf(ba);
+    public static String substringAfterLast(String string, int searchCharacter) {
+        int bb = string.lastIndexOf(searchCharacter);
         return bb != -1 ? string.substring(bb + 1) : string;
     }
 
@@ -1729,8 +1733,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     @Override
-    public void setMethodParameterChangeClasses(Object object) {
-        List list1 = (List) object;
+    public void setMethodParameterChangeClasses(Object methodParameterChangeClassesArgument) {
+        List list1 = (List) methodParameterChangeClassesArgument;
         ObjectTriple objectTriple = new ObjectTriple(list1.get(0), list1.get(1), list1.get(2));
         if (this.canonicalClassTriples.containsKey(objectTriple)) {
             objectTriple = (ObjectTriple) this.canonicalClassTriples.get(objectTriple);
@@ -1745,38 +1749,38 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
 
         if (this.reverseMethodMappings != null) {
-            String string3 = ZkmUtils.slashesToDots(string);
+            String key = ZkmUtils.slashesToDots(string);
             ComparableKeyValue comparableKeyValue = this.createNameTypeKey(string1, string2);
-            String string4 = this.joinTypeNames(strings);
-            return this.reverseMethodMappings.containsKeys(string3, comparableKeyValue, string4);
+            String keyValue = this.joinTypeNames(strings);
+            return this.reverseMethodMappings.containsKeys(key, comparableKeyValue, keyValue);
         } else {
             return false;
         }
     }
 
     @Override
-    public void addModuleAutoReflectionClass(Object object, Object object1) {
-        String string = (String) this.moduleAutoReflectionClasses.put(object1, object);
+    public void addModuleAutoReflectionClass(Object value, Object key) {
+        String string = (String) this.moduleAutoReflectionClasses.put(key, value);
     }
 
-    public void addRawMethodMapping(String string, String string1, String string2, String string3, String string4) throws IOException {
-        String string5 = ZkmUtils.slashesToDots(string);
-        ChangeLogMemberKey changeLogMemberKey = this.createMethodKeyForDescriptor(string1, string2, string3);
-        NewNameMapping newNameMapping = this.createNewNameMapping(string4, string2);
-        this.rawMethodMappings.addValue(string5, changeLogMemberKey, newNameMapping);
+    public void addRawMethodMapping(String string, String nameArgument, String parameterTypes, String descriptor, String newName) throws IOException {
+        String key = ZkmUtils.slashesToDots(string);
+        ChangeLogMemberKey changeLogMemberKey = this.createMethodKeyForDescriptor(nameArgument, parameterTypes, descriptor);
+        NewNameMapping newNameMapping = this.createNewNameMapping(newName, parameterTypes);
+        this.rawMethodMappings.addValue(key, changeLogMemberKey, newNameMapping);
     }
 
     public void removePackageMapping(String string) throws IOException {
-        String string1 = string;
-        if (string1 != null) {
-            string1 = ZkmUtils.slashesToDots(string1);
+        String key = string;
+        if (key != null) {
+            key = ZkmUtils.slashesToDots(key);
         }
 
         if (this.packageMappings != null) {
-            String string2 = (String) this.packageMappings.get(string1);
-            this.packageMappings.remove(string1);
-            this.reversePackageMappings.removeValue(string2, string1);
-            this.logWarning("Package '" + string1 + "' no longer appears in the opened classes and will be assumed to be no longer used.");
+            String keyValue = (String) this.packageMappings.get(key);
+            this.packageMappings.remove(key);
+            this.reversePackageMappings.removeValue(keyValue, key);
+            this.logWarning("Package '" + key + "' no longer appears in the opened classes and will be assumed to be no longer used.");
         }
     }
 
@@ -1786,10 +1790,10 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 || this.referenceObfuscationClass != null && this.referenceObfuscationClass.equals(string1);
     }
 
-    public void removeRawMethodMapping(String string, String string1, String string2, String string3) throws IOException {
-        String string4 = ZkmUtils.slashesToDots(string);
-        ChangeLogMemberKey changeLogMemberKey = this.createMethodKeyForDescriptor(string1, string2, string3);
-        this.rawMethodMappings.removeInnerKey(string4, changeLogMemberKey);
+    public void removeRawMethodMapping(String string, String nameArgument, String parameterTypes, String descriptor) throws IOException {
+        String key = ZkmUtils.slashesToDots(string);
+        ChangeLogMemberKey changeLogMemberKey = this.createMethodKeyForDescriptor(nameArgument, parameterTypes, descriptor);
+        this.rawMethodMappings.removeInnerKey(key, changeLogMemberKey);
     }
 
     public boolean isNewPackageName(String string) throws IOException {
@@ -1812,25 +1816,25 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return this.scriptEnvironment.isLooseClassFilesLoaded();
     }
 
-    public void renameRawMethodMapping(String string, String string1, String string2, String string3, String string4) throws IOException {
-        String string5 = ZkmUtils.slashesToDots(string);
-        ChangeLogMemberKey changeLogMemberKey = this.createMethodKeyForDescriptor(string1, string2, string3);
-        List list1 = this.rawMethodMappings.getValues(string5, changeLogMemberKey);
+    public void renameRawMethodMapping(String string, String nameArgument, String parameterTypes, String descriptor, String nameArgument2) throws IOException {
+        String key = ZkmUtils.slashesToDots(string);
+        ChangeLogMemberKey changeLogMemberKey = this.createMethodKeyForDescriptor(nameArgument, parameterTypes, descriptor);
+        List list1 = this.rawMethodMappings.getValues(key, changeLogMemberKey);
         if (list1.size() == 1) {
             NewNameMapping newNameMapping = (NewNameMapping) list1.get(0);
-            this.rawMethodMappings.removeInnerKey(string5, changeLogMemberKey);
-            ChangeLogMemberKey changeLogMemberKey1 = this.createMethodKeyForDescriptor(string4, string2, changeLogMemberKey.getType());
-            this.rawMethodMappings.addValue(string5, changeLogMemberKey1, newNameMapping);
+            this.rawMethodMappings.removeInnerKey(key, changeLogMemberKey);
+            ChangeLogMemberKey changeLogMemberKey1 = this.createMethodKeyForDescriptor(nameArgument2, parameterTypes, changeLogMemberKey.getType());
+            this.rawMethodMappings.addValue(key, changeLogMemberKey1, newNameMapping);
         } else {
             this.reportFatalError(
                     "Class '"
-                            + string5
+                            + key
                             + "' has multiple method mappings for method '"
                             + changeLogMemberKey.getType()
                             + " "
                             + changeLogMemberKey.getName()
                             + '('
-                            + string2
+                            + parameterTypes
                             + ")'."
             );
         }
@@ -1856,9 +1860,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
         String string = (String) object1;
         String string1 = (String) object;
         if (this.classMappings == null) {
-            int ba = ZkmUtils.getPrimeCapacity(this.classCount);
-            this.classMappings = ZkmUtils.createHashMap(ba);
-            this.reverseClassMappings = ZkmUtils.createHashMap(ba);
+            int primeCapacity = ZkmUtils.getPrimeCapacity(this.classCount);
+            this.classMappings = ZkmUtils.createHashMap(primeCapacity);
+            this.reverseClassMappings = ZkmUtils.createHashMap(primeCapacity);
         }
 
         String string3 = ((java.lang.String) (this.classMappings.put(string, string1)));
@@ -1880,104 +1884,104 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return this.looseChangeLog;
     }
 
-    public void addFlowObfuscationEntry(String string, List list1, boolean bl, String string1, String string2) throws ZkmException, IOException {
+    public void addFlowObfuscationEntry(String key, List list1, boolean bl, String string1, String string2) throws ZkmException, IOException {
         this.flowObfuscationDataPresent = true;
         String string3 = bl ? "" : " for package '" + string2 + "'";
-        if (this.classMappings != null && this.classMappings.containsKey(string)) {
-            String string4 = ZkmUtils.dotsToSlashes((String) ZkmUtils.mapOrSelf(string, this.classMappings));
+        if (this.classMappings != null && this.classMappings.containsKey(key)) {
+            String string4 = ZkmUtils.dotsToSlashes((String) ZkmUtils.mapOrSelf(key, this.classMappings));
             boolean bl1 = false;
-            String string5 = null;
-            String string6 = null;
-            String string7 = null;
-            String string8 = null;
-            String string9 = null;
-            boolean bl2 = false;
+            String nameValue = null;
+            String fieldDescriptor = null;
+            String nameValue3 = null;
+            String nameValue4 = null;
+            String nameValue5 = null;
+            boolean alternateVariant = false;
             if (list1.size() < 2) {
                 this.flowEntryList.add(null);
             } else {
                 if (((String) list1.get(0)).charAt(0) == '0') {
-                    for (int i = 0; i < list1.size(); i++) {
-                        String string10 = (String) list1.get(i);
+                    for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                        String string10 = (String) list1.get(elementIndex);
                         if (string10.length() > 1) {
                             char bb = string10.charAt(0);
                             if (bb == '0') {
                                 string10 = string10.substring(1);
-                                ChangeLogClassKey changeLogClassKey = this.findFieldKeyByHash(string, string10);
-                                string5 = changeLogClassKey.getName();
-                                string6 = MethodSignature.javaTypeToDescriptor(changeLogClassKey.getType());
-                                if (string6 == null) {
-                                    this.reportError("Corrupt Data: '" + string10 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(string) + "' (C)");
+                                ChangeLogClassKey changeLogClassKey = this.findFieldKeyByHash(key, string10);
+                                nameValue = changeLogClassKey.getName();
+                                fieldDescriptor = MethodSignature.javaTypeToDescriptor(changeLogClassKey.getType());
+                                if (fieldDescriptor == null) {
+                                    this.reportError("Corrupt Data: '" + string10 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(key) + "' (C)");
                                     bl1 = true;
                                     break;
                                 }
                             } else {
                                 string10 = string10.substring(1);
-                                ChangeLogMemberKey changeLogMemberKey = this.findMethodKeyByHash(string, string10);
-                                String string11 = changeLogMemberKey.getName();
+                                ChangeLogMemberKey changeLogMemberKey = this.findMethodKeyByHash(key, string10);
+                                String nameValue2 = changeLogMemberKey.getName();
                                 switch (bb) {
                                     case 'a':
-                                        string7 = string11;
+                                        nameValue3 = nameValue2;
                                         break;
                                     case 'b':
-                                        string8 = string11;
+                                        nameValue4 = nameValue2;
                                         break;
                                     case 'c':
-                                        string9 = string11;
+                                        nameValue5 = nameValue2;
                                 }
                             }
                         } else {
-                            bl2 = string10.charAt(0) >= 'A' && string10.charAt(0) <= 'Z';
+                            alternateVariant = string10.charAt(0) >= 'A' && string10.charAt(0) <= 'Z';
                         }
                     }
                 } else {
-                    for (int i = 0; i < list1.size(); i++) {
-                        if (i == 0) {
-                            String string12 = (String) list1.get(i);
+                    for (int elementIndexValue = 0; elementIndexValue < list1.size(); elementIndexValue++) {
+                        if (elementIndexValue == 0) {
+                            String string12 = (String) list1.get(elementIndexValue);
                             if ((string12.charAt(0) < '1' || string12.charAt(0) > '5')
                                     && "MQoSAkmVrHyDwxKuhLPOURetTIFYqWnpbzfjEsXcZlNCdvgJGBia".indexOf(string12.charAt(0)) == -1) {
-                                this.reportError("Corrupt Data: '" + string12 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(string) + "' (A)");
+                                this.reportError("Corrupt Data: '" + string12 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(key) + "' (A)");
                                 bl1 = true;
                                 break;
                             }
 
                             try {
-                                string5 = AbstractChangeLog.decodePrefixedName(string12, string4);
+                                nameValue = AbstractChangeLog.decodePrefixedName(string12, string4);
                             } catch (NumberFormatException numberFormatException) {
-                                this.reportError("Corrupt Data: '" + string12 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(string) + "' (B)");
+                                this.reportError("Corrupt Data: '" + string12 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(key) + "' (B)");
                                 bl1 = true;
                                 break;
                             }
 
-                            string6 = decodeFlowFieldType(string12, this.flowEntryList, string);
-                            if (string6 == null) {
-                                this.reportError("Corrupt Data: '" + string12 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(string) + "' (C)");
+                            fieldDescriptor = decodeFlowFieldType(string12, this.flowEntryList, key);
+                            if (fieldDescriptor == null) {
+                                this.reportError("Corrupt Data: '" + string12 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(key) + "' (C)");
                                 bl1 = true;
                                 break;
                             }
                         } else {
-                            String string13 = (String) list1.get(i);
+                            String string13 = (String) list1.get(elementIndexValue);
                             if (string13.length() > 1) {
-                                String string14;
+                                String nameValue6;
                                 try {
-                                    string14 = AbstractChangeLog.decodeName(string13.substring(1), string4);
+                                    nameValue6 = AbstractChangeLog.decodeName(string13.substring(1), string4);
                                 } catch (NumberFormatException numberFormatException1) {
-                                    this.reportError("Corrupt Data: '" + string13 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(string) + "' (D)");
+                                    this.reportError("Corrupt Data: '" + string13 + "' for " + string1 + string3 + " '" + ZkmUtils.slashesToDots(key) + "' (D)");
                                     bl1 = true;
                                     break;
                                 }
 
                                 switch (string13.charAt(0)) {
                                     case 'a':
-                                        string7 = string14;
+                                        nameValue3 = nameValue6;
                                         break;
                                     case 'b':
-                                        string8 = string14;
+                                        nameValue4 = nameValue6;
                                         break;
                                     case 'c':
-                                        string9 = string14;
+                                        nameValue5 = nameValue6;
                                 }
                             } else {
-                                bl2 = string13.charAt(0) >= 'A' && string13.charAt(0) <= 'Z';
+                                alternateVariant = string13.charAt(0) >= 'A' && string13.charAt(0) <= 'Z';
                             }
                         }
                     }
@@ -1988,7 +1992,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 } else {
                     ObservableHolder observableHolder = new ObservableHolder();
                     ChangeLogMemberEntry changeLogMemberEntry = new ChangeLogMemberEntry(
-                            string, string5, string6, string7, string8, string9, bl2, string2, this, string1, observableHolder
+                            key, nameValue, fieldDescriptor, nameValue3, nameValue4, nameValue5, alternateVariant, string2, this, string1, observableHolder
                     );
                     if (!observableHolder.isValueNull()) {
                         this.reportError((String) observableHolder.getValue());
@@ -2002,7 +2006,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                     "Duplicate "
                                             + string1
                                             + " '"
-                                            + ZkmUtils.slashesToDots(string)
+                                            + ZkmUtils.slashesToDots(key)
                                             + "' entries with field name '"
                                             + changeLogMemberEntry.getFieldName()
                                             + "'"
@@ -2019,7 +2023,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                             + string1
                                             + string3
                                             + " '"
-                                            + ZkmUtils.slashesToDots(string)
+                                            + ZkmUtils.slashesToDots(key)
                                             + "' entries with field name '"
                                             + changeLogMemberEntry.getFieldName()
                                             + "'"
@@ -2030,14 +2034,14 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         }
                     }
 
-                    set1.add(string);
+                    set1.add(key);
                     this.flowEntryList.add(changeLogMemberEntry);
                 }
             }
         } else {
             this.reportError(
                     "Class '"
-                            + ZkmUtils.slashesToDots(string)
+                            + ZkmUtils.slashesToDots(key)
                             + "' appears as a Flow Obfuscation "
                             + string1
                             + string3
@@ -2059,22 +2063,22 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
-                String string1 = ZkmUtils.dotsToSlashes(string);
-                ClassFileBase classFileBase = classResolver1.getClassFile(string1);
+                String key = (String) entry.getKey();
+                String keyValue3 = ZkmUtils.dotsToSlashes(key);
+                ClassFileBase classFileBase = classResolver1.getClassFile(keyValue3);
                 Iterator iterator1 = ((ListMultimap) entry.getValue()).entrySet().iterator();
 
                 while (iterator1.hasNext()) {
                     Entry entry1 = (Entry) iterator1.next();
                     ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) entry1.getKey();
                     String string2 = MethodSignature.javaTypeToDescriptor(changeLogMemberKey.getType());
-                    String string3 = changeLogMemberKey.getName();
+                    String nameValue = changeLogMemberKey.getName();
                     MethodSignature methodSignature1 = new MethodSignature(
-                            string3, MethodSignature.parseParameterList(changeLogMemberKey.getParameterTypes()), string2
+                            nameValue, MethodSignature.parseParameterList(changeLogMemberKey.getParameterTypes()), string2
                     );
                     NewNameMapping newNameMapping = (NewNameMapping) ((List) entry1.getValue()).get(0);
                     AbstractMethodInfo abstractMethodInfo = classFileBase.findMethod(methodSignature1);
-                    String string8;
+                    String keyValue;
                     Map map2;
                     if (abstractMethodInfo == null) {
                         if (!methodSignature1.isStaticInitializer()) {
@@ -2082,22 +2086,22 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         }
 
                         long bc = 3687986690820L;
-                        string8 = string;
+                        keyValue = key;
                         map2 = this.classMappings;
                     } else {
                         long bb = 3687986690820L;
-                        string8 = string;
+                        keyValue = key;
                         map2 = this.classMappings;
                     }
 
                     Map map1 = map2;
-                    String string6 = string8;
-                    String string4 = ZkmUtils.dotsToSlashes((String) ZkmUtils.mapOrSelf(string6, map1));
+                    String keyValue2 = keyValue;
+                    String string4 = ZkmUtils.dotsToSlashes((String) ZkmUtils.mapOrSelf(keyValue2, map1));
                     if (newNameMapping.hasParameterChangeData()) {
-                        String string5 = newNameMapping.getParameterChangeData();
+                        String parameterChangeData = newNameMapping.getParameterChangeData();
                         observableHolder.clearValue();
                         Long long1 = AbstractChangeLog.decodeParameterChangeData(
-                                string5, MethodSignature.parseParameterList(newNameMapping.getNewParameterTypes()), observableHolder, string4
+                                parameterChangeData, MethodSignature.parseParameterList(newNameMapping.getNewParameterTypes()), observableHolder, string4
                         );
                         if (abstractMethodInfo != null) {
                             this.parameterChangeKeysByMethod.put(abstractMethodInfo, long1);
@@ -2111,20 +2115,20 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
                     if (newNameMapping.hasParamChangeNodeData() && HiddenOptionFlags.DEBUG_PARAMETER_CHANGE_LOG) {
                         this.setParamChangeNodeDataPresent();
-                        String string7 = newNameMapping.getParamChangeNodeData();
+                        String paramChangeNodeData = newNameMapping.getParamChangeNodeData();
                         MutableLong mutableLong4 = new MutableLong();
                         MutableLong mutableLong = new MutableLong();
                         MutableLong mutableLong1 = new MutableLong();
                         MutableLong mutableLong2 = new MutableLong();
                         MutableLong mutableLong3 = new MutableLong();
-                        AbstractChangeLog.decodeParamChangeNodeData(string7, mutableLong4, mutableLong, mutableLong1, mutableLong2, mutableLong3, string4);
-                        long[] ba = new long[]{
+                        AbstractChangeLog.decodeParamChangeNodeData(paramChangeNodeData, mutableLong4, mutableLong, mutableLong1, mutableLong2, mutableLong3, string4);
+                        long[] value = new long[]{
                                 mutableLong4.getValue(), mutableLong.getValue(), mutableLong1.getValue(), mutableLong2.getValue(), mutableLong3.getValue()
                         };
                         if (abstractMethodInfo != null) {
-                            this.paramChangeNodeDataByMethod.put(abstractMethodInfo, ba);
+                            this.paramChangeNodeDataByMethod.put(abstractMethodInfo, value);
                         } else {
-                            this.paramChangeNodeDataByClass.put(classFileBase, ba);
+                            this.paramChangeNodeDataByClass.put(classFileBase, value);
                         }
                     }
                 }
@@ -2139,18 +2143,18 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return this.methodMappings != null && this.methodMappings.containsKeys(ZkmUtils.slashesToDots(string), methodSignature1);
     }
 
-    public boolean hasAddedParametersEntry(Object object) {
-        return this.addedParametersByMethod == null ? false : this.addedParametersByMethod.containsKey(object);
+    public boolean hasAddedParametersEntry(Object key) {
+        return (!(this.addedParametersByMethod == null) && (this.addedParametersByMethod.containsKey(key)));
     }
 
     @Override
-    public void addMethodMappings(String string, ListMultimap listMultimap) {
+    public void addMethodMappings(String key, ListMultimap listMultimap) {
         ChangeLogSimpleNode.getOpaqueStrings();
         if (this.rawMethodMappings == null) {
             this.rawMethodMappings = new NestedMultiMap(this.classCount, 5, 5);
         }
 
-        this.rawMethodMappings.putMultimap(string, listMultimap);
+        this.rawMethodMappings.putMultimap(key, listMultimap);
         if (!this.hasParameterChangeData()) {
             Enumeration enumeration = listMultimap.allValues();
 
@@ -2188,67 +2192,67 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 ArrayList arrayList = new ArrayList(this.packageMappings.keySet());
                 Collections.sort(arrayList);
 
-                for (int i = 0; i < arrayList.size(); i++) {
-                    String string = (String) arrayList.get(i);
-                    String string1 = (String) this.packageMappings.get(string);
+                for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                    String string = (String) arrayList.get(elementIndex);
+                    String value = (String) this.packageMappings.get(string);
                     if (nameExclusionSet.isPackageExcluded(ZkmUtils.dotsToSlashes(string))) {
-                        if (!string.equals(string1)) {
+                        if (!string.equals(value)) {
                             hashSet.add(string);
                             hashMap.put(string, string);
                             this.logWarning(
                                     "Package '"
                                             + string
                                             + "' could not be renamed to '"
-                                            + string1
+                                            + value
                                             + "' because it has been excluded and the input change log is specified as loose. It will not be renamed."
                             );
                             hashMap.put(string, string);
                             twoKeyMap.putValue(string, string, string);
                         } else {
-                            hashMap.put(string, string1);
-                            twoKeyMap.putValue(string1, string, string);
+                            hashMap.put(string, value);
+                            twoKeyMap.putValue(value, string, string);
                         }
                     } else {
-                        String string2 = getPackageName(string);
-                        String string3 = (String) this.packageMappings.get(string2);
-                        String string4 = (String) hashMap.get(string2);
-                        if (hashSet.contains(string2)) {
-                            String string5 = derivePackageName(string1, string3, string4);
-                            if (!string5.equals(string1)) {
+                        String packageName = getPackageName(string);
+                        String string3 = (String) this.packageMappings.get(packageName);
+                        String string4 = (String) hashMap.get(packageName);
+                        if (hashSet.contains(packageName)) {
+                            String valueValue = derivePackageName(value, string3, string4);
+                            if (!valueValue.equals(value)) {
                                 hashSet.add(string);
                                 this.logWarning(
                                         "Package '"
                                                 + string
                                                 + "' could not be renamed to '"
-                                                + string1
+                                                + value
                                                 + "' because the mapping of its superpackage has been changed. It will be renamed to '"
-                                                + string5
+                                                + valueValue
                                                 + "'"
                                 );
                             }
 
-                            hashMap.put(string, string5);
-                            twoKeyMap.putValue(string5, string, string);
-                        } else if (nameExclusionSet.isPackageExcluded(ZkmUtils.dotsToSlashes(string2)) && !string1.startsWith(string3 + ".")) {
-                            String string13 = derivePackageName(string1, string3, string4);
-                            if (!string13.equals(string1)) {
+                            hashMap.put(string, valueValue);
+                            twoKeyMap.putValue(valueValue, string, string);
+                        } else if (nameExclusionSet.isPackageExcluded(ZkmUtils.dotsToSlashes(packageName)) && !value.startsWith(string3 + ".")) {
+                            String valueValue2 = derivePackageName(value, string3, string4);
+                            if (!valueValue2.equals(value)) {
                                 hashSet.add(string);
                                 this.logWarning(
                                         "Package '"
                                                 + string
                                                 + "' could not be renamed to '"
-                                                + string1
+                                                + value
                                                 + "' because its superpackage has been excluded. It will be renamed to '"
-                                                + string13
+                                                + valueValue2
                                                 + "'"
                                 );
                             }
 
-                            hashMap.put(string, string13);
-                            twoKeyMap.putValue(string13, string, string);
+                            hashMap.put(string, valueValue2);
+                            twoKeyMap.putValue(valueValue2, string, string);
                         } else {
-                            hashMap.put(string, string1);
-                            twoKeyMap.putValue(string1, string, string);
+                            hashMap.put(string, value);
+                            twoKeyMap.putValue(value, string, string);
                         }
                     }
                 }
@@ -2270,52 +2274,52 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
                 while (iterator.hasNext()) {
                     Entry entry = (Entry) iterator.next();
-                    String string10 = (String) entry.getKey();
-                    String string11 = (String) entry.getValue();
-                    String string12 = getSimpleName(string10);
-                    String string14 = getSimpleName(string11);
-                    String string6 = getPackageName(string10);
-                    String string7 = null;
+                    String key = (String) entry.getKey();
+                    String valueValue3 = (String) entry.getValue();
+                    String simpleName = getSimpleName(key);
+                    String simpleNameValue = getSimpleName(valueValue3);
+                    String packageNameValue = getPackageName(key);
+                    String packageNameValue2 = null;
                     if (hashMap != null) {
-                        string7 = (String) hashMap.get(string6);
+                        packageNameValue2 = (String) hashMap.get(packageNameValue);
                     }
 
-                    if (string7 == null) {
-                        string7 = string6;
+                    if (packageNameValue2 == null) {
+                        packageNameValue2 = packageNameValue;
                     }
 
-                    if (hashSet != null && hashSet.contains(string6)) {
+                    if (hashSet != null && hashSet.contains(packageNameValue)) {
                         String string15;
-                        if (nameExclusionSet.isClassNameExcluded(ZkmUtils.dotsToSlashes(string10)) && !string12.equals(string14)) {
-                            string15 = string7 + "." + string12;
+                        if (nameExclusionSet.isClassNameExcluded(ZkmUtils.dotsToSlashes(key)) && !simpleName.equals(simpleNameValue)) {
+                            string15 = packageNameValue2 + "." + simpleName;
                             this.logWarning(
                                     "Class '"
-                                            + string10
+                                            + key
                                             + "' could not be renamed to '"
-                                            + string11
+                                            + valueValue3
                                             + "' because it has been excluded and the mapping of its package name has been changed. It will be renamed to '"
                                             + string15
                                             + "'"
                             );
                         } else {
-                            string15 = string7 + "." + string14;
+                            string15 = packageNameValue2 + "." + simpleNameValue;
                             this.logWarning(
                                     "Class '"
-                                            + string10
+                                            + key
                                             + "' could not be renamed to '"
-                                            + string11
+                                            + valueValue3
                                             + "' because the mapping of its package name has been changed. It will be renamed to '"
                                             + string15
                                             + "'"
                             );
                         }
 
-                        hashMap1.put(string10, string15);
-                        String string16 = ((java.lang.String) (hashMap2.put(string15, string10)));
+                        hashMap1.put(key, string15);
+                        String string16 = ((java.lang.String) (hashMap2.put(string15, key)));
                         if (string16 != null) {
                             this.reportFatalError(
                                     "Class name clash after package and class exclusions.  Both '"
-                                            + string10
+                                            + key
                                             + "' and '"
                                             + string16
                                             + "' are renamed to '"
@@ -2324,27 +2328,27 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             );
                         }
                     } else {
-                        String string8;
-                        if (nameExclusionSet.isClassNameExcluded(ZkmUtils.dotsToSlashes(string10)) && !string12.equals(string14)) {
-                            string8 = string7 + "." + string12;
+                        String valueValue4;
+                        if (nameExclusionSet.isClassNameExcluded(ZkmUtils.dotsToSlashes(key)) && !simpleName.equals(simpleNameValue)) {
+                            valueValue4 = packageNameValue2 + "." + simpleName;
                             this.logWarning(
                                     "Class '"
-                                            + string10
+                                            + key
                                             + "' could not be renamed to '"
-                                            + string11
+                                            + valueValue3
                                             + "' because it has been excluded. It will be renamed to '"
-                                            + string8
+                                            + valueValue4
                                             + "'"
                             );
                         } else {
-                            string8 = string11;
+                            valueValue4 = valueValue3;
                         }
 
-                        hashMap1.put(string10, string8);
-                        String string9 = ((java.lang.String) (hashMap2.put(string8, string10)));
+                        hashMap1.put(key, valueValue4);
+                        String string9 = ((java.lang.String) (hashMap2.put(valueValue4, key)));
                         if (string9 != null) {
                             this.reportFatalError(
-                                    "Class name clash after class exclusions.  Both '" + string10 + "' and '" + string9 + "' are renamed to '" + string8 + "'."
+                                    "Class name clash after class exclusions.  Both '" + key + "' and '" + string9 + "' are renamed to '" + valueValue4 + "'."
                             );
                         }
                     }
@@ -2366,8 +2370,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public ChangeLogMemberKey findMethodKeyByHash(String string, Object object) {
-        Iterator iterator = this.rawMethodMappings.getMultimap(string).keySet().iterator();
+    public ChangeLogMemberKey findMethodKeyByHash(String key, Object object) {
+        Iterator iterator = this.rawMethodMappings.getMultimap(key).keySet().iterator();
 
         while (iterator.hasNext()) {
             ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) iterator.next();
@@ -2385,22 +2389,22 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return null;
     }
 
-    public ChangeLogClassKey createFieldKey(String string, String string1) {
-        String string2;
-        boolean bl;
-        if (ConstantPoolEntry.isFieldDescriptor(string1)) {
-            string2 = ConstantPoolEntry.descriptorToJavaType(string1);
-            bl = this.fieldsHaveTypes;
+    public ChangeLogClassKey createFieldKey(String nameArgument, String descriptor) {
+        String descriptorValue;
+        boolean fieldsHaveTypesValue;
+        if (ConstantPoolEntry.isFieldDescriptor(descriptor)) {
+            descriptorValue = ConstantPoolEntry.descriptorToJavaType(descriptor);
+            fieldsHaveTypesValue = this.fieldsHaveTypes;
         } else {
-            string2 = string1;
-            bl = this.fieldsHaveTypes;
+            descriptorValue = descriptor;
+            fieldsHaveTypesValue = this.fieldsHaveTypes;
         }
 
         ChangeLogClassKey changeLogClassKey;
-        if (bl) {
-            changeLogClassKey = new ChangeLogClassKey(string, string2, 0);
+        if (fieldsHaveTypesValue) {
+            changeLogClassKey = new ChangeLogClassKey(nameArgument, descriptorValue, 0);
         } else {
-            changeLogClassKey = new ChangeLogClassKey(string, null, 0);
+            changeLogClassKey = new ChangeLogClassKey(nameArgument, null, 0);
         }
 
         return changeLogClassKey;
@@ -2408,9 +2412,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
     @Override
     public void addPackageMapping(Object object, Object object1) {
-        String string = (String) object;
-        String string1 = (String) object1;
-        this.putPackageMapping(string, string1, true);
+        String value = (String) object;
+        String key = (String) object1;
+        this.putPackageMapping(value, key, true);
     }
 
     public static String derivePackageName(String string, String string1, String string2) {
@@ -2429,13 +2433,13 @@ public class ChangeLogMapping extends AbstractChangeLog {
         } else if (ba < bb) {
             string3 = string2;
         } else {
-            int bd = 0;
+            int fromIndex = 0;
 
             for (int i = 0; i < bb; i++) {
-                bd = string.indexOf(46, bd);
+                fromIndex = string.indexOf(46, fromIndex);
             }
 
-            string3 = string2 + "." + string.substring(bd + 1);
+            string3 = string2 + "." + string.substring(fromIndex + 1);
         }
 
         return string3;
@@ -2443,19 +2447,19 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
     public String getNewMethodName(String string, String string1, String[] strings, String string2) throws IOException {
         if (this.rawMethodMappings != null) {
-            String string3 = ZkmUtils.slashesToDots(string);
+            String key = ZkmUtils.slashesToDots(string);
             String string4 = this.joinTypeNames(strings);
             String string5 = string2;
             String string6 = string4;
             String string7 = string1;
             ChangeLogMemberKey changeLogMemberKey = this.createMethodKey(string7, string6, string5);
-            List list1 = this.rawMethodMappings.getValues(string3, changeLogMemberKey);
+            List list1 = this.rawMethodMappings.getValues(key, changeLogMemberKey);
             if (list1 != null && list1.size() > 0) {
                 if (list1.size() == 1) {
                     NewNameMapping newNameMapping = (NewNameMapping) list1.get(0);
                     return !string1.equals(newNameMapping.getNewName()) ? newNameMapping.getNewName() : null;
                 } else {
-                    this.reportError("Class '" + string3 + "' has multiple methods '" + string1 + "(" + string4 + ")'.");
+                    this.reportError("Class '" + key + "' has multiple methods '" + string1 + "(" + string4 + ")'.");
                     return null;
                 }
             } else {
@@ -2474,16 +2478,16 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
+                String key = (String) entry.getKey();
                 Iterator iterator1 = ((Map) entry.getValue()).entrySet().iterator();
 
                 while (iterator1.hasNext()) {
                     Entry entry1 = (Entry) iterator1.next();
                     MethodSignature methodSignature1 = (MethodSignature) entry1.getKey();
                     ChangeLogMethodSignature changeLogMethodSignature = (ChangeLogMethodSignature) entry1.getValue();
-                    ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(ZkmUtils.dotsToSlashes(string));
+                    ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(ZkmUtils.dotsToSlashes(key));
                     MethodInfo methodInfo1 = classMemberLookup1.findDeclaredMethod(programClass1, methodSignature1);
-                    String string1 = (String) ZkmUtils.mapOrSelf(ZkmUtils.dotsToSlashes(string), hashMap);
+                    String string1 = (String) ZkmUtils.mapOrSelf(ZkmUtils.dotsToSlashes(key), hashMap);
                     string1 = ZkmUtils.slashesToDots(string1);
                     if (nameExclusionSet.isMethodExcluded(methodInfo1)) {
                         if (!methodSignature1.getName().equals(changeLogMethodSignature.getName())) {
@@ -2502,8 +2506,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                             + changeLogMethodSignature.getName()
                                             + "' because it has been excluded and the input change log is specified as loose. It will not be renamed."
                             );
-                            twoKeyMap.putValue(string, methodSignature1, changeLogMethodSignature1);
-                            MethodSignature methodSignature2 = (MethodSignature) twoKeyMap1.putValue(string, changeLogMethodSignature1, methodSignature1);
+                            twoKeyMap.putValue(key, methodSignature1, changeLogMethodSignature1);
+                            MethodSignature methodSignature2 = (MethodSignature) twoKeyMap1.putValue(key, changeLogMethodSignature1, methodSignature1);
                             if (methodSignature2 != null) {
                                 this.reportFatalError(
                                         "Method name clash in class '"
@@ -2518,8 +2522,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                 );
                             }
                         } else {
-                            twoKeyMap.putValue(string, methodSignature1, changeLogMethodSignature);
-                            MethodSignature methodSignature3 = (MethodSignature) twoKeyMap1.putValue(string, changeLogMethodSignature, methodSignature1);
+                            twoKeyMap.putValue(key, methodSignature1, changeLogMethodSignature);
+                            MethodSignature methodSignature3 = (MethodSignature) twoKeyMap1.putValue(key, changeLogMethodSignature, methodSignature1);
                             if (methodSignature3 != null) {
                                 this.reportFatalError(
                                         "Method name clash in class '"
@@ -2535,8 +2539,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             }
                         }
                     } else {
-                        twoKeyMap.putValue(string, methodSignature1, changeLogMethodSignature);
-                        MethodSignature methodSignature4 = (MethodSignature) twoKeyMap1.putValue(string, changeLogMethodSignature, methodSignature1);
+                        twoKeyMap.putValue(key, methodSignature1, changeLogMethodSignature);
+                        MethodSignature methodSignature4 = (MethodSignature) twoKeyMap1.putValue(key, changeLogMethodSignature, methodSignature1);
                         if (methodSignature4 != null) {
                             this.reportFatalError(
                                     "Method name clash in class '"
@@ -2583,32 +2587,32 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             + ". All method entries in change logs being merged must have new method parameter data or no method entries can have new method parameter data."
             );
         } else {
-            int ba = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) list1.get(i);
-                ListMultimap listMultimap = changeLogMapping2.rawMethodMappings.getMultimap(string);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                String key = (String) list1.get(elementIndex);
+                ListMultimap listMultimap = changeLogMapping2.rawMethodMappings.getMultimap(key);
                 if (listMultimap != null) {
                     EnumerationBackedList enumerationBackedList = new EnumerationBackedList(listMultimap.keys());
                     Collections.sort(enumerationBackedList);
 
-                    for (int j = 0; j < enumerationBackedList.size(); j++) {
-                        ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) enumerationBackedList.get(j);
-                        String string1 = changeLogMemberKey.getName();
-                        String string2 = changeLogMemberKey.getType();
-                        String string3 = changeLogMemberKey.getParameterTypes();
+                    for (int elementIndexValue = 0; elementIndexValue < enumerationBackedList.size(); elementIndexValue++) {
+                        ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) enumerationBackedList.get(elementIndexValue);
+                        String nameValue = changeLogMemberKey.getName();
+                        String typeValue = changeLogMemberKey.getType();
+                        String parameterTypes = changeLogMemberKey.getParameterTypes();
                         List list2 = listMultimap.getValues(changeLogMemberKey);
                         if (list2.size() > 1) {
                             if (changeLogMapping2.methodsHaveReturnTypes) {
                                 this.reportError(
                                         "More than one method \""
-                                                + string2
+                                                + typeValue
                                                 + " "
-                                                + string1
+                                                + nameValue
                                                 + "("
-                                                + string3
+                                                + parameterTypes
                                                 + ")\" appears in class \""
-                                                + string
+                                                + key
                                                 + "\" in log \""
                                                 + changeLogMapping2.changeLogName
                                                 + "\"."
@@ -2616,11 +2620,11 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             } else {
                                 this.reportError(
                                         "More than one method \""
-                                                + string1
+                                                + nameValue
                                                 + "("
-                                                + string3
+                                                + parameterTypes
                                                 + ")\" appears in class \""
-                                                + string
+                                                + key
                                                 + "\" in log \""
                                                 + changeLogMapping2.changeLogName
                                                 + "\" but there are no method return types to allow the mappings to be distinguished."
@@ -2629,21 +2633,21 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         } else {
                             NewNameMapping newNameMapping = (NewNameMapping) list2.get(0);
                             if (this.rawMethodMappings != null) {
-                                List list3 = this.rawMethodMappings.getValues(string, changeLogMemberKey);
+                                List list3 = this.rawMethodMappings.getValues(key, changeLogMemberKey);
                                 if (list3 != null && list3.size() > 0) {
                                     if (list3.size() > 1) {
                                         if (this.methodsHaveReturnTypes) {
                                             this.reportError(
-                                                    "More than one method \"" + string2 + " " + string1 + "(" + string3 + ")\" appears in class \"" + string + "\"."
+                                                    "More than one method \"" + typeValue + " " + nameValue + "(" + parameterTypes + ")\" appears in class \"" + key + "\"."
                                             );
                                         } else {
                                             this.reportError(
                                                     "More than one method \""
-                                                            + string1
+                                                            + nameValue
                                                             + "("
-                                                            + string3
+                                                            + parameterTypes
                                                             + ")\" appears in class \""
-                                                            + string
+                                                            + key
                                                             + "\" there are no method return types to allow the mappings to be distinguished."
                                             );
                                         }
@@ -2659,12 +2663,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                         && !newNameMapping1.getParameterChangeData().equals(newNameMapping.getParameterChangeData())) {
                                                     this.logWarning(
                                                             "Method \""
-                                                                    + (string2 != null ? string2 + " " : "")
-                                                                    + string1
+                                                                    + (typeValue != null ? typeValue + " " : "")
+                                                                    + nameValue
                                                                     + "("
-                                                                    + string3
+                                                                    + parameterTypes
                                                                     + ")\" mapping clash in class \""
-                                                                    + string
+                                                                    + key
                                                                     + "\" while merging with \""
                                                                     + changeLogMapping2.changeLogName
                                                                     + "\". Parameter change data is different : '"
@@ -2678,12 +2682,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                                 } else {
                                                     this.logWarning(
                                                             "Method \""
-                                                                    + (string2 != null ? string2 + " " : "")
-                                                                    + string1
+                                                                    + (typeValue != null ? typeValue + " " : "")
+                                                                    + nameValue
                                                                     + "("
-                                                                    + string3
+                                                                    + parameterTypes
                                                                     + ")\" mapping clash in class \""
-                                                                    + string
+                                                                    + key
                                                                     + "\" while merging with \""
                                                                     + changeLogMapping2.changeLogName
                                                                     + "\". Change log '"
@@ -2702,12 +2706,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                             } else {
                                                 this.logWarning(
                                                         "Method \""
-                                                                + (string2 != null ? string2 + " " : "")
-                                                                + string1
+                                                                + (typeValue != null ? typeValue + " " : "")
+                                                                + nameValue
                                                                 + "("
-                                                                + string3
+                                                                + parameterTypes
                                                                 + ")\" mapping clash in class \""
-                                                                + string
+                                                                + key
                                                                 + "\" while merging with \""
                                                                 + changeLogMapping2.changeLogName
                                                                 + "\". Will be mapped to \""
@@ -2721,10 +2725,10 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                         }
                                     }
                                 } else {
-                                    this.putRawMethodMapping(string, changeLogMemberKey, newNameMapping);
+                                    this.putRawMethodMapping(key, changeLogMemberKey, newNameMapping);
                                 }
                             } else {
-                                this.putRawMethodMapping(string, changeLogMemberKey, newNameMapping);
+                                this.putRawMethodMapping(key, changeLogMemberKey, newNameMapping);
                             }
                         }
                     }
@@ -2736,21 +2740,21 @@ public class ChangeLogMapping extends AbstractChangeLog {
     @Override
     public void addFieldMappings(Object object, Object object1) {
         ListMultimap listMultimap = (ListMultimap) object1;
-        String string = (String) object;
+        String key = (String) object;
         if (this.rawFieldMappings == null) {
             this.rawFieldMappings = new NestedMultiMap(this.classCount, 5, 5);
         }
 
-        this.rawFieldMappings.putMultimap(string, listMultimap);
+        this.rawFieldMappings.putMultimap(key, listMultimap);
     }
 
-    public NewNameMapping createNewNameMapping(String string, String string1) {
+    public NewNameMapping createNewNameMapping(String newName, String string1) {
         NewNameMapping newNameMapping;
         if (this.hasParameterChangeData()) {
-            String string2 = this.mapTypeList(string1, this.classMappings);
-            newNameMapping = new NewNameMapping(string, string2);
+            String newParameterTypes = this.mapTypeList(string1, this.classMappings);
+            newNameMapping = new NewNameMapping(newName, newParameterTypes);
         } else {
-            newNameMapping = new NewNameMapping(string);
+            newNameMapping = new NewNameMapping(newName);
         }
 
         return newNameMapping;
@@ -2798,8 +2802,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return this.removedClassMappings != null && this.removedClassMappings.containsKey(ZkmUtils.slashesToDots(string));
     }
 
-    public ChangeLogMapping(String string, ScriptEnvironment scriptEnvironment1) {
-        this(string, scriptEnvironment1, false);
+    public ChangeLogMapping(String changeLogNameArgument, ScriptEnvironment scriptEnvironment1) {
+        this(changeLogNameArgument, scriptEnvironment1, false);
     }
 
     public ListMultimap getLineNumberMappings(String string) throws IOException {
@@ -2807,8 +2811,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
             return null;
         }
 
-        String string1 = ZkmUtils.slashesToDots(string);
-        return this.lineNumberMappings.getMultimap(string1);
+        String key = ZkmUtils.slashesToDots(string);
+        return this.lineNumberMappings.getMultimap(key);
     }
 
     public ArrayList getNewClassNames() {
@@ -2826,10 +2830,10 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     public boolean isSimpleNameChanged(String string) throws IOException {
-        String string1 = this.getNewClassName(string);
-        if (string1 != null) {
+        String newClassName = this.getNewClassName(string);
+        if (newClassName != null) {
             String string2 = substringAfterLast(string, 47);
-            return !substringAfterLast(string1, 47).equals(string2);
+            return !substringAfterLast(newClassName, 47).equals(string2);
         } else {
             return false;
         }
@@ -2838,27 +2842,27 @@ public class ChangeLogMapping extends AbstractChangeLog {
     public void checkFieldTypeConsistency(List list1) {
         if (this.rawFieldMappings != null) {
             boolean bl = true;
-            int ba = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) list1.get(i);
-                ListMultimap listMultimap = this.rawFieldMappings.getMultimap(string);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                String key = (String) list1.get(elementIndex);
+                ListMultimap listMultimap = this.rawFieldMappings.getMultimap(key);
                 if (listMultimap != null) {
                     EnumerationBackedList enumerationBackedList = new EnumerationBackedList(listMultimap.keys());
                     Collections.sort(enumerationBackedList);
 
-                    for (int j = 0; j < enumerationBackedList.size(); j++) {
-                        ChangeLogClassKey changeLogClassKey = (ChangeLogClassKey) enumerationBackedList.get(j);
-                        String string1 = changeLogClassKey.getName();
+                    for (int elementIndexValue = 0; elementIndexValue < enumerationBackedList.size(); elementIndexValue++) {
+                        ChangeLogClassKey changeLogClassKey = (ChangeLogClassKey) enumerationBackedList.get(elementIndexValue);
+                        String nameValue = changeLogClassKey.getName();
                         if (bl) {
                             bl = false;
                             this.fieldsHaveTypes = changeLogClassKey.getType() != null;
                         } else if (this.fieldsHaveTypes != (changeLogClassKey.getType() != null)) {
                             this.reportError(
                                     "Field \""
-                                            + string1
+                                            + nameValue
                                             + "\" in class \""
-                                            + string
+                                            + key
                                             + "\" "
                                             + (this.fieldsHaveTypes ? "has no type." : "has a type")
                                             + " which is inconsistent with the previous field entries. All field entries must have types or no field entries can have types."
@@ -2883,17 +2887,17 @@ public class ChangeLogMapping extends AbstractChangeLog {
         if (changeLogMapping2.classMappings != null) {
             arrayList = new ArrayList(changeLogMapping2.classMappings.keySet());
             Collections.sort(arrayList);
-            int ba = arrayList.size();
+            int arrayListSize = arrayList.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) arrayList.get(i);
-                if (this.classMappings != null && this.classMappings.containsKey(string)) {
-                    String string6 = (String) this.classMappings.get(string);
-                    String string7 = (String) changeLogMapping2.classMappings.get(string);
+            for (int elementIndex = 0; elementIndex < arrayListSize; elementIndex++) {
+                String key = (String) arrayList.get(elementIndex);
+                if (this.classMappings != null && this.classMappings.containsKey(key)) {
+                    String string6 = (String) this.classMappings.get(key);
+                    String string7 = (String) changeLogMapping2.classMappings.get(key);
                     if (!string6.equals(string7)) {
                         this.logWarning(
                                 "Class name \""
-                                        + string
+                                        + key
                                         + "\" mapping clash while merging with \""
                                         + changeLogMapping2.changeLogName
                                         + "\". Will be mapped to \""
@@ -2904,24 +2908,24 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         );
                     }
                 } else {
-                    String string1 = (String) changeLogMapping2.classMappings.get(string);
-                    if (this.reverseClassMappings != null && this.reverseClassMappings.containsKey(string1)) {
-                        String string2 = (String) this.reverseClassMappings.get(string1);
+                    String keyValue = (String) changeLogMapping2.classMappings.get(key);
+                    if (this.reverseClassMappings != null && this.reverseClassMappings.containsKey(keyValue)) {
+                        String string2 = (String) this.reverseClassMappings.get(keyValue);
                         this.reportError(
                                 "Class name \""
                                         + string2
                                         + "\"  \""
-                                        + string1
+                                        + keyValue
                                         + "\" mapping clash while merging with \""
                                         + changeLogMapping2.changeLogName
                                         + "\". Cannot also map \""
-                                        + string
+                                        + key
                                         + "\" to \""
-                                        + string1
+                                        + keyValue
                                         + "\""
                         );
                     } else {
-                        this.addClassMapping(string1, string);
+                        this.addClassMapping(keyValue, key);
                     }
                 }
             }
@@ -3000,19 +3004,19 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string3 = (String) entry.getKey();
-                String string4 = (String) entry.getValue();
-                String string5 = (String) this.moduleAutoReflectionClasses.get(string3);
+                String keyValue2 = (String) entry.getKey();
+                String value = (String) entry.getValue();
+                String string5 = (String) this.moduleAutoReflectionClasses.get(keyValue2);
                 Map map3;
                 if (string5 != null) {
-                    if (!string5.equals(string4)) {
+                    if (!string5.equals(value)) {
                         this.reportError(
                                 "Clashing \"AutoReflectionClass:\" values for module '"
-                                        + string3
+                                        + keyValue2
                                         + "'. \""
                                         + string5
                                         + "\" clashes with \""
-                                        + string4
+                                        + value
                                         + "\" in '"
                                         + changeLogMapping2.getChangeLogName()
                                         + "'."
@@ -3025,7 +3029,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                     map3 = this.moduleAutoReflectionClasses;
                 }
 
-                map3.put(string3, string4);
+                map3.put(keyValue2, value);
             }
         }
 
@@ -3056,19 +3060,19 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator1.hasNext()) {
                 Entry entry1 = (Entry) iterator1.next();
-                String string8 = (String) entry1.getKey();
-                String string10 = (String) entry1.getValue();
-                String string11 = (String) this.moduleReferenceObfuscationClasses.get(string8);
+                String keyValue3 = (String) entry1.getKey();
+                String valueValue = (String) entry1.getValue();
+                String string11 = (String) this.moduleReferenceObfuscationClasses.get(keyValue3);
                 Map map1;
                 if (string11 != null) {
-                    if (!string11.equals(string10)) {
+                    if (!string11.equals(valueValue)) {
                         this.reportError(
                                 "Clashing \"ObfuscateReferencesClass:\" values for module '"
-                                        + string8
+                                        + keyValue3
                                         + "'. \""
                                         + string11
                                         + "\" clashes with \""
-                                        + string10
+                                        + valueValue
                                         + "\" in '"
                                         + changeLogMapping2.getChangeLogName()
                                         + "'."
@@ -3081,7 +3085,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                     map1 = this.moduleReferenceObfuscationClasses;
                 }
 
-                map1.put(string8, string10);
+                map1.put(keyValue3, valueValue);
             }
         }
 
@@ -3121,13 +3125,13 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator2.hasNext()) {
                 Entry entry2 = (Entry) iterator2.next();
-                String string9 = (String) entry2.getKey();
+                String keyValue4 = (String) entry2.getKey();
                 ObjectTriple objectTriple1 = (ObjectTriple) entry2.getValue();
-                ObjectTriple objectTriple2 = (ObjectTriple) this.moduleMethodParameterChangeClasses.get(string9);
+                ObjectTriple objectTriple2 = (ObjectTriple) this.moduleMethodParameterChangeClasses.get(keyValue4);
                 if (objectTriple2 != null && !objectTriple2.equals(objectTriple1)) {
                     this.reportError(
                             "Clashing \"MethodParameterChangeClasses:\" values for module '"
-                                    + string9
+                                    + keyValue4
                                     + "'. \"{"
                                     + (String) objectTriple2.getFirst()
                                     + ", "
@@ -3156,7 +3160,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         map2 = this.moduleMethodParameterChangeClasses;
                     }
 
-                    map2.put(string9, new ObjectTriple(objectTriple1.getFirst(), objectTriple1.getSecond(), objectTriple1.getThird()));
+                    map2.put(keyValue4, new ObjectTriple(objectTriple1.getFirst(), objectTriple1.getSecond(), objectTriple1.getThird()));
                 }
             }
         }
@@ -3198,8 +3202,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
             return null;
         }
 
-        String string1 = methodSignature2.getName();
-        return string1.equals(methodSignature1.getName()) ? null : string1;
+        String nameValue = methodSignature2.getName();
+        return nameValue.equals(methodSignature1.getName()) ? null : nameValue;
     }
 
     public void collectParameterObfuscatedMethods(int ba, ClassResolver classResolver1, int bb) throws ZkmException, IOException {
@@ -3211,9 +3215,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
-                String string1 = ZkmUtils.dotsToSlashes(string);
-                ClassFileBase classFileBase = classResolver1.getClassFile(string1);
+                String key = (String) entry.getKey();
+                String keyValue = ZkmUtils.dotsToSlashes(key);
+                ClassFileBase classFileBase = classResolver1.getClassFile(keyValue);
                 Iterator iterator1 = ((ListMultimap) entry.getValue()).entrySet().iterator();
 
                 while (true) {
@@ -3221,9 +3225,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         Entry entry1 = (Entry) iterator1.next();
                         ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) entry1.getKey();
                         String string2 = MethodSignature.javaTypeToDescriptor(changeLogMemberKey.getType());
-                        String string3 = changeLogMemberKey.getName();
+                        String nameValue = changeLogMemberKey.getName();
                         MethodSignature methodSignature1 = new MethodSignature(
-                                string3, MethodSignature.parseParameterList(changeLogMemberKey.getParameterTypes()), string2
+                                nameValue, MethodSignature.parseParameterList(changeLogMemberKey.getParameterTypes()), string2
                         );
                         List list1 = (List) entry1.getValue();
                         if (ba >= 0) {
@@ -3236,7 +3240,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                         continue;
                                     }
 
-                                    parametersObfuscated = string3.equals(newNameMapping.getNewName());
+                                    parametersObfuscated = nameValue.equals(newNameMapping.getNewName());
                                 }
 
                                 if (!parametersObfuscated) {
@@ -3246,7 +3250,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                             "Method '"
                                                     + abstractMethodInfo.toDisplayString()
                                                     + "' in class '"
-                                                    + string
+                                                    + key
                                                     + "' is specified as having its parameters obfuscated but not having its name changed. This not supported. Has the change log been edited?"
                                     );
                                 }
@@ -3264,8 +3268,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     @Override
-    public void setReferenceObfuscationClass(Object object) {
-        this.referenceObfuscationClass = (String) object;
+    public void setReferenceObfuscationClass(Object referenceObfuscationClassArgument) {
+        this.referenceObfuscationClass = (String) referenceObfuscationClassArgument;
     }
 
     public Map getMemberClassEntries() {
@@ -3278,7 +3282,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getKey();
+            String key = (String) entry.getKey();
             Iterator iterator1 = ((Map) entry.getValue()).entrySet().iterator();
 
             while (iterator1.hasNext()) {
@@ -3286,7 +3290,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 MethodSignature methodSignature1 = (MethodSignature) entry1.getKey();
                 MethodSignature methodSignature2 = (MethodSignature) entry1.getValue();
                 if (!methodSignature1.getName().equals(methodSignature2.getName())) {
-                    setMultiMap.addValue(ZkmUtils.dotsToSlashes(string), methodSignature2);
+                    setMultiMap.addValue(ZkmUtils.dotsToSlashes(key), methodSignature2);
                 }
             }
         }
@@ -3305,19 +3309,19 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
-                String string1 = (String) entry.getValue();
-                if (this.reversePackageMappings.containsKey(string1)) {
-                    Map map1 = this.reversePackageMappings.getInnerMap(string1);
+                String key = (String) entry.getKey();
+                String value = (String) entry.getValue();
+                if (this.reversePackageMappings.containsKey(value)) {
+                    Map map1 = this.reversePackageMappings.getInnerMap(value);
                     ArrayList arrayList = new ArrayList(map1.keySet());
                     Collections.sort(arrayList);
                     this.reportError(
                             "Class \""
-                                    + string
+                                    + key
                                     + "\" and package \""
                                     + (String) arrayList.get(0)
                                     + "\" are both remapped to \""
-                                    + string1
+                                    + value
                                     + "\". This could cause problems because some classes have been opened from the file system."
                     );
                 }
@@ -3351,35 +3355,35 @@ public class ChangeLogMapping extends AbstractChangeLog {
         Iterator iterator = list1.iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            if (this.getLineNumberMappings(string) == null) {
-                ListMultimap listMultimap = changeLogMapping2.getLineNumberMappings(string);
+            String key = (String) iterator.next();
+            if (this.getLineNumberMappings(key) == null) {
+                ListMultimap listMultimap = changeLogMapping2.getLineNumberMappings(key);
                 if (listMultimap != null) {
                     if (this.lineNumberMappings == null) {
                         this.lineNumberMappings = new NestedMultiMap(changeLogMapping2.classCount);
                     }
 
-                    this.lineNumberMappings.putMultimap(string, new ListMultimap(listMultimap));
+                    this.lineNumberMappings.putMultimap(key, new ListMultimap(listMultimap));
                 }
             }
         }
     }
 
     @Override
-    public void addModuleReferenceObfuscationClass(Object object, Object object1) {
-        String string = (String) this.moduleReferenceObfuscationClasses.put(object1, object);
+    public void addModuleReferenceObfuscationClass(Object value, Object key) {
+        String string = (String) this.moduleReferenceObfuscationClasses.put(key, value);
     }
 
-    public void putResolvedFieldMapping(String string, String string1, FieldSignature fieldSignature, FieldSignature fieldSignature1, HashMap hashMap) {
+    public void putResolvedFieldMapping(String string, String key, FieldSignature fieldSignature, FieldSignature fieldSignature1, HashMap hashMap) {
         TwoKeyMap twoKeyMap;
-        if ((FieldSignature) this.fieldMappings.putValue(string1, fieldSignature, fieldSignature1) != null) {
+        if ((FieldSignature) this.fieldMappings.putValue(key, fieldSignature, fieldSignature1) != null) {
             this.reportError("Field \"" + fieldSignature.formatDeclaration(hashMap) + "\" appears more than once in class \"" + string + "\"");
             twoKeyMap = this.reverseFieldMappings;
         } else {
             twoKeyMap = this.reverseFieldMappings;
         }
 
-        FieldSignature fieldSignature2 = (FieldSignature) twoKeyMap.putValue(string1, fieldSignature1, fieldSignature);
+        FieldSignature fieldSignature2 = (FieldSignature) twoKeyMap.putValue(key, fieldSignature1, fieldSignature);
         if (fieldSignature2 != null) {
             this.reportError(
                     "Fields \""
@@ -3400,16 +3404,16 @@ public class ChangeLogMapping extends AbstractChangeLog {
             return null;
         }
 
-        String string3 = ZkmUtils.slashesToDots(string);
+        String key = ZkmUtils.slashesToDots(string);
         String string4 = this.joinTypeNames(strings);
         String string6 = string2;
         String string7 = string4;
         String string8 = string1;
         ChangeLogMemberKey changeLogMemberKey = this.createMethodKey(string8, string7, string6);
-        List list1 = this.rawMethodMappings.getValues(string3, changeLogMemberKey);
+        List list1 = this.rawMethodMappings.getValues(key, changeLogMemberKey);
         if (list1 != null && list1.size() > 0) {
             if (list1.size() != 1) {
-                this.reportError("Class '" + string3 + "' has multiple methods '" + string1 + "(" + string4 + ")'.");
+                this.reportError("Class '" + key + "' has multiple methods '" + string1 + "(" + string4 + ")'.");
                 return null;
             }
 
@@ -3423,20 +3427,20 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 }
             }
 
-            String string9 = newNameMapping.getEffectiveParameterTypes();
+            String effectiveParameterTypes = newNameMapping.getEffectiveParameterTypes();
             if (!string1.equals(newNameMapping.getNewName())
                     || newNameMapping.isSignatureChanged()
-                    || string9 != null && !string9.equals(stringBuilder.toString())) {
+                    || effectiveParameterTypes != null && !effectiveParameterTypes.equals(stringBuilder.toString())) {
                 StringBuilder stringBuilder1 = new StringBuilder();
-                String string5 = changeLogMemberKey.getType();
-                if (string5 != null && string5.length() > 0) {
-                    stringBuilder1.append(this.toOriginalTypeName(string5));
+                String typeValue = changeLogMemberKey.getType();
+                if (typeValue != null && typeValue.length() > 0) {
+                    stringBuilder1.append(this.toOriginalTypeName(typeValue));
                     stringBuilder1.append(' ');
                 }
 
                 stringBuilder1.append(newNameMapping.getNewName());
                 stringBuilder1.append('(');
-                stringBuilder1.append(string9);
+                stringBuilder1.append(effectiveParameterTypes);
                 stringBuilder1.append(')');
                 return stringBuilder1.toString();
             } else {
@@ -3453,16 +3457,16 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
 
         if (this.reverseMethodMappings != null) {
-            String string3 = ZkmUtils.slashesToDots(string);
+            String key = ZkmUtils.slashesToDots(string);
             ComparableKeyValue comparableKeyValue = this.createNameTypeKey(string1, string2);
-            String string4 = this.joinTypeNames(strings);
-            List list1 = this.reverseMethodMappings.getValues(string3, comparableKeyValue, string4);
+            String keyValue = this.joinTypeNames(strings);
+            List list1 = this.reverseMethodMappings.getValues(key, comparableKeyValue, keyValue);
             if (list1 != null && list1.size() > 0) {
                 if (list1.size() == 1) {
                     String string5 = (String) list1.get(0);
                     return !string5.equals(string1) ? string5 : null;
                 } else {
-                    this.reportError("Class '" + string3 + "' has multiple methods '" + string1 + "(" + string4 + ")'.");
+                    this.reportError("Class '" + key + "' has multiple methods '" + string1 + "(" + keyValue + ")'.");
                     return null;
                 }
             } else {
@@ -3473,21 +3477,21 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public void removeRawFieldMapping(String string, String string1, String string2) throws IOException {
-        String string3 = ZkmUtils.slashesToDots(string);
-        ChangeLogClassKey changeLogClassKey = this.createFieldKey(string1, string2);
-        this.rawFieldMappings.removeInnerKey(string3, changeLogClassKey);
+    public void removeRawFieldMapping(String string, String nameArgument, String descriptor) throws IOException {
+        String key = ZkmUtils.slashesToDots(string);
+        ChangeLogClassKey changeLogClassKey = this.createFieldKey(nameArgument, descriptor);
+        this.rawFieldMappings.removeInnerKey(key, changeLogClassKey);
     }
 
     public void removeClassMapping(String string) throws IOException {
-        String string1 = string;
-        if (string1 != null) {
-            string1 = ZkmUtils.slashesToDots(string1);
+        String key = string;
+        if (key != null) {
+            key = ZkmUtils.slashesToDots(key);
         }
 
         if (this.classMappings != null) {
-            String string2 = (String) this.classMappings.get(string1);
-            String string3 = (String) this.classMappings.remove(string1);
+            String string2 = (String) this.classMappings.get(key);
+            String string3 = (String) this.classMappings.remove(key);
             Map map1;
             if (this.removedClassMappings == null) {
                 this.removedClassMappings = ZkmUtils.createHashMap();
@@ -3496,25 +3500,25 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 map1 = this.removedClassMappings;
             }
 
-            map1.put(string1, string2);
+            map1.put(key, string2);
             this.reverseClassMappings.remove(string2);
             if (this.rawFieldMappings != null) {
-                ListMultimap listMultimap = this.rawFieldMappings.removeMultimap(string1);
+                ListMultimap listMultimap = this.rawFieldMappings.removeMultimap(key);
                 if (listMultimap != null) {
                     if (this.removedClassFieldMappings == null) {
                         this.removedClassFieldMappings = new NestedMultiMap();
                     }
 
-                    this.removedClassFieldMappings.putMultimap(string1, listMultimap);
+                    this.removedClassFieldMappings.putMultimap(key, listMultimap);
                 }
             }
 
             if (this.rawMethodMappings != null) {
-                this.rawMethodMappings.removeMultimap(string1);
+                this.rawMethodMappings.removeMultimap(key);
             }
 
             if (this.memberClassEntries != null) {
-                this.memberClassEntries.remove(string1);
+                this.memberClassEntries.remove(key);
             }
 
             if (this.sourceNameMappings != null) {
@@ -3525,7 +3529,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 this.lineNumberMappings.removeMultimap(string2);
             }
 
-            this.logWarning("Class '" + string1 + "' no longer appears in the opened classes and will be assumed to be no longer used.");
+            this.logWarning("Class '" + key + "' no longer appears in the opened classes and will be assumed to be no longer used.");
         }
     }
 
@@ -3533,12 +3537,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return this.classMappings != null ? ZkmUtils.copyToHashMap(this.classMappings) : null;
     }
 
-    public void putRawFieldMapping(Object object, ChangeLogClassKey changeLogClassKey, Object object1) {
+    public void putRawFieldMapping(Object key, ChangeLogClassKey changeLogClassKey, Object object1) {
         if (this.rawFieldMappings == null) {
             this.rawFieldMappings = new NestedMultiMap(this.classCount, 5, 5);
         }
 
-        this.rawFieldMappings.addValue(object, changeLogClassKey, object1);
+        this.rawFieldMappings.addValue(key, changeLogClassKey, object1);
         if (changeLogClassKey.getType() != null) {
             this.fieldsHaveTypes = true;
         } else {
@@ -3546,9 +3550,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public void removeAddedParameters(Object object) {
+    public void removeAddedParameters(Object key) {
         if (this.addedParametersByMethod != null) {
-            AddedParameter[] addedParameters1 = (AddedParameter[]) this.addedParametersByMethod.remove(object);
+            AddedParameter[] addedParameters1 = (AddedParameter[]) this.addedParametersByMethod.remove(key);
         }
     }
 
@@ -3580,9 +3584,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return hashMap;
     }
 
-    public ListMultimap copyRawMethodMappings(String string) {
+    public ListMultimap copyRawMethodMappings(String key) {
         if (this.rawMethodMappings != null) {
-            ListMultimap listMultimap = this.rawMethodMappings.getMultimap(string);
+            ListMultimap listMultimap = this.rawMethodMappings.getMultimap(key);
             return listMultimap == null ? null : new ListMultimap(listMultimap);
         } else {
             return null;
@@ -3591,17 +3595,17 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
     public String getSourceName(String string) throws IOException {
         if (this.sourceNameMappings != null) {
-            String string1 = ZkmUtils.slashesToDots(string);
-            return (String) this.sourceNameMappings.get(string1);
+            String key = ZkmUtils.slashesToDots(string);
+            return (String) this.sourceNameMappings.get(key);
         } else {
             return null;
         }
     }
 
-    public List listMethodEntries(String string) {
+    public List listMethodEntries(String key) {
         ArrayList arrayList = new ArrayList();
         if (this.rawMethodMappings != null) {
-            ListMultimap listMultimap = this.rawMethodMappings.getMultimap(string);
+            ListMultimap listMultimap = this.rawMethodMappings.getMultimap(key);
             if (listMultimap != null) {
                 StringBuilder stringBuilder = new StringBuilder();
                 Enumeration enumeration = listMultimap.keys();
@@ -3625,45 +3629,45 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
     public ChangeLogMemberKey createMethodKey(String string, String string1, String string2) {
         String string6 = this.methodsHaveReturnTypes ? string2 : null;
-        byte ba = 0;
-        String string3 = string6;
-        String string4 = string1;
-        String string5 = string;
-        return new ChangeLogMemberKey(string5, string4, string3, ba);
+        byte accessFlags = 0;
+        String typeValue = string6;
+        String parameterTypes = string1;
+        String nameValue = string;
+        return new ChangeLogMemberKey(nameValue, parameterTypes, typeValue, accessFlags);
     }
 
     public void removeFieldMapping(String string, FieldSignature fieldSignature) throws IOException {
-        String string1 = string;
-        string1 = ZkmUtils.slashesToDots(string1);
+        String key = string;
+        key = ZkmUtils.slashesToDots(key);
         if (this.fieldMappings != null) {
-            FieldSignature fieldSignature1 = (FieldSignature) this.fieldMappings.removeValue(string1, fieldSignature);
-            FieldSignature fieldSignature2 = (FieldSignature) this.reverseFieldMappings.removeValue(string1, fieldSignature1);
+            FieldSignature fieldSignature1 = (FieldSignature) this.fieldMappings.removeValue(key, fieldSignature);
+            FieldSignature fieldSignature2 = (FieldSignature) this.reverseFieldMappings.removeValue(key, fieldSignature1);
         }
     }
 
-    public ChangeLogMemberKey createMethodKeyForDescriptor(String string, String string1, String string2) {
-        String string3;
-        boolean bl;
-        if (ConstantPoolEntry.isFieldDescriptor(string2)) {
-            string3 = ConstantPoolEntry.descriptorToJavaType(string2);
-            bl = this.methodsHaveReturnTypes;
+    public ChangeLogMemberKey createMethodKeyForDescriptor(String nameArgument, String parameterTypes, String descriptor) {
+        String descriptorValue;
+        boolean methodsHaveReturnTypesValue;
+        if (ConstantPoolEntry.isFieldDescriptor(descriptor)) {
+            descriptorValue = ConstantPoolEntry.descriptorToJavaType(descriptor);
+            methodsHaveReturnTypesValue = this.methodsHaveReturnTypes;
         } else {
-            string3 = string2;
-            bl = this.methodsHaveReturnTypes;
+            descriptorValue = descriptor;
+            methodsHaveReturnTypesValue = this.methodsHaveReturnTypes;
         }
 
         ChangeLogMemberKey changeLogMemberKey;
-        if (bl) {
-            changeLogMemberKey = new ChangeLogMemberKey(string, string1, string3, 0);
+        if (methodsHaveReturnTypesValue) {
+            changeLogMemberKey = new ChangeLogMemberKey(nameArgument, parameterTypes, descriptorValue, 0);
         } else {
-            changeLogMemberKey = new ChangeLogMemberKey(string, string1, null, 0);
+            changeLogMemberKey = new ChangeLogMemberKey(nameArgument, parameterTypes, null, 0);
         }
 
         return changeLogMemberKey;
     }
 
-    public AddedParameter[] getAddedParameters(Object object) {
-        return this.addedParametersByMethod == null ? null : (AddedParameter[]) this.addedParametersByMethod.get(object);
+    public AddedParameter[] getAddedParameters(Object key) {
+        return this.addedParametersByMethod == null ? null : (AddedParameter[]) this.addedParametersByMethod.get(key);
     }
 
     public void buildReverseMethodMappings() throws IOException {
@@ -3672,28 +3676,28 @@ public class ChangeLogMapping extends AbstractChangeLog {
             Enumeration enumeration = this.rawMethodMappings.keys();
 
             while (enumeration.hasMoreElements()) {
-                String string = (String) enumeration.nextElement();
-                String string1 = this.getNewClassName(string);
+                String newClassNameValue = (String) enumeration.nextElement();
+                String newClassName = this.getNewClassName(newClassNameValue);
                 NestedMultiMap nestedMultiMap;
-                if (string1 == null) {
-                    string1 = string;
+                if (newClassName == null) {
+                    newClassName = newClassNameValue;
                     nestedMultiMap = this.rawMethodMappings;
                 } else {
-                    string1 = ZkmUtils.slashesToDots(string1);
+                    newClassName = ZkmUtils.slashesToDots(newClassName);
                     nestedMultiMap = this.rawMethodMappings;
                 }
 
-                ListMultimap listMultimap = nestedMultiMap.getMultimap(string);
+                ListMultimap listMultimap = nestedMultiMap.getMultimap(newClassNameValue);
                 Enumeration enumeration1 = listMultimap.keys();
 
                 while (enumeration1.hasMoreElements()) {
                     ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) enumeration1.nextElement();
-                    String string2 = changeLogMemberKey.getParameterTypes();
-                    String string3 = this.mapTypeList(string2, this.classMappings);
-                    String string4 = changeLogMemberKey.getType();
+                    String parameterTypes = changeLogMemberKey.getParameterTypes();
+                    String effectiveParameterTypesValue = this.mapTypeList(parameterTypes, this.classMappings);
+                    String typeValue = changeLogMemberKey.getType();
                     String string5 = null;
-                    if (string4 != null) {
-                        string5 = AbstractChangeLog.mapTypeName(string4, this.classMappings);
+                    if (typeValue != null) {
+                        string5 = AbstractChangeLog.mapTypeName(typeValue, this.classMappings);
                     }
 
                     Iterator iterator = listMultimap.getValues(changeLogMemberKey).iterator();
@@ -3701,17 +3705,17 @@ public class ChangeLogMapping extends AbstractChangeLog {
                     while (iterator.hasNext()) {
                         NewNameMapping newNameMapping = (NewNameMapping) iterator.next();
                         ComparableKeyValue comparableKeyValue = new ComparableKeyValue(newNameMapping.getNewName(), string5);
-                        String string6;
+                        String effectiveParameterTypes;
                         ThreeKeyMultiMap threeKeyMultiMap;
                         if (newNameMapping.hasParameterChangeData()) {
-                            string6 = newNameMapping.getEffectiveParameterTypes();
+                            effectiveParameterTypes = newNameMapping.getEffectiveParameterTypes();
                             threeKeyMultiMap = this.reverseMethodMappings;
                         } else {
-                            string6 = string3;
+                            effectiveParameterTypes = effectiveParameterTypesValue;
                             threeKeyMultiMap = this.reverseMethodMappings;
                         }
 
-                        threeKeyMultiMap.addValue(string1, comparableKeyValue, string6, changeLogMemberKey.getName());
+                        threeKeyMultiMap.addValue(newClassName, comparableKeyValue, effectiveParameterTypes, changeLogMemberKey.getName());
                     }
                 }
             }
@@ -3739,9 +3743,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
         return this.changeLogName;
     }
 
-    public ListMultimap copyRawFieldMappings(String string) {
+    public ListMultimap copyRawFieldMappings(String key) {
         if (this.rawFieldMappings != null) {
-            ListMultimap listMultimap = this.rawFieldMappings.getMultimap(string);
+            ListMultimap listMultimap = this.rawFieldMappings.getMultimap(key);
             return listMultimap == null ? null : new ListMultimap(listMultimap);
         } else {
             return null;
@@ -3750,8 +3754,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
     public ComparableKeyValue createNameTypeKey(String string, String string1) {
         String string2 = this.methodsHaveReturnTypes ? string1 : null;
-        String string3 = string;
-        return new ComparableKeyValue(string3, string2);
+        String comparable = string;
+        return new ComparableKeyValue(comparable, string2);
     }
 
     public String getResolvedNewFieldName(String string, FieldSignature fieldSignature) throws IOException {
@@ -3769,15 +3773,15 @@ public class ChangeLogMapping extends AbstractChangeLog {
         Enumeration enumeration = this.fieldMappings.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            Iterator iterator = this.fieldMappings.getInnerMap(string).entrySet().iterator();
+            String key = (String) enumeration.nextElement();
+            Iterator iterator = this.fieldMappings.getInnerMap(key).entrySet().iterator();
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
                 FieldSignature fieldSignature = (FieldSignature) entry.getKey();
                 FieldSignature fieldSignature1 = (FieldSignature) entry.getValue();
-                FieldInfo fieldInfo = classMemberLookup1.findField(ZkmUtils.dotsToSlashes(string), fieldSignature.getName(), fieldSignature.getDescriptor());
-                String string1 = (String) ZkmUtils.mapOrSelf(ZkmUtils.dotsToSlashes(string), hashMap);
+                FieldInfo fieldInfo = classMemberLookup1.findField(ZkmUtils.dotsToSlashes(key), fieldSignature.getName(), fieldSignature.getDescriptor());
+                String string1 = (String) ZkmUtils.mapOrSelf(ZkmUtils.dotsToSlashes(key), hashMap);
                 string1 = ZkmUtils.slashesToDots(string1);
                 if (nameExclusionSet.isFieldExcluded(fieldInfo)) {
                     if (!fieldSignature.getName().equals(fieldSignature1.getName())) {
@@ -3791,8 +3795,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                         + fieldSignature1.getName()
                                         + "' because it has been excluded and the input change log is specified as loose. It will not be renamed."
                         );
-                        twoKeyMap.putValue(string, fieldSignature, fieldSignature2);
-                        FieldSignature fieldSignature3 = (FieldSignature) twoKeyMap1.putValue(string, fieldSignature2, fieldSignature);
+                        twoKeyMap.putValue(key, fieldSignature, fieldSignature2);
+                        FieldSignature fieldSignature3 = (FieldSignature) twoKeyMap1.putValue(key, fieldSignature2, fieldSignature);
                         if (fieldSignature3 != null) {
                             this.reportFatalError(
                                     "Field name clash in class '"
@@ -3807,8 +3811,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             );
                         }
                     } else {
-                        twoKeyMap.putValue(string, fieldSignature, fieldSignature1);
-                        FieldSignature fieldSignature4 = (FieldSignature) twoKeyMap1.putValue(string, fieldSignature1, fieldSignature);
+                        twoKeyMap.putValue(key, fieldSignature, fieldSignature1);
+                        FieldSignature fieldSignature4 = (FieldSignature) twoKeyMap1.putValue(key, fieldSignature1, fieldSignature);
                         if (fieldSignature4 != null) {
                             this.reportFatalError(
                                     "Field name clash in class '"
@@ -3824,8 +3828,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         }
                     }
                 } else {
-                    twoKeyMap.putValue(string, fieldSignature, fieldSignature1);
-                    FieldSignature fieldSignature5 = (FieldSignature) twoKeyMap1.putValue(string, fieldSignature1, fieldSignature);
+                    twoKeyMap.putValue(key, fieldSignature, fieldSignature1);
+                    FieldSignature fieldSignature5 = (FieldSignature) twoKeyMap1.putValue(key, fieldSignature1, fieldSignature);
                     if (fieldSignature5 != null) {
                         this.reportFatalError(
                                 "Field name clash in class '"
@@ -3850,9 +3854,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
     @Override
     public void addMainFlowObfuscationData(Object object, Object object1) throws ZkmException, IOException {
         List list1 = (List) object1;
-        String string = (String) object;
+        String key = (String) object;
         if (!this.errorsFound) {
-            this.addFlowObfuscationEntry(string, list1, true, "TraceBackClass:", (String) null);
+            this.addFlowObfuscationEntry(key, list1, true, "TraceBackClass:", (String) null);
         }
     }
 
@@ -3867,13 +3871,13 @@ public class ChangeLogMapping extends AbstractChangeLog {
             Enumeration enumeration = this.reversePackageMappings.keys();
 
             while (enumeration.hasMoreElements()) {
-                String string = (String) enumeration.nextElement();
-                Iterator iterator = this.reversePackageMappings.getInnerMap(string).keySet().iterator();
+                String key = (String) enumeration.nextElement();
+                Iterator iterator = this.reversePackageMappings.getInnerMap(key).keySet().iterator();
 
                 while (iterator.hasNext()) {
                     String string1 = (String) iterator.next();
-                    if (!string.equals(string1) && hashSet.add(string)) {
-                        arrayList.add(ZkmUtils.dotsToSlashes(string));
+                    if (!key.equals(string1) && hashSet.add(key)) {
+                        arrayList.add(ZkmUtils.dotsToSlashes(key));
                     }
                 }
             }
@@ -3888,12 +3892,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string1 = (String) entry.getKey();
-            String string2 = getPackageName(string1);
-            String string3 = (String) entry.getValue();
-            String string4 = getSimpleName(string3);
-            if (string2.length() == 0) {
-                String string5 = ((java.lang.String) (this.reverseClassMappings.put(string3, string1)));
+            String key = (String) entry.getKey();
+            String packageName = getPackageName(key);
+            String value = (String) entry.getValue();
+            String simpleName = getSimpleName(value);
+            if (packageName.length() == 0) {
+                String string5 = ((java.lang.String) (this.reverseClassMappings.put(value, key)));
                 if (string5 != null) {
                     this.reportError(
                             "Mapping clash while merging with \""
@@ -3901,27 +3905,27 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                     + "\". Class name \""
                                     + string5
                                     + "\"  \""
-                                    + string3
+                                    + value
                                     + "\". Cannot also map \""
-                                    + string1
+                                    + key
                                     + "\" to \""
-                                    + string3
+                                    + value
                                     + "\" (1)"
                     );
                     return;
                 }
             } else {
-                String string8 = (String) this.packageMappings.get(string2);
-                String string6;
+                String string8 = (String) this.packageMappings.get(packageName);
+                String valueValue;
                 if (string8.length() > 0) {
-                    string6 = string8 + "." + string4;
-                    entry.setValue(string6);
+                    valueValue = string8 + "." + simpleName;
+                    entry.setValue(valueValue);
                 } else {
-                    string6 = string4;
-                    entry.setValue(string6);
+                    valueValue = simpleName;
+                    entry.setValue(valueValue);
                 }
 
-                String string7 = ((java.lang.String) (this.reverseClassMappings.put(string6, string1)));
+                String string7 = ((java.lang.String) (this.reverseClassMappings.put(valueValue, key)));
                 if (string7 != null) {
                     this.reportError(
                             "Mapping clash while merging with \""
@@ -3929,11 +3933,11 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                     + "\". Class name \""
                                     + string7
                                     + "\" already mapped to \""
-                                    + string6
+                                    + valueValue
                                     + "\". Cannot also map \""
-                                    + string1
+                                    + key
                                     + "\" to \""
-                                    + string6
+                                    + valueValue
                                     + "\" (2)"
                     );
                     return;
@@ -3952,10 +3956,10 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     public ArrayList getFieldMappingPairs(String string) throws IOException {
-        String string1 = string;
-        string1 = ZkmUtils.slashesToDots(string1);
+        String key = string;
+        key = ZkmUtils.slashesToDots(key);
         if (this.fieldMappings != null) {
-            Map map1 = this.fieldMappings.getInnerMap(string1);
+            Map map1 = this.fieldMappings.getInnerMap(key);
             if (map1 != null) {
                 ArrayList arrayList = new ArrayList();
                 Iterator iterator = map1.entrySet().iterator();
@@ -3979,41 +3983,41 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
-                String string1 = getPackageName(string);
-                String string2 = (String) entry.getValue();
-                String string3 = getPackageName(string2);
+                String key = (String) entry.getKey();
+                String packageName = getPackageName(key);
+                String value = (String) entry.getValue();
+                String packageNameValue = getPackageName(value);
                 String string4 = null;
                 if (this.packageMappings != null) {
-                    string4 = (String) this.packageMappings.get(string1);
+                    string4 = (String) this.packageMappings.get(packageName);
                 }
 
-                if (string1.length() > 0) {
-                    if (string1.equals(string3)) {
+                if (packageName.length() > 0) {
+                    if (packageName.equals(packageNameValue)) {
                         if (string4 != null) {
-                            if (!string3.equals(string4)) {
+                            if (!packageNameValue.equals(string4)) {
                                 this.reportError(
                                         "Class \""
-                                                + string
+                                                + key
                                                 + "\" is remapped to \""
-                                                + string2
+                                                + value
                                                 + "\" but package '"
-                                                + string1
+                                                + packageName
                                                 + "\" should be remapped to \""
                                                 + string4
                                                 + "\" (1)"
                                 );
                             }
                         } else {
-                            String string5 = ((java.lang.String) (hashMap.put(string1, string3)));
-                            if (string5 != null && !string3.equals(string5)) {
+                            String string5 = ((java.lang.String) (hashMap.put(packageName, packageNameValue)));
+                            if (string5 != null && !packageNameValue.equals(string5)) {
                                 this.reportError(
                                         "Class \""
-                                                + string
+                                                + key
                                                 + "\" is remapped to \""
-                                                + string2
+                                                + value
                                                 + "\" but the package remapping is inconsistent with that of another class : \""
-                                                + string3
+                                                + packageNameValue
                                                 + " != "
                                                 + string5
                                                 + "\"."
@@ -4021,24 +4025,24 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             }
                         }
                     } else if (string4 != null) {
-                        if (!string3.equals(string4)) {
+                        if (!packageNameValue.equals(string4)) {
                             this.reportError(
                                     "Class \""
-                                            + string
+                                            + key
                                             + "\" is remapped to \""
-                                            + string2
+                                            + value
                                             + "\" but package '"
-                                            + string1
+                                            + packageName
                                             + "\" should be remapped to \""
                                             + string4
                                             + "\" (2)"
                             );
                         }
                     } else {
-                        this.reportError("Class \"" + string + "\" is remapped to \"" + string2 + "\" but there is no corresponding packge level remapping.");
+                        this.reportError("Class \"" + key + "\" is remapped to \"" + value + "\" but there is no corresponding packge level remapping.");
                     }
-                } else if (string3.length() > 0) {
-                    this.reportError("Class \"" + string + "\" is remapped to \"" + string2 + "\" but current version cannot handle remapping of default package.");
+                } else if (packageNameValue.length() > 0) {
+                    this.reportError("Class \"" + key + "\" is remapped to \"" + value + "\" but current version cannot handle remapping of default package.");
                 }
             }
 
@@ -4047,19 +4051,19 @@ public class ChangeLogMapping extends AbstractChangeLog {
             StringKeyEntryComparator stringKeyEntryComparator = new StringKeyEntryComparator(this);
             Arrays.sort(entrys, stringKeyEntryComparator);
 
-            for (int i = 0; i < entrys.length; i++) {
-                this.putPackageMapping((String) entrys[i].getValue(), (String) entrys[i].getKey(), false);
+            for (int entryIndex = 0; entryIndex < entrys.length; entryIndex++) {
+                this.putPackageMapping((String) entrys[entryIndex].getValue(), (String) entrys[entryIndex].getKey(), false);
             }
         }
     }
 
-    public String lookupOriginalFieldName(String string, String string1, String string2, NestedMultiMap nestedMultiMap) throws IOException {
+    public String lookupOriginalFieldName(String originalClassNameArgument, String string1, String string2, NestedMultiMap nestedMultiMap) throws IOException {
         if (nestedMultiMap != null) {
-            String string3 = this.getOriginalClassName(string);
-            if (string3 == null) {
-                string3 = string;
+            String originalClassName = this.getOriginalClassName(originalClassNameArgument);
+            if (originalClassName == null) {
+                originalClassName = originalClassNameArgument;
             } else {
-                string3 = ZkmUtils.slashesToDots(string3);
+                originalClassName = ZkmUtils.slashesToDots(originalClassName);
             }
 
             String string4 = this.toOriginalTypeName(string2);
@@ -4069,7 +4073,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
                 string4 = ZkmUtils.slashesToDots(string4);
             }
 
-            ListMultimap listMultimap = nestedMultiMap.getMultimap(string3);
+            ListMultimap listMultimap = nestedMultiMap.getMultimap(originalClassName);
             if (listMultimap == null) {
                 return string1;
             }
@@ -4090,18 +4094,18 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public boolean containsFieldMapping(String string, String string1, String string2) throws IOException {
+    public boolean containsFieldMapping(String string, String nameArgument, String descriptor) throws IOException {
         if (this.rawFieldMappings != null) {
-            String string3 = ZkmUtils.slashesToDots(string);
-            ChangeLogClassKey changeLogClassKey = this.createFieldKey(string1, string2);
-            return this.rawFieldMappings.containsInnerKey(string3, changeLogClassKey);
+            String key = ZkmUtils.slashesToDots(string);
+            ChangeLogClassKey changeLogClassKey = this.createFieldKey(nameArgument, descriptor);
+            return this.rawFieldMappings.containsInnerKey(key, changeLogClassKey);
         } else {
             return false;
         }
     }
 
-    public String getNewFieldName(String string, String string1, String string2) throws IOException {
-        return this.lookupNewFieldName(string, string1, string2, this.rawFieldMappings);
+    public String getNewFieldName(String string, String nameArgument, String descriptor) throws IOException {
+        return this.lookupNewFieldName(string, nameArgument, descriptor, this.rawFieldMappings);
     }
 
     public ArrayList getSortedPackageNames() {
@@ -4126,9 +4130,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
     public static String describeSourceFile(String string, ScriptEnvironment scriptEnvironment1) {
         File file1 = new File(string);
         if (TempFileManager.isZkmTempFile(file1)) {
-            String string1 = TempFileManager.getOriginalName(file1.getAbsolutePath());
-            if (string1 != null) {
-                return " : Original file is \"" + new File(string1).getAbsolutePath() + "\"";
+            String originalName = TempFileManager.getOriginalName(file1.getAbsolutePath());
+            if (originalName != null) {
+                return " : Original file is \"" + new File(originalName).getAbsolutePath() + "\"";
             }
 
             File file2 = scriptEnvironment1.getDefaultDirectory();
@@ -4149,14 +4153,14 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     public void renameMappedClass(String string, String string1) throws IOException {
-        String string2 = ZkmUtils.slashesToDots(string);
+        String key = ZkmUtils.slashesToDots(string);
         String string3 = ZkmUtils.slashesToDots(string1);
         String string4;
-        if (this.hasClassMapping(string2)) {
-            string4 = (String) this.classMappings.get(string2);
-            this.removeClassMapping(string2);
+        if (this.hasClassMapping(key)) {
+            string4 = (String) this.classMappings.get(key);
+            this.removeClassMapping(key);
         } else {
-            string4 = (String) this.removedClassMappings.get(string2);
+            string4 = (String) this.removedClassMappings.get(key);
         }
 
         this.addClassMapping(string4, string3);
@@ -4174,30 +4178,30 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             + ". All field entries in change logs being merged must have types or no field entries can have types."
             );
         } else {
-            int ba = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) list1.get(i);
-                ListMultimap listMultimap = changeLogMapping2.rawFieldMappings.getMultimap(string);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                String key = (String) list1.get(elementIndex);
+                ListMultimap listMultimap = changeLogMapping2.rawFieldMappings.getMultimap(key);
                 if (listMultimap != null) {
                     EnumerationBackedList enumerationBackedList = new EnumerationBackedList(listMultimap.keys());
                     Collections.sort(enumerationBackedList);
-                    int bc = enumerationBackedList.size();
+                    int enumerationBackedListSize = enumerationBackedList.size();
 
-                    for (int j = 0; j < bc; j++) {
-                        ChangeLogClassKey changeLogClassKey = (ChangeLogClassKey) enumerationBackedList.get(j);
-                        String string1 = changeLogClassKey.getName();
-                        String string2 = changeLogClassKey.getType();
+                    for (int elementIndexValue = 0; elementIndexValue < enumerationBackedListSize; elementIndexValue++) {
+                        ChangeLogClassKey changeLogClassKey = (ChangeLogClassKey) enumerationBackedList.get(elementIndexValue);
+                        String nameValue = changeLogClassKey.getName();
+                        String typeValue = changeLogClassKey.getType();
                         List list2 = listMultimap.getValues(changeLogClassKey);
                         if (list2.size() > 1) {
                             if (changeLogMapping2.fieldsHaveTypes) {
                                 this.reportError(
                                         "More than one field \""
-                                                + string2
+                                                + typeValue
                                                 + " "
-                                                + string1
+                                                + nameValue
                                                 + "\" appears in class \""
-                                                + string
+                                                + key
                                                 + "\" in log \""
                                                 + changeLogMapping2.changeLogName
                                                 + "\"."
@@ -4205,9 +4209,9 @@ public class ChangeLogMapping extends AbstractChangeLog {
                             } else {
                                 this.reportError(
                                         "More than one field with the name \""
-                                                + string1
+                                                + nameValue
                                                 + "\" appears in class \""
-                                                + string
+                                                + key
                                                 + "\" in log \""
                                                 + changeLogMapping2.changeLogName
                                                 + "\" but there are no field types to allow the mappings to be distinguished."
@@ -4216,17 +4220,17 @@ public class ChangeLogMapping extends AbstractChangeLog {
                         } else {
                             String string3 = (String) list2.get(0);
                             if (this.rawFieldMappings != null) {
-                                List list3 = this.rawFieldMappings.getValues(string, changeLogClassKey);
+                                List list3 = this.rawFieldMappings.getValues(key, changeLogClassKey);
                                 if (list3 != null && list3.size() > 0) {
                                     if (list3.size() == 1) {
                                         String string4 = (String) list3.get(0);
                                         if (!string4.equals(string3)) {
                                             this.logWarning(
                                                     "Field \""
-                                                            + (string2 != null ? string2 + " " : "")
-                                                            + string1
+                                                            + (typeValue != null ? typeValue + " " : "")
+                                                            + nameValue
                                                             + "\" mapping clash in class \""
-                                                            + string
+                                                            + key
                                                             + "\" while merging with \""
                                                             + changeLogMapping2.changeLogName
                                                             + "\". Will be mapped to \""
@@ -4238,22 +4242,22 @@ public class ChangeLogMapping extends AbstractChangeLog {
                                         }
                                     } else if (list3.size() > 1) {
                                         if (this.fieldsHaveTypes) {
-                                            this.reportError("More than one field \"" + string2 + " " + string1 + "\" appears in class \"" + string + "\" in log.");
+                                            this.reportError("More than one field \"" + typeValue + " " + nameValue + "\" appears in class \"" + key + "\" in log.");
                                         } else {
                                             this.reportError(
                                                     "More than one field with the name \""
-                                                            + string1
+                                                            + nameValue
                                                             + "\" appears in class \""
-                                                            + string
+                                                            + key
                                                             + "\" in log but there are no field types to allow the mappings to be distinguished."
                                             );
                                         }
                                     }
                                 } else {
-                                    this.putRawFieldMapping(string, changeLogClassKey, string3);
+                                    this.putRawFieldMapping(key, changeLogClassKey, string3);
                                 }
                             } else {
-                                this.putRawFieldMapping(string, changeLogClassKey, string3);
+                                this.putRawFieldMapping(key, changeLogClassKey, string3);
                             }
                         }
                     }
@@ -4264,7 +4268,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
 
     public void putResolvedMethodMapping(
             String string,
-            String string1,
+            String key,
             MethodSignature methodSignature1,
             ChangeLogMethodSignature changeLogMethodSignature,
             HashMap hashMap,
@@ -4272,11 +4276,11 @@ public class ChangeLogMapping extends AbstractChangeLog {
             TwoKeyMap twoKeyMap1,
             TwoKeyMap twoKeyMap2
     ) {
-        if ((MethodSignature) this.methodMappings.putValue(string1, methodSignature1, changeLogMethodSignature) != null) {
+        if ((MethodSignature) this.methodMappings.putValue(key, methodSignature1, changeLogMethodSignature) != null) {
             this.reportError("Method '" + methodSignature1.getNameWithParameters(hashMap) + "' appears more than once in class '" + string + "'");
         }
 
-        MethodSignature methodSignature2 = (MethodSignature) twoKeyMap.putValue(string1, changeLogMethodSignature, methodSignature1);
+        MethodSignature methodSignature2 = (MethodSignature) twoKeyMap.putValue(key, changeLogMethodSignature, methodSignature1);
         String string2 = methodSignature1.formatParameters(hashMap);
         if (methodSignature2 != null) {
             this.reportError(
@@ -4295,8 +4299,8 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
 
         if (twoKeyMap1 != null) {
-            MethodSignature methodSignature3 = this.withAddedParameters(changeLogMethodSignature, ZkmUtils.dotsToSlashes(string1), twoKeyMap2);
-            MethodSignature methodSignature4 = (MethodSignature) twoKeyMap1.putValue(string1, methodSignature3, methodSignature1);
+            MethodSignature methodSignature3 = this.withAddedParameters(changeLogMethodSignature, ZkmUtils.dotsToSlashes(key), twoKeyMap2);
+            MethodSignature methodSignature4 = (MethodSignature) twoKeyMap1.putValue(key, methodSignature3, methodSignature1);
             if (methodSignature4 != null) {
                 this.reportError(
                         "Methods '"
@@ -4313,14 +4317,14 @@ public class ChangeLogMapping extends AbstractChangeLog {
         }
     }
 
-    public void addRawFieldMapping(String string, String string1, String string2, Object object) throws IOException {
-        String string3 = ZkmUtils.slashesToDots(string);
-        ChangeLogClassKey changeLogClassKey = this.createFieldKey(string1, string2);
-        this.rawFieldMappings.addValue(string3, changeLogClassKey, object);
+    public void addRawFieldMapping(String string, String nameArgument, String descriptor, Object object) throws IOException {
+        String key = ZkmUtils.slashesToDots(string);
+        ChangeLogClassKey changeLogClassKey = this.createFieldKey(nameArgument, descriptor);
+        this.rawFieldMappings.addValue(key, changeLogClassKey, object);
     }
 
-    public ChangeLogMapping(String string, ScriptEnvironment scriptEnvironment1, boolean looseChangeLog) {
-        this.changeLogName = string;
+    public ChangeLogMapping(String changeLogNameArgument, ScriptEnvironment scriptEnvironment1, boolean looseChangeLog) {
+        this.changeLogName = changeLogNameArgument;
         this.scriptEnvironment = scriptEnvironment1;
         this.looseChangeLog = looseChangeLog;
     }
@@ -4333,30 +4337,30 @@ public class ChangeLogMapping extends AbstractChangeLog {
     public void checkMethodReturnTypeConsistency(List list1) {
         if (this.rawMethodMappings != null) {
             boolean bl = true;
-            int ba = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) list1.get(i);
-                ListMultimap listMultimap = this.rawMethodMappings.getMultimap(string);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                String key = (String) list1.get(elementIndex);
+                ListMultimap listMultimap = this.rawMethodMappings.getMultimap(key);
                 if (listMultimap != null) {
                     EnumerationBackedList enumerationBackedList = new EnumerationBackedList(listMultimap.keys());
                     Collections.sort(enumerationBackedList);
 
-                    for (int j = 0; j < enumerationBackedList.size(); j++) {
-                        ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) enumerationBackedList.get(j);
-                        String string1 = changeLogMemberKey.getName();
-                        String string2 = changeLogMemberKey.getType();
+                    for (int elementIndexValue = 0; elementIndexValue < enumerationBackedList.size(); elementIndexValue++) {
+                        ChangeLogMemberKey changeLogMemberKey = (ChangeLogMemberKey) enumerationBackedList.get(elementIndexValue);
+                        String nameValue = changeLogMemberKey.getName();
+                        String typeValue = changeLogMemberKey.getType();
                         if (bl) {
                             bl = false;
-                            this.methodsHaveReturnTypes = string2 != null;
-                        } else if (this.methodsHaveReturnTypes != (string2 != null)) {
+                            this.methodsHaveReturnTypes = typeValue != null;
+                        } else if (this.methodsHaveReturnTypes != (typeValue != null)) {
                             this.reportError(
                                     "Method \""
-                                            + string1
+                                            + nameValue
                                             + "("
                                             + changeLogMemberKey.getParameterTypes()
                                             + ")\" in class \""
-                                            + string
+                                            + key
                                             + "\" "
                                             + (this.methodsHaveReturnTypes ? "has no return type" : "has a return type")
                                             + " which is inconsistent with the previous method entries. All method entries must have return types or no method entries can have return types."
@@ -4369,7 +4373,7 @@ public class ChangeLogMapping extends AbstractChangeLog {
     }
 
     @Override
-    public void addLineNumberMappings(String string, Map map1) {
+    public void addLineNumberMappings(String key, Map map1) {
         if (this.lineNumberMappings == null) {
             this.lineNumberMappings = new NestedMultiMap(this.classCount);
         }
@@ -4382,26 +4386,26 @@ public class ChangeLogMapping extends AbstractChangeLog {
             listMultimap.addValue(entry.getValue(), entry.getKey());
         }
 
-        this.lineNumberMappings.putMultimap(string, listMultimap);
+        this.lineNumberMappings.putMultimap(key, listMultimap);
     }
 
     public static String getPackageName(String string) {
-        int ba = string.lastIndexOf(46);
-        return ba == -1 ? "" : string.substring(0, ba);
+        int endIndex = string.lastIndexOf(46);
+        return endIndex == -1 ? "" : string.substring(0, endIndex);
     }
 
-    public void renameRawFieldMapping(String string, String string1, String string2, String string3) throws IOException {
-        String string4 = ZkmUtils.slashesToDots(string);
-        ChangeLogClassKey changeLogClassKey = this.createFieldKey(string1, string2);
-        List list1 = this.rawFieldMappings.getValues(string4, changeLogClassKey);
+    public void renameRawFieldMapping(String string, String nameArgument, String descriptor, String nameArgument2) throws IOException {
+        String key = ZkmUtils.slashesToDots(string);
+        ChangeLogClassKey changeLogClassKey = this.createFieldKey(nameArgument, descriptor);
+        List list1 = this.rawFieldMappings.getValues(key, changeLogClassKey);
         if (list1.size() == 1) {
             String string5 = (String) list1.get(0);
-            this.rawFieldMappings.removeInnerKey(string4, changeLogClassKey);
-            this.createFieldKey(string3, string2);
-            this.rawFieldMappings.addValue(string4, changeLogClassKey, string5);
+            this.rawFieldMappings.removeInnerKey(key, changeLogClassKey);
+            this.createFieldKey(nameArgument2, descriptor);
+            this.rawFieldMappings.addValue(key, changeLogClassKey, string5);
         } else {
-            String string6 = ConstantPoolEntry.descriptorToJavaType(string2);
-            this.reportFatalError("Class '" + string4 + "' has multiple field mappings for field '" + string6 + " " + string1 + "'.");
+            String string6 = ConstantPoolEntry.descriptorToJavaType(descriptor);
+            this.reportFatalError("Class '" + key + "' has multiple field mappings for field '" + string6 + " " + nameArgument + "'.");
         }
     }
 
@@ -4427,12 +4431,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
                     }
                 }
             }
-        } catch (final IOException ex) {
+        } catch (final IOException ioException) {
         } finally {
             if (openReader != null) {
                 try {
                     openReader.close();
-                } catch (final IOException ex2) {
+                } catch (final IOException ioExceptionValue) {
                 }
             }
         }
@@ -4455,16 +4459,16 @@ public class ChangeLogMapping extends AbstractChangeLog {
     public Set getFlowEntryFieldNames(String string) throws IOException {
         HashSet hashSet = ZkmUtils.createHashSet();
         String string1 = ZkmUtils.slashesToDots(string);
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
         for (List list1 = this.flowEntryList; bb < list1.size(); list1 = this.flowEntryList) {
-            ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) this.flowEntryList.get(ba);
+            ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) this.flowEntryList.get(elementIndex);
             if (changeLogMemberEntry.getClassName().equals(string1)) {
                 hashSet.add(changeLogMemberEntry.getFieldName());
             }
 
-            bb = ++ba;
+            bb = ++elementIndex;
         }
 
         return hashSet;
@@ -4483,12 +4487,12 @@ public class ChangeLogMapping extends AbstractChangeLog {
         this.parsingComplete = true;
     }
 
-    public boolean isParameterListUnchanged(Object object) {
+    public boolean isParameterListUnchanged(Object key) {
         if (this.addedParametersByMethod == null) {
             return false;
         }
 
-        AddedParameter[] addedParameters1 = (AddedParameter[]) this.addedParametersByMethod.get(object);
-        return addedParameters1 == null ? false : addedParameters1.length == 0;
+        AddedParameter[] addedParameters1 = (AddedParameter[]) this.addedParametersByMethod.get(key);
+        return (!(addedParameters1 == null) && (addedParameters1.length == 0));
     }
 }

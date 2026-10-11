@@ -52,8 +52,8 @@ public class ConstantInvokeDynamic extends DynamicConstantBase {
         }
     }
 
-    public ConstantInvokeDynamic(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, classFileInputStream, abstractConstantPool);
+    public ConstantInvokeDynamic(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, classFileInputStream, abstractConstantPool);
     }
 
     @Override

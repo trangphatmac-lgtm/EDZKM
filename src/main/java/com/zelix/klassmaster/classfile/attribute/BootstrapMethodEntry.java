@@ -100,9 +100,9 @@ public class BootstrapMethodEntry
 
     @Override
     public void replaceLongConstant(ConstantLong constantLong, ConstantLong constantLong1) {
-        for (int i = 0; i < this.arguments.length; i++) {
-            if (this.arguments[i] == constantLong) {
-                this.arguments[i] = constantLong1;
+        for (int argumentIndex = 0; argumentIndex < this.arguments.length; argumentIndex++) {
+            if (this.arguments[argumentIndex] == constantLong) {
+                this.arguments[argumentIndex] = constantLong1;
                 break;
             }
         }
@@ -131,11 +131,11 @@ public class BootstrapMethodEntry
                 default:
                     break;
                 case 6:
-                    String string = ((ResolvedClassConstant) constantPoolEntry).getClassName();
-                    ProgramClass programClass1 = ConstantPoolEntry.findProgramClassByDescriptor(string);
+                    String className = ((ResolvedClassConstant) constantPoolEntry).getClassName();
+                    ProgramClass programClass1 = ConstantPoolEntry.findProgramClassByDescriptor(className);
                     if (programClass1 != null) {
                         programClass1 = this.selectMatchingProgramClass(programClass1);
-                        if (!string.startsWith("[")) {
+                        if (!className.startsWith("[")) {
                             set2.add(programClass1);
                         } else {
                             set1.add(programClass1);
@@ -190,9 +190,9 @@ public class BootstrapMethodEntry
 
     @Override
     public void replaceStringConstant(ResolvedStringConstant resolvedStringConstant, ResolvedStringConstant resolvedStringConstant1) {
-        for (int i = 0; i < this.arguments.length; i++) {
-            if (this.arguments[i] == resolvedStringConstant) {
-                this.arguments[i] = resolvedStringConstant1;
+        for (int argumentIndex = 0; argumentIndex < this.arguments.length; argumentIndex++) {
+            if (this.arguments[argumentIndex] == resolvedStringConstant) {
+                this.arguments[argumentIndex] = resolvedStringConstant1;
                 break;
             }
         }
@@ -212,9 +212,9 @@ public class BootstrapMethodEntry
 
     @Override
     public void replaceClassConstant(ResolvedClassConstant resolvedClassConstant, ResolvedClassConstant resolvedClassConstant1) {
-        for (int i = 0; i < this.arguments.length; i++) {
-            if (this.arguments[i] == resolvedClassConstant) {
-                this.arguments[i] = resolvedClassConstant1;
+        for (int argumentIndex = 0; argumentIndex < this.arguments.length; argumentIndex++) {
+            if (this.arguments[argumentIndex] == resolvedClassConstant) {
+                this.arguments[argumentIndex] = resolvedClassConstant1;
                 break;
             }
         }
@@ -229,17 +229,17 @@ public class BootstrapMethodEntry
     public BootstrapMethodEntry(
             ClassFileComponent classFileComponent,
             ClassFileInputStream classFileInputStream,
-            int ba,
+            int indexArgument,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
             ListMultimap listMultimap2,
             ListMultimap listMultimap3
     ) throws IOException {
         super(classFileComponent);
-        this.setIndex(ba);
-        int bb = classFileInputStream.readUnsignedShort();
+        this.setIndex(indexArgument);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
         int bc = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry instanceof ResolvedMethodHandleConstant) {
             this.methodHandle = (ResolvedMethodHandleConstant) constantPoolEntry;
         } else {
@@ -250,9 +250,9 @@ public class BootstrapMethodEntry
         if (this.valid) {
             this.arguments = new ConstantPoolEntry[bc];
 
-            for (int i = 0; i < bc; i++) {
-                int be = classFileInputStream.readUnsignedShort();
-                ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(be);
+            for (int argumentIndex = 0; argumentIndex < bc; argumentIndex++) {
+                int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+                ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(constantPoolIndexValue);
                 if (!(constantPoolEntry1 instanceof ResolvedClassConstant)
                         && !(constantPoolEntry1 instanceof LoadableConstant)
                         && !(constantPoolEntry1 instanceof ResolvedMethodHandleConstant)
@@ -273,7 +273,7 @@ public class BootstrapMethodEntry
                     listMultimap3.addValue((ResolvedClassConstant) constantPoolEntry1, this);
                 }
 
-                this.arguments[i] = constantPoolEntry1;
+                this.arguments[argumentIndex] = constantPoolEntry1;
             }
         }
     }
@@ -284,9 +284,9 @@ public class BootstrapMethodEntry
             ConstantPoolEntry constantPoolEntry = this.arguments[ba++];
             if (constantPoolEntry instanceof ResolvedStringConstant) {
                 ResolvedStringConstant resolvedStringConstant = (ResolvedStringConstant) constantPoolEntry;
-                String string = resolvedStringConstant.getEditableValue();
+                String editableValue = resolvedStringConstant.getEditableValue();
                 StringBuilder stringBuilder = new StringBuilder();
-                StringTokenizer stringTokenizer = new StringTokenizer(string, ";");
+                StringTokenizer stringTokenizer = new StringTokenizer(editableValue, ";");
                 int bb = stringTokenizer.countTokens();
 
                 for (int i = 0; i < bb; i++) {
@@ -312,9 +312,9 @@ public class BootstrapMethodEntry
                     }
                 }
 
-                String string2 = stringBuilder.toString();
-                if (!string2.equals(string)) {
-                    resolvedStringConstant.setValueFromString(string2);
+                String valueFromString = stringBuilder.toString();
+                if (!valueFromString.equals(editableValue)) {
+                    resolvedStringConstant.setValueFromString(valueFromString);
                 }
             }
         }
@@ -333,11 +333,11 @@ public class BootstrapMethodEntry
                 default:
                     break;
                 case 6:
-                    String string = ((ResolvedClassConstant) constantPoolEntry).getClassName();
-                    ClassFileBase classFileBase = ConstantPoolEntry.lookupClassByDescriptor(string);
+                    String className = ((ResolvedClassConstant) constantPoolEntry).getClassName();
+                    ClassFileBase classFileBase = ConstantPoolEntry.lookupClassByDescriptor(className);
                     if (classFileBase != null) {
                         Set set5;
-                        if (!string.startsWith("[")) {
+                        if (!className.startsWith("[")) {
                             set5 = set2;
                         } else {
                             set5 = set1;
@@ -371,9 +371,9 @@ public class BootstrapMethodEntry
 
     @Override
     public void replaceIntegerConstant(ConstantInteger constantInteger, ConstantInteger constantInteger1) {
-        for (int i = 0; i < this.arguments.length; i++) {
-            if (this.arguments[i] == constantInteger) {
-                this.arguments[i] = constantInteger1;
+        for (int argumentIndex = 0; argumentIndex < this.arguments.length; argumentIndex++) {
+            if (this.arguments[argumentIndex] == constantInteger) {
+                this.arguments[argumentIndex] = constantInteger1;
                 break;
             }
         }
@@ -386,9 +386,9 @@ public class BootstrapMethodEntry
         stringBuilder.append(" : ");
         stringBuilder.append('[');
 
-        for (int i = 0; i < this.arguments.length; i++) {
-            stringBuilder.append(this.arguments[i].getValueString());
-            if (i < this.arguments.length - 1) {
+        for (int argumentIndex = 0; argumentIndex < this.arguments.length; argumentIndex++) {
+            stringBuilder.append(this.arguments[argumentIndex].getValueString());
+            if (argumentIndex < this.arguments.length - 1) {
                 stringBuilder.append(',');
             }
         }

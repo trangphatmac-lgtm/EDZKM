@@ -7,8 +7,8 @@ public abstract class FlowObfuscationDataNode extends ChangeLogEntryNode {
     public String className;
     public List values = new ArrayList();
 
-    public final void setClassName(String string) {
-        this.className = string;
+    public final void setClassName(String classNameArgument) {
+        this.className = classNameArgument;
     }
 
     public FlowObfuscationDataNode(int ba) {

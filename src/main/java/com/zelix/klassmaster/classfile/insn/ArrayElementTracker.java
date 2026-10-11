@@ -18,8 +18,8 @@ public class ArrayElementTracker implements ValueFlowTracker {
     public List warnings;
     public NestedMultiMap visitedStates;
 
-    public HashSet getElementValues(int ba) {
-        return (HashSet) this.elementValuesByIndex.get(MethodFlowAnalyzer.INTEGER_CACHE.valueOf(ba));
+    public HashSet getElementValues(int integerArgument) {
+        return (HashSet) this.elementValuesByIndex.get(MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument));
     }
 
     @Override
@@ -39,41 +39,41 @@ public class ArrayElementTracker implements ValueFlowTracker {
     }
 
     @Override
-    public void markVisited(int ba, int bb, int bc) {
+    public void markVisited(int integerArgument, int integerArgument2, int integerArgument3) {
         this.visitedStates
-                .addValue(MethodFlowAnalyzer.INTEGER_CACHE.valueOf(ba), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(bb), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(bc));
+                .addValue(MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument2), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument3));
     }
 
     @Override
-    public boolean traceAtInstruction(ValueTraceFrame valueTraceFrame, int ba, BasicBlock basicBlock) throws ZkmException, IOException {
-        if (((Instruction) MethodFlowAnalyzer.getInstructions(this.flowAnalyzer).get(ba)).getOpcode() != 83) {
+    public boolean traceAtInstruction(ValueTraceFrame valueTraceFrame, int elementIndexArgument, BasicBlock basicBlock) throws ZkmException, IOException {
+        if (((Instruction) MethodFlowAnalyzer.getInstructions(this.flowAnalyzer).get(elementIndexArgument)).getOpcode() != 83) {
             return false;
         }
 
-        StackFrameState stackFrameState = MethodFlowAnalyzer.getFrameStates(this.flowAnalyzer)[ba];
+        StackFrameState stackFrameState = MethodFlowAnalyzer.getFrameStates(this.flowAnalyzer)[elementIndexArgument];
         ArrayList arrayList = new ArrayList();
         MethodFlowAnalyzer.collectIntConstantSources(
-                this.flowAnalyzer, arrayList, basicBlock, ba, stackFrameState.getStack().length + 1, ZkmUtils.createHashSet()
+                this.flowAnalyzer, arrayList, basicBlock, elementIndexArgument, stackFrameState.getStack().length + 1, ZkmUtils.createHashSet()
         );
         int bb = stackFrameState.getStack().length + 2;
         HashSet hashSet = ZkmUtils.createHashSet(13);
         ValueTraceFrame valueTraceFrame1 = new ValueTraceFrame(this.flowAnalyzer, valueTraceFrame, ReflectionArgumentKind.CLASS_REFERENCE, 0);
         valueTraceFrame1.swapResults(hashSet);
-        if (ba > basicBlock.getStartIndex()) {
-            this.flowAnalyzer.traceStackValueSource(valueTraceFrame1, basicBlock, ba, bb);
+        if (elementIndexArgument > basicBlock.getStartIndex()) {
+            this.flowAnalyzer.traceStackValueSource(valueTraceFrame1, basicBlock, elementIndexArgument, bb);
         } else {
             List list1 = basicBlock.getPredecessors();
 
-            for (int i = 0; i < list1.size(); i++) {
-                BasicBlock basicBlock1 = (BasicBlock) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                BasicBlock basicBlock1 = (BasicBlock) list1.get(elementIndex);
                 this.flowAnalyzer.traceStackValueSource(valueTraceFrame1, basicBlock1, basicBlock1.getEndIndex() + 1, bb);
             }
         }
 
         Integer integer = null;
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            Object object = arrayList.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+            Object object = arrayList.get(elementIndexValue);
             if (!(object instanceof Integer)) {
                 this.warnings.add("Could not determine element position at AALOAD : " + object);
                 break;
@@ -97,10 +97,10 @@ public class ArrayElementTracker implements ValueFlowTracker {
     }
 
     @Override
-    public boolean isVisited(int ba, int bb, int bc) {
+    public boolean isVisited(int integerArgument, int integerArgument2, int integerArgument3) {
         return this.visitedStates
                 .containsValue(
-                        MethodFlowAnalyzer.INTEGER_CACHE.valueOf(ba), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(bb), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(bc)
+                        MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument2), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument3)
                 );
     }
 }

@@ -16,13 +16,13 @@ import java.util.ArrayList;
 public class RuntimeInvisibleAnnotationsAttribute extends AnnotationsAttribute {
     public RuntimeInvisibleAnnotationsAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             PrintWriter printWriter
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap, printWriter, "RuntimeInvisibleAnnotations");
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap, printWriter, "RuntimeInvisibleAnnotations");
         if (super.valid && this.getOwningClass().isProgramClass()) {
             AnnotationEntry annotationEntry = this.findAnnotation("com/zelix/annotation/ZKMClassLevel", true);
             if (annotationEntry == null) {
@@ -40,13 +40,13 @@ public class RuntimeInvisibleAnnotationsAttribute extends AnnotationsAttribute {
 
     public void readSpecificationValues(AnnotationEntry annotationEntry, AnnotationValueMap annotationValueMap, PrintWriter printWriter) {
         for (AnnotationElementPair annotationElementPair : annotationEntry.elements) {
-            String string = annotationElementPair.getElementName();
+            String elementName = annotationElementPair.getElementName();
             AnnotationElementValue annotationElementValue = annotationElementPair.getValue();
             if (annotationElementValue.getTag() == 101) {
                 EnumElementValue enumElementValue = (EnumElementValue) annotationElementValue;
                 enumElementValue.getEnumTypeName();
-                String string1 = enumElementValue.getEnumConstantName();
-                annotationValueMap.putValue(string, ObfuscateOptions.getLevelNameForPolicy(string1));
+                String enumConstantName = enumElementValue.getEnumConstantName();
+                annotationValueMap.putValue(elementName, ObfuscateOptions.getLevelNameForPolicy(enumConstantName));
             } else {
                 printWriter.println(
                         "ERROR: "

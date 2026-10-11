@@ -16,16 +16,16 @@ public class ASTParameterChangeData extends ChangeLogSimpleNode implements Chang
     }
 
     @Override
-    public void setParsedName(Object object) {
-        this.parameterChangeData = (String) object;
+    public void setParsedName(Object parsedName) {
+        this.parameterChangeData = (String) parsedName;
     }
 
     @Override
     public void interpret(ChangeLogNode changeLogNode, int bc, int bd, int be, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).interpret(this, 30872, 34067, 41973, abstractChangeLog);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).interpret(this, 30872, 34067, 41973, abstractChangeLog);
         }
 
         ((ChangeLogASTMethodNameChange) changeLogNode).setParameterChangeData(this.parameterChangeData);

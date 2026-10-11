@@ -14,8 +14,8 @@ public class ASTLparenClause extends ProGuardConfigSimpleNode implements ProGuar
     public String returnType;
     public List argumentTypes = new ArrayList();
 
-    public void setReturnType(String string) {
-        this.returnType = string;
+    public void setReturnType(String returnTypeArgument) {
+        this.returnType = returnTypeArgument;
     }
 
     @Override
@@ -35,8 +35,8 @@ public class ASTLparenClause extends ProGuardConfigSimpleNode implements ProGuar
     public final void translate(Object object1, Object object) throws ZkmException, IOException {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < this.jjtGetNumChildren(); childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
 
         ASTProduction6 aSTProduction6 = (ASTProduction6) this.jjtGetParent();

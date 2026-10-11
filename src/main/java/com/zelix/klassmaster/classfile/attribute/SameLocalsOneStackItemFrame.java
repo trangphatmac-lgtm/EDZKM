@@ -36,7 +36,7 @@ public class SameLocalsOneStackItemFrame extends StackMapTableFrame {
         super(classFileComponent);
         this.frameType = frameType;
         IntegerCache integerCache1 = IntegerCache.getInstance();
-        int bb = this.frameType - 64;
+        int offsetValue = this.frameType - 64;
         this.stackItem = VerificationTypeInfo.readTypeInfo(
                 (StackMapTableAttribute) classFileComponent, classFileInputStream, listMultimap, listMultimap1, printWriter, map1, map2, integerCache1
         );
@@ -46,9 +46,9 @@ public class SameLocalsOneStackItemFrame extends StackMapTableFrame {
 
         int value = mutableInt.getValue();
         if (value == -1) {
-            this.offset = bb;
+            this.offset = offsetValue;
         } else {
-            this.offset = value + 1 + bb;
+            this.offset = value + 1 + offsetValue;
         }
 
         mutableInt.setValue(this.offset);

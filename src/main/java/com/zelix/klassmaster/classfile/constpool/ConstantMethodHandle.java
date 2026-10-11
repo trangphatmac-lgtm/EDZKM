@@ -28,8 +28,8 @@ public class ConstantMethodHandle extends MethodHandleConstantBase implements Re
         return true;
     }
 
-    public ConstantMethodHandle(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantMethodHandle(int indexArgument, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(indexArgument, abstractConstantPool);
         this.referenceKind = classFileInputStream.readUnsignedByte();
         this.referenceIndex = classFileInputStream.readUnsignedShort();
     }

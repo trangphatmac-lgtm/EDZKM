@@ -22,11 +22,11 @@ public class ModuleRequiresEntry extends ClassFileComponent implements Utf8Const
 
     public ModuleRequiresEntry(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws ClassFileFormatException, IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(ba);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry == null) {
             throw new ClassFileFormatException(
-                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + ba + " : File is probably corrupt (AJ)"
+                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + constantPoolIndex + " : File is probably corrupt (AJ)"
             );
         }
 
@@ -34,7 +34,7 @@ public class ModuleRequiresEntry extends ClassFileComponent implements Utf8Const
             throw new ClassFileFormatException(
                     classFileComponent.getOwningClass().getLocationName()
                             + " : Invalid attribute : "
-                            + ba
+                            + constantPoolIndex
                             + " : '"
                             + constantPoolEntry.getClass().getName()
                             + "' : File is probably corrupt (AK)"
@@ -43,14 +43,14 @@ public class ModuleRequiresEntry extends ClassFileComponent implements Utf8Const
 
         this.requiredModule = (ResolvedConstantModule) constantPoolEntry;
         this.requiresFlags = new AccessFlags(this, classFileInputStream);
-        int bb = classFileInputStream.readUnsignedShort();
-        if (bb != 0) {
-            ConstantPoolEntry constantPoolEntry1 = classFileComponent.getConstantPoolEntry(bb);
+        int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+        if (constantPoolIndexValue != 0) {
+            ConstantPoolEntry constantPoolEntry1 = classFileComponent.getConstantPoolEntry(constantPoolIndexValue);
             if (constantPoolEntry1 == null) {
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Illegal constant pool index in attribute : "
-                                + bb
+                                + constantPoolIndexValue
                                 + " : File is probably corrupt (AL)"
                 );
             }
@@ -59,7 +59,7 @@ public class ModuleRequiresEntry extends ClassFileComponent implements Utf8Const
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Invalid attribute : "
-                                + bb
+                                + constantPoolIndexValue
                                 + " : '"
                                 + constantPoolEntry1.getClass().getName()
                                 + "' : File is probably corrupt (AM)"

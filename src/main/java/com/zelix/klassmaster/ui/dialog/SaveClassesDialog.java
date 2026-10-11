@@ -69,10 +69,10 @@ public class SaveClassesDialog extends OwnedFrameDialogBase implements ActionLis
         return true;
     }
 
-    public SaveClassesDialog(JFrame jFrame, String string, String string1, String string2, String string3, DialogCallback dialogCallback1) {
-        super(jFrame, string, string3, string1, string2);
+    public SaveClassesDialog(JFrame jFrame, String string, String string1, String string2, String initialDirectoryArgument, DialogCallback dialogCallback1) {
+        super(jFrame, string, initialDirectoryArgument, string1, string2);
         this.callback = dialogCallback1;
-        this.initialDirectory = string3;
+        this.initialDirectory = initialDirectoryArgument;
         this.showCenteredOnOwner();
         SwingUtils.requestFocusOnEdt(this.okBtn);
     }
@@ -122,7 +122,7 @@ public class SaveClassesDialog extends OwnedFrameDialogBase implements ActionLis
         File file2 = null;
         String string = (String) object;
         String string1 = (String) object1;
-        String string2 = (String) object2;
+        String toolTipText = (String) object2;
         if (string != null) {
             File file3 = new File(string);
             if (file3.exists() && file3.isDirectory()) {
@@ -136,7 +136,7 @@ public class SaveClassesDialog extends OwnedFrameDialogBase implements ActionLis
         container1.add(this.fileSelector, "fileSelector");
         this.fileSelector.addKeyListener(this);
         this.fileSelector.addPropertyChangeListener(this);
-        this.createButtons(string1, string2, constraintLayout1, container1);
+        this.createButtons(string1, toolTipText, constraintLayout1, container1);
         this.fileSelector.selectFileInList(file2);
         this.setResizable(true);
         this.setIconImage(KlassMaster.getLogoImage(this));
@@ -150,9 +150,9 @@ public class SaveClassesDialog extends OwnedFrameDialogBase implements ActionLis
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object instanceof JButton) {
-                JButton jButton = (JButton) object;
+            Object source = actionEvent.getSource();
+            if (source instanceof JButton) {
+                JButton jButton = (JButton) source;
                 if (jButton == this.okBtn) {
                     this.confirmSave();
                 } else if (jButton == this.cancelBtn) {
@@ -199,9 +199,9 @@ public class SaveClassesDialog extends OwnedFrameDialogBase implements ActionLis
         }
     }
 
-    public void createButtons(String string, String string1, ConstraintLayout constraintLayout1, Container container1) {
+    public void createButtons(String string, String toolTipText, ConstraintLayout constraintLayout1, Container container1) {
         this.okBtn = new JButton(string);
-        this.okBtn.setToolTipText(string1);
+        this.okBtn.setToolTipText(toolTipText);
         container1.add(this.okBtn, "okBtn");
         this.okBtn.setEnabled(false);
         this.cancelBtn = new JButton("Cancel");

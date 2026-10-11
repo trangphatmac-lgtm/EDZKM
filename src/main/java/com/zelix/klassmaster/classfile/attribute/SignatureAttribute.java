@@ -42,20 +42,20 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
         dataOutputStream.writeShort(this.signatureConstant.getIndex());
     }
 
-    public static void mergeInnerClassSegments(ArrayList arrayList, Iterator iterator, String string) {
+    public static void mergeInnerClassSegments(ArrayList arrayList, Iterator iterator, String className) {
         SignatureClassTypeSegment signatureClassTypeSegment = (SignatureClassTypeSegment) arrayList.get(0);
         SignatureClassTypeSegment signatureClassTypeSegment1 = (SignatureClassTypeSegment) arrayList.get(arrayList.size() - 1);
 
-        for (int i = 0; i < arrayList.size() - 1; i++) {
-            SignatureClassTypeSegment signatureClassTypeSegment2 = (SignatureClassTypeSegment) arrayList.get(i);
+        for (int elementIndex = 0; elementIndex < arrayList.size() - 1; elementIndex++) {
+            SignatureClassTypeSegment signatureClassTypeSegment2 = (SignatureClassTypeSegment) arrayList.get(elementIndex);
             iterator.remove();
-            if (i < arrayList.size() - 2) {
+            if (elementIndex < arrayList.size() - 2) {
                 signatureClassTypeSegment2 = (SignatureClassTypeSegment) ((ObjectTreeNode) iterator.next()).getValue();
             }
         }
 
         signatureClassTypeSegment1.setPrefix(signatureClassTypeSegment.getPrefix());
-        signatureClassTypeSegment1.setClassName(string);
+        signatureClassTypeSegment1.setClassName(className);
         signatureClassTypeSegment1.setInnerClassSuffix();
     }
 
@@ -65,11 +65,11 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
             Enumeration enumeration = genericTree.values();
 
             while (enumeration.hasMoreElements()) {
-                String string = null;
+                String className = null;
                 SignatureClassTypeSegment signatureClassTypeSegment = (SignatureClassTypeSegment) enumeration.nextElement();
                 if (!signatureClassTypeSegment.startsInnerClassChain()) {
                     if (!signatureClassTypeSegment.isInnerClassSuffix()) {
-                        string = signatureClassTypeSegment.getClassName();
+                        className = signatureClassTypeSegment.getClassName();
                     }
                 } else {
                     StringBuffer stringBuffer = new StringBuffer();
@@ -83,11 +83,11 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
                         stringBuffer.append(signatureClassTypeSegment1.getClassName());
                     }
 
-                    string = stringBuffer.toString();
+                    className = stringBuffer.toString();
                 }
 
-                if (string != null) {
-                    ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string);
+                if (className != null) {
+                    ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(className);
                     if (programClass1 != null) {
                         set1.add(programClass1);
                     }
@@ -142,19 +142,19 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
 
                 StringBuffer stringBuffer = new StringBuffer();
 
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (i > 0) {
+                for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                    if (elementIndex > 0) {
                         stringBuffer.append("$");
                     }
 
-                    stringBuffer.append(((SignatureClassTypeSegment) arrayList.get(i)).getClassName());
+                    stringBuffer.append(((SignatureClassTypeSegment) arrayList.get(elementIndex)).getClassName());
                 }
 
-                String string11 = stringBuffer.toString();
-                String string3 = ClassFileBase.stripPackage(string11);
-                String string4 = (String) ZkmUtils.mapOrSelf(string11, hashMap);
-                ClassFileBase.getPackagePath(string4);
-                String string5 = ClassFileBase.stripPackage(string4);
+                String key = stringBuffer.toString();
+                String string3 = ClassFileBase.stripPackage(key);
+                String classNameValue5 = (String) ZkmUtils.mapOrSelf(key, hashMap);
+                ClassFileBase.getPackagePath(classNameValue5);
+                String string5 = ClassFileBase.stripPackage(classNameValue5);
                 boolean bl;
                 if (ba != 0 && (ba != 2 || !string3.equals(string5))) {
                     bl = false;
@@ -162,12 +162,12 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
                     bl = true;
                 }
 
-                if (!string11.equals(string4) || !bl) {
+                if (!key.equals(classNameValue5) || !bl) {
                     StringTokenizer stringTokenizer = new StringTokenizer(string5, "$");
                     stringTokenizer.countTokens();
                     new StringTokenizer(string3, "$").countTokens();
                     if (stringTokenizer.countTokens() == 1) {
-                        mergeInnerClassSegments(arrayList, iterator, string4);
+                        mergeInnerClassSegments(arrayList, iterator, classNameValue5);
                     } else if (bl) {
                         int bd = 0;
                         StringBuffer stringBuffer1 = null;
@@ -175,38 +175,38 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
 
                         for (Iterator iterator1 = arrayList.iterator(); iterator1.hasNext(); bd++) {
                             SignatureClassTypeSegment signatureClassTypeSegment1 = (SignatureClassTypeSegment) iterator1.next();
-                            String string6 = signatureClassTypeSegment1.getClassName();
+                            String className = signatureClassTypeSegment1.getClassName();
                             if (bd == 0) {
-                                String string7 = (String) ZkmUtils.mapOrSelf(string6, hashMap);
-                                if (!string6.equals(string7)) {
-                                    signatureClassTypeSegment1.setClassName(string7);
+                                String classNameValue = (String) ZkmUtils.mapOrSelf(className, hashMap);
+                                if (!className.equals(classNameValue)) {
+                                    signatureClassTypeSegment1.setClassName(classNameValue);
                                 }
 
-                                stringBuffer1 = new StringBuffer(string6);
-                                stringBuffer2 = new StringBuffer(string7);
+                                stringBuffer1 = new StringBuffer(className);
+                                stringBuffer2 = new StringBuffer(classNameValue);
                             } else {
                                 String string12 = stringBuffer1.toString();
                                 String string8 = stringBuffer2.toString();
                                 stringBuffer1.append("$");
-                                stringBuffer1.append(string6);
-                                String string9 = stringBuffer1.toString();
-                                String string10 = ((String) ZkmUtils.mapOrSelf(string9, hashMap)).substring(string8.length() + 1);
-                                string9.substring(string12.length() + 1);
+                                stringBuffer1.append(className);
+                                String keyValue = stringBuffer1.toString();
+                                String classNameValue2 = ((String) ZkmUtils.mapOrSelf(keyValue, hashMap)).substring(string8.length() + 1);
+                                keyValue.substring(string12.length() + 1);
                                 stringBuffer2.append("$");
-                                stringBuffer2.append(string10);
-                                signatureClassTypeSegment1.setClassName(string10);
+                                stringBuffer2.append(classNameValue2);
+                                signatureClassTypeSegment1.setClassName(classNameValue2);
                             }
                         }
                     } else {
-                        mergeInnerClassSegments(arrayList, iterator, string4);
+                        mergeInnerClassSegments(arrayList, iterator, classNameValue5);
                     }
                 }
             } else if (!signatureClassTypeSegment.isInnerClassSuffix()) {
-                String string1 = signatureClassTypeSegment.getClassName();
-                if (string1 != null) {
-                    String string2 = (String) ZkmUtils.mapOrSelf(string1, hashMap);
-                    if (!string1.equals(string2)) {
-                        signatureClassTypeSegment.setClassName(string2);
+                String classNameValue3 = signatureClassTypeSegment.getClassName();
+                if (classNameValue3 != null) {
+                    String classNameValue4 = (String) ZkmUtils.mapOrSelf(classNameValue3, hashMap);
+                    if (!classNameValue3.equals(classNameValue4)) {
+                        signatureClassTypeSegment.setClassName(classNameValue4);
                     }
                 }
             }
@@ -250,10 +250,10 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
         int bb = (Integer) object;
         HashMap hashMap = (HashMap) object2;
         int ba = (Integer) object1;
-        String string = this.signatureConstant.getValue();
-        String string1 = remapSignature(string, bb, ba, hashMap, this);
-        if (!string.equals(string1)) {
-            this.signatureConstant.setValue(string1);
+        String value = this.signatureConstant.getValue();
+        String valueValue = remapSignature(value, bb, ba, hashMap, this);
+        if (!value.equals(valueValue)) {
+            this.signatureConstant.setValue(valueValue);
         }
     }
 
@@ -261,48 +261,48 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
         GenericTree genericTree;
         try {
             genericTree = new GenericTree(new SignatureClassTypeSegment(""));
-            int ba = ZkmStringUtils.indexOfAny(string, 0, classTypeStartChars);
-            if (ba == -1) {
+            int characterIndex = ZkmStringUtils.indexOfAny(string, 0, classTypeStartChars);
+            if (characterIndex == -1) {
                 return null;
             }
 
             int bb = 0;
 
-            while (ba > -1) {
-                char bc = string.charAt(ba);
-                int bd = ZkmStringUtils.indexOfAny(string, ba + 1, identifierEndChars);
+            while (characterIndex > -1) {
+                char bc = string.charAt(characterIndex);
+                int bd = ZkmStringUtils.indexOfAny(string, characterIndex + 1, identifierEndChars);
                 if (bd == -1) {
-                    String string3 = "Parse error in " + (classFileComponent != null ? classFileComponent.getLocationName() : "") + " : '" + string + "' : " + ba;
+                    String string3 = "Parse error in " + (classFileComponent != null ? classFileComponent.getLocationName() : "") + " : '" + string + "' : " + characterIndex;
                     throw new ZkmProcessingException(string3);
                 }
 
                 char be = string.charAt(bd);
                 if (be == ':') {
-                    ba = ZkmStringUtils.indexOfAny(string, bd + 1, typeStartChars);
+                    characterIndex = ZkmStringUtils.indexOfAny(string, bd + 1, typeStartChars);
                 } else {
                     char bf = string.charAt(bb);
-                    String string1;
+                    String prefix;
                     SignatureClassTypeSegment signatureClassTypeSegment;
-                    String string6;
+                    String prefixValue2;
                     char bj;
                     if (bc == 'T') {
-                        string1 = string.substring(bb, bd);
-                        signatureClassTypeSegment = new SignatureClassTypeSegment(string1);
-                        string6 = string1;
+                        prefix = string.substring(bb, bd);
+                        signatureClassTypeSegment = new SignatureClassTypeSegment(prefix);
+                        prefixValue2 = prefix;
                         bj = '<';
                     } else {
-                        string1 = string.substring(bb, ba + 1);
-                        String string2 = string.substring(ba + 1, bd);
-                        boolean bl = bc == '.';
-                        String string4 = string2;
-                        String string5 = string1;
-                        signatureClassTypeSegment = new SignatureClassTypeSegment(string5, string4, bl);
-                        string6 = string1;
+                        prefix = string.substring(bb, characterIndex + 1);
+                        String string2 = string.substring(characterIndex + 1, bd);
+                        boolean innerClassSuffix = bc == '.';
+                        String className = string2;
+                        String prefixValue = prefix;
+                        signatureClassTypeSegment = new SignatureClassTypeSegment(prefixValue, className, innerClassSuffix);
+                        prefixValue2 = prefix;
                         bj = '<';
                     }
 
-                    int bg = ZkmStringUtils.countChar(string6, bj);
-                    int bh = ZkmStringUtils.countChar(string1, '>') - bg;
+                    int bg = ZkmStringUtils.countChar(prefixValue2, bj);
+                    int bh = ZkmStringUtils.countChar(prefix, '>') - bg;
 
                     for (int i = 0; i < bh; i++) {
                         genericTree.moveToParent();
@@ -315,10 +315,10 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
                     }
 
                     bb = bd;
-                    ba = ZkmStringUtils.indexOfAny(string, bb, typeStartChars);
-                    if (ba == -1) {
-                        string1 = string.substring(bb);
-                        SignatureClassTypeSegment signatureClassTypeSegment3 = new SignatureClassTypeSegment(string1);
+                    characterIndex = ZkmStringUtils.indexOfAny(string, bb, typeStartChars);
+                    if (characterIndex == -1) {
+                        prefix = string.substring(bb);
+                        SignatureClassTypeSegment signatureClassTypeSegment3 = new SignatureClassTypeSegment(prefix);
                         genericTree.addSibling(signatureClassTypeSegment3);
                     }
                 }
@@ -357,10 +357,10 @@ public class SignatureAttribute extends Attribute implements Utf8ConstantReplace
         return parseSignatureTree(this.signatureConstant.getValue(), this);
     }
 
-    public SignatureAttribute(ClassFileComponent classFileComponent, int ba, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws ClassFileFormatException, IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+    public SignatureAttribute(ClassFileComponent classFileComponent, int constantPoolIndexArgument, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws ClassFileFormatException, IOException {
+        super(classFileComponent, constantPoolIndexArgument, attributeName, classFileInputStream, listMultimap);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         this.setSignatureConstant(constantPoolEntry);
         listMultimap.addValue(this.signatureConstant, this);
     }

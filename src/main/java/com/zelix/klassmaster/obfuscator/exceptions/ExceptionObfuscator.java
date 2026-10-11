@@ -54,7 +54,7 @@ public class ExceptionObfuscator {
         Set set2;
         if (processingStatistics1.meetsFullSizeThreshold()) {
             if (!HiddenOptionFlags.SKIP_EXCEPTION_HANDLER_OBFUSCATION) {
-                String string = null;
+                String commonSuperType = null;
                 Iterator iterator = pairValueMap.entrySet().iterator();
 
                 while (iterator.hasNext()) {
@@ -64,20 +64,20 @@ public class ExceptionObfuscator {
 
                     while (iterator1.hasNext()) {
                         ExceptionTableEntry exceptionTableEntry1 = (ExceptionTableEntry) iterator1.next();
-                        String string1 = exceptionTableEntry1.getCatchTypeName();
-                        if (string == null) {
-                            string = 'L' + string1 + ';';
+                        String catchTypeName = exceptionTableEntry1.getCatchTypeName();
+                        if (commonSuperType == null) {
+                            commonSuperType = 'L' + catchTypeName + ';';
                         } else if (ignoreMissingReferencesSpec1 == null
-                                || !ignoreMissingReferencesSpec1.isClassIgnored(string1)
-                                && !ignoreMissingReferencesSpec1.isClassIgnored(string.substring(1, string.length() - 1))) {
-                            string = commonSuperTypeResolver1.getCommonSuperType(string, 'L' + string1 + ';', "Exception Obfuscation");
+                                || !ignoreMissingReferencesSpec1.isClassIgnored(catchTypeName)
+                                && !ignoreMissingReferencesSpec1.isClassIgnored(commonSuperType.substring(1, commonSuperType.length() - 1))) {
+                            commonSuperType = commonSuperTypeResolver1.getCommonSuperType(commonSuperType, 'L' + catchTypeName + ';', "Exception Obfuscation");
                         } else {
-                            string = "Ljava/lang/Throwable;";
+                            commonSuperType = "Ljava/lang/Throwable;";
                         }
                     }
                 }
 
-                String string2 = '(' + string + ')' + string;
+                String string2 = '(' + commonSuperType + ')' + commonSuperType;
                 LocalVariableList localVariableList1 = new LocalVariableList(true, string2, 5);
                 ArrayList arrayList1 = new ArrayList();
                 arrayList1.add(Instruction.createObjectLoad(0, localVariableList1, 8));

@@ -38,8 +38,8 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
     private String label;
     private int minDistanceFromEntry = -1;
 
-    public void setLabel(String string) {
-        this.label = string;
+    public void setLabel(String labelArgument) {
+        this.label = labelArgument;
     }
 
     public Enumeration enumerateExceptionHandlers() {
@@ -61,10 +61,10 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
         }
 
         boolean bl = false;
-        int ba = basicBlock1.predecessors.size();
+        int predecessorsSize = basicBlock1.predecessors.size();
 
-        for (int i = 0; i < ba; i++) {
-            BasicBlock basicBlock2 = (BasicBlock) basicBlock1.predecessors.get(i);
+        for (int elementIndex = 0; elementIndex < predecessorsSize; elementIndex++) {
+            BasicBlock basicBlock2 = (BasicBlock) basicBlock1.predecessors.get(elementIndex);
             if (basicBlock2 == this) {
                 return true;
             }
@@ -83,9 +83,9 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
     }
 
     public Instruction findLastRealInstruction(List list1) {
-        for (int i = this.endIndex; i > this.startIndex; i += -1) {
-            if (!((Instruction) list1.get(i)).isLabel()) {
-                return (Instruction) list1.get(i);
+        for (int endIndexValue = this.endIndex; endIndexValue > this.startIndex; endIndexValue += -1) {
+            if (!((Instruction) list1.get(endIndexValue)).isLabel()) {
+                return (Instruction) list1.get(endIndexValue);
             }
         }
 
@@ -182,18 +182,18 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
             return -1;
         }
 
-        int ba;
+        int startIndexValue;
         if (this == basicBlock1 && ((Instruction) nonNullList.get(this.startIndex)).isLabel()) {
-            ba = this.startIndex + 1;
+            startIndexValue = this.startIndex + 1;
         } else {
-            ba = this.startIndex;
+            startIndexValue = this.startIndex;
         }
 
-        for (int i = this.endIndex - 1; i >= ba; i += -1) {
-            if (stackFrameStates[i].isFullyInitialized()
+        for (int stackFrameStateIndex = this.endIndex - 1; stackFrameStateIndex >= startIndexValue; stackFrameStateIndex += -1) {
+            if (stackFrameStates[stackFrameStateIndex].isFullyInitialized()
                     && stackFrameState.isCompatibleWithOrUnchecked(
                     commonSuperTypeResolver1,
-                    stackFrameStates[i],
+                    stackFrameStates[stackFrameStateIndex],
                     set1,
                     bl,
                     string,
@@ -206,18 +206,18 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
                             ? -1
                             : 1
             )
-                    && stackFrameState.getSubroutineEntryLabel() == stackFrameStates[i].getSubroutineEntryLabel()) {
+                    && stackFrameState.getSubroutineEntryLabel() == stackFrameStates[stackFrameStateIndex].getSubroutineEntryLabel()) {
                 observableHolder.setValue(this);
-                return i;
+                return stackFrameStateIndex;
             }
         }
 
         if (this != basicBlock2) {
             if (this.successors != null) {
-                int be = this.successors.size();
+                int successorsSize = this.successors.size();
 
-                for (int i = 0; i < be; i++) {
-                    BasicBlock basicBlock4 = (BasicBlock) this.successors.get(i);
+                for (int elementIndex = 0; elementIndex < successorsSize; elementIndex++) {
+                    BasicBlock basicBlock4 = (BasicBlock) this.successors.get(elementIndex);
                     if (set2.add(basicBlock4)) {
                         int bd = basicBlock4.findMatchingFrame(
                                 stackFrameState,
@@ -269,7 +269,7 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
 
     public boolean checkClassDigests(Set set1, ScriptEnvironment scriptEnvironment1) {
         synchronized (this.getClass()) {
-            int bb;
+            int integrityStateValue;
             if (integrityState == 0) {
                 if (set1.size() != 5) {
                     integrityState = -1;
@@ -288,12 +288,12 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
                 }
 
                 integrityState = 1;
-                bb = integrityState;
+                integrityStateValue = integrityState;
             } else {
-                bb = integrityState;
+                integrityStateValue = integrityState;
             }
 
-            return bb == 1;
+            return integrityStateValue == 1;
         }
     }
 
@@ -338,18 +338,18 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
     public int getMinDistanceFromEntry() {
         if (this.minDistanceFromEntry == -1) {
             int instructionCount = this.getInstructionCount();
-            int bb;
-            if (this.predecessors != null && (bb = this.predecessors.size()) > 0) {
-                int bc = Integer.MAX_VALUE;
+            int predecessorsSize;
+            if (this.predecessors != null && (predecessorsSize = this.predecessors.size()) > 0) {
+                int maxValue = Integer.MAX_VALUE;
 
-                for (int i = 0; i < bb; i++) {
-                    int minDistanceFromEntry = ((BasicBlock) this.predecessors.get(i)).getMinDistanceFromEntry();
-                    if (minDistanceFromEntry < bc) {
-                        bc = minDistanceFromEntry;
+                for (int elementIndex = 0; elementIndex < predecessorsSize; elementIndex++) {
+                    int minDistanceFromEntry = ((BasicBlock) this.predecessors.get(elementIndex)).getMinDistanceFromEntry();
+                    if (minDistanceFromEntry < maxValue) {
+                        maxValue = minDistanceFromEntry;
                     }
                 }
 
-                instructionCount += bc;
+                instructionCount += maxValue;
             }
 
             this.minDistanceFromEntry = instructionCount;
@@ -379,12 +379,12 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
         LinkedList linkedList1 = new LinkedList();
         BasicBlock basicBlock = blockBitSet.block;
         if (basicBlock.successors != null) {
-            int ba = basicBlock.successors.size();
+            int successorsSize = basicBlock.successors.size();
 
-            for (int i = 0; i < ba; i++) {
-                BasicBlock basicBlock1 = (BasicBlock) basicBlock.successors.get(i);
+            for (int elementIndex = 0; elementIndex < successorsSize; elementIndex++) {
+                BasicBlock basicBlock1 = (BasicBlock) basicBlock.successors.get(elementIndex);
                 ObjectPair objectPair = new ObjectPair(basicBlock, basicBlock1);
-                if (i == ba - 1) {
+                if (elementIndex == successorsSize - 1) {
                     linkedList.addFirst(objectPair);
                 } else {
                     linkedList1.addFirst(objectPair);
@@ -413,12 +413,12 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
                 BlockBitSet blockBitSet1 = new BlockBitSet(basicBlock4, bitSet);
                 map2.put(basicBlock4, blockBitSet1);
                 if (basicBlock4.successors != null) {
-                    int bc = basicBlock4.successors.size();
+                    int successorsSizeValue = basicBlock4.successors.size();
 
-                    for (int i = 0; i < bc; i++) {
-                        BasicBlock basicBlock2 = (BasicBlock) basicBlock4.successors.get(i);
+                    for (int elementIndexValue = 0; elementIndexValue < successorsSizeValue; elementIndexValue++) {
+                        BasicBlock basicBlock2 = (BasicBlock) basicBlock4.successors.get(elementIndexValue);
                         ObjectPair objectPair1 = new ObjectPair(basicBlock4, basicBlock2);
-                        if (i == bc - 1) {
+                        if (elementIndexValue == successorsSizeValue - 1) {
                             linkedList.addFirst(objectPair1);
                         } else {
                             linkedList1.addFirst(objectPair1);
@@ -495,16 +495,16 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
     public void sortSuccessors() {
         if (this.successors.size() > 1) {
             Collections.sort(this.successors);
-            int ba = 0;
+            int elementIndex = 0;
 
-            for (int i = 0; i < this.successors.size(); i++) {
-                if (((BasicBlock) this.successors.get(i)).getStartIndex() > this.getEndIndex()) {
-                    ba = i;
+            for (int elementIndexValue = 0; elementIndexValue < this.successors.size(); elementIndexValue++) {
+                if (((BasicBlock) this.successors.get(elementIndexValue)).getStartIndex() > this.getEndIndex()) {
+                    elementIndex = elementIndexValue;
                     break;
                 }
             }
 
-            BasicBlock basicBlock1 = (BasicBlock) this.successors.remove(ba);
+            BasicBlock basicBlock1 = (BasicBlock) this.successors.remove(elementIndex);
             this.successors.add(basicBlock1);
         }
     }
@@ -542,8 +542,8 @@ public class BasicBlock extends EncodedKeyTable implements Comparable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareStart((BasicBlock) object);
+    public int compareTo(Object other) {
+        return this.compareStart((BasicBlock) other);
     }
 
     public BasicBlock getFirstSuccessor() {

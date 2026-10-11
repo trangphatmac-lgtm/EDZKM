@@ -11,8 +11,8 @@ public class ConcatRecipePart {
         return this.text;
     }
 
-    public ConcatRecipePart(int ba, String string, ResolvedStringConstant resolvedStringConstant) {
-        this(ba, string);
+    public ConcatRecipePart(int tokenIndexArgument, String textArgument, ResolvedStringConstant resolvedStringConstant) {
+        this(tokenIndexArgument, textArgument);
         this.stringConstant = resolvedStringConstant;
     }
 
@@ -20,9 +20,9 @@ public class ConcatRecipePart {
         return this.stringConstant;
     }
 
-    public ConcatRecipePart(int tokenIndex, String string) {
+    public ConcatRecipePart(int tokenIndex, String textArgument) {
         this.tokenIndex = tokenIndex;
-        this.text = string;
+        this.text = textArgument;
     }
 
     public int getTokenIndex() {

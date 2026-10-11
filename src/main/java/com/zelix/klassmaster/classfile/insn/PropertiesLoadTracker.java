@@ -22,9 +22,9 @@ public class PropertiesLoadTracker implements ValueFlowTracker {
     }
 
     @Override
-    public void markVisited(int ba, int bb, int bc) {
+    public void markVisited(int integer, int integerArgument, int integerArgument2) {
         this.visitedStates
-                .addValue(MethodFlowAnalyzer.INTEGER_CACHE.valueOf(ba), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(bb), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(bc));
+                .addValue(MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integer), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument2));
     }
 
     @Override
@@ -33,95 +33,84 @@ public class PropertiesLoadTracker implements ValueFlowTracker {
     }
 
     @Override
-    public boolean isVisited(int ba, int bb, int bc) {
+    public boolean isVisited(int integer, int integerArgument, int integerArgument2) {
         return this.visitedStates
                 .containsValue(
-                        MethodFlowAnalyzer.INTEGER_CACHE.valueOf(ba), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(bb), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(bc)
+                        MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integer), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument), MethodFlowAnalyzer.INTEGER_CACHE.valueOf(integerArgument2)
                 );
     }
 
     @Override
-    public boolean traceAtInstruction(ValueTraceFrame valueTraceFrame, int ba, BasicBlock basicBlock) throws ZkmException, IOException {
-        Instruction instruction1 = (Instruction) MethodFlowAnalyzer.getInstructions(this.analyzer).get(ba);
-        if (instruction1.getOpcode() != 182) {
+    public boolean traceAtInstruction(ValueTraceFrame valueTraceFrame, int instructionIndex, BasicBlock basicBlock) throws ZkmException, IOException {
+        Instruction loadInstruction = (Instruction) MethodFlowAnalyzer.getInstructions(this.analyzer).get(instructionIndex);
+        if (loadInstruction.getOpcode() != 182) {
             return false;
         }
 
-        ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) ((ConstantRefInstruction) instruction1).getConstantPoolEntry();
-        if (resolvedMethodRef.getReferencedClassName().equals("java/util/Properties")
-                && resolvedMethodRef.getSignatureString().equals("load(Ljava/io/InputStream;)V")) {
-            boolean bl = false;
+        ResolvedMethodRef propertiesLoadMethod = (ResolvedMethodRef) ((ConstantRefInstruction) loadInstruction).getConstantPoolEntry();
+        if (propertiesLoadMethod.getReferencedClassName().equals("java/util/Properties")
+                && propertiesLoadMethod.getSignatureString().equals("load(Ljava/io/InputStream;)V")) {
+            boolean traceComplete = false;
             int startIndex = basicBlock.getStartIndex();
-            int bc = ba;
+            int sourceIndex = instructionIndex;
 
-            while (!bl) {
-                if (bc > startIndex) {
-                    bc += -1;
-                    Instruction instruction2 = (Instruction) MethodFlowAnalyzer.getInstructions(this.analyzer).get(bc);
-                    if (instruction2.getOpcode() == 183) {
-                        ResolvedMethodRef resolvedMethodRef1 = (ResolvedMethodRef) ((ConstantRefInstruction) instruction2).getConstantPoolEntry();
-                        String string = resolvedMethodRef1.getReferencedClassName();
-                        String string1 = resolvedMethodRef1.getMemberName();
+            while (!traceComplete) {
+                if (sourceIndex > startIndex) {
+                    sourceIndex += -1;
+                    Instruction sourceInstruction = (Instruction) MethodFlowAnalyzer.getInstructions(this.analyzer).get(sourceIndex);
+                    if (sourceInstruction.getOpcode() == 183) {
+                        ResolvedMethodRef constructor = (ResolvedMethodRef) ((ConstantRefInstruction) sourceInstruction).getConstantPoolEntry();
+                        String constructorClassName = constructor.getReferencedClassName();
+                        String constructorName = constructor.getMemberName();
 
                         try {
-                            if (string1.equals("<init>")
+                            if (constructorName.equals("<init>")
                                     && (
-                                    valueTraceFrame.memberLookup.isSubclass(string, "java/io/InputStream")
-                                            || valueTraceFrame.memberLookup.isSubclass(string, "java/io/Reader")
+                                    valueTraceFrame.memberLookup.isSubclass(constructorClassName, "java/io/InputStream")
+                                            || valueTraceFrame.memberLookup.isSubclass(constructorClassName, "java/io/Reader")
                             )) {
-                                List list1 = resolvedMethodRef1.getParameterTypes();
-                                if (list1.size() == 1) {
-                                    String string2 = (String) list1.get(0);
-                                    if (string2.length() > 2) {
-                                        string2 = string2.substring(1, string2.length() - 1);
+                                List constructorParameterTypes = constructor.getParameterTypes();
+                                if (constructorParameterTypes.size() == 1) {
+                                    String parameterClassName = (String) constructorParameterTypes.get(0);
+                                    if (parameterClassName.length() > 2) {
+                                        parameterClassName = parameterClassName.substring(1, parameterClassName.length() - 1);
                                     }
 
-                                    if (!string2.equals("java/io/InputStream") && !string2.equals("java/io/Reader")) {
-                                        label81:
-                                        if (string2.equals("java/lang/String")) {
-                                            MethodFlowAnalyzer methodFlowAnalyzer;
-                                            if (!string.equals("java/io/FileInputStream")) {
-                                                if (!string.equals("java/io/FileReader")) {
-                                                    break label81;
-                                                }
-
-                                                methodFlowAnalyzer = this.analyzer;
+                                    if (!parameterClassName.equals("java/io/InputStream") && !parameterClassName.equals("java/io/Reader")) {
+                                        if (parameterClassName.equals("java/lang/String")
+                                                && (constructorClassName.equals("java/io/FileInputStream") || constructorClassName.equals("java/io/FileReader"))) {
+                                            int argumentStackDepth = MethodFlowAnalyzer.getFrameStates(this.analyzer)[sourceIndex].getStack().length + 1;
+                                            ValueTraceFrame fileNameTrace = new ValueTraceFrame(this.analyzer, valueTraceFrame, ReflectionArgumentKind.NORMAL, 0, true);
+                                            fileNameTrace.swapResults(this.fileNameValues);
+                                            if (sourceIndex > startIndex) {
+                                                this.analyzer.traceStackValueSource(fileNameTrace, basicBlock, sourceIndex, argumentStackDepth);
                                             } else {
-                                                methodFlowAnalyzer = this.analyzer;
-                                            }
+                                                List predecessorBlocks = basicBlock.getPredecessors();
 
-                                            int bd = MethodFlowAnalyzer.getFrameStates(methodFlowAnalyzer)[bc].getStack().length + 1;
-                                            ValueTraceFrame valueTraceFrame1 = new ValueTraceFrame(this.analyzer, valueTraceFrame, ReflectionArgumentKind.NORMAL, 0, true);
-                                            valueTraceFrame1.swapResults(this.fileNameValues);
-                                            if (bc > startIndex) {
-                                                this.analyzer.traceStackValueSource(valueTraceFrame1, basicBlock, bc, bd);
-                                            } else {
-                                                List list2 = basicBlock.getPredecessors();
-
-                                                for (int i = 0; i < list2.size(); i++) {
-                                                    BasicBlock basicBlock1 = (BasicBlock) list2.get(i);
-                                                    this.analyzer.traceStackValueSource(valueTraceFrame1, basicBlock1, basicBlock1.getEndIndex() + 1, bd);
+                                                for (int elementIndex = 0; elementIndex < predecessorBlocks.size(); elementIndex++) {
+                                                    BasicBlock predecessor = (BasicBlock) predecessorBlocks.get(elementIndex);
+                                                    this.analyzer.traceStackValueSource(fileNameTrace, predecessor, predecessor.getEndIndex() + 1, argumentStackDepth);
                                                 }
                                             }
 
-                                            bl = true;
+                                            traceComplete = true;
                                             continue;
                                         }
 
-                                        bl = true;
+                                        traceComplete = true;
                                     }
                                 }
                             } else {
-                                bl = true;
+                                traceComplete = true;
                             }
                         } catch (ClassFileLoadException classFileLoadException) {
-                            bl = true;
+                            traceComplete = true;
                         }
                     } else {
-                        bl = true;
+                        traceComplete = true;
                     }
                 } else {
-                    bl = true;
+                    traceComplete = true;
                 }
             }
 

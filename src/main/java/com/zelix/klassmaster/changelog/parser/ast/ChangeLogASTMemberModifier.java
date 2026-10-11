@@ -23,7 +23,7 @@ public class ChangeLogASTMemberModifier extends ChangeLogValueNode {
                 changeLogASTMemberModifier1 = this;
             }
 
-            String string = changeLogASTMemberModifier1.value;
+            String valueValue = changeLogASTMemberModifier1.value;
             String string1 = "private";
             if (ba >= 0) {
                 if (changeLogASTMemberModifier1.value.equals("private")) {
@@ -31,11 +31,11 @@ public class ChangeLogASTMemberModifier extends ChangeLogValueNode {
                     return;
                 }
 
-                string = this.value;
+                valueValue = this.value;
                 string1 = "static";
             }
 
-            if (string.equals(string1)) {
+            if (valueValue.equals(string1)) {
                 changeLogModifierNode.addStaticModifier();
             }
         }

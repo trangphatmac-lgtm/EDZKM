@@ -11,20 +11,20 @@ public class HelperClassTriple implements LookupClassOption {
         return (String) this.helperClassNames.getFirst();
     }
 
-    public HelperClassTriple(ObjectTriple objectTriple) {
-        this.helperClassNames = objectTriple;
+    public HelperClassTriple(ObjectTriple helperClassNames) {
+        this.helperClassNames = helperClassNames;
     }
 
-    public void setHelperClass(ProgramClass programClass1, int ba) {
-        switch (ba) {
+    public void setHelperClass(ProgramClass helperClass, int helperIndex) {
+        switch (helperIndex) {
             case 0:
-                this.helperClasses = new ObjectTriple(programClass1, null, null);
+                this.helperClasses = new ObjectTriple(helperClass, null, null);
                 break;
             case 1:
-                this.helperClasses.setSecond(programClass1);
+                this.helperClasses.setSecond(helperClass);
                 break;
             case 2:
-                this.helperClasses.setThird(programClass1);
+                this.helperClasses.setThird(helperClass);
         }
     }
 
@@ -32,11 +32,11 @@ public class HelperClassTriple implements LookupClassOption {
         return (String) this.helperClassNames.getThird();
     }
 
-    public int indexOfClassName(String string) {
-        if (((String) this.helperClassNames.getFirst()).equals(string)) {
+    public int indexOfClassName(String className) {
+        if (((String) this.helperClassNames.getFirst()).equals(className)) {
             return 0;
         } else {
-            return ((String) this.helperClassNames.getSecond()).equals(string) ? 1 : 2;
+            return ((String) this.helperClassNames.getSecond()).equals(className) ? 1 : 2;
         }
     }
 

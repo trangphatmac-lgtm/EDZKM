@@ -74,10 +74,10 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
             Random random1
     ) throws ZkmException, IOException {
         if (this.subclassNodes != null) {
-            int ba = this.subclassNodes.size();
+            int subclassNodesSize = this.subclassNodes.size();
 
-            for (int i = 0; i < ba; i++) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.subclassNodes.get(i);
+            for (int elementIndex = 0; elementIndex < subclassNodesSize; elementIndex++) {
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.subclassNodes.get(elementIndex);
                 ClassFileBase classFileBase = classHierarchyNode1.getClassFile();
                 if (classFileBase == null) {
                     String string = "analyzing subclasses of '"
@@ -115,16 +115,16 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
     ) throws ZkmProcessingException, IOException {
         if (this.classFile.isProgramClass() && !set1.contains(this.classFile)) {
             if (changeLogMapping1 != null && changeLogMapping1.hasClassMapping(this.className)) {
-                String string3 = changeLogMapping1.getNewClassName(this.className);
-                String string5 = classNameGenerator.getRenamedPackagePrefix(this.className);
-                String string6;
-                if (string3 != null) {
-                    string6 = ClassNameGenerator.getSimpleName(string3);
+                String newClassName = changeLogMapping1.getNewClassName(this.className);
+                String renamedPackagePrefix = classNameGenerator.getRenamedPackagePrefix(this.className);
+                String simpleName;
+                if (newClassName != null) {
+                    simpleName = ClassNameGenerator.getSimpleName(newClassName);
                 } else {
-                    string6 = ClassNameGenerator.getSimpleName(this.className);
+                    simpleName = ClassNameGenerator.getSimpleName(this.className);
                 }
 
-                String string7 = string5 + string6;
+                String string7 = renamedPackagePrefix + simpleName;
                 hashMap.put(this.className, string7);
                 Object object1 = hashMap1.put(string7, this.className);
                 ZkmAssert.assertNull(object1, "Duplicate class '" + this.className + "' '" + string7 + "' '" + object1 + "' (C)");
@@ -136,10 +136,10 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
 
                     while (enumeration.hasMoreElements()) {
                         ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) enumeration.nextElement();
-                        String string = classHierarchyNode1.getClassName();
-                        String string1 = ClassFileBase.stripPackage((String) ZkmUtils.mapOrSelf(string, hashMap));
-                        String string2 = ClassFileBase.stripOuterClassPrefix(string1);
-                        hashMap2.put(classHierarchyNode1, string2);
+                        String classNameValue = classHierarchyNode1.getClassName();
+                        String string1 = ClassFileBase.stripPackage((String) ZkmUtils.mapOrSelf(classNameValue, hashMap));
+                        String value = ClassFileBase.stripOuterClassPrefix(string1);
+                        hashMap2.put(classHierarchyNode1, value);
                     }
                 }
 
@@ -155,10 +155,10 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         }
 
         if (this.subclassNodes != null) {
-            int ba = this.subclassNodes.size();
+            int subclassNodesSize = this.subclassNodes.size();
 
-            for (int i = 0; i < ba; i++) {
-                ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) this.subclassNodes.get(i);
+            for (int elementIndex = 0; elementIndex < subclassNodesSize; elementIndex++) {
+                ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) this.subclassNodes.get(elementIndex);
                 classHierarchyNode2.generateClassNames(classNameGenerator, changeLogMapping1, hashMap, hashMap1, set1, set2);
             }
         }
@@ -195,17 +195,17 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         this.enclosingNode = null;
         this.outerClassNode = null;
         if (this.enclosedClassNodes != null) {
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = this.enclosedClassNodes; bb < list1.size(); list1 = this.enclosedClassNodes) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.enclosedClassNodes.get(ba);
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.enclosedClassNodes.get(elementIndex);
                 classHierarchyNode1.enclosingNode = null;
                 if (classHierarchyNode1.outerClassNode == this) {
                     classHierarchyNode1.outerClassNode = null;
                 }
 
-                bb = ++ba;
+                bb = ++elementIndex;
             }
         }
 
@@ -216,9 +216,9 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         return Collections.enumeration(nodesByName.values());
     }
 
-    public static final boolean isUnknownClass(String string) {
-        ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) nodesByName.get(string);
-        return classHierarchyNode == null ? true : classHierarchyNode.hasNoClassFile();
+    public static final boolean isUnknownClass(String key) {
+        ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) nodesByName.get(key);
+        return ((classHierarchyNode == null) || (classHierarchyNode.hasNoClassFile()));
     }
 
     public final String getClassName() {
@@ -261,8 +261,8 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         return this.subclassNodes != null && this.subclassNodes.size() > 0;
     }
 
-    public static boolean isProgramClassName(String string) {
-        ClassHierarchyNode classHierarchyNode = findNode(string);
+    public static boolean isProgramClassName(String key) {
+        ClassHierarchyNode classHierarchyNode = findNode(key);
         return classHierarchyNode != null && classHierarchyNode.isProgramClass();
     }
 
@@ -271,20 +271,20 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
     }
 
     public final void registerClassName(ClassNameGenerator classNameGenerator, HashMap hashMap, HashMap hashMap1, Set set1, Set set2, Set set3) {
-        String string = classNameGenerator.getPackageOnlyRename(this);
-        if (string == null) {
-            string = this.className;
+        String packageOnlyRename = classNameGenerator.getPackageOnlyRename(this);
+        if (packageOnlyRename == null) {
+            packageOnlyRename = this.className;
         }
 
-        hashMap.put(this.className, string);
-        String string1 = ((java.lang.String) (hashMap1.put(string, this.className)));
-        ZkmAssert.assertNull(string1, "Duplicate new class name. Both '" + this.className + "' and '" + string1 + "' mapped to '" + string + "'");
-        set1.add(string);
+        hashMap.put(this.className, packageOnlyRename);
+        String string1 = ((java.lang.String) (hashMap1.put(packageOnlyRename, this.className)));
+        ZkmAssert.assertNull(string1, "Duplicate new class name. Both '" + this.className + "' and '" + string1 + "' mapped to '" + packageOnlyRename + "'");
+        set1.add(packageOnlyRename);
         if (!this.getClassFile().isFromArchive()) {
-            set2.add(string.toLowerCase());
+            set2.add(packageOnlyRename.toLowerCase());
         }
 
-        set3.add(string.toLowerCase());
+        set3.add(packageOnlyRename.toLowerCase());
     }
 
     public final boolean tryGenerateClassName(ClassNameGenerator classNameGenerator, HashMap hashMap, HashMap hashMap1, Iterator iterator) throws ZkmProcessingException, IOException {
@@ -295,9 +295,9 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
 
             while (enumeration.hasMoreElements()) {
                 ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) enumeration.nextElement();
-                String string = classHierarchyNode1.getClassName();
-                String string1 = ClassFileBase.stripOuterClassPrefix(ClassFileBase.stripPackage((String) ZkmUtils.mapOrSelf(string, hashMap)));
-                hashMap2.put(classHierarchyNode1, string1);
+                String classNameValue = classHierarchyNode1.getClassName();
+                String value = ClassFileBase.stripOuterClassPrefix(ClassFileBase.stripPackage((String) ZkmUtils.mapOrSelf(classNameValue, hashMap)));
+                hashMap2.put(classHierarchyNode1, value);
             }
         }
 
@@ -314,7 +314,7 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
     }
 
     public final void assignGeneratedClassName(ClassNameGenerator classNameGenerator, HashMap hashMap, HashMap hashMap1) throws IOException {
-        String string = classNameGenerator.generateFallbackName(this, this.classFile != null ? this.classFile.isFromArchive() : false);
+        String string = classNameGenerator.generateFallbackName(this, ((this.classFile != null) && (this.classFile.isFromArchive())));
         hashMap.put(this.className, string);
         Object object = hashMap1.put(string, this.className);
         ZkmAssert.assertNull(object, "Duplicate class '" + this.className + "' '" + string + "' '" + object + "' (B)");
@@ -324,8 +324,8 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         this.depth = depth;
     }
 
-    public static void setCheckHierarchyGaps(boolean bl) {
-        checkHierarchyGaps = bl;
+    public static void setCheckHierarchyGaps(boolean checkHierarchyGapsArgument) {
+        checkHierarchyGaps = checkHierarchyGapsArgument;
     }
 
     public final ClassHierarchyNode getSuperclassNode() {
@@ -334,22 +334,22 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
 
     public final void renameEnclosedClassReferences(HashMap hashMap, HashMap hashMap1) throws ZkmException, IOException {
         if (this.enclosedClassNodes != null) {
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = this.enclosedClassNodes; bb < list1.size(); list1 = this.enclosedClassNodes) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.enclosedClassNodes.get(ba);
-                ClassFileBase classFileBase = ((ClassHierarchyNode) this.enclosedClassNodes.get(ba)).classFile;
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.enclosedClassNodes.get(elementIndex);
+                ClassFileBase classFileBase = ((ClassHierarchyNode) this.enclosedClassNodes.get(elementIndex)).classFile;
                 if (classFileBase.isProgramClass()) {
                     ProgramClass programClass1 = (ProgramClass) classFileBase;
                     ClassHierarchyNode classHierarchyNode2 = classHierarchyNode1.getOuterClassNode();
                     if (classHierarchyNode2 != null) {
-                        String string = classHierarchyNode2.getClassName();
-                        programClass1.renamePackagePrefix(string, (String) hashMap.get(string), hashMap, hashMap1);
+                        String classNameValue = classHierarchyNode2.getClassName();
+                        programClass1.renamePackagePrefix(classNameValue, (String) hashMap.get(classNameValue), hashMap, hashMap1);
                     }
                 }
 
-                bb = ++ba;
+                bb = ++elementIndex;
             }
         }
     }
@@ -368,24 +368,24 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
 
     public final void collectProgramImplementors(ArrayList arrayList) {
         if (this.implementorNodes != null) {
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = this.implementorNodes; bb < list1.size(); list1 = this.implementorNodes) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.implementorNodes.get(ba);
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.implementorNodes.get(elementIndex);
                 if (classHierarchyNode1.isProgramClass()) {
                     arrayList.add(classHierarchyNode1);
                 } else {
                     classHierarchyNode1.collectProgramImplementors(arrayList);
                 }
 
-                bb = ++ba;
+                bb = ++elementIndex;
             }
         }
     }
 
-    private ClassHierarchyNode(String string, ClassFileBase classFileBase) {
-        this.className = string;
+    private ClassHierarchyNode(String classNameArgument, ClassFileBase classFileBase) {
+        this.className = classNameArgument;
         this.classFile = classFileBase;
         if (this.classFile != null) {
             this.classFile.addObserver(this);
@@ -402,32 +402,32 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
 
     public final void collectAllSubtypes(Map map1) {
         if (this.subclassNodes != null) {
-            int ba = 0;
+            int elementIndex = 0;
             int bd = 0;
 
             for (List list2 = this.subclassNodes; bd < list2.size(); list2 = this.subclassNodes) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.subclassNodes.get(ba);
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.subclassNodes.get(elementIndex);
                 map1.put(classHierarchyNode1, classHierarchyNode1);
                 classHierarchyNode1.collectAllSubtypes(map1);
-                bd = ++ba;
+                bd = ++elementIndex;
             }
         }
 
         if (this.implementorNodes != null) {
-            int bb = 0;
+            int elementIndexValue = 0;
             int bc = 0;
 
             for (List list1 = this.implementorNodes; bc < list1.size(); list1 = this.implementorNodes) {
-                ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) this.implementorNodes.get(bb);
+                ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) this.implementorNodes.get(elementIndexValue);
                 map1.put(classHierarchyNode2, classHierarchyNode2);
                 classHierarchyNode2.collectAllSubtypes(map1);
-                bc = ++bb;
+                bc = ++elementIndexValue;
             }
         }
     }
 
-    public static ClassHierarchyNode findNode(String string) {
-        return (ClassHierarchyNode) nodesByName.get(string);
+    public static ClassHierarchyNode findNode(String key) {
+        return (ClassHierarchyNode) nodesByName.get(key);
     }
 
     public final Enumeration enumerateOuterClasses() {
@@ -445,12 +445,12 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append('[');
 
-                for (int i = 0; i < arrayList.size(); i++) {
-                    ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) arrayList.get(i);
+                for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                    ClassHierarchyNode classHierarchyNode2 = (ClassHierarchyNode) arrayList.get(elementIndex);
                     stringBuilder.append(
                             classHierarchyNode2.getClassName() + " " + classHierarchyNode2.getClassFile().getLocationName() + " " + classHierarchyNode1.hasNoClassFile()
                     );
-                    if (i < arrayList.size() - 1) {
+                    if (elementIndex < arrayList.size() - 1) {
                         stringBuilder.append(", ");
                     }
                 }
@@ -552,10 +552,10 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         }
 
         if (this.subclassNodes != null) {
-            int bb = this.subclassNodes.size();
+            int subclassNodesSize = this.subclassNodes.size();
 
-            for (int i = 0; i < bb; i++) {
-                ((ClassHierarchyNode) this.subclassNodes.get(i))
+            for (int elementIndex = 0; elementIndex < subclassNodesSize; elementIndex++) {
+                ((ClassHierarchyNode) this.subclassNodes.get(elementIndex))
                         .renameMethodsRecursively(
                                 nameExclusionSet,
                                 changeLogMapping1,
@@ -726,8 +726,8 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
     }
 
     @Override
-    public final boolean equals(Object object) {
-        return object instanceof ClassHierarchyNode ? this.className.equals(((ClassHierarchyNode) object).className) : false;
+    public final boolean equals(Object other) {
+        return ((other instanceof ClassHierarchyNode) && (this.className.equals(((ClassHierarchyNode) other).className)));
     }
 
     public final void addImplementor(Object object) {
@@ -745,10 +745,10 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
     public final void collectRenamableMethods(MethodRenamer methodRenamer1) throws ZkmException, IOException {
         this.classFile.renameMethods(this, methodRenamer1);
         if (this.subclassNodes != null) {
-            int ba = this.subclassNodes.size();
+            int subclassNodesSize = this.subclassNodes.size();
 
-            for (int i = 0; i < ba; i++) {
-                ((ClassHierarchyNode) this.subclassNodes.get(i)).collectRenamableMethods(methodRenamer1);
+            for (int elementIndex = 0; elementIndex < subclassNodesSize; elementIndex++) {
+                ((ClassHierarchyNode) this.subclassNodes.get(elementIndex)).collectRenamableMethods(methodRenamer1);
             }
         }
     }
@@ -934,8 +934,8 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByName((ClassHierarchyNode) object);
+    public int compareTo(Object other) {
+        return this.compareByName((ClassHierarchyNode) other);
     }
 
     public final Enumeration enumerateSubclasses() {
@@ -957,8 +957,8 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         return this.classFile != null && this.classFile.isInterface();
     }
 
-    public static ClassFileBase findClassFile(String string) {
-        ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) nodesByName.get(string);
+    public static ClassFileBase findClassFile(String key) {
+        ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) nodesByName.get(key);
         return classHierarchyNode == null ? null : classHierarchyNode.classFile;
     }
 
@@ -969,10 +969,10 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
     public final void analyzeParameterChanges(MethodParameterChangeSet methodParameterChangeSet) throws ZkmException, IOException {
         this.classFile.applyParameterChanges(this, methodParameterChangeSet);
         if (this.subclassNodes != null) {
-            int ba = this.subclassNodes.size();
+            int subclassNodesSize = this.subclassNodes.size();
 
-            for (int i = 0; i < ba; i++) {
-                ((ClassHierarchyNode) this.subclassNodes.get(i)).analyzeParameterChanges(methodParameterChangeSet);
+            for (int elementIndex = 0; elementIndex < subclassNodesSize; elementIndex++) {
+                ((ClassHierarchyNode) this.subclassNodes.get(elementIndex)).analyzeParameterChanges(methodParameterChangeSet);
             }
         }
     }
@@ -983,45 +983,45 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
 
     public final void collectProgramSubclasses(ArrayList arrayList) {
         if (this.subclassNodes != null) {
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = this.subclassNodes; bb < list1.size(); list1 = this.subclassNodes) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.subclassNodes.get(ba);
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.subclassNodes.get(elementIndex);
                 if (classHierarchyNode1.isProgramClass()) {
                     arrayList.add(classHierarchyNode1);
                 } else {
                     classHierarchyNode1.collectProgramSubclasses(arrayList);
                 }
 
-                bb = ++ba;
+                bb = ++elementIndex;
             }
         }
     }
 
     public final void sumSubtreeCounts(MutableInt mutableInt, MutableInt mutableInt1, CountingBag countingBag, CountingBag countingBag1) {
-        int ba = countingBag.getCount(this.classFile);
-        int bb = countingBag1.getCount(this.classFile);
+        int count = countingBag.getCount(this.classFile);
+        int countValue = countingBag1.getCount(this.classFile);
         if (this.subclassNodes != null) {
-            int bc = 0;
+            int elementIndex = 0;
             int bd = 0;
 
             for (List list1 = this.subclassNodes; bd < list1.size(); list1 = this.subclassNodes) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.subclassNodes.get(bc);
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.subclassNodes.get(elementIndex);
                 MutableInt mutableInt2 = new MutableInt(0);
                 MutableInt mutableInt3 = new MutableInt(0);
                 classHierarchyNode1.sumSubtreeCounts(mutableInt2, mutableInt3, countingBag, countingBag1);
-                ba += mutableInt2.getValue();
-                bb += mutableInt3.getValue();
-                bd = ++bc;
+                count += mutableInt2.getValue();
+                countValue += mutableInt3.getValue();
+                bd = ++elementIndex;
             }
         }
 
-        mutableInt.setValue(ba);
-        mutableInt1.setValue(bb);
+        mutableInt.setValue(count);
+        mutableInt1.setValue(countValue);
         if (this.classFile.isProgramClass()) {
-            countingBag.addCount((ProgramClass) this.classFile, ba);
-            countingBag1.addCount((ProgramClass) this.classFile, bb);
+            countingBag.addCount((ProgramClass) this.classFile, count);
+            countingBag1.addCount((ProgramClass) this.classFile, countValue);
         }
     }
 
@@ -1045,15 +1045,15 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         return this.className.hashCode();
     }
 
-    public static ProgramClass findProgramClass(String string) {
-        ClassHierarchyNode classHierarchyNode = findNode(string);
+    public static ProgramClass findProgramClass(String key) {
+        ClassHierarchyNode classHierarchyNode = findNode(key);
         return classHierarchyNode == null ? null : classHierarchyNode.getProgramClass();
     }
 
     public final void collectAllInterfaces(Set set1) {
         if (this.interfaceNodes != null) {
-            for (int i = 0; i < this.interfaceNodes.size(); i++) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.interfaceNodes.get(i);
+            for (int elementIndex = 0; elementIndex < this.interfaceNodes.size(); elementIndex++) {
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) this.interfaceNodes.get(elementIndex);
                 set1.add(classHierarchyNode1);
                 classHierarchyNode1.collectAllInterfaces(set1);
             }
@@ -1207,11 +1207,11 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         return this.subclassNodes != null ? new ArrayList(this.subclassNodes) : null;
     }
 
-    public static synchronized ClassHierarchyNode getOrCreateNode(String string, ClassFileBase classFileBase) {
-        ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) nodesByName.get(string);
+    public static synchronized ClassHierarchyNode getOrCreateNode(String key, ClassFileBase classFileBase) {
+        ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) nodesByName.get(key);
         if (classHierarchyNode == null) {
-            classHierarchyNode = new ClassHierarchyNode(string, classFileBase);
-            nodesByName.put(string, classHierarchyNode);
+            classHierarchyNode = new ClassHierarchyNode(key, classFileBase);
+            nodesByName.put(key, classHierarchyNode);
         }
 
         return classHierarchyNode;
@@ -1223,10 +1223,10 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         }
 
         if (this.subclassNodes != null) {
-            int ba = this.subclassNodes.size();
+            int subclassNodesSize = this.subclassNodes.size();
 
-            for (int i = 0; i < ba; i++) {
-                ((ClassHierarchyNode) this.subclassNodes.get(i)).applyMethodRenamer(methodRenamer1);
+            for (int elementIndex = 0; elementIndex < subclassNodesSize; elementIndex++) {
+                ((ClassHierarchyNode) this.subclassNodes.get(elementIndex)).applyMethodRenamer(methodRenamer1);
             }
         }
     }
@@ -1256,10 +1256,10 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
                         map1
                 );
         if (this.subclassNodes != null) {
-            int ba = this.subclassNodes.size();
+            int subclassNodesSize = this.subclassNodes.size();
 
-            for (int i = 0; i < ba; i++) {
-                ((ClassHierarchyNode) this.subclassNodes.get(i))
+            for (int elementIndex = 0; elementIndex < subclassNodesSize; elementIndex++) {
+                ((ClassHierarchyNode) this.subclassNodes.get(elementIndex))
                         .applyParameterChanges(
                                 changeLogMapping1,
                                 methodParameterChangeSet,
@@ -1289,27 +1289,27 @@ public class ClassHierarchyNode implements NodeVisitor, Comparable {
         }
 
         if (this.subclassNodes != null) {
-            int ba = this.subclassNodes.size();
+            int subclassNodesSize = this.subclassNodes.size();
 
-            for (int i = 0; i < ba; i++) {
-                ((ClassHierarchyNode) this.subclassNodes.get(i)).registerParameterChangeMethods(methodParameterChangeSet);
+            for (int elementIndex = 0; elementIndex < subclassNodesSize; elementIndex++) {
+                ((ClassHierarchyNode) this.subclassNodes.get(elementIndex)).registerParameterChangeMethods(methodParameterChangeSet);
             }
         }
     }
 
     public final String[] getInterfaceNames() {
-        String[] strings;
+        String[] interfaceNames;
         if (this.interfaceNodes != null) {
-            strings = new String[this.interfaceNodes.size()];
+            interfaceNames = new String[this.interfaceNodes.size()];
 
-            for (int i = 0; i < this.interfaceNodes.size(); i++) {
-                strings[i] = ((ClassHierarchyNode) this.interfaceNodes.get(i)).getClassName();
+            for (int elementIndex = 0; elementIndex < this.interfaceNodes.size(); elementIndex++) {
+                interfaceNames[elementIndex] = ((ClassHierarchyNode) this.interfaceNodes.get(elementIndex)).getClassName();
             }
         } else {
-            strings = new String[0];
+            interfaceNames = new String[0];
         }
 
-        return strings;
+        return interfaceNames;
     }
 
     public final void addInterface(Object object) {

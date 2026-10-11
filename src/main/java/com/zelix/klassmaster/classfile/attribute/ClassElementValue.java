@@ -41,25 +41,25 @@ public class ClassElementValue extends AnnotationElementValue {
         IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1 = (IgnoreMissingReferencesSpec) object1;
         ClassResolver classResolver1 = (ClassResolver) object;
         MutableInt mutableInt = new MutableInt(0);
-        String string = ClassFileBase.extractClassName(this.classConstant.getValue(), mutableInt);
+        String key = ClassFileBase.extractClassName(this.classConstant.getValue(), mutableInt);
         this.arrayDimensions = mutableInt.getValue();
-        if (string != null) {
+        if (key != null) {
             this.referencedClass = classResolver1.getClassFile(
-                    string, "analyzing annotations in class '" + this.getDisplayLocationName() + "' (A)", ignoreMissingReferencesSpec1
+                    key, "analyzing annotations in class '" + this.getDisplayLocationName() + "' (A)", ignoreMissingReferencesSpec1
             );
         }
     }
 
-    public ClassElementValue(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba);
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+    public ClassElementValue(ClassFileComponent classFileComponent, int tagArgument, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, tagArgument);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry != null && constantPoolEntry instanceof ConstantUtf8) {
             this.classConstant = (ConstantUtf8) constantPoolEntry;
             listMultimap.addValue(this.classConstant, this);
         } else {
             this.setValid();
-            this.setErrorMessage("Invalid component string class index : " + bb + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
+            this.setErrorMessage("Invalid component string class index : " + constantPoolIndex + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
         }
     }
 
@@ -101,8 +101,8 @@ public class ClassElementValue extends AnnotationElementValue {
     @Override
     public String getClassValueName() {
         if (this.classConstant != null) {
-            String string = this.classConstant.getValue();
-            return string.startsWith("[") ? string : string.substring(1, string.length() - 1);
+            String value = this.classConstant.getValue();
+            return value.startsWith("[") ? value : value.substring(1, value.length() - 1);
         } else {
             return null;
         }

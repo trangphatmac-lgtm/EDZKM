@@ -7,7 +7,7 @@ public class LineCommentStripper implements StringKeyTransform {
 
     @Override
     public String transformLine(String string) {
-        int ba = string.indexOf(COMMENT_PREFIX);
-        return ba > -1 ? string.substring(0, ba) : string;
+        int endIndex = string.indexOf(COMMENT_PREFIX);
+        return endIndex > -1 ? string.substring(0, endIndex) : string;
     }
 }

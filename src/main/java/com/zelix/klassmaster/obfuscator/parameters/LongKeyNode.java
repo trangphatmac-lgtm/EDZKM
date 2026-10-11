@@ -21,8 +21,8 @@ public class LongKeyNode implements EncryptionKeyChain {
         return (int) MethodParameterChanger.extractLowPermutedBits(this.getCurrentKey(), 8, this.bitLayout);
     }
 
-    public long getMiddleBitsAt(int ba) {
-        return MethodParameterChanger.extractPermutedBits(this.getKeyAt(ba), 8, 55, this.bitLayout);
+    public long getMiddleBitsAt(int elementIndex) {
+        return MethodParameterChanger.extractPermutedBits(this.getKeyAt(elementIndex), 8, 55, this.bitLayout);
     }
 
     public long getLow56Bits() {
@@ -43,14 +43,14 @@ public class LongKeyNode implements EncryptionKeyChain {
         return bd;
     }
 
-    public boolean equals(Object object) {
-        if (this == object) {
+    public boolean equals(Object otherArgument) {
+        if (this == otherArgument) {
             return true;
         }
-        if (!(object instanceof LongKeyNode)) {
+        if (!(otherArgument instanceof LongKeyNode)) {
             return false;
         }
-        LongKeyNode other = (LongKeyNode) object;
+        LongKeyNode other = (LongKeyNode) otherArgument;
         return MethodParameterChanger.extractLowPermutedBits(this.getCurrentKey(), 56, this.bitLayout)
                 == MethodParameterChanger.extractLowPermutedBits(other.getCurrentKey(), 56, other.bitLayout);
     }
@@ -63,8 +63,8 @@ public class LongKeyNode implements EncryptionKeyChain {
         return this.previous != null;
     }
 
-    public Long getKeyAt(int ba) {
-        return (Long) this.keyHistory.get(ba);
+    public Long getKeyAt(int elementIndex) {
+        return (Long) this.keyHistory.get(elementIndex);
     }
 
     @Override
@@ -102,8 +102,8 @@ public class LongKeyNode implements EncryptionKeyChain {
         return stringBuilder.toString();
     }
 
-    public void copyBitLayout(Object object) {
-        System.arraycopy(object, 0, this.bitLayout, 0, this.bitLayout.length);
+    public void copyBitLayout(Object sourceArray) {
+        System.arraycopy(sourceArray, 0, this.bitLayout, 0, this.bitLayout.length);
     }
 
     @Override

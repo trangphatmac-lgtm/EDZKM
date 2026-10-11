@@ -21,7 +21,7 @@ public abstract class TrimExclusionsBaseDialog extends TrimExclusionsDialogBase 
     public JButton testBtn;
 
     public TrimExclusionsBaseDialog(
-            String string,
+            String title,
             ZkmMainWindow zkmMainWindow,
             List list1,
             TrimExcludeSettings trimExcludeSettings1,
@@ -30,7 +30,7 @@ public abstract class TrimExclusionsBaseDialog extends TrimExclusionsDialogBase 
             ScriptEnvironment scriptEnvironment1,
             DialogCallback dialogCallback1
     ) throws ZkmException, IOException {
-        super(string, zkmMainWindow, list1, trimExcludeSettings1, classRepository1, trimOptions1, scriptEnvironment1, dialogCallback1);
+        super(title, zkmMainWindow, list1, trimExcludeSettings1, classRepository1, trimOptions1, scriptEnvironment1, dialogCallback1);
     }
 
     public final void runTestTrim() throws ZkmException, IOException {

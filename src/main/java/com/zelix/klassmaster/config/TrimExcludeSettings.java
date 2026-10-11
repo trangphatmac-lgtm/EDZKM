@@ -20,27 +20,27 @@ public class TrimExcludeSettings extends WizardAppSettings implements Serializab
                 final TrimExcludeSettings trimExcludeSettings = (TrimExcludeSettings) objectInputStream.readObject();
                 if (trimExcludeSettings.l == null) {
                     trimExcludeSettings.l = new LinkedHashMap();
-                    trimExcludeSettings.p = true;
+                    trimExcludeSettings.saved = true;
                 } else {
-                    trimExcludeSettings.p = true;
+                    trimExcludeSettings.saved = true;
                 }
                 final TrimExcludeSettings trimExcludeSettings2 = trimExcludeSettings;
                 try {
                     objectInputStream.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
                 return trimExcludeSettings2;
-            } catch (final IOException ex2) {
-            } catch (final ClassNotFoundException ex3) {
-            } catch (final ClassCastException ex4) {
-            } catch (final AssertionFailedException ex5) {
-                throw ex5;
-            } catch (final Throwable t) {
+            } catch (final IOException ioExceptionValue) {
+            } catch (final ClassNotFoundException classNotFoundException) {
+            } catch (final ClassCastException classCastException) {
+            } catch (final AssertionFailedException assertionFailedException) {
+                throw assertionFailedException;
+            } catch (final Throwable throwable) {
             } finally {
                 if (objectInputStream != null) {
                     try {
                         objectInputStream.close();
-                    } catch (final IOException ex6) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }

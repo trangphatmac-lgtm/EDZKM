@@ -32,11 +32,11 @@ public class ASTGroupingsStatement extends ParameterListStatement {
     public ArrayList getGroupings() {
         ArrayList arrayList = new ArrayList();
         if (super.parameters != null) {
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
             for (List list1 = super.parameters; bb < list1.size(); list1 = super.parameters) {
-                ASTGrouping aSTGrouping = (ASTGrouping) super.parameters.get(ba);
+                ASTGrouping aSTGrouping = (ASTGrouping) super.parameters.get(elementIndex);
                 ArrayList arrayList1 = new ArrayList();
                 Enumeration enumeration = aSTGrouping.getFilterParameters();
 
@@ -46,7 +46,7 @@ public class ASTGroupingsStatement extends ParameterListStatement {
                 }
 
                 arrayList.add(arrayList1);
-                bb = ++ba;
+                bb = ++elementIndex;
             }
         }
 

@@ -113,10 +113,10 @@ public class ZkmAssert {
             return "null";
         }
 
-        String string = object.getClass().getName();
-        string = string.replace('/', '.');
-        int ba = string.lastIndexOf(".");
-        return ba > -1 ? string.substring(ba + 1) : string;
+        String name = object.getClass().getName();
+        name = name.replace('/', '.');
+        int ba = name.lastIndexOf(".");
+        return ba > -1 ? name.substring(ba + 1) : name;
     }
 
     private static void staticInit() {

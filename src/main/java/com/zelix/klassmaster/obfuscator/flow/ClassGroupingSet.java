@@ -16,9 +16,9 @@ public class ClassGroupingSet implements Serializable, Comparable {
     public NamedSet o;
 
     @Override
-    public boolean equals(Object object) {
-        if (object instanceof ClassGroupingSet) {
-            ClassGroupingSet classGroupingSet1 = (ClassGroupingSet) object;
+    public boolean equals(Object other) {
+        if (other instanceof ClassGroupingSet) {
+            ClassGroupingSet classGroupingSet1 = (ClassGroupingSet) other;
             return this.y.equals(classGroupingSet1.y);
         } else {
             return false;
@@ -108,8 +108,8 @@ public class ClassGroupingSet implements Serializable, Comparable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareGrouping((ClassGroupingSet) object);
+    public int compareTo(Object other) {
+        return this.compareGrouping((ClassGroupingSet) other);
     }
 
     public Set getSets() {

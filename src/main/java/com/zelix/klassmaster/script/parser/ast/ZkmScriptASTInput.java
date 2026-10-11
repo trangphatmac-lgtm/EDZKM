@@ -15,8 +15,8 @@ public class ZkmScriptASTInput extends ZkmScriptSimpleNode {
         int ba = 0;
         int bb = this.jjtGetNumChildren();
 
-        for (int i = 0; i < bb; i++) {
-            if ((ScriptStatementNode) ((ASTNTStatement) this.jjtGetChild(i)).jjtGetChild(0) instanceof SaveStatementNode) {
+        for (int childrenElementIndex = 0; childrenElementIndex < bb; childrenElementIndex++) {
+            if ((ScriptStatementNode) ((ASTNTStatement) this.jjtGetChild(childrenElementIndex)).jjtGetChild(0) instanceof SaveStatementNode) {
                 ba++;
             }
         }
@@ -28,8 +28,8 @@ public class ZkmScriptASTInput extends ZkmScriptSimpleNode {
         int ba = 0;
         int bb = this.jjtGetNumChildren();
 
-        for (int i = 0; i < bb; i++) {
-            if ((ScriptStatementNode) ((ASTNTStatement) this.jjtGetChild(i)).jjtGetChild(0) instanceof ASTLoadStatement) {
+        for (int childrenElementIndex = 0; childrenElementIndex < bb; childrenElementIndex++) {
+            if ((ScriptStatementNode) ((ASTNTStatement) this.jjtGetChild(childrenElementIndex)).jjtGetChild(0) instanceof ASTLoadStatement) {
                 ba++;
             }
         }
@@ -42,8 +42,8 @@ public class ZkmScriptASTInput extends ZkmScriptSimpleNode {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
     }
 }

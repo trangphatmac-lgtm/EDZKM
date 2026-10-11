@@ -18,17 +18,17 @@ public class ASTThrowsClause extends ZkmScriptSimpleNode implements TypeTextHold
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object1;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         MethodSpecifierChildNode methodSpecifierChildNode = (MethodSpecifierChildNode) zkmScriptNode;
-        int bc = 0;
+        int elementIndex = 0;
         int bd = 0;
 
         for (Vector vector = this.exceptionTypeNames; bd < vector.size(); vector = this.exceptionTypeNames) {
-            methodSpecifierChildNode.addThrownException((String) this.exceptionTypeNames.elementAt(bc));
-            bd = ++bc;
+            methodSpecifierChildNode.addThrownException((String) this.exceptionTypeNames.elementAt(elementIndex));
+            bd = ++elementIndex;
         }
     }
 
@@ -37,7 +37,7 @@ public class ASTThrowsClause extends ZkmScriptSimpleNode implements TypeTextHold
     }
 
     @Override
-    public void setTypeText(Object object) {
-        this.exceptionTypeNames.addElement(object);
+    public void setTypeText(Object typeText) {
+        this.exceptionTypeNames.addElement(typeText);
     }
 }

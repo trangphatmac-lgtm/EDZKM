@@ -29,10 +29,10 @@ public class UninitializedVerificationType extends VerificationTypeInfo implemen
         return InstructionUsageFlag.SET_USAGE_STACK_MAP;
     }
 
-    public UninitializedVerificationType(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba);
-        int bb = classFileInputStream.readUnsignedShort();
-        listMultimap.addValue(integerCache.valueOf(bb), this);
+    public UninitializedVerificationType(ClassFileComponent classFileComponent, int tagArgument, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, tagArgument);
+        int integerValue = classFileInputStream.readUnsignedShort();
+        listMultimap.addValue(integerCache.valueOf(integerValue), this);
     }
 
     @Override

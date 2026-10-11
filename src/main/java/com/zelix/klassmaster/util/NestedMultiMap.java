@@ -18,8 +18,8 @@ public class NestedMultiMap {
         this(75, 10, 5, false);
     }
 
-    public NestedMultiMap(int ba, boolean bl) {
-        this(ba, 5, 5, bl);
+    public NestedMultiMap(int ba, boolean concurrentArgument) {
+        this(ba, 5, 5, concurrentArgument);
     }
 
     public Enumeration keys() {
@@ -36,31 +36,31 @@ public class NestedMultiMap {
         this.map.clear();
     }
 
-    public ListMultimap putMultimap(Object object, Object object1) {
-        return (ListMultimap) this.map.put(object, object1);
+    public ListMultimap putMultimap(Object key, Object value) {
+        return (ListMultimap) this.map.put(key, value);
     }
 
-    public ListMultimap getMultimap(Object object) {
-        return (ListMultimap) this.map.get(object);
+    public ListMultimap getMultimap(Object key) {
+        return (ListMultimap) this.map.get(key);
     }
 
-    public ListMultimap removeMultimap(Object object) {
-        return (ListMultimap) this.map.remove(object);
+    public ListMultimap removeMultimap(Object key) {
+        return (ListMultimap) this.map.remove(key);
     }
 
     public Set entrySet() {
         return this.map.entrySet();
     }
 
-    public synchronized void addValues(Object object, Object object1, Collection collection1) {
-        ListMultimap listMultimap = (ListMultimap) this.map.get(object);
+    public synchronized void addValues(Object key, Object keyArgument, Collection collection1) {
+        ListMultimap listMultimap = (ListMultimap) this.map.get(key);
         if (listMultimap == null) {
             listMultimap = new ListMultimap(false, this.innerInitialCapacity, collection1.size(), this.concurrent);
-            this.map.put(object, listMultimap);
+            this.map.put(key, listMultimap);
         }
 
         for (Object object2 : collection1) {
-            listMultimap.addValue(object1, object2);
+            listMultimap.addValue(keyArgument, object2);
         }
     }
 
@@ -68,45 +68,45 @@ public class NestedMultiMap {
         return this.map.isEmpty();
     }
 
-    public NestedMultiMap(int ba, int bb, int bc) {
-        this(ba, bb, bc, false);
+    public NestedMultiMap(int ba, int innerInitialCapacityArgument, int innerListCapacityArgument) {
+        this(ba, innerInitialCapacityArgument, innerListCapacityArgument, false);
     }
 
     public int getKeyCount() {
         return this.map.size();
     }
 
-    public NestedMultiMap(boolean bl) {
-        this(75, 10, 5, bl);
+    public NestedMultiMap(boolean concurrentArgument) {
+        this(75, 10, 5, concurrentArgument);
     }
 
-    public synchronized boolean containsValue(Object object, Object object1, Object object2) {
-        ListMultimap listMultimap = (ListMultimap) this.map.get(object);
-        return listMultimap == null ? false : listMultimap.containsValue(object1, object2);
+    public synchronized boolean containsValue(Object key, Object keyArgument, Object object2) {
+        ListMultimap listMultimap = (ListMultimap) this.map.get(key);
+        return (!(listMultimap == null) && (listMultimap.containsValue(keyArgument, object2)));
     }
 
     public NestedMultiMap(int ba) {
         this(ba, 10, 5, false);
     }
 
-    public synchronized List getValues(Object object, Object object1) {
-        ListMultimap listMultimap = (ListMultimap) this.map.get(object);
-        return listMultimap == null ? null : listMultimap.getValues(object1);
+    public synchronized List getValues(Object key, Object keyArgument) {
+        ListMultimap listMultimap = (ListMultimap) this.map.get(key);
+        return listMultimap == null ? null : listMultimap.getValues(keyArgument);
     }
 
-    public synchronized void addValue(Object object, Object object1, Object object2) {
-        ListMultimap listMultimap = (ListMultimap) this.map.get(object);
+    public synchronized void addValue(Object key, Object keyArgument, Object object2) {
+        ListMultimap listMultimap = (ListMultimap) this.map.get(key);
         if (listMultimap == null) {
             listMultimap = new ListMultimap(false, this.innerInitialCapacity, this.innerListCapacity, this.concurrent);
-            listMultimap.addValue(object1, object2);
-            this.map.put(object, listMultimap);
+            listMultimap.addValue(keyArgument, object2);
+            this.map.put(key, listMultimap);
         } else {
-            listMultimap.addValue(object1, object2);
+            listMultimap.addValue(keyArgument, object2);
         }
     }
 
-    public boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
     public NestedMultiMap(int ba, int innerInitialCapacity, int innerListCapacity, boolean concurrent) {
@@ -124,18 +124,18 @@ public class NestedMultiMap {
         return this.map.keySet();
     }
 
-    public synchronized List removeInnerKey(Object object, Object object1) {
-        ListMultimap listMultimap = (ListMultimap) this.map.get(object);
-        return listMultimap != null ? listMultimap.removeKey(object1) : null;
+    public synchronized List removeInnerKey(Object key, Object keyArgument) {
+        ListMultimap listMultimap = (ListMultimap) this.map.get(key);
+        return listMultimap != null ? listMultimap.removeKey(keyArgument) : null;
     }
 
-    public synchronized boolean containsInnerKey(Object object, Object object1) {
-        ListMultimap listMultimap = (ListMultimap) this.map.get(object);
-        return listMultimap == null ? false : listMultimap.containsKey(object1);
+    public synchronized boolean containsInnerKey(Object key, Object keyArgument) {
+        ListMultimap listMultimap = (ListMultimap) this.map.get(key);
+        return (!(listMultimap == null) && (listMultimap.containsKey(keyArgument)));
     }
 
-    public synchronized boolean removeValue(Object object, Object object1, Object object2) {
-        ListMultimap listMultimap = (ListMultimap) this.map.get(object);
-        return listMultimap != null ? listMultimap.removeValue(object1, object2) : false;
+    public synchronized boolean removeValue(Object key, Object keyArgument, Object object2) {
+        ListMultimap listMultimap = (ListMultimap) this.map.get(key);
+        return ((listMultimap != null) && (listMultimap.removeValue(keyArgument, object2)));
     }
 }

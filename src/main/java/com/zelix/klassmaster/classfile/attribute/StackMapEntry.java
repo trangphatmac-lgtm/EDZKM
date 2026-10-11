@@ -27,24 +27,14 @@ public class StackMapEntry extends StackMapFrame {
 
     @Override
     public int getFrameSize() {
-        int ba = 6;
-        int bb = 0;
-        int bc = 0;
-
-        for (VerificationTypeInfo[] verificationTypeInfos1 = this.locals; bc < verificationTypeInfos1.length; verificationTypeInfos1 = this.locals) {
-            ba += this.locals[bb].getByteSize();
-            bc = ++bb;
+        int byteSize = 6;
+        for (int localIndex = 0; localIndex < this.locals.length; localIndex++) {
+            byteSize += this.locals[localIndex].getByteSize();
         }
-
-        bb = 0;
-        bc = 0;
-
-        for (VerificationTypeInfo[] verificationTypeInfos = this.stackItems; bc < verificationTypeInfos.length; verificationTypeInfos = this.stackItems) {
-            ba += this.stackItems[bb].getByteSize();
-            bc = ++bb;
+        for (int stackIndex = 0; stackIndex < this.stackItems.length; stackIndex++) {
+            byteSize += this.stackItems[stackIndex].getByteSize();
         }
-
-        return ba;
+        return byteSize;
     }
 
     @Override
@@ -54,54 +44,35 @@ public class StackMapEntry extends StackMapFrame {
 
     
     @Override
-    public final void collectUsedConstants(char ba, int bb, UsedConstantsCollector usedConstantsCollector, char bc) {
-        VisitableNode[] visitableNodes2 = ClassFileComponent.getFlowGuardNodes();
-        int bd = this.locals.length;
-        VisitableNode[] visitableNodes1 = visitableNodes2;
-        int be = 0;
-
-        label41:
-        while (true) {
-            if (be >= bd) {
-                visitableNodes2 = this.stackItems;
-                break;
-            }
-
-            if (bc > 0) {
-                this.locals[be].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+    public final void collectUsedConstants(char controlTag, int controlSeed, UsedConstantsCollector collector, char controlMode) {
+        VisitableNode[] flowGuardNodes = ClassFileComponent.getFlowGuardNodes();
+        int localCount = this.locals.length;
+        int localIndex = 0;
+        while (localIndex < localCount) {
+            if (controlMode > 0) {
+                this.locals[localIndex].collectUsedConstants('\u0000', 1103830477, collector, '鞍');
             } else {
                 if (this.locals != null) {
                     continue;
                 }
-
-                if (ba >= 0) {
-                    visitableNodes2 = this.stackItems;
-                    break;
-                }
+                break;
             }
 
-            do {
-                be++;
-                if (visitableNodes1 != null) {
-                    continue label41;
-                }
-            } while (ba < 0);
-
-            visitableNodes2 = this.stackItems;
-            break;
+            localIndex++;
+            if (flowGuardNodes == null) {
+                break;
+            }
         }
 
-        be = visitableNodes2.length;
-        int bf = 0;
-
+        int stackSize = this.stackItems.length;
+        int stackIndex = 0;
         while (true) {
-            if (bf < be) {
-                this.stackItems[bf].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
-            } else if (bb >= 0) {
+            if (stackIndex < stackSize) {
+                this.stackItems[stackIndex].collectUsedConstants('\u0000', 1103830477, collector, '鞍');
+            } else if (controlSeed >= 0) {
                 return;
             }
-
-            bf++;
+            stackIndex++;
         }
     }
 
@@ -141,18 +112,18 @@ public class StackMapEntry extends StackMapFrame {
             verificationTypeInfos = this.locals;
         }
 
-        int ba = verificationTypeInfos.length;
-        dataOutputStream.writeShort(ba);
+        int lengthValue = verificationTypeInfos.length;
+        dataOutputStream.writeShort(lengthValue);
 
-        for (int i = 0; i < ba; i++) {
-            this.locals[i].writeTo(dataOutputStream);
+        for (int localIndexValue = 0; localIndexValue < lengthValue; localIndexValue++) {
+            this.locals[localIndexValue].writeTo(dataOutputStream);
         }
 
-        int bd = this.stackItems.length;
-        dataOutputStream.writeShort(bd);
+        int lengthValue2 = this.stackItems.length;
+        dataOutputStream.writeShort(lengthValue2);
 
-        for (int i = 0; i < bd; i++) {
-            this.stackItems[i].writeTo(dataOutputStream);
+        for (int stackItemIndex = 0; stackItemIndex < lengthValue2; stackItemIndex++) {
+            this.stackItems[stackItemIndex].writeTo(dataOutputStream);
         }
     }
 
@@ -172,11 +143,11 @@ public class StackMapEntry extends StackMapFrame {
         int ba = classFileInputStream.readUnsignedShort();
         this.locals = new VerificationTypeInfo[ba];
 
-        for (int i = 0; i < ba; i++) {
-            this.locals[i] = VerificationTypeInfo.readTypeInfo(
+        for (int localIndexValue = 0; localIndexValue < ba; localIndexValue++) {
+            this.locals[localIndexValue] = VerificationTypeInfo.readTypeInfo(
                     (AbstractStackMapAttribute) classFileComponent, classFileInputStream, listMultimap, listMultimap1, printWriter, hashMap, hashMap1, integerCache1
             );
-            if (!this.locals[i].isValid()) {
+            if (!this.locals[localIndexValue].isValid()) {
                 this.valid = false;
             }
         }
@@ -184,11 +155,11 @@ public class StackMapEntry extends StackMapFrame {
         int bd = classFileInputStream.readUnsignedShort();
         this.stackItems = new VerificationTypeInfo[bd];
 
-        for (int i = 0; i < bd; i++) {
-            this.stackItems[i] = VerificationTypeInfo.readTypeInfo(
+        for (int stackItemIndex = 0; stackItemIndex < bd; stackItemIndex++) {
+            this.stackItems[stackItemIndex] = VerificationTypeInfo.readTypeInfo(
                     (AbstractStackMapAttribute) classFileComponent, classFileInputStream, listMultimap, listMultimap1, printWriter, hashMap, hashMap1, integerCache1
             );
-            if (!this.stackItems[i].isValid()) {
+            if (!this.stackItems[stackItemIndex].isValid()) {
                 this.valid = false;
             }
         }
@@ -205,18 +176,18 @@ public class StackMapEntry extends StackMapFrame {
             verificationTypeInfos = this.locals;
         }
 
-        int ba = verificationTypeInfos.length;
-        dataOutputStream.writeShort(ba);
+        int lengthValue = verificationTypeInfos.length;
+        dataOutputStream.writeShort(lengthValue);
 
-        for (int i = 0; i < ba; i++) {
-            this.locals[i].writeRemapped(dataOutputStream, map1);
+        for (int localIndexValue = 0; localIndexValue < lengthValue; localIndexValue++) {
+            this.locals[localIndexValue].writeRemapped(dataOutputStream, map1);
         }
 
-        int bd = this.stackItems.length;
-        dataOutputStream.writeShort(bd);
+        int lengthValue2 = this.stackItems.length;
+        dataOutputStream.writeShort(lengthValue2);
 
-        for (int i = 0; i < bd; i++) {
-            this.stackItems[i].writeRemapped(dataOutputStream, map1);
+        for (int stackItemIndex = 0; stackItemIndex < lengthValue2; stackItemIndex++) {
+            this.stackItems[stackItemIndex].writeRemapped(dataOutputStream, map1);
         }
     }
 

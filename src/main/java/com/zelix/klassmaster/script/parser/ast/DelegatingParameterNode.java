@@ -20,8 +20,8 @@ public abstract class DelegatingParameterNode extends ZkmScriptParameterNode {
         this.valueParameter.execute(this, scriptEnvironment1);
     }
 
-    public DelegatingParameterNode(int ba) {
-        super(ba);
+    public DelegatingParameterNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     @Override

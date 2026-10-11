@@ -8,8 +8,8 @@ import com.zelix.klassmaster.util.ListMultimap;
 import java.io.IOException;
 
 public class IgnoredAttribute extends Attribute {
-    public IgnoredAttribute(ClassFileComponent classFileComponent, int ba, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+    public IgnoredAttribute(ClassFileComponent classFileComponent, int constantPoolIndex, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         classFileInputStream.skipBytes(this.length);
     }
 

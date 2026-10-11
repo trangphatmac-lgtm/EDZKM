@@ -56,12 +56,12 @@ public class FileListView extends FilePathList implements MouseListener, KeyList
         DirectoryFirstFileComparator directoryFirstFileComparator = DirectoryFirstFileComparator.getInstance();
         Arrays.sort(this.directoryFiles, directoryFirstFileComparator);
         DefaultListModel defaultListModel = new DefaultListModel();
-        int ba = 0;
+        int directoryFileIndex = 0;
         int bb = 0;
 
         for (File[] files = this.directoryFiles; bb < files.length; files = this.directoryFiles) {
-            defaultListModel.addElement(this.directoryFiles[ba]);
-            bb = ++ba;
+            defaultListModel.addElement(this.directoryFiles[directoryFileIndex]);
+            bb = ++directoryFileIndex;
         }
 
         this.listModel = defaultListModel;
@@ -101,20 +101,20 @@ public class FileListView extends FilePathList implements MouseListener, KeyList
         boolean bl = false;
         this.adjustingSelection = true;
 
-        for (int i = 0; i < selectedIndices.length; i++) {
-            int bc = selectedIndices[i];
-            File file1 = (File) this.listModel.get(bc);
+        for (int selectedIndiceIndex = 0; selectedIndiceIndex < selectedIndices.length; selectedIndiceIndex++) {
+            int selectedIndice = selectedIndices[selectedIndiceIndex];
+            File file1 = (File) this.listModel.get(selectedIndice);
             switch (this.fileSelectionMode) {
                 case 1:
                     if (file1.isDirectory()) {
-                        this.removeSelectionInterval(bc, bc);
+                        this.removeSelectionInterval(selectedIndice, selectedIndice);
                     } else {
                         bl = true;
                     }
                     break;
                 case 2:
                     if (!file1.isDirectory()) {
-                        this.removeSelectionInterval(bc, bc);
+                        this.removeSelectionInterval(selectedIndice, selectedIndice);
                     } else {
                         bl = true;
                     }
@@ -193,22 +193,22 @@ public class FileListView extends FilePathList implements MouseListener, KeyList
             this.reloadFiles();
             ArrayList arrayList = new ArrayList(list1.size());
 
-            for (int i = 0; i < list1.size(); i++) {
-                int bb = this.listModel.indexOf(list1.get(i));
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                int bb = this.listModel.indexOf(list1.get(elementIndex));
                 if (bb > -1) {
                     arrayList.add(bb);
                 }
             }
 
-            int[] bc = new int[arrayList.size()];
+            int[] selectedIndicesValue = new int[arrayList.size()];
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                bc[i] = (Integer) arrayList.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+                selectedIndicesValue[elementIndexValue] = (Integer) arrayList.get(elementIndexValue);
             }
 
-            this.setSelectedIndices(bc);
-            if (bc.length > 0) {
-                this.ensureIndexIsVisible(bc[0]);
+            this.setSelectedIndices(selectedIndicesValue);
+            if (selectedIndicesValue.length > 0) {
+                this.ensureIndexIsVisible(selectedIndicesValue[0]);
             }
         }
     }

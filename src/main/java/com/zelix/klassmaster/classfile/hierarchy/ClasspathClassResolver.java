@@ -37,36 +37,36 @@ public class ClasspathClassResolver implements NodeVisitor {
     public ZkmClasspath classpath;
     public final boolean caseSensitive;
 
-    public final boolean implementsInterface(String string, String string1) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    public final boolean implementsInterface(String key, String keyArgument) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
         }
 
-        Boolean boolean1 = (Boolean) this.interfaceCache.getValue(string1, string);
+        Boolean boolean1 = (Boolean) this.interfaceCache.getValue(keyArgument, key);
         if (boolean1 != null) {
             return boolean1;
         }
 
-        ProgramClass programClass1 = this.loadProgramClass(string);
+        ProgramClass programClass1 = this.loadProgramClass(key);
         ArrayEnumeration arrayEnumeration = new ArrayEnumeration(programClass1.getInterfaceNames());
 
         while (arrayEnumeration.hasMoreElements()) {
-            String string2 = (String) arrayEnumeration.nextElement();
-            if (string2.equals(string1)) {
-                this.interfaceCache.putValue(string1, string, CACHED_TRUE);
+            String keyValue = (String) arrayEnumeration.nextElement();
+            if (keyValue.equals(keyArgument)) {
+                this.interfaceCache.putValue(keyArgument, key, CACHED_TRUE);
                 return true;
             }
 
-            boolean bl = this.implementsInterface(string2, string1);
+            boolean bl = this.implementsInterface(keyValue, keyArgument);
             if (bl) {
-                this.interfaceCache.putValue(string1, string, CACHED_TRUE);
+                this.interfaceCache.putValue(keyArgument, key, CACHED_TRUE);
                 return true;
             }
         }
 
-        String string3 = programClass1.getSuperclassName();
-        boolean bl1 = this.implementsInterface(string3, string1);
-        this.interfaceCache.putValue(string1, string, bl1 ? CACHED_TRUE : CACHED_FALSE);
+        String superclassName = programClass1.getSuperclassName();
+        boolean bl1 = this.implementsInterface(superclassName, keyArgument);
+        this.interfaceCache.putValue(keyArgument, key, bl1 ? CACHED_TRUE : CACHED_FALSE);
         return bl1;
     }
 
@@ -82,25 +82,25 @@ public class ClasspathClassResolver implements NodeVisitor {
         this.resetClassPathResolver();
     }
 
-    public final boolean isSubclassOf(String string, String string1) throws ZkmException, IOException {
-        if (string.equals("java/lang/Object")) {
+    public final boolean isSubclassOf(String key, String keyArgument) throws ZkmException, IOException {
+        if (key.equals("java/lang/Object")) {
             return false;
         } else {
-            Boolean boolean1 = (Boolean) this.superclassCache.getValue(string1, string);
+            Boolean boolean1 = (Boolean) this.superclassCache.getValue(keyArgument, key);
             if (boolean1 != null) {
                 return boolean1;
             } else {
-                String string2 = this.loadProgramClass(string).getSuperclassName();
-                if (string2.equals(string1)) {
-                    this.superclassCache.putValue(string1, string, CACHED_TRUE);
+                String superclassName = this.loadProgramClass(key).getSuperclassName();
+                if (superclassName.equals(keyArgument)) {
+                    this.superclassCache.putValue(keyArgument, key, CACHED_TRUE);
                     return true;
-                } else if (string2.equals("java/lang/Object")) {
-                    this.superclassCache.putValue(string1, string, CACHED_FALSE);
+                } else if (superclassName.equals("java/lang/Object")) {
+                    this.superclassCache.putValue(keyArgument, key, CACHED_FALSE);
                     return false;
                 } else {
-                    boolean bl = this.isSubclassOf(string2, string1);
-                    this.superclassCache.putValue(string1, string, bl ? CACHED_TRUE : CACHED_FALSE);
-                    return bl;
+                    boolean subclassOf = this.isSubclassOf(superclassName, keyArgument);
+                    this.superclassCache.putValue(keyArgument, key, subclassOf ? CACHED_TRUE : CACHED_FALSE);
+                    return subclassOf;
                 }
             }
         }
@@ -133,45 +133,45 @@ public class ClasspathClassResolver implements NodeVisitor {
     }
 
     public ProgramClass loadProgramClass(String string) throws ZkmException, IOException {
-        String string1 = string;
+        String key = string;
         HashMap hashMap;
-        if (string1.startsWith("[")) {
-            string1 = "java/lang/Object";
+        if (key.startsWith("[")) {
+            key = "java/lang/Object";
             hashMap = this.classCache;
         } else {
             hashMap = this.classCache;
         }
 
-        ProgramClass programClass1 = (ProgramClass) hashMap.get(string1);
+        ProgramClass programClass1 = (ProgramClass) hashMap.get(key);
         if (programClass1 != null) {
             return programClass1;
         }
 
-        InputFileLocation inputFileLocation = this.classPathResolver.findClassFile(string1, false);
+        InputFileLocation inputFileLocation = this.classPathResolver.findClassFile(key, false);
         int ba;
         InputStream inputStream1;
         if (inputFileLocation == null) {
             if (!this.classpath.isJrtAvailable()) {
                 throw new TraceClassNotFoundException(
-                        string1, "Class '" + ZkmUtils.slashesToDots(string1) + "' not found. Check the classpath option and reopen classes. (4)"
+                        key, "Class '" + ZkmUtils.slashesToDots(key) + "' not found. Check the classpath option and reopen classes. (4)"
                 );
             }
 
             try {
                 ObservableHolder observableHolder = new ObservableHolder();
-                byte[] bb = this.classpath.readJrtClassBytes(string1, observableHolder);
-                if (bb == null) {
+                byte[] byteArray = this.classpath.readJrtClassBytes(key, observableHolder);
+                if (byteArray == null) {
                     throw new TraceClassNotFoundException(
-                            string1, "Class '" + ZkmUtils.slashesToDots(string1) + "' not found. Check the classpath option and reopen classes. (3)"
+                            key, "Class '" + ZkmUtils.slashesToDots(key) + "' not found. Check the classpath option and reopen classes. (3)"
                     );
                 }
 
                 inputFileLocation = new InputFileLocation((Path) observableHolder.getValue(), this.classpath);
-                inputStream1 = new ByteArrayInputStream(bb);
-                ba = bb.length;
+                inputStream1 = new ByteArrayInputStream(byteArray);
+                ba = byteArray.length;
             } catch (IOException iOException2) {
                 throw new TraceClassNotFoundException(
-                        string1, "Class '" + ZkmUtils.slashesToDots(string1) + "' not found. Check the classpath option and reopen classes. (1)"
+                        key, "Class '" + ZkmUtils.slashesToDots(key) + "' not found. Check the classpath option and reopen classes. (1)"
                 );
             }
         } else {
@@ -181,7 +181,7 @@ public class ClasspathClassResolver implements NodeVisitor {
                 inputStream1 = inputFileLocation.openInputStream(mutableInt);
                 ba = mutableInt.getValue();
             } catch (IOException iOException1) {
-                throw new TraceClassNotFoundException(string1, "'" + string1 + "' : File error (E) : '" + iOException1 + "'");
+                throw new TraceClassNotFoundException(key, "'" + key + "' : File error (E) : '" + iOException1 + "'");
             }
         }
 
@@ -202,41 +202,41 @@ public class ClasspathClassResolver implements NodeVisitor {
                     throw new ClassLookupException(zkmProcessingException.getMessage());
                 }
 
-                if (!string1.equals(programClass1.getClassName())) {
-                    String string2 = inputFileLocation.getName();
-                    String string3 = inputFileLocation.getArchivePath();
-                    if (string3 != null) {
+                if (!key.equals(programClass1.getClassName())) {
+                    String name = inputFileLocation.getName();
+                    String archivePath = inputFileLocation.getArchivePath();
+                    if (archivePath != null) {
                         throw new ClassLookupException(
                                 "File '"
-                                        + string2
+                                        + name
                                         + "' in '"
-                                        + string3
+                                        + archivePath
                                         + "' contains the class '"
                                         + programClass1.getDottedClassName()
                                         + "' rather than '"
-                                        + ZkmUtils.slashesToDots(string1)
+                                        + ZkmUtils.slashesToDots(key)
                                         + "' as expected."
                         );
                     } else {
                         throw new ClassLookupException(
                                 "File '"
-                                        + string2
+                                        + name
                                         + "' contains the class '"
                                         + programClass1.getDottedClassName()
                                         + "' rather than '"
-                                        + ZkmUtils.slashesToDots(string1)
+                                        + ZkmUtils.slashesToDots(key)
                                         + "' as expected."
                         );
                     }
                 } else {
-                    this.classCache.put(string1, programClass1);
+                    this.classCache.put(key, programClass1);
                     return programClass1;
                 }
             } else {
-                throw new ClassLookupException("Class '" + ZkmUtils.slashesToDots(string1) + "' not found. Check the classpath option and reopen classes. (2)");
+                throw new ClassLookupException("Class '" + ZkmUtils.slashesToDots(key) + "' not found. Check the classpath option and reopen classes. (2)");
             }
         } catch (IOException iOException) {
-            throw new ClassLookupException("'" + ZkmUtils.slashesToDots(string1) + "' : File error (F) : " + iOException);
+            throw new ClassLookupException("'" + ZkmUtils.slashesToDots(key) + "' : File error (F) : " + iOException);
         }
     }
 }

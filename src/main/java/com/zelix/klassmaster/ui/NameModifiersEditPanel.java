@@ -112,8 +112,8 @@ public abstract class NameModifiersEditPanel extends ObservingPanel implements P
     public abstract void applyChanges() throws ZkmException, IOException;
 
     @Override
-    public void handleObservedChange(ObservableModel observableModel1, Object object, Object object1, Object object2) throws ZkmException, IOException {
-        new EdtCallbackInvoker(this, observableModel1, object, object1, object2);
+    public void handleObservedChange(ObservableModel observableModel1, Object changeArg1, Object changeArg2, Object changeArg3) throws ZkmException, IOException {
+        new EdtCallbackInvoker(this, observableModel1, changeArg1, changeArg2, changeArg3);
     }
 
     public final void disableButtonsIfUnchanged() {
@@ -182,16 +182,16 @@ public abstract class NameModifiersEditPanel extends ObservingPanel implements P
     }
 
     @Override
-    public final void handleSelectionDelta(int[] ba, int[] bb) {
-        for (int i = 0; i < ba.length; i++) {
-            if (!this.originalModifierIndices.contains(ba[i])) {
+    public final void handleSelectionDelta(int[] integerArray, int[] integerArrayArgument) {
+        for (int integerArrayElementIndex = 0; integerArrayElementIndex < integerArray.length; integerArrayElementIndex++) {
+            if (!this.originalModifierIndices.contains(integerArray[integerArrayElementIndex])) {
                 this.enableChangeButtons();
                 return;
             }
         }
 
-        for (int i = 0; i < bb.length; i++) {
-            if (this.originalModifierIndices.contains(bb[i])) {
+        for (int integerArrayArgumentElementIndex = 0; integerArrayArgumentElementIndex < integerArrayArgument.length; integerArrayArgumentElementIndex++) {
+            if (this.originalModifierIndices.contains(integerArrayArgument[integerArrayArgumentElementIndex])) {
                 this.enableChangeButtons();
                 return;
             }

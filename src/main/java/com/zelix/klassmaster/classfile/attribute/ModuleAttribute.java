@@ -38,8 +38,8 @@ public class ModuleAttribute extends ParsedAttributeBase implements Utf8Constant
     public final ResolvedClassConstant[] uses;
     public final ModuleProvidesEntry[] provides;
 
-    public ModuleAttribute(final ClassFileComponent classFileComponent, final int n, final String s, final ClassFileInputStream classFileInputStream, final ListMultimap listMultimap, final ListMultimap listMultimap2) throws ClassFileFormatException, IOException {
-        super(classFileComponent, n, s, classFileInputStream, listMultimap);
+    public ModuleAttribute(final ClassFileComponent classFileComponent, final int constantPoolIndex, final String attributeName, final ClassFileInputStream classFileInputStream, final ListMultimap listMultimap, final ListMultimap listMultimap2) throws ClassFileFormatException, IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         classFileInputStream.read(super.rawBytes = new byte[this.length]);
         try (final ClassFileInputStream fromBytes = ClassFileInputStream.fromBytes(super.rawBytes, false)) {
             final int unsignedShort = fromBytes.readUnsignedShort();
@@ -69,49 +69,49 @@ public class ModuleAttribute extends ParsedAttributeBase implements Utf8Constant
             }
             final int unsignedShort3 = fromBytes.readUnsignedShort();
             this.requires = new ModuleRequiresEntry[unsignedShort3];
-            for (int i = 0; i < unsignedShort3; ++i) {
+            for (int requireIndex = 0; requireIndex < unsignedShort3; ++requireIndex) {
                 try {
                     try {
-                        this.requires[i] = new ModuleRequiresEntry(this, fromBytes, listMultimap);
-                    } catch (final ZkmRuntimeException ex) {
-                        throw ex;
+                        this.requires[requireIndex] = new ModuleRequiresEntry(this, fromBytes, listMultimap);
+                    } catch (final ZkmRuntimeException zkmRuntimeException) {
+                        throw zkmRuntimeException;
                     }
-                } catch (final ClassFileFormatException ex2) {
+                } catch (final ClassFileFormatException classFileFormatException) {
                     super.valid = false;
-                    throw ex2;
+                    throw classFileFormatException;
                 }
             }
             final int unsignedShort4 = fromBytes.readUnsignedShort();
             this.exports = new ModuleExportsEntry[unsignedShort4];
-            for (int j = 0; j < unsignedShort4; ++j) {
+            for (int exportIndex = 0; exportIndex < unsignedShort4; ++exportIndex) {
                 try {
                     try {
-                        this.exports[j] = new ModuleExportsEntry(this, fromBytes);
-                    } catch (final ZkmRuntimeException ex3) {
-                        throw ex3;
+                        this.exports[exportIndex] = new ModuleExportsEntry(this, fromBytes);
+                    } catch (final ZkmRuntimeException zkmRuntimeExceptionValue) {
+                        throw zkmRuntimeExceptionValue;
                     }
-                } catch (final ClassFileFormatException ex4) {
+                } catch (final ClassFileFormatException classFileFormatExceptionValue) {
                     super.valid = false;
-                    throw ex4;
+                    throw classFileFormatExceptionValue;
                 }
             }
             final int unsignedShort5 = fromBytes.readUnsignedShort();
             this.opens = new ModuleOpensEntry[unsignedShort5];
-            for (int k = 0; k < unsignedShort5; ++k) {
+            for (int openIndex = 0; openIndex < unsignedShort5; ++openIndex) {
                 try {
                     try {
-                        this.opens[k] = new ModuleOpensEntry(this, fromBytes);
-                    } catch (final ZkmRuntimeException ex5) {
-                        throw ex5;
+                        this.opens[openIndex] = new ModuleOpensEntry(this, fromBytes);
+                    } catch (final ZkmRuntimeException zkmRuntimeExceptionValue2) {
+                        throw zkmRuntimeExceptionValue2;
                     }
-                } catch (final ClassFileFormatException ex6) {
+                } catch (final ClassFileFormatException classFileFormatExceptionValue2) {
                     super.valid = false;
-                    throw ex6;
+                    throw classFileFormatExceptionValue2;
                 }
             }
             final int unsignedShort6 = fromBytes.readUnsignedShort();
             this.uses = new ResolvedClassConstant[unsignedShort6];
-            for (int l = 0; l < unsignedShort6; ++l) {
+            for (int useIndex = 0; useIndex < unsignedShort6; ++useIndex) {
                 final int unsignedShort7 = fromBytes.readUnsignedShort();
                 final ConstantPoolEntry constantPoolEntry3 = classFileComponent.getConstantPoolEntry(unsignedShort7);
                 if (constantPoolEntry3 == null) {
@@ -122,20 +122,20 @@ public class ModuleAttribute extends ParsedAttributeBase implements Utf8Constant
                     super.valid = false;
                     throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : " + unsignedShort7 + " : '" + ((ResolvedClassConstant) constantPoolEntry3).getClass().getName() + "' : File is probably corrupt (O)");
                 }
-                listMultimap2.addValue(this.uses[l] = (ResolvedClassConstant) constantPoolEntry3, this);
+                listMultimap2.addValue(this.uses[useIndex] = (ResolvedClassConstant) constantPoolEntry3, this);
             }
             final int unsignedShort8 = fromBytes.readUnsignedShort();
             this.provides = new ModuleProvidesEntry[unsignedShort8];
-            for (int m = 0; m < unsignedShort8; ++m) {
+            for (int provideIndex = 0; provideIndex < unsignedShort8; ++provideIndex) {
                 try {
                     try {
-                        this.provides[m] = new ModuleProvidesEntry(this, fromBytes, listMultimap2);
-                    } catch (final ZkmRuntimeException ex7) {
-                        throw ex7;
+                        this.provides[provideIndex] = new ModuleProvidesEntry(this, fromBytes, listMultimap2);
+                    } catch (final ZkmRuntimeException zkmRuntimeExceptionValue3) {
+                        throw zkmRuntimeExceptionValue3;
                     }
-                } catch (final ClassFileFormatException ex8) {
+                } catch (final ClassFileFormatException classFileFormatExceptionValue3) {
                     super.valid = false;
-                    throw ex8;
+                    throw classFileFormatExceptionValue3;
                 }
             }
             if (fromBytes != null) {
@@ -150,9 +150,9 @@ public class ModuleAttribute extends ParsedAttributeBase implements Utf8Constant
 
     @Override
     public void replaceClassConstant(final ResolvedClassConstant resolvedClassConstant, final ResolvedClassConstant resolvedClassConstant2) {
-        for (int length = this.uses.length, i = 0; i < length; ++i) {
-            if (this.uses[i] == resolvedClassConstant) {
-                this.uses[i] = resolvedClassConstant2;
+        for (int length = this.uses.length, useIndex = 0; useIndex < length; ++useIndex) {
+            if (this.uses[useIndex] == resolvedClassConstant) {
+                this.uses[useIndex] = resolvedClassConstant2;
             }
         }
     }
@@ -171,36 +171,36 @@ public class ModuleAttribute extends ParsedAttributeBase implements Utf8Constant
         }
         if (super.valid) {
             final ModuleRequiresEntry[] requires = this.requires;
-            for (int length = requires.length, i = 0; i < length; ++i) {
-                final ModuleRequiresEntry moduleRequiresEntry = requires[i];
+            for (int length = requires.length, requireIndex = 0; requireIndex < length; ++requireIndex) {
+                final ModuleRequiresEntry moduleRequiresEntry = requires[requireIndex];
                 if (c2 > '\0') {
                     moduleRequiresEntry.collectUsedConstants('\0', 1103830477, usedConstantsCollector, '\u978d');
                 }
             }
             final ModuleExportsEntry[] exports = this.exports;
-            for (int length2 = exports.length, j = 0; j < length2; ++j) {
-                final ModuleExportsEntry moduleExportsEntry = exports[j];
+            for (int length2 = exports.length, exportIndex = 0; exportIndex < length2; ++exportIndex) {
+                final ModuleExportsEntry moduleExportsEntry = exports[exportIndex];
                 if (n > 0) {
                     moduleExportsEntry.collectUsedConstants('\0', 1103830477, usedConstantsCollector, '\u978d');
                 }
             }
             final ModuleOpensEntry[] opens = this.opens;
-            for (int length3 = opens.length, k = 0; k < length3; ++k) {
-                final ModuleOpensEntry moduleOpensEntry = opens[k];
+            for (int length3 = opens.length, openIndex = 0; openIndex < length3; ++openIndex) {
+                final ModuleOpensEntry moduleOpensEntry = opens[openIndex];
                 if (c2 > '\0') {
                     moduleOpensEntry.collectUsedConstants('\0', 1103830477, usedConstantsCollector, '\u978d');
                 }
             }
             final ResolvedClassConstant[] uses = this.uses;
-            for (int length4 = uses.length, l = 0; l < length4; ++l) {
-                final ResolvedClassConstant resolvedClassConstant = uses[l];
+            for (int length4 = uses.length, useIndex = 0; useIndex < length4; ++useIndex) {
+                final ResolvedClassConstant resolvedClassConstant = uses[useIndex];
                 if (c >= '\0') {
                     resolvedClassConstant.registerUsage(usedConstantsCollector, this, this.getParent());
                 }
             }
             final ModuleProvidesEntry[] provides = this.provides;
-            for (int length5 = provides.length, n2 = 0; n2 < length5; ++n2) {
-                provides[n2].collectUsedConstants('\0', 1103830477, usedConstantsCollector, '\u978d');
+            for (int length5 = provides.length, provideIndex = 0; provideIndex < length5; ++provideIndex) {
+                provides[provideIndex].collectUsedConstants('\0', 1103830477, usedConstantsCollector, '\u978d');
             }
         }
     }
@@ -231,23 +231,23 @@ public class ModuleAttribute extends ParsedAttributeBase implements Utf8Constant
             }
             dataOutputStream2.writeShort(array.length);
             final ModuleRequiresEntry[] requires = this.requires;
-            for (int length = requires.length, i = 0; i < length; ++i) {
-                requires[i].writeRemapped(dataOutputStream, map);
+            for (int length = requires.length, requireIndex = 0; requireIndex < length; ++requireIndex) {
+                requires[requireIndex].writeRemapped(dataOutputStream, map);
             }
             dataOutputStream.writeShort(this.exports.length);
             final ModuleExportsEntry[] exports = this.exports;
-            for (int length2 = exports.length, j = 0; j < length2; ++j) {
-                exports[j].writeRemapped(dataOutputStream);
+            for (int length2 = exports.length, exportIndex = 0; exportIndex < length2; ++exportIndex) {
+                exports[exportIndex].writeRemapped(dataOutputStream);
             }
             dataOutputStream.writeShort(this.opens.length);
             final ModuleOpensEntry[] opens = this.opens;
-            for (int length3 = opens.length, k = 0; k < length3; ++k) {
-                opens[k].writeRemapped(dataOutputStream);
+            for (int length3 = opens.length, openIndex = 0; openIndex < length3; ++openIndex) {
+                opens[openIndex].writeRemapped(dataOutputStream);
             }
             dataOutputStream.writeShort(this.uses.length);
             final ResolvedClassConstant[] uses = this.uses;
-            for (int length4 = uses.length, l = 0; l < length4; ++l) {
-                final ResolvedClassConstant resolvedClassConstant = uses[l];
+            for (int length4 = uses.length, useIndex = 0; useIndex < length4; ++useIndex) {
+                final ResolvedClassConstant resolvedClassConstant = uses[useIndex];
                 final ResolvedClassConstant resolvedClassConstant2 = ((com.zelix.klassmaster.classfile.constpool.ResolvedClassConstant) (map.get(resolvedClassConstant)));
                 if (resolvedClassConstant2 != null) {
                     dataOutputStream.writeShort(resolvedClassConstant2.getIndex());
@@ -257,8 +257,8 @@ public class ModuleAttribute extends ParsedAttributeBase implements Utf8Constant
             }
             dataOutputStream.writeShort(this.provides.length);
             final ModuleProvidesEntry[] provides = this.provides;
-            for (int length5 = provides.length, n = 0; n < length5; ++n) {
-                provides[n].writeRemapped(dataOutputStream, map);
+            for (int length5 = provides.length, provideIndex = 0; provideIndex < length5; ++provideIndex) {
+                provides[provideIndex].writeRemapped(dataOutputStream, map);
             }
         } else {
             dataOutputStream.write(super.rawBytes);
@@ -283,28 +283,28 @@ public class ModuleAttribute extends ParsedAttributeBase implements Utf8Constant
             dataOutputStream.writeShort((this.moduleVersion == null) ? 0 : this.moduleVersion.getIndex());
             dataOutputStream.writeShort(this.requires.length);
             final ModuleRequiresEntry[] requires = this.requires;
-            for (int length = requires.length, i = 0; i < length; ++i) {
-                requires[i].writeTo(dataOutputStream);
+            for (int length = requires.length, requireIndex = 0; requireIndex < length; ++requireIndex) {
+                requires[requireIndex].writeTo(dataOutputStream);
             }
             dataOutputStream.writeShort(this.exports.length);
             final ModuleExportsEntry[] exports = this.exports;
-            for (int length2 = exports.length, j = 0; j < length2; ++j) {
-                exports[j].writeTo(dataOutputStream);
+            for (int length2 = exports.length, exportIndex = 0; exportIndex < length2; ++exportIndex) {
+                exports[exportIndex].writeTo(dataOutputStream);
             }
             dataOutputStream.writeShort(this.opens.length);
             final ModuleOpensEntry[] opens = this.opens;
-            for (int length3 = opens.length, k = 0; k < length3; ++k) {
-                opens[k].writeTo(dataOutputStream);
+            for (int length3 = opens.length, openIndex = 0; openIndex < length3; ++openIndex) {
+                opens[openIndex].writeTo(dataOutputStream);
             }
             dataOutputStream.writeShort(this.uses.length);
             final ResolvedClassConstant[] uses = this.uses;
-            for (int length4 = uses.length, l = 0; l < length4; ++l) {
-                dataOutputStream.writeShort(uses[l].getIndex());
+            for (int length4 = uses.length, useIndex = 0; useIndex < length4; ++useIndex) {
+                dataOutputStream.writeShort(uses[useIndex].getIndex());
             }
             dataOutputStream.writeShort(this.provides.length);
             final ModuleProvidesEntry[] provides = this.provides;
-            for (int length5 = provides.length, n = 0; n < length5; ++n) {
-                provides[n].writeTo(dataOutputStream);
+            for (int length5 = provides.length, provideIndex = 0; provideIndex < length5; ++provideIndex) {
+                provides[provideIndex].writeTo(dataOutputStream);
             }
         } else {
             dataOutputStream.write(super.rawBytes);

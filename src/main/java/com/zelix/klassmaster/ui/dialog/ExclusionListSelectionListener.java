@@ -23,9 +23,9 @@ public class ExclusionListSelectionListener implements ListSelectionListener {
                         this.dialog.mainDeleteBtn.setEnabled(false);
                     }
 
-                    String string = (String) disableableListItem.getItem();
-                    String string1 = this.dialog.parseParameter(string).buildDescription(this.dialog.paramKind);
-                    this.dialog.explanationArea.setText(string1);
+                    String item = (String) disableableListItem.getItem();
+                    String text = this.dialog.parseParameter(item).buildDescription(this.dialog.paramKind);
+                    this.dialog.explanationArea.setText(text);
                     this.dialog.explanationArea.setCaretPosition(0);
                 }
             }

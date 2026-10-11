@@ -171,17 +171,17 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                     parameterListStatement = ASTTrimExcludeStatement.parseDefaultTrimExclude(string, scriptEnvironment1);
                 } catch (ZkmProcessingException zkmProcessingException) {
                     ScriptEnvironment scriptEnvironment2;
-                    String string1;
+                    String message;
                     if (operationStatusCallback != null) {
                         operationStatusCallback.setStatus((String) null);
                         scriptEnvironment2 = scriptEnvironment1;
-                        string1 = zkmProcessingException.getMessage();
+                        message = zkmProcessingException.getMessage();
                     } else {
                         scriptEnvironment2 = scriptEnvironment1;
-                        string1 = zkmProcessingException.getMessage();
+                        message = zkmProcessingException.getMessage();
                     }
 
-                    scriptEnvironment2.logWarning(string1);
+                    scriptEnvironment2.logWarning(message);
                     new MessageBoxDialog(this, "Error", "Unexpected error in exclude parameters. (3) See the log for more detail.");
                     if (operationStatusCallback != null) {
                         operationStatusCallback.onDialogCancelled();
@@ -237,8 +237,8 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                 abstractList = new ArrayList(list1.size());
             }
 
-            for (int i = 0; i < list1.size(); i++) {
-                abstractList.add(new ClassListEntry((ClassFileBase) list1.get(i), false));
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                abstractList.add(new ClassListEntry((ClassFileBase) list1.get(elementIndex), false));
             }
         }
 
@@ -380,8 +380,8 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
             Set set1,
             OperationStatusCallback operationStatusCallback
     ) throws ZkmException, IOException {
-        String string = (String) observableHolder.getValue();
-        this.userPreferences.setOpenClassesDirectory(string);
+        String value = (String) observableHolder.getValue();
+        this.userPreferences.setOpenClassesDirectory(value);
         OperationStatusCallback operationStatusCallback1 = operationStatusCallback;
         Set set2 = set1;
         this.openClasses(inputFileLocations, sourceArchives1, inputFileLocations1, inputFileLocations2, boolean1, set2, operationStatusCallback1);
@@ -426,11 +426,11 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
             SourceArchive[] sourceArchives1,
             InputFileLocation[] inputFileLocations1,
             InputFileLocation[] inputFileLocations2,
-            boolean bl,
+            boolean openNestedArchives,
             Set set1,
             OperationStatusCallback operationStatusCallback
     ) throws ZkmException, IOException {
-        this.userPreferences.setOpenNestedArchives(bl);
+        this.userPreferences.setOpenNestedArchives(openNestedArchives);
         this.userPreferences.savePreferences();
         InputFileLocation[] inputFileLocations3 = new InputFileLocation[0];
         InputFileLocation[] inputFileLocations4 = new InputFileLocation[0];
@@ -453,7 +453,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                     inputFileLocations2,
                     inputFileLocations3,
                     inputFileLocations4,
-                    bl,
+                    openNestedArchives,
                     openClassesDoneCallback,
                     operationStatusCallback
             );
@@ -544,18 +544,18 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
     }
 
     @Override
-    public void handleObservedChange(ObservableModel observableModel1, Object object, Object object1, Object object2) throws ZkmException, IOException {
-        new EdtCallbackInvoker(this, observableModel1, object, object1, object2);
+    public void handleObservedChange(ObservableModel observableModel1, Object changeArg1, Object changeArg2, Object changeArg3) throws ZkmException, IOException {
+        new EdtCallbackInvoker(this, observableModel1, changeArg1, changeArg2, changeArg3);
     }
 
     public void showInitialHelper() throws ZkmException, IOException {
         if (!this.classpath.isRuntimeClassesFound()) {
-            String string = this.classpath.getClasspath();
-            String string1 = FileSelectorDialog.selectBootstrapArchive(this, "Zelix KlassMaster - Select Java Bootstrap classes path", string);
-            if (string1 != null && ZkmClasspath.isRuntimeArchivePath(string1)) {
-                this.userPreferences.setClasspath(string1);
+            String classpathValue = this.classpath.getClasspath();
+            String classpathValue2 = FileSelectorDialog.selectBootstrapArchive(this, "Zelix KlassMaster - Select Java Bootstrap classes path", classpathValue);
+            if (classpathValue2 != null && ZkmClasspath.isRuntimeArchivePath(classpathValue2)) {
+                this.userPreferences.setClasspath(classpathValue2);
                 this.userPreferences.savePreferences();
-                this.classpath.appendClasspath(string1);
+                this.classpath.appendClasspath(classpathValue2);
             }
         }
 
@@ -622,7 +622,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
     }
 
     public ZkmMainWindow(
-            String string,
+            String title,
             ClassRepository classRepository1,
             ObservableHolder observableHolder,
             ZkmClasspath zkmClasspath,
@@ -636,13 +636,13 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         this.logWriter = printWriter;
         this.userPreferences = userPreferences1;
         observableHolder.addObserver(this);
-        this.buildWindow(string);
+        this.buildWindow(title);
         this.showWaitCursor();
         this.classPropertiesListView = new ClassPropertiesListView(this.selectedClassHolder, this.classPropertiesList);
         this.textViewUpdater = new BrowserTextViewUpdater(this.selectedItemHolder, this.classTextArea, this.textScrollPane);
     }
 
-    public void buildWindow(String string) {
+    public void buildWindow(String title) {
         Container container1 = this.getContentPane();
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
@@ -699,20 +699,20 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         jMenu.setMnemonic('f');
         this.openItem = new JMenuItem("Open...");
         this.openItem.setMnemonic('o');
-        int bd = menuShortcutKeyMask;
-        this.openItem.setAccelerator(KeyStroke.getKeyStroke(79, bd));
+        int menuShortcutKeyMaskValue = menuShortcutKeyMask;
+        this.openItem.setAccelerator(KeyStroke.getKeyStroke(79, menuShortcutKeyMaskValue));
         this.openItem.addActionListener(mainMenuActionForwarder);
         jMenu.add(this.openItem);
         this.saveAllItem = new JMenuItem("Save all...");
         this.saveAllItem.setMnemonic('s');
-        int be = menuShortcutKeyMask;
-        this.saveAllItem.setAccelerator(KeyStroke.getKeyStroke(83, be));
+        int menuShortcutKeyMaskValue2 = menuShortcutKeyMask;
+        this.saveAllItem.setAccelerator(KeyStroke.getKeyStroke(83, menuShortcutKeyMaskValue2));
         this.saveAllItem.addActionListener(mainMenuActionForwarder);
         jMenu.add(this.saveAllItem);
         this.exitItem = new JMenuItem("Exit");
         this.exitItem.setMnemonic('e');
-        int bf = menuShortcutKeyMask;
-        this.exitItem.setAccelerator(KeyStroke.getKeyStroke(69, bf));
+        int menuShortcutKeyMaskValue3 = menuShortcutKeyMask;
+        this.exitItem.setAccelerator(KeyStroke.getKeyStroke(69, menuShortcutKeyMaskValue3));
         this.exitItem.addActionListener(mainMenuActionForwarder);
         jMenu.add(this.exitItem);
         this.mainMenuBar.add(jMenu);
@@ -720,38 +720,38 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         jMenu1.setMnemonic('t');
         this.trimItem = new JMenuItem("Trim...");
         this.trimItem.setMnemonic('t');
-        int bg = menuShortcutKeyMask;
-        this.trimItem.setAccelerator(KeyStroke.getKeyStroke(84, bg));
+        int menuShortcutKeyMaskValue4 = menuShortcutKeyMask;
+        this.trimItem.setAccelerator(KeyStroke.getKeyStroke(84, menuShortcutKeyMaskValue4));
         this.trimItem.addActionListener(mainMenuActionForwarder);
         jMenu1.add(this.trimItem);
         this.obfuscateItem = new JMenuItem("Obfuscate...");
         this.obfuscateItem.setMnemonic('b');
-        int bh = menuShortcutKeyMask;
-        this.obfuscateItem.setAccelerator(KeyStroke.getKeyStroke(66, bh));
+        int menuShortcutKeyMaskValue5 = menuShortcutKeyMask;
+        this.obfuscateItem.setAccelerator(KeyStroke.getKeyStroke(66, menuShortcutKeyMaskValue5));
         this.obfuscateItem.addActionListener(mainMenuActionForwarder);
         jMenu1.add(this.obfuscateItem);
         this.buildHelperItem = new JMenuItem("Build Helper...");
         this.buildHelperItem.setMnemonic('u');
-        int bi = menuShortcutKeyMask;
-        this.buildHelperItem.setAccelerator(KeyStroke.getKeyStroke(85, bi));
+        int menuShortcutKeyMaskValue6 = menuShortcutKeyMask;
+        this.buildHelperItem.setAccelerator(KeyStroke.getKeyStroke(85, menuShortcutKeyMaskValue6));
         this.buildHelperItem.addActionListener(mainMenuActionForwarder);
         jMenu1.add(this.buildHelperItem);
         this.scriptHelperItem = new JMenuItem("ZKM Script Helper...");
         this.scriptHelperItem.setMnemonic('z');
-        int bj = menuShortcutKeyMask;
-        this.scriptHelperItem.setAccelerator(KeyStroke.getKeyStroke(90, bj));
+        int menuShortcutKeyMaskValue7 = menuShortcutKeyMask;
+        this.scriptHelperItem.setAccelerator(KeyStroke.getKeyStroke(90, menuShortcutKeyMaskValue7));
         this.scriptHelperItem.addActionListener(mainMenuActionForwarder);
         jMenu1.add(this.scriptHelperItem);
         this.stackTraceTranslateItem = new JMenuItem("Stack Trace translate...");
         this.stackTraceTranslateItem.setMnemonic('c');
-        int bk = menuShortcutKeyMask;
-        this.stackTraceTranslateItem.setAccelerator(KeyStroke.getKeyStroke(67, bk));
+        int menuShortcutKeyMaskValue8 = menuShortcutKeyMask;
+        this.stackTraceTranslateItem.setAccelerator(KeyStroke.getKeyStroke(67, menuShortcutKeyMaskValue8));
         this.stackTraceTranslateItem.addActionListener(mainMenuActionForwarder);
         jMenu1.add(this.stackTraceTranslateItem);
         this.proGuardTranslateItem = new JMenuItem("ProGuard configuration translate...");
         this.proGuardTranslateItem.setMnemonic('d');
-        int bl = menuShortcutKeyMask;
-        this.proGuardTranslateItem.setAccelerator(KeyStroke.getKeyStroke(68, bl));
+        int menuShortcutKeyMaskValue9 = menuShortcutKeyMask;
+        this.proGuardTranslateItem.setAccelerator(KeyStroke.getKeyStroke(68, menuShortcutKeyMaskValue9));
         this.proGuardTranslateItem.addActionListener(mainMenuActionForwarder);
         jMenu1.add(this.proGuardTranslateItem);
         this.mainMenuBar.add(jMenu1);
@@ -759,14 +759,14 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         jMenu2.setMnemonic('o');
         this.classpathItem = new JMenuItem("Classpath...");
         this.classpathItem.setMnemonic('p');
-        int bm = menuShortcutKeyMask;
-        this.classpathItem.setAccelerator(KeyStroke.getKeyStroke(80, bm));
+        int menuShortcutKeyMaskValue10 = menuShortcutKeyMask;
+        this.classpathItem.setAccelerator(KeyStroke.getKeyStroke(80, menuShortcutKeyMaskValue10));
         this.classpathItem.addActionListener(mainMenuActionForwarder);
         jMenu2.add(this.classpathItem);
         this.garbageCollectItem = new JMenuItem("Garbage Collect");
         this.garbageCollectItem.setMnemonic('g');
-        int bn = menuShortcutKeyMask;
-        this.garbageCollectItem.setAccelerator(KeyStroke.getKeyStroke(71, bn));
+        int menuShortcutKeyMaskValue11 = menuShortcutKeyMask;
+        this.garbageCollectItem.setAccelerator(KeyStroke.getKeyStroke(71, menuShortcutKeyMaskValue11));
         this.garbageCollectItem.addActionListener(mainMenuActionForwarder);
         jMenu2.add(this.garbageCollectItem);
         this.mainMenuBar.add(jMenu2);
@@ -774,30 +774,30 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         jMenu3.setMnemonic('h');
         this.browserHelpItem = new JMenuItem("Browser help");
         this.browserHelpItem.setMnemonic('r');
-        int bo = menuShortcutKeyMask;
-        this.browserHelpItem.setAccelerator(KeyStroke.getKeyStroke(82, bo));
+        int menuShortcutKeyMaskValue12 = menuShortcutKeyMask;
+        this.browserHelpItem.setAccelerator(KeyStroke.getKeyStroke(82, menuShortcutKeyMaskValue12));
         this.browserHelpItem.addActionListener(mainMenuActionForwarder);
         jMenu3.add(this.browserHelpItem);
         this.overviewHelpItem = new JMenuItem("ZKM Overview");
         this.overviewHelpItem.setMnemonic('k');
-        int bp = menuShortcutKeyMask;
-        this.overviewHelpItem.setAccelerator(KeyStroke.getKeyStroke(75, bp));
+        int menuShortcutKeyMaskValue13 = menuShortcutKeyMask;
+        this.overviewHelpItem.setAccelerator(KeyStroke.getKeyStroke(75, menuShortcutKeyMaskValue13));
         this.overviewHelpItem.addActionListener(mainMenuActionForwarder);
         jMenu3.add(this.overviewHelpItem);
         this.aboutItem = new JMenuItem("About");
         this.aboutItem.setMnemonic('a');
-        int bq = menuShortcutKeyMask;
-        this.aboutItem.setAccelerator(KeyStroke.getKeyStroke(65, bq));
+        int menuShortcutKeyMaskValue14 = menuShortcutKeyMask;
+        this.aboutItem.setAccelerator(KeyStroke.getKeyStroke(65, menuShortcutKeyMaskValue14));
         this.aboutItem.addActionListener(mainMenuActionForwarder);
         jMenu3.add(this.aboutItem);
         this.mainMenuBar.add(jMenu3);
         this.setJMenuBar(this.mainMenuBar);
-        this.setTitle(string);
+        this.setTitle(title);
         this.setResizable(true);
         this.setIconImage(KlassMaster.getLogoImage(this));
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int br = dimension.width;
-        int bt = Math.min(635, br);
+        int widthValue = dimension.width;
+        int bt = Math.min(635, widthValue);
         int bs = dimension.height - 50;
         this.setSize(bt, Math.min(475, bs));
         Dimension dimension1 = this.getSize();
@@ -843,14 +843,14 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
         if (observableModel1 == this.classRepository) {
             Enumeration enumeration = this.classRepository.enumerateHierarchyNodes();
             DefaultListModel defaultListModel = new DefaultListModel();
-            int ba = -1;
-            int bb = 0;
+            int selectedIndexValue = -1;
+            int selectedIndexValue3 = 0;
             ProgramClass programClass1 = (ProgramClass) this.selectedClassHolder.getSelectedNode();
 
             while (enumeration.hasMoreElements()) {
                 ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) enumeration.nextElement();
                 if (programClass1 != null && classHierarchyNode.getProgramClass() == programClass1) {
-                    ba = bb;
+                    selectedIndexValue = selectedIndexValue3;
                 }
 
                 Serializable serializable = classHierarchyNode.getJavaClassName();
@@ -862,17 +862,17 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                 }
 
                 String string2 = String.valueOf(stringBuffer) + serializable;
-                boolean bl = !classHierarchyNode.isProgramClass();
-                String string = string2;
-                DisableableListItem disableableListItem = new DisableableListItem(string, bl);
+                boolean disabled = !classHierarchyNode.isProgramClass();
+                String item = string2;
+                DisableableListItem disableableListItem = new DisableableListItem(item, disabled);
                 defaultListModel.addElement(disableableListItem);
-                bb++;
+                selectedIndexValue3++;
             }
 
             this.classList.setModel(defaultListModel);
-            if (ba != -1) {
-                this.classList.setSelectedIndex(ba);
-                this.classList.ensureIndexIsVisible(ba);
+            if (selectedIndexValue != -1) {
+                this.classList.setSelectedIndex(selectedIndexValue);
+                this.classList.ensureIndexIsVisible(selectedIndexValue);
             } else if (programClass1 != null) {
                 this.selectedClassIndex = -1;
                 this.selectedClassHolder.setSelectedNode((VisitableNode) null);
@@ -890,9 +890,9 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
 
             this.classListPnl.validate();
         } else if (observableModel1 == this.statusHolder && this.statusLabel != null) {
-            String string1 = (String) object1;
-            if (string1.length() != 0) {
-                this.statusLabel.setText(string1);
+            String text = (String) object1;
+            if (text.length() != 0) {
+                this.statusLabel.setText(text);
             } else {
                 this.statusLabel.setText(" ");
             }
@@ -909,10 +909,10 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
 
                 this.memberList.setModel(defaultListModel1);
                 if (selectedIndex != -1) {
-                    int bh = memberListNode1.getMemberIndex(this.selectedMember);
-                    if (bh > -1) {
-                        this.memberList.setSelectedIndex(bh);
-                        this.memberList.ensureIndexIsVisible(bh);
+                    int memberIndex = memberListNode1.getMemberIndex(this.selectedMember);
+                    if (memberIndex > -1) {
+                        this.memberList.setSelectedIndex(memberIndex);
+                        this.memberList.ensureIndexIsVisible(memberIndex);
                     } else {
                         this.selectedMember = null;
                         this.tertiaryPnl.removeAll();
@@ -925,9 +925,9 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                     && ((MutableInt) object1).getValue() == 0
                     && (this.selectedPropertyIndex == 1 && object2 instanceof FieldInfo || this.selectedPropertyIndex == 2 && object2 instanceof MethodInfo)) {
                 MemberInfo memberInfo1 = (MemberInfo) object2;
-                int bi = memberListNode1.getMemberIndex(memberInfo1);
-                if (bi != -1) {
-                    ((DefaultListModel) this.memberList.getModel()).setElementAt(memberInfo1.getSourceName(), bi);
+                int memberIndexValue = memberListNode1.getMemberIndex(memberInfo1);
+                if (memberIndexValue != -1) {
+                    ((DefaultListModel) this.memberList.getModel()).setElementAt(memberInfo1.getSourceName(), memberIndexValue);
                 }
 
                 if (selectedIndex != -1) {
@@ -937,7 +937,7 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
             }
         } else if (observableModel1 instanceof ClassConstantsNode) {
             ClassConstantsNode classConstantsNode = (ClassConstantsNode) observableModel1;
-            int bf = this.memberList.getSelectedIndex();
+            int selectedIndexValue2 = this.memberList.getSelectedIndex();
             int size = this.memberList.getModel().getSize();
             if (object1 == null) {
                 classConstantsNode.resetCursor();
@@ -949,8 +949,8 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                 }
 
                 this.memberList.setModel(defaultListModel2);
-                if (bf != -1 && !bl1) {
-                    this.memberList.setSelectedIndex(bf);
+                if (selectedIndexValue2 != -1 && !bl1) {
+                    this.memberList.setSelectedIndex(selectedIndexValue2);
                 }
 
                 this.secondaryPnl.validate();
@@ -959,10 +959,10 @@ public class ZkmMainWindow extends EscapeClosableFrame implements EdtCallback, M
                 }
             } else if (object1 instanceof MutableInt && ((MutableInt) object1).getValue() == 3) {
                 LoadableConstant loadableConstant = (LoadableConstant) object2;
-                int bj = classConstantsNode.getConstantIndex(loadableConstant);
-                ((DefaultListModel) this.memberList.getModel()).setElementAt(loadableConstant.getEditableValue(), bj);
-                this.memberList.setSelectedIndex(bf);
-                this.memberList.ensureIndexIsVisible(bf);
+                int constantIndex = classConstantsNode.getConstantIndex(loadableConstant);
+                ((DefaultListModel) this.memberList.getModel()).setElementAt(loadableConstant.getEditableValue(), constantIndex);
+                this.memberList.setSelectedIndex(selectedIndexValue2);
+                this.memberList.ensureIndexIsVisible(selectedIndexValue2);
             }
         }
     }

@@ -15,14 +15,14 @@ public class TrimOptionsActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.deleteAttributesDialog.previousBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.deleteAttributesDialog.previousBtn) {
                 this.deleteAttributesDialog.onPrevious();
-            } else if (object == this.deleteAttributesDialog.okBtn) {
+            } else if (source == this.deleteAttributesDialog.okBtn) {
                 this.deleteAttributesDialog.onOk();
-            } else if (object == this.deleteAttributesDialog.cancelBtn) {
+            } else if (source == this.deleteAttributesDialog.cancelBtn) {
                 this.deleteAttributesDialog.onCancel();
-            } else if (object == this.deleteAttributesDialog.helpBtn) {
+            } else if (source == this.deleteAttributesDialog.helpBtn) {
                 this.deleteAttributesDialog.showHelp();
             }
         } catch (Throwable throwable) {

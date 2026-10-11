@@ -14,20 +14,20 @@ public class ASTProduction2 extends ProGuardConfigSimpleNode {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < this.jjtGetNumChildren(); childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
 
         ProGuardClassNameListOwner proGuardClassNameListOwner = (ProGuardClassNameListOwner) this.jjtGetParent();
 
-        for (int i = 0; i < ba; i++) {
-            ASTStarClause2 aSTStarClause2 = (ASTStarClause2) this.jjtGetChild(i);
-            String string1 = aSTStarClause2.getValue();
+        for (int childrenElementIndexValue = 0; childrenElementIndexValue < ba; childrenElementIndexValue++) {
+            ASTStarClause2 aSTStarClause2 = (ASTStarClause2) this.jjtGetChild(childrenElementIndexValue);
+            String value = aSTStarClause2.getValue();
             boolean negated = aSTStarClause2.isNegated();
-            boolean bl = ba > 1;
-            boolean bl1 = negated;
-            String string = string1;
-            proGuardClassNameListOwner.addClassNamePattern(new NamePatternEntry(string, bl1, bl));
+            boolean inList = ba > 1;
+            boolean negatedValue = negated;
+            String valueValue = value;
+            proGuardClassNameListOwner.addClassNamePattern(new NamePatternEntry(valueValue, negatedValue, inList));
         }
     }
 

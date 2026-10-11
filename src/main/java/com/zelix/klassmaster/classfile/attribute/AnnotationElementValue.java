@@ -56,17 +56,17 @@ public abstract class AnnotationElementValue extends ClassFileComponent implemen
         return this.errorMessage;
     }
 
-    public final void setErrorMessage(String string) {
-        this.errorMessage = string;
+    public final void setErrorMessage(String errorMessageArgument) {
+        this.errorMessage = errorMessageArgument;
     }
 
     public static AnnotationElementValue readElementValue(
             ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream, ListMultimap listMultimap
     ) throws IOException {
-        int ba = classFileInputStream.readUnsignedByte();
-        switch (ba) {
+        int tagValue = classFileInputStream.readUnsignedByte();
+        switch (tagValue) {
             case 64:
-                return new NestedAnnotationValue(classFileComponent, ba, classFileInputStream, listMultimap);
+                return new NestedAnnotationValue(classFileComponent, tagValue, classFileInputStream, listMultimap);
             case 65:
             case 69:
             case 71:
@@ -113,21 +113,21 @@ public abstract class AnnotationElementValue extends ClassFileComponent implemen
             case 73:
             case 83:
             case 90:
-                return new IntElementValue(classFileComponent, ba, classFileInputStream);
+                return new IntElementValue(classFileComponent, tagValue, classFileInputStream);
             case 68:
-                return new DoubleElementValue(classFileComponent, ba, classFileInputStream);
+                return new DoubleElementValue(classFileComponent, tagValue, classFileInputStream);
             case 70:
-                return new FloatElementValue(classFileComponent, ba, classFileInputStream);
+                return new FloatElementValue(classFileComponent, tagValue, classFileInputStream);
             case 74:
-                return new LongElementValue(classFileComponent, ba, classFileInputStream);
+                return new LongElementValue(classFileComponent, tagValue, classFileInputStream);
             case 91:
-                return new NestedAnnotationElementValue(classFileComponent, ba, classFileInputStream, listMultimap);
+                return new NestedAnnotationElementValue(classFileComponent, tagValue, classFileInputStream, listMultimap);
             case 99:
-                return new ClassElementValue(classFileComponent, ba, classFileInputStream, listMultimap);
+                return new ClassElementValue(classFileComponent, tagValue, classFileInputStream, listMultimap);
             case 101:
-                return new EnumElementValue(classFileComponent, ba, classFileInputStream, listMultimap);
+                return new EnumElementValue(classFileComponent, tagValue, classFileInputStream, listMultimap);
             case 115:
-                return new StringElementValue(classFileComponent, ba, classFileInputStream, listMultimap);
+                return new StringElementValue(classFileComponent, tagValue, classFileInputStream, listMultimap);
         }
     }
 

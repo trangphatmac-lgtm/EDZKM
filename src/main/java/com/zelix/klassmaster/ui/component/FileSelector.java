@@ -51,10 +51,10 @@ public class FileSelector extends ObservingPanel implements PropertyChangeListen
         return fileSelector1.newFolderButton;
     }
 
-    public void buildComponents(File file1, boolean bl, int ba, ZkmFileFilter[] zkmFileFilters, boolean bl1) {
+    public void buildComponents(File file1, boolean multiSelectionArgument, int fileSelectionMode, ZkmFileFilter[] zkmFileFilters, boolean editable) {
         ConstraintLayout constraintLayout1 = new ConstraintLayout(this);
         this.setLayout(constraintLayout1);
-        this.fileListView = new FileListView(file1, bl, ba, zkmFileFilters[0]);
+        this.fileListView = new FileListView(file1, multiSelectionArgument, fileSelectionMode, zkmFileFilters[0]);
         this.directoryComboBox = new DirectoryComboBox(file1);
         this.upFolderButton = new UpFolderButton();
         this.newFolderButton = new NewFolderButton();
@@ -62,16 +62,16 @@ public class FileSelector extends ObservingPanel implements PropertyChangeListen
         this.add(this.upFolderButton, "upFolderButton");
         this.add(this.newFolderButton, "newFolderButton");
         this.add(new ZkmScrollPane(this.fileListView), "fileList");
-        String string = selectorLayoutSpec;
-        if (bl1) {
+        String selectorLayoutSpecValue = selectorLayoutSpec;
+        if (editable) {
             JLabel jLabel = new JLabel("File name:");
             this.add(jLabel, "filesDisplayLbl");
-            string = string + labeledFilesDisplayLayoutSpec;
+            selectorLayoutSpecValue = selectorLayoutSpecValue + labeledFilesDisplayLayoutSpec;
         } else {
-            string = string + filesDisplayLayoutSpec;
+            selectorLayoutSpecValue = selectorLayoutSpecValue + filesDisplayLayoutSpec;
         }
 
-        this.filesDisplay = new FilesDisplay(file1, bl1, ba, bl);
+        this.filesDisplay = new FilesDisplay(file1, editable, fileSelectionMode, multiSelectionArgument);
         this.add(this.filesDisplay, "filesDisplay");
         this.filterComboBox = new FilterComboBox(zkmFileFilters);
         this.add(this.filterComboBox, "filterComboBox");
@@ -90,7 +90,7 @@ public class FileSelector extends ObservingPanel implements PropertyChangeListen
         this.upFolderButton.addKeyListener(fileSelectorKeyListener);
         this.newFolderButton.addActionListener(fileSelectorButtonListener);
         this.newFolderButton.addKeyListener(fileSelectorKeyListener);
-        constraintLayout1.parseConstraints(string);
+        constraintLayout1.parseConstraints(selectorLayoutSpecValue);
     }
 
     public void promptCreateFolder() {
@@ -100,17 +100,17 @@ public class FileSelector extends ObservingPanel implements PropertyChangeListen
         }
     }
 
-    public int showSelectorDialog(JFrame jFrame, String string, String string1, String string2, String string3, String string4, String string5, String string6) {
+    public int showSelectorDialog(JFrame jFrame, String string, String string1, String toolTipText, String string3, String toolTipTextArgument, String toolTipTextArgument2, String toolTipTextArgument3) {
         this.dialog = new FileSelectorOwnedDialog(this, jFrame, string);
         Container container1 = this.dialog.getContentPane();
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
         container1.add(this, "fileSelector");
         this.approveBtn = new JButton(string1);
-        this.approveBtn.setToolTipText(string2);
+        this.approveBtn.setToolTipText(toolTipText);
         container1.add(this.approveBtn, "approveBtn");
         this.cancelBtn = new JButton(string3);
-        this.cancelBtn.setToolTipText(string4);
+        this.cancelBtn.setToolTipText(toolTipTextArgument);
         container1.add(this.cancelBtn, "cancelBtn");
         constraintLayout1.setConstraints(dialogLayoutSpec);
         FileSelectorFieldKeyListener fileSelectorFieldKeyListener = new FileSelectorFieldKeyListener(this);
@@ -120,8 +120,8 @@ public class FileSelector extends ObservingPanel implements PropertyChangeListen
         this.cancelBtn.addKeyListener(fileSelectorFieldKeyListener);
         this.fileListView.addPropertyChangeListener(new FileSelectionListener(this));
         this.filesDisplay.addPropertyChangeListener(new FileNameChangeListener(this));
-        this.directoryComboBox.setToolTipText(string5);
-        this.filesDisplay.setToolTipText(string6);
+        this.directoryComboBox.setToolTipText(toolTipTextArgument2);
+        this.filesDisplay.setToolTipText(toolTipTextArgument3);
         SwingUtils.packOnEdt(this.dialog);
         this.dialog.showCenteredOnOwner();
         return this.dialogResult;
@@ -157,37 +157,24 @@ public class FileSelector extends ObservingPanel implements PropertyChangeListen
         return this.filesDisplay.getSelectedFiles();
     }
 
-    public FileSelector(File file1, boolean multiSelection, int ba, ZkmFileFilter[] zkmFileFilters, boolean showFileNameLabel) {
-        label16:
-        {
-            this.dialogResult = -1;
-            File file2;
-            if (file1 != null) {
-                if (file1.isDirectory()) {
-                    this.multiSelection = multiSelection;
-                    break label16;
-                }
-
-                file2 = defaultDirectory;
-            } else {
-                file2 = defaultDirectory;
-            }
-
-            file1 = file2;
-            this.multiSelection = multiSelection;
+    public FileSelector(File file1, boolean multiSelection, int fileSelectionMode, ZkmFileFilter[] zkmFileFilters, boolean showFileNameLabel) {
+        this.dialogResult = -1;
+        if (file1 == null || !file1.isDirectory()) {
+            file1 = defaultDirectory;
         }
+        this.multiSelection = multiSelection;
 
         this.showFileNameLabel = showFileNameLabel;
-        this.buildComponents(file1, multiSelection, ba, zkmFileFilters, showFileNameLabel);
+        this.buildComponents(file1, multiSelection, fileSelectionMode, zkmFileFilters, showFileNameLabel);
     }
 
     public void collectFilesRecursively(File file1, ArrayList arrayList) {
         if (file1.isDirectory()) {
             File[] files = this.listSubdirectories(file1);
             if (files != null) {
-                for (int i = 0; i < files.length; i++) {
-                    arrayList.add(files[i]);
-                    this.collectFilesRecursively(files[i], arrayList);
+                for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+                    arrayList.add(files[fileIndex]);
+                    this.collectFilesRecursively(files[fileIndex], arrayList);
                 }
             }
         } else {
@@ -200,17 +187,17 @@ public class FileSelector extends ObservingPanel implements PropertyChangeListen
     }
 
     public int showOpenDialog(JFrame jFrame, String string) {
-        String string1;
+        String toolTipText;
         String string2;
         if (this.multiSelection) {
-            string1 = "Open selected files";
+            toolTipText = "Open selected files";
             string2 = "Cancel";
         } else {
-            string1 = "Open selected file";
+            toolTipText = "Open selected file";
             string2 = "Cancel";
         }
 
-        return this.showSelectorDialog(jFrame, string, "OK", string1, string2, "Cancel", "List files at this level", "Selected files");
+        return this.showSelectorDialog(jFrame, string, "OK", toolTipText, string2, "Cancel", "List files at this level", "Selected files");
     }
 
     public File getCurrentDirectory() {

@@ -9,13 +9,13 @@ public class ThreeKeyConcurrentMap {
     public int innerCapacity;
     public ConcurrentHashMap map;
 
-    public TwoKeyMap getTwoKeyMap(Object object) {
-        return (TwoKeyMap) this.map.get(object);
+    public TwoKeyMap getTwoKeyMap(Object key) {
+        return (TwoKeyMap) this.map.get(key);
     }
 
-    public boolean containsKeys(Object object, Object object1, Object object2) {
-        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(object);
-        return twoKeyMap == null ? false : twoKeyMap.containsKeys(object1, object2);
+    public boolean containsKeys(Object key, Object keyArgument, Object keyArgument2) {
+        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(key);
+        return (!(twoKeyMap == null) && (twoKeyMap.containsKeys(keyArgument, keyArgument2)));
     }
 
     public ThreeKeyConcurrentMap(int ba, int outerCapacity, int bc) {
@@ -24,26 +24,26 @@ public class ThreeKeyConcurrentMap {
         this.map = new ConcurrentHashMap(ZkmUtils.getPrimeCapacity(ba));
     }
 
-    public TwoKeyMap removeTwoKeyMap(Object object) {
-        return (TwoKeyMap) this.map.remove(object);
+    public TwoKeyMap removeTwoKeyMap(Object key) {
+        return (TwoKeyMap) this.map.remove(key);
     }
 
-    public Object getValue(Object object, Object object1, Object object2) {
-        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(object);
+    public Object getValue(Object key, Object keyArgument2, Object keyArgument) {
+        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(key);
         if (twoKeyMap == null) {
             return null;
         }
 
-        Map map1 = twoKeyMap.getInnerMap(object1);
-        return map1 == null ? null : map1.get(object2);
+        Map map1 = twoKeyMap.getInnerMap(keyArgument2);
+        return map1 == null ? null : map1.get(keyArgument);
     }
 
-    public Object removeValue(Object object, Object object1, Object object2) {
-        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(object);
+    public Object removeValue(Object key, Object keyArgument, Object keyArgument2) {
+        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(key);
         if (twoKeyMap != null) {
-            Object object3 = twoKeyMap.removeValue(object1, object2);
+            Object object3 = twoKeyMap.removeValue(keyArgument, keyArgument2);
             if (twoKeyMap.getKeyCount() == 0) {
-                this.map.remove(object);
+                this.map.remove(key);
             }
 
             return object3;
@@ -60,29 +60,29 @@ public class ThreeKeyConcurrentMap {
         this(ba, 10, 5);
     }
 
-    public boolean containsKeyPair(Object object, Object object1) {
-        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(object);
-        return twoKeyMap == null ? false : twoKeyMap.containsKey(object1);
+    public boolean containsKeyPair(Object key, Object keyArgument) {
+        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(key);
+        return (!(twoKeyMap == null) && (twoKeyMap.containsKey(keyArgument)));
     }
 
     public ThreeKeyConcurrentMap(int ba, int bb) {
         this(ba, 5, 5);
     }
 
-    public Map getInnerMap(Object object, Object object1) {
-        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(object);
-        return twoKeyMap == null ? null : twoKeyMap.getInnerMap(object1);
+    public Map getInnerMap(Object key, Object keyArgument) {
+        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(key);
+        return twoKeyMap == null ? null : twoKeyMap.getInnerMap(keyArgument);
     }
 
-    public Object putValue(Object object, Object object1, Object object2, Object object3) {
-        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(object);
+    public Object putValue(Object key, Object keyArgument, Object keyArgument2, Object value) {
+        TwoKeyMap twoKeyMap = (TwoKeyMap) this.map.get(key);
         if (twoKeyMap == null) {
             twoKeyMap = new TwoKeyMap(this.outerCapacity, this.innerCapacity);
-            Object object4 = twoKeyMap.putValue(object1, object2, object3);
-            this.map.put(object, twoKeyMap);
+            Object object4 = twoKeyMap.putValue(keyArgument, keyArgument2, value);
+            this.map.put(key, twoKeyMap);
             return object4;
         } else {
-            return twoKeyMap.putValue(object1, object2, object3);
+            return twoKeyMap.putValue(keyArgument, keyArgument2, value);
         }
     }
 

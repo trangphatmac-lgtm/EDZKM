@@ -38,10 +38,10 @@ public class BipushInstruction extends Instruction {
     public StackFrameState computeFrameAfter(StackFrameState stackFrameState, Object object, Object object1, Object object2) throws ZkmException, IOException {
         VerifierType[] verifierTypes = stackFrameState.getStack();
         VerifierType[] verifierTypes1 = stackFrameState.getLocals();
-        int ba = verifierTypes.length;
-        VerifierType[] verifierTypes2 = VerifierType.createArray(ba + 1);
-        System.arraycopy(verifierTypes, 0, verifierTypes2, 0, ba);
-        verifierTypes2[ba] = VerifierType.INT;
+        int lengthValue = verifierTypes.length;
+        VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue + 1);
+        System.arraycopy(verifierTypes, 0, verifierTypes2, 0, lengthValue);
+        verifierTypes2[lengthValue] = VerifierType.INT;
         return new StackFrameState(verifierTypes2, verifierTypes1, stackFrameState.getSubroutineLocals(), stackFrameState.getHeldMonitors());
     }
 
@@ -60,10 +60,10 @@ public class BipushInstruction extends Instruction {
     public void printDisassembly(PrintWriter printWriter, StringBuilder stringBuilder) throws UnknownOpcodeException {
         StringBuilder stringBuilder1 = new StringBuilder(100);
         stringBuilder1.append(this.toAssembly());
-        String string = Instruction.getDescriptionComment(this.opcode);
-        string = Instruction.formatDescription(string, String.valueOf(this.byteValue));
-        if (string.length() > 0) {
-            stringBuilder1.append("\t" + string);
+        String descriptionComment = Instruction.getDescriptionComment(this.opcode);
+        descriptionComment = Instruction.formatDescription(descriptionComment, String.valueOf(this.byteValue));
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);

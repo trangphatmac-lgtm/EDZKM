@@ -579,21 +579,21 @@ public class ZkmUtils {
     };
 
     public static long xorLongWithKey(long ba, String string) {
-        char[] bb = string.toCharArray();
+        char[] characterArray = string.toCharArray();
         long bc = 0L;
 
-        for (int i = 0; i < 8; i++) {
-            char be;
-            if (i < bb.length - 1) {
-                be = bb[i];
+        for (int characterArrayElementIndex = 0; characterArrayElementIndex < 8; characterArrayElementIndex++) {
+            char characterArrayElement;
+            if (characterArrayElementIndex < characterArray.length - 1) {
+                characterArrayElement = characterArray[characterArrayElementIndex];
             } else {
-                be = bb[i % bb.length];
+                characterArrayElement = characterArray[characterArrayElementIndex % characterArray.length];
             }
 
-            if (i == 0) {
-                bc |= be & 7;
+            if (characterArrayElementIndex == 0) {
+                bc |= characterArrayElement & 7;
             } else {
-                bc |= be & 15;
+                bc |= characterArrayElement & 15;
             }
 
             bc <<= 4;
@@ -602,66 +602,66 @@ public class ZkmUtils {
         return ba ^ bc;
     }
 
-    public static void diffSortedIntArrays(int[] ba, int[] bb, ObservableHolder observableHolder, ObservableHolder observableHolder1) throws ZkmException, IOException {
-        int bc;
-        if (ba.length > bb.length) {
-            bc = ba.length;
+    public static void diffSortedIntArrays(int[] integerArray, int[] integerArrayArgument, ObservableHolder observableHolder, ObservableHolder observableHolder1) throws ZkmException, IOException {
+        int lengthValue;
+        if (integerArray.length > integerArrayArgument.length) {
+            lengthValue = integerArray.length;
         } else {
-            bc = bb.length;
+            lengthValue = integerArrayArgument.length;
         }
 
-        int[] bd = new int[bc];
-        int[] be = new int[bc];
-        int bf = 0;
-        int bg = 0;
-        int bh = 0;
-        int bi = 0;
+        int[] sourceArray = new int[lengthValue];
+        int[] sourceArrayValue = new int[lengthValue];
+        int copyLength = 0;
+        int copyLengthValue = 0;
+        int integerArrayElementIndex = 0;
+        int integerArrayArgumentElementIndex = 0;
 
-        while (bh < ba.length && bi < bb.length) {
-            if (ba[bh] == bb[bi]) {
-                bh++;
-                bi++;
-            } else if (ba[bh] > bb[bi]) {
-                bd[bf++] = bb[bi];
-                bi++;
+        while (integerArrayElementIndex < integerArray.length && integerArrayArgumentElementIndex < integerArrayArgument.length) {
+            if (integerArray[integerArrayElementIndex] == integerArrayArgument[integerArrayArgumentElementIndex]) {
+                integerArrayElementIndex++;
+                integerArrayArgumentElementIndex++;
+            } else if (integerArray[integerArrayElementIndex] > integerArrayArgument[integerArrayArgumentElementIndex]) {
+                sourceArray[copyLength++] = integerArrayArgument[integerArrayArgumentElementIndex];
+                integerArrayArgumentElementIndex++;
             } else {
-                be[bg++] = ba[bh];
-                bh++;
+                sourceArrayValue[copyLengthValue++] = integerArray[integerArrayElementIndex];
+                integerArrayElementIndex++;
             }
         }
 
-        while (bh < ba.length) {
-            be[bg++] = ba[bh];
-            bh++;
+        while (integerArrayElementIndex < integerArray.length) {
+            sourceArrayValue[copyLengthValue++] = integerArray[integerArrayElementIndex];
+            integerArrayElementIndex++;
         }
 
-        while (bi < bb.length) {
-            bd[bf++] = bb[bi];
-            bi++;
+        while (integerArrayArgumentElementIndex < integerArrayArgument.length) {
+            sourceArray[copyLength++] = integerArrayArgument[integerArrayArgumentElementIndex];
+            integerArrayArgumentElementIndex++;
         }
 
-        int[] bj = new int[bg];
-        System.arraycopy(be, 0, bj, 0, bg);
-        observableHolder1.setValue(bj);
-        int[] bk = new int[bf];
-        System.arraycopy(bd, 0, bk, 0, bf);
-        observableHolder.setValue(bk);
+        int[] value = new int[copyLengthValue];
+        System.arraycopy(sourceArrayValue, 0, value, 0, copyLengthValue);
+        observableHolder1.setValue(value);
+        int[] valueValue = new int[copyLength];
+        System.arraycopy(sourceArray, 0, valueValue, 0, copyLength);
+        observableHolder.setValue(valueValue);
     }
 
     public static String xorString(String string, String string1) {
-        char[] ba = string.toCharArray();
-        char[] bb = string1.toCharArray();
-        StringBuilder stringBuilder = new StringBuilder(ba.length);
+        char[] characterArray = string.toCharArray();
+        char[] characterArrayValue = string1.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder(characterArray.length);
 
-        for (int i = 0; i < ba.length; i++) {
-            char bd;
-            if (i < bb.length - 1) {
-                bd = bb[i];
+        for (int i = 0; i < characterArray.length; i++) {
+            char characterArrayValueElement;
+            if (i < characterArrayValue.length - 1) {
+                characterArrayValueElement = characterArrayValue[i];
             } else {
-                bd = bb[i % bb.length];
+                characterArrayValueElement = characterArrayValue[i % characterArrayValue.length];
             }
 
-            stringBuilder.append((char) ((byte) ba[i] ^ (byte) bd));
+            stringBuilder.append((char) ((byte) characterArray[i] ^ (byte) characterArrayValueElement));
         }
 
         return stringBuilder.toString();
@@ -696,8 +696,8 @@ public class ZkmUtils {
         }
     }
 
-    public static String escapeAndTruncate(String string, int ba) {
-        return string.length() > ba ? escapeJavaString(string.substring(0, ba)) + " ...<" + (string.length() - ba) + " CHARS>" : escapeJavaString(string);
+    public static String escapeAndTruncate(String string, int endIndex) {
+        return string.length() > endIndex ? escapeJavaString(string.substring(0, endIndex)) + " ...<" + (string.length() - endIndex) + " CHARS>" : escapeJavaString(string);
     }
 
     public static String slashesToDots(String string) throws IOException {
@@ -719,10 +719,10 @@ public class ZkmUtils {
         int bc = string.length();
         messageDigest1.update(string.getBytes(), 0, bc);
         StringBuilder stringBuilder = new StringBuilder();
-        byte[] ba = messageDigest1.digest();
+        byte[] byteArray = messageDigest1.digest();
 
-        for (int i = 0; i < ba.length; i++) {
-            String string2 = Integer.toHexString(ba[i] & 255);
+        for (int byteArrayElementIndex = 0; byteArrayElementIndex < byteArray.length; byteArrayElementIndex++) {
+            String string2 = Integer.toHexString(byteArray[byteArrayElementIndex] & 255);
             if (string2.length() == 1) {
                 stringBuilder.append('0');
             }
@@ -740,14 +740,14 @@ public class ZkmUtils {
                 if (bc > 0L) {
                 }
 
-                long bb;
+                long randomSeed;
                 if (bc < 0L) {
-                    bb = bc + ba;
+                    randomSeed = bc + ba;
                 } else {
-                    bb = bc - ba;
+                    randomSeed = bc - ba;
                 }
 
-                return bb;
+                return randomSeed;
             } catch (Throwable throwable) {
             }
         }
@@ -1009,10 +1009,10 @@ public class ZkmUtils {
     }
 
     public static String escapeJavaString(String string) {
-        char[] ba = string.toCharArray();
+        char[] characterArray = string.toCharArray();
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (char bb : ba) {
+        for (char bb : characterArray) {
             char bc = bb;
             switch (bc) {
                 case '\n':
@@ -1042,25 +1042,25 @@ public class ZkmUtils {
         return stringBuilder.toString();
     }
 
-    public static Object twoKeyMapOrSelf(Object object, Object object1, TwoKeyMap twoKeyMap) {
+    public static Object twoKeyMapOrSelf(Object key, Object keyArgument, TwoKeyMap twoKeyMap) {
         if (twoKeyMap != null) {
-            Object object2 = twoKeyMap.getValue(object, object1);
-            if (object2 != null) {
-                return object2;
+            Object value = twoKeyMap.getValue(key, keyArgument);
+            if (value != null) {
+                return value;
             }
         }
 
-        return object1;
+        return keyArgument;
     }
 
     public static int toUnsignedShort(int ba) {
         return ba & 65535;
     }
 
-    public static void swapChars(char[] ba, int bb, int bc) {
-        char bd = ba[bb];
-        ba[bb] = ba[bc];
-        ba[bc] = bd;
+    public static void swapChars(char[] characterArray, int characterArrayElementIndex, int characterArrayElementIndexArgument) {
+        char characterArrayElement = characterArray[characterArrayElementIndex];
+        characterArray[characterArrayElementIndex] = characterArray[characterArrayElementIndexArgument];
+        characterArray[characterArrayElementIndexArgument] = characterArrayElement;
     }
 
     public static String getBracketedTimestamp() {
@@ -1090,55 +1090,55 @@ public class ZkmUtils {
         byte bf = 36;
         ZkmAssert.assertTrue(true, new String[]{"MAX_RADIX is too small : 36 < " + 36});
         int ba = string.length();
-        byte[] bb = new byte[ba / 2];
+        byte[] byteArray = new byte[ba / 2];
         int bc = 0;
 
-        for (int i = 0; i < ba; i += 2) {
-            bb[bc++] = (byte) Integer.parseInt(string.substring(i, i + 2), 36);
+        for (int beginIndex = 0; beginIndex < ba; beginIndex += 2) {
+            byteArray[bc++] = (byte) Integer.parseInt(string.substring(beginIndex, beginIndex + 2), 36);
         }
 
-        return bb;
+        return byteArray;
     }
 
     public static String unescapeJavaString(String string) {
         StringBuilder stringBuilder = new StringBuilder(string.length());
 
-        for (int i = 0; i < string.length(); i++) {
-            char bb = string.charAt(i);
-            if (bb == '\\' && i + 1 < string.length()) {
-                switch (string.charAt(i + 1)) {
+        for (int characterIndex = 0; characterIndex < string.length(); characterIndex++) {
+            char bb = string.charAt(characterIndex);
+            if (bb == '\\' && characterIndex + 1 < string.length()) {
+                switch (string.charAt(characterIndex + 1)) {
                     case '"':
                         stringBuilder.append('"');
-                        i++;
+                        characterIndex++;
                         break;
                     case '\'':
                         stringBuilder.append('\'');
-                        i++;
+                        characterIndex++;
                         break;
                     case '\\':
                         stringBuilder.append('\\');
-                        i++;
+                        characterIndex++;
                         break;
                     case 'n':
                         stringBuilder.append('\n');
-                        i++;
+                        characterIndex++;
                         break;
                     case 'r':
                         stringBuilder.append('\r');
-                        i++;
+                        characterIndex++;
                         break;
                     case 't':
                         stringBuilder.append('\t');
-                        i++;
+                        characterIndex++;
                         break;
                     case 'u':
-                        if (i + 5 < string.length()) {
-                            String string1 = string.substring(i + 2, i + 6);
+                        if (characterIndex + 5 < string.length()) {
+                            String string1 = string.substring(characterIndex + 2, characterIndex + 6);
 
                             try {
                                 int bc = Integer.parseInt(string1, 16);
                                 stringBuilder.append((char) bc);
-                                i += 5;
+                                characterIndex += 5;
                                 break;
                             } catch (NumberFormatException numberFormatException) {
                             }
@@ -1157,14 +1157,14 @@ public class ZkmUtils {
         return stringBuilder.toString();
     }
 
-    public static String toHexArrayLiteral(byte[] ba) {
-        if (ba != null) {
+    public static String toHexArrayLiteral(byte[] byteArray) {
+        if (byteArray != null) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("{");
 
-            for (int i = 0; i < ba.length; i++) {
-                stringBuilder.append(byteToHex(ba[i]));
-                if (i < ba.length - 1) {
+            for (int byteArrayElementIndex = 0; byteArrayElementIndex < byteArray.length; byteArrayElementIndex++) {
+                stringBuilder.append(byteToHex(byteArray[byteArrayElementIndex]));
+                if (byteArrayElementIndex < byteArray.length - 1) {
                     stringBuilder.append(',');
                 }
             }
@@ -1178,15 +1178,15 @@ public class ZkmUtils {
     public static String toQuotedListString(Collection collection1) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("'");
-        int ba = collection1.size();
+        int collection1Size = collection1.size();
         int bb = 0;
 
         for (Iterator iterator = collection1.iterator(); iterator.hasNext(); bb++) {
             String string = (String) iterator.next();
             stringBuilder.append(string);
-            if (bb < ba - 2) {
+            if (bb < collection1Size - 2) {
                 stringBuilder.append("', '");
-            } else if (bb < ba - 1) {
+            } else if (bb < collection1Size - 1) {
                 stringBuilder.append("' and '");
             }
         }
@@ -1196,13 +1196,13 @@ public class ZkmUtils {
     }
 
     public static Random createRandom(int ba) {
-        long bb = getRandomSeed(ba);
+        long randomSeed = getRandomSeed(ba);
         Random random1;
         if (HiddenOptionFlags.DETERMINISTIC_OUTPUT) {
-            random1 = new Random(bb);
+            random1 = new Random(randomSeed);
         } else {
             random1 = HiddenOptionFlags.USE_PLAIN_RANDOM ? new Random() : new SecureRandom();
-            random1.setSeed(bb);
+            random1.setSeed(randomSeed);
         }
 
         return random1;
@@ -1220,15 +1220,15 @@ public class ZkmUtils {
         return byteArrayOutputStream.toString();
     }
 
-    public static Object mapOrSelf(Object object, Map map1) {
+    public static Object mapOrSelf(Object key, Map map1) {
         if (map1 != null) {
-            Object object1 = map1.get(object);
+            Object object1 = map1.get(key);
             if (object1 != null) {
                 return object1;
             }
         }
 
-        return object;
+        return key;
     }
 
     public static ListMultimap invertMultiMap(MultiMap multiMap) {
@@ -1237,10 +1237,10 @@ public class ZkmUtils {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            Object object = entry.getKey();
+            Object key = entry.getKey();
 
-            for (Object object1 : (List) entry.getValue()) {
-                setMultiMap.addValue(object1, object);
+            for (Object keyValue : (List) entry.getValue()) {
+                setMultiMap.addValue(keyValue, key);
             }
         }
 
@@ -1275,26 +1275,26 @@ public class ZkmUtils {
         }
 
         int bb = 0;
-        int bc = 0;
+        int endIndex = 0;
 
         for (String string4 : strings) {
-            int bd = string4.length();
-            bb += bd;
-            if (bd > bc) {
-                bc = bd;
+            int endIndexValue = string4.length();
+            bb += endIndexValue;
+            if (endIndexValue > endIndex) {
+                endIndex = endIndexValue;
             }
         }
 
-        StringBuilder stringBuilder = new StringBuilder(bb + strings.length * 6 + (bc + 6) * 2);
-        stringBuilder.append(string + ZkmStringUtils.pad("", 76, bc, ba) + string1);
+        StringBuilder stringBuilder = new StringBuilder(bb + strings.length * 6 + (endIndex + 6) * 2);
+        stringBuilder.append(string + ZkmStringUtils.pad("", 76, endIndex, ba) + string1);
         stringBuilder.append(LINE_SEPARATOR);
 
         for (String string5 : strings) {
-            stringBuilder.append(string2 + ZkmStringUtils.pad(string5, 76, bc, 32) + string3);
+            stringBuilder.append(string2 + ZkmStringUtils.pad(string5, 76, endIndex, 32) + string3);
             stringBuilder.append(LINE_SEPARATOR);
         }
 
-        stringBuilder.append(string + ZkmStringUtils.pad("", 76, bc, ba) + string1);
+        stringBuilder.append(string + ZkmStringUtils.pad("", 76, endIndex, ba) + string1);
         stringBuilder.append(LINE_SEPARATOR);
         return stringBuilder.toString();
     }
@@ -1304,20 +1304,20 @@ public class ZkmUtils {
     }
 
     public static String xorStringWithKey(String string, String string1) {
-        char[] ba = string.toCharArray();
-        char[] bb = string1.toCharArray();
-        StringBuilder stringBuilder = new StringBuilder(ba.length);
+        char[] characterArray = string.toCharArray();
+        char[] characterArrayValue = string1.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder(characterArray.length);
 
-        for (int i = 0; i < ba.length; i++) {
-            char bd = ba[i];
-            char be;
-            if (i < bb.length - 1) {
-                be = bb[i];
+        for (int i = 0; i < characterArray.length; i++) {
+            char characterArrayElement = characterArray[i];
+            char characterArrayValueElement;
+            if (i < characterArrayValue.length - 1) {
+                characterArrayValueElement = characterArrayValue[i];
             } else {
-                be = bb[i % bb.length];
+                characterArrayValueElement = characterArrayValue[i % characterArrayValue.length];
             }
 
-            stringBuilder.append((char) ((byte) bd ^ (byte) be));
+            stringBuilder.append((char) ((byte) characterArrayElement ^ (byte) characterArrayValueElement));
         }
 
         return stringBuilder.toString();
@@ -1343,14 +1343,14 @@ public class ZkmUtils {
 
     public static byte[] decodeCustomBaseBytes(String string, String string1) {
         int ba = string.length();
-        byte[] bb = new byte[ba / 2];
+        byte[] byteArray = new byte[ba / 2];
         int bc = 0;
 
-        for (int i = 0; i < ba; i += 2) {
-            bb[bc++] = (byte) parseCustomBase(string.substring(i, i + 2), string1);
+        for (int beginIndex = 0; beginIndex < ba; beginIndex += 2) {
+            byteArray[bc++] = (byte) parseCustomBase(string.substring(beginIndex, beginIndex + 2), string1);
         }
 
-        return bb;
+        return byteArray;
     }
 
     public static Map invertMap(Map map1) {
@@ -1374,10 +1374,10 @@ public class ZkmUtils {
         }
     }
 
-    public static void swapInts(int[] ba, int bb, int bc) {
-        int bd = ba[bb];
-        ba[bb] = ba[bc];
-        ba[bc] = bd;
+    public static void swapInts(int[] integerArray, int integerArrayElementIndex, int integerArrayElementIndexArgument) {
+        int integerArrayElement = integerArray[integerArrayElementIndex];
+        integerArray[integerArrayElementIndex] = integerArray[integerArrayElementIndexArgument];
+        integerArray[integerArrayElementIndexArgument] = integerArrayElement;
     }
 
     public static String toHexDigit(int ba) {
@@ -1420,43 +1420,43 @@ public class ZkmUtils {
     }
 
     public static String descriptorToJavaName(String string) {
-        String string1 = string;
-        int ba = 0;
-        if (string1.startsWith("[")) {
-            ba = ZkmStringUtils.countChar(string1, "[".charAt(0));
-            string1 = string1.substring(ba);
+        String primitiveTypeName = string;
+        int beginIndex = 0;
+        if (primitiveTypeName.startsWith("[")) {
+            beginIndex = ZkmStringUtils.countChar(primitiveTypeName, "[".charAt(0));
+            primitiveTypeName = primitiveTypeName.substring(beginIndex);
         }
 
-        if (string1.endsWith(";")) {
-            string1 = string1.substring(1, string1.length() - 1);
-        } else if (string1.length() == 1) {
-            string1 = ConstantPoolEntry.getPrimitiveTypeName(string1);
+        if (primitiveTypeName.endsWith(";")) {
+            primitiveTypeName = primitiveTypeName.substring(1, primitiveTypeName.length() - 1);
+        } else if (primitiveTypeName.length() == 1) {
+            primitiveTypeName = ConstantPoolEntry.getPrimitiveTypeName(primitiveTypeName);
         }
 
-        string1 = string1.replace('/', '.');
+        primitiveTypeName = primitiveTypeName.replace('/', '.');
 
-        for (int i = 0; i < ba; i++) {
-            string1 = string1 + "[]";
+        for (int i = 0; i < beginIndex; i++) {
+            primitiveTypeName = primitiveTypeName + "[]";
         }
 
-        return string1;
+        return primitiveTypeName;
     }
 
-    public static void shuffleInts(int[] ba, int bb, Random random1) {
+    public static void shuffleInts(int[] integerArray, int bb, Random random1) {
         for (int i = bb; i > 1; i += -1) {
-            swapInts(ba, i - 1, random1.nextInt(i));
+            swapInts(integerArray, i - 1, random1.nextInt(i));
         }
     }
 
-    private static void swapListElements(List list1, int ba, int bb) {
-        Object object = list1.get(ba);
-        list1.set(ba, list1.get(bb));
-        list1.set(bb, object);
+    private static void swapListElements(List list1, int elementIndex, int elementIndexArgument) {
+        Object object = list1.get(elementIndex);
+        list1.set(elementIndex, list1.get(elementIndexArgument));
+        list1.set(elementIndexArgument, object);
     }
 
     public static void shuffleArray(Object[] objects, Random random1) {
-        for (int i = objects.length; i > 1; i += -1) {
-            swapElements(objects, i - 1, random1.nextInt(i));
+        for (int lengthValue = objects.length; lengthValue > 1; lengthValue += -1) {
+            swapElements(objects, lengthValue - 1, random1.nextInt(lengthValue));
         }
     }
 
@@ -1465,9 +1465,9 @@ public class ZkmUtils {
         Enumeration<Object> enumeration = properties1.keys();
 
         while (enumeration.hasMoreElements()) {
-            Object object = enumeration.nextElement();
-            Object object1 = properties1.get(object);
-            printWriter.println(object.toString() + " = " + object1.toString());
+            Object key = enumeration.nextElement();
+            Object object1 = properties1.get(key);
+            printWriter.println(key.toString() + " = " + object1.toString());
         }
     }
 
@@ -1497,8 +1497,8 @@ public class ZkmUtils {
         }
     }
 
-    public static void shuffleChars(char[] ba) {
-        shuffleChars(ba, createRandom(97));
+    public static void shuffleChars(char[] characterArray) {
+        shuffleChars(characterArray, createRandom(97));
     }
 
     public static String toQuotedArrayString(String[] strings) {
@@ -1533,25 +1533,25 @@ public class ZkmUtils {
         int bc = (int) (ba / bb);
         int bd = 0;
         int be = PRIME_CAPACITIES.length - 1;
-        int bf = 0;
+        int primeCapacityIndex = 0;
 
         while (bd <= be) {
-            bf = (bd + be) / 2;
-            if (bc < PRIME_CAPACITIES[bf]) {
-                be = bf - 1;
+            primeCapacityIndex = (bd + be) / 2;
+            if (bc < PRIME_CAPACITIES[primeCapacityIndex]) {
+                be = primeCapacityIndex - 1;
             } else {
-                if (bc <= PRIME_CAPACITIES[bf]) {
-                    return PRIME_CAPACITIES[bf];
+                if (bc <= PRIME_CAPACITIES[primeCapacityIndex]) {
+                    return PRIME_CAPACITIES[primeCapacityIndex];
                 }
 
-                bd = bf + 1;
+                bd = primeCapacityIndex + 1;
             }
         }
 
-        if (PRIME_CAPACITIES[bf] > bc) {
-            return PRIME_CAPACITIES[bf];
+        if (PRIME_CAPACITIES[primeCapacityIndex] > bc) {
+            return PRIME_CAPACITIES[primeCapacityIndex];
         } else {
-            return bf + 1 < PRIME_CAPACITIES.length ? PRIME_CAPACITIES[bf + 1] : bc;
+            return primeCapacityIndex + 1 < PRIME_CAPACITIES.length ? PRIME_CAPACITIES[primeCapacityIndex + 1] : bc;
         }
     }
 
@@ -1573,8 +1573,8 @@ public class ZkmUtils {
         }
     }
 
-    public static NamedSet createNamedSet(String string, Collection collection1) {
-        return HiddenOptionFlags.DETERMINISTIC_OUTPUT ? new NamedLinkedHashSet(string, collection1) : new NamedHashSet(string, collection1);
+    public static NamedSet createNamedSet(String name, Collection collection1) {
+        return HiddenOptionFlags.DETERMINISTIC_OUTPUT ? new NamedLinkedHashSet(name, collection1) : new NamedHashSet(name, collection1);
     }
 
     public static HashMap copyToHashMap(Map map1) {
@@ -1582,31 +1582,31 @@ public class ZkmUtils {
     }
 
     public static byte[] toModifiedUtf8(String string) {
-        char[] ba = string.toCharArray();
-        int bb = 0;
+        char[] characterArray = string.toCharArray();
+        int copyLength = 0;
         int bc = string.length();
-        byte[] bd = new byte[bc * 3];
+        byte[] sourceArray = new byte[bc * 3];
 
-        for (int i = 0; i < bc; i++) {
-            char bf = ba[i];
-            if (bf == 0) {
-                bd[bb++] = -64;
-                bd[bb++] = -128;
-            } else if (bf < 128) {
-                bd[bb++] = (byte) bf;
-            } else if (bf < 2048) {
-                bd[bb++] = (byte) (192 | bf >>> 6 & 31);
-                bd[bb++] = (byte) (128 | bf & 63);
+        for (int characterArrayElementIndex = 0; characterArrayElementIndex < bc; characterArrayElementIndex++) {
+            char characterArrayElement = characterArray[characterArrayElementIndex];
+            if (characterArrayElement == 0) {
+                sourceArray[copyLength++] = -64;
+                sourceArray[copyLength++] = -128;
+            } else if (characterArrayElement < 128) {
+                sourceArray[copyLength++] = (byte) characterArrayElement;
+            } else if (characterArrayElement < 2048) {
+                sourceArray[copyLength++] = (byte) (192 | characterArrayElement >>> 6 & 31);
+                sourceArray[copyLength++] = (byte) (128 | characterArrayElement & 63);
             } else {
-                bd[bb++] = (byte) (224 | bf >>> '\f' & 15);
-                bd[bb++] = (byte) (128 | bf >>> 6 & 63);
-                bd[bb++] = (byte) (128 | bf & 63);
+                sourceArray[copyLength++] = (byte) (224 | characterArrayElement >>> '\f' & 15);
+                sourceArray[copyLength++] = (byte) (128 | characterArrayElement >>> 6 & 63);
+                sourceArray[copyLength++] = (byte) (128 | characterArrayElement & 63);
             }
         }
 
-        byte[] bg = new byte[bb];
-        System.arraycopy(bd, 0, bg, 0, bb);
-        return bg;
+        byte[] destinationArray = new byte[copyLength];
+        System.arraycopy(sourceArray, 0, destinationArray, 0, copyLength);
+        return destinationArray;
     }
 
     public static DisableableMap copyDisableableMap(DisableableMap disableableMap) {
@@ -1615,15 +1615,15 @@ public class ZkmUtils {
 
     public static String toEnglishList(Collection collection1) {
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = collection1.size();
+        int collection1Size = collection1.size();
         int bb = 0;
 
         for (Iterator iterator = collection1.iterator(); iterator.hasNext(); bb++) {
             String string = (String) iterator.next();
             stringBuilder.append(string);
-            if (bb < ba - 2) {
+            if (bb < collection1Size - 2) {
                 stringBuilder.append(", ");
-            } else if (bb < ba - 1) {
+            } else if (bb < collection1Size - 1) {
                 stringBuilder.append(" and ");
             }
         }
@@ -1636,11 +1636,11 @@ public class ZkmUtils {
     }
 
     public static long computeStringHash(String string) {
-        char[] ba = string.toCharArray();
+        char[] characterArray = string.toCharArray();
         long bb = 0L;
-        if (ba.length > 0) {
-            for (int i = 0; i < ba.length; i++) {
-                bb = 31L * bb + ba[i];
+        if (characterArray.length > 0) {
+            for (int characterArrayElementIndex = 0; characterArrayElementIndex < characterArray.length; characterArrayElementIndex++) {
+                bb = 31L * bb + characterArray[characterArrayElementIndex];
             }
         }
 
@@ -1659,21 +1659,21 @@ public class ZkmUtils {
         return hashSet;
     }
 
-    public static void shuffleInts(int[] ba, Random random1) {
-        shuffleInts(ba, ba.length, random1);
+    public static void shuffleInts(int[] integerArray, Random random1) {
+        shuffleInts(integerArray, integerArray.length, random1);
     }
 
     public static CountingBag copyCountingBag(CountingBag countingBag) {
         return (CountingBag) countingBag.clone();
     }
 
-    public static boolean intArraysEqual(int[] ba, int[] bb) {
-        if (ba.length != bb.length) {
+    public static boolean intArraysEqual(int[] integerArray, int[] integerArrayArgument) {
+        if (integerArray.length != integerArrayArgument.length) {
             return false;
         }
 
-        for (int i = 0; i < ba.length; i++) {
-            if (ba[i] != bb[i]) {
+        for (int i = 0; i < integerArray.length; i++) {
+            if (integerArray[i] != integerArrayArgument[i]) {
                 return false;
             }
         }
@@ -1681,15 +1681,15 @@ public class ZkmUtils {
         return true;
     }
 
-    public static String toHexString(byte[] ba) {
-        if (ba == null) {
+    public static String toHexString(byte[] byteArray) {
+        if (byteArray == null) {
             return "";
         }
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < ba.length; i++) {
-            stringBuilder.append(byteToHex(ba[i]));
+        for (int byteArrayElementIndex = 0; byteArrayElementIndex < byteArray.length; byteArrayElementIndex++) {
+            stringBuilder.append(byteToHex(byteArray[byteArrayElementIndex]));
         }
 
         return stringBuilder.toString();
@@ -1713,8 +1713,8 @@ public class ZkmUtils {
         int bb = string1.length();
         long bc = 1L;
 
-        for (char bd : string2.toCharArray()) {
-            ba += string1.indexOf(bd) * bc;
+        for (char searchCharacter : string2.toCharArray()) {
+            ba += string1.indexOf(searchCharacter) * bc;
             bc *= bb;
         }
 
@@ -1726,8 +1726,8 @@ public class ZkmUtils {
     }
 
     public static void shuffleList(List list1, Random random1) {
-        int ba = list1.size();
-        if (ba >= 10 && !(list1 instanceof RandomAccess)) {
+        int list1Size = list1.size();
+        if (list1Size >= 10 && !(list1 instanceof RandomAccess)) {
             Object[] objects = list1.toArray();
             shuffleArray(objects, random1);
             ListIterator listIterator = list1.listIterator();
@@ -1737,8 +1737,8 @@ public class ZkmUtils {
                 listIterator.set(objects[i]);
             }
         } else {
-            for (int i = ba; i > 1; i += -1) {
-                swapListElements(list1, i - 1, random1.nextInt(i));
+            for (int list1SizeValue = list1Size; list1SizeValue > 1; list1SizeValue += -1) {
+                swapListElements(list1, list1SizeValue - 1, random1.nextInt(list1SizeValue));
             }
         }
     }
@@ -1747,22 +1747,22 @@ public class ZkmUtils {
         return HiddenOptionFlags.DETERMINISTIC_OUTPUT ? new LinkedHashSet(ba) : new HashSet(ba);
     }
 
-    public static String toCustomBase(long ba, char[] bb) {
+    public static String toCustomBase(long ba, char[] characterArray) {
         long bc = ba;
         if (bc < 0L) {
             throw new IllegalArgumentException("Must be positive " + bc);
         }
 
         if (bc == 0L) {
-            return String.valueOf(bb[0]);
+            return String.valueOf(characterArray[0]);
         }
 
-        int bd = bb.length;
+        int lengthValue = characterArray.length;
         StringBuilder stringBuilder = new StringBuilder();
 
         while (bc > 0L) {
-            stringBuilder.append(bb[(int) (bc % bd)]);
-            bc /= bd;
+            stringBuilder.append(characterArray[(int) (bc % lengthValue)]);
+            bc /= lengthValue;
         }
 
         return stringBuilder.reverse().toString();
@@ -1772,42 +1772,42 @@ public class ZkmUtils {
         return HiddenOptionFlags.DETERMINISTIC_OUTPUT ? new NamedLinkedHashSet() : new NamedHashSet();
     }
 
-    public static String fromModifiedUtf8(byte[] ba) {
+    public static String fromModifiedUtf8(byte[] byteArray) {
         int bb = 0;
-        int bc = ba.length;
-        char[] bd = new char[bc];
+        int lengthValue = byteArray.length;
+        char[] characterArray = new char[lengthValue];
 
-        for (int i = 0; i < bc; i++) {
-            int bf = 255 & ba[i];
+        for (int byteArrayElementIndex = 0; byteArrayElementIndex < lengthValue; byteArrayElementIndex++) {
+            int bf = 255 & byteArray[byteArrayElementIndex];
             if (bf < 192) {
-                bd[bb++] = (char) bf;
+                characterArray[bb++] = (char) bf;
             } else if (bf < 224) {
-                char bg = (char) ((char) (bf & 31) << 6);
-                byte bh = ba[++i];
-                bg = (char) (bg | (char) (bh & 63));
-                bd[bb++] = bg;
-            } else if (i < bc - 2) {
-                char bj = (char) ((char) (bf & 15) << '\f');
-                byte bi = ba[++i];
-                bj = (char) (bj | (char) (bi & 63) << 6);
-                bi = ba[++i];
-                bj = (char) (bj | (char) (bi & 63));
-                bd[bb++] = bj;
+                char characterArrayElement = (char) ((char) (bf & 31) << 6);
+                byte byteArrayElement = byteArray[++byteArrayElementIndex];
+                characterArrayElement = (char) (characterArrayElement | (char) (byteArrayElement & 63));
+                characterArray[bb++] = characterArrayElement;
+            } else if (byteArrayElementIndex < lengthValue - 2) {
+                char characterArrayElementValue = (char) ((char) (bf & 15) << '\f');
+                byte byteArrayElementValue = byteArray[++byteArrayElementIndex];
+                characterArrayElementValue = (char) (characterArrayElementValue | (char) (byteArrayElementValue & 63) << 6);
+                byteArrayElementValue = byteArray[++byteArrayElementIndex];
+                characterArrayElementValue = (char) (characterArrayElementValue | (char) (byteArrayElementValue & 63));
+                characterArray[bb++] = characterArrayElementValue;
             }
         }
 
-        return new String(bd, 0, bb);
+        return new String(characterArray, 0, bb);
     }
 
-    public static Object multiMapOrSelf(Object object, Object object1, ReadOnlyMultiMap readOnlyMultiMap) {
+    public static Object multiMapOrSelf(Object key, Object keyArgument, ReadOnlyMultiMap readOnlyMultiMap) {
         if (readOnlyMultiMap != null) {
-            Object object2 = readOnlyMultiMap.getValue(object, object1);
-            if (object2 != null) {
-                return object2;
+            Object value = readOnlyMultiMap.getValue(key, keyArgument);
+            if (value != null) {
+                return value;
             }
         }
 
-        return object1;
+        return keyArgument;
     }
 
     public static HashMap createHashMap(int ba) {
@@ -1826,11 +1826,11 @@ public class ZkmUtils {
         Iterator iterator = collection1.iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            if (TempFileManager.isZkmTempFilePath(string)) {
-                arrayList.add(TempFileManager.getOriginalName(string) + " (" + string + ")");
+            String key = (String) iterator.next();
+            if (TempFileManager.isZkmTempFilePath(key)) {
+                arrayList.add(TempFileManager.getOriginalName(key) + " (" + key + ")");
             } else {
-                arrayList.add(string);
+                arrayList.add(key);
             }
         }
 
@@ -1869,14 +1869,14 @@ public class ZkmUtils {
         return HiddenOptionFlags.DETERMINISTIC_OUTPUT ? new LinkedHashSet(collection1) : new HashSet(collection1);
     }
 
-    public static void shuffleChars(char[] ba, Random random1) {
-        for (int i = ba.length; i > 1; i += -1) {
-            swapChars(ba, i - 1, random1.nextInt(i));
+    public static void shuffleChars(char[] characterArray, Random random1) {
+        for (int lengthValue = characterArray.length; lengthValue > 1; lengthValue += -1) {
+            swapChars(characterArray, lengthValue - 1, random1.nextInt(lengthValue));
         }
     }
 
-    public static NamedSet createNamedSetFromMap(String string, Map map1) {
-        return HiddenOptionFlags.DETERMINISTIC_OUTPUT ? new NamedLinkedHashSet(string, map1) : new NamedHashSet(string, map1);
+    public static NamedSet createNamedSetFromMap(String name, Map map1) {
+        return HiddenOptionFlags.DETERMINISTIC_OUTPUT ? new NamedLinkedHashSet(name, map1) : new NamedHashSet(name, map1);
     }
 
     public static boolean arraysEqual(Object[] objects, Object[] objects1) {

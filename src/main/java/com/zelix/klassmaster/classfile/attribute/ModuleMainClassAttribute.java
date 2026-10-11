@@ -44,22 +44,22 @@ public class ModuleMainClassAttribute
 
 
 
-    public ModuleMainClassAttribute(ClassFileComponent classFileComponent, int n, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap, ListMultimap listMultimap2) throws ClassFileFormatException, IOException {
-        super(classFileComponent, n, string, classFileInputStream, listMultimap);
+    public ModuleMainClassAttribute(ClassFileComponent classFileComponent, int constantPoolIndexArgument, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap, ListMultimap listMultimap2) throws ClassFileFormatException, IOException {
+        super(classFileComponent, constantPoolIndexArgument, attributeName, classFileInputStream, listMultimap);
         this.rawBytes = new byte[this.length];
         classFileInputStream.read(this.rawBytes);
         ClassFileInputStream classFileInputStream2 = ClassFileInputStream.fromBytes(this.rawBytes, false);
         Throwable throwable = null;
         try {
-            int n2 = classFileInputStream2.readUnsignedShort();
-            ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(n2);
+            int constantPoolIndex = classFileInputStream2.readUnsignedShort();
+            ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
             if (constantPoolEntry == null) {
                 this.valid = false;
-                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + n2 + " : File is probably corrupt (X)");
+                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + constantPoolIndex + " : File is probably corrupt (X)");
             }
             if (!(constantPoolEntry instanceof ResolvedClassConstant)) {
                 this.valid = false;
-                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : " + n2 + " : '" + constantPoolEntry.getClass().getName() + "' : File is probably corrupt (Y)");
+                throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : " + constantPoolIndex + " : '" + constantPoolEntry.getClass().getName() + "' : File is probably corrupt (Y)");
             }
             this.mainClass = (ResolvedClassConstant) constantPoolEntry;
             listMultimap2.addValue(this.mainClass, this);

@@ -32,8 +32,8 @@ public class SourceArchive implements Comparable {
         }
     }
 
-    public void setModuleName(String string) {
-        this.moduleName = string;
+    public void setModuleName(String moduleNameArgument) {
+        this.moduleName = moduleNameArgument;
     }
 
     public String getDisplayPath() {
@@ -41,8 +41,8 @@ public class SourceArchive implements Comparable {
         return ba == -1 ? this.getFileName() : new File(this.qualifiedPath.substring(0, ba)).getName() + this.qualifiedPath.substring(ba);
     }
 
-    public SourceArchive(String string, long ba, String string1) {
-        this(string, ba, string1, null, null);
+    public SourceArchive(String filePathArgument, long fileSizeArgument, String string1) {
+        this(filePathArgument, fileSizeArgument, string1, null, null);
     }
 
     public String getOriginalPath() {
@@ -69,13 +69,13 @@ public class SourceArchive implements Comparable {
         return this.fileSize;
     }
 
-    public SourceArchive(String string, long fileSize, String string1, String string2, String string3) {
-        this.filePath = string;
+    public SourceArchive(String filePathArgument, long fileSize, String string1, String expectedInitialSha256Argument, String expectedFinalSha256Argument) {
+        this.filePath = filePathArgument;
         this.name = string1;
         this.fileSize = fileSize;
         this.qualifiedPath = string1;
-        this.expectedInitialSha256 = string2;
-        this.expectedFinalSha256 = string3;
+        this.expectedInitialSha256 = expectedInitialSha256Argument;
+        this.expectedFinalSha256 = expectedFinalSha256Argument;
     }
 
     public SourceArchive getParentArchive() {
@@ -103,16 +103,16 @@ public class SourceArchive implements Comparable {
     }
 
     public boolean hasMicroEditionConfiguration() {
-        return this.manifest != null ? this.manifest.hasMicroEditionConfiguration() : false;
+        return ((this.manifest != null) && (this.manifest.hasMicroEditionConfiguration()));
     }
 
     public boolean isCldc10() throws ZkmException {
-        return this.manifest != null ? this.manifest.isCldc10() : false;
+        return ((this.manifest != null) && (this.manifest.isCldc10()));
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByQualifiedPath((SourceArchive) object);
+    public int compareTo(Object other) {
+        return this.compareByQualifiedPath((SourceArchive) other);
     }
 
     public String getExpectedFinalSha256() {
@@ -146,8 +146,8 @@ public class SourceArchive implements Comparable {
         return this.filePath == null ? this.name : this.filePath;
     }
 
-    public SourceArchive(String string, long fileSize, String string1, SourceArchive sourceArchive2) throws ZipException {
-        this.filePath = string;
+    public SourceArchive(String filePathArgument, long fileSize, String string1, SourceArchive sourceArchive2) throws ZipException {
+        this.filePath = filePathArgument;
         this.name = string1;
         this.parentArchive = sourceArchive2;
         if (sourceArchive2 != null) {

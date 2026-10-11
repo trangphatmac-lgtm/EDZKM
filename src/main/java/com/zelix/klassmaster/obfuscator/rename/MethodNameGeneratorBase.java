@@ -92,7 +92,7 @@ public abstract class MethodNameGeneratorBase {
         } else {
             AbstractMethodInfo abstractMethodInfo = this.overrideAnalyzer.findRootMethod(methodInfo1);
             if (abstractMethodInfo != null) {
-                return abstractMethodInfo.isProgramMember() ? this.parameterExclusions.isMethodExcluded((MethodInfo) abstractMethodInfo) : false;
+                return ((abstractMethodInfo.isProgramMember()) && (this.parameterExclusions.isMethodExcluded((MethodInfo) abstractMethodInfo)));
             } else {
                 return this.parameterExclusions.isMethodExcluded(methodInfo1);
             }
@@ -132,7 +132,7 @@ public abstract class MethodNameGeneratorBase {
             boolean bl2
     ) throws ZkmException, IOException {
         MethodSignature methodSignature1 = methodInfo1.getSignature();
-        String string = methodSignature1.getDescriptor();
+        String descriptor = methodSignature1.getDescriptor();
         AbstractMethodInfo abstractMethodInfo = null;
         if (!methodInfo1.isStrictlyPrivate() && !methodInfo1.isStatic()) {
             abstractMethodInfo = this.overrideAnalyzer.findRootMethod(methodInfo1);
@@ -148,9 +148,9 @@ public abstract class MethodNameGeneratorBase {
             nameExclusionSet = this.exclusionSet;
         }
 
-        String string2 = nameExclusionSet.getLinkPrefix(abstractMethodInfo1);
-        String string1;
-        if (string2 != null && this.exclusionSet.isInLinkedGroup(abstractMethodInfo1)) {
+        String linkPrefix = nameExclusionSet.getLinkPrefix(abstractMethodInfo1);
+        String second;
+        if (linkPrefix != null && this.exclusionSet.isInLinkedGroup(abstractMethodInfo1)) {
             Set set2 = this.exclusionSet.getSamePrefixGroupMethods(abstractMethodInfo1);
             Set set3 = this.exclusionSet.getEquivalentMethods(abstractMethodInfo1);
             ObservableHolder observableHolder = new ObservableHolder();
@@ -164,19 +164,19 @@ public abstract class MethodNameGeneratorBase {
                 do {
                     bl3 = true;
                     arrayList.clear();
-                    string1 = this.generatePrefixedUniqueName(
-                            string2, classHierarchyNode, methodSignature1, string, map1, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, true, bl2
+                    second = this.generatePrefixedUniqueName(
+                            linkPrefix, classHierarchyNode, methodSignature1, descriptor, map1, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, true, bl2
                     );
-                    String string3 = string1.substring(string2.length());
+                    String string3 = second.substring(linkPrefix.length());
                     Iterator iterator = set3.iterator();
 
                     while (iterator.hasNext()) {
                         AbstractMethodInfo abstractMethodInfo2 = (AbstractMethodInfo) iterator.next();
                         if (abstractMethodInfo2.isProgramMember()) {
                             MethodInfo methodInfo2 = (MethodInfo) abstractMethodInfo2;
-                            String string4 = this.exclusionSet.getLinkPrefix(methodInfo2);
+                            String linkPrefixValue = this.exclusionSet.getLinkPrefix(methodInfo2);
                             MethodSignature methodSignature2 = methodInfo2.getSignature();
-                            MethodSignature methodSignature3 = new MethodSignature(string4 + string3, methodInfo2.getDescriptor());
+                            MethodSignature methodSignature3 = new MethodSignature(linkPrefixValue + string3, methodInfo2.getDescriptor());
                             Boolean boolean4 = bl2;
                             Boolean boolean3 = false;
                             Boolean boolean2 = bl;
@@ -207,7 +207,7 @@ public abstract class MethodNameGeneratorBase {
                     }
                 } while (!bl3);
 
-                set1.add(MethodSignature.toPropertyName(string1, string2));
+                set1.add(MethodSignature.toPropertyName(second, linkPrefix));
                 Iterator iterator1 = arrayList.iterator();
 
                 while (iterator1.hasNext()) {
@@ -257,24 +257,24 @@ public abstract class MethodNameGeneratorBase {
                     }
                 }
             } else if (objectPair != null) {
-                string1 = (String) objectPair.getSecond();
+                second = (String) objectPair.getSecond();
             } else {
-                string1 = string2 + ((String) objectPair1.getSecond()).substring(((String) observableHolder1.getValue()).length());
+                second = linkPrefix + ((String) objectPair1.getSecond()).substring(((String) observableHolder1.getValue()).length());
             }
         } else {
-            string1 = this.generateUniqueName(
-                    classHierarchyNode, methodSignature1, string, map1, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, bl2
+            second = this.generateUniqueName(
+                    classHierarchyNode, methodSignature1, descriptor, map1, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, bl2
             );
         }
 
-        if (bl2 && string1 != null && !string1.equals(abstractMethodInfo1.getSourceName())) {
+        if (bl2 && second != null && !second.equals(abstractMethodInfo1.getSourceName())) {
             abstractMethodInfo1.setNameChanged(true);
             if (abstractMethodInfo1 != methodInfo1) {
                 methodInfo1.setNameChanged(true);
             }
         }
 
-        return string1;
+        return second;
     }
 
     public String generatePrefixedUniqueName(
@@ -349,12 +349,12 @@ public abstract class MethodNameGeneratorBase {
             if (string == null) {
                 ClassFileBase classFileBase = this.overrideAnalyzer.getRootMethodClass(methodInfo1);
                 if (classFileBase != null) {
-                    String string1 = classFileBase.getClassName();
-                    ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(string1);
+                    String className = classFileBase.getClassName();
+                    ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(className);
                     if (classHierarchyNode1 == null || classHierarchyNode1.hasNoClassFile()) {
                         string = null;
                     } else if (!classHierarchyNode1.isProgramClass()) {
-                        string = this.methodRenamer.getNewMethodName(string1, methodSignature1);
+                        string = this.methodRenamer.getNewMethodName(className, methodSignature1);
                     } else {
                         string = this.assignNewName(classHierarchyNode, methodInfo1, map1, bl, map2, map3, map4, disableableMap, disableableMap1, set1, bl1, bl2);
                     }
@@ -462,11 +462,9 @@ public abstract class MethodNameGeneratorBase {
                             && !this.overrideAnalyzer.tryReserveGroupRename(classHierarchyNode, methodSignature1, methodSignature2, bl2, new ObservableHolder())) {
                         return false;
                     } else {
-                        return bl3
+                        return (!(bl3
                                 && bl1
-                                && !this.overrideAnalyzer.tryReserveGroupRename(classHierarchyNode, methodSignature3, methodSignature2, bl2, new ObservableHolder())
-                                ? false
-                                : string == null || !set1.contains(MethodSignature.toPropertyName(methodSignature1.getName(), string));
+                                && !this.overrideAnalyzer.tryReserveGroupRename(classHierarchyNode, methodSignature3, methodSignature2, bl2, new ObservableHolder())) && (string == null || !set1.contains(MethodSignature.toPropertyName(methodSignature1.getName(), string))));
                     }
                 } else {
                     return false;

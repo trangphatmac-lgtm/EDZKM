@@ -37,10 +37,10 @@ public class VerificationTypeInfo extends ClassFileComponent {
             Map map2,
             IntegerCache integerCache1
     ) throws IOException {
-        int ba = classFileInputStream.readUnsignedByte();
-        Integer integer = integerCache1.valueOf(ba);
+        int tagValue = classFileInputStream.readUnsignedByte();
+        Integer integer = integerCache1.valueOf(tagValue);
         VerificationTypeInfo verificationTypeInfo;
-        switch (ba) {
+        switch (tagValue) {
             case 0:
             case 1:
             case 2:
@@ -51,7 +51,7 @@ public class VerificationTypeInfo extends ClassFileComponent {
                 if (map1.containsKey(integer)) {
                     verificationTypeInfo = (VerificationTypeInfo) map1.get(integer);
                 } else {
-                    verificationTypeInfo = new VerificationTypeInfo(abstractStackMapAttribute, ba);
+                    verificationTypeInfo = new VerificationTypeInfo(abstractStackMapAttribute, tagValue);
                     map1.put(integer, verificationTypeInfo);
                 }
                 break;
@@ -61,17 +61,17 @@ public class VerificationTypeInfo extends ClassFileComponent {
                 if (map2.containsKey(integer1)) {
                     verificationTypeInfo = (VerificationTypeInfo) map2.get(integer1);
                 } else {
-                    verificationTypeInfo = new ObjectVerificationType(abstractStackMapAttribute, ba, bb, listMultimap1, printWriter);
+                    verificationTypeInfo = new ObjectVerificationType(abstractStackMapAttribute, tagValue, bb, listMultimap1, printWriter);
                     map2.put(integer1, verificationTypeInfo);
                 }
                 break;
             case 8:
-                verificationTypeInfo = new UninitializedVerificationType(abstractStackMapAttribute, ba, classFileInputStream, listMultimap);
+                verificationTypeInfo = new UninitializedVerificationType(abstractStackMapAttribute, tagValue, classFileInputStream, listMultimap);
                 break;
             default:
-                verificationTypeInfo = new VerificationTypeInfo(abstractStackMapAttribute, ba);
+                verificationTypeInfo = new VerificationTypeInfo(abstractStackMapAttribute, tagValue);
                 verificationTypeInfo.valid = false;
-                printWriter.println("ERROR: " + verificationTypeInfo.getLocationName() + " : " + "Invalid StackMap attribute" + " '" + ba + "' (D)");
+                printWriter.println("ERROR: " + verificationTypeInfo.getLocationName() + " : " + "Invalid StackMap attribute" + " '" + tagValue + "' (D)");
         }
 
         return verificationTypeInfo;
@@ -90,8 +90,8 @@ public class VerificationTypeInfo extends ClassFileComponent {
         IntegerCache integerCache1 = IntegerCache.getInstance();
         ArrayList arrayList = new ArrayList(verifierTypes.length);
 
-        for (int i = 0; i < verifierTypes.length; i++) {
-            VerifierType verifierType = verifierTypes[i];
+        for (int verifierTypeIndex = 0; verifierTypeIndex < verifierTypes.length; verifierTypeIndex++) {
+            VerifierType verifierType = verifierTypes[verifierTypeIndex];
             if (!verifierType.isWideSecondSlot()) {
                 VerificationTypeInfo verificationTypeInfo;
                 if (verifierType == VerifierType.TOP) {
@@ -140,8 +140,8 @@ public class VerificationTypeInfo extends ClassFileComponent {
             }
         }
 
-        int bb = arrayList.size();
-        VerificationTypeInfo[] verificationTypeInfos = new VerificationTypeInfo[bb];
+        int arrayListSize = arrayList.size();
+        VerificationTypeInfo[] verificationTypeInfos = new VerificationTypeInfo[arrayListSize];
         arrayList.toArray(verificationTypeInfos);
         return verificationTypeInfos;
     }
@@ -151,13 +151,13 @@ public class VerificationTypeInfo extends ClassFileComponent {
         this.tag = tag;
     }
 
-    public static VerificationTypeInfo getOrCreateSimple(AbstractStackMapAttribute abstractStackMapAttribute, int ba, Map map1, IntegerCache integerCache1) {
-        Integer integer = integerCache1.valueOf(ba);
+    public static VerificationTypeInfo getOrCreateSimple(AbstractStackMapAttribute abstractStackMapAttribute, int tagArgument, Map map1, IntegerCache integerCache1) {
+        Integer integer = integerCache1.valueOf(tagArgument);
         VerificationTypeInfo verificationTypeInfo;
         if (map1.containsKey(integer)) {
             verificationTypeInfo = (VerificationTypeInfo) map1.get(integer);
         } else {
-            verificationTypeInfo = new VerificationTypeInfo(abstractStackMapAttribute, ba);
+            verificationTypeInfo = new VerificationTypeInfo(abstractStackMapAttribute, tagArgument);
             map1.put(integer, verificationTypeInfo);
         }
 

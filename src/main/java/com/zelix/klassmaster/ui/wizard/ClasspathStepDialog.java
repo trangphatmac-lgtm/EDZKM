@@ -39,12 +39,12 @@ public class ClasspathStepDialog extends ClasspathDialog {
     }
 
     @Override
-    public void createMainButtons(String string, String string1, StringBuffer stringBuffer, Container container1) {
+    public void createMainButtons(String string, String toolTipText, StringBuffer stringBuffer, Container container1) {
         this.previousBtn = new JButton("Previous");
         this.previousBtn.setToolTipText(GuiResources.getTooltipText("PREVIOUS_SCREEN"));
         container1.add(this.previousBtn, "previousBtn");
         super.okBtn = new JButton(string);
-        super.okBtn.setToolTipText(string1);
+        super.okBtn.setToolTipText(toolTipText);
         container1.add(super.okBtn, "okBtn");
         super.cancelBtn = new JButton("Cancel");
         super.cancelBtn.setToolTipText(GuiResources.getTooltipText("CANCEL_DIALOG"));
@@ -75,9 +75,9 @@ public class ClasspathStepDialog extends ClasspathDialog {
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         try {
-            Object object = keyEvent.getSource();
+            Object source = keyEvent.getSource();
             if (keyEvent.getKeyCode() == 10) {
-                if (object == this.previousBtn) {
+                if (source == this.previousBtn) {
                     this.goPrevious();
                 } else {
                     super.keyPressed(keyEvent);

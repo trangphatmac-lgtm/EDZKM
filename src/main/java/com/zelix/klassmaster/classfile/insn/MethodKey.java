@@ -6,20 +6,20 @@ public class MethodKey {
     private final String descriptor;
     private final int cachedHash;
 
-    public MethodKey(String string, String string1, String string2) {
-        this.className = string;
-        this.methodName = string1;
-        this.descriptor = string2;
-        this.cachedHash = string.hashCode() ^ string1.hashCode() ^ string2.hashCode();
+    public MethodKey(String classNameArgument, String methodNameArgument, String descriptorArgument) {
+        this.className = classNameArgument;
+        this.methodName = methodNameArgument;
+        this.descriptor = descriptorArgument;
+        this.cachedHash = classNameArgument.hashCode() ^ methodNameArgument.hashCode() ^ descriptorArgument.hashCode();
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof MethodKey)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof MethodKey)) {
             return false;
         }
 
-        MethodKey methodKey1 = (MethodKey) object;
+        MethodKey methodKey1 = (MethodKey) other;
         return this.cachedHash == methodKey1.cachedHash
                 && this.className.equals(methodKey1.className)
                 && this.methodName.equals(methodKey1.methodName)

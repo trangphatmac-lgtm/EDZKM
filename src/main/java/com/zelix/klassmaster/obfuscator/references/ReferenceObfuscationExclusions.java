@@ -49,14 +49,12 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
         if (!this.includedMethodReferences.containsKey(abstractMethodInfo)) {
             return false;
         } else {
-            return this.includedMethodReferences.containsValue(abstractMethodInfo, null)
-                    ? true
-                    : this.includedMethodReferences.containsValue(abstractMethodInfo, object);
+            return ((this.includedMethodReferences.containsValue(abstractMethodInfo, null)) || (this.includedMethodReferences.containsValue(abstractMethodInfo, object)));
         }
     }
 
-    public Set getReferencingMethods(Object object) {
-        return ZkmUtils.createHashSetFrom(this.memberReferences.getValues(object));
+    public Set getReferencingMethods(Object key) {
+        return ZkmUtils.createHashSetFrom(this.memberReferences.getValues(key));
     }
 
     @Override
@@ -93,7 +91,7 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
     }
 
     public boolean isValidReferenceParameter(ASTRenameFilterParameter aSTRenameFilterParameter, String string) {
-        boolean bl = true;
+        boolean validReferenceParameter = true;
         if (!aSTRenameFilterParameter.isMethodSpecifier() && !aSTRenameFilterParameter.isFieldSpecifier()) {
             super.scriptEnvironment
                     .logWarning(
@@ -104,7 +102,7 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
                                     + "' statement is not a field or method exclusion parameter. It will be ignored.",
                             true
                     );
-            bl = false;
+            validReferenceParameter = false;
         }
 
         if (aSTRenameFilterParameter.isClassSpecifier() && aSTRenameFilterParameter.hasLinkClassName()) {
@@ -117,7 +115,7 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
                                     + "' statement cannot use the '<link>' syntax. It will be ignored.",
                             true
                     );
-            bl = false;
+            validReferenceParameter = false;
         }
 
         if (aSTRenameFilterParameter.isMethodSpecifier() && aSTRenameFilterParameter.hasLinkMethodSignature()) {
@@ -130,7 +128,7 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
                                     + "' statement cannot use the '<link>' syntax. It will be ignored.",
                             true
                     );
-            bl = false;
+            validReferenceParameter = false;
         }
 
         if (aSTRenameFilterParameter.isMethodSpecifier() && aSTRenameFilterParameter.hasPlusSignatureClasses()) {
@@ -145,7 +143,7 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
                                     + "' keyword. It will be ignored.",
                             true
                     );
-            bl = false;
+            validReferenceParameter = false;
         }
 
         if (!aSTRenameFilterParameter.isContainedInMethodSpec()) {
@@ -160,7 +158,7 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
                                     + "' clause which does not contain a method specification parameter. It will be ignored.",
                             true
                     );
-            bl = false;
+            validReferenceParameter = false;
         }
 
         if (aSTRenameFilterParameter.isContainedInMethodSpec() && aSTRenameFilterParameter.containedInHasLinkMethod()) {
@@ -175,7 +173,7 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
                                     + "' clause which uses the '<link>' syntax. It will be ignored.",
                             true
                     );
-            bl = false;
+            validReferenceParameter = false;
         }
 
         if (aSTRenameFilterParameter.isContainedInMethodSpec() && aSTRenameFilterParameter.containedInHasPlusSignature()) {
@@ -192,10 +190,10 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
                                     + "' keyword. It will be ignored.",
                             true
                     );
-            bl = false;
+            validReferenceParameter = false;
         }
 
-        return bl;
+        return validReferenceParameter;
     }
 
     public final void excludeMethodReference(AbstractMethodInfo abstractMethodInfo, MethodBytecode methodBytecode1, String string) throws ZkmException, IOException {
@@ -264,15 +262,15 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
                     MethodBytecode methodBytecode1 = (MethodBytecode) entry1.getKey();
                     if (fixedClassesExclusionSet1 != null && fixedClassesExclusionSet1.isMatchedClass((ProgramClass) methodBytecode1.getOwningClass())) {
                         if (super.scriptEnvironment.isVerbose()) {
-                            String string = methodBytecode1.getOriginalDottedName();
+                            String originalDottedName = methodBytecode1.getOriginalDottedName();
                             super.scriptEnvironment
                                     .logMessage(
                                             "Reference Obfuscation : References in method '"
                                                     + methodBytecode1.getMethod().toOriginalDisplayString()
                                                     + "' in class '"
-                                                    + string
+                                                    + originalDottedName
                                                     + "' will not be obfuscated because the containing class '"
-                                                    + string
+                                                    + originalDottedName
                                                     + "' is specified in a 'fixedClasses' statement."
                                     );
                         }
@@ -308,18 +306,18 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
     }
 
     public final void applyScriptParameters() throws ZkmException, IOException {
-        int ba;
+        int exclusionStatementsSize;
         if (super.exclusionStatements == null) {
-            ba = 0;
+            exclusionStatementsSize = 0;
         } else {
-            ba = super.exclusionStatements.size();
+            exclusionStatementsSize = super.exclusionStatements.size();
         }
 
         HashSet hashSet = ZkmUtils.createHashSet();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(i);
+        for (int elementIndex = 0; elementIndex < exclusionStatementsSize; elementIndex++) {
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -333,31 +331,31 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
         if (super.scriptEnvironment.isVerbose() && arrayList.size() > 0) {
             super.logWriter.println("\tobfuscateReferencesInclude parameters:");
 
-            for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t" + arrayList.get(i));
+            for (int elementIndexValue = arrayList.size() - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                super.logWriter.println("\t\t" + arrayList.get(elementIndexValue));
             }
         }
 
-        for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) arrayList.get(i);
+        for (int elementIndexValue2 = arrayList.size() - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) arrayList.get(elementIndexValue2);
             if (this.isValidReferenceParameter(aSTRenameFilterParameter2, "obfuscateReferencesInclude")) {
                 this.warnHigherLevelIgnored(aSTRenameFilterParameter2, "obfuscateReferencesInclude");
                 aSTRenameFilterParameter2.applyReferenceInclusion(this);
             }
         }
 
-        int be;
+        int unexclusionStatementsSize;
         if (super.unexclusionStatements == null) {
-            be = 0;
+            unexclusionStatementsSize = 0;
         } else {
-            be = super.unexclusionStatements.size();
+            unexclusionStatementsSize = super.unexclusionStatements.size();
         }
 
         HashMap hashMap = ZkmUtils.createHashMap();
         Vector vector = new Vector();
 
-        for (int i = 0; i < be; i++) {
-            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(i);
+        for (int elementIndexValue3 = 0; elementIndexValue3 < unexclusionStatementsSize; elementIndexValue3++) {
+            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(elementIndexValue3);
             Enumeration enumeration1 = parameterListStatement1.getRenameFilterParameters();
 
             while (enumeration1.hasMoreElements()) {
@@ -372,13 +370,13 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
         if (super.scriptEnvironment.isVerbose() && vector.size() > 0) {
             super.logWriter.println("\tobfuscateReferencesExclude parameters:");
 
-            for (int i = vector.size() - 1; i >= 0; i += -1) {
-                super.logWriter.println("\t\t\"" + vector.elementAt(i) + "\"");
+            for (int elementIndexValue4 = vector.size() - 1; elementIndexValue4 >= 0; elementIndexValue4 += -1) {
+                super.logWriter.println("\t\t\"" + vector.elementAt(elementIndexValue4) + "\"");
             }
         }
 
-        for (int i = vector.size() - 1; i >= 0; i += -1) {
-            ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) vector.elementAt(i);
+        for (int elementIndexValue5 = vector.size() - 1; elementIndexValue5 >= 0; elementIndexValue5 += -1) {
+            ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) vector.elementAt(elementIndexValue5);
             if (this.isValidReferenceParameter(aSTRenameFilterParameter3, "obfuscateReferencesExclude")) {
                 this.warnHigherLevelIgnored(aSTRenameFilterParameter3, "obfuscateReferencesExclude");
                 aSTRenameFilterParameter3.applyReferenceExclusion(this);
@@ -513,8 +511,8 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
         }
     }
 
-    public final boolean isFieldIncluded(Object object) {
-        return this.includedFieldReferences.containsKey(object);
+    public final boolean isFieldIncluded(Object key) {
+        return this.includedFieldReferences.containsKey(key);
     }
 
     public static void setVisitableNodes() {
@@ -529,9 +527,7 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
         if (!this.includedFieldReferences.containsKey(abstractFieldInfo)) {
             return false;
         } else {
-            return this.includedFieldReferences.containsValue(abstractFieldInfo, null)
-                    ? true
-                    : this.includedFieldReferences.containsValue(abstractFieldInfo, object);
+            return ((this.includedFieldReferences.containsValue(abstractFieldInfo, null)) || (this.includedFieldReferences.containsValue(abstractFieldInfo, object)));
         }
     }
 
@@ -554,30 +550,13 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
         }
 
         if (classRepository1.hasProgramClasses()) {
-            label40:
-            {
-                int ba = this.memberReferences.getKeyCount() / 5 + this.memberReferences.getKeyCount();
-                int bb = Math.max(ba, (int) minInitialCapacity);
-                this.initSets(bb);
-                ReferenceObfuscationExclusions referenceObfuscationExclusions1;
-                HashSet hashSet;
-                if (list1 != null && list1.size() != 0) {
-                    referenceObfuscationExclusions1 = this;
-                    hashSet = super.unmatchedClasses;
-                } else if (list2 != null) {
-                    if (list2.size() > 0) {
-                        this.collectReferencedMembers(super.matchedClasses, super.matchedFields, super.matchedMethods, true);
-                        break label40;
-                    }
-
-                    referenceObfuscationExclusions1 = this;
-                    hashSet = super.unmatchedClasses;
-                } else {
-                    referenceObfuscationExclusions1 = this;
-                    hashSet = super.unmatchedClasses;
-                }
-
-                referenceObfuscationExclusions1.collectReferencedMembers(hashSet, super.unmatchedFields, super.unmatchedMethods, false);
+            int ba = this.memberReferences.getKeyCount() / 5 + this.memberReferences.getKeyCount();
+            int bb = Math.max(ba, (int) minInitialCapacity);
+            this.initSets(bb);
+            if ((list1 == null || list1.size() == 0) && list2 != null && list2.size() > 0) {
+                this.collectReferencedMembers(super.matchedClasses, super.matchedFields, super.matchedMethods, true);
+            } else {
+                this.collectReferencedMembers(super.unmatchedClasses, super.unmatchedFields, super.unmatchedMethods, false);
             }
 
             this.applyScriptParameters();
@@ -661,8 +640,8 @@ public class ReferenceObfuscationExclusions extends ContainedInSpecList {
         }
     }
 
-    public final boolean isMethodIncluded(Object object) {
-        return this.includedMethodReferences.containsKey(object);
+    public final boolean isMethodIncluded(Object key) {
+        return this.includedMethodReferences.containsKey(key);
     }
 
     static {

@@ -63,21 +63,21 @@ public class ReflectionCallSite {
             MethodBytecode methodBytecode1,
             ReflectionApiMethod reflectionApiMethod,
             ConstantRefInstruction constantRefInstruction,
-            String string,
-            String string1,
+            String classNameArgument,
+            String methodNameArgument,
             List list1,
-            String string2
+            String memberNameArgument
     ) {
         this.methodBytecode = methodBytecode1;
         this.apiMethod = reflectionApiMethod;
         this.callInstruction = constantRefInstruction;
-        this.className = string;
-        this.methodName = string1;
+        this.className = classNameArgument;
+        this.methodName = methodNameArgument;
         if (list1 != null) {
-            for (int i = 0; i < list1.size(); i++) {
-                String string3 = (String) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String string3 = (String) list1.get(elementIndex);
                 if (string3 != null) {
-                    list1.set(i, string3.replace('.', '/'));
+                    list1.set(elementIndex, string3.replace('.', '/'));
                 }
             }
 
@@ -86,6 +86,6 @@ public class ReflectionCallSite {
             this.targetClassNames = list1;
         }
 
-        this.memberName = string2;
+        this.memberName = memberNameArgument;
     }
 }

@@ -45,12 +45,12 @@ public class ClassConstantsNode extends ListClassProperty {
             }
 
             super.indexMap = ZkmUtils.createHashMap((int) (this.constantCount * 1.5));
-            int ba = 0;
+            int integer = 0;
             int bb = 0;
 
-            for (int i = this.constantCount; bb < i; i = this.constantCount) {
-                super.indexMap.put(this.constants[ba], super.integerCache.valueOf(ba));
-                bb = ++ba;
+            for (int constantCountValue = this.constantCount; bb < constantCountValue; constantCountValue = this.constantCount) {
+                super.indexMap.put(this.constants[integer], super.integerCache.valueOf(integer));
+                bb = ++integer;
             }
         }
 
@@ -104,8 +104,8 @@ public class ClassConstantsNode extends ListClassProperty {
         return this.constantCount;
     }
 
-    public NumericConstantEntry getConstant(int ba) {
-        return this.constants[ba];
+    public NumericConstantEntry getConstant(int constantIndex) {
+        return this.constants[constantIndex];
     }
 
     public SetMultiMap getDuplicateStrings() {

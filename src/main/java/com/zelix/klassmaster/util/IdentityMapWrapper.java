@@ -10,8 +10,8 @@ public class IdentityMapWrapper {
         this.map = new IdentityHashMap();
     }
 
-    public Object remove(Object object) {
-        return this.map.remove(object);
+    public Object remove(Object key) {
+        return this.map.remove(key);
     }
 
     public int size() {
@@ -34,15 +34,15 @@ public class IdentityMapWrapper {
         return this.map.isEmpty();
     }
 
-    public boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
-    public Object put(Object object, Object object1) {
-        return this.map.put(object, object1);
+    public Object put(Object key, Object value) {
+        return this.map.put(key, value);
     }
 
-    public Object get(Object object) {
-        return this.map.get(object);
+    public Object get(Object key) {
+        return this.map.get(key);
     }
 }

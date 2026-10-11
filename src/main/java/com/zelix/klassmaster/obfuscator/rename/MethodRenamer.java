@@ -62,13 +62,13 @@ public class MethodRenamer {
     public Map keepNameMethods;
     public ScriptEnvironment scriptEnvironment;
 
-    public String getOriginalMemberName(String string, MemberSignatureBase memberSignatureBase) {
+    public String getOriginalMemberName(String key, MemberSignatureBase memberSignatureBase) {
         MethodSignature methodSignature1 = null;
         if (memberSignatureBase instanceof MethodSignature) {
-            methodSignature1 = (MethodSignature) this.newToOldMethodMap.getValue(string, (MethodSignature) memberSignatureBase);
+            methodSignature1 = (MethodSignature) this.newToOldMethodMap.getValue(key, (MethodSignature) memberSignatureBase);
         } else if (memberSignatureBase instanceof FieldNameTypeSignature) {
             FieldNameTypeSignature fieldNameTypeSignature = (FieldNameTypeSignature) memberSignatureBase;
-            Map map1 = this.newToOldMethodMap.getInnerMap(string);
+            Map map1 = this.newToOldMethodMap.getInnerMap(key);
             if (map1 != null) {
                 Iterator iterator = map1.entrySet().iterator();
 
@@ -94,10 +94,10 @@ public class MethodRenamer {
             MethodSignature methodSignature1 = methodInfo1.getSignature();
             ClassFileBase classFileBase = (ClassFileBase) methodInfo1.getParent();
             if (classFileBase.isInterface() && !this.overrideAnalyzer.isSignatureReserved(methodSignature1)) {
-                String string = classFileBase.getClassName();
-                String string1 = methodSignature1.getName();
-                if (this.isShortName(string1)) {
-                    ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
+                String className = classFileBase.getClassName();
+                String nameValue = methodSignature1.getName();
+                if (this.isShortName(nameValue)) {
+                    ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(className);
                     ObservableHolder observableHolder = new ObservableHolder();
                     boolean bl = this.overrideAnalyzer.tryReserveRename(classHierarchyNode, methodSignature1, methodSignature1, observableHolder);
                     if (!bl) {
@@ -116,10 +116,10 @@ public class MethodRenamer {
             MethodSignature methodSignature2 = methodInfo2.getSignature();
             ClassFileBase classFileBase1 = (ClassFileBase) methodInfo2.getParent();
             if (!classFileBase1.isInterface() && !this.overrideAnalyzer.isSignatureReserved(methodSignature2)) {
-                String string2 = classFileBase1.getClassName();
-                String string3 = methodSignature2.getName();
-                if (this.isShortName(string3)) {
-                    ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(string2);
+                String classNameValue = classFileBase1.getClassName();
+                String nameValue2 = methodSignature2.getName();
+                if (this.isShortName(nameValue2)) {
+                    ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(classNameValue);
                     ObservableHolder observableHolder1 = new ObservableHolder();
                     boolean bl1 = this.overrideAnalyzer
                             .tryReserveMethodRename(classHierarchyNode1, methodSignature2, methodSignature2, methodInfo2, observableHolder1);
@@ -155,15 +155,15 @@ public class MethodRenamer {
             Iterator iterator = this.changeLogMapping.getNewClassNames().iterator();
 
             while (iterator.hasNext()) {
-                String string = (String) iterator.next();
-                if (!ClassHierarchyNode.isProgramClassName(string)) {
-                    ArrayList arrayList = this.changeLogMapping.getMethodMappingPairs(string);
+                String key = (String) iterator.next();
+                if (!ClassHierarchyNode.isProgramClassName(key)) {
+                    ArrayList arrayList = this.changeLogMapping.getMethodMappingPairs(key);
                     if (arrayList != null) {
                         Iterator iterator1 = arrayList.iterator();
 
                         while (iterator1.hasNext()) {
                             ObjectPair objectPair = (ObjectPair) iterator1.next();
-                            twoKeyMap.putValue(string, objectPair.getFirst(), objectPair.getSecond());
+                            twoKeyMap.putValue(key, objectPair.getFirst(), objectPair.getSecond());
                         }
                     }
                 }
@@ -178,25 +178,25 @@ public class MethodRenamer {
             Enumeration enumeration = twoKeyMap.keys();
 
             while (enumeration.hasMoreElements()) {
-                String string = (String) enumeration.nextElement();
-                Iterator iterator = twoKeyMap.getInnerMap(string).entrySet().iterator();
+                String key = (String) enumeration.nextElement();
+                Iterator iterator = twoKeyMap.getInnerMap(key).entrySet().iterator();
 
                 while (iterator.hasNext()) {
                     Entry entry = (Entry) iterator.next();
-                    this.oldToNewMethodMap.putValue(string, entry.getKey(), entry.getValue());
-                    this.newToOldMethodMap.putValue(string, entry.getValue(), entry.getKey());
+                    this.oldToNewMethodMap.putValue(key, entry.getKey(), entry.getValue());
+                    this.newToOldMethodMap.putValue(key, entry.getValue(), entry.getKey());
                 }
 
-                ClasspathClassFile classpathClassFile = (ClasspathClassFile) ClassHierarchyNode.findClassFile(string);
+                ClasspathClassFile classpathClassFile = (ClasspathClassFile) ClassHierarchyNode.findClassFile(key);
                 classpathClassFile.applyMethodNameMapping(this.oldToNewMethodMap, this.methodNamePairs);
             }
         }
     }
 
     public final void checkChangeLogOverrideMapping(ClassFileBase classFileBase, AbstractMethodInfo abstractMethodInfo) throws IOException {
-        String string = classFileBase.getClassName();
+        String className = classFileBase.getClassName();
         MethodSignature methodSignature1 = abstractMethodInfo.getSignature();
-        ChangeLogMethodSignature changeLogMethodSignature = this.changeLogMapping.lookupMethodMapping(string, methodSignature1);
+        ChangeLogMethodSignature changeLogMethodSignature = this.changeLogMapping.lookupMethodMapping(className, methodSignature1);
         if (changeLogMethodSignature != null && !abstractMethodInfo.isStatic() && !abstractMethodInfo.isStrictlyPrivate()) {
             ClassFileBase classFileBase1 = this.overrideAnalyzer.getRootMethodClass(abstractMethodInfo);
             if (classFileBase1 != null) {
@@ -204,11 +204,11 @@ public class MethodRenamer {
                 if (classHierarchyNode != null && !classHierarchyNode.hasNoClassFile()) {
                     ChangeLogMethodSignature changeLogMethodSignature1 = changeLogMethodSignature;
                     changeLogMethodSignature = this.changeLogMapping
-                            .reconcileInheritedMethodMapping(string, classFileBase1.getClassName(), methodSignature1, changeLogMethodSignature, this.classRenameMap);
+                            .reconcileInheritedMethodMapping(className, classFileBase1.getClassName(), methodSignature1, changeLogMethodSignature, this.classRenameMap);
                     if (!changeLogMethodSignature.equals(changeLogMethodSignature1)) {
                     }
                 } else if (!methodSignature1.getName().equals(changeLogMethodSignature.getName())) {
-                    String string1 = (String) ZkmUtils.mapOrSelf(string, this.classRenameMap);
+                    String string1 = (String) ZkmUtils.mapOrSelf(className, this.classRenameMap);
                     this.changeLogMapping
                             .logWarning(
                                     "Method '"
@@ -221,7 +221,7 @@ public class MethodRenamer {
                                             + classFileBase1.getOriginalDottedName()
                                             + "' which has not been opened."
                             );
-                    this.changeLogMapping.removeMethodMapping(string, methodSignature1);
+                    this.changeLogMapping.removeMethodMapping(className, methodSignature1);
                 }
             }
         }
@@ -246,9 +246,9 @@ public class MethodRenamer {
     }
 
     public final void applyChangeLogMethodMapping(ClassHierarchyNode classHierarchyNode, ClassFileBase classFileBase, AbstractMethodInfo abstractMethodInfo) throws ZkmException, IOException {
-        String string = classFileBase.getClassName();
+        String className = classFileBase.getClassName();
         MethodSignature methodSignature1 = abstractMethodInfo.getSignature();
-        MethodSignature methodSignature2 = this.changeLogMapping.getNewMethodSignature(string, methodSignature1);
+        MethodSignature methodSignature2 = this.changeLogMapping.getNewMethodSignature(className, methodSignature1);
         if (methodSignature2 != null) {
             ObservableHolder observableHolder = new ObservableHolder();
             if (this.overrideAnalyzer.isSignatureReserved(methodSignature2)) {
@@ -265,7 +265,7 @@ public class MethodRenamer {
                                                 + methodSignature2.getName()
                                                 + "' because of a possible name clash. (1)"
                                 );
-                        this.changeLogMapping.removeMethodMapping(string, methodSignature1);
+                        this.changeLogMapping.removeMethodMapping(className, methodSignature1);
                     } else {
                         this.changeLogMapping
                                 .reportError(
@@ -277,7 +277,7 @@ public class MethodRenamer {
                                                 + methodSignature2.getName()
                                                 + "' because of a possible name clash. (2)"
                                 );
-                        this.changeLogMapping.removeMethodMapping(string, methodSignature1);
+                        this.changeLogMapping.removeMethodMapping(className, methodSignature1);
                     }
                 }
             } else if ((
@@ -287,7 +287,7 @@ public class MethodRenamer {
                     && !this.isShortName(methodSignature1.getName())) {
                 this.overrideAnalyzer.reserveSignature(methodSignature2);
             } else if (!this.tryRecordRename(classHierarchyNode, methodSignature1, methodSignature2, abstractMethodInfo, observableHolder)) {
-                String string2 = (String) ZkmUtils.mapOrSelf(string, this.classRenameMap);
+                String string2 = (String) ZkmUtils.mapOrSelf(className, this.classRenameMap);
                 MemberSignatureBase memberSignatureBase = (MemberSignatureBase) observableHolder.getValue();
                 String string1 = "";
                 if (memberSignatureBase != null) {
@@ -307,7 +307,7 @@ public class MethodRenamer {
                                             + string1
                                             + ". (3)"
                             );
-                    this.changeLogMapping.removeMethodMapping(string, methodSignature1);
+                    this.changeLogMapping.removeMethodMapping(className, methodSignature1);
                 } else {
                     this.changeLogMapping
                             .reportError(
@@ -321,7 +321,7 @@ public class MethodRenamer {
                                             + string1
                                             + ". (4)"
                             );
-                    this.changeLogMapping.removeMethodMapping(string, methodSignature1);
+                    this.changeLogMapping.removeMethodMapping(className, methodSignature1);
                 }
             }
         }
@@ -388,17 +388,17 @@ public class MethodRenamer {
             }
 
             List list1 = this.classHierarchy.getTopLoadedNodes();
-            int bb = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < bb; i++) {
-                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(elementIndex);
                 if (classHierarchyNode.isInterface()) {
                     classHierarchyNode.collectRenamableMethods(this);
                 }
             }
 
-            for (int i = 0; i < bb; i++) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < list1Size; elementIndexValue++) {
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndexValue);
                 if (!classHierarchyNode1.isInterface()) {
                     classHierarchyNode1.collectRenamableMethods(this);
                 }
@@ -414,8 +414,8 @@ public class MethodRenamer {
         List list1 = (List) observableHolder.getValue();
         MethodSignature methodSignature2 = null;
 
-        for (int i = 0; i < list1.size(); i++) {
-            ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(elementIndex);
             MethodSignature methodSignature3 = this.changeLogMapping.getNewMethodSignature(classHierarchyNode.getClassName(), methodSignature1);
             if (methodSignature3 != null) {
                 if (methodSignature2 == null) {
@@ -437,25 +437,25 @@ public class MethodRenamer {
         }
     }
 
-    public String getNewMethodName(String string, MethodSignature methodSignature1) {
-        MethodSignature methodSignature2 = (MethodSignature) ZkmUtils.twoKeyMapOrSelf(string, methodSignature1, this.oldToNewMethodMap);
+    public String getNewMethodName(String key, MethodSignature methodSignature1) {
+        MethodSignature methodSignature2 = (MethodSignature) ZkmUtils.twoKeyMapOrSelf(key, methodSignature1, this.oldToNewMethodMap);
         return methodSignature2 != null ? methodSignature2.getName() : null;
     }
 
     public void validateChangeLogMappings() throws IOException {
         if (this.changeLogMapping != null) {
             List list1 = this.classHierarchy.getTopLoadedNodes();
-            int ba = list1.size();
+            int list1Size = list1.size();
 
-            for (int i = 0; i < ba; i++) {
-                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                ClassHierarchyNode classHierarchyNode = (ClassHierarchyNode) list1.get(elementIndex);
                 if (classHierarchyNode.isInterface()) {
                     classHierarchyNode.applyMethodRenamer(this);
                 }
             }
 
-            for (int i = 0; i < ba; i++) {
-                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+            for (int elementIndexValue = 0; elementIndexValue < list1Size; elementIndexValue++) {
+                ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndexValue);
                 if (!classHierarchyNode1.isInterface()) {
                     classHierarchyNode1.applyMethodRenamer(this);
                 }
@@ -464,11 +464,11 @@ public class MethodRenamer {
     }
 
     public void rejectInterfaceMappings(List list1, MethodSignature methodSignature1, String string) throws IOException {
-        for (int i = 0; i < list1.size(); i++) {
-            String string1 = ((ClassHierarchyNode) list1.get(i)).getClassName();
-            ChangeLogMethodSignature changeLogMethodSignature = this.changeLogMapping.lookupMethodMapping(string1, methodSignature1);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            String className = ((ClassHierarchyNode) list1.get(elementIndex)).getClassName();
+            ChangeLogMethodSignature changeLogMethodSignature = this.changeLogMapping.lookupMethodMapping(className, methodSignature1);
             if (changeLogMethodSignature != null) {
-                this.changeLogMapping.removeMethodMapping(string1, methodSignature1);
+                this.changeLogMapping.removeMethodMapping(className, methodSignature1);
                 this.changeLogMapping
                         .logWarning(
                                 "Could not rename method '"
@@ -476,7 +476,7 @@ public class MethodRenamer {
                                         + "' to '"
                                         + changeLogMethodSignature.getName()
                                         + " in interface '"
-                                        + ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(string1, this.classRenameMap))
+                                        + ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(className, this.classRenameMap))
                                         + "' because of '"
                                         + string
                                         + "'."
@@ -541,8 +541,8 @@ public class MethodRenamer {
                     if (observableHolder != null) {
                         List list1 = (List) observableHolder.getValue();
 
-                        for (int i = 0; i < list1.size(); i++) {
-                            ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(i);
+                        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                            ClassHierarchyNode classHierarchyNode1 = (ClassHierarchyNode) list1.get(elementIndex);
                             if (classHierarchyNode1.isProgramClass() && classHierarchyNode1 != classHierarchyNode) {
                                 MethodInfo methodInfo2 = this.classRepository.findDeclaredMethod(classHierarchyNode1.getProgramClass(), methodSignature1);
                                 if (methodInfo2 != null) {
@@ -568,8 +568,8 @@ public class MethodRenamer {
                 if (observableHolder1 != null) {
                     List list3 = (List) observableHolder1.getValue();
 
-                    for (int i = 0; i < list3.size(); i++) {
-                        ClassHierarchyNode classHierarchyNode5 = (ClassHierarchyNode) list3.get(i);
+                    for (int elementIndexValue = 0; elementIndexValue < list3.size(); elementIndexValue++) {
+                        ClassHierarchyNode classHierarchyNode5 = (ClassHierarchyNode) list3.get(elementIndexValue);
                         if (classHierarchyNode5.isProgramClass() && classHierarchyNode5 != classHierarchyNode2) {
                             MethodInfo methodInfo6 = this.classRepository.findDeclaredMethod(classHierarchyNode5.getProgramClass(), methodSignature2);
                             if (methodInfo6 != null) {
@@ -604,7 +604,7 @@ public class MethodRenamer {
 
         HashSet hashSet3 = ZkmUtils.createHashSet();
         List list2 = this.classHierarchy.getTopLoadedNodes();
-        int bd = list2.size();
+        int list2Size = list2.size();
         DisableableMap disableableMap4;
         if (this.avoidNameOverloading) {
             disableableMap4 = new DisableableMap(false);
@@ -612,8 +612,8 @@ public class MethodRenamer {
             disableableMap4 = new DisableableMap(true);
         }
 
-        for (int i = 0; i < bd; i++) {
-            ClassHierarchyNode classHierarchyNode3 = (ClassHierarchyNode) list2.get(i);
+        for (int elementIndexValue2 = 0; elementIndexValue2 < list2Size; elementIndexValue2++) {
+            ClassHierarchyNode classHierarchyNode3 = (ClassHierarchyNode) list2.get(elementIndexValue2);
             if (classHierarchyNode3.isInterface()) {
                 HashMap hashMap4 = ZkmUtils.createHashMap();
                 HashMap hashMap6 = ZkmUtils.createHashMap();
@@ -666,8 +666,8 @@ public class MethodRenamer {
             }
         }
 
-        for (int i = 0; i < bd; i++) {
-            ClassHierarchyNode classHierarchyNode4 = (ClassHierarchyNode) list2.get(i);
+        for (int elementIndexValue3 = 0; elementIndexValue3 < list2Size; elementIndexValue3++) {
+            ClassHierarchyNode classHierarchyNode4 = (ClassHierarchyNode) list2.get(elementIndexValue3);
             if (!classHierarchyNode4.isInterface()) {
                 HashMap hashMap5 = ZkmUtils.createHashMap();
                 HashMap hashMap7 = ZkmUtils.createHashMap();
@@ -687,12 +687,12 @@ public class MethodRenamer {
 
                 Map map2 = this.keepNameMethods;
                 HashSet hashSet2 = hashSet3;
-                boolean bl2 = this.randomizeNames;
-                boolean bl3 = this.overloadByReturnType;
+                boolean randomizeNamesValue = this.randomizeNames;
+                boolean overloadByReturnTypeValue = this.overloadByReturnType;
                 DisableableMap disableableMap2 = disableableMap6;
                 DisableableMap disableableMap3 = disableableMap4;
                 HashMap hashMap2 = hashMap7;
-                int bc = this.keepInnerClassInfoMode;
+                int keepInnerClassInfoModeValue = this.keepInnerClassInfoMode;
                 ListMultimap listMultimap1 = listMultimap3;
                 HashMap hashMap3 = hashMap5;
                 MethodNameGeneratorBase methodNameGeneratorBase2 = methodNameGeneratorBase;
@@ -708,12 +708,12 @@ public class MethodRenamer {
                         methodNameGeneratorBase2,
                         hashMap3,
                         listMultimap1,
-                        bc,
+                        keepInnerClassInfoModeValue,
                         hashMap2,
                         disableableMap3,
                         disableableMap2,
-                        bl3,
-                        bl2,
+                        overloadByReturnTypeValue,
+                        randomizeNamesValue,
                         hashSet2,
                         map2
                 );
@@ -727,16 +727,16 @@ public class MethodRenamer {
         this.classRepository.indexMethods();
     }
 
-    public MethodSignature recordMethodName(MethodInfo methodInfo1, String string, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public MethodSignature recordMethodName(MethodInfo methodInfo1, String second, ObservableHolder observableHolder) throws ZkmException, IOException {
         observableHolder.clearValue();
-        String string1 = methodInfo1.getClassName();
+        String className = methodInfo1.getClassName();
         MethodSignature methodSignature1 = methodInfo1.getSignature();
         MethodSignature methodSignature2;
-        if (string != null) {
-            methodSignature2 = new MethodSignature(string, methodSignature1.getDescriptor());
-            this.methodNamePairs.putPair(methodInfo1, methodSignature1.getName(), string);
+        if (second != null) {
+            methodSignature2 = new MethodSignature(second, methodSignature1.getDescriptor());
+            this.methodNamePairs.putPair(methodInfo1, methodSignature1.getName(), second);
             if (methodInfo1.isNameChanged()) {
-                MethodSignature methodSignature3 = new MethodSignature(string, MethodParameterExclusions.getPackedDescriptor(methodInfo1));
+                MethodSignature methodSignature3 = new MethodSignature(second, MethodParameterExclusions.getPackedDescriptor(methodInfo1));
                 observableHolder.setValue(methodSignature3);
             }
         } else {
@@ -744,14 +744,14 @@ public class MethodRenamer {
             this.methodNamePairs.putPair(methodInfo1, methodInfo1.getSourceName(), methodInfo1.getSourceName());
         }
 
-        MethodSignature methodSignature5 = (MethodSignature) this.oldToNewMethodMap.putValue(string1, methodSignature1, methodSignature2);
-        MethodSignature methodSignature4 = (MethodSignature) this.newToOldMethodMap.putValue(string1, methodSignature2, methodSignature1);
+        MethodSignature methodSignature5 = (MethodSignature) this.oldToNewMethodMap.putValue(className, methodSignature1, methodSignature2);
+        MethodSignature methodSignature4 = (MethodSignature) this.newToOldMethodMap.putValue(className, methodSignature2, methodSignature1);
         if (methodSignature4 != null) {
             ZkmAssert.assertTrue(
                     false,
                     new String[]{
                             "Duplicate method name in class "
-                                    + ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(string1, this.classRenameMap))
+                                    + ZkmUtils.slashesToDots((String) ZkmUtils.mapOrSelf(className, this.classRenameMap))
                                     + ". Both '"
                                     + methodSignature1.formatDeclaration(this.classRenameMap)
                                     + "' and '"

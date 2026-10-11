@@ -10,8 +10,8 @@ import java.io.IOException;
 public abstract class ChangeLogValueNode extends ChangeLogSimpleNode {
     public String value;
 
-    public void setValue(String string) {
-        this.value = string;
+    public void setValue(String valueArgument) {
+        this.value = valueArgument;
     }
 
     @Override

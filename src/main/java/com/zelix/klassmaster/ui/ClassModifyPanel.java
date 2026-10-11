@@ -135,10 +135,10 @@ public class ClassModifyPanel extends NameModifiersEditPanel {
 
     @Override
     public void applyChanges() throws ZkmException, IOException {
-        String string = null;
-        int ba = -1;
-        String string1 = null;
-        String string2 = null;
+        String classNameValue = null;
+        int accessFlagsValue = -1;
+        String text = null;
+        String className = null;
         String string3 = super.propertyEditFld.getText().trim();
         if (!string3.equals(super.originalName)) {
             if (this.programClass.hasVersionedVariants()) {
@@ -152,14 +152,14 @@ public class ClassModifyPanel extends NameModifiersEditPanel {
                                 + "'"
                 );
             } else if (string3.length() > 0) {
-                string1 = this.packagePrefix + string3;
-                string2 = string1.replace('.', '/');
+                text = this.packagePrefix + string3;
+                className = text.replace('.', '/');
                 ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(this.programClass.getClassName());
                 if (!classHierarchyNode.hasEnclosingNode()) {
-                    if (!ClassHierarchyNode.isProgramClassName(string2)) {
-                        string = string2;
+                    if (!ClassHierarchyNode.isProgramClassName(className)) {
+                        classNameValue = className;
                     } else {
-                        new MessageBoxDialog(super.mainWindow, "Error", "Class " + string1 + " already exists.");
+                        new MessageBoxDialog(super.mainWindow, "Error", "Class " + text + " already exists.");
                     }
                 } else {
                     new MessageBoxDialog(super.mainWindow, "Error", "Cannot rename inner classes in this version : " + this.programClass.getLocationName() + "'");
@@ -181,60 +181,51 @@ public class ClassModifyPanel extends NameModifiersEditPanel {
                                 + "'"
                 );
             } else {
-                ba = this.programClass.getAccessFlags();
-                ba &= -1586;
+                accessFlagsValue = this.programClass.getAccessFlags();
+                accessFlagsValue &= -1586;
                 if (super.accessComboBox.getSelectedIndex() == super.publicIndex) {
-                    ba |= 1;
+                    accessFlagsValue |= 1;
                 }
 
                 if (super.modifierList.isSelectedIndex(super.abstractIndex)) {
-                    ba |= 1024;
+                    accessFlagsValue |= 1024;
                 }
 
                 if (super.modifierList.isSelectedIndex(super.finalIndex)) {
-                    ba |= 16;
+                    accessFlagsValue |= 16;
                 }
 
                 if (super.modifierList.isSelectedIndex(super.superIndex)) {
-                    ba |= 32;
+                    accessFlagsValue |= 32;
                 }
 
                 if (super.modifierList.isSelectedIndex(super.interfaceIndex)) {
-                    ba |= 512;
+                    accessFlagsValue |= 512;
                 }
             }
         }
 
-        if (string != null) {
+        if (classNameValue != null) {
             synchronized (super.classRepository) {
-                super.existingNameLbl.setText(string1);
+                super.existingNameLbl.setText(text);
                 HashMap hashMap = ZkmUtils.createHashMap();
                 HashMap hashMap1 = ZkmUtils.createHashMap();
-                this.programClass.renameClass(string2, hashMap, hashMap1);
+                this.programClass.renameClass(className, hashMap, hashMap1);
 
-                ClassRepository classRepository1;
-                label69:
-                {
-                    try {
-                        Object object = null;
-                        super.classRepository.applyNameChangesToAll(hashMap1, (HashMap) null, (MessageReporter) object);
-                    } catch (ZkmProcessingException zkmProcessingException) {
-                        new MessageBoxDialog(super.mainWindow, "Error", zkmProcessingException.getMessage());
-                        classRepository1 = super.classRepository;
-                        break label69;
-                    }
-
-                    classRepository1 = super.classRepository;
+                try {
+                    super.classRepository.applyNameChangesToAll(hashMap1, (HashMap) null, (MessageReporter) null);
+                } catch (ZkmProcessingException processingException) {
+                    new MessageBoxDialog(super.mainWindow, "Error", processingException.getMessage());
                 }
 
-                classRepository1.applyFieldPrefixRenames(hashMap1);
+                super.classRepository.applyFieldPrefixRenames(hashMap1);
                 super.classRepository.refreshIndexes();
             }
         }
 
-        if (ba != -1) {
+        if (accessFlagsValue != -1) {
             try {
-                this.applyAccessFlags(ba);
+                this.applyAccessFlags(accessFlagsValue);
                 super.originalAccessIndex = super.accessComboBox.getSelectedIndex();
             } catch (InvalidEditException invalidEditException) {
                 new MessageBoxDialog(super.mainWindow, "Error", invalidEditException.getMessage());
@@ -251,14 +242,14 @@ public class ClassModifyPanel extends NameModifiersEditPanel {
         defaultListModel.addElement("super");
     }
 
-    public void applyAccessFlags(int ba) throws ZkmException, IOException {
+    public void applyAccessFlags(int accessFlagsArgument) throws ZkmException, IOException {
         int accessFlags = this.programClass.getAccessFlags();
         ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(this.programClass.getClassName());
-        if ((ba & 1024) != 0 && (ba & 16) != 0) {
+        if ((accessFlagsArgument & 1024) != 0 && (accessFlagsArgument & 16) != 0) {
             throw new InvalidEditException("An abstract class cannot also be final");
         }
 
-        if ((ba & 512) != 0 && (accessFlags & 512) == 0) {
+        if ((accessFlagsArgument & 512) != 0 && (accessFlags & 512) == 0) {
             if (!this.programClass.getSuperclassName().equals("java/lang/Object")) {
                 throw new InvalidEditException("An interface can only have Object as it's superclass");
             }
@@ -269,7 +260,7 @@ public class ClassModifyPanel extends NameModifiersEditPanel {
         }
 
         ClassRepository classRepository1;
-        if ((ba & 512) == 0) {
+        if ((accessFlagsArgument & 512) == 0) {
             if ((accessFlags & 512) != 0) {
                 if (classHierarchyNode.hasImplementors()) {
                     throw new InvalidEditException("This class is implemented by other classes. It must remain an interface.");
@@ -284,7 +275,7 @@ public class ClassModifyPanel extends NameModifiersEditPanel {
         }
 
         synchronized (classRepository1) {
-            this.programClass.setAccessFlags(ba);
+            this.programClass.setAccessFlags(accessFlagsArgument);
         }
     }
 }

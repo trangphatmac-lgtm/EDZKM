@@ -28,9 +28,9 @@ public class StringElementValue extends AnnotationElementValue {
     @Override
     public void collectReferencedClasses(Object object) {
         if (this.isValid()) {
-            String string = ConstantPoolEntry.parseClassNameCandidate(this.stringConstant.getValue());
-            if (string != null) {
-                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string);
+            String key = ConstantPoolEntry.parseClassNameCandidate(this.stringConstant.getValue());
+            if (key != null) {
+                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(key);
                 if (classFileBase != null) {
                     ((Set) object).add(classFileBase);
                 }
@@ -44,21 +44,21 @@ public class StringElementValue extends AnnotationElementValue {
         HashMap hashMap1 = (HashMap) object;
         AnnotationNameKind annotationNameKind = (AnnotationNameKind) specialElementKinds.getValue(this.getAnnotationTypeName(), this.getElementName());
         boolean bl = annotationNameKind != null && annotationNameKind.equals(AnnotationNameKind.PACKAGE);
-        String string = this.stringConstant.getValue();
+        String valueValue = this.stringConstant.getValue();
         if (bl) {
-            String string1 = ConstantPoolEntry.remapQualifiedName(string, hashMap1, true);
-            if (!string1.equals(string)) {
-                this.stringConstant.setValue(string1);
+            String valueValue2 = ConstantPoolEntry.remapQualifiedName(valueValue, hashMap1, true);
+            if (!valueValue2.equals(valueValue)) {
+                this.stringConstant.setValue(valueValue2);
             }
         } else if (annotationNameKind != AnnotationNameKind.FIELD) {
             BooleanFlag booleanFlag = new BooleanFlag();
-            String string2 = ConstantPoolEntry.remapClassNameString(string, hashMap, booleanFlag);
-            if (!string2.equals(string)) {
-                this.stringConstant.setValue(string2);
+            String valueValue3 = ConstantPoolEntry.remapClassNameString(valueValue, hashMap, booleanFlag);
+            if (!valueValue3.equals(valueValue)) {
+                this.stringConstant.setValue(valueValue3);
             } else if (!booleanFlag.getValue()) {
-                string2 = ConstantPoolEntry.remapQualifiedName(string, hashMap1, false);
-                if (!string2.equals(string)) {
-                    this.stringConstant.setValue(string2);
+                valueValue3 = ConstantPoolEntry.remapQualifiedName(valueValue, hashMap1, false);
+                if (!valueValue3.equals(valueValue)) {
+                    this.stringConstant.setValue(valueValue3);
                 }
             }
         }
@@ -142,11 +142,11 @@ public class StringElementValue extends AnnotationElementValue {
 
     @Override
     public void collectReferencedMembers(Object object, Object object2, Object object1, Object object3) {
-        String string = ConstantPoolEntry.parseClassNameCandidate(this.stringConstant.getValue());
+        String key = ConstantPoolEntry.parseClassNameCandidate(this.stringConstant.getValue());
         TwoKeyMap twoKeyMap;
-        if (string != null) {
-            if (ClassHierarchyNode.isProgramClassName(string)) {
-                ((Set) object).add(ClassHierarchyNode.findProgramClass(string));
+        if (key != null) {
+            if (ClassHierarchyNode.isProgramClassName(key)) {
+                ((Set) object).add(ClassHierarchyNode.findProgramClass(key));
                 twoKeyMap = specialElementKinds;
             } else {
                 twoKeyMap = specialElementKinds;
@@ -163,8 +163,8 @@ public class StringElementValue extends AnnotationElementValue {
         }
     }
 
-    public void setStringValue(String string) {
-        this.stringConstant.setValue(string);
+    public void setStringValue(String stringValue) {
+        this.stringConstant.setValue(stringValue);
     }
 
     @Override
@@ -174,16 +174,16 @@ public class StringElementValue extends AnnotationElementValue {
         }
     }
 
-    public StringElementValue(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba);
-        int bb = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
+    public StringElementValue(ClassFileComponent classFileComponent, int tagArgument, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, tagArgument);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry != null && constantPoolEntry instanceof ConstantUtf8) {
             this.stringConstant = (ConstantUtf8) constantPoolEntry;
             listMultimap.addValue(this.stringConstant, this);
         } else {
             this.setValid();
-            this.setErrorMessage("Invalid component string constant index : " + bb + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
+            this.setErrorMessage("Invalid component string constant index : " + constantPoolIndex + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() : ""));
         }
     }
 

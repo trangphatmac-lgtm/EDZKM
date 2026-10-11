@@ -60,8 +60,8 @@ public class CodeInsertion implements Comparable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByPosition((CodeInsertion) object);
+    public int compareTo(Object other) {
+        return this.compareByPosition((CodeInsertion) other);
     }
 
     public int getPosition() {

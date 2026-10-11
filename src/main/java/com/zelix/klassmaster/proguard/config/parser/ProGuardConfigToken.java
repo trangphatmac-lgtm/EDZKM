@@ -13,7 +13,7 @@ public class ProGuardConfigToken implements Serializable {
     public int c;
     public int d;
     public String M;
-    private static final String b = " NULL >";
+    private static final String NULL_IMAGE_SUFFIX = " NULL >";
 
     public static ProGuardConfigToken newToken(int ba) {
         return newToken(ba, (String) null);
@@ -24,7 +24,7 @@ public class ProGuardConfigToken implements Serializable {
 
     @Override
     public String toString() {
-        return this.M == null ? "<" + ZkmAssert.getSimpleClassName(this) + b : this.M;
+        return this.M == null ? "<" + ZkmAssert.getSimpleClassName(this) + NULL_IMAGE_SUFFIX : this.M;
     }
 
     public ProGuardConfigToken(int ba, String string) {

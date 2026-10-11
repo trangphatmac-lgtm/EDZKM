@@ -45,7 +45,7 @@ public class KnownNameValue implements TrackedValue {
         return true;
     }
 
-    public KnownNameValue(String string) {
-        this.name = string;
+    public KnownNameValue(String nameArgument) {
+        this.name = nameArgument;
     }
 }

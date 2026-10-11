@@ -232,7 +232,7 @@ public class ScriptEnvironment extends AbstractMessageLog {
         this.paramObfuscationExcludeStatements = new ArrayList();
     }
 
-    public ScriptEnvironment(ClassRepository classRepository1, ZkmClasspath zkmClasspath, String string, PrintWriter printWriter) {
+    public ScriptEnvironment(ClassRepository classRepository1, ZkmClasspath zkmClasspath, String logFileNameArgument, PrintWriter printWriter) {
         super(true);
         this.classRepository = classRepository1;
         this.classpath = zkmClasspath;
@@ -250,18 +250,18 @@ public class ScriptEnvironment extends AbstractMessageLog {
         }
 
         ScriptEnvironment scriptEnvironment2;
-        String string1;
-        if (string == null) {
+        String logFileNameValue;
+        if (logFileNameArgument == null) {
             this.logFileName = "ZKM_log.txt";
             scriptEnvironment2 = this;
-            string1 = this.logFileName;
+            logFileNameValue = this.logFileName;
         } else {
-            this.logFileName = string;
+            this.logFileName = logFileNameArgument;
             scriptEnvironment2 = this;
-            string1 = this.logFileName;
+            logFileNameValue = this.logFileName;
         }
 
-        scriptEnvironment2.validateLogFileName(string1, this.trimLogFileName);
+        scriptEnvironment2.validateLogFileName(logFileNameValue, this.trimLogFileName);
         this.logFileName = new File(this.logFileName).getAbsolutePath();
         super.logWriter = printWriter;
         this.proGuardMappingInputEnabled = false;
@@ -292,18 +292,18 @@ public class ScriptEnvironment extends AbstractMessageLog {
             throw new ZkmRuntimeException("The Zelix KlassMaster log file name cannot be null");
         }
 
-        boolean bl;
+        boolean caseSensitiveFileSystemValue;
         if (ZkmFileUtils.caseSensitiveFileSystem) {
             if (string.equals(string1)) {
                 throw new ZkmRuntimeException("The Zelix KlassMaster log file name cannot be the same as the Trim log file name. : " + ZkmFileUtils.OS_NAME);
             }
 
-            bl = ZkmFileUtils.caseSensitiveFileSystem;
+            caseSensitiveFileSystemValue = ZkmFileUtils.caseSensitiveFileSystem;
         } else {
-            bl = ZkmFileUtils.caseSensitiveFileSystem;
+            caseSensitiveFileSystemValue = ZkmFileUtils.caseSensitiveFileSystem;
         }
 
-        if (!bl && string.equalsIgnoreCase(string1)) {
+        if (!caseSensitiveFileSystemValue && string.equalsIgnoreCase(string1)) {
             throw new ZkmRuntimeException("The Zelix KlassMaster log file name cannot be the same as the Trim log file name. : " + ZkmFileUtils.OS_NAME);
         }
     }
@@ -377,11 +377,11 @@ public class ScriptEnvironment extends AbstractMessageLog {
             classpathClassLoader1.addVersionedClasspath(zkmClasspath);
             this.versionedClasspaths.add(zkmClasspath);
         } else {
-            int ba = this.versionedClasspaths.size();
+            int versionedClasspathsSize = this.versionedClasspaths.size();
             boolean bl = false;
 
-            for (int i = 0; i < ba; i++) {
-                ZkmClasspath zkmClasspath1 = (ZkmClasspath) this.versionedClasspaths.get(i);
+            for (int elementIndex = 0; elementIndex < versionedClasspathsSize; elementIndex++) {
+                ZkmClasspath zkmClasspath1 = (ZkmClasspath) this.versionedClasspaths.get(elementIndex);
                 if (zkmClasspath1.getReleaseVersion().equals(integer)) {
                     zkmClasspath = zkmClasspath1;
                     bl = true;
@@ -422,7 +422,7 @@ public class ScriptEnvironment extends AbstractMessageLog {
     public ScriptEnvironment(
             ClassRepository classRepository1,
             ZkmClasspath zkmClasspath,
-            boolean bl,
+            boolean verbose,
             String string,
             String string1,
             String string2,
@@ -430,14 +430,14 @@ public class ScriptEnvironment extends AbstractMessageLog {
             String string4,
             String string5,
             String string6,
-            boolean bl1,
+            boolean throwOnFatalErrorArgument,
             boolean skipMidpPreverification,
             boolean proGuardMappingInputEnabled
     ) throws ZkmException {
-        super(bl);
+        super(verbose);
         this.classRepository = classRepository1;
         this.classpath = zkmClasspath;
-        super.throwOnFatalError = bl1;
+        super.throwOnFatalError = throwOnFatalErrorArgument;
         this.skipMidpPreverification = skipMidpPreverification;
         this.proGuardMappingInputEnabled = proGuardMappingInputEnabled;
         this.setDefaultFileNames(string1, string2, string3, string4, string5, string6);

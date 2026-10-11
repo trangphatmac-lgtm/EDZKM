@@ -24,12 +24,12 @@ public class ProGuardMappingASTQualifiedType extends ProGuardMappingSimpleNode {
         super.translate(proGuardMappingNode, proGuardMappingTranslator);
         ProGuardMappingNameSetter proGuardMappingNameSetter = (ProGuardMappingNameSetter) proGuardMappingNode;
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = this.nameParts.size();
+        int namePartsSize = this.nameParts.size();
 
-        for (int i = 0; i < ba; i++) {
-            String string = (String) this.nameParts.get(i);
+        for (int elementIndex = 0; elementIndex < namePartsSize; elementIndex++) {
+            String string = (String) this.nameParts.get(elementIndex);
             stringBuilder.append(string);
-            if (i < ba - 1) {
+            if (elementIndex < namePartsSize - 1) {
                 stringBuilder.append((char) ((int) separatorCharCode));
             }
         }

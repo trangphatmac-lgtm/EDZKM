@@ -36,9 +36,9 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
         return bootstrapMethodEntry;
     }
 
-    public BootstrapMethodEntry getEntry(int ba) {
-        if (ba >= 0 && ba < this.entries.length) {
-            return this.entries[ba];
+    public BootstrapMethodEntry getEntry(int entryIndex) {
+        if (entryIndex >= 0 && entryIndex < this.entries.length) {
+            return this.entries[entryIndex];
         } else {
             throw new IllegalArgumentException(
                     "Index out of bounds in '"
@@ -46,7 +46,7 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
                             + "' attribute in class '"
                             + this.getDisplayLocationName()
                             + "' : "
-                            + ba
+                            + entryIndex
                             + ">"
                             + (this.entries.length - 1)
             );
@@ -66,10 +66,10 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
         if (super.valid) {
             dataOutputStream.writeShort(this.entries.length);
             BootstrapMethodEntry[] bootstrapMethodEntrys = this.entries;
-            int ba = bootstrapMethodEntrys.length;
+            int lengthValue = bootstrapMethodEntrys.length;
 
-            for (int i = 0; i < ba; i++) {
-                bootstrapMethodEntrys[i].writeRemapped(dataOutputStream, map1);
+            for (int bootstrapMethodEntryIndex = 0; bootstrapMethodEntryIndex < lengthValue; bootstrapMethodEntryIndex++) {
+                bootstrapMethodEntrys[bootstrapMethodEntryIndex].writeRemapped(dataOutputStream, map1);
             }
         } else {
             dataOutputStream.write(super.rawBytes);
@@ -79,18 +79,18 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
     @Override
     public void collectUsedConstants(char bd, int ba, UsedConstantsCollector usedConstantsCollector, char be) {
         usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
-        int bb = 0;
+        int entryIndex = 0;
         int bc = 0;
         BootstrapMethodEntry[] bootstrapMethodEntrys = this.entries;
 
         while (true) {
             if (bc < bootstrapMethodEntrys.length) {
-                this.entries[bb].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+                this.entries[entryIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
             } else if (ba >= 0) {
                 return;
             }
 
-            bc = ++bb;
+            bc = ++entryIndex;
             bootstrapMethodEntrys = this.entries;
         }
     }
@@ -102,10 +102,10 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
     public void collectMethodHandleTargets(Set set1) {
         if (super.valid) {
             BootstrapMethodEntry[] bootstrapMethodEntrys = this.entries;
-            int ba = bootstrapMethodEntrys.length;
+            int lengthValue = bootstrapMethodEntrys.length;
 
-            for (int i = 0; i < ba; i++) {
-                bootstrapMethodEntrys[i].collectMethodHandleTargets(set1);
+            for (int bootstrapMethodEntryIndex = 0; bootstrapMethodEntryIndex < lengthValue; bootstrapMethodEntryIndex++) {
+                bootstrapMethodEntrys[bootstrapMethodEntryIndex].collectMethodHandleTargets(set1);
             }
         }
     }
@@ -116,10 +116,10 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
         if (super.valid) {
             dataOutputStream.writeShort(this.entries.length);
             BootstrapMethodEntry[] bootstrapMethodEntrys = this.entries;
-            int ba = bootstrapMethodEntrys.length;
+            int lengthValue = bootstrapMethodEntrys.length;
 
-            for (int i = 0; i < ba; i++) {
-                bootstrapMethodEntrys[i].write(dataOutputStream);
+            for (int bootstrapMethodEntryIndex = 0; bootstrapMethodEntryIndex < lengthValue; bootstrapMethodEntryIndex++) {
+                bootstrapMethodEntrys[bootstrapMethodEntryIndex].write(dataOutputStream);
             }
         } else {
             dataOutputStream.write(super.rawBytes);
@@ -147,18 +147,18 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
     }
 
     public BootstrapMethodIndex buildStringConcatIndex() {
-        int ba = this.entries.length;
+        int lengthValue = this.entries.length;
         BootstrapMethodIndex bootstrapMethodIndex1 = new BootstrapMethodIndex((ProgramClass) this.getOwningClass(), this);
 
-        for (int i = 0; i < ba; i++) {
-            BootstrapMethodEntry bootstrapMethodEntry = this.entries[i];
+        for (int entryIndex = 0; entryIndex < lengthValue; entryIndex++) {
+            BootstrapMethodEntry bootstrapMethodEntry = this.entries[entryIndex];
             if (bootstrapMethodEntry.isInvokeStaticHandle() && bootstrapMethodEntry.matchesBootstrapMethod()) {
                 ConstantPoolEntry[] constantPoolEntrys = bootstrapMethodEntry.copyArguments();
                 ConstantPoolEntry constantPoolEntry = constantPoolEntrys[0];
                 if (constantPoolEntry instanceof ResolvedStringConstant) {
-                    String string = ((ResolvedStringConstant) constantPoolEntry).getEditableValue();
+                    String editableValue = ((ResolvedStringConstant) constantPoolEntry).getEditableValue();
                     MutableInt mutableInt = new MutableInt();
-                    List list1 = BootstrapMethodIndex.tokenizeRecipe(string, mutableInt);
+                    List list1 = BootstrapMethodIndex.tokenizeRecipe(editableValue, mutableInt);
                     if (list1 != null) {
                         boolean bl = false;
                         Iterator iterator = list1.iterator();
@@ -173,13 +173,13 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
 
                         boolean bl1 = false;
                         if (constantPoolEntrys.length > 1) {
-                            for (int j = 1; j < constantPoolEntrys.length; j++) {
-                                if (!(constantPoolEntrys[j] instanceof ResolvedStringConstant)) {
+                            for (int constantPoolEntryIndex = 1; constantPoolEntryIndex < constantPoolEntrys.length; constantPoolEntryIndex++) {
+                                if (!(constantPoolEntrys[constantPoolEntryIndex] instanceof ResolvedStringConstant)) {
                                     bl1 = true;
                                     break;
                                 }
 
-                                if (!bl && ((ResolvedStringConstant) constantPoolEntrys[j]).getValueString().length() >= 2) {
+                                if (!bl && ((ResolvedStringConstant) constantPoolEntrys[constantPoolEntryIndex]).getValueString().length() >= 2) {
                                     bl = true;
                                 }
                             }
@@ -202,20 +202,20 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
 
     @Override
     public int getLength() {
-        int ba = 2;
+        int lengthValue = 2;
 
         for (BootstrapMethodEntry bootstrapMethodEntry : this.entries) {
-            ba += bootstrapMethodEntry.getByteLength();
+            lengthValue += bootstrapMethodEntry.getByteLength();
         }
 
-        this.length = ba;
-        return ba;
+        this.length = lengthValue;
+        return lengthValue;
     }
 
     public BootstrapMethodsAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
@@ -224,34 +224,34 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
             ListMultimap listMultimap4,
             PrintWriter printWriter
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
-        byte[] bb = new byte[this.length];
-        classFileInputStream.read(bb);
-        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(bb, false);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
+        byte[] rawBytesValue = new byte[this.length];
+        classFileInputStream.read(rawBytesValue);
+        ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(rawBytesValue, false);
 
         try {
             if (this.length >= 2) {
                 int bc = classFileInputStream1.readUnsignedShort();
                 this.entries = new BootstrapMethodEntry[bc];
 
-                for (int i = 0; i < bc; i++) {
-                    this.entries[i] = new BootstrapMethodEntry(this, classFileInputStream1, i, listMultimap1, listMultimap2, listMultimap3, listMultimap4);
-                    if (!this.entries[i].isValid()) {
+                for (int index = 0; index < bc; index++) {
+                    this.entries[index] = new BootstrapMethodEntry(this, classFileInputStream1, index, listMultimap1, listMultimap2, listMultimap3, listMultimap4);
+                    if (!this.entries[index].isValid()) {
                         super.valid = false;
-                        super.rawBytes = bb;
+                        super.rawBytes = rawBytesValue;
                         printWriter.println(
-                                "ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " (C) " + this.entries[i].getErrorMessage()
+                                "ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " (C) " + this.entries[index].getErrorMessage()
                         );
                     }
                 }
             } else {
                 super.valid = false;
-                super.rawBytes = bb;
+                super.rawBytes = rawBytesValue;
                 printWriter.println("ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " : length=" + this.length);
             }
         } catch (IOException iOException) {
             super.valid = false;
-            super.rawBytes = bb;
+            super.rawBytes = rawBytesValue;
             printWriter.println("ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " is possibly corrupt : " + iOException);
         } finally {
             classFileInputStream1.close();
@@ -261,21 +261,21 @@ public class BootstrapMethodsAttribute extends ParsedAttributeBase {
     public void updateRecordObjectMethodsNames() throws ZkmException, IOException {
         if (super.valid && this.getOwningClass().getSuperclassName().equals("java/lang/Record")) {
             BootstrapMethodEntry[] bootstrapMethodEntrys = this.entries;
-            int ba = bootstrapMethodEntrys.length;
+            int lengthValue = bootstrapMethodEntrys.length;
 
-            for (int i = 0; i < ba; i++) {
-                bootstrapMethodEntrys[i].updateObjectMethodsNames();
+            for (int bootstrapMethodEntryIndex = 0; bootstrapMethodEntryIndex < lengthValue; bootstrapMethodEntryIndex++) {
+                bootstrapMethodEntrys[bootstrapMethodEntryIndex].updateObjectMethodsNames();
             }
         }
     }
 
     public void renumberEntries() {
-        int ba = 0;
+        int index = 0;
         int bb = 0;
 
         for (BootstrapMethodEntry[] bootstrapMethodEntrys = this.entries; bb < bootstrapMethodEntrys.length; bootstrapMethodEntrys = this.entries) {
-            this.entries[ba].setIndex(ba);
-            bb = ++ba;
+            this.entries[index].setIndex(index);
+            bb = ++index;
         }
     }
 }

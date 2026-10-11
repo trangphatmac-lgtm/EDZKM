@@ -20,8 +20,8 @@ public class ASTClassInitializationOrderStatement extends SummarizingStatementNo
         return "classInitializationOrder";
     }
 
-    public void addInitializationOrder(Object object, Object object1) {
-        this.initializationOrders.addValue(object, object1);
+    public void addInitializationOrder(Object key, Object object1) {
+        this.initializationOrders.addValue(key, object1);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class ASTClassInitializationOrderStatement extends SummarizingStatementNo
         System.out.println(string);
         int bd = this.jjtGetNumChildren();
 
-        for (int i = 0; i < bd; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < bd; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         Integer integer1 = errorCount;

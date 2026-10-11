@@ -17,72 +17,114 @@ import java.util.Map;
 import java.io.ObjectInputStream;
 
 public class ObfuscateOptions implements Serializable {
-    public static final Map XC = new HashMap(13);
-    public static final Map XP = new HashMap(13);
-    public static final Map X3 = new HashMap(13);
-    public static final Map XJ = new HashMap(13);
-    public static final Map Xr = new HashMap(13);
+    // Preserve the existing serialized identity while recovering non-persistent member names.
+    private static final long serialVersionUID = -8579173474158073371L;
+
+    public static final Map FLOW_LEVELS_BY_NAME = new HashMap(13);
+    public static final Map FLOW_NAMES_BY_LEVEL = new HashMap(13);
+    public static final Map EXCEPTION_LEVELS_BY_NAME = new HashMap(13);
+    public static final Map EXCEPTION_NAMES_BY_LEVEL = new HashMap(13);
+    public static final Map LEVEL_NAMES_BY_POLICY = new HashMap(13);
+    /** newFieldNameFile; the field name is retained for serialized settings compatibility. */
     public String di;
+    /** inputChangeLogs; the field name is retained for serialized settings compatibility. */
     public ChangeLogInputFile[] g;
+    /** newMethodNameFile; the field name is retained for serialized settings compatibility. */
     public String dB;
+    /** newNamesPrefix; the field name is retained for serialized settings compatibility. */
     public String x;
+    /** newClassNameFile; the field name is retained for serialized settings compatibility. */
     public String dE;
+    /** methodParameterChangesPackage; the field name is retained for serialized settings compatibility. */
     public String dN;
+    /** assumedRuntimeVersion; the field name is retained for serialized settings compatibility. */
     public String an;
     public Integer at;
+    /** autoReflectionPackage; the field name is retained for serialized settings compatibility. */
     public String q;
-    public transient PrintWriter h;
+    public transient PrintWriter changeLogWriter;
+    /** defaultCollapsedPackage; the field name is retained for serialized settings compatibility. */
     public String t;
+    /** referenceObfuscationPackage; the field name is retained for serialized settings compatibility. */
     public String ai;
+    /** changeLogEncoding; the field name is retained for serialized settings compatibility. */
     public String v;
-    public transient boolean a;
+    public transient boolean loaded;
+    /** autoReflectionHash; the field name is retained for serialized settings compatibility. */
     public String D;
+    /** newPackageNameFile; the field name is retained for serialized settings compatibility. */
     public String dv;
     public int b = 1;
+    /** genericsInfoMode; the field name is retained for serialized settings compatibility. */
     public int u = 0;
     public boolean c = false;
     public boolean e = false;
     public boolean d = true;
+    /** outputChangeLogFile; the field name is retained for serialized settings compatibility. */
     public String f = "ChangeLog.txt";
+    /** lineNumbersMode; the field name is retained for serialized settings compatibility. */
     public int i = 0;
+    /** localVariablesMode; the field name is retained for serialized settings compatibility. */
     public int B = 0;
     public int am = 0;
+    /** aggressiveMethodRenaming; the field name is retained for serialized settings compatibility. */
     public boolean w = false;
+    /** legalIdentifiers; the field name is retained for serialized settings compatibility. */
     public boolean E = true;
     public boolean dr = true;
+    /** preverify; the field name is retained for serialized settings compatibility. */
     public boolean j = true;
+    /** makeClassesPublic; the field name is retained for serialized settings compatibility. */
     public boolean XN = false;
+    /** keepBalancedLocks; the field name is retained for serialized settings compatibility. */
     public boolean ar = false;
-    public MixedCaseNamesMode F = MixedCaseNamesMode.d;
+    /** mixedCaseNamesMode; the field name is retained for serialized settings compatibility. */
+    public MixedCaseNamesMode F = MixedCaseNamesMode.IF_IN_ARCHIVE;
+    /** uniqueClassNames; the field name is retained for serialized settings compatibility. */
     public boolean ay = false;
+    /** uniqueMethodNames; the field name is retained for serialized settings compatibility. */
     public boolean dV = false;
+    /** methodParameterChangesMode; the field name is retained for serialized settings compatibility. */
     public int aC = 0;
+    /** hideFieldNames; the field name is retained for serialized settings compatibility. */
     public boolean k = false;
+    /** hideStaticMethodNames; the field name is retained for serialized settings compatibility. */
     public boolean l = false;
+    /** flowObfuscationLevel; the field name is retained for serialized settings compatibility. */
     public int o = 1;
     public int d7 = 0;
+    /** stringEncryptionLevel; the field name is retained for serialized settings compatibility. */
     public int as = 4;
+    /** integerEncryptionLevel; the field name is retained for serialized settings compatibility. */
     public int dZ = 0;
+    /** longEncryptionLevel; the field name is retained for serialized settings compatibility. */
     public int dC = 0;
     public boolean p = true;
+    /** exceptionObfuscationLevel; the field name is retained for serialized settings compatibility. */
     public int C = 1;
+    /** collapsePackages; the field name is retained for serialized settings compatibility. */
     public boolean s = false;
+    /** randomizeNames; the field name is retained for serialized settings compatibility. */
     public boolean z = false;
+    /** deriveGroupingsFromInputChangeLog; the field name is retained for serialized settings compatibility. */
     public boolean y = false;
     public boolean A = true;
+    /** referenceObfuscationMode; the field name is retained for serialized settings compatibility. */
     public int aj = 0;
+    /** referenceStructuresMode; the field name is retained for serialized settings compatibility. */
     public int m = 1;
+    /** autoReflectionMode; the field name is retained for serialized settings compatibility. */
     public int r = 1;
 
-    public static String getLevelNameForPolicy(String string) {
-        return (String) Xr.get(string);
+    public static String getLevelNameForPolicy(String key) {
+        return (String) LEVEL_NAMES_BY_POLICY.get(key);
     }
 
     public ObfuscateOptions() {
     }
 
     public boolean isLoaded() {
-        return this.a;
+        return this.loaded;
     }
 
     public void saveToFile(final String parent) {
@@ -96,53 +138,53 @@ public class ObfuscateOptions implements Serializable {
             objectOutputStream.writeObject(this);
             try {
                 objectOutputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
-        } catch (final IOException ex2) {
+        } catch (final IOException ioExceptionValue) {
         } finally {
             if (objectOutputStream != null) {
                 try {
                     objectOutputStream.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
             }
         }
     }
 
-    public static int parseFlowLevel(String string) {
-        return (Integer) XC.get(string);
+    public static int parseFlowLevel(String key) {
+        return (Integer) FLOW_LEVELS_BY_NAME.get(key);
     }
 
     public static String getFlowLevelName(Integer integer) {
-        return (String) XP.get(integer);
+        return (String) FLOW_NAMES_BY_LEVEL.get(integer);
     }
 
-    public static int parseExceptionLevel(String string) {
-        return (Integer) X3.get(string);
+    public static int parseExceptionLevel(String key) {
+        return (Integer) EXCEPTION_LEVELS_BY_NAME.get(key);
     }
 
     static {
-        XC.put("none", 0);
-        XC.put("light", 1);
-        XC.put("normal", 2);
-        XC.put("aggressive", 3);
-        XC.put("extraAggressive", 4);
-        XP.put(0, "none");
-        XP.put(1, "light");
-        XP.put(2, "normal");
-        XP.put(3, "aggressive");
-        XP.put(4, "extraAggressive");
-        X3.put("none", 0);
-        X3.put("light", 1);
-        X3.put("heavy", 2);
-        XJ.put(0, "none");
-        XJ.put(1, "light");
-        XJ.put(2, "heavy");
-        Xr.put(FlowObfuscationPolicy.NONE.name(), "none");
-        Xr.put(FlowObfuscationPolicy.LIGHT.name(), "light");
-        Xr.put(FlowObfuscationPolicy.NORMAL.name(), "normal");
-        Xr.put(FlowObfuscationPolicy.AGGRESSIVE.name(), "aggressive");
-        Xr.put(ExceptionObfuscationPolicy.HEAVY.name(), "heavy");
+        FLOW_LEVELS_BY_NAME.put("none", 0);
+        FLOW_LEVELS_BY_NAME.put("light", 1);
+        FLOW_LEVELS_BY_NAME.put("normal", 2);
+        FLOW_LEVELS_BY_NAME.put("aggressive", 3);
+        FLOW_LEVELS_BY_NAME.put("extraAggressive", 4);
+        FLOW_NAMES_BY_LEVEL.put(0, "none");
+        FLOW_NAMES_BY_LEVEL.put(1, "light");
+        FLOW_NAMES_BY_LEVEL.put(2, "normal");
+        FLOW_NAMES_BY_LEVEL.put(3, "aggressive");
+        FLOW_NAMES_BY_LEVEL.put(4, "extraAggressive");
+        EXCEPTION_LEVELS_BY_NAME.put("none", 0);
+        EXCEPTION_LEVELS_BY_NAME.put("light", 1);
+        EXCEPTION_LEVELS_BY_NAME.put("heavy", 2);
+        EXCEPTION_NAMES_BY_LEVEL.put(0, "none");
+        EXCEPTION_NAMES_BY_LEVEL.put(1, "light");
+        EXCEPTION_NAMES_BY_LEVEL.put(2, "heavy");
+        LEVEL_NAMES_BY_POLICY.put(FlowObfuscationPolicy.NONE.name(), "none");
+        LEVEL_NAMES_BY_POLICY.put(FlowObfuscationPolicy.LIGHT.name(), "light");
+        LEVEL_NAMES_BY_POLICY.put(FlowObfuscationPolicy.NORMAL.name(), "normal");
+        LEVEL_NAMES_BY_POLICY.put(FlowObfuscationPolicy.AGGRESSIVE.name(), "aggressive");
+        LEVEL_NAMES_BY_POLICY.put(ExceptionObfuscationPolicy.HEAVY.name(), "heavy");
     }
 
     public ObfuscateOptions(final String parent, final String child) {
@@ -161,7 +203,7 @@ public class ObfuscateOptions implements Serializable {
         this.j = true;
         this.XN = false;
         this.ar = false;
-        this.F = MixedCaseNamesMode.d;
+        this.F = MixedCaseNamesMode.IF_IN_ARCHIVE;
         this.ay = false;
         this.dV = false;
         this.aC = 0;
@@ -234,22 +276,22 @@ public class ObfuscateOptions implements Serializable {
                 this.dE = obfuscateOptions.dE;
                 this.di = obfuscateOptions.di;
                 this.dB = obfuscateOptions.dB;
-                this.a = true;
+                this.loaded = true;
                 try {
                     objectInputStream.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
-            } catch (final IOException ex2) {
-            } catch (final ClassNotFoundException ex3) {
-            } catch (final ClassCastException ex4) {
-            } catch (final AssertionFailedException ex5) {
-                throw ex5;
-            } catch (final Throwable t) {
+            } catch (final IOException ioExceptionValue) {
+            } catch (final ClassNotFoundException classNotFoundException) {
+            } catch (final ClassCastException classCastException) {
+            } catch (final AssertionFailedException assertionFailedException) {
+                throw assertionFailedException;
+            } catch (final Throwable throwable) {
             } finally {
                 if (objectInputStream != null) {
                     try {
                         objectInputStream.close();
-                    } catch (final IOException ex6) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }
@@ -257,6 +299,6 @@ public class ObfuscateOptions implements Serializable {
     }
 
     public static String getExceptionLevelName(Integer integer) {
-        return (String) XJ.get(integer);
+        return (String) EXCEPTION_NAMES_BY_LEVEL.get(integer);
     }
 }

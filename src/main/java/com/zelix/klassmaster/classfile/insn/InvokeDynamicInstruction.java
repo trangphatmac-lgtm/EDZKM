@@ -15,19 +15,19 @@ public class InvokeDynamicInstruction extends ConstantRefInstruction {
     @Override
     public void printDisassembly(PrintWriter printWriter, StringBuilder stringBuilder) throws UnknownOpcodeException {
         StringBuilder stringBuilder1 = new StringBuilder(100);
-        String string = this.getMnemonic();
+        String mnemonic = this.getMnemonic();
         ResolvedInvokeDynamic resolvedInvokeDynamic = (ResolvedInvokeDynamic) this.constantEntry;
-        stringBuilder1.append(string + " " + (resolvedInvokeDynamic != null ? resolvedInvokeDynamic.getIndex() : "null"));
-        String string1 = Instruction.getDescriptionComment(this.opcode);
-        string1 = Instruction.formatDescription(string1, resolvedInvokeDynamic != null ? resolvedInvokeDynamic.getNameAndTypeString() : "null");
-        string1 = Instruction.formatDescription(
-                string1,
+        stringBuilder1.append(mnemonic + " " + (resolvedInvokeDynamic != null ? resolvedInvokeDynamic.getIndex() : "null"));
+        String descriptionComment = Instruction.getDescriptionComment(this.opcode);
+        descriptionComment = Instruction.formatDescription(descriptionComment, resolvedInvokeDynamic != null ? resolvedInvokeDynamic.getNameAndTypeString() : "null");
+        descriptionComment = Instruction.formatDescription(
+                descriptionComment,
                 resolvedInvokeDynamic != null
                         ? (resolvedInvokeDynamic.getBootstrapMethodHandle() != null ? resolvedInvokeDynamic.getBootstrapMethodHandle().getDisplayString() : "null")
                         : "null"
         );
-        if (string1.length() > 0) {
-            stringBuilder1.append("\t" + string1);
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);

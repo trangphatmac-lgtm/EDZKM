@@ -9,8 +9,8 @@ public abstract class ChangeLogMethodSignatureNode extends ChangeLogSimpleNode i
     public String argumentTypes;
 
     @Override
-    public final void setParsedName(Object object) {
-        this.methodName = (String) object;
+    public final void setParsedName(Object parsedName) {
+        this.methodName = (String) parsedName;
     }
 
     public ChangeLogMethodSignatureNode(int ba) {
@@ -18,7 +18,7 @@ public abstract class ChangeLogMethodSignatureNode extends ChangeLogSimpleNode i
     }
 
     @Override
-    public final void setTypeName(Object object) {
-        this.argumentTypes = (String) object;
+    public final void setTypeName(Object typeName) {
+        this.argumentTypes = (String) typeName;
     }
 }

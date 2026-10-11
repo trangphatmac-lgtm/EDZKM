@@ -169,18 +169,18 @@ public class LocalVariableEntry extends ClassFileComponent implements Utf8Consta
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareByLocalIndex((LocalVariableEntry) object);
+    public int compareTo(Object other) {
+        return this.compareByLocalIndex((LocalVariableEntry) other);
     }
 
     public void remapDescriptorClassNames(Object object, Object object1, HashMap hashMap) throws ZkmProcessingException {
         MutableInt mutableInt = new MutableInt(0);
-        String string = ClassFileBase.extractClassName(this.getDescriptorConstant().getValue(), mutableInt);
-        if (string != null) {
-            String string1 = (String) ZkmUtils.mapOrSelf(string, hashMap);
-            if (!string1.equals(string)) {
-                String string2 = ClassFileBase.toTypeDescriptor(string1, mutableInt.getValue());
-                this.getDescriptorConstant().setValue(string2);
+        String key = ClassFileBase.extractClassName(this.getDescriptorConstant().getValue(), mutableInt);
+        if (key != null) {
+            String string1 = (String) ZkmUtils.mapOrSelf(key, hashMap);
+            if (!string1.equals(key)) {
+                String value = ClassFileBase.toTypeDescriptor(string1, mutableInt.getValue());
+                this.getDescriptorConstant().setValue(value);
             }
         }
     }
@@ -206,12 +206,12 @@ public class LocalVariableEntry extends ClassFileComponent implements Utf8Consta
         this.endPc = this.startPc + ba;
         listMultimap1.addValue(integerCache.valueOf(this.startPc), this);
         listMultimap1.addValue(integerCache.valueOf(this.endPc), this);
-        int bb = classFileInputStream.readUnsignedShort();
-        int bc = classFileInputStream.readUnsignedShort();
-        int bd = classFileInputStream.readUnsignedShort();
-        this.localIndex = localVariableList1.getSlotAt(bd);
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(bb);
-        ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(bc);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        int constantPoolIndexValue = classFileInputStream.readUnsignedShort();
+        int elementIndex = classFileInputStream.readUnsignedShort();
+        this.localIndex = localVariableList1.getSlotAt(elementIndex);
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
+        ConstantPoolEntry constantPoolEntry1 = this.getConstantPoolEntry(constantPoolIndexValue);
         if (constantPoolEntry instanceof ConstantUtf8 && constantPoolEntry1 instanceof ConstantUtf8 && this.localIndex != null) {
             this.setNameConstant((ConstantUtf8) constantPoolEntry);
             this.setDescriptorConstant((ConstantUtf8) constantPoolEntry1);
@@ -219,7 +219,7 @@ public class LocalVariableEntry extends ClassFileComponent implements Utf8Consta
             listMultimap.addValue(this.getDescriptorConstant(), this);
         } else {
             this.valid = false;
-            this.buildRawBytes(bb, bc, bd);
+            this.buildRawBytes(constantPoolIndex, constantPoolIndexValue, elementIndex);
         }
     }
 
@@ -237,8 +237,8 @@ public class LocalVariableEntry extends ClassFileComponent implements Utf8Consta
 
     public void obfuscateName() {
         if (HiddenOptionFlags.MARK_RENAMED_LOCALS) {
-            String string = this.getNameConstant().getValue() + '_' + "a";
-            this.getNameConstant().setValue(string);
+            String value = this.getNameConstant().getValue() + '_' + "a";
+            this.getNameConstant().setValue(value);
         } else {
             this.getNameConstant().setValue("a");
         }

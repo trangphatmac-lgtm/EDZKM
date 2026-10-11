@@ -40,9 +40,9 @@ public class PropertyLookupValue implements TrackedValue {
     public int hashCode() {
         boolean strictMergeEnabled = StackFrameState.isStrictMergeEnabled();
         int ba = 0;
-        boolean bl = strictMergeEnabled;
+        boolean strictMergeEnabledValue = strictMergeEnabled;
         PropertyLookupValue propertyLookupValue1 = this;
-        if (bl) {
+        if (strictMergeEnabledValue) {
             if (this.keyValues != null) {
                 ba = this.keyValues.hashCode();
             }
@@ -51,7 +51,7 @@ public class PropertyLookupValue implements TrackedValue {
         }
 
         HashSet hashSet;
-        if (bl) {
+        if (strictMergeEnabledValue) {
             if (propertyLookupValue1.defaultValues != null) {
                 ba ^= this.defaultValues.hashCode();
             }
@@ -99,12 +99,12 @@ public class PropertyLookupValue implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        boolean bl1 = object instanceof PropertyLookupValue;
+        boolean bl1 = other instanceof PropertyLookupValue;
         if (!strictMergeDisabled) {
             if (bl1) {
-                PropertyLookupValue propertyLookupValue1 = (PropertyLookupValue) object;
+                PropertyLookupValue propertyLookupValue1 = (PropertyLookupValue) other;
                 PropertyLookupValue propertyLookupValue2 = this;
                 if (!strictMergeDisabled) {
                     if (!this.areSetsEqual(this.keyValues, propertyLookupValue1.keyValues)) {

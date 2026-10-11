@@ -35,8 +35,8 @@ public class ASTExecuteStatement extends SummarizingStatementNode {
     public void executeStatement(Object object, Object object1, Object object2, Object object3) throws ZkmException, IOException {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object;
         PrintWriter printWriter = scriptEnvironment1.getLogWriter();
-        String string = ZkmScriptSimpleNode.getTimestampPrefix();
-        String string1 = string + " Executing command...";
+        String timestampPrefix = ZkmScriptSimpleNode.getTimestampPrefix();
+        String string1 = timestampPrefix + " Executing command...";
         printWriter.println(string1 + " [" + this.command + "]");
         System.out.println(string1);
         Runtime runtime1 = Runtime.getRuntime();
@@ -58,8 +58,8 @@ public class ASTExecuteStatement extends SummarizingStatementNode {
             }
 
             process = runtime1.exec(string2 + this.command);
-            ProcessOutputPump processOutputPump = new ProcessOutputPump(process.getErrorStream(), printWriter, string.length() + 1, true);
-            ProcessOutputPump processOutputPump1 = new ProcessOutputPump(process.getInputStream(), printWriter, string.length() + 1, false);
+            ProcessOutputPump processOutputPump = new ProcessOutputPump(process.getErrorStream(), printWriter, timestampPrefix.length() + 1, true);
+            ProcessOutputPump processOutputPump1 = new ProcessOutputPump(process.getInputStream(), printWriter, timestampPrefix.length() + 1, false);
             processOutputPump.start();
             processOutputPump1.start();
             if (!SystemEnvironmentConstants.JAVA_VM_VENDOR.startsWith("Microsoft")) {

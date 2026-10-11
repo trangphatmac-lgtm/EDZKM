@@ -11,47 +11,47 @@ public class AnalyzedStackTraceLine extends StackTraceLine {
     public MethodNameAndArgs[] resolveOriginalMethodNames(MethodInfo methodInfo1, LoadedChangeLog loadedChangeLog) throws StackTraceTranslateException {
         StringBuilder stringBuilder = new StringBuilder();
         List list1 = methodInfo1.getParameterTypeNames();
-        String[] strings = this.translateArgumentTypes(list1, stringBuilder, loadedChangeLog);
-        String string = methodInfo1.getReturnTypeName();
-        String string1 = this.translateTypeName(string, loadedChangeLog);
+        String[] argumentTypes = this.translateArgumentTypes(list1, stringBuilder, loadedChangeLog);
+        String returnTypeName = methodInfo1.getReturnTypeName();
+        String string1 = this.translateTypeName(returnTypeName, loadedChangeLog);
         MethodNameAndArgs[] methodNameAndArgs;
         if (methodInfo1.isConstructor()) {
             int ba = super.className.lastIndexOf(".");
-            String string2;
+            String classNameValue;
             if (ba == -1) {
-                string2 = super.className;
+                classNameValue = super.className;
             } else {
-                string2 = super.className.substring(ba + 1);
+                classNameValue = super.className.substring(ba + 1);
             }
 
-            methodNameAndArgs = new MethodNameAndArgs[]{new MethodNameAndArgs(string2, strings)};
+            methodNameAndArgs = new MethodNameAndArgs[]{new MethodNameAndArgs(classNameValue, argumentTypes)};
         } else if (methodInfo1.isStaticInitializer()) {
-            methodNameAndArgs = new MethodNameAndArgs[]{new MethodNameAndArgs("static", strings)};
+            methodNameAndArgs = new MethodNameAndArgs[]{new MethodNameAndArgs("static", argumentTypes)};
         } else {
-            String string3 = methodInfo1.getJvmName();
-            String[] strings1 = loadedChangeLog.findOriginalMethodNames(super.className, string3, string1, stringBuilder.toString());
+            String jvmName = methodInfo1.getJvmName();
+            String[] strings1 = loadedChangeLog.findOriginalMethodNames(super.className, jvmName, string1, stringBuilder.toString());
             if (strings1 != null && strings1.length != 0) {
                 methodNameAndArgs = new MethodNameAndArgs[strings1.length];
 
-                for (int i = 0; i < strings1.length; i++) {
-                    methodNameAndArgs[i] = new MethodNameAndArgs(strings1[i], strings);
+                for (int methodNameAndArgIndex = 0; methodNameAndArgIndex < strings1.length; methodNameAndArgIndex++) {
+                    methodNameAndArgs[methodNameAndArgIndex] = new MethodNameAndArgs(strings1[methodNameAndArgIndex], argumentTypes);
                 }
             } else {
                 if (loadedChangeLog.isNewClassName(super.className)) {
                     StringBuilder stringBuilder1 = new StringBuilder();
 
-                    for (int i = 0; i < list1.size(); i++) {
-                        stringBuilder1.append((String) list1.get(i));
-                        if (i < list1.size() - 1) {
+                    for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                        stringBuilder1.append((String) list1.get(elementIndex));
+                        if (elementIndex < list1.size() - 1) {
                             stringBuilder1.append(", ");
                         }
                     }
 
                     throw new StackTraceTranslateException(
                             "Method '"
-                                    + string
+                                    + returnTypeName
                                     + " "
-                                    + string3
+                                    + jvmName
                                     + "("
                                     + stringBuilder1.toString()
                                     + ")' is in the bytecode of class with original name '"
@@ -60,7 +60,7 @@ public class AnalyzedStackTraceLine extends StackTraceLine {
                     );
                 }
 
-                methodNameAndArgs = new MethodNameAndArgs[]{new MethodNameAndArgs(string3, strings)};
+                methodNameAndArgs = new MethodNameAndArgs[]{new MethodNameAndArgs(jvmName, argumentTypes)};
             }
         }
 
@@ -86,15 +86,15 @@ public class AnalyzedStackTraceLine extends StackTraceLine {
                 this.resolveClassAndLine(resolvedStackTraceLine, loadedChangeLog);
                 MethodNameAndArgs[] methodNameAndArgs = this.resolveOriginalMethodNames(methodInfo1, loadedChangeLog);
 
-                for (int i = 0; i < methodNameAndArgs.length; i++) {
-                    arrayList.add(methodNameAndArgs[i]);
+                for (int methodNameAndArgIndex = 0; methodNameAndArgIndex < methodNameAndArgs.length; methodNameAndArgIndex++) {
+                    arrayList.add(methodNameAndArgs[methodNameAndArgIndex]);
                 }
             } else {
                 MethodInfo methodInfo2 = frameMethodCandidate.getMethod();
                 MethodNameAndArgs[] methodNameAndArgs1 = this.resolveOriginalMethodNames(methodInfo2, loadedChangeLog);
 
-                for (int i = 0; i < methodNameAndArgs1.length; i++) {
-                    arrayList.add(methodNameAndArgs1[i]);
+                for (int methodNameAndArgs1ElementIndex = 0; methodNameAndArgs1ElementIndex < methodNameAndArgs1.length; methodNameAndArgs1ElementIndex++) {
+                    arrayList.add(methodNameAndArgs1[methodNameAndArgs1ElementIndex]);
                 }
             }
         }

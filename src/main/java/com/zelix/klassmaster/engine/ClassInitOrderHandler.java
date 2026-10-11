@@ -27,30 +27,30 @@ public class ClassInitOrderHandler {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = (String) entry.getKey();
-                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string);
+                String key = (String) entry.getKey();
+                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
                 if (programClass1 != null) {
                     Iterator iterator1 = ((Set) entry.getValue()).iterator();
 
                     while (iterator1.hasNext()) {
-                        String string1 = (String) iterator1.next();
-                        ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(string1);
+                        String keyValue = (String) iterator1.next();
+                        ProgramClass programClass2 = ClassHierarchyNode.findProgramClass(keyValue);
                         if (programClass2 != null) {
                             this.initializedAfterMap.addValue(programClass1, programClass2);
                             this.laterInitializedClasses.add(programClass2);
-                            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string1);
+                            ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(keyValue);
                             this.laterInitializedClasses.addAll(classHierarchyNode.getProgramSuperclasses());
                         } else {
                             scriptEnvironment1.logWarning(
                                     "Class name '"
-                                            + ZkmUtils.slashesToDots(string1)
+                                            + ZkmUtils.slashesToDots(keyValue)
                                             + "' appears in a '"
                                             + "classInitializationOrder"
                                             + "' statement but it has not been opened for obfuscation. It will be ignored."
                             );
                             scriptEnvironment1.logError(
                                     "Class '"
-                                            + ZkmUtils.slashesToDots(string1)
+                                            + ZkmUtils.slashesToDots(keyValue)
                                             + "' not opened. It was specified as initialized after class '"
                                             + programClass1.getOriginalDottedName()
                                             + " in a '"
@@ -62,7 +62,7 @@ public class ClassInitOrderHandler {
                 } else {
                     scriptEnvironment1.logError(
                             "Class '"
-                                    + ZkmUtils.slashesToDots(string)
+                                    + ZkmUtils.slashesToDots(key)
                                     + "' not opened. It was specified as initialized before "
                                     + (((Set) entry.getValue()).size() == 1 ? "another class" : "other classes")
                                     + " in a '"

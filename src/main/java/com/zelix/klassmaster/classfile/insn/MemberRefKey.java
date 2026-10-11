@@ -12,22 +12,22 @@ public class MemberRefKey {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof MemberRefKey)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof MemberRefKey)) {
             return false;
         }
 
-        MemberRefKey memberRefKey1 = (MemberRefKey) object;
+        MemberRefKey memberRefKey1 = (MemberRefKey) other;
         return this.hash == memberRefKey1.hash
                 && this.className.equals(memberRefKey1.className)
                 && this.memberName.equals(memberRefKey1.memberName)
                 && this.descriptor.equals(memberRefKey1.descriptor);
     }
 
-    public MemberRefKey(String string, String string1, String string2) {
-        this.className = string;
-        this.memberName = string1;
-        this.descriptor = string2;
-        this.hash = string.hashCode() ^ string1.hashCode() ^ string2.hashCode();
+    public MemberRefKey(String classNameArgument, String memberNameArgument, String descriptorArgument) {
+        this.className = classNameArgument;
+        this.memberName = memberNameArgument;
+        this.descriptor = descriptorArgument;
+        this.hash = classNameArgument.hashCode() ^ memberNameArgument.hashCode() ^ descriptorArgument.hashCode();
     }
 }

@@ -37,7 +37,7 @@ public class E4XmiXmlHandler extends GenericXmlFileHandler {
         XmlElementNode xmlElementNode = (XmlElementNode) object;
         boolean predicateFlag = XmlConfigFileHandler.getPredicateFlag();
         xmlElementNode.getTagName();
-        boolean bl = predicateFlag;
+        boolean predicateFlagValue = predicateFlag;
         XmlElementNode xmlElementNode1 = this.getOpenElement(0);
         if (xmlElementNode1 != null) {
             xmlElementNode1.getTagName();
@@ -46,56 +46,42 @@ public class E4XmiXmlHandler extends GenericXmlFileHandler {
         Enumeration enumeration = xmlElementNode.getAttributeNames();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            ObservableHolder observableHolder = xmlElementNode.getAttributeValue(string);
-            label47:
+            String key = (String) enumeration.nextElement();
+            ObservableHolder observableHolder = xmlElementNode.getAttributeValue(key);
             if (observableHolder != null) {
-                String string1 = (String) observableHolder.getValue();
-                String string10;
-                String string11;
-                if (string1.startsWith("bundleclass://")) {
-                    int ba = string1.lastIndexOf("/");
-                    if (ba > -1 && ba < string1.length() - 1) {
-                        String string2 = string1.substring(ba + 1);
+                String valueValue = (String) observableHolder.getValue();
+                if (valueValue.startsWith("bundleclass://")) {
+                    int ba = valueValue.lastIndexOf("/");
+                    if (ba > -1 && ba < valueValue.length() - 1) {
+                        String string2 = valueValue.substring(ba + 1);
                         ProgramClass programClass1 = this.findProgramClass(string2);
                         if (programClass1 != null && programClass1.isRenamed()) {
-                            String string3 = string1.substring(0, ba + 1);
-                            String string4 = string3 + programClass1.getDottedClassName();
-                            observableHolder.setValue(string4);
+                            String string3 = valueValue.substring(0, ba + 1);
+                            String valueValue2 = string3 + programClass1.getDottedClassName();
+                            observableHolder.setValue(valueValue2);
                         }
                     }
 
-                    if (!bl) {
-                        break label47;
-                    }
-
-                    string10 = string1;
-                    string11 = "platform:/plugin/";
-                } else {
-                    string10 = string1;
-                    string11 = "platform:/plugin/";
-                }
-
-                if (string10.startsWith(string11)) {
-                    int bb = string1.indexOf("/", "platform:/plugin/".length());
-                    if (bb > -1 && bb < string1.length() - 1) {
-                        string1.substring(0, bb + 1);
-                        String string8 = string1.substring(bb + 1);
+                } else if (valueValue.startsWith("platform:/plugin/")) {
+                    int bb = valueValue.indexOf("/", "platform:/plugin/".length());
+                    if (bb > -1 && bb < valueValue.length() - 1) {
+                        valueValue.substring(0, bb + 1);
+                        String string8 = valueValue.substring(bb + 1);
                         int bc = string8.lastIndexOf("/");
                         if (bc > -1) {
                             String string9 = string8.substring(0, bc);
                             String string5 = string8.substring(bc);
                             String string6 = this.renamePackagePath(string9);
                             if (!string9.equals(string6)) {
-                                String string7 = string1.substring(0, bb + 1) + string6 + string5;
-                                observableHolder.setValue(string7);
+                                String valueValue3 = valueValue.substring(0, bb + 1) + string6 + string5;
+                                observableHolder.setValue(valueValue3);
                             }
                         }
                     }
                 }
             }
 
-            if (bl) {
+            if (predicateFlagValue) {
                 break;
             }
         }
@@ -105,7 +91,7 @@ public class E4XmiXmlHandler extends GenericXmlFileHandler {
 
     @Override
     public void analyzeElement(XmlElementNode xmlElementNode, Map map1, Object object, Object object1, Object object2) throws ZkmException, IOException {
-        String string = xmlElementNode.getTagName();
+        String tagName = xmlElementNode.getTagName();
         XmlElementNode xmlElementNode1 = this.getOpenElement(0);
         if (xmlElementNode1 != null) {
             xmlElementNode1.getTagName();
@@ -114,26 +100,26 @@ public class E4XmiXmlHandler extends GenericXmlFileHandler {
         Enumeration enumeration = xmlElementNode.getAttributeNames();
 
         while (enumeration.hasMoreElements()) {
-            String string1 = (String) enumeration.nextElement();
-            ObservableHolder observableHolder = xmlElementNode.getAttributeValue(string1);
+            String key = (String) enumeration.nextElement();
+            ObservableHolder observableHolder = xmlElementNode.getAttributeValue(key);
             if (observableHolder != null) {
-                String string2 = (String) observableHolder.getValue();
-                if (string2.startsWith("bundleclass://")) {
-                    int ba = string2.lastIndexOf("/");
-                    if (ba > -1 && ba < string2.length()) {
-                        String string3 = string2.substring(ba + 1);
+                String valueValue = (String) observableHolder.getValue();
+                if (valueValue.startsWith("bundleclass://")) {
+                    int ba = valueValue.lastIndexOf("/");
+                    if (ba > -1 && ba < valueValue.length()) {
+                        String string3 = valueValue.substring(ba + 1);
                         ProgramClass programClass1 = this.findProgramClass(string3);
                         if (programClass1 != null) {
-                            String string4 = "reference in '"
+                            String valueValue2 = "reference in '"
                                     + super.resourceName
                                     + "' by '"
-                                    + string
+                                    + tagName
                                     + "' tag '"
-                                    + string1
+                                    + key
                                     + "' attribute with value '"
-                                    + string2
+                                    + valueValue
                                     + "'";
-                            map1.put(programClass1, string4);
+                            map1.put(programClass1, valueValue2);
                         }
                     }
                 }

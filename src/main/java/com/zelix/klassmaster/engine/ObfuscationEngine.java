@@ -144,16 +144,16 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         Iterator iterator = changeLogMapping1.getNewClassNames().iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            if (!ClassHierarchyNode.isProgramClassName(string)) {
-                String string1 = changeLogMapping1.getOriginalClassName(string);
-                if (string1 == null) {
-                    string1 = string;
+            String originalClassNameValue = (String) iterator.next();
+            if (!ClassHierarchyNode.isProgramClassName(originalClassNameValue)) {
+                String originalClassName = changeLogMapping1.getOriginalClassName(originalClassNameValue);
+                if (originalClassName == null) {
+                    originalClassName = originalClassNameValue;
                 }
 
-                ListMultimap listMultimap = changeLogMapping1.getLineNumberMappings(string1);
+                ListMultimap listMultimap = changeLogMapping1.getLineNumberMappings(originalClassName);
                 if (listMultimap != null) {
-                    nestedMultiMap.putMultimap(string, listMultimap);
+                    nestedMultiMap.putMultimap(originalClassNameValue, listMultimap);
                 }
             }
         }
@@ -179,89 +179,60 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     ObservableHolder observableHolder = new ObservableHolder();
                     bufferedReader = ZkmFileUtils.createBomAwareReader(new FileInputStream(file2), "UTF-8", observableHolder);
 
-                    label211:
-                    while (true) {
-                        String string4;
-                        boolean bl;
-                        while (true) {
-                            if ((string4 = bufferedReader.readLine()) == null) {
-                                return new ArrayList(syncIndexedSet);
+                    String name;
+                    while ((name = bufferedReader.readLine()) != null) {
+                        name = name.trim();
+                        if (name.length() == 0
+                                || name.length() >= 2 && (name.charAt(0) == '/' || name.charAt(1) == '/')) {
+                            continue;
+                        }
+                        if (!HiddenOptionFlags.ALLOW_HASH_NAMES_IN_NAME_FILE && name.charAt(0) == '#') {
+                            continue;
+                        }
+
+                        String originalLine = name;
+                        if (!HiddenOptionFlags.DONT_UNESCAPE_NAME_FILE) {
+                            name = ZkmUtils.unescapeJavaString(name);
+                        }
+                        if (HiddenOptionFlags.VALIDATE_NAME_FILE_IDENTIFIERS) {
+                            if (!Character.isJavaIdentifierStart(name.charAt(0))) {
+                                scriptEnvironment1.logWarning(
+                                        "Line '" + originalLine + "' in file '" + file2.getAbsolutePath()
+                                                + "' specified by '" + string1
+                                                + "' parameter is not a valid Java identifier and will not be used. (A)"
+                                );
+                                continue;
                             }
-
-                            string4 = string4.trim();
-                            if (string4.length() > 0) {
-                                if (string4.length() >= 2) {
-                                    if (string4.charAt(0) == '/' || string4.charAt(1) == '/') {
-                                        continue;
-                                    }
-
-                                    bl = HiddenOptionFlags.ALLOW_HASH_NAMES_IN_NAME_FILE;
+                            boolean validIdentifier = true;
+                            for (int characterIndex = 1; characterIndex < name.length(); characterIndex++) {
+                                if (!Character.isJavaIdentifierPart(name.charAt(characterIndex))) {
+                                    scriptEnvironment1.logWarning(
+                                            "Line '" + originalLine + "' in file '" + file2.getAbsolutePath()
+                                                    + "' specified by '" + string1
+                                                    + "' parameter is not a valid Java identifier and will not be used. (B)"
+                                    );
+                                    validIdentifier = false;
                                     break;
                                 }
-
-                                bl = HiddenOptionFlags.ALLOW_HASH_NAMES_IN_NAME_FILE;
-                                break;
                             }
-                        }
-
-                        if (bl || string4.charAt(0) != '#') {
-                            String string3 = string4;
-                            if (!HiddenOptionFlags.DONT_UNESCAPE_NAME_FILE) {
-                                string4 = ZkmUtils.unescapeJavaString(string4);
-                                bl = HiddenOptionFlags.VALIDATE_NAME_FILE_IDENTIFIERS;
-                            } else {
-                                bl = HiddenOptionFlags.VALIDATE_NAME_FILE_IDENTIFIERS;
+                            if (!validIdentifier) {
+                                continue;
                             }
-
-                            if (bl) {
-                                if (!Character.isJavaIdentifierStart(string4.charAt(0))) {
+                        } else {
+                            for (int characterIndex = 0; characterIndex < name.length(); characterIndex++) {
+                                if (Character.isWhitespace(name.charAt(characterIndex))) {
                                     scriptEnvironment1.logWarning(
-                                            "Line '"
-                                                    + string3
-                                                    + "' in file '"
-                                                    + file2.getAbsolutePath()
-                                                    + "' specified by '"
-                                                    + string1
-                                                    + "' parameter is not a valid Java identifier and will not be used. (A)"
+                                            "Line '" + originalLine + "' in file '" + file2.getAbsolutePath()
+                                                    + "' specified by '" + string1
+                                                    + "' parameter contains white space at " + characterIndex
+                                                    + ". If you have specified a change log that needs to be parsable then it may cause unexpected problems."
                                     );
-                                    continue;
-                                }
-
-                                for (int i = 1; i < string4.length(); i++) {
-                                    if (!Character.isJavaIdentifierPart(string4.charAt(i))) {
-                                        scriptEnvironment1.logWarning(
-                                                "Line '"
-                                                        + string3
-                                                        + "' in file '"
-                                                        + file2.getAbsolutePath()
-                                                        + "' specified by '"
-                                                        + string1
-                                                        + "' parameter is not a valid Java identifier and will not be used. (B)"
-                                        );
-                                        continue label211;
-                                    }
-                                }
-                            } else {
-                                for (int i = 0; i < string4.length(); i++) {
-                                    if (Character.isWhitespace(string4.charAt(i))) {
-                                        scriptEnvironment1.logWarning(
-                                                "Line '"
-                                                        + string3
-                                                        + "' in file '"
-                                                        + file2.getAbsolutePath()
-                                                        + "' specified by '"
-                                                        + string1
-                                                        + "' parameter contains white space at "
-                                                        + i
-                                                        + ". If you have specified a change log that needs to be parsable then it may cause unexpected problems."
-                                        );
-                                    }
                                 }
                             }
-
-                            syncIndexedSet.add(string4);
                         }
+                        syncIndexedSet.add(name);
                     }
+                    return new ArrayList(syncIndexedSet);
                 } catch (FileNotFoundException fileNotFoundException) {
                     scriptEnvironment1.logFatalError(
                             "Could not read file '"
@@ -297,20 +268,20 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
     }
 
     public static String xorStrings(String string, String string1) {
-        char[] ba = string.toCharArray();
-        char[] bb = string1.toCharArray();
-        StringBuilder stringBuilder = new StringBuilder(ba.length);
+        char[] characterArray = string.toCharArray();
+        char[] characterArrayValue = string1.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder(characterArray.length);
 
-        for (int i = 0; i < ba.length; i++) {
-            char bd = ba[i];
-            char be;
-            if (i < bb.length - 1) {
-                be = bb[i];
+        for (int i = 0; i < characterArray.length; i++) {
+            char characterArrayElement = characterArray[i];
+            char characterArrayValueElement;
+            if (i < characterArrayValue.length - 1) {
+                characterArrayValueElement = characterArrayValue[i];
             } else {
-                be = bb[i % bb.length];
+                characterArrayValueElement = characterArrayValue[i % characterArrayValue.length];
             }
 
-            stringBuilder.append((char) ((byte) bd ^ (byte) be));
+            stringBuilder.append((char) ((byte) characterArrayElement ^ (byte) characterArrayValueElement));
         }
 
         return stringBuilder.toString();
@@ -331,215 +302,95 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
     
     
-    public boolean checkLicenseTimestamps(long ba, long bb, Object object) throws ZkmException, IOException {
+    public boolean checkLicenseTimestamps(long licenseTimestamp, long currentTimestamp, Object licenseContext) throws ZkmException, IOException {
         if (isPermanentLicense()) {
             return true;
         }
-        String string = object.getClass().getName();
+        String contextClassName = licenseContext.getClass().getName();
         if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
         }
-
-        if (ba > bb) {
+        if (licenseTimestamp > currentTimestamp) {
             if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
             }
-
             return false;
-        } else {
-            String string1 = xorStrings(LicenseCheckBase.getEncodedEvaluationPeriod(), LicenseCheckBase.getXorKey());
-            String string3 = string1;
-            String string5 = string3;
-            long bc = this.m(string5);
-            String string2 = xorStrings(LicenseCheckBase.getEncodedGracePeriod(), LicenseCheckBase.getXorKey());
-            String string4 = string2;
-            String string6 = string4;
-            long bd = this.m(string6);
-            if (ba < bb - bc) {
-                if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
-                }
+        }
 
-                return false;
-            } else {
-                long be = ba + bd;
-                ClassPathResolver classPathResolver1 = null;
-                boolean bl = false ;
+        String encodedEvaluationPeriod = xorStrings(LicenseCheckBase.getEncodedEvaluationPeriod(), LicenseCheckBase.getXorKey());
+        long evaluationPeriod = this.decodeLicenseNumber(encodedEvaluationPeriod);
+        String encodedGracePeriod = xorStrings(LicenseCheckBase.getEncodedGracePeriod(), LicenseCheckBase.getXorKey());
+        long gracePeriod = this.decodeLicenseNumber(encodedGracePeriod);
+        if (licenseTimestamp < currentTimestamp - evaluationPeriod) {
+            if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
+            }
+            return false;
+        }
 
-                label339:
-                {
-                    boolean bl2;
-                    label338:
-                    {
-                        label337:
-                        {
-                            label348:
-                            {
-                                try {
-                                    bl = true;
-                                    classPathResolver1 = new ClassPathResolver(System.getProperty("java.class.path"));
-                                    Object[] objects = classPathResolver1.getEntries();
-
-                                    for (int i = 0; i < objects.length; i++) {
-                                        if (objects[i] instanceof File) {
-                                            long bh = ((File) objects[i]).lastModified();
-                                            if (bh > be) {
-                                                if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
-                                                }
-
-                                                bl = false;
-                                                break label339;
-                                            }
-                                        } else {
-                                            File file1 = new File(((ZipFile) objects[i]).getName());
-                                            if (file1.exists()) {
-                                                if (file1.lastModified() > be) {
-                                                    if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
-                                                    }
-
-                                                    bl2 = false;
-                                                    bl = false;
-                                                    break label338;
-                                                }
-
-                                                if (file1.getName().endsWith("ZKM.jar")) {
-                                                    ArchiveZipFile archiveZipFile = null;
-                                                    boolean bl1 = false ;
-
-                                                    label325:
-                                                    {
-                                                        label324:
-                                                        {
-                                                            label323:
-                                                            {
-                                                                try {
-                                                                    label321:
-                                                                    {
-                                                                        long bg;
-                                                                        try {
-                                                                            bl1 = true;
-                                                                            archiveZipFile = new ArchiveZipFile(file1);
-                                                                            ZipEntry zipEntry1 = archiveZipFile.getEntry(string.replace('.', '/') + ".class");
-                                                                            if (zipEntry1 == null) {
-                                                                                bl1 = false;
-                                                                                break label323;
-                                                                            }
-
-                                                                            bg = zipEntry1.getTime();
-                                                                            if (bg > be) {
-                                                                                if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
-                                                                                }
-
-                                                                                bl1 = false;
-                                                                                break label325;
-                                                                            }
-                                                                        } catch (IOException iOException5) {
-                                                                            bl1 = false;
-                                                                            break label321;
-                                                                        }
-
-                                                                        if (bg != -1L) {
-                                                                            if (ba > bg + bc) {
-                                                                                if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
-                                                                                }
-
-                                                                                bl1 = false;
-                                                                                break label324;
-                                                                            }
-
-                                                                            bl1 = false;
-                                                                        } else {
-                                                                            bl1 = false;
-                                                                        }
-                                                                        break label323;
-                                                                    }
-                                                                } finally {
-                                                                    if (bl1) {
-                                                                        if (archiveZipFile != null) {
-                                                                            try {
-                                                                                com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                                                                archiveZipFile.close();
-                                                                            } catch (IOException iOException) {
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                                try {
-                                                                    if (archiveZipFile != null) {
-                                                                        try {
-                                                                            com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                                                            archiveZipFile.close();
-                                                                        } catch (IOException iOException3) {
-                                                                        }
-                                                                    }
-                                                                    continue;
-                                                                } catch (
-                                                                        AssertionFailedException assertionFailedException) {
-                                                                    throw assertionFailedException;
-                                                                }
-                                                            }
-
-                                                            try {
-                                                                com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                                                archiveZipFile.close();
-                                                            } catch (IOException iOException4) {
-                                                            }
-                                                            continue;
-                                                        }
-
-                                                        try {
-                                                            com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                                            archiveZipFile.close();
-                                                            bl = false;
-                                                        } catch (IOException iOException2) {
-                                                            bl = false;
-                                                        }
-                                                        break label348;
-                                                    }
-
-                                                    try {
-                                                        com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
-                                                        archiveZipFile.close();
-                                                        bl = false;
-                                                    } catch (IOException iOException1) {
-                                                        bl = false;
-                                                    }
-                                                    break label337;
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    bl = false;
-                                } finally {
-                                    if (bl) {
-                                        if (classPathResolver1 != null) {
-                                            classPathResolver1.close();
-                                        }
-                                    }
-                                }
-
-                                classPathResolver1.close();
-                                if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
-                                }
-
-                                return true;
-                            }
-
-                            classPathResolver1.close();
-                            return false;
+        long latestAllowedTimestamp = licenseTimestamp + gracePeriod;
+        ClassPathResolver classPath = null;
+        try {
+            classPath = new ClassPathResolver(System.getProperty("java.class.path"));
+            Object[] classPathEntries = classPath.getEntries();
+            for (int entryIndex = 0; entryIndex < classPathEntries.length; entryIndex++) {
+                if (classPathEntries[entryIndex] instanceof File) {
+                    long entryTimestamp = ((File) classPathEntries[entryIndex]).lastModified();
+                    if (entryTimestamp > latestAllowedTimestamp) {
+                        if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
                         }
-
-                        classPathResolver1.close();
                         return false;
                     }
-
-                    classPathResolver1.close();
-                    return bl2;
+                } else {
+                    File archiveFile = new File(((ZipFile) classPathEntries[entryIndex]).getName());
+                    if (archiveFile.exists()) {
+                        if (archiveFile.lastModified() > latestAllowedTimestamp) {
+                            if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
+                            }
+                            return false;
+                        }
+                        if (archiveFile.getName().endsWith("ZKM.jar")) {
+                            ArchiveZipFile archive = null;
+                            try {
+                                long entryTimestamp;
+                                try {
+                                    archive = new ArchiveZipFile(archiveFile);
+                                    ZipEntry classEntry = archive.getEntry(contextClassName.replace('.', '/') + ".class");
+                                    if (classEntry == null) {
+                                        continue;
+                                    }
+                                    entryTimestamp = classEntry.getTime();
+                                    if (entryTimestamp > latestAllowedTimestamp) {
+                                        if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
+                                        }
+                                        return false;
+                                    }
+                                } catch (IOException exception) {
+                                    continue;
+                                }
+                                if (entryTimestamp != -1L && licenseTimestamp > entryTimestamp + evaluationPeriod) {
+                                    if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
+                                    }
+                                    return false;
+                                }
+                            } finally {
+                                if (archive != null) {
+                                    try {
+                                        com.zelix.klassmaster.util.ZkmUtils.<java.io.IOException>mayThrow();
+                                        archive.close();
+                                    } catch (IOException exception) {
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-
-                classPathResolver1.close();
-                return false;
+            }
+        } finally {
+            if (classPath != null) {
+                classPath.close();
             }
         }
+        if (HiddenOptionFlags.DEBUG_LICENSE_CHECK) {
+        }
+        return true;
     }
 
     private static boolean isPermanentLicense() {
@@ -596,7 +447,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             RootPackageNode rootPackageNode1,
             ObservableHolder observableHolder,
             ChangeLogInputFile[] changeLogInputFiles,
-            boolean bl,
+            boolean changeLogTakesPrecedence,
             PrintWriter printWriter,
             String string,
             String string1,
@@ -624,13 +475,13 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             List list22,
             List list23,
             boolean bl1,
-            String string2,
+            String lookupClassNamePrefix,
             boolean bl2,
             boolean bl3,
-            boolean bl4,
+            boolean useFullDescriptor,
             boolean bl5,
             boolean bl6,
-            boolean bl7,
+            boolean deriveGroupingsFromChangeLog,
             int ba,
             int bb,
             int bc,
@@ -660,7 +511,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             boolean bl11,
             boolean bl12,
             MixedCaseNamesMode mixedCaseNamesMode1,
-            boolean bl13,
+            boolean avoidSimpleNameClash,
             boolean bl14,
             int bo,
             String string7,
@@ -686,9 +537,8 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
         com.zelix.klassmaster.util.SetMultiMap setMultiMap7 = null;
 
-        java.lang.String string82 = null;
-        boolean bl21 = bo != 0;
-        BooleanFlag booleanFlag = new BooleanFlag(bl21);
+        boolean valueValue = bo != 0;
+        BooleanFlag booleanFlag = new BooleanFlag(valueValue);
         if (classRepository1.isClasspathChanged()) {
             messageReporter1.reportFatalError(
                     "FATAL ERROR:", "Classpath has been changed but the classes have not been reopened. You must reopen the classes. (A)"
@@ -713,8 +563,8 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 ChangeLogMapping changeLogMapping1 = null;
                 if (changeLogInputFiles != null && changeLogInputFiles.length > 0) {
                     observableHolder.setValue("Parsing Input Change Log");
-                    Boolean boolean3 = bl4;
-                    Boolean boolean2 = bl;
+                    Boolean boolean3 = useFullDescriptor;
+                    Boolean boolean2 = changeLogTakesPrecedence;
                     ScriptEnvironment scriptEnvironment4 = scriptEnvironment1;
                     MessageReporter messageReporter2 = messageReporter1;
                     changeLogMapping1 = this.loadChangeLogs(changeLogInputFiles, messageReporter2, scriptEnvironment4, boolean2, boolean3);
@@ -722,10 +572,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
                 ProcessingStatistics processingStatistics1 = new ProcessingStatistics(super.programClasses.length * 5);
                 ProgramClass[] programClass2 = super.programClasses;
-                int bq = programClass2.length;
+                int lengthValue = programClass2.length;
 
-                for (int i = 0; i < bq; i += 1) {
-                    ProgramClass programClass3 = programClass2[i];
+                for (int programClass2ElementIndex = 0; programClass2ElementIndex < lengthValue; programClass2ElementIndex += 1) {
+                    ProgramClass programClass3 = programClass2[programClass2ElementIndex];
                     programClass3.collectStatistics(processingStatistics1);
                 }
 
@@ -814,27 +664,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         bl22
                 );
                 list26 = null;
-                label2500:
                 if (bn != 0) {
-                    ScriptEnvironment scriptEnvironment32;
-                    label2758:
-                    {
-                        if (list18 == null || list18.size() <= 0) {
-                            if (list19 == null) {
-                                scriptEnvironment32 = scriptEnvironment1;
-                                long de = 99214412922351L;
-                                string82 = "You elected to obfuscate references but you have not specified any references to be obfuscate.";
-                                break label2758;
-                            }
-
-                            if (list19.size() <= 0) {
-                                scriptEnvironment32 = scriptEnvironment1;
-                                long ef = 99214412922351L;
-                                string82 = "You elected to obfuscate references but you have not specified any references to be obfuscate.";
-                                break label2758;
-                            }
-                        }
-
+                    if ((list18 == null || list18.size() <= 0) && (list19 == null || list19.size() <= 0)) {
+                        scriptEnvironment1.logWarning("You elected to obfuscate references but you have not specified any references to be obfuscate.");
+                    } else {
                         TwoKeySetMultiMap twoKeySetMultiMap = new TwoKeySetMultiMap();
                         if (string9 != null && string9.length() > 0) {
                             ScriptEnvironment scriptEnvironment26 = scriptEnvironment1;
@@ -848,10 +681,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
                         referenceObfuscator = new ReferenceObfuscator(booleanFlag, list26, bl5);
                         ProgramClass[] programClass4 = super.programClasses;
-                        int bs = programClass4.length;
+                        int lengthValue2 = programClass4.length;
 
-                        for (int i = 0; i < bs; i += 1) {
-                            ProgramClass programClass5 = programClass4[i];
+                        for (int programClass4ElementIndex = 0; programClass4ElementIndex < lengthValue2; programClass4ElementIndex += 1) {
+                            ProgramClass programClass5 = programClass4[programClass4ElementIndex];
                             if (programClass5.isMultiRelease()) {
                                 Iterator iterator = programClass5.getAllVersions().iterator();
 
@@ -879,11 +712,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         nestedMultiMap = referenceObfuscationExclusions.collectIncludedReferences(
                                 twoKeySetMultiMap, staticInitCalleeAnalyzer1, fixedClassesExclusionSet1
                         );
-                        break label2500;
                     }
-
-                    String string18 = string82;
-                    scriptEnvironment32.logWarning(string18);
                 }
 
                 NameExclusionSet nameExclusionSet6 = new NameExclusionSet(classRepository1, list1, list2, classFileBases5, scriptEnvironment1);
@@ -899,10 +728,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 ObfuscationEngine obfuscationEngine1 = this;
                 classRepository1.recordClassDigests(obfuscationEngine1, integer1, integer2);
                 if (scriptEnvironment1.getSeriousErrorCount() > seriousErrorCount) {
-                    String string101 = scriptEnvironment1.getSeriousErrorsText();
+                    String seriousErrorsText = scriptEnvironment1.getSeriousErrorsText();
                     ea = 81764775538649L;
-                    String string19 = string101;
-                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (A).", string19);
+                    String seriousErrorsTextValue7 = seriousErrorsText;
+                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (A).", seriousErrorsTextValue7);
                 }
 
                 StringEncryptionExclusionSpec stringEncryptionExclusionSpec1 = null;
@@ -971,7 +800,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             listMultimap4 = (ListMultimap) observableHolder6.getValue();
                         }
                     }
-                } else if (changeLogMapping1 != null && changeLogMapping1.hasParameterChangeData() && bl) {
+                } else if (changeLogMapping1 != null && changeLogMapping1.hasParameterChangeData() && changeLogTakesPrecedence) {
                     String string83 = "Input change log '"
                             + changeLogMapping1.getChangeLogName()
                             + "' contains method parameter change data but the '"
@@ -987,10 +816,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 MethodParameterExclusions methodParameterExclusions6 = null;
                 if (classRepository1.isParametersObfuscated()) {
                     ProgramClass[] programClass25 = super.programClasses;
-                    int bu = programClass25.length;
+                    int lengthValue3 = programClass25.length;
 
-                    for (int i = 0; i < bu; i += 1) {
-                        ProgramClass programClass6 = programClass25[i];
+                    for (int programClass25ElementIndex = 0; programClass25ElementIndex < lengthValue3; programClass25ElementIndex += 1) {
+                        ProgramClass programClass6 = programClass25[programClass25ElementIndex];
                         programClass6.clearParameterObfuscatedFlags();
                         if (programClass6.hasVersionedVariants()) {
                             Iterator iterator1 = programClass6.getVersionedVariants().iterator();
@@ -1060,7 +889,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 ZkmUtils.createHashMap();
                 FlowObfuscationManager flowObfuscationManager4 = null;
                 if (changeLogMapping1 != null) {
-                    if (!bl) {
+                    if (!changeLogTakesPrecedence) {
                         FixedClassesExclusionSet fixedClassesExclusionSet5 = fixedClassesExclusionSet1;
                         ChangeLogMapping changeLogMapping4 = changeLogMapping1;
                         nameExclusionSet6.unexcludeRenamedPackages(changeLogMapping4, fixedClassesExclusionSet5);
@@ -1074,48 +903,37 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
 
                 this.validateClassHierarchy(messageReporter1);
-                String string76 = this.getLicenseDateCode();
-                String string84 = scriptEnvironment1.getLogFileName();
+                String licenseDateCode = this.getLicenseDateCode();
+                String logFileName = scriptEnvironment1.getLogFileName();
                 short dg = 20803;
                 int dw = -557565592;
-                String string21 = string84;
-                long ch = this.getFileTimestamp(string21);
+                String logFileNameValue = logFileName;
+                long fileTimestamp = this.getFileTimestamp(logFileNameValue);
                 Boolean boolean4 = true;
-                String string22 = string76;
-                long bw = this.decodeLicenseTimestamp(string22, boolean4);
+                String licenseDateCodeValue = licenseDateCode;
+                long bw = this.decodeLicenseTimestamp(licenseDateCodeValue, boolean4);
                 ClassRepository classRepository6 = classRepository1;
                 Long long3 = bw;
-                boolean bl33 = this.checkLicenseTimestamps(ch, long3, classRepository6);
+                boolean bl33 = this.checkLicenseTimestamps(fileTimestamp, long3, classRepository6);
                 if (!bl33) {
                     scriptEnvironment1.incrementPendingMarkerCount();
                 }
 
+                setMultiMap7 = null;
+                bl34 = bi == 1 || bi == 2;
                 Random random7;
-                label2414:
-                {
-                    setMultiMap7 = null;
-                    bl34 = bi == 1 || bi == 2;
-                    byte cz;
-                    if (!bl5) {
-                        if (!HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
-                            random7 = ZkmUtils.createSeededRandom(super.programClasses.length);
-                            random7.nextBoolean();
-                            break label2414;
-                        }
-
-                        cz = 67;
-                    } else {
-                        cz = 67;
-                    }
-
-                    random7 = ZkmUtils.createRandom(cz);
+                if (!bl5 && !HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
+                    random7 = ZkmUtils.createSeededRandom(super.programClasses.length);
+                    random7.nextBoolean();
+                } else {
+                    random7 = ZkmUtils.createRandom((byte) 67);
                 }
 
                 HashSet hashSet10 = ZkmUtils.createHashSet();
                 if (bc != 0) {
-                    String string11 = xorStrings("\u0002'5&2$$N$+4s\"(+N?*?s'+*Mm,=s.))Cm*=6a(7\u001a92<s,\"1R\"! s()e_,&;s\"+$I>", "MESSAGE:");
-                    observableHolder.setValue(string11);
-                    String string85 = string11 + (bl33 ? "" : (HiddenOptionFlags.DOT_MESSAGE_SUFFIX ? " ." : " "));
+                    String valueValue2 = xorStrings("\u0002'5&2$$N$+4s\"(+N?*?s'+*Mm,=s.))Cm*=6a(7\u001a92<s,\"1R\"! s()e_,&;s\"+$I>", "MESSAGE:");
+                    observableHolder.setValue(valueValue2);
+                    String string85 = valueValue2 + (bl33 ? "" : (HiddenOptionFlags.DOT_MESSAGE_SUFFIX ? " ." : " "));
                     long dh = 129120864439474L;
                     String string23 = string85;
                     scriptEnvironment1.logMessage(string23);
@@ -1128,7 +946,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             classRepository1,
                             processingStatistics1,
                             staticInitCalleeAnalyzer1,
-                            bl7,
+                            deriveGroupingsFromChangeLog,
                             bl5
                     );
                     NestedMultiMap nestedMultiMap4 = null;
@@ -1204,11 +1022,11 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         Integer integer7 = 53487;
                         ClassResolver classResolver3 = classResolver5;
                         Integer integer6 = 30291;
-                        int dx = integer6;
-                        int cd = integer7;
+                        int integer6Value = integer6;
+                        int integer7Value = integer7;
                         ClassResolver classResolver4 = classResolver3;
-                        int ce = dx;
-                        changeLogMapping1.collectParameterObfuscatedMethods(ce, classResolver4, cd);
+                        int integer6Value2 = integer6Value;
+                        changeLogMapping1.collectParameterObfuscatedMethods(integer6Value2, classResolver4, integer7Value);
                     }
                 }
 
@@ -1248,11 +1066,11 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     ScriptEnvironment scriptEnvironment8 = scriptEnvironment1;
                     List list32 = list37;
                     Iterator iterator10 = iterator33;
-                    String string28 = string3;
+                    String valueValue11 = string3;
                     Boolean boolean10 = bl8;
                     ClassPathResolver classPathResolver1 = classPathResolver2;
                     MixedCaseNamesMode mixedCaseNamesMode2 = mixedCaseNamesMode1;
-                    String string27 = string2;
+                    String lookupClassNamePrefixValue = lookupClassNamePrefix;
                     Boolean boolean9 = bl1;
                     Boolean boolean8 = bl15;
                     Boolean boolean7 = bl5;
@@ -1263,20 +1081,20 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             boolean7,
                             boolean8,
                             boolean9,
-                            string27,
+                            lookupClassNamePrefixValue,
                             mixedCaseNamesMode2,
                             classPathResolver1,
                             boolean10,
-                            string28,
+                            valueValue11,
                             iterator10,
                             list32,
                             scriptEnvironment8
                     );
                     ModuleInfoClass[] moduleInfoClass1 = moduleInfoClass;
-                    int bx = moduleInfoClass1.length;
+                    int lengthValue4 = moduleInfoClass1.length;
 
-                    for (int i = 0; i < bx; i += 1) {
-                        ModuleInfoClass moduleInfoClass2 = moduleInfoClass1[i];
+                    for (int moduleInfoClass1ElementIndex = 0; moduleInfoClass1ElementIndex < lengthValue4; moduleInfoClass1ElementIndex += 1) {
+                        ModuleInfoClass moduleInfoClass2 = moduleInfoClass1[moduleInfoClass1ElementIndex];
                         HashMap hashMap9 = hashMap39;
                         moduleInfoClass2.applyPackageRenames(hashMap9);
                         if (moduleInfoClass2.hasVersionedVariants()) {
@@ -1296,10 +1114,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 Thread.yield();
                 ProgramClass[] programClass45;
                 if (scriptEnvironment1.getSeriousErrorCount() > seriousErrorCount) {
-                    String string94 = scriptEnvironment1.getSeriousErrorsText();
+                    String seriousErrorsTextValue = scriptEnvironment1.getSeriousErrorsText();
                     ea = 81764775538649L;
-                    String string29 = string94;
-                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (B).", string29);
+                    String seriousErrorsTextValue8 = seriousErrorsTextValue;
+                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (B).", seriousErrorsTextValue8);
                     programClass45 = super.programClasses;
                 } else {
                     programClass45 = super.programClasses;
@@ -1308,46 +1126,32 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 HashMap hashMap40;
                 HashMap hashMap41;
                 HashMap hashMap42;
-                label2387:
-                {
-                    int ci = ZkmUtils.getPrimeCapacity(programClass45.length);
-                    hashMap40 = ZkmUtils.createHashMap(ci);
-                    hashMap41 = ZkmUtils.createHashMap(ci);
-                    hashMap42 = ZkmUtils.createHashMap(ci);
-                    ObservableHolder observableHolder24;
-                    String string79;
-                    if (nameExclusionSet6.hasNoIncludedClasses()) {
-                        if (nameExclusionSet6.hasNoIncludedPackages()) {
-                            ChangeLogMapping changeLogMapping8 = changeLogMapping1;
-                            boolean bl35 = this.initClassNameMaps(hashMap41, hashMap42, hashMap40, changeLogMapping8);
-                            if (bl35 || ba != 0 && bb != 1) {
-                                ModuleInfoClass[] moduleInfoClass5 = classRepository1.getModuleInfoClasses();
-                                HashMap hashMap16 = hashMap39;
-                                HashMap hashMap15 = hashMap41;
-                                Integer integer11 = bb;
-                                Integer integer10 = ba;
-                                ModuleInfoClass[] moduleInfoClass4 = moduleInfoClass5;
-                                ClassFileBase[] classFileBases2 = classFileBases5;
-                                classRepository1.applyNameChanges(classFileBases2, moduleInfoClass4, integer10, integer11, hashMap15, hashMap16, messageReporter1);
-                                classRepository1.refreshIndexes();
-                            }
-
-                            if (bl35) {
-                                classRepository1.indexFields();
-                                classRepository1.indexMethods();
-                                classRepository1.snapshotPreRenameCaches();
-                            }
-                            break label2387;
-                        }
-
-                        observableHolder24 = observableHolder;
-                        string79 = "Obfuscating class names";
-                    } else {
-                        observableHolder24 = observableHolder;
-                        string79 = "Obfuscating class names";
+                int primeCapacity = ZkmUtils.getPrimeCapacity(programClass45.length);
+                hashMap40 = ZkmUtils.createHashMap(primeCapacity);
+                hashMap41 = ZkmUtils.createHashMap(primeCapacity);
+                hashMap42 = ZkmUtils.createHashMap(primeCapacity);
+                if (nameExclusionSet6.hasNoIncludedClasses() && nameExclusionSet6.hasNoIncludedPackages()) {
+                    ChangeLogMapping changeLogMapping8 = changeLogMapping1;
+                    boolean bl35 = this.initClassNameMaps(hashMap41, hashMap42, hashMap40, changeLogMapping8);
+                    if (bl35 || ba != 0 && bb != 1) {
+                        ModuleInfoClass[] moduleInfoClass5 = classRepository1.getModuleInfoClasses();
+                        HashMap hashMap16 = hashMap39;
+                        HashMap hashMap15 = hashMap41;
+                        Integer integer11 = bb;
+                        Integer integer10 = ba;
+                        ModuleInfoClass[] moduleInfoClass4 = moduleInfoClass5;
+                        ClassFileBase[] classFileBases2 = classFileBases5;
+                        classRepository1.applyNameChanges(classFileBases2, moduleInfoClass4, integer10, integer11, hashMap15, hashMap16, messageReporter1);
+                        classRepository1.refreshIndexes();
                     }
 
-                    observableHolder24.setValue(string79);
+                    if (bl35) {
+                        classRepository1.indexFields();
+                        classRepository1.indexMethods();
+                        classRepository1.snapshotPreRenameCaches();
+                    }
+                } else {
+                    observableHolder.setValue("Obfuscating class names");
                     MessageReporter messageReporter3 = messageReporter1;
                     ClassFileBase[] classFileBases1 = classFileBases5;
                     HashMap hashMap14 = hashMap42;
@@ -1355,11 +1159,11 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     HashMap hashMap12 = hashMap40;
                     HashMap hashMap11 = hashMap39;
                     String string31 = string9;
-                    Boolean boolean13 = bl13;
+                    Boolean boolean13 = avoidSimpleNameClash;
                     MixedCaseNamesMode mixedCaseNamesMode3 = mixedCaseNamesMode1;
                     Integer integer9 = bb;
                     Integer integer8 = ba;
-                    String string30 = string2;
+                    String lookupClassNamePrefixValue2 = lookupClassNamePrefix;
                     Boolean boolean12 = bl1;
                     Boolean boolean11 = bl15;
                     this.renameClasses(
@@ -1368,7 +1172,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             bl5,
                             boolean11,
                             boolean12,
-                            string30,
+                            lookupClassNamePrefixValue2,
                             integer8,
                             integer9,
                             mixedCaseNamesMode3,
@@ -1400,7 +1204,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     case 1:
                         observableHolder.setValue("Scrambling line numbers");
                         nestedMultiMap5 = new NestedMultiMap(super.programClasses.length, 75, 2);
-                        Boolean boolean14 = bl;
+                        Boolean boolean14 = changeLogTakesPrecedence;
                         ChangeLogMapping changeLogMapping9 = changeLogMapping1;
                         FixedClassesExclusionSet fixedClassesExclusionSet7 = fixedClassesExclusionSet1;
                         HashMap hashMap17 = hashMap42;
@@ -1408,7 +1212,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
 
                 ObservableHolder observableHolder25;
-                String string80;
+                String valueValue3;
                 if (changeLogMapping1 != null) {
                     if (changeLogMapping1.hasLineNumberMappings()) {
                         if (nestedMultiMap5 == null) {
@@ -1418,17 +1222,17 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         ChangeLogMapping changeLogMapping10 = changeLogMapping1;
                         this.addChangeLogLineNumberMappings(nestedMultiMap5, changeLogMapping10);
                         observableHolder25 = observableHolder;
-                        string80 = "Obfuscating method names";
+                        valueValue3 = "Obfuscating method names";
                     } else {
                         observableHolder25 = observableHolder;
-                        string80 = "Obfuscating method names";
+                        valueValue3 = "Obfuscating method names";
                     }
                 } else {
                     observableHolder25 = observableHolder;
-                    string80 = "Obfuscating method names";
+                    valueValue3 = "Obfuscating method names";
                 }
 
-                observableHolder25.setValue(string80);
+                observableHolder25.setValue(valueValue3);
                 Thread.yield();
                 if (changeLogMapping1 != null) {
                     ClasspathClassLoader classpathClassLoader1 = super.classpathClassLoader;
@@ -1438,10 +1242,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
 
                 if (scriptEnvironment1.getSeriousErrorCount() > seriousErrorCount) {
-                    String string95 = scriptEnvironment1.getSeriousErrorsText();
+                    String seriousErrorsTextValue2 = scriptEnvironment1.getSeriousErrorsText();
                     ea = 81764775538649L;
-                    String string32 = string95;
-                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (E).", string32);
+                    String seriousErrorsTextValue9 = seriousErrorsTextValue2;
+                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (E).", seriousErrorsTextValue9);
                 }
 
                 TwoKeyMap twoKeyMap12 = new TwoKeyMap(super.programClasses.length, 25);
@@ -1456,20 +1260,20 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 TwoKeyMap twoKeyMap8 = twoKeyMap12;
                 HashMap hashMap18 = hashMap42;
                 Boolean boolean21 = bl3;
-                String string33 = string2;
+                String lookupClassNamePrefixValue3 = lookupClassNamePrefix;
                 Boolean boolean20 = bl1;
                 Boolean boolean19 = bl15;
                 Boolean boolean18 = bl33;
                 Boolean boolean17 = bl5;
                 Boolean boolean16 = bl14;
-                Boolean boolean15 = bl4;
+                Boolean boolean15 = useFullDescriptor;
                 Integer integer12 = ba;
                 this.renameMethods(
                         nameExclusionSet6,
                         methodParameterExclusions7,
                         fixedClassesExclusionSet1,
                         changeLogMapping1,
-                        bl,
+                        changeLogTakesPrecedence,
                         integer12,
                         boolean15,
                         boolean16,
@@ -1477,7 +1281,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         boolean18,
                         boolean19,
                         boolean20,
-                        string33,
+                        lookupClassNamePrefixValue3,
                         boolean21,
                         hashMap18,
                         twoKeyMap8,
@@ -1496,7 +1300,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     HashMap hashMap20 = hashMap42;
                     HashMap hashMap19 = hashMap41;
                     changeLogMapping1.resolveFieldMappings(hashMap19, hashMap20, setMultiMap, classRepository8, classpathClassLoader2);
-                    if (!bl) {
+                    if (!changeLogTakesPrecedence) {
                         FixedClassesExclusionSet fixedClassesExclusionSet8 = fixedClassesExclusionSet1;
                         HashMap hashMap21 = hashMap42;
                         ChangeLogMapping changeLogMapping11 = changeLogMapping1;
@@ -1508,43 +1312,29 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
 
                 if (scriptEnvironment1.getSeriousErrorCount() > seriousErrorCount) {
-                    String string96 = scriptEnvironment1.getSeriousErrorsText();
+                    String seriousErrorsTextValue3 = scriptEnvironment1.getSeriousErrorsText();
                     ea = 81764775538649L;
-                    String string34 = string96;
-                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (C).", string34);
+                    String seriousErrorsTextValue10 = seriousErrorsTextValue3;
+                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (C).", seriousErrorsTextValue10);
                 }
 
                 TwoKeyMap twoKeyMap3;
-                label2713:
-                {
-                    TwoKeyMap twoKeyMap2 = new TwoKeyMap(super.programClasses.length, 20);
-                    twoKeyMap3 = new TwoKeyMap(super.programClasses.length, 20);
-                    ObservableHolder observableHolder26;
-                    String string81;
-                    if (nameExclusionSet6.hasNoIncludedFields()) {
-                        if (bc == 0 || changeLogMapping1 == null) {
-                            boolean bl20 = this.initFieldNameMaps(twoKeyMap2, twoKeyMap3, changeLogMapping1);
-                            if (bl20) {
-                                classRepository1.refreshClassReferences(classFileBases5, scriptEnvironment1);
-                            }
-                            break label2713;
-                        }
-
-                        observableHolder26 = observableHolder;
-                        string81 = "Obfuscating field names";
-                    } else {
-                        observableHolder26 = observableHolder;
-                        string81 = "Obfuscating field names";
+                TwoKeyMap twoKeyMap2 = new TwoKeyMap(super.programClasses.length, 20);
+                twoKeyMap3 = new TwoKeyMap(super.programClasses.length, 20);
+                if (nameExclusionSet6.hasNoIncludedFields() && (bc == 0 || changeLogMapping1 == null)) {
+                    boolean bl20 = this.initFieldNameMaps(twoKeyMap2, twoKeyMap3, changeLogMapping1);
+                    if (bl20) {
+                        classRepository1.refreshClassReferences(classFileBases5, scriptEnvironment1);
                     }
-
-                    observableHolder26.setValue(string81);
+                } else {
+                    observableHolder.setValue("Obfuscating field names");
                     List list34 = list24;
                     ClassFileBase[] classFileBases4 = classFileBases5;
                     TwoKeyMap twoKeyMap11 = twoKeyMap3;
                     TwoKeyMap twoKeyMap10 = twoKeyMap2;
                     HashMap hashMap23 = hashMap42;
                     Boolean boolean25 = bl2;
-                    String string35 = string2;
+                    String lookupClassNamePrefixValue4 = lookupClassNamePrefix;
                     Boolean boolean24 = bl5;
                     Boolean boolean23 = bl1;
                     Boolean boolean22 = bl15;
@@ -1556,7 +1346,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             boolean22,
                             boolean23,
                             boolean24,
-                            string35,
+                            lookupClassNamePrefixValue4,
                             boolean25,
                             hashMap23,
                             twoKeyMap10,
@@ -1569,19 +1359,19 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
 
                 if (scriptEnvironment1.getSeriousErrorCount() > seriousErrorCount) {
-                    String string97 = scriptEnvironment1.getSeriousErrorsText();
+                    String seriousErrorsTextValue4 = scriptEnvironment1.getSeriousErrorsText();
                     ea = 81764775538649L;
-                    String string36 = string97;
-                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (D).", string36);
+                    String seriousErrorsTextValue11 = seriousErrorsTextValue4;
+                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (D).", seriousErrorsTextValue11);
                 }
 
                 ObservableHolder observableHolder14 = observableHolder;
                 this.processLocalVariables(bi, observableHolder14);
                 this.processMethodParameters(bj, observableHolder);
-                Object object = observableHolder22.getValue();
+                Object valueValue4 = observableHolder22.getValue();
                 boolean bl41 = false;
                 short eb = 13246;
-                Map map16 = (Map) object;
+                Map map16 = (Map) valueValue4;
                 Integer integer14 = 672164757;
                 this.markDebugInfoPresence(integer14, map16);
                 SetMultiMap setMultiMap8 = null;
@@ -1603,10 +1393,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
                 classRepository1.updateNameStringConstants(hashMap42, hashMap41, hashMap39, scriptEnvironment1);
                 if (scriptEnvironment1.getSeriousErrorCount() > seriousErrorCount) {
-                    String string98 = scriptEnvironment1.getSeriousErrorsText();
+                    String seriousErrorsTextValue5 = scriptEnvironment1.getSeriousErrorsText();
                     ea = 81764775538649L;
-                    String string37 = string98;
-                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (F).", string37);
+                    String seriousErrorsTextValue12 = seriousErrorsTextValue5;
+                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (F).", seriousErrorsTextValue12);
                 }
 
                 HashMap hashMap2 = classRepository1.findJ2meClasses();
@@ -1616,10 +1406,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 ListMultimap listMultimap = new ListMultimap(super.programClasses.length);
                 if (be != 0) {
                     ProgramClass[] programClass7 = super.programClasses;
-                    int bz = programClass7.length;
+                    int lengthValue5 = programClass7.length;
 
-                    for (int ca = 0; ca < bz; ca += 1) {
-                        ProgramClass programClass8 = programClass7[ca];
+                    for (int programClass7ElementIndex = 0; programClass7ElementIndex < lengthValue5; programClass7ElementIndex += 1) {
+                        ProgramClass programClass8 = programClass7[programClass7ElementIndex];
                         if (fixedClassesExclusionSet1 == null || !fixedClassesExclusionSet1.isMatchedClass(programClass8)) {
                             if (stringEncryptionExclusionSpec1 != null) {
                                 ProgramClass programClass15 = programClass8;
@@ -1696,10 +1486,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 PairMultiMap pairMultiMap9 = new PairMultiMap(super.programClasses.length);
                 if (bf != 0) {
                     ProgramClass[] programClass26 = super.programClasses;
-                    int cj = programClass26.length;
+                    int lengthValue6 = programClass26.length;
 
-                    for (int ck = 0; ck < cj; ck += 1) {
-                        ProgramClass programClass9 = programClass26[ck];
+                    for (int programClass26ElementIndex = 0; programClass26ElementIndex < lengthValue6; programClass26ElementIndex += 1) {
+                        ProgramClass programClass9 = programClass26[programClass26ElementIndex];
                         if (fixedClassesExclusionSet1 == null || !fixedClassesExclusionSet1.isMatchedClass(programClass9)) {
                             if (integerEncryptionExclusions5 != null) {
                                 ProgramClass programClass16 = programClass9;
@@ -1768,10 +1558,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 PairMultiMap pairMultiMap11 = new PairMultiMap(super.programClasses.length);
                 if (bg != 0) {
                     ProgramClass[] programClass27 = super.programClasses;
-                    int cl = programClass27.length;
+                    int lengthValue7 = programClass27.length;
 
-                    for (int cm = 0; cm < cl; cm += 1) {
-                        ProgramClass programClass10 = programClass27[cm];
+                    for (int programClass27ElementIndex = 0; programClass27ElementIndex < lengthValue7; programClass27ElementIndex += 1) {
+                        ProgramClass programClass10 = programClass27[programClass27ElementIndex];
                         if (fixedClassesExclusionSet1 == null || !fixedClassesExclusionSet1.isMatchedClass(programClass10)) {
                             if (longEncryptionExclusionHandler2 != null) {
                                 ProgramClass programClass17 = programClass10;
@@ -1951,20 +1741,20 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
                     if (bo == 3) {
                         ProgramClass[] programClass28 = super.programClasses;
-                        int co = programClass28.length;
+                        int lengthValue8 = programClass28.length;
 
-                        for (int cq = 0; cq < co; cq += 1) {
-                            ProgramClass programClass36 = programClass28[cq];
+                        for (int programClass28ElementIndex = 0; programClass28ElementIndex < lengthValue8; programClass28ElementIndex += 1) {
+                            ProgramClass programClass36 = programClass28[programClass28ElementIndex];
                             if (fixedClassesExclusionSet1 == null || !fixedClassesExclusionSet1.isMatchedClass(programClass36)) {
                                 programClass36.collectParameterChangeFlowCandidates(hashSet11, flowObfuscationExclusions, methodParameterExclusions5);
                             }
                         }
                     }
 
-                    boolean bl39;
+                    boolean checkRepeatedParameterChanges;
                     if (flowObfuscationManager4 != null) {
                         if (!flowObfuscationManager4.isAdvancedModeEnabled() && !flowObfuscationManager4.hasNonZeroValuedField()) {
-                            bl39 = HiddenOptionFlags.CHECK_REPEATED_PARAMETER_CHANGES;
+                            checkRepeatedParameterChanges = HiddenOptionFlags.CHECK_REPEATED_PARAMETER_CHANGES;
                         } else {
                             ScriptEnvironment scriptEnvironment11 = scriptEnvironment1;
                             MutableInt mutableInt1 = mutableInt4;
@@ -1997,26 +1787,26 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                     }
                                 }
 
-                                bl39 = HiddenOptionFlags.CHECK_REPEATED_PARAMETER_CHANGES;
+                                checkRepeatedParameterChanges = HiddenOptionFlags.CHECK_REPEATED_PARAMETER_CHANGES;
                             } else {
-                                bl39 = HiddenOptionFlags.CHECK_REPEATED_PARAMETER_CHANGES;
+                                checkRepeatedParameterChanges = HiddenOptionFlags.CHECK_REPEATED_PARAMETER_CHANGES;
                             }
                         }
                     } else {
-                        bl39 = HiddenOptionFlags.CHECK_REPEATED_PARAMETER_CHANGES;
+                        checkRepeatedParameterChanges = HiddenOptionFlags.CHECK_REPEATED_PARAMETER_CHANGES;
                     }
 
-                    if (bl39) {
+                    if (checkRepeatedParameterChanges) {
                         ProgramClass[] programClass29 = super.programClasses;
-                        int cp = programClass29.length;
+                        int lengthValue9 = programClass29.length;
 
-                        for (int cr = 0; cr < cp; cr += 1) {
-                            ProgramClass programClass38 = programClass29[cr];
+                        for (int programClass29ElementIndex = 0; programClass29ElementIndex < lengthValue9; programClass29ElementIndex += 1) {
+                            ProgramClass programClass38 = programClass29[programClass29ElementIndex];
                             MethodInfo[] methodInfos = programClass38.getMethodInfos();
-                            int cs = methodInfos.length;
+                            int lengthValue10 = methodInfos.length;
 
-                            for (int cb = 0; cb < cs; cb += 1) {
-                                MethodInfo methodInfo2 = methodInfos[cb];
+                            for (int methodInfoIndex = 0; methodInfoIndex < lengthValue10; methodInfoIndex += 1) {
+                                MethodInfo methodInfo2 = methodInfos[methodInfoIndex];
                                 if (!methodInfo2.isManufactured()) {
                                     hashSet11.add(methodInfo2);
                                 }
@@ -2035,9 +1825,9 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
 
                 classRepository1.recordNameChanges(classFileBases5);
-                int cn = readOnlyMultiMapView.getKeyCount();
-                SetMultiMap setMultiMap9 = new SetMultiMap(ZkmUtils.getPrimeCapacity(cn));
-                SetMultiMap setMultiMap10 = new SetMultiMap(ZkmUtils.getPrimeCapacity(cn));
+                int keyCount = readOnlyMultiMapView.getKeyCount();
+                SetMultiMap setMultiMap9 = new SetMultiMap(ZkmUtils.getPrimeCapacity(keyCount));
+                SetMultiMap setMultiMap10 = new SetMultiMap(ZkmUtils.getPrimeCapacity(keyCount));
                 SetMultiMap setMultiMap2 = setMultiMap10;
                 SetMultiMap setMultiMap1 = setMultiMap9;
                 ReadOnlyMultiMapView readOnlyMultiMapView1 = readOnlyMultiMapView;
@@ -2053,12 +1843,12 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     }
 
                     MethodOverrideAnalyzer methodOverrideAnalyzer1 = new MethodOverrideAnalyzer(
-                            classRepository1, super.classHierarchy, super.classResolver, scriptEnvironment1, super.programClasses.length, bl4, bl33, true
+                            classRepository1, super.classHierarchy, super.classResolver, scriptEnvironment1, super.programClasses.length, useFullDescriptor, bl33, true
                     );
-                    int ec = super.programClasses.length;
+                    int lengthValue11 = super.programClasses.length;
                     MethodOverrideAnalyzer methodOverrideAnalyzer3 = methodOverrideAnalyzer1;
                     ChangeLogMapping changeLogMapping12 = changeLogMapping1;
-                    Integer integer17 = ec;
+                    Integer integer17 = lengthValue11;
                     map33 = MethodParameterChanger.assignMethodKeys(set2, map33, bl5, integer17, changeLogMapping12, methodOverrideAnalyzer3);
                     hashMap43 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(map33.size()));
                     Set set1 = flowObfuscationManager4 == null ? null : flowObfuscationManager4.getFieldOwnerClasses();
@@ -2074,7 +1864,6 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
                     MethodParameterChangeSet methodParameterChangeSet;
                     Random random1;
-                    label2128:
                     {
                         methodParameterChanger10 = new MethodParameterChanger(
                                 map33,
@@ -2087,9 +1876,9 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                 setMultiMap8,
                                 super.programClasses.length,
                                 readOnlyMultiMapView4,
-                                string2,
+                                lookupClassNamePrefix,
                                 mixedCaseNamesMode1,
-                                bl13,
+                                avoidSimpleNameClash,
                                 mutableInt4.getValue(),
                                 mutableInt5.getValue(),
                                 processingStatistics1.meetsFullSizeThreshold(),
@@ -2123,11 +1912,11 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         boolean bl19 = bl5;
                         MethodOverrideAnalyzer methodOverrideAnalyzer = methodOverrideAnalyzer1;
                         ScriptEnvironment scriptEnvironment3 = scriptEnvironment29;
-                        boolean bl23 = bl28;
+                        boolean includeInterfaces = bl28;
                         BooleanFlag booleanFlag1 = booleanFlag6;
                         Map map6 = map31;
                         SetValuedMap setValuedMap4 = setValuedMap3;
-                        String string13 = string73;
+                        String helperClassPrefix = string73;
                         Map map7 = map32;
                         ObservableHolder observableHolder8 = observableHolder4;
                         TwoKeyMap twoKeyMap4 = twoKeyMap;
@@ -2136,15 +1925,15 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         HashSet hashSet1 = hashSet;
                         HashMap hashMap4 = hashMap1;
                         Map map8 = map5;
-                        boolean bl24 = bl19;
+                        boolean shuffleMethods = bl19;
                         MethodOverrideAnalyzer methodOverrideAnalyzer2 = methodOverrideAnalyzer;
-                        boolean bl25 = bl4;
-                        int cc = ba;
+                        boolean compareFullSignatures = useFullDescriptor;
+                        int changeLevel = ba;
                         CommonSuperTypeResolver commonSuperTypeResolver2 = commonSuperTypeResolver1;
                         ClassHierarchy classHierarchy2 = super.classHierarchy;
                         ProgramClass[] programClass12 = super.programClasses;
                         ClassRepository classRepository3 = classRepository1;
-                        boolean bl26 = bl;
+                        boolean useChangeLogExclusions = changeLogTakesPrecedence;
                         ChangeLogMapping changeLogMapping2 = changeLogMapping1;
                         FixedClassesExclusionSet fixedClassesExclusionSet2 = fixedClassesExclusionSet1;
                         MethodParameterExclusions methodParameterExclusions = methodParameterExclusions5;
@@ -2152,15 +1941,15 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                 methodParameterExclusions,
                                 fixedClassesExclusionSet2,
                                 changeLogMapping2,
-                                bl26,
+                                useChangeLogExclusions,
                                 classRepository3,
                                 programClass12,
                                 classHierarchy2,
                                 commonSuperTypeResolver2,
-                                cc,
-                                bl25,
+                                changeLevel,
+                                compareFullSignatures,
                                 methodOverrideAnalyzer2,
-                                bl24,
+                                shuffleMethods,
                                 map8,
                                 hashMap4,
                                 hashSet1,
@@ -2169,34 +1958,26 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                 twoKeyMap4,
                                 observableHolder8,
                                 map7,
-                                string13,
+                                helperClassPrefix,
                                 setValuedMap4,
                                 map6,
                                 booleanFlag1,
-                                bl23,
+                                includeInterfaces,
                                 scriptEnvironment3
                         );
-                        byte dc;
-                        if (!bl5) {
-                            if (!HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
-                                random1 = ZkmUtils.createSeededRandom(super.programClasses.length);
-                                random1.nextBoolean();
-                                break label2128;
-                            }
-
-                            dc = 93;
+                        if (!bl5 && !HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
+                            random1 = ZkmUtils.createSeededRandom(super.programClasses.length);
+                            random1.nextBoolean();
                         } else {
-                            dc = 93;
+                            random1 = ZkmUtils.createRandom((byte) 93);
                         }
-
-                        random1 = ZkmUtils.createRandom(dc);
                     }
 
                     bl41 = bo == 2 || bo == 3;
                     Random random2 = random1;
-                    boolean bl27 = bl41;
+                    boolean randomizeLayouts = bl41;
                     MethodParameterChangeSet methodParameterChangeSet1 = methodParameterChangeSet;
-                    ParameterListGenerator parameterListGenerator = new ParameterListGenerator(methodParameterChangeSet1, bl27, random2);
+                    ParameterListGenerator parameterListGenerator = new ParameterListGenerator(methodParameterChangeSet1, randomizeLayouts, random2);
                     ObservableHolder observableHolder7 = new ObservableHolder();
                     FlowObfuscationManager flowObfuscationManager5 = processingStatistics1.meetsBasicSizeThreshold() ? flowObfuscationManager4 : null;
                     bl16 = processingStatistics1.meetsFullSizeThreshold();
@@ -2244,10 +2025,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 if (bd != 0) {
                     SetMultiMap setMultiMap11 = new SetMultiMap();
                     ProgramClass[] programClass39 = super.programClasses;
-                    int ct = programClass39.length;
+                    int lengthValue12 = programClass39.length;
 
-                    for (int cu = 0; cu < ct; cu += 1) {
-                        ProgramClass programClass40 = programClass39[cu];
+                    for (int programClass39ElementIndex = 0; programClass39ElementIndex < lengthValue12; programClass39ElementIndex += 1) {
+                        ProgramClass programClass40 = programClass39[programClass39ElementIndex];
                         if (programClass40.hasVersionedVariants()) {
                             Iterator iterator26 = programClass40.getVersionedVariants().iterator();
 
@@ -2387,7 +2168,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         EnumerableMap enumerableMap1 = classRepository1.getOriginalToCurrentNameMap();
                         long dz = 39080577441246L;
                         ObservableHolder observableHolder16 = observableHolder23;
-                        Boolean boolean35 = bl7;
+                        Boolean boolean35 = deriveGroupingsFromChangeLog;
                         ClassRepository classRepository12 = classRepository1;
                         ChangeLogMapping changeLogMapping13 = changeLogMapping1;
                         GroupingsSpec groupingsSpec1 = groupingsSpec2;
@@ -2675,134 +2456,120 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     if (!setValuedMap.isEmpty()) {
                         scriptEnvironment1.logSeriousError_v("Auto Reflection Handling : Cannot perform autoReflection handling more than once on the same classes.");
                     } else {
-                        label2057:
                         if (hashMap2.size() == 0) {
-                            boolean bl40;
-                            if (nameExclusionSet6.hasNoIncludedPackages()) {
-                                if (nameExclusionSet6.hasNoIncludedClasses()) {
-                                    if (nameExclusionSet6.hasNoIncludedFields()) {
-                                        if (nameExclusionSet6.hasNoIncludedMethods()) {
-                                            scriptEnvironment1.logMessage(
-                                                    "Auto Reflection Handling : Will not perform automatic Reflection API handling because no packages, classes, fields or methods have been renamed."
-                                            );
-                                            break label2057;
-                                        }
-
-                                        bl40 = super.verbose;
-                                    } else {
-                                        bl40 = super.verbose;
-                                    }
-                                } else {
-                                    bl40 = super.verbose;
-                                }
+                            if (nameExclusionSet6.hasNoIncludedPackages()
+                                    && nameExclusionSet6.hasNoIncludedClasses()
+                                    && nameExclusionSet6.hasNoIncludedFields()
+                                    && nameExclusionSet6.hasNoIncludedMethods()) {
+                                scriptEnvironment1.logMessage(
+                                        "Auto Reflection Handling : Will not perform automatic Reflection API handling because no packages, classes, fields or methods have been renamed."
+                                );
                             } else {
-                                bl40 = super.verbose;
-                            }
+                                if (super.verbose) {
+                                    if (list16 != null && list16.size() != 0) {
+                                        scriptEnvironment1.logMessage(
+                                                "Auto Reflection Handling : There is an 'accessedByReflection' statement in effect so only classes, fields and methods specified by that statement are eligible for AutoReflection mapping."
+                                        );
+                                    } else {
+                                        scriptEnvironment1.logMessage(
+                                                "Auto Reflection Handling : There is no 'accessedByReflection' statement in effect so all classes, fields and methods are by default eligible for AutoReflection mapping."
+                                        );
+                                    }
+                                }
 
-                            if (bl40) {
-                                if (list16 != null && list16.size() != 0) {
-                                    scriptEnvironment1.logMessage(
-                                            "Auto Reflection Handling : There is an 'accessedByReflection' statement in effect so only classes, fields and methods specified by that statement are eligible for AutoReflection mapping."
-                                    );
-                                } else {
-                                    scriptEnvironment1.logMessage(
-                                            "Auto Reflection Handling : There is no 'accessedByReflection' statement in effect so all classes, fields and methods are by default eligible for AutoReflection mapping."
+                                MethodKeyInjector methodKeyInjector3 = null;
+                                if (HiddenOptionFlags.AUTO_REFLECTION_METHOD_KEYS
+                                        && !HiddenOptionFlags.NO_AUTO_REFLECTION_METHOD_KEYS
+                                        && methodParameterChanger10 != null
+                                        && methodParameterChanger10.hasHelperTriples()
+                                        && readOnlyMultiMapView4.isEmpty()) {
+                                    methodKeyInjector3 = new MethodKeyInjector(
+                                            methodParameterChanger10, (ObjectTriple) observableHolder3.getValue(), map3, classRepository1, super.classResolver, random7
                                     );
                                 }
-                            }
 
-                            MethodKeyInjector methodKeyInjector3 = null;
-                            if (HiddenOptionFlags.AUTO_REFLECTION_METHOD_KEYS
-                                    && !HiddenOptionFlags.NO_AUTO_REFLECTION_METHOD_KEYS
-                                    && methodParameterChanger10 != null
-                                    && methodParameterChanger10.hasHelperTriples()
-                                    && readOnlyMultiMapView4.isEmpty()) {
-                                methodKeyInjector3 = new MethodKeyInjector(
-                                        methodParameterChanger10, (ObjectTriple) observableHolder3.getValue(), map3, classRepository1, super.classResolver, random7
+                                if (list26 == null && string9 != null && string9.length() > 0) {
+                                    ScriptEnvironment scriptEnvironment30 = scriptEnvironment1;
+                                    String string69 = "newClassNameFile";
+                                    String string72 = string9;
+                                    ScriptEnvironment scriptEnvironment20 = scriptEnvironment30;
+                                    String string46 = string69;
+                                    String string45 = string72;
+                                    list26 = readNameListFile(string45, string46, scriptEnvironment20);
+                                }
+
+                                ListMultimap listMultimap7 = classRepository1.getReflectionCallSites();
+                                boolean bl42 = list16 != null && list16.size() > 0;
+                                boolean bl47 = list17 != null && list17.size() > 0;
+                                int valueValue5 = mutableInt4.getValue();
+                                int valueValue6 = mutableInt5.getValue();
+                                boolean bl49 = processingStatistics1.meetsFullSizeThreshold();
+                                ScriptEnvironment scriptEnvironment31 = scriptEnvironment1;
+                                List list36 = list26;
+                                FixedClassesExclusionSet fixedClassesExclusionSet13 = fixedClassesExclusionSet1;
+                                MethodKeyInjector methodKeyInjector2 = methodKeyInjector3;
+                                boolean bl29 = bl49;
+                                int valueValue9 = valueValue6;
+                                int valueValue10 = valueValue5;
+                                boolean avoidSimpleNameClashValue = avoidSimpleNameClash;
+                                String lookupClassNamePrefixValue5 = lookupClassNamePrefix;
+                                boolean bl31 = bl5;
+                                String string75 = string5;
+                                boolean bl18 = bl47;
+                                boolean bl32 = bl42;
+                                ReflectionAccessMatcher reflectionAccessMatcher4 = reflectionAccessMatcher;
+                                ScriptEnvironment scriptEnvironment21 = scriptEnvironment31;
+                                List list35 = list36;
+                                FixedClassesExclusionSet fixedClassesExclusionSet10 = fixedClassesExclusionSet13;
+                                MethodKeyInjector methodKeyInjector = methodKeyInjector2;
+                                Boolean boolean48 = bl29;
+                                Integer integer19 = valueValue9;
+                                Integer integer18 = valueValue10;
+                                Boolean boolean47 = avoidSimpleNameClashValue;
+                                String lookupClassNamePrefixValue7 = lookupClassNamePrefixValue5;
+                                Boolean boolean46 = bl31;
+                                String digestAlgorithm = string75;
+                                Boolean boolean45 = bl18;
+                                Boolean boolean44 = bl32;
+                                ReflectionAccessMatcher reflectionAccessMatcher3 = reflectionAccessMatcher4;
+                                String string47 = string4;
+                                ChangeLogMapping changeLogMapping14 = changeLogMapping1;
+                                ObservableHolder observableHolder17 = observableHolder2;
+                                SetValuedMap setValuedMap5 = setValuedMap;
+                                Map map26 = map1;
+                                SetMultiMap setMultiMap4 = setMultiMap10;
+                                SetMultiMap setMultiMap3 = setMultiMap9;
+                                ReadOnlyMultiMapView readOnlyMultiMapView2 = readOnlyMultiMapView4;
+                                ClassRepository classRepository13 = classRepository1;
+                                CommonSuperTypeResolver commonSuperTypeResolver15 = commonSuperTypeResolver1;
+                                this.applyAutoReflectionHandling(
+                                        listMultimap7,
+                                        commonSuperTypeResolver15,
+                                        classRepository13,
+                                        readOnlyMultiMapView2,
+                                        setMultiMap3,
+                                        setMultiMap4,
+                                        map26,
+                                        setValuedMap5,
+                                        observableHolder17,
+                                        changeLogMapping14,
+                                        string47,
+                                        reflectionAccessMatcher3,
+                                        boolean44,
+                                        boolean45,
+                                        digestAlgorithm,
+                                        boolean46,
+                                        lookupClassNamePrefixValue7,
+                                        boolean47,
+                                        integer18,
+                                        integer19,
+                                        boolean48,
+                                        methodKeyInjector,
+                                        fixedClassesExclusionSet10,
+                                        list35,
+                                        scriptEnvironment21
                                 );
                             }
-
-                            if (list26 == null && string9 != null && string9.length() > 0) {
-                                ScriptEnvironment scriptEnvironment30 = scriptEnvironment1;
-                                String string69 = "newClassNameFile";
-                                String string72 = string9;
-                                ScriptEnvironment scriptEnvironment20 = scriptEnvironment30;
-                                String string46 = string69;
-                                String string45 = string72;
-                                list26 = readNameListFile(string45, string46, scriptEnvironment20);
-                            }
-
-                            ListMultimap listMultimap7 = classRepository1.getReflectionCallSites();
-                            boolean bl42 = list16 != null && list16.size() > 0;
-                            boolean bl47 = list17 != null && list17.size() > 0;
-                            int ei = mutableInt4.getValue();
-                            int ej = mutableInt5.getValue();
-                            boolean bl49 = processingStatistics1.meetsFullSizeThreshold();
-                            ScriptEnvironment scriptEnvironment31 = scriptEnvironment1;
-                            List list36 = list26;
-                            FixedClassesExclusionSet fixedClassesExclusionSet13 = fixedClassesExclusionSet1;
-                            MethodKeyInjector methodKeyInjector2 = methodKeyInjector3;
-                            boolean bl29 = bl49;
-                            int cf = ej;
-                            int cg = ei;
-                            boolean bl30 = bl13;
-                            String string74 = string2;
-                            boolean bl31 = bl5;
-                            String string75 = string5;
-                            boolean bl18 = bl47;
-                            boolean bl32 = bl42;
-                            ReflectionAccessMatcher reflectionAccessMatcher4 = reflectionAccessMatcher;
-                            ScriptEnvironment scriptEnvironment21 = scriptEnvironment31;
-                            List list35 = list36;
-                            FixedClassesExclusionSet fixedClassesExclusionSet10 = fixedClassesExclusionSet13;
-                            MethodKeyInjector methodKeyInjector = methodKeyInjector2;
-                            Boolean boolean48 = bl29;
-                            Integer integer19 = cf;
-                            Integer integer18 = cg;
-                            Boolean boolean47 = bl30;
-                            String string49 = string74;
-                            Boolean boolean46 = bl31;
-                            String string48 = string75;
-                            Boolean boolean45 = bl18;
-                            Boolean boolean44 = bl32;
-                            ReflectionAccessMatcher reflectionAccessMatcher3 = reflectionAccessMatcher4;
-                            String string47 = string4;
-                            ChangeLogMapping changeLogMapping14 = changeLogMapping1;
-                            ObservableHolder observableHolder17 = observableHolder2;
-                            SetValuedMap setValuedMap5 = setValuedMap;
-                            Map map26 = map1;
-                            SetMultiMap setMultiMap4 = setMultiMap10;
-                            SetMultiMap setMultiMap3 = setMultiMap9;
-                            ReadOnlyMultiMapView readOnlyMultiMapView2 = readOnlyMultiMapView4;
-                            ClassRepository classRepository13 = classRepository1;
-                            CommonSuperTypeResolver commonSuperTypeResolver15 = commonSuperTypeResolver1;
-                            this.applyAutoReflectionHandling(
-                                    listMultimap7,
-                                    commonSuperTypeResolver15,
-                                    classRepository13,
-                                    readOnlyMultiMapView2,
-                                    setMultiMap3,
-                                    setMultiMap4,
-                                    map26,
-                                    setValuedMap5,
-                                    observableHolder17,
-                                    changeLogMapping14,
-                                    string47,
-                                    reflectionAccessMatcher3,
-                                    boolean44,
-                                    boolean45,
-                                    string48,
-                                    boolean46,
-                                    string49,
-                                    boolean47,
-                                    integer18,
-                                    integer19,
-                                    boolean48,
-                                    methodKeyInjector,
-                                    fixedClassesExclusionSet10,
-                                    list35,
-                                    scriptEnvironment21
-                            );
                         } else {
                             scriptEnvironment1.logMessage(
                                     "Auto Reflection Handling : Will not perform automatic Reflection API handling because CLDC classes are present."
@@ -2868,8 +2635,8 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             );
                         }
 
-                        int ed = mutableInt4.getValue();
-                        int ee = mutableInt5.getValue();
+                        int valueValue7 = mutableInt4.getValue();
+                        int valueValue8 = mutableInt5.getValue();
                         boolean bl46 = processingStatistics1.meetsFullSizeThreshold();
                         ScriptEnvironment scriptEnvironment22 = scriptEnvironment1;
                         Boolean boolean50 = bl46;
@@ -2888,19 +2655,19 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         SetMultiMap setMultiMap6 = setMultiMap10;
                         SetMultiMap setMultiMap5 = setMultiMap9;
                         ReadOnlyMultiMapView readOnlyMultiMapView3 = readOnlyMultiMapView4;
-                        Boolean boolean49 = bl13;
+                        Boolean boolean49 = avoidSimpleNameClash;
                         String string52 = string6;
-                        String string51 = string2;
+                        String lookupClassNamePrefixValue6 = lookupClassNamePrefix;
                         ChangeLogMapping changeLogMapping15 = changeLogMapping1;
-                        Integer integer21 = ee;
-                        Integer integer20 = ed;
+                        Integer integer21 = valueValue8;
+                        Integer integer20 = valueValue7;
                         this.obfuscateReferences(
                                 referenceObfuscationExclusions,
                                 bl9,
                                 integer20,
                                 integer21,
                                 changeLogMapping15,
-                                string51,
+                                lookupClassNamePrefixValue6,
                                 string52,
                                 boolean49,
                                 readOnlyMultiMapView3,
@@ -2936,11 +2703,11 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     }
 
                     ArrayList arrayList5 = new ArrayList(super.programClasses.length + 5);
-                    int cy = 0;
-                    int dd = 0;
+                    int programClasseIndex = 0;
+                    int programClasseIndexValue = 0;
 
-                    for (ProgramClass[] programClass50 = super.programClasses; dd < programClass50.length; programClass50 = super.programClasses) {
-                        ProgramClass programClass43 = super.programClasses[cy];
+                    for (ProgramClass[] programClass50 = super.programClasses; programClasseIndexValue < programClass50.length; programClass50 = super.programClasses) {
+                        ProgramClass programClass43 = super.programClasses[programClasseIndex];
                         arrayList5.add(programClass43);
                         if (programClass43.hasVersionedVariants()) {
                             Iterator iterator8 = programClass43.getVersionedVariants().iterator();
@@ -2951,8 +2718,8 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             }
                         }
 
-                        cy += 1;
-                        dd = cy;
+                        programClasseIndex += 1;
+                        programClasseIndexValue = programClasseIndex;
                     }
 
                     ListMultimap listMultimap6;
@@ -3091,10 +2858,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
                 if (bl11) {
                     ProgramClass[] programClass41 = super.programClasses;
-                    int cv = programClass41.length;
+                    int lengthValue13 = programClass41.length;
 
-                    for (int cx = 0; cx < cv; cx += 1) {
-                        ProgramClass programClass42 = programClass41[cx];
+                    for (int programClass41ElementIndex = 0; programClass41ElementIndex < lengthValue13; programClass41ElementIndex += 1) {
+                        ProgramClass programClass42 = programClass41[programClass41ElementIndex];
                         if (fixedClassesExclusionSet1 != null && !fixedClassesExclusionSet1.isMatchedClass(programClass42)) {
                         }
 
@@ -3112,10 +2879,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
 
                 if (scriptEnvironment1.getSeriousErrorCount() > seriousErrorCount) {
-                    String string99 = scriptEnvironment1.getSeriousErrorsText();
+                    String seriousErrorsTextValue6 = scriptEnvironment1.getSeriousErrorsText();
                     ea = 81764775538649L;
-                    String string53 = string99;
-                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (G).", string53);
+                    String seriousErrorsTextValue13 = seriousErrorsTextValue6;
+                    messageReporter1.reportFatalErrorWithDetail("FATAL ERROR:", "Serious Errors detected during obfuscation (G).", seriousErrorsTextValue13);
                     Thread.yield();
                 } else {
                     Thread.yield();
@@ -3181,7 +2948,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         changeLogMapping3,
                         integerCache1,
                         enumeration,
-                        bl4
+                        useFullDescriptor
                 );
                 if (super.verbose && bl10) {
                     scriptEnvironment1.getLogWriter().println("\tStackMap algorithm=" + HiddenOptionFlags.STACK_MAP_ALGORITHM);
@@ -3219,12 +2986,12 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 classRepository1.applyPackageRenamesToResources(hashMap36, messageReporter1);
                 observableHolder.setValue(" ");
             } catch (MissingClassException missingClassException) {
-                String string93 = missingClassException.getMessage();
+                String message = missingClassException.getMessage();
                 long dt = 37549368807840L;
-                String string54 = string93;
-                String string58 = string54;
+                String messageValue3 = message;
+                String messageValue6 = messageValue3;
                 String string59 = "FILE ERROR:";
-                messageReporter1.reportSeriousError(string59, string58);
+                messageReporter1.reportSeriousError(string59, messageValue6);
             } catch (MethodAnalysisException methodAnalysisException) {
                 ArrayList arrayList = new ArrayList();
                 if (bc != 0) {
@@ -3275,19 +3042,19 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 String string61 = "SERIOUS ERROR:";
                 messageReporter1.reportSeriousError(string61, string60);
             } catch (ZkmProcessingException zkmProcessingException) {
-                String string91 = zkmProcessingException.getMessage();
+                String messageValue = zkmProcessingException.getMessage();
                 long dq = 37549368807840L;
-                String string56 = string91;
-                String string62 = string56;
+                String messageValue4 = messageValue;
+                String messageValue7 = messageValue4;
                 String string63 = "SERIOUS ERROR:";
-                messageReporter1.reportSeriousError(string63, string62);
+                messageReporter1.reportSeriousError(string63, messageValue7);
             } catch (StackAnalysisException stackAnalysisException) {
-                String string100 = stackAnalysisException.getMessage();
+                String messageValue2 = stackAnalysisException.getMessage();
                 long eg = 37549368807840L;
-                String string57 = string100;
-                String string64 = string57;
+                String messageValue5 = messageValue2;
+                String messageValue8 = messageValue5;
                 String string65 = "SERIOUS ERROR:";
-                messageReporter1.reportSeriousError(string65, string64);
+                messageReporter1.reportSeriousError(string65, messageValue8);
             } finally {
                 dialogCallback1.onDialogCancelled();
                 ClassHierarchyNode.setCheckHierarchyGaps(false);
@@ -3354,31 +3121,31 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         }
     }
 
-    public long m(String string) {
-        char[] ba = string.toCharArray();
-        char[] bb = new char[ba.length];
+    public long decodeLicenseNumber(String string) {
+        char[] characterArray = string.toCharArray();
+        char[] characterArrayValue = new char[characterArray.length];
 
-        for (int i = 0; i < ba.length; i++) {
-            char bd = ba[i];
-            if (bd >= '0' && bd <= '9') {
-                if (bd > '0') {
-                    bd = (char) (':' - bd + 48);
+        for (int i = 0; i < characterArray.length; i++) {
+            char characterArrayValueElement = characterArray[i];
+            if (characterArrayValueElement >= '0' && characterArrayValueElement <= '9') {
+                if (characterArrayValueElement > '0') {
+                    characterArrayValueElement = (char) (':' - characterArrayValueElement + 48);
                 }
-            } else if (bd >= 'A' && bd <= 'J') {
-                bd = (char) (bd - 17);
-            } else if (bd >= 'K' && bd <= 'T') {
-                bd = (char) (bd - 27);
-            } else if (bd >= 'U' && bd <= 'Z') {
-                bd = (char) (bd - '%');
-            } else if (bd >= 'a' && bd <= 'd') {
-                bd = (char) (bd - '+');
-            } else if (bd >= 'e' && bd <= 'n') {
-                bd = (char) (bd - '5');
-            } else if (bd >= 'o' && bd <= 'x') {
-                bd = (char) (bd - '?');
+            } else if (characterArrayValueElement >= 'A' && characterArrayValueElement <= 'J') {
+                characterArrayValueElement = (char) (characterArrayValueElement - 17);
+            } else if (characterArrayValueElement >= 'K' && characterArrayValueElement <= 'T') {
+                characterArrayValueElement = (char) (characterArrayValueElement - 27);
+            } else if (characterArrayValueElement >= 'U' && characterArrayValueElement <= 'Z') {
+                characterArrayValueElement = (char) (characterArrayValueElement - '%');
+            } else if (characterArrayValueElement >= 'a' && characterArrayValueElement <= 'd') {
+                characterArrayValueElement = (char) (characterArrayValueElement - '+');
+            } else if (characterArrayValueElement >= 'e' && characterArrayValueElement <= 'n') {
+                characterArrayValueElement = (char) (characterArrayValueElement - '5');
+            } else if (characterArrayValueElement >= 'o' && characterArrayValueElement <= 'x') {
+                characterArrayValueElement = (char) (characterArrayValueElement - '?');
             }
 
-            bb[i] = bd;
+            characterArrayValue[i] = characterArrayValueElement;
         }
 
         Class<Long> class1 = Long.class;
@@ -3387,7 +3154,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
         try {
             Method method1 = class1.getMethod(xorStrings(LicenseCheckBase.getEncodedParseLong(), LicenseCheckBase.getXorKey()), class2);
-            Object[] objects = new Object[]{new String(bb)};
+            Object[] objects = new Object[]{new String(characterArrayValue)};
             be = (Long) method1.invoke(null, objects);
         } catch (AssertionFailedException assertionFailedException) {
             throw assertionFailedException;
@@ -3413,15 +3180,15 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             boolean bl1
     ) throws ZkmException, IOException {
         HashSet hashSet = ZkmUtils.createHashSet();
-        int bb = 0;
+        int hashSetSize = 0;
         int bf = 0;
 
         for (ProgramClass[] programClass6 = super.programClasses; bf < programClass6.length; programClass6 = super.programClasses) {
-            hashSet.add(super.programClasses[bb].getPackagePath());
-            bf = ++bb;
+            hashSet.add(super.programClasses[hashSetSize].getPackagePath());
+            bf = ++hashSetSize;
         }
 
-        bb = hashSet.size();
+        hashSetSize = hashSet.size();
         SetMultiMap setMultiMap = flowObfuscationManager.assignPredicateFields(
                 hashSet, nameExclusionSet, super.classHierarchy, inheritedMemberAnalyzer, super.classRepository, flowObfuscationExclusions, classInitOrderHandler1
         );
@@ -3453,14 +3220,14 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             programClass4 = super.programClasses;
         }
 
-        int bd = programClass4.length;
-        ListMultimap listMultimap = new ListMultimap(bd, HiddenOptionFlags.USE_PARALLEL);
+        int lengthValue = programClass4.length;
+        ListMultimap listMultimap = new ListMultimap(lengthValue, HiddenOptionFlags.USE_PARALLEL);
         ArrayList arrayList = new ArrayList(super.programClasses.length + 5);
-        int bc = 0;
+        int programClasseIndex = 0;
         bf = 0;
 
         for (ProgramClass[] programClass5 = super.programClasses; bf < programClass5.length; programClass5 = super.programClasses) {
-            ProgramClass programClass1 = super.programClasses[bc];
+            ProgramClass programClass1 = super.programClasses[programClasseIndex];
             arrayList.add(programClass1);
             if (programClass1.hasVersionedVariants()) {
                 Iterator iterator1 = programClass1.getVersionedVariants().iterator();
@@ -3471,7 +3238,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
             }
 
-            bf = ++bc;
+            bf = ++programClasseIndex;
         }
 
         AbstractMap abstractMap = HiddenOptionFlags.USE_PARALLEL ? new ConcurrentHashMap() : ZkmUtils.createHashMap();
@@ -3540,23 +3307,23 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             }
         }
 
-        ListMultimap listMultimap1 = new ListMultimap(bd, 5);
+        ListMultimap listMultimap1 = new ListMultimap(lengthValue, 5);
 
-        for (int i = 0; i < bd; i++) {
-            super.programClasses[i].collectFlowObfuscationCandidates(listMultimap1);
+        for (int programClasseIndexValue = 0; programClasseIndexValue < lengthValue; programClasseIndexValue++) {
+            super.programClasses[programClasseIndexValue].collectFlowObfuscationCandidates(listMultimap1);
         }
 
-        HashSet hashSet1 = ZkmUtils.createHashSet(bb);
-        HashSet hashSet2 = ZkmUtils.createHashSet(bb);
-        boolean bl2;
+        HashSet hashSet1 = ZkmUtils.createHashSet(hashSetSize);
+        HashSet hashSet2 = ZkmUtils.createHashSet(hashSetSize);
+        boolean useParallel;
         if (super.programClasses.length > 1) {
             flowObfuscationManager.selectCallerMethods(hashSet1, hashSet2, listMultimap1, flowObfuscationExclusions, staticInitCalleeAnalyzer1);
-            bl2 = HiddenOptionFlags.USE_PARALLEL;
+            useParallel = HiddenOptionFlags.USE_PARALLEL;
         } else {
-            bl2 = HiddenOptionFlags.USE_PARALLEL;
+            useParallel = HiddenOptionFlags.USE_PARALLEL;
         }
 
-        if (bl2 && HiddenOptionFlags.PROCESSOR_COUNT >= 2) {
+        if (useParallel && HiddenOptionFlags.PROCESSOR_COUNT >= 2) {
             Vector vector1 = new Vector();
             arrayList.parallelStream()
                     .forEach(
@@ -3724,19 +3491,19 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             ClassFileBase classFileBase, SetMultiMap setMultiMap, boolean bl, Set set1, ClassResolver classResolver1, String string
     ) throws ZkmException, IOException {
         if (set1.add(classFileBase) && !classFileBase.getClassName().equals("java/lang/Object")) {
-            String string1 = classFileBase.getSuperclassName();
-            ClassFileBase classFileBase1 = classResolver1.getClassFile(string1, string);
+            String superclassName = classFileBase.getSuperclassName();
+            ClassFileBase classFileBase1 = classResolver1.getClassFile(superclassName, string);
 
             for (AbstractMethodInfo abstractMethodInfo : classFileBase1.getDeclaredMethods()) {
                 setMultiMap.addValue(bl ? abstractMethodInfo.getSignature() : abstractMethodInfo.getNameTypeSignature(), abstractMethodInfo);
             }
 
             collectInheritedMethods(classFileBase1, setMultiMap, bl, set1, classResolver1, string);
-            String[] strings = classFileBase.getInterfaceNames();
+            String[] interfaceNames = classFileBase.getInterfaceNames();
 
-            for (int i = 0; i < strings.length; i++) {
-                String string2 = strings[i];
-                ClassFileBase classFileBase2 = classResolver1.getClassFile(string2, string);
+            for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+                String interfaceName = interfaceNames[interfaceNameIndex];
+                ClassFileBase classFileBase2 = classResolver1.getClassFile(interfaceName, string);
 
                 for (AbstractMethodInfo abstractMethodInfo1 : classFileBase2.getDeclaredMethods()) {
                     setMultiMap.addValue(bl ? abstractMethodInfo1.getSignature() : abstractMethodInfo1.getNameTypeSignature(), abstractMethodInfo1);
@@ -3792,7 +3559,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             ReflectionAccessMatcher reflectionAccessMatcher,
             boolean bl,
             boolean bl1,
-            String string1,
+            String digestAlgorithmArgument,
             Boolean boolean1,
             String string2,
             boolean bl2,
@@ -3811,20 +3578,20 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         }
 
         boolean bl5 = false;
-        int bc = super.programClasses.length;
+        int lengthValue = super.programClasses.length;
         PrintWriter printWriter = scriptEnvironment1.getLogWriter();
 
-        for (int i = 0; i < bc; i += 1) {
-            bl5 = !super.programClasses[i].supportsJava4() || bl5;
+        for (int programClasseIndex = 0; programClasseIndex < lengthValue; programClasseIndex += 1) {
+            bl5 = !super.programClasses[programClasseIndex].supportsJava4() || bl5;
         }
 
-        String string3 = bl5 ? "SHA-1" : "SHA-512";
-        if (string1 != null && string1.length() > 0) {
+        String digestAlgorithm = bl5 ? "SHA-1" : "SHA-512";
+        if (digestAlgorithmArgument != null && digestAlgorithmArgument.length() > 0) {
             if (super.verbose) {
-                printWriter.println("\tAuto Reflection Handling hash algorithm changed from '" + string3 + "' to '" + string1 + "' as specified.");
+                printWriter.println("\tAuto Reflection Handling hash algorithm changed from '" + digestAlgorithm + "' to '" + digestAlgorithmArgument + "' as specified.");
             }
 
-            string3 = string1;
+            digestAlgorithm = digestAlgorithmArgument;
         }
 
         HashMap hashMap = ZkmUtils.createHashMap();
@@ -3833,7 +3600,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         EnumerableMap enumerableMap = classRepository1.getCumulativeNameMap();
         EnumerableMap enumerableMap1 = classRepository1.getOriginalToCurrentNameMap();
         EnumerableMap enumerableMap2 = classRepository1.getCurrentToOriginalNameMap();
-        AutoReflectionHandler autoReflectionHandler = new AutoReflectionHandler(reflectionAccessMatcher, list1, classRepository1, string3, boolean1);
+        AutoReflectionHandler autoReflectionHandler = new AutoReflectionHandler(reflectionAccessMatcher, list1, classRepository1, digestAlgorithm, boolean1);
         ReadOnlyMultiMap readOnlyMultiMap = classRepository1.getFieldSignatureChanges();
         ReadOnlyMultiMap readOnlyMultiMap1 = classRepository1.getMethodSignatureChanges();
         autoReflectionHandler.processReflectionCallSites(
@@ -3889,14 +3656,14 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     classRepository1,
                     (LookupClassOption) null
             );
-            bc = super.programClasses.length;
+            lengthValue = super.programClasses.length;
             boolean bl6 = hashMap.size() > 0;
             boolean bl7 = twoKeyMap.getKeyCount() > 0;
             boolean bl8 = twoKeyMap1.getKeyCount() > 0;
             ArrayList arrayList = new ArrayList();
 
-            for (int i = 0; i < bc; i += 1) {
-                ProgramClass programClass1 = super.programClasses[i];
+            for (int programClasseIndexValue = 0; programClasseIndexValue < lengthValue; programClasseIndexValue += 1) {
+                ProgramClass programClass1 = super.programClasses[programClasseIndexValue];
                 if ((fixedClassesExclusionSet1 == null || !fixedClassesExclusionSet1.isMatchedClass(programClass1)) && !programClass1.isGenerated()) {
                     ProgramClass programClass2 = (ProgramClass) hashMap3.get(programClass1);
                     boolean bl9 = programClass1.applyAutoReflectionHandling(
@@ -4039,16 +3806,16 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                 twoKeyMap3,
                                 set3,
                                 programClass10,
-                                string3,
+                                digestAlgorithm,
                                 methodKeyInjector,
                                 classRepository1,
                                 super.classResolver,
                                 scriptEnvironment1
                         );
-                        int bi = ZkmUtils.getPrimeCapacity(bg);
+                        int primeCapacity = ZkmUtils.getPrimeCapacity(bg);
                         long bh = 86928442684906L;
-                        int bf = bi;
-                        programClass10.replaceIntegerConstant(bf);
+                        int primeCapacityValue = primeCapacity;
+                        programClass10.replaceIntegerConstant(primeCapacityValue);
                     }
                 } catch (UnsupportedEncodingException unsupportedEncodingException) {
                     throw new ZkmProcessingException("Auto Reflection Handling : UnsupportedEncodingException : " + unsupportedEncodingException.getMessage());
@@ -4112,7 +3879,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
     }
 
     public long getFileTimestamp(String string) {
-        long ba = 0L;
+        long fileTimestamp = 0L;
         if (string != null) {
             File file1 = new File(string);
             if (file1.exists()) {
@@ -4120,7 +3887,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 Class[] class2 = new Class[0];
 
                 try {
-                    ba = (Long) class1.getMethod(xorStrings(LicenseCheckBase.getEncodedLastModified(), LicenseCheckBase.getXorKey()), class2).invoke(file1, class2);
+                    fileTimestamp = (Long) class1.getMethod(xorStrings(LicenseCheckBase.getEncodedLastModified(), LicenseCheckBase.getXorKey()), class2).invoke(file1, class2);
                 } catch (AssertionFailedException assertionFailedException) {
                     throw assertionFailedException;
                 } catch (Exception exception) {
@@ -4128,7 +3895,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             }
         }
 
-        return ba;
+        return fileTimestamp;
     }
 
     public void addReferenceObfuscationExclusions(
@@ -4164,12 +3931,12 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
     public final void renameFields(
             NameExclusionSet nameExclusionSet,
             ChangeLogMapping changeLogMapping1,
-            int ba,
-            boolean bl,
-            boolean bl1,
-            boolean bl2,
-            String string,
-            boolean bl3,
+            int keepInnerClassInfoMode,
+            boolean asciiNames,
+            boolean letterStartNames,
+            boolean randomizeNames,
+            String namePrefix,
+            boolean reuseNames,
             HashMap hashMap,
             TwoKeyMap twoKeyMap,
             TwoKeyMap twoKeyMap1,
@@ -4187,9 +3954,9 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 hashMap,
                 twoKeyMap,
                 twoKeyMap1,
-                bl2
+                randomizeNames
         );
-        DefaultFieldNameGenerator defaultFieldNameGenerator = new DefaultFieldNameGenerator(ba, bl, bl1, bl2, string, bl3, list1);
+        DefaultFieldNameGenerator defaultFieldNameGenerator = new DefaultFieldNameGenerator(keepInnerClassInfoMode, asciiNames, letterStartNames, randomizeNames, namePrefix, reuseNames, list1);
         fieldRenamer.renameFields(defaultFieldNameGenerator, scriptEnvironment1);
     }
 
@@ -4264,7 +4031,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             boolean bl,
             Map map1,
             TwoKeyMap twoKeyMap,
-            int[] ba,
+            int[] integerArray,
             TwoKeyMap twoKeyMap1,
             NestedMultimapView nestedMultimapView,
             NestedMultiMap nestedMultiMap,
@@ -4313,7 +4080,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         map2,
                         map9,
                         inheritedMemberAnalyzer,
-                        ba,
+                        integerArray,
                         map10,
                         resolvedMethodRef,
                         resolvedMethodRef1,
@@ -4357,7 +4124,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             bl,
                             map1,
                             twoKeyMap,
-                            ba,
+                            integerArray,
                             twoKeyMap1,
                             nestedMultimapView,
                             nestedMultiMap,
@@ -4406,12 +4173,12 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             ScriptEnvironment scriptEnvironment1
     ) throws IOException {
         Random random1 = ZkmUtils.createRandom(4096);
-        int ba = 0;
+        int programClasseIndex = 0;
         int bb = 0;
 
         for (ProgramClass[] programClass3 = super.programClasses; bb < programClass3.length; programClass3 = super.programClasses) {
             ListMultimap listMultimap = null;
-            ProgramClass programClass1 = super.programClasses[ba];
+            ProgramClass programClass1 = super.programClasses[programClasseIndex];
             String string = (String) ZkmUtils.mapOrSelf(programClass1.getClassName(), hashMap);
             if (changeLogMapping1 != null) {
                 listMultimap = changeLogMapping1.getLineNumberMappings(string);
@@ -4467,7 +4234,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 nestedMultiMap.putMultimap(programClass1.getClassName(), listMultimap1);
             }
 
-            bb = ++ba;
+            bb = ++programClasseIndex;
         }
     }
 
@@ -4488,7 +4255,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
     public void encryptClassStringsDefault(
             ProgramClass programClass1,
-            boolean bl,
+            boolean lazyDecrypt,
             boolean bl1,
             MethodKeyInjector methodKeyInjector,
             CommonSuperTypeResolver commonSuperTypeResolver1,
@@ -4498,7 +4265,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         boolean bl2 = programClass1.supportsJava6();
         this.encryptStringsInClass(
                 programClass1,
-                bl,
+                lazyDecrypt,
                 bl2,
                 bl1,
                 !HiddenOptionFlags.NO_METHOD_KEY_FLOW_OBFUSCATION,
@@ -4633,18 +4400,18 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
     public long decodeLicenseTimestamp(String string, boolean bl) {
         String string1 = string;
-        return this.m(string1) + (bl ? 1272694208093L : 0L);
+        return this.decodeLicenseNumber(string1) + (bl ? 1272694208093L : 0L);
     }
 
     public final void renameClasses(
             NameExclusionSet nameExclusionSet,
             ChangeLogMapping changeLogMapping1,
-            boolean bl,
+            boolean randomizeOrder,
             boolean bl1,
             boolean bl2,
-            String string,
-            int ba,
-            int bb,
+            String namePrefix,
+            int keepInnerClassInfoMode,
+            int keepGenericsInfoMode,
             MixedCaseNamesMode mixedCaseNamesMode1,
             boolean bl3,
             String string1,
@@ -4658,7 +4425,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
     ) throws ZkmException, IOException {
         ListMultimap listMultimap = ObfuscatorEngineBase.invertToMultimap(hashMap);
         ClassRenameClashChecker classRenameClashChecker = new ClassRenameClashChecker(
-                nameExclusionSet, changeLogMapping1, bl, super.classRepository, super.programClasses, classFileBases, super.classHierarchy, hashMap2, hashMap3
+                nameExclusionSet, changeLogMapping1, randomizeOrder, super.classRepository, super.programClasses, classFileBases, super.classHierarchy, hashMap2, hashMap3
         );
         List list1 = null;
         if (string1 != null && string1.length() > 0) {
@@ -4668,11 +4435,11 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         FileClassNameGenerator fileClassNameGenerator;
         if (bl3) {
             fileClassNameGenerator = new SharedSequenceClassNamer(
-                    classRenameClashChecker, bl1, bl2, string, ba, bb, bl, mixedCaseNamesMode1, hashMap, listMultimap, super.rootPackageNode.getNodesByPath(), list1
+                    classRenameClashChecker, bl1, bl2, namePrefix, keepInnerClassInfoMode, keepGenericsInfoMode, randomizeOrder, mixedCaseNamesMode1, hashMap, listMultimap, super.rootPackageNode.getNodesByPath(), list1
             );
         } else {
             fileClassNameGenerator = new FileClassNameGenerator(
-                    classRenameClashChecker, bl1, bl2, string, ba, bb, bl, mixedCaseNamesMode1, hashMap, listMultimap, super.rootPackageNode.getNodesByPath(), list1
+                    classRenameClashChecker, bl1, bl2, namePrefix, keepInnerClassInfoMode, keepGenericsInfoMode, randomizeOrder, mixedCaseNamesMode1, hashMap, listMultimap, super.rootPackageNode.getNodesByPath(), list1
             );
         }
 
@@ -4696,10 +4463,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         if (observableHolder1.isValueNull()) {
             SetMultiMap setMultiMap = new SetMultiMap();
             ProgramClass[] programClass1 = super.programClasses;
-            int ba = programClass1.length;
+            int lengthValue = programClass1.length;
 
-            for (int i = 0; i < ba; i++) {
-                programClass1[i].collectCallGraph(setMultiMap, set1);
+            for (int programClass1ElementIndex = 0; programClass1ElementIndex < lengthValue; programClass1ElementIndex++) {
+                programClass1[programClass1ElementIndex].collectCallGraph(setMultiMap, set1);
             }
 
             listMultimap = setMultiMap.toListMultimap();
@@ -4735,16 +4502,16 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             MethodParameterExclusions methodParameterExclusions,
             FixedClassesExclusionSet fixedClassesExclusionSet1,
             ChangeLogMapping changeLogMapping1,
-            boolean bl,
-            int ba,
-            boolean bl1,
-            boolean bl2,
-            boolean bl3,
+            boolean changeLogTakesPrecedence,
+            int keepInnerClassInfoMode,
+            boolean overloadByReturnType,
+            boolean avoidNameOverloading,
+            boolean randomizeNames,
             boolean bl4,
-            boolean bl5,
-            boolean bl6,
-            String string,
-            boolean bl7,
+            boolean asciiNames,
+            boolean letterStartNames,
+            String namePrefix,
+            boolean reuseNames,
             HashMap hashMap,
             TwoKeyMap twoKeyMap,
             TwoKeyMap twoKeyMap1,
@@ -4759,16 +4526,16 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 methodParameterExclusions,
                 fixedClassesExclusionSet1,
                 changeLogMapping1,
-                bl,
+                changeLogTakesPrecedence,
                 super.classRepository,
                 super.programClasses,
                 classFileBases,
                 super.classHierarchy,
                 super.classResolver,
-                ba,
-                bl1,
-                bl2,
-                bl3,
+                keepInnerClassInfoMode,
+                overloadByReturnType,
+                avoidNameOverloading,
+                randomizeNames,
                 bl4,
                 hashMap,
                 twoKeyMap,
@@ -4778,7 +4545,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 scriptEnvironment1
         );
         MethodNameAssigner methodNameAssigner = new MethodNameAssigner(
-                methodRenamer1, nameExclusionSet, methodParameterExclusions, bl5, bl6, bl3, string, bl7, list1
+                methodRenamer1, nameExclusionSet, methodParameterExclusions, asciiNames, letterStartNames, randomizeNames, namePrefix, reuseNames, list1
         );
         methodRenamer1.renameMethods(methodNameAssigner);
     }
@@ -4802,26 +4569,26 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
     ) throws ZkmException, IOException {
         IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1 = scriptEnvironment1.getIgnoreMissingReferencesSpec();
         ArrayList arrayList = new ArrayList();
-        String string2 = HiddenOptionFlags.EXCEPTION_OBFUSCATION_USE_EXCEPTION;
-        if (string2 != null) {
-            StringTokenizer stringTokenizer = new StringTokenizer(string2, ";");
+        String exceptionObfuscationUseException = HiddenOptionFlags.EXCEPTION_OBFUSCATION_USE_EXCEPTION;
+        if (exceptionObfuscationUseException != null) {
+            StringTokenizer stringTokenizer = new StringTokenizer(exceptionObfuscationUseException, ";");
 
             while (stringTokenizer.hasMoreTokens()) {
                 String string3 = stringTokenizer.nextToken();
-                String string4 = ZkmUtils.dotsToSlashes(string3);
-                if (super.classResolver.findClassFile(string4) != null) {
-                    if (!string4.equals("java/lang/Throwable") && !classRepository1.isSubclass(string4, "java/lang/Throwable")) {
+                String keyValue = ZkmUtils.dotsToSlashes(string3);
+                if (super.classResolver.findClassFile(keyValue) != null) {
+                    if (!keyValue.equals("java/lang/Throwable") && !classRepository1.isSubclass(keyValue, "java/lang/Throwable")) {
                         scriptEnvironment1.logWarning(
                                 "Class '"
                                         + string3
                                         + "' specified in "
                                         + "ZKM_EXCEPTION_OBFUSCATION_USE_EXCEPTION"
                                         + " String '"
-                                        + string2
+                                        + exceptionObfuscationUseException
                                         + "' is not a Throwable. It will not be used."
                         );
                     } else {
-                        arrayList.add(string4);
+                        arrayList.add(keyValue);
                     }
                 } else {
                     scriptEnvironment1.logWarning(
@@ -4830,7 +4597,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                     + "' specified in "
                                     + "ZKM_EXCEPTION_OBFUSCATION_USE_EXCEPTION"
                                     + " String '"
-                                    + string2
+                                    + exceptionObfuscationUseException
                                     + "' could not be found. It will not be used."
                     );
                 }
@@ -4838,10 +4605,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         }
 
         HashMap hashMap = ZkmUtils.createHashMap();
-        String string10 = HiddenOptionFlags.EXCEPTION_OBFUSCATION_EXTRA_EXCEPTIONS;
+        String exceptionObfuscationExtraExceptions = HiddenOptionFlags.EXCEPTION_OBFUSCATION_EXTRA_EXCEPTIONS;
         ArrayList arrayList1 = new ArrayList();
-        if (string10 != null) {
-            StringTokenizer stringTokenizer1 = new StringTokenizer(string10, ";");
+        if (exceptionObfuscationExtraExceptions != null) {
+            StringTokenizer stringTokenizer1 = new StringTokenizer(exceptionObfuscationExtraExceptions, ";");
 
             while (stringTokenizer1.hasMoreTokens()) {
                 String string5 = stringTokenizer1.nextToken();
@@ -4869,39 +4636,33 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             StringLengthComparator stringLengthComparator = new StringLengthComparator(this);
             ArrayList arrayList3 = new ArrayList();
             List list2 = countingBag.getSortedByCount();
-            float ba = -1.0F;
+            float countValue = -1.0F;
             Iterator iterator1 = list2.iterator();
 
-            label139:
             while (iterator1.hasNext()) {
-                String string7 = (String) iterator1.next();
-                String string8 = classRepository1.lookupNewClassName(string7);
+                String key = (String) iterator1.next();
+                String string8 = classRepository1.lookupNewClassName(key);
                 Iterator iterator2 = arrayList1.iterator();
-
+                boolean excludedClassName = false;
                 while (iterator2.hasNext()) {
-                    String string9 = (String) iterator2.next();
-                    String string = string9;
-                    String string1 = string7;
-                    if (ZkmStringUtils.matchesWildcard(string1, string)) {
-                        continue label139;
-                    }
-
-                    if (string8 != null) {
-                        string = string9;
-                        string1 = string8;
-                        if (ZkmStringUtils.matchesWildcard(string1, string)) {
-                            continue label139;
-                        }
+                    String excludedPattern = (String) iterator2.next();
+                    if (ZkmStringUtils.matchesWildcard(key, excludedPattern)
+                            || string8 != null && ZkmStringUtils.matchesWildcard(string8, excludedPattern)) {
+                        excludedClassName = true;
+                        break;
                     }
                 }
-
-                int bc = countingBag.getCount(string7);
-                if (ba == -1.0F) {
-                    ba = bc;
+                if (excludedClassName) {
+                    continue;
                 }
 
-                if (ba / bc > 0.5) {
-                    arrayList3.add(string7);
+                int count = countingBag.getCount(key);
+                if (countValue == -1.0F) {
+                    countValue = count;
+                }
+
+                if (countValue / count > 0.5) {
+                    arrayList3.add(key);
                 }
             }
 
@@ -4925,25 +4686,16 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         }
 
         ArrayList arrayList2 = new ArrayList(super.programClasses.length);
-        int bb = 0;
+        int programClasseIndex = 0;
         int bd = 0;
 
         for (ProgramClass[] programClass4 = super.programClasses; bd < programClass4.length; programClass4 = super.programClasses) {
-            ProgramClass programClass2 = super.programClasses[bb];
-            label111:
-            if (!programClass2.isGenerated() && (fixedClassesExclusionSet1 == null || !fixedClassesExclusionSet1.isMatchedClass(programClass2))) {
-                boolean bl2;
-                if (exceptionObfuscationExclusions != null) {
-                    if (exceptionObfuscationExclusions.isClassExcluded(programClass2)) {
-                        break label111;
-                    }
-
-                    bl2 = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
-                } else {
-                    bl2 = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
-                }
-
-                if (!bl2 || flowObfuscationExclusions == null || !flowObfuscationExclusions.isClassExcluded(programClass2)) {
+            ProgramClass programClass2 = super.programClasses[programClasseIndex];
+            if (!programClass2.isGenerated()
+                    && (fixedClassesExclusionSet1 == null || !fixedClassesExclusionSet1.isMatchedClass(programClass2))
+                    && (exceptionObfuscationExclusions == null || !exceptionObfuscationExclusions.isClassExcluded(programClass2))) {
+                boolean flowExcludesExceptionObfuscation = HiddenOptionFlags.FLOW_EXCLUDES_EXCEPTION_OBFUSCATION;
+                if (!flowExcludesExceptionObfuscation || flowObfuscationExclusions == null || !flowObfuscationExclusions.isClassExcluded(programClass2)) {
                     arrayList2.add(programClass2);
                     if (programClass2.hasVersionedVariants()) {
                         Iterator iterator5 = programClass2.getVersionedVariants().iterator();
@@ -4956,7 +4708,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 }
             }
 
-            bd = ++bb;
+            bd = ++programClasseIndex;
         }
 
         if (HiddenOptionFlags.USE_PARALLEL && HiddenOptionFlags.PROCESSOR_COUNT >= 2) {
@@ -5096,7 +4848,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             boolean bl2,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        boolean bl3 = HiddenOptionFlags.VERBOSE_STRING_ENCRYPTION;
+        boolean verboseStringEncryption = HiddenOptionFlags.VERBOSE_STRING_ENCRYPTION;
         ArrayList arrayList;
         ClassRepository classRepository1;
         if (scriptEnvironment1.isVerbose()) {
@@ -5120,7 +4872,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         listMultimap,
                         multiMapTable,
                         stringEncryptor,
-                        bl3,
+                        verboseStringEncryption,
                         bl,
                         bl1,
                         bl2,
@@ -5155,7 +4907,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             listMultimap,
                             multiMapTable,
                             stringEncryptor,
-                            bl3,
+                            verboseStringEncryption,
                             bl,
                             bl1,
                             bl2,
@@ -5192,7 +4944,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
     public void encryptStringsInClass(
             ProgramClass programClass1,
-            boolean bl,
+            boolean lazyDecrypt,
             boolean bl1,
             boolean bl2,
             boolean bl3,
@@ -5208,7 +4960,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 + programClass1.getCreationKind()
                 + ")";
         HashSet hashSet = ZkmUtils.createHashSet();
-        StringEncryptor stringEncryptor = new StringEncryptor(false, bl);
+        StringEncryptor stringEncryptor = new StringEncryptor(false, lazyDecrypt);
         ProgramClass[] programClass2 = new ProgramClass[]{programClass1};
         InheritedMemberAnalyzer inheritedMemberAnalyzer = new InheritedMemberAnalyzer(programClass2, super.classResolver);
         MultiMapTable multiMapTable = new MultiMapTable(super.programClasses.length);
@@ -5259,7 +5011,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                 inheritedMemberAnalyzer,
                 stringEncryptor,
                 true,
-                bl,
+                lazyDecrypt,
                 bl1,
                 true,
                 bl2,
@@ -5296,30 +5048,32 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         return LicenseCheckBase.getEncodedLicenseKey();
     }
 
-    public void markDebugInfoPresence(int ba, Map map1) {
-        ProgramClass[] programClass1 = super.programClasses;
-        int bb = programClass1.length;
+    public void markDebugInfoPresence(int traversalMode, Map debugAttributeFlags) {
+        ProgramClass[] classes = super.programClasses;
+        int classCount = classes.length;
         ZkmProcessingException.getBuildTag();
-        int bc = 0;
+        int classIndex = 0;
 
-        label30:
-        while (bc < bb) {
-            ProgramClass programClass2 = programClass1[bc];
-            if (ba >= 0) {
-                programClass2.propagateDebugAttributeFlags(map1);
-                if (programClass2.hasVersionedVariants()) {
-                    Iterator iterator = programClass2.getVersionedVariants().iterator();
-
-                    while (iterator.hasNext()) {
-                        ClassFileBase classFileBase = (ClassFileBase) iterator.next();
-                        ((ProgramClass) classFileBase).propagateDebugAttributeFlags(map1);
-                        if (ba <= 0) {
-                            continue label30;
+        while (classIndex < classCount) {
+            ProgramClass programClass = classes[classIndex];
+            if (traversalMode >= 0) {
+                programClass.propagateDebugAttributeFlags(debugAttributeFlags);
+                boolean repeatCurrentClass = false;
+                if (programClass.hasVersionedVariants()) {
+                    Iterator versions = programClass.getVersionedVariants().iterator();
+                    while (versions.hasNext()) {
+                        ClassFileBase version = (ClassFileBase) versions.next();
+                        ((ProgramClass) version).propagateDebugAttributeFlags(debugAttributeFlags);
+                        if (traversalMode <= 0) {
+                            repeatCurrentClass = true;
+                            break;
                         }
                     }
                 }
-
-                bc++;
+                // Preserve the original retry behavior for nonpositive traversal modes.
+                if (!repeatCurrentClass) {
+                    classIndex++;
+                }
             }
         }
     }
@@ -5493,13 +5247,13 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
         NestedMultimapView nestedMultimapView = twoKeySetMultiMap.toNestedMultimapView();
         ListMultimap listMultimap2 = setMultiMap2.toListMultimap();
         if (bl3) {
-            boolean bl5 = bl;
+            boolean lazyDecrypt = bl;
             HashMap hashMap3 = ZkmUtils.createHashMap();
             HashMap hashMap4 = ZkmUtils.createHashMap();
             HashMap hashMap5 = ZkmUtils.createHashMap();
             TwoKeyMap twoKeyMap = new TwoKeyMap(true, false);
             TwoKeyMap twoKeyMap1 = new TwoKeyMap(true, false);
-            int[] bd = null;
+            int[] integerArray = null;
             TwoKeyMap twoKeyMap2 = null;
             HashMap hashMap6 = ZkmUtils.createHashMap();
             HashSet hashSet = ZkmUtils.createHashSet();
@@ -5561,37 +5315,19 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
 
                 iterator3 = hashSet.iterator();
 
-                label260:
-                while (true) {
-                    BooleanFlag booleanFlag;
-                    BooleanFlag booleanFlag1;
-                    BooleanFlag booleanFlag2;
-                    HashSet hashSet1;
-                    ListMultimap listMultimap1;
-                    ProgramClass programClass10;
-                    boolean bl6;
-                    BooleanFlag booleanFlag4;
-                    do {
-                        if (!iterator3.hasNext()) {
-                            break label260;
-                        }
-
-                        programClass10 = (ProgramClass) iterator3.next();
-                        bl6 = ReferenceObfuscator.bothSupportInvokedynamic(programClass10, (ProgramClass) null);
-                        booleanFlag4 = new BooleanFlag();
-                        booleanFlag = new BooleanFlag();
-                        booleanFlag1 = new BooleanFlag();
-                        booleanFlag2 = new BooleanFlag();
-                        hashSet1 = ZkmUtils.createHashSet();
-                        listMultimap1 = listMultimap;
-                        if (hashSet.size() <= 1) {
-                            break;
-                        }
-
+                while (iterator3.hasNext()) {
+                    ProgramClass programClass10 = (ProgramClass) iterator3.next();
+                    boolean bl6 = ReferenceObfuscator.bothSupportInvokedynamic(programClass10, (ProgramClass) null);
+                    BooleanFlag booleanFlag4 = new BooleanFlag();
+                    BooleanFlag booleanFlag = new BooleanFlag();
+                    BooleanFlag booleanFlag1 = new BooleanFlag();
+                    BooleanFlag booleanFlag2 = new BooleanFlag();
+                    HashSet hashSet1 = ZkmUtils.createHashSet();
+                    ListMultimap listMultimap1 = listMultimap;
+                    if (hashSet.size() > 1) {
                         Set set2 = setMultiMap3.getValues(programClass10);
                         listMultimap1 = new ListMultimap(listMultimap.getKeyCount());
                         Iterator iterator4 = listMultimap.entrySet().iterator();
-
                         while (iterator4.hasNext()) {
                             Entry entry3 = (Entry) iterator4.next();
                             MethodBytecode methodBytecode2 = (MethodBytecode) entry3.getKey();
@@ -5599,16 +5335,19 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                 listMultimap1.appendValues(methodBytecode2, (Collection) entry3.getValue());
                             }
                         }
-                    } while (listMultimap1.isEmpty());
+                        if (listMultimap1.isEmpty()) {
+                            continue;
+                        }
+                    }
 
                     Map map5 = referenceObfuscator.assignMemberRefIndices(
                             bl6, booleanFlag4, booleanFlag, listMultimap1, map4.size(), hashSet1, booleanFlag1, booleanFlag2, classRepository1
                     );
                     twoKeyMap1.putInnerMap(programClass10, map5);
-                    bl5 = map4.size() + map5.size() <= 65535;
-                    int[] bc = referenceObfuscator.shuffleKeyBitPositions();
-                    if (bd == null) {
-                        bd = referenceObfuscator.pickRandomLetters();
+                    lazyDecrypt = map4.size() + map5.size() <= 65535;
+                    int[] integerArrayValue = referenceObfuscator.shuffleKeyBitPositions();
+                    if (integerArray == null) {
+                        integerArray = referenceObfuscator.pickRandomLetters();
                     }
 
                     HashMap hashMap7 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(map4.size() + twoKeyMap1.getKeyCount()));
@@ -5635,7 +5374,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     }
 
                     boolean value = booleanFlag4.getValue();
-                    boolean bl8 = booleanFlag.getValue();
+                    boolean valueValue = booleanFlag.getValue();
                     Map map6 = twoKeyMap1.getInnerMap(programClass10);
                     Map map7 = twoKeyMap2.getInnerMap(programClass10);
                     ClassResolver classResolver1 = super.classResolver;
@@ -5647,11 +5386,11 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                     programClass10.createReferenceObfuscationSupport(
                             true,
                             value,
-                            bl8,
+                            valueValue,
                             map4,
                             map6,
-                            bc,
-                            bd,
+                            integerArrayValue,
+                            integerArray,
                             map7,
                             arrayList,
                             inheritedMemberAnalyzer1,
@@ -5676,10 +5415,10 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             BooleanFlag booleanFlag3 = new BooleanFlag();
             ClassHierarchy classHierarchy1 = classRepository1.getClassHierarchy();
             ProgramClass[] programClass4 = super.programClasses;
-            int be = programClass4.length;
+            int lengthValue = programClass4.length;
 
-            for (int i = 0; i < be; i += 1) {
-                ProgramClass programClass9 = programClass4[i];
+            for (int programClass4ElementIndex = 0; programClass4ElementIndex < lengthValue; programClass4ElementIndex += 1) {
+                ProgramClass programClass9 = programClass4[programClass4ElementIndex];
                 if (programClass9.isInterface() && !hashSet.contains(programClass9) && !programClass9.isGenerated()) {
                     ClassHierarchyNode classHierarchyNode1 = ClassHierarchyNode.findNode(programClass9.getClassName());
                     this.obfuscateReferencesInHierarchy(
@@ -5688,7 +5427,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             bl,
                             hashMap6,
                             twoKeyMap1,
-                            bd,
+                            integerArray,
                             twoKeyMap2,
                             nestedMultimapView,
                             nestedMultiMap,
@@ -5721,7 +5460,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                     bl,
                                     hashMap6,
                                     twoKeyMap1,
-                                    bd,
+                                    integerArray,
                                     twoKeyMap2,
                                     nestedMultimapView,
                                     nestedMultiMap,
@@ -5760,7 +5499,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                             bl,
                             hashMap6,
                             twoKeyMap1,
-                            bd,
+                            integerArray,
                             twoKeyMap2,
                             nestedMultimapView,
                             nestedMultiMap,
@@ -5793,7 +5532,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                                     bl,
                                     hashMap6,
                                     twoKeyMap1,
-                                    bd,
+                                    integerArray,
                                     twoKeyMap2,
                                     nestedMultimapView,
                                     nestedMultiMap,
@@ -5848,7 +5587,7 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
                         ProgramClass programClass7 = (ProgramClass) iterator8.next();
                         if (HiddenOptionFlags.REFERENCE_OBFUSCATION_METHOD_KEYS) {
                             this.encryptClassStringsDefault(
-                                    programClass7, bl5, bl2 && methodKeyInjector == null, methodKeyInjector, commonSuperTypeResolver1, classRepository1, scriptEnvironment1
+                                    programClass7, lazyDecrypt, bl2 && methodKeyInjector == null, methodKeyInjector, commonSuperTypeResolver1, classRepository1, scriptEnvironment1
                             );
                         }
 
@@ -5932,20 +5671,20 @@ public class ObfuscationEngine extends ObfuscatorEngineBase {
             return programClass1.removeDeadCode(commonSuperTypeResolver1, classMemberLookup1, bl, scriptEnvironment1);
         } catch (ZkmClassNotFoundException zkmClassNotFoundException) {
             if (HiddenOptionFlags.REMOVE_CORRUPT_CLASS && ignoreMissingReferencesSpec1 != null) {
-                String string = zkmClassNotFoundException.getMessage();
-                int ba = string.indexOf(39);
-                int bb = string.indexOf(39, ba + 1);
-                if (bb > ba) {
-                    String string1 = string.substring(ba + 1, bb).trim();
-                    if (ignoreMissingReferencesSpec1.isClassIgnored(ZkmUtils.dotsToSlashes(string1))) {
-                        int bc = string.lastIndexOf(58);
-                        if (bc > 0) {
-                            int bd = string.indexOf("'", bc);
-                            if (bd > bc) {
-                                int be = string.indexOf("'", bd + 1);
-                                if (be > bd) {
-                                    string.substring(bd + 1, be).trim();
-                                    map1.put(programClass1, string1);
+                String message = zkmClassNotFoundException.getMessage();
+                int ba = message.indexOf(39);
+                int endIndex = message.indexOf(39, ba + 1);
+                if (endIndex > ba) {
+                    String valueValue = message.substring(ba + 1, endIndex).trim();
+                    if (ignoreMissingReferencesSpec1.isClassIgnored(ZkmUtils.dotsToSlashes(valueValue))) {
+                        int fromIndex = message.lastIndexOf(58);
+                        if (fromIndex > 0) {
+                            int bd = message.indexOf("'", fromIndex);
+                            if (bd > fromIndex) {
+                                int endIndexValue = message.indexOf("'", bd + 1);
+                                if (endIndexValue > bd) {
+                                    message.substring(bd + 1, endIndexValue).trim();
+                                    map1.put(programClass1, valueValue);
                                     return bl1;
                                 }
                             }

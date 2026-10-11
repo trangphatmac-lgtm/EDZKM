@@ -18,14 +18,14 @@ public class ClassSuffixExcludeDialog extends ExcludeParameterDialogBase {
         this.classNamePanel = new ClassNameSpecifierPanel(this, super.filterModel, super.exclusionType);
         JTabbedPane jTabbedPane = super.tabbedPane;
         PackageNameParamPanel packageNameParamPanel1 = this.packagePanel;
-        String string = GuiResources.getTooltipText("CONTAINING_PACKAGE_PART_OF_PARAM");
+        String tooltipText = GuiResources.getTooltipText("CONTAINING_PACKAGE_PART_OF_PARAM");
         PackageNameParamPanel packageNameParamPanel = packageNameParamPanel1;
-        jTabbedPane.addTab("Containing package", (Icon) null, packageNameParamPanel, string);
+        jTabbedPane.addTab("Containing package", (Icon) null, packageNameParamPanel, tooltipText);
         jTabbedPane = super.tabbedPane;
         ClassNameSpecifierPanel classNameSpecifierPanel1 = this.classNamePanel;
-        String string1 = GuiResources.getTooltipText("CLASS_SUFFIX_PART_OF_PARAM");
+        String tooltipTextValue = GuiResources.getTooltipText("CLASS_SUFFIX_PART_OF_PARAM");
         ClassNameSpecifierPanel classNameSpecifierPanel = classNameSpecifierPanel1;
-        jTabbedPane.addTab("Class", (Icon) null, classNameSpecifierPanel, string1);
+        jTabbedPane.addTab("Class", (Icon) null, classNameSpecifierPanel, tooltipTextValue);
         super.tabbedPane.setSelectedComponent(this.classNamePanel);
     }
 

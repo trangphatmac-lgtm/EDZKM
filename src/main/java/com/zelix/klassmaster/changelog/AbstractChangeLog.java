@@ -39,8 +39,8 @@ public abstract class AbstractChangeLog {
         String string1 = ba + ZkmStringUtils.pad(String.valueOf(bb), 82, 4, 48);
         int bc = 0;
 
-        for (int i = 0; i < string.length(); i++) {
-            bc += string.charAt(i);
+        for (int characterIndex = 0; characterIndex < string.length(); characterIndex++) {
+            bc += string.charAt(characterIndex);
         }
 
         String string3 = Long.toOctalString(Long.parseLong(string1));
@@ -109,7 +109,7 @@ public abstract class AbstractChangeLog {
 
     public abstract void addModuleReferenceObfuscationClass(Object object, Object object1);
 
-    public abstract void setMethodParameterChangeClasses(Object object);
+    public abstract void setMethodParameterChangeClasses(Object methodParameterChangeClasses);
 
     public abstract void incrementClassCount();
 
@@ -119,47 +119,47 @@ public abstract class AbstractChangeLog {
             return 1;
         }
 
-        char[] bb = string.toCharArray();
-        int bc = bb.length;
+        char[] characterArray = string.toCharArray();
+        int lengthValue = characterArray.length;
 
-        for (int i = 1; i < bb.length; i++) {
-            char be = string.charAt(i);
+        for (int characterIndex = 1; characterIndex < characterArray.length; characterIndex++) {
+            char be = string.charAt(characterIndex);
             if (be >= '0' && be <= '9') {
-                bc = i;
+                lengthValue = characterIndex;
                 break;
             }
         }
 
-        return bc;
+        return lengthValue;
     }
 
     public abstract boolean acceptsFieldChanges();
 
-    public Integer getCachedInteger(int ba) {
-        return INTEGER_CACHE.valueOf(ba);
+    public Integer getCachedInteger(int integer) {
+        return INTEGER_CACHE.valueOf(integer);
     }
 
-    public abstract void setAutoReflectionClass(Object object);
+    public abstract void setAutoReflectionClass(Object autoReflectionClass);
 
     public static String encodeParameterChangeData(ChangedMethodDescriptor changedMethodDescriptor, Long long1, String string) {
-        int[] ba;
+        int[] integerArray;
         if (changedMethodDescriptor == null) {
-            ba = EMPTY_INT_ARRAY;
+            integerArray = EMPTY_INT_ARRAY;
         } else {
-            ba = changedMethodDescriptor.getParamIndices();
+            integerArray = changedMethodDescriptor.getParamIndices();
         }
 
         String string1 = ZkmStringUtils.pad(ZkmUtils.toCustomBase(ZkmUtils.xorLongWithKey(long1, string), ENCODING_CHARS), 82, 8, ENCODING_CHARS[0]);
         long bb = 0L;
 
-        for (int i = 0; i < 3; i++) {
-            if (i < ba.length) {
-                bb |= ba[i];
+        for (int integerArrayElementIndex = 0; integerArrayElementIndex < 3; integerArrayElementIndex++) {
+            if (integerArrayElementIndex < integerArray.length) {
+                bb |= integerArray[integerArrayElementIndex];
             } else {
                 bb |= 256L;
             }
 
-            if (i < 2) {
+            if (integerArrayElementIndex < 2) {
                 bb <<= 9;
             }
         }
@@ -199,23 +199,23 @@ public abstract class AbstractChangeLog {
         String string2 = string.substring(0, 12);
         boolean bl = string2.charAt(0) == NEGATIVE_MARKER_CHAR;
         mutableLong.setValue(decodeLong(string2.substring(1), string1, bl));
-        int bb = 24;
+        int endIndex = 24;
         string2 = string.substring(12, 24);
         bl = string2.charAt(0) == NEGATIVE_MARKER_CHAR;
         mutableLong1.setValue(decodeLong(string2.substring(1), string1, bl));
-        int ba = bb;
-        bb = ba + 11 + 1;
-        string2 = string.substring(ba, bb);
+        int beginIndex = endIndex;
+        endIndex = beginIndex + 11 + 1;
+        string2 = string.substring(beginIndex, endIndex);
         bl = string2.charAt(0) == NEGATIVE_MARKER_CHAR;
         mutableLong2.setValue(decodeLong(string2.substring(1), string1, bl));
-        ba = bb;
-        bb = ba + 11 + 1;
-        string2 = string.substring(ba, bb);
+        beginIndex = endIndex;
+        endIndex = beginIndex + 11 + 1;
+        string2 = string.substring(beginIndex, endIndex);
         bl = string2.charAt(0) == NEGATIVE_MARKER_CHAR;
         mutableLong3.setValue(decodeLong(string2.substring(1), string1, bl));
-        ba = bb;
-        bb = ba + 11 + 1;
-        string2 = string.substring(ba, bb);
+        beginIndex = endIndex;
+        endIndex = beginIndex + 11 + 1;
+        string2 = string.substring(beginIndex, endIndex);
         bl = string2.charAt(0) == NEGATIVE_MARKER_CHAR;
         mutableLong4.setValue(decodeLong(string2.substring(1), string1, bl));
     }
@@ -228,8 +228,8 @@ public abstract class AbstractChangeLog {
         long ba = Long.parseLong(string);
         int bb = 0;
 
-        for (int i = 0; i < string1.length(); i++) {
-            bb += string1.charAt(i);
+        for (int characterIndex = 0; characterIndex < string1.length(); characterIndex++) {
+            bb += string1.charAt(characterIndex);
         }
 
         long be = ba - bb;
@@ -282,36 +282,36 @@ public abstract class AbstractChangeLog {
         this.paramChangeNodeDataPresent = true;
     }
 
-    public abstract void setReferenceObfuscationClass(Object object);
+    public abstract void setReferenceObfuscationClass(Object referenceObfuscationClass);
 
-    public static String mapTypeName(String string, Map map1) {
-        int ba = string.indexOf(91);
-        String string1;
+    public static String mapTypeName(String keyArgument, Map map1) {
+        int ba = keyArgument.indexOf(91);
+        String key;
         String string2;
         if (ba > -1) {
-            string1 = string.substring(0, ba);
-            string2 = string.substring(ba);
+            key = keyArgument.substring(0, ba);
+            string2 = keyArgument.substring(ba);
         } else {
-            string1 = string;
+            key = keyArgument;
             string2 = "";
         }
 
-        if (!MethodSignature.isPrimitiveKeyword(string1)) {
-            String string3 = (String) ZkmUtils.mapOrSelf(string1, map1);
+        if (!MethodSignature.isPrimitiveKeyword(key)) {
+            String string3 = (String) ZkmUtils.mapOrSelf(key, map1);
             return string3 + string2;
         } else {
-            return string;
+            return keyArgument;
         }
     }
 
-    public static AddedParameter[] createAddedParameters(String string, List list1) {
+    public static AddedParameter[] createAddedParameters(String descriptor, List list1) {
         AddedParameter[] addedParameters1 = new AddedParameter[list1.size()];
-        List list2 = MethodSignature.splitParameterDescriptors(string);
+        List list2 = MethodSignature.splitParameterDescriptors(descriptor);
 
-        for (int i = 0; i < list1.size(); i++) {
-            int bb = (Integer) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            int bb = (Integer) list1.get(elementIndex);
             String string1 = (String) list2.get(bb);
-            addedParameters1[i] = new AddedParameter(bb, ((String) list2.get(bb)).charAt(0));
+            addedParameters1[elementIndex] = new AddedParameter(bb, ((String) list2.get(bb)).charAt(0));
         }
 
         return addedParameters1;
@@ -323,8 +323,8 @@ public abstract class AbstractChangeLog {
             StringTokenizer stringTokenizer = new StringTokenizer(string, ",");
 
             while (stringTokenizer.hasMoreTokens()) {
-                String string1 = stringTokenizer.nextToken().trim();
-                stringBuilder.append(mapTypeName(string1, map1));
+                String key = stringTokenizer.nextToken().trim();
+                stringBuilder.append(mapTypeName(key, map1));
                 if (stringTokenizer.hasMoreTokens()) {
                     stringBuilder.append(", ");
                 }
@@ -336,16 +336,16 @@ public abstract class AbstractChangeLog {
         }
     }
 
-    public static Long decodeShortParameterChangeData(String string, String string1, ObservableHolder observableHolder, String string2) throws ZkmException, IOException {
+    public static Long decodeShortParameterChangeData(String string, String descriptor, ObservableHolder observableHolder, String string2) throws ZkmException, IOException {
         long ba = ZkmUtils.xorLongWithKey(ZkmUtils.parseCustomBase(string, "8WSNy5E-tIAreXQwVzuqnBoskGYJgKP2pfhFD$Z3TRbLc714xHdiO6UC9Mj_0amvl"), string2);
         ArrayList arrayList = new ArrayList();
 
         for (int i = 0; i < 3; i++) {
-            int bc = (int) (ba & 511L);
+            int integer = (int) (ba & 511L);
             long bd;
             byte be;
-            if (bc <= 255) {
-                arrayList.add(INTEGER_CACHE.valueOf(bc));
+            if (integer <= 255) {
+                arrayList.add(INTEGER_CACHE.valueOf(integer));
                 bd = ba;
                 be = 9;
             } else {
@@ -357,7 +357,7 @@ public abstract class AbstractChangeLog {
         }
 
         Collections.reverse(arrayList);
-        observableHolder.setValue(createAddedParameters(string1, arrayList));
+        observableHolder.setValue(createAddedParameters(descriptor, arrayList));
         return ba;
     }
 
@@ -378,8 +378,8 @@ public abstract class AbstractChangeLog {
 
     public static String decodePrefixedName(String string, String string1) {
         String string2 = string;
-        int ba = getNonDigitPrefixLength(string2);
-        string2 = string2.substring(ba);
+        int nonDigitPrefixLength = getNonDigitPrefixLength(string2);
+        string2 = string2.substring(nonDigitPrefixLength);
         return decodeName(string2, string1);
     }
 
@@ -408,9 +408,9 @@ public abstract class AbstractChangeLog {
 
     public abstract void addMemberFlowObfuscationData(Object object, Object object1);
 
-    public static Long decodeParameterChangeData(String string, String string1, ObservableHolder observableHolder, String string2) throws ZkmException, IOException {
+    public static Long decodeParameterChangeData(String string, String descriptor, ObservableHolder observableHolder, String string2) throws ZkmException, IOException {
         if (string.length() < 14) {
-            return decodeShortParameterChangeData(string, string1, observableHolder, string2);
+            return decodeShortParameterChangeData(string, descriptor, observableHolder, string2);
         }
 
         String string3 = string.substring(0, 8);
@@ -420,11 +420,11 @@ public abstract class AbstractChangeLog {
         ArrayList arrayList = new ArrayList();
 
         for (int i = 0; i < 3; i++) {
-            int bd = (int) (bb & 511L);
+            int integer = (int) (bb & 511L);
             long be;
             byte bf;
-            if (bd <= 255) {
-                arrayList.add(INTEGER_CACHE.valueOf(bd));
+            if (integer <= 255) {
+                arrayList.add(INTEGER_CACHE.valueOf(integer));
                 be = bb;
                 bf = 9;
             } else {
@@ -436,7 +436,7 @@ public abstract class AbstractChangeLog {
         }
 
         Collections.reverse(arrayList);
-        observableHolder.setValue(createAddedParameters(string1, arrayList));
+        observableHolder.setValue(createAddedParameters(descriptor, arrayList));
         return ba;
     }
 
@@ -452,8 +452,8 @@ public abstract class AbstractChangeLog {
         long ba = Long.parseLong(string);
         int bb = 0;
 
-        for (int i = 0; i < string1.length(); i++) {
-            bb += string1.charAt(i);
+        for (int characterIndex = 0; characterIndex < string1.length(); characterIndex++) {
+            bb += string1.charAt(characterIndex);
         }
 
         long bg = ba - bb;

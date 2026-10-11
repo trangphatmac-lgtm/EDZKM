@@ -43,25 +43,25 @@ public class MethodKeyInjector {
     public final ObjectTriple defaultHelperTriple;
     public final Map archiveHelperTriples;
 
-    public Long createMethodKey(Object object) {
-        long ba = MethodParameterChanger.nextRandomKey();
-        this.methodKeys.put(object, ba);
-        return ba;
+    public Long createMethodKey(Object key) {
+        long value = MethodParameterChanger.nextRandomKey();
+        this.methodKeys.put(key, value);
+        return value;
     }
 
-    public void putKeyLocal(Object object, Object object1) {
-        LocalVariableIndex localVariableIndex1 = (LocalVariableIndex) this.keyLocals.put(object, object1);
+    public void putKeyLocal(Object key, Object value) {
+        LocalVariableIndex localVariableIndex1 = (LocalVariableIndex) this.keyLocals.put(key, value);
     }
 
-    public LocalVariableIndex getKeyLocal(Object object) {
-        return (LocalVariableIndex) this.keyLocals.get(object);
+    public LocalVariableIndex getKeyLocal(Object key) {
+        return (LocalVariableIndex) this.keyLocals.get(key);
     }
 
-    public boolean hasMethodKey(Object object) {
-        return this.methodKeys.containsKey(object);
+    public boolean hasMethodKey(Object key) {
+        return this.methodKeys.containsKey(key);
     }
 
-    public void initializeForMethod(MethodInfo methodInfo1, int ba) {
+    public void initializeForMethod(MethodInfo methodInfo1, int elementIndex) {
         ObjectTriple objectTriple;
         if (this.currentArchive != null) {
             objectTriple = (ObjectTriple) this.archiveHelperTriples.get(this.currentArchive);
@@ -70,7 +70,7 @@ public class MethodKeyInjector {
         }
 
         this.currentNode = new MethodParamChangeNode(methodInfo1, true, false);
-        this.currentPairKeys = this.parameterChanger.getNodePairKeys(ba);
+        this.currentPairKeys = this.parameterChanger.getNodePairKeys(elementIndex);
         this.currentNode
                 .setKeys(
                         this.currentPairKeys.getFirstNode(),
@@ -102,14 +102,14 @@ public class MethodKeyInjector {
         MutableInt mutableInt1 = new MutableInt();
         List list2 = this.parameterChanger
                 .buildKeyLookupCode(programClass1, long1, long2, long3, mutableInt1, list1, constantPool1, this.memberLookup, this.classResolver);
-        int ba = 0 + mutableInt1.getValue();
+        int value = 0 + mutableInt1.getValue();
         arrayList.addAll(list2);
         arrayList.add(Instruction.createLongLoad(0, localVariableList1, 4));
         arrayList.add(SimpleInstruction.forOpcode(131));
         arrayList.add(Instruction.createLongStore(0, localVariableList1, 4));
         arrayList.add(new LabelInstruction(8192));
-        ba += 3;
-        mutableInt.setValue(ba);
+        value += 3;
+        mutableInt.setValue(value);
         return arrayList;
     }
 
@@ -147,11 +147,11 @@ public class MethodKeyInjector {
         Long long1 = this.createMethodKey(methodInfo1);
         ResolvedFieldRef resolvedFieldRef = this.currentNode.getKeyFieldRef();
         long effectiveKey = this.currentNode.getEffectiveKey();
-        long bc = long1 ^ effectiveKey;
+        long value = long1 ^ effectiveKey;
         int localVariableCount = methodInfo1.getLocalVariableCount();
         methodInfo1.setMaxLocals(localVariableCount + 2);
         arrayList.add(new ConstantRefInstruction(178, resolvedFieldRef));
-        arrayList.add(Instruction.createLongConstantLoad(bc, constantPool1, list1));
+        arrayList.add(Instruction.createLongConstantLoad(value, constantPool1, list1));
         arrayList.add(SimpleInstruction.forOpcode(131));
         LocalVariableList localVariableList1 = methodInfo1.getLocalVariableList();
         arrayList.add(Instruction.createLongStore(localVariableCount, localVariableList1, ba));
@@ -160,16 +160,16 @@ public class MethodKeyInjector {
         return arrayList;
     }
 
-    public Long getMethodKey(Object object) {
-        return (Long) this.methodKeys.get(object);
+    public Long getMethodKey(Object key) {
+        return (Long) this.methodKeys.get(key);
     }
 
     public void setCurrentArchive(SourceArchive sourceArchive1) {
         this.currentArchive = sourceArchive1;
     }
 
-    public long getKeyValueAt(int ba) {
-        return this.currentKeyNode.getMiddleBitsAt(ba);
+    public long getKeyValueAt(int elementIndex) {
+        return this.currentKeyNode.getMiddleBitsAt(elementIndex);
     }
 
     public Map getMethodKeys() {

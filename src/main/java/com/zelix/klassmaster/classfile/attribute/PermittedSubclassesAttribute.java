@@ -57,15 +57,15 @@ public class PermittedSubclassesAttribute
 
     @Override
     public void replaceClassConstant(ResolvedClassConstant resolvedClassConstant, ResolvedClassConstant resolvedClassConstant2) {
-        int n = 0;
+        int permittedSubclasseIndex = 0;
         int n2 = 0;
         ResolvedClassConstant[] resolvedClassConstantArray = this.permittedSubclasses;
         while (n2 < resolvedClassConstantArray.length) {
-            if (this.permittedSubclasses[n] == resolvedClassConstant) {
-                this.permittedSubclasses[n] = resolvedClassConstant2;
+            if (this.permittedSubclasses[permittedSubclasseIndex] == resolvedClassConstant) {
+                this.permittedSubclasses[permittedSubclasseIndex] = resolvedClassConstant2;
                 return;
             }
-            n2 = ++n;
+            n2 = ++permittedSubclasseIndex;
             resolvedClassConstantArray = this.permittedSubclasses;
         }
     }
@@ -73,9 +73,9 @@ public class PermittedSubclassesAttribute
     public void collectReferencedClasses(HashSet hashSet) {
         if (this.valid) {
             ResolvedClassConstant[] resolvedClassConstantArray = this.permittedSubclasses;
-            int n = resolvedClassConstantArray.length;
-            for (int i = 0; i < n; ++i) {
-                ProgramClass programClass = ClassHierarchyNode.findProgramClass(resolvedClassConstantArray[i].getClassName());
+            int lengthValue = resolvedClassConstantArray.length;
+            for (int resolvedClassConstantArrayElementIndex = 0; resolvedClassConstantArrayElementIndex < lengthValue; ++resolvedClassConstantArrayElementIndex) {
+                ProgramClass programClass = ClassHierarchyNode.findProgramClass(resolvedClassConstantArray[resolvedClassConstantArrayElementIndex].getClassName());
                 if (programClass == null) continue;
                 hashSet.add(programClass);
             }
@@ -108,9 +108,9 @@ public class PermittedSubclassesAttribute
     public void collectUsedConstants(char c, int n, UsedConstantsCollector usedConstantsCollector, char c2) {
         usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
         ResolvedClassConstant[] resolvedClassConstantArray = this.permittedSubclasses;
-        int n2 = resolvedClassConstantArray.length;
-        for (int i = 0; i < n2; ++i) {
-            resolvedClassConstantArray[i].registerUsage(usedConstantsCollector, this, this);
+        int lengthValue = resolvedClassConstantArray.length;
+        for (int resolvedClassConstantArrayElementIndex = 0; resolvedClassConstantArrayElementIndex < lengthValue; ++resolvedClassConstantArrayElementIndex) {
+            resolvedClassConstantArray[resolvedClassConstantArrayElementIndex].registerUsage(usedConstantsCollector, this, this);
         }
     }
 
@@ -119,49 +119,39 @@ public class PermittedSubclassesAttribute
 
 
 
-    public PermittedSubclassesAttribute(ClassFileComponent classFileComponent, int n, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap, ListMultimap listMultimap2, PrintWriter printWriter) throws IOException {
-        super(classFileComponent, n, string, classFileInputStream, listMultimap);
-        block9:
-        {
-            byte[] byArray = new byte[this.length];
-            classFileInputStream.read(byArray);
-            ClassFileInputStream classFileInputStream2 = ClassFileInputStream.fromBytes(byArray, false);
-            Throwable throwable = null;
-            try {
-                int n2 = classFileInputStream2.readUnsignedShort();
-                this.permittedSubclasses = new ResolvedClassConstant[n2];
-                for (int i = 0; i < n2; ++i) {
-                    int n3 = classFileInputStream2.readUnsignedShort();
-                    ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(n3);
-                    if (constantPoolEntry instanceof ResolvedClassConstant) {
-                        this.permittedSubclasses[i] = (ResolvedClassConstant) constantPoolEntry;
-                        listMultimap2.addValue(this.permittedSubclasses[i], this);
-                        continue;
-                    }
-                    this.valid = false;
-                    this.rawBytes = byArray;
-                    printWriter.println("ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " (A) Invalid permitted class index " + n3);
+    public PermittedSubclassesAttribute(ClassFileComponent classFileComponent, int constantPoolIndexArgument, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap, ListMultimap listMultimap2, PrintWriter printWriter) throws IOException {
+        super(classFileComponent, constantPoolIndexArgument, attributeName, classFileInputStream, listMultimap);
+        byte[] byArray = new byte[this.length];
+        classFileInputStream.read(byArray);
+        ClassFileInputStream classFileInputStream2 = ClassFileInputStream.fromBytes(byArray, false);
+        try {
+            int n2 = classFileInputStream2.readUnsignedShort();
+            this.permittedSubclasses = new ResolvedClassConstant[n2];
+            for (int permittedSubclasseIndex = 0; permittedSubclasseIndex < n2; ++permittedSubclasseIndex) {
+                int constantPoolIndex = classFileInputStream2.readUnsignedShort();
+                ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
+                if (constantPoolEntry instanceof ResolvedClassConstant) {
+                    this.permittedSubclasses[permittedSubclasseIndex] = (ResolvedClassConstant) constantPoolEntry;
+                    listMultimap2.addValue(this.permittedSubclasses[permittedSubclasseIndex], this);
+                    continue;
                 }
-                if (classFileInputStream2 == null) break block9;
-            } catch (Throwable throwable2) {
+                this.valid = false;
+                this.rawBytes = byArray;
+                printWriter.println("ERROR: " + this.getDisplayLocationName() + " : " + this.getAttributeName() + " (A) Invalid permitted class index " + constantPoolIndex);
+            }
+        } catch (Throwable failure) {
+            if (classFileInputStream2 != null) {
                 try {
-                    throwable = throwable2;
-                    throw throwable2;
-                } catch (Throwable throwable3) {
-                    if (classFileInputStream2 == null) throw throwable3;
-                    if (throwable == null) {
-                        classFileInputStream2.close();
-                        throw throwable3;
-                    }
-                    try {
-                        classFileInputStream2.close();
-                        throw throwable3;
-                    } catch (Throwable throwable4) {
-                        throwable.addSuppressed(throwable4);
-                        throw throwable3;
-                    }
+                    classFileInputStream2.close();
+                    throw failure;
+                } catch (Throwable closeFailure) {
+                    // Preserve the existing self-suppression failure when close succeeds.
+                    failure.addSuppressed(closeFailure);
                 }
             }
+            throw failure;
+        }
+        if (classFileInputStream2 != null) {
             classFileInputStream2.close();
         }
         if (!this.valid) return;
@@ -170,9 +160,9 @@ public class PermittedSubclassesAttribute
 
     @Override
     public int getLength() {
-        int n = 2 + this.permittedSubclasses.length * 2;
-        this.replaceLength(n);
-        return n;
+        int lengthValue = 2 + this.permittedSubclasses.length * 2;
+        this.replaceLength(lengthValue);
+        return lengthValue;
     }
 
     @Override

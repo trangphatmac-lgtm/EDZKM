@@ -26,8 +26,8 @@ public class EnumerationBackedList implements List {
     }
 
     @Override
-    public boolean equals(Object object) {
-        return this.elements.equals(object);
+    public boolean equals(Object other) {
+        return this.elements.equals(other);
     }
 
     @Override
@@ -71,8 +71,8 @@ public class EnumerationBackedList implements List {
     }
 
     @Override
-    public Object get(int ba) {
-        return this.elements.get(ba);
+    public Object get(int elementIndex) {
+        return this.elements.get(elementIndex);
     }
 
     @Override

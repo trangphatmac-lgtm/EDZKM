@@ -12,13 +12,13 @@ public class RuntimeVisibleTypeAnnotationsAttribute extends TypeAnnotationsAttri
 
     public RuntimeVisibleTypeAnnotationsAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
             PrintWriter printWriter
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap, listMultimap1, printWriter, ATTRIBUTE_NAME);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap, listMultimap1, printWriter, ATTRIBUTE_NAME);
     }
 }

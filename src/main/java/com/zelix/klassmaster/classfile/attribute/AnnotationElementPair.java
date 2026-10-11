@@ -71,14 +71,14 @@ public class AnnotationElementPair extends ClassFileComponent implements Annotat
             ClassFileBase classFileBase, ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
         if (classFileBase != null) {
-            String string = this.nameConstant.getValue();
-            String string1 = this.value.getValueTypeDescriptor();
-            if (string1 != null) {
-                this.elementMethod = classFileBase.findMethod(new MethodSignature(string, "()", string1));
+            String valueValue = this.nameConstant.getValue();
+            String valueTypeDescriptor = this.value.getValueTypeDescriptor();
+            if (valueTypeDescriptor != null) {
+                this.elementMethod = classFileBase.findMethod(new MethodSignature(valueValue, "()", valueTypeDescriptor));
             }
 
             if (this.elementMethod == null) {
-                List list1 = classFileBase.findMethodsByName(string);
+                List list1 = classFileBase.findMethodsByName(valueValue);
                 if (list1.size() == 1) {
                     this.elementMethod = (AbstractMethodInfo) list1.get(0);
                 }
@@ -104,8 +104,8 @@ public class AnnotationElementPair extends ClassFileComponent implements Annotat
 
     public AnnotationElementPair(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(ba);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry != null) {
             if (constantPoolEntry instanceof ConstantUtf8) {
                 this.nameConstant = (ConstantUtf8) constantPoolEntry;
@@ -126,7 +126,7 @@ public class AnnotationElementPair extends ClassFileComponent implements Annotat
         }
 
         this.errorMessage = "Invalid component name index : "
-                + ba
+                + constantPoolIndex
                 + (constantPoolEntry != null ? " : tag=" + constantPoolEntry.getTag() + " : \"" + constantPoolEntry.getDisplayString() + "\"" : "");
     }
 

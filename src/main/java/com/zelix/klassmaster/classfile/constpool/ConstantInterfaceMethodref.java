@@ -8,8 +8,8 @@ import java.io.IOException;
 public class ConstantInterfaceMethodref extends ConstantMemberRef implements ResolvableConstant {
     public static final ConstantPoolTag TAG = ConstantPoolTag.INTERFACE_METHODREF;
 
-    public ConstantInterfaceMethodref(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, classFileInputStream, abstractConstantPool);
+    public ConstantInterfaceMethodref(int index, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(index, classFileInputStream, abstractConstantPool);
     }
 
     @Override

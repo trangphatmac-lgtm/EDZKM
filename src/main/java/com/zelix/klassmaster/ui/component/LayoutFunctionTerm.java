@@ -46,12 +46,12 @@ public class LayoutFunctionTerm implements LayoutExpressionNode, LayoutConstrain
     @Override
     public void reset() {
         this.resolved = false;
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
         for (Vector vector = this.arguments; bb < vector.size(); vector = this.arguments) {
-            ((LayoutExpression) this.arguments.elementAt(ba)).reset();
-            bb = ++ba;
+            ((LayoutExpression) this.arguments.elementAt(elementIndex)).reset();
+            bb = ++elementIndex;
         }
     }
 
@@ -68,8 +68,8 @@ public class LayoutFunctionTerm implements LayoutExpressionNode, LayoutConstrain
         StringTokenizer stringTokenizer1 = new StringTokenizer(string, ",");
 
         while (stringTokenizer1.hasMoreTokens()) {
-            String string1 = stringTokenizer1.nextToken();
-            LayoutExpression layoutExpression = new LayoutExpression(this.layout, string1);
+            String expressionText = stringTokenizer1.nextToken();
+            LayoutExpression layoutExpression = new LayoutExpression(this.layout, expressionText);
             String string2 = layoutExpression.prepare();
             if (string2 != null) {
                 return string2;
@@ -116,23 +116,23 @@ public class LayoutFunctionTerm implements LayoutExpressionNode, LayoutConstrain
             return true;
         }
 
-        int ba = 0;
-        int bc = ba;
+        int elementIndex = 0;
+        int elementIndexValue = elementIndex;
 
-        for (Vector vector1 = this.arguments; bc < vector1.size(); vector1 = this.arguments) {
-            LayoutExpression layoutExpression = (LayoutExpression) this.arguments.elementAt(ba);
+        for (Vector vector1 = this.arguments; elementIndexValue < vector1.size(); vector1 = this.arguments) {
+            LayoutExpression layoutExpression = (LayoutExpression) this.arguments.elementAt(elementIndex);
             if (!layoutExpression.tryEvaluate(bl)) {
                 return false;
             }
 
-            bc = ++ba;
+            elementIndexValue = ++elementIndex;
         }
 
-        ba = 0;
-        bc = 0;
+        elementIndex = 0;
+        elementIndexValue = 0;
 
-        for (Vector vector = this.arguments; bc < vector.size(); vector = this.arguments) {
-            LayoutExpression layoutExpression1 = (LayoutExpression) this.arguments.elementAt(ba);
+        for (Vector vector = this.arguments; elementIndexValue < vector.size(); vector = this.arguments) {
+            LayoutExpression layoutExpression1 = (LayoutExpression) this.arguments.elementAt(elementIndex);
             int value = layoutExpression1.getValue();
             if (this.functionName.equals("max")) {
                 this.value = Math.max(value, this.value);
@@ -140,7 +140,7 @@ public class LayoutFunctionTerm implements LayoutExpressionNode, LayoutConstrain
                 this.value = Math.min(value, this.value);
             }
 
-            bc = ++ba;
+            elementIndexValue = ++elementIndex;
         }
 
         this.resolved = true;

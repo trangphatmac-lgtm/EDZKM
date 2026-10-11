@@ -10,9 +10,6 @@
 </p>
 
 ### Join Discord：https://discord.gg/TPjtZt75Vs
-## Zelix Pty has filed a DMCA takedown notice against this repository, and it will be taken down shortly. Please download and archive it as soon as possible (forks will also be affected by the DMCA takedown), and join our Discord!
-
-## chinese：有死妈向Zelix Pty提交了本repository的DMCA，该repository将在不久后被击落，请尽快下载存档(注意 fork 依然会被DMCA下架) 并且加入我们的discord！！！
 
 youtube：【ZelixKlassMaster27 fully deobf+idea ready】 https://youtu.be/GhLJreiEuCU
 

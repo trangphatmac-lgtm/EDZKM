@@ -96,10 +96,10 @@ public class BuildHelperScriptDialog extends OwnedFrameDialogBase implements Hel
         ConstraintLayout constraintLayout1 = new ConstraintLayout(container1);
         container1.setLayout(constraintLayout1);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int ba = dimension.width;
-        int bc = Math.min(600, ba);
-        int bb = dimension.height;
-        this.setSize(bc, Math.min(480, bb));
+        int widthValue = dimension.width;
+        int bc = Math.min(600, widthValue);
+        int heightValue = dimension.height;
+        this.setSize(bc, Math.min(480, heightValue));
         this.previousBtn = new JButton("Previous");
         this.previousBtn.setToolTipText(GuiResources.getTooltipText("PREVIOUS_SCREEN"));
         this.saveBtn = new JButton("Save");
@@ -159,15 +159,15 @@ public class BuildHelperScriptDialog extends OwnedFrameDialogBase implements Hel
                 }
                 try {
                     bufferedWriter.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
-            } catch (final IOException ex2) {
-                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Couldn't save \"" + selectedFile.getAbsolutePath() + "\" : " + ex2.getMessage());
+            } catch (final IOException ioExceptionValue) {
+                final MessageBoxDialog messageBoxDialog = new MessageBoxDialog(this, "File Error", "Couldn't save \"" + selectedFile.getAbsolutePath() + "\" : " + ioExceptionValue.getMessage());
             } finally {
                 if (bufferedWriter != null) {
                     try {
                         bufferedWriter.close();
-                    } catch (final IOException ex3) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }
@@ -199,14 +199,14 @@ public class BuildHelperScriptDialog extends OwnedFrameDialogBase implements Hel
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.previousBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.previousBtn) {
                 this.goPrevious();
-            } else if (object == this.saveBtn) {
+            } else if (source == this.saveBtn) {
                 this.saveScript();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
             }
         } catch (Throwable throwable) {

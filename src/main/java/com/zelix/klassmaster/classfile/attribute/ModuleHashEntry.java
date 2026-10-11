@@ -23,11 +23,11 @@ public class ModuleHashEntry extends ClassFileComponent {
 
     public ModuleHashEntry(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream) throws ClassFileFormatException, IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(ba);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
         if (constantPoolEntry == null) {
             throw new ClassFileFormatException(
-                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + ba + " : File is probably corrupt (T)"
+                    classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + constantPoolIndex + " : File is probably corrupt (T)"
             );
         }
 
@@ -35,7 +35,7 @@ public class ModuleHashEntry extends ClassFileComponent {
             throw new ClassFileFormatException(
                     classFileComponent.getOwningClass().getLocationName()
                             + " : Invalid attribute : "
-                            + ba
+                            + constantPoolIndex
                             + " : '"
                             + constantPoolEntry.getClass().getName()
                             + "' : File is probably corrupt (U)"
@@ -46,8 +46,8 @@ public class ModuleHashEntry extends ClassFileComponent {
         int bb = classFileInputStream.readUnsignedShort();
         this.hash = new byte[bb];
 
-        for (int i = 0; i < bb; i++) {
-            this.hash[i] = (byte) classFileInputStream.readUnsignedByte();
+        for (int hashElementIndex = 0; hashElementIndex < bb; hashElementIndex++) {
+            this.hash[hashElementIndex] = (byte) classFileInputStream.readUnsignedByte();
         }
 
         this.valid = true;
@@ -56,36 +56,36 @@ public class ModuleHashEntry extends ClassFileComponent {
     public void writeRemapped(DataOutputStream dataOutputStream, Map map1) throws IOException {
         ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) map1.get(this.module);
         DataOutputStream dataOutputStream1;
-        byte[] bd;
+        byte[] hashValue;
         if (constantPoolEntry != null) {
             dataOutputStream.writeShort(constantPoolEntry.getIndex());
             dataOutputStream1 = dataOutputStream;
-            bd = this.hash;
+            hashValue = this.hash;
         } else {
             dataOutputStream.writeShort(this.module.getIndex());
             dataOutputStream1 = dataOutputStream;
-            bd = this.hash;
+            hashValue = this.hash;
         }
 
-        dataOutputStream1.writeShort(bd.length);
-        int ba = 0;
+        dataOutputStream1.writeShort(hashValue.length);
+        int hashElementIndex = 0;
         int bb = 0;
 
         for (byte[] hash = this.hash; bb < hash.length; hash = this.hash) {
-            dataOutputStream.writeByte(this.hash[ba]);
-            bb = ++ba;
+            dataOutputStream.writeByte(this.hash[hashElementIndex]);
+            bb = ++hashElementIndex;
         }
     }
 
     public void writeTo(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeShort(this.module.getIndex());
         dataOutputStream.writeShort(this.hash.length);
-        int ba = 0;
+        int hashElementIndex = 0;
         int bb = 0;
 
         for (byte[] hash = this.hash; bb < hash.length; hash = this.hash) {
-            dataOutputStream.writeByte(this.hash[ba]);
-            bb = ++ba;
+            dataOutputStream.writeByte(this.hash[hashElementIndex]);
+            bb = ++hashElementIndex;
         }
     }
 }

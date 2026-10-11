@@ -57,12 +57,12 @@ public class StringConstantValue implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        boolean bl1 = object instanceof StringConstantValue;
+        boolean bl1 = other instanceof StringConstantValue;
         if (!strictMergeDisabled) {
             if (bl1) {
-                StringConstantValue stringConstantValue1 = (StringConstantValue) object;
+                StringConstantValue stringConstantValue1 = (StringConstantValue) other;
                 StringConstantValue stringConstantValue2 = this;
                 if (!strictMergeDisabled) {
                     if (this.methodType != null) {

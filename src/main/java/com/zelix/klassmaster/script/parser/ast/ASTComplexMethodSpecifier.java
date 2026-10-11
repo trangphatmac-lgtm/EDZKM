@@ -16,7 +16,7 @@ public class ASTComplexMethodSpecifier extends NameMatchingSpecifierNode {
     @Override
     public boolean isLiteralName() {
         QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) this.jjtGetChild(0);
-        return qualifiedNameMatcher instanceof ZkmScriptASTMethodName ? ((ZkmScriptASTMethodName) qualifiedNameMatcher).isExactName() : false;
+        return ((qualifiedNameMatcher instanceof ZkmScriptASTMethodName) && (((ZkmScriptASTMethodName) qualifiedNameMatcher).isExactName()));
     }
 
     public double estimateMatchFraction(
@@ -25,9 +25,9 @@ public class ASTComplexMethodSpecifier extends NameMatchingSpecifierNode {
         double ba = 1.0;
         QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) this.jjtGetChild(0);
         if (qualifiedNameMatcher instanceof ZkmScriptASTMethodName) {
-            String string = qualifiedNameMatcher.getSpecText();
-            if (string != null && !ASTRenameFilterParameter.isAnyWildcard(string)) {
-                if (!ASTRenameFilterParameter.containsWildcard(string)) {
+            String specText = qualifiedNameMatcher.getSpecText();
+            if (specText != null && !ASTRenameFilterParameter.isAnyWildcard(specText)) {
+                if (!ASTRenameFilterParameter.containsWildcard(specText)) {
                     ba *= 0.1;
                 } else {
                     ba *= 0.5;

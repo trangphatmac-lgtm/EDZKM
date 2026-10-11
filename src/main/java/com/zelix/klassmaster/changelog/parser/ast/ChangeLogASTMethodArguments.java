@@ -17,12 +17,12 @@ public class ChangeLogASTMethodArguments extends ChangeLogSimpleNode implements 
     public String buildArgumentList() {
         StringBuilder stringBuilder = new StringBuilder();
         if (this.argumentTypes != null) {
-            int ba = this.argumentTypes.size();
+            int argumentTypesSize = this.argumentTypes.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) this.argumentTypes.get(i);
+            for (int elementIndex = 0; elementIndex < argumentTypesSize; elementIndex++) {
+                String string = (String) this.argumentTypes.get(elementIndex);
                 stringBuilder.append(string);
-                if (i < this.argumentTypes.size() - 1) {
+                if (elementIndex < this.argumentTypes.size() - 1) {
                     stringBuilder.append(ARGUMENT_SEPARATOR);
                 }
             }
@@ -35,10 +35,10 @@ public class ChangeLogASTMethodArguments extends ChangeLogSimpleNode implements 
     public void interpret(ChangeLogNode changeLogNode, int bd, int be, int ba, AbstractChangeLog abstractChangeLog) throws ZkmException, IOException {
         int bb = this.jjtGetNumChildren();
 
-        for (int i = 0; i < bb; i++) {
+        for (int childrenElementIndex = 0; childrenElementIndex < bb; childrenElementIndex++) {
             ChangeLogNode changeLogNode1 = this;
             if (ba > 0) {
-                changeLogNode1 = this.jjtGetChild(i);
+                changeLogNode1 = this.jjtGetChild(childrenElementIndex);
             }
 
             changeLogNode1.interpret(this, 30872, 34067, 41973, abstractChangeLog);
@@ -53,7 +53,7 @@ public class ChangeLogASTMethodArguments extends ChangeLogSimpleNode implements 
     }
 
     @Override
-    public void setTypeName(Object object) {
-        this.argumentTypes.add(object);
+    public void setTypeName(Object typeName) {
+        this.argumentTypes.add(typeName);
     }
 }

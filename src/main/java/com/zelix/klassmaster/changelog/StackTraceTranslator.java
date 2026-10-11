@@ -54,8 +54,8 @@ public class StackTraceTranslator {
     public List changeLogFileNames;
     public ZkmClasspath classpath;
 
-    public List translateToTraces(String string, boolean bl) throws ZkmException, IOException {
-        if (string == null) {
+    public List translateToTraces(String text, boolean bl) throws ZkmException, IOException {
+        if (text == null) {
             throw new IllegalArgumentException("Stack trace is null");
         }
 
@@ -63,7 +63,7 @@ public class StackTraceTranslator {
             this.initialize();
         }
 
-        ParsedStackTrace parsedStackTrace = new ParsedStackTrace(string);
+        ParsedStackTrace parsedStackTrace = new ParsedStackTrace(text);
         List list1;
         if (this.classResolver != null && bl) {
             try {
@@ -138,13 +138,13 @@ public class StackTraceTranslator {
         return false;
     }
 
-    public String translate(String string, boolean bl) throws ZkmException, IOException {
-        return this.translate(string, bl, 2);
+    public String translate(String stackTraceText, boolean analyzeBytecode) throws ZkmException, IOException {
+        return this.translate(stackTraceText, analyzeBytecode, 2);
     }
 
     
     
-    public LoadedChangeLog loadChangeLog(String string) throws ZkmException, IOException {
+    public LoadedChangeLog loadChangeLog(String changeLogName) throws ZkmException, IOException {
         BufferedReader bufferedReader = null;
         ChangeLogSimpleNode changeLogSimpleNode = null;
         boolean bl = false ;
@@ -152,14 +152,14 @@ public class StackTraceTranslator {
         LoadedChangeLog loadedChangeLog;
         try {
             bl = true;
-            loadedChangeLog = new LoadedChangeLog(string);
-            String string1 = ChangeLogMapping.readChangeLogEncoding(new File(string));
+            loadedChangeLog = new LoadedChangeLog(changeLogName);
+            String string1 = ChangeLogMapping.readChangeLogEncoding(new File(changeLogName));
             ChangeLogParser changeLogParser;
             if (string1 != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(string), string1));
+                bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(changeLogName), string1));
                 changeLogParser = ChangeLogParser.instance;
             } else {
-                bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(string)));
+                bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(changeLogName)));
                 changeLogParser = ChangeLogParser.instance;
             }
 
@@ -180,13 +180,13 @@ public class StackTraceTranslator {
                 bl = false;
             }
         } catch (UnsupportedEncodingException unsupportedEncodingException) {
-            throw new StackTraceTranslateException("File Error : UnsupportedEncodingException in \"" + string + "\"");
+            throw new StackTraceTranslateException("File Error : UnsupportedEncodingException in \"" + changeLogName + "\"");
         } catch (FileNotFoundException fileNotFoundException) {
-            throw new StackTraceTranslateException("File Error : Couldn't open file \"" + string + "\"");
+            throw new StackTraceTranslateException("File Error : Couldn't open file \"" + changeLogName + "\"");
         } catch (ChangeLogTokenMgrError changeLogTokenMgrError) {
-            throw new StackTraceTranslateException("Lexical error while reading \"" + string + "\" : \"" + changeLogTokenMgrError.getMessage() + "\"");
+            throw new StackTraceTranslateException("Lexical error while reading \"" + changeLogName + "\" : \"" + changeLogTokenMgrError.getMessage() + "\"");
         } catch (ChangeLogParseException changeLogParseException) {
-            throw new StackTraceTranslateException("Parse error while reading \"" + string + "\" : \"" + changeLogParseException.getMessage() + "\"");
+            throw new StackTraceTranslateException("Parse error while reading \"" + changeLogName + "\" : \"" + changeLogParseException.getMessage() + "\"");
         } finally {
             if (bl) {
                 if (changeLogSimpleNode != null) {
@@ -220,10 +220,10 @@ public class StackTraceTranslator {
         Iterator iterator = this.changeLogFileNames.iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            LoadedChangeLog loadedChangeLog = this.loadChangeLog(string);
+            String changeLogName = (String) iterator.next();
+            LoadedChangeLog loadedChangeLog = this.loadChangeLog(changeLogName);
             if (loadedChangeLog == null) {
-                throw new StackTraceTranslateException("Change log '" + string + "' appears to contain no change log data.");
+                throw new StackTraceTranslateException("Change log '" + changeLogName + "' appears to contain no change log data.");
             }
 
             if (this.changeLog == null) {
@@ -248,13 +248,13 @@ public class StackTraceTranslator {
     public List buildCandidateSets(List list1, ClasspathClassResolver classpathClassResolver) throws ZkmException, IOException {
         HashMap hashMap = ZkmUtils.createHashMap();
         ArrayList arrayList = new ArrayList();
-        boolean bl = false;
+        boolean validFrame = false;
         ResolvedStackTraceLine resolvedStackTraceLine = null;
 
-        for (int i = 0; i < list1.size(); i++) {
-            ResolvedStackTraceLine resolvedStackTraceLine1 = (ResolvedStackTraceLine) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ResolvedStackTraceLine resolvedStackTraceLine1 = (ResolvedStackTraceLine) list1.get(elementIndex);
             List list2 = resolvedStackTraceLine1.getMethodCandidates();
-            if (i == 0) {
+            if (elementIndex == 0) {
                 this.startCallPaths(arrayList, resolvedStackTraceLine1);
             } else if (!resolvedStackTraceLine1.isValidFrame()) {
                 ListIterator listIterator1 = arrayList.listIterator();
@@ -264,7 +264,7 @@ public class StackTraceTranslator {
                     stackTraceCallPath2.addUnresolvedFrame(resolvedStackTraceLine1);
                 }
             } else if (!resolvedStackTraceLine.isValidFrame()) {
-                this.extendCallPaths(resolvedStackTraceLine1, arrayList, list2, bl);
+                this.extendCallPaths(resolvedStackTraceLine1, arrayList, list2, validFrame);
             } else {
                 ArrayList arrayList1 = new ArrayList(arrayList.size());
                 ListIterator listIterator = arrayList.listIterator();
@@ -275,8 +275,8 @@ public class StackTraceTranslator {
                     arrayList1.add(stackTraceCallPath);
                     MethodInfo methodInfo1 = stackTraceCallPath.getLastMethod();
 
-                    for (int j = 0; j < list2.size(); j++) {
-                        MethodInfo methodInfo2 = ((TraceMethodCandidate) list2.get(j)).method;
+                    for (int elementIndexValue = 0; elementIndexValue < list2.size(); elementIndexValue++) {
+                        MethodInfo methodInfo2 = ((TraceMethodCandidate) list2.get(elementIndexValue)).method;
                         if (this.canCall(methodInfo1, methodInfo2, hashMap, classpathClassResolver)) {
                             StackTraceCallPath stackTraceCallPath1 = (StackTraceCallPath) stackTraceCallPath.clone();
                             stackTraceCallPath1.addMethodFrame(resolvedStackTraceLine1, methodInfo2);
@@ -287,13 +287,13 @@ public class StackTraceTranslator {
 
                 if (arrayList.size() == 0) {
                     arrayList = arrayList1;
-                    this.extendCallPaths(resolvedStackTraceLine1, arrayList, list2, bl);
+                    this.extendCallPaths(resolvedStackTraceLine1, arrayList, list2, validFrame);
                 }
             }
 
             resolvedStackTraceLine = resolvedStackTraceLine1;
-            if (!bl) {
-                bl = resolvedStackTraceLine1.isValidFrame();
+            if (!validFrame) {
+                validFrame = resolvedStackTraceLine1.isValidFrame();
             }
 
             if (arrayList.size() > 16000) {
@@ -309,8 +309,8 @@ public class StackTraceTranslator {
 
         ArrayList arrayList2 = new ArrayList(arrayList.size());
 
-        for (int i = 0; i < arrayList.size(); i++) {
-            arrayList2.add(new FrameCandidateSets((StackTraceCallPath) arrayList.get(i)));
+        for (int elementIndexValue2 = 0; elementIndexValue2 < arrayList.size(); elementIndexValue2++) {
+            arrayList2.add(new FrameCandidateSets((StackTraceCallPath) arrayList.get(elementIndexValue2)));
         }
 
         if (arrayList.size() > 2000) {
@@ -323,13 +323,13 @@ public class StackTraceTranslator {
             );
         }
 
-        int bd;
+        int arrayList2Size;
         do {
-            bd = arrayList2.size();
+            arrayList2Size = arrayList2.size();
 
-            for (int i = 0; i < arrayList2.size() - 1; i++) {
-                FrameCandidateSets frameCandidateSets = (FrameCandidateSets) arrayList2.get(i);
-                ListIterator listIterator2 = arrayList2.listIterator(i + 1);
+            for (int elementIndexValue3 = 0; elementIndexValue3 < arrayList2.size() - 1; elementIndexValue3++) {
+                FrameCandidateSets frameCandidateSets = (FrameCandidateSets) arrayList2.get(elementIndexValue3);
+                ListIterator listIterator2 = arrayList2.listIterator(elementIndexValue3 + 1);
 
                 while (listIterator2.hasNext()) {
                     FrameCandidateSets frameCandidateSets1 = (FrameCandidateSets) listIterator2.next();
@@ -339,7 +339,7 @@ public class StackTraceTranslator {
                     }
                 }
             }
-        } while (arrayList2.size() < bd);
+        } while (arrayList2.size() < arrayList2Size);
 
         return arrayList2;
     }
@@ -347,8 +347,8 @@ public class StackTraceTranslator {
     public void startCallPaths(List list1, ResolvedStackTraceLine resolvedStackTraceLine) {
         List list2 = resolvedStackTraceLine.getMethodCandidates();
         if (resolvedStackTraceLine.isValidFrame() && list2.size() > 0) {
-            for (int i = 0; i < list2.size(); i++) {
-                TraceMethodCandidate traceMethodCandidate = (TraceMethodCandidate) list2.get(i);
+            for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
+                TraceMethodCandidate traceMethodCandidate = (TraceMethodCandidate) list2.get(elementIndex);
                 MethodInfo methodInfo1 = traceMethodCandidate.method;
                 if (methodInfo1 == null) {
                     methodInfo1 = resolvedStackTraceLine.getProgramClass().findMethodBySignature(new MethodSignature(traceMethodCandidate.methodNameAndDescriptor));
@@ -389,8 +389,8 @@ public class StackTraceTranslator {
                 ResolvedMethodRef resolvedMethodRef = (ResolvedMethodRef) entry.getKey();
                 if (!ClassFileBase.isSignaturePolymorphicOwner(resolvedMethodRef.getReferencedClassName())) {
                     Integer integer = (Integer) entry.getValue();
-                    String string = resolvedMethodRef.getReferencedClassName();
-                    ProgramClass programClass1 = classpathClassResolver.loadProgramClass(string);
+                    String referencedClassName = resolvedMethodRef.getReferencedClassName();
+                    ProgramClass programClass1 = classpathClassResolver.loadProgramClass(referencedClassName);
                     threeKeyConcurrentMap.putValue(resolvedMethodRef.getSignatureString(), programClass1, integer, integer);
                 }
             }
@@ -401,112 +401,97 @@ public class StackTraceTranslator {
         return threeKeyConcurrentMap;
     }
 
-    public String translate(String string, boolean bl, int ba) throws ZkmException, IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        BooleanFlag booleanFlag = new BooleanFlag();
-        String[] strings = this.translateAlternatives(string, bl, ba, booleanFlag);
-        if (!booleanFlag.getValue()) {
-            stringBuilder.append(
+    public String translate(String stackTraceText, boolean analyzeBytecode, int argumentFormat) throws ZkmException, IOException {
+        StringBuilder output = new StringBuilder();
+        BooleanFlag anyClassMapped = new BooleanFlag();
+        String[] alternatives = this.translateAlternatives(stackTraceText, analyzeBytecode, argumentFormat, anyClassMapped);
+        if (!anyClassMapped.getValue()) {
+            output.append(
                     "NOTE: None of the classes in the stack trace were found in the change log or no stack trace lines found. Is the correct change log selected?  Do the stack trace lines start with 'at'?"
             );
-            stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-            stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
+            output.append(HiddenOptionFlags.LINE_SEPARATOR);
+            output.append(HiddenOptionFlags.LINE_SEPARATOR);
         }
 
-        if (strings.length == 1) {
-            label37:
-            {
-                StringBuilder stringBuilder2;
-                String string2;
-                if (bl) {
-                    if (this.classpath != null) {
-                        break label37;
-                    }
-
-                    stringBuilder2 = stringBuilder;
-                    string2 = "NOTE: Obfuscated bytecode not analyzed so there could be multiple possible methods for each trace line.";
-                } else {
-                    stringBuilder2 = stringBuilder;
-                    string2 = "NOTE: Obfuscated bytecode not analyzed so there could be multiple possible methods for each trace line.";
-                }
-
-                stringBuilder2.append(string2);
-                stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-                stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
+        if (alternatives.length == 1) {
+            if (!analyzeBytecode || this.classpath == null) {
+                output.append("NOTE: Obfuscated bytecode not analyzed so there could be multiple possible methods for each trace line.");
+                output.append(HiddenOptionFlags.LINE_SEPARATOR);
+                output.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
 
-            stringBuilder.append(strings[0]);
+            output.append(alternatives[0]);
         } else {
-            stringBuilder.append("NOTE: " + strings.length + " translated stack traces are possible.");
-            stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-            stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
+            output.append("NOTE: " + alternatives.length + " translated stack traces are possible.");
+            output.append(HiddenOptionFlags.LINE_SEPARATOR);
+            output.append(HiddenOptionFlags.LINE_SEPARATOR);
 
-            for (int i = 0; i < strings.length; i++) {
-                String string1 = "Possible stack trace " + (i + 1) + " of " + strings.length + "...";
-                stringBuilder.append(string1 + HiddenOptionFlags.LINE_SEPARATOR);
-                StringBuilder stringBuilder1 = new StringBuilder();
-                int bc = string1.length();
-                Integer integer = 61;
-                stringBuilder.append(stringBuilder1.append(ZkmStringUtils.repeatChar(bc, integer)).append(HiddenOptionFlags.LINE_SEPARATOR).toString());
-                stringBuilder.append(strings[i]);
-                if (i < strings.length - 1) {
-                    stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
+            for (int alternativeIndex = 0; alternativeIndex < alternatives.length; alternativeIndex++) {
+                String alternativeHeading = "Possible stack trace " + (alternativeIndex + 1) + " of " + alternatives.length + "...";
+                output.append(alternativeHeading + HiddenOptionFlags.LINE_SEPARATOR);
+                StringBuilder underline = new StringBuilder();
+                int headingLength = alternativeHeading.length();
+                Integer underlineCharacter = 61;
+                output.append(underline.append(ZkmStringUtils.repeatChar(headingLength, underlineCharacter)).append(HiddenOptionFlags.LINE_SEPARATOR).toString());
+                output.append(alternatives[alternativeIndex]);
+                if (alternativeIndex < alternatives.length - 1) {
+                    output.append(HiddenOptionFlags.LINE_SEPARATOR);
                 }
             }
         }
 
         if (this.mergeMessages != null && this.mergeMessages.length() > 0) {
-            stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
-            stringBuilder.append(this.mergeMessages);
+            output.append(HiddenOptionFlags.LINE_SEPARATOR);
+            output.append(this.mergeMessages);
         }
 
-        return stringBuilder.toString();
+        return output.toString();
     }
 
-    public String[] translateAlternatives(String string, boolean bl, int ba, BooleanFlag booleanFlag) throws ZkmException, IOException {
-        booleanFlag.setValue(false);
-        List list1 = this.translateToTraces(string, bl);
-        String[] strings = new String[list1.size()];
+    public String[] translateAlternatives(String stackTraceText, boolean analyzeBytecode, int argumentFormat, BooleanFlag anyClassMapped) throws ZkmException, IOException {
+        anyClassMapped.setValue(false);
+        List list1 = this.translateToTraces(stackTraceText, analyzeBytecode);
+        String[] alternatives = new String[list1.size()];
 
-        for (int i = 0; i < strings.length; i++) {
-            TranslatedStackTrace translatedStackTrace = (TranslatedStackTrace) list1.get(i);
+        for (int elementIndex = 0; elementIndex < alternatives.length; elementIndex++) {
+            TranslatedStackTrace translatedStackTrace = (TranslatedStackTrace) list1.get(elementIndex);
             if (translatedStackTrace.hasMappedClasses()) {
-                booleanFlag.setValue(true);
+                anyClassMapped.setValue(true);
             }
 
-            strings[i] = translatedStackTrace.format(ba, this.changeLog, bl ? this.classResolver : null);
+            alternatives[elementIndex] = translatedStackTrace.format(argumentFormat, this.changeLog, analyzeBytecode ? this.classResolver : null);
         }
 
-        Arrays.sort(strings);
-        return strings;
+        Arrays.sort(alternatives);
+        return alternatives;
     }
 
-    public String translateClassName(String string) throws ZkmException, IOException {
+    public String translateClassName(String keyArgument) throws ZkmException, IOException {
         if (!this.initialized) {
             this.initialize();
         }
 
-        boolean bl = string.indexOf("/") > -1;
-        String string1;
+        boolean bl = keyArgument.indexOf("/") > -1;
+        String key;
         LoadedChangeLog loadedChangeLog;
         if (bl) {
-            string1 = string.replace('/', '.');
+            key = keyArgument.replace('/', '.');
             loadedChangeLog = this.changeLog;
         } else {
-            string1 = string;
+            key = keyArgument;
             loadedChangeLog = this.changeLog;
         }
 
-        String string2 = loadedChangeLog.getNewClassName(string1);
-        if (string2 == null) {
-            return string;
+        String newClassName = loadedChangeLog.getNewClassName(key);
+        if (newClassName == null) {
+            return keyArgument;
         }
 
         if (bl) {
-            string2 = string2.replace('.', '/');
+            newClassName = newClassName.replace('.', '/');
         }
 
-        return string2;
+        return newClassName;
     }
 
     public static synchronized void releaseThreadOwnership() {
@@ -518,17 +503,17 @@ public class StackTraceTranslator {
 
 
     static {
-        d(new String[5]);
+        setOpaqueStrings(new String[5]);
         ownerThreadId = -1L;
     }
 
 
-    public String getOriginalMethodName(String string, String string1, String[] strings, String string2) throws ZkmException, IOException {
+    public String getOriginalMethodName(String key, String keyArgument, String[] strings, String keyArgument2) throws ZkmException, IOException {
         if (!this.initialized) {
             this.initialize();
         }
 
-        return this.changeLog.getOriginalMethodName(string, string1, strings, string2);
+        return this.changeLog.getOriginalMethodName(key, keyArgument, strings, keyArgument2);
     }
 
     public static synchronized void acquireThreadOwnership() {
@@ -555,29 +540,29 @@ public class StackTraceTranslator {
     public List createTranslations(List list1) throws StackTraceTranslateException {
         ArrayList arrayList = new ArrayList(list1.size());
 
-        for (int i = 0; i < list1.size(); i++) {
-            FrameCandidateSets frameCandidateSets = (FrameCandidateSets) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            FrameCandidateSets frameCandidateSets = (FrameCandidateSets) list1.get(elementIndex);
             arrayList.add(new BytecodeTraceTranslation(frameCandidateSets, this.changeLog));
         }
 
         return arrayList;
     }
 
-    public static void d(String[] strings) {
-        opaqueStrings = strings;
+    public static void setOpaqueStrings(String[] opaqueStringsArgument) {
+        opaqueStrings = opaqueStringsArgument;
     }
 
-    public void extendCallPaths(ResolvedStackTraceLine resolvedStackTraceLine, List list1, List list2, boolean bl) {
+    public void extendCallPaths(ResolvedStackTraceLine resolvedStackTraceLine, List list1, List list2, boolean callTraceBreak) {
         ListIterator listIterator = list1.listIterator();
 
         while (listIterator.hasNext()) {
             StackTraceCallPath stackTraceCallPath = (StackTraceCallPath) listIterator.next();
             listIterator.remove();
 
-            for (int i = 0; i < list2.size(); i++) {
-                MethodInfo methodInfo1 = ((TraceMethodCandidate) list2.get(i)).method;
+            for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
+                MethodInfo methodInfo1 = ((TraceMethodCandidate) list2.get(elementIndex)).method;
                 StackTraceCallPath stackTraceCallPath1 = (StackTraceCallPath) stackTraceCallPath.clone();
-                stackTraceCallPath1.addMethodFrame(resolvedStackTraceLine, methodInfo1, bl);
+                stackTraceCallPath1.addMethodFrame(resolvedStackTraceLine, methodInfo1, callTraceBreak);
                 listIterator.add(stackTraceCallPath1);
             }
         }
@@ -587,35 +572,35 @@ public class StackTraceTranslator {
         return opaqueStrings;
     }
 
-    public String[] getOriginalMethodSignatures(String string, String string1) throws ZkmException, IOException {
-        String string2 = string;
-        String string4;
+    public String[] getOriginalMethodSignatures(String string, String keyArgument) throws ZkmException, IOException {
+        String key = string;
+        String keyValue;
         char bb;
         if (!this.initialized) {
             this.initialize();
-            string4 = string2;
+            keyValue = key;
             bb = '/';
         } else {
-            string4 = string2;
+            keyValue = key;
             bb = '/';
         }
 
-        string2 = string4.replace(bb, '.');
-        List list1 = this.changeLog.findOriginalMethods(string2, string1);
-        String[] strings;
+        key = keyValue.replace(bb, '.');
+        List list1 = this.changeLog.findOriginalMethods(key, keyArgument);
+        String[] originalMethodSignatures;
         if (list1 != null && list1.size() != 0) {
-            strings = new String[list1.size()];
+            originalMethodSignatures = new String[list1.size()];
 
-            for (int i = 0; i < list1.size(); i++) {
-                ObjectPair objectPair = (ObjectPair) list1.get(i);
-                String string3 = (String) objectPair.getSecond();
-                strings[i] = (String) objectPair.getFirst() + "(" + (string3 != null ? string3 : "") + ")";
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                ObjectPair objectPair = (ObjectPair) list1.get(elementIndex);
+                String second = (String) objectPair.getSecond();
+                originalMethodSignatures[elementIndex] = (String) objectPair.getFirst() + "(" + (second != null ? second : "") + ")";
             }
         } else {
-            strings = new String[]{string1};
+            originalMethodSignatures = new String[]{keyArgument};
         }
 
-        return strings;
+        return originalMethodSignatures;
     }
 
     public void dispose() {

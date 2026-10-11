@@ -30,12 +30,12 @@ public class ExceptionTableEntry extends ClassFileComponent implements LabelTarg
     private ResolvedClassConstant catchType;
     private boolean newlyCreated;
 
-    public static boolean isContiguousIndexRange(int ba, int bb, int[] bc) {
-        int bd = Arrays.binarySearch(bc, ba);
+    public static boolean isContiguousIndexRange(int ba, int bb, int[] integerArray) {
+        int integerArrayElementIndex = Arrays.binarySearch(integerArray, ba);
 
         for (int i = ba + 1; i < bb; i++) {
-            bd++;
-            if (bd >= bc.length || i != bc[bd]) {
+            integerArrayElementIndex++;
+            if (integerArrayElementIndex >= integerArray.length || i != integerArray[integerArrayElementIndex]) {
                 return false;
             }
         }
@@ -63,14 +63,14 @@ public class ExceptionTableEntry extends ClassFileComponent implements LabelTarg
         return "ExceptionEntry";
     }
 
-    public String getLabelName(int ba) {
-        return ((LabelInstruction) this.rangeLabels[ba]).getLabelName();
+    public String getLabelName(int rangeLabelIndex) {
+        return ((LabelInstruction) this.rangeLabels[rangeLabelIndex]).getLabelName();
     }
 
     public boolean isOutsideRange(int ba, int bb) {
-        int bc = this.getOffset(0);
-        int bd = this.getOffset(1);
-        return bc >= bb || bd <= ba;
+        int offsetValue = this.getOffset(0);
+        int offsetValue2 = this.getOffset(1);
+        return offsetValue >= bb || offsetValue2 <= ba;
     }
 
     public int getEndIndex() {
@@ -117,19 +117,19 @@ public class ExceptionTableEntry extends ClassFileComponent implements LabelTarg
         labelInstruction.addUsageFlag(InstructionUsageFlag.SET_USAGE_EXCEPTION_TRY_START);
         labelInstruction1.addUsageFlag(InstructionUsageFlag.SET_USAGE_EXCEPTION_TRY_END);
         labelInstruction2.addUsageFlag(InstructionUsageFlag.SET_USAGE_EXCEPTION_HANDLER);
-        Object[] objects = new Object[]{labelInstruction, labelInstruction1, labelInstruction2};
-        this.rangeLabels = objects;
+        Object[] rangeLabelsValue = new Object[]{labelInstruction, labelInstruction1, labelInstruction2};
+        this.rangeLabels = rangeLabelsValue;
         this.newlyCreated = true;
     }
 
-    public int getOffset(int ba) {
-        return ((LabelInstruction) this.rangeLabels[ba]).getOffset();
+    public int getOffset(int rangeLabelIndex) {
+        return ((LabelInstruction) this.rangeLabels[rangeLabelIndex]).getOffset();
     }
 
     public boolean overlapsPartially(int ba, int bb) {
-        int bc = this.getOffset(0);
-        int bd = this.getOffset(1);
-        return bc > ba && bc < bb && bd > bb || bc < ba && bd > ba && bd < bb;
+        int offsetValue = this.getOffset(0);
+        int offsetValue2 = this.getOffset(1);
+        return offsetValue > ba && offsetValue < bb && offsetValue2 > bb || offsetValue < ba && offsetValue2 > ba && offsetValue2 < bb;
     }
 
     public int getStartIndex() {
@@ -156,11 +156,11 @@ public class ExceptionTableEntry extends ClassFileComponent implements LabelTarg
         return this.catchType == null;
     }
 
-    public void resolveCatchType(int ba, ListMultimap listMultimap) throws ClassFileFormatException {
-        if (ba != 0) {
-            ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(ba);
+    public void resolveCatchType(int constantPoolIndex, ListMultimap listMultimap) throws ClassFileFormatException {
+        if (constantPoolIndex != 0) {
+            ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
             if (!(constantPoolEntry instanceof ResolvedClassConstant)) {
-                throw new ClassFileFormatException(this.getLocationName() + " : " + "Invalid Class index in Exception Entry" + " : " + ba);
+                throw new ClassFileFormatException(this.getLocationName() + " : " + "Invalid Class index in Exception Entry" + " : " + constantPoolIndex);
             }
 
             this.catchType = (ResolvedClassConstant) constantPoolEntry;
@@ -174,15 +174,15 @@ public class ExceptionTableEntry extends ClassFileComponent implements LabelTarg
 
     @Override
     public void registerLabelTargets(SetMultiMap setMultiMap) {
-        for (int i = 0; i < this.rangeLabels.length; i++) {
-            setMultiMap.addValue((LabelInstruction) this.rangeLabels[i], this);
+        for (int rangeLabelIndex = 0; rangeLabelIndex < this.rangeLabels.length; rangeLabelIndex++) {
+            setMultiMap.addValue((LabelInstruction) this.rangeLabels[rangeLabelIndex], this);
         }
     }
 
     public boolean isWithinRange(int ba, int bb) {
-        int bc = this.getOffset(0);
-        int bd = this.getOffset(1);
-        return bc >= ba && bd <= bb;
+        int offsetValue = this.getOffset(0);
+        int offsetValue2 = this.getOffset(1);
+        return offsetValue >= ba && offsetValue2 <= bb;
     }
 
     public String getCatchTypeName() {
@@ -239,32 +239,32 @@ public class ExceptionTableEntry extends ClassFileComponent implements LabelTarg
             ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream, ListMultimap listMultimap, ListMultimap listMultimap1
     ) throws ClassFileFormatException, IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
-        int bb = classFileInputStream.readUnsignedShort();
-        int bc = classFileInputStream.readUnsignedShort();
-        Integer integer = integerCache.valueOf(ba);
+        int integerValue = classFileInputStream.readUnsignedShort();
+        int integerValue2 = classFileInputStream.readUnsignedShort();
+        int integerValue3 = classFileInputStream.readUnsignedShort();
+        Integer integer = integerCache.valueOf(integerValue);
         listMultimap.addValue(integer, this);
         this.rangeLabels[ExceptionRangeField.START_PC.ordinal()] = integer;
-        integer = integerCache.valueOf(bb);
+        integer = integerCache.valueOf(integerValue2);
         listMultimap.addValue(integer, this);
         this.rangeLabels[ExceptionRangeField.END_PC.ordinal()] = integer;
-        integer = integerCache.valueOf(bc);
+        integer = integerCache.valueOf(integerValue3);
         listMultimap.addValue(integer, this);
         this.rangeLabels[ExceptionRangeField.HANDLER_PC.ordinal()] = integer;
-        int bd = classFileInputStream.readUnsignedShort();
-        this.resolveCatchType(bd, listMultimap1);
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
+        this.resolveCatchType(constantPoolIndex, listMultimap1);
     }
 
     @Override
     public void bindLabel(Integer integer, LabelInstruction labelInstruction) {
-        int ba = this.rangeLabels.length;
+        int lengthValue = this.rangeLabels.length;
         labelInstruction.setVisible();
 
-        for (int i = 0; i < ba; i++) {
-            Object object = this.rangeLabels[i];
-            if (object instanceof Integer && ((Integer) object).equals(integer)) {
-                this.rangeLabels[i] = labelInstruction;
-                switch (i) {
+        for (int rangeLabelIndex = 0; rangeLabelIndex < lengthValue; rangeLabelIndex++) {
+            Object rangeLabel = this.rangeLabels[rangeLabelIndex];
+            if (rangeLabel instanceof Integer && ((Integer) rangeLabel).equals(integer)) {
+                this.rangeLabels[rangeLabelIndex] = labelInstruction;
+                switch (rangeLabelIndex) {
                     case 0:
                         labelInstruction.addUsageFlag(InstructionUsageFlag.SET_USAGE_EXCEPTION_TRY_START);
                         break;
@@ -292,12 +292,12 @@ public class ExceptionTableEntry extends ClassFileComponent implements LabelTarg
         dataOutputStream.writeShort(this.catchType == null ? 0 : this.catchType.getIndex());
     }
 
-    public boolean unlinkIfRangeRemoved(HashSet hashSet, int[] ba, SetMultiMap setMultiMap) {
+    public boolean unlinkIfRangeRemoved(HashSet hashSet, int[] integerArray, SetMultiMap setMultiMap) {
         LabelInstruction labelInstruction = (LabelInstruction) this.rangeLabels[0];
         LabelInstruction labelInstruction1 = (LabelInstruction) this.rangeLabels[1];
         LabelInstruction labelInstruction2 = (LabelInstruction) this.rangeLabels[2];
         if (hashSet.contains(labelInstruction2)
-                || hashSet.contains(labelInstruction) && isContiguousIndexRange(labelInstruction.getInstructionIndex(), labelInstruction1.getInstructionIndex(), ba)) {
+                || hashSet.contains(labelInstruction) && isContiguousIndexRange(labelInstruction.getInstructionIndex(), labelInstruction1.getInstructionIndex(), integerArray)) {
             setMultiMap.removeValue(labelInstruction, this);
             setMultiMap.removeValue(labelInstruction1, this);
             setMultiMap.removeValue(labelInstruction2, this);

@@ -15,15 +15,15 @@ public class IdentityValueHolder extends ObservableHolder {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof IdentityValueHolder)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof IdentityValueHolder)) {
             return false;
         } else {
-            return this.value != null ? this.value == ((IdentityValueHolder) object).getValue() : object == null;
+            return this.value != null ? this.value == ((IdentityValueHolder) other).getValue() : other == null;
         }
     }
 
-    public IdentityValueHolder(Object object) throws ZkmException, IOException {
-        super(object);
+    public IdentityValueHolder(Object valueArgument) throws ZkmException, IOException {
+        super(valueArgument);
     }
 }

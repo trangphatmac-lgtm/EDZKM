@@ -32,28 +32,13 @@ public abstract class MemberPropertiesPanel extends NameModifiersEditPanel {
 
     @Override
     public void handleChangeOnEdt(Object object1, Object object, Object object2, Object object3) throws ZkmException, IOException {
-        label108:
-        {
-            MemberPropertiesPanel memberPropertiesPanel1;
-            MemberInfo memberInfo1;
-            if (object != null) {
-                if (object == null || !(object instanceof MutableInt) || ((MutableInt) object).getValue() != 0) {
-                    break label108;
-                }
-
-                memberPropertiesPanel1 = this;
-                memberInfo1 = this.memberInfo;
-            } else {
-                memberPropertiesPanel1 = this;
-                memberInfo1 = this.memberInfo;
-            }
-
-            memberPropertiesPanel1.originalName = memberInfo1.getSourceName();
+        if (object == null || object instanceof MutableInt && ((MutableInt) object).getValue() == 0) {
+            super.originalName = this.memberInfo.getSourceName();
             super.existingNameLbl.setText(super.originalName);
             super.propertyEditFld.setText(super.originalName);
         }
 
-        if (object == null || object != null && object instanceof MutableInt && ((MutableInt) object).getValue() == 1) {
+        if (object == null || object instanceof MutableInt && ((MutableInt) object).getValue() == 1) {
             super.originalModifierIndices = ZkmUtils.createNamedSet();
             if (this.memberInfo.isPublic()) {
                 super.accessComboBox.setSelectedIndex(super.publicIndex);
@@ -182,7 +167,7 @@ public abstract class MemberPropertiesPanel extends NameModifiersEditPanel {
     @Override
     public void applyChanges() throws ZkmException, IOException {
         String string = null;
-        int ba = -1;
+        int accessFlags = -1;
         String string1 = super.propertyEditFld.getText().trim();
         if (!string1.equals(super.originalName)) {
             if (string1.length() > 0) {
@@ -193,53 +178,53 @@ public abstract class MemberPropertiesPanel extends NameModifiersEditPanel {
         }
 
         if (this.isModifierSelectionChanged()) {
-            ba = this.memberInfo.getAccessFlags();
-            ba &= this.getRetainedFlagsMask();
+            accessFlags = this.memberInfo.getAccessFlags();
+            accessFlags &= this.getRetainedFlagsMask();
             int selectedIndex = super.accessComboBox.getSelectedIndex();
             if (selectedIndex == super.publicIndex) {
-                ba |= 1;
+                accessFlags |= 1;
             } else if (selectedIndex == super.protectedIndex) {
-                ba |= 4;
+                accessFlags |= 4;
             } else if (selectedIndex == super.privateIndex) {
-                ba |= 2;
+                accessFlags |= 2;
             }
 
             PlatformAwareJList platformAwareJList;
             if (super.modifierList.isSelectedIndex(super.abstractIndex)) {
-                ba |= 1024;
+                accessFlags |= 1024;
                 platformAwareJList = super.modifierList;
             } else {
                 platformAwareJList = super.modifierList;
             }
 
             if (platformAwareJList.isSelectedIndex(super.staticIndex)) {
-                ba |= 8;
+                accessFlags |= 8;
                 platformAwareJList = super.modifierList;
             } else {
                 platformAwareJList = super.modifierList;
             }
 
             if (platformAwareJList.isSelectedIndex(super.finalIndex)) {
-                ba |= 16;
+                accessFlags |= 16;
             }
 
             if (super.modifierList.isSelectedIndex(super.synchronizedIndex)) {
-                ba |= 32;
+                accessFlags |= 32;
                 platformAwareJList = super.modifierList;
             } else {
                 platformAwareJList = super.modifierList;
             }
 
             if (platformAwareJList.isSelectedIndex(super.nativeIndex)) {
-                ba |= 256;
+                accessFlags |= 256;
             }
 
             if (super.modifierList.isSelectedIndex(super.volatileIndex)) {
-                ba |= 64;
+                accessFlags |= 64;
             }
 
             if (super.modifierList.isSelectedIndex(super.transientIndex)) {
-                ba |= 128;
+                accessFlags |= 128;
             }
         }
 
@@ -255,9 +240,9 @@ public abstract class MemberPropertiesPanel extends NameModifiersEditPanel {
             }
         }
 
-        if (ba != -1) {
+        if (accessFlags != -1) {
             try {
-                this.applyAccessFlags(ba);
+                this.applyAccessFlags(accessFlags);
             } catch (InvalidEditException invalidEditException) {
                 new MessageBoxDialog(super.mainWindow, "Error", invalidEditException.getMessage());
             }

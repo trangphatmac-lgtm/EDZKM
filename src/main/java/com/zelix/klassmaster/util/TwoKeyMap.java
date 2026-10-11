@@ -18,8 +18,8 @@ public class TwoKeyMap {
     private Map map;
 
     public TwoKeyMap deepCopy() {
-        int ba = this.map.size();
-        TwoKeyMap twoKeyMap1 = new TwoKeyMap(this.linked, ba * 2 + 1, this.innerCapacity, this.concurrent);
+        int mapSize = this.map.size();
+        TwoKeyMap twoKeyMap1 = new TwoKeyMap(this.linked, mapSize * 2 + 1, this.innerCapacity, this.concurrent);
         Iterator iterator = this.map.entrySet().iterator();
 
         while (iterator.hasNext()) {
@@ -33,22 +33,22 @@ public class TwoKeyMap {
     }
 
     public int getValueCount() {
-        int ba = 0;
+        int valueCount = 0;
         Iterator iterator = this.map.values().iterator();
 
         while (iterator.hasNext()) {
             Map map1 = (Map) iterator.next();
             if (map1 != null) {
-                ba += map1.size();
+                valueCount += map1.size();
             }
         }
 
-        return ba;
+        return valueCount;
     }
 
-    public Object getValue(Object object, Object object1) {
-        Map map1 = (Map) this.map.get(object);
-        return map1 == null ? null : map1.get(object1);
+    public Object getValue(Object key, Object keyArgument) {
+        Map map1 = (Map) this.map.get(key);
+        return map1 == null ? null : map1.get(keyArgument);
     }
 
     public boolean isEmpty() {
@@ -59,12 +59,12 @@ public class TwoKeyMap {
         return Collections.enumeration(this.map.values());
     }
 
-    public TwoKeyMap(boolean bl) {
-        this(75, 15, bl);
+    public TwoKeyMap(boolean concurrentArgument) {
+        this(75, 15, concurrentArgument);
     }
 
-    public Map getInnerMap(Object object) {
-        return (Map) this.map.get(object);
+    public Map getInnerMap(Object key) {
+        return (Map) this.map.get(key);
     }
 
     public int getKeyCount() {
@@ -91,8 +91,8 @@ public class TwoKeyMap {
         this(75, 15, false);
     }
 
-    public TwoKeyMap(int ba, int bb, boolean bl) {
-        this(false, ba, bb, bl);
+    public TwoKeyMap(int ba, int bb, boolean concurrentArgument) {
+        this(false, ba, bb, concurrentArgument);
     }
 
     public TwoKeyMap(int ba, int bb) {
@@ -107,26 +107,26 @@ public class TwoKeyMap {
         return this.copyInnerMap(map1);
     }
 
-    public Object removeValue(Object object, Object object1) {
+    public Object removeValue(Object key, Object keyArgument) {
         Object object2 = null;
-        Map map1 = (Map) this.map.get(object);
+        Map map1 = (Map) this.map.get(key);
         if (map1 != null) {
-            object2 = map1.remove(object1);
+            object2 = map1.remove(keyArgument);
             if (map1.size() == 0) {
-                this.map.remove(object);
+                this.map.remove(key);
             }
         }
 
         return object2;
     }
 
-    public boolean containsKeys(Object object, Object object1) {
-        Map map1 = (Map) this.map.get(object);
-        return map1 == null ? false : map1.containsKey(object1);
+    public boolean containsKeys(Object key, Object keyArgument) {
+        Map map1 = (Map) this.map.get(key);
+        return (!(map1 == null) && (map1.containsKey(keyArgument)));
     }
 
-    public Map removeInnerMap(Object object) {
-        return (Map) this.map.remove(object);
+    public Map removeInnerMap(Object key) {
+        return (Map) this.map.remove(key);
     }
 
     public Enumeration keys() {
@@ -188,23 +188,23 @@ public class TwoKeyMap {
         this.map.clear();
     }
 
-    public boolean containsKey(Object object) {
-        return this.map.containsKey(object);
+    public boolean containsKey(Object key) {
+        return this.map.containsKey(key);
     }
 
-    public Map putInnerMap(Object object, Map map1) {
-        return ((java.util.Map) (this.map.put(object, this.copyInnerMap(map1))));
+    public Map putInnerMap(Object key, Map map1) {
+        return ((java.util.Map) (this.map.put(key, this.copyInnerMap(map1))));
     }
 
-    public Object putValue(Object object, Object object1, Object object2) {
+    public Object putValue(Object key, Object keyArgument, Object value) {
         Object object3 = null;
-        Map map1 = (Map) this.map.get(object);
+        Map map1 = (Map) this.map.get(key);
         if (map1 == null) {
             map1 = this.createInnerMap();
-            map1.put(object1, object2);
-            this.map.put(object, map1);
+            map1.put(keyArgument, value);
+            this.map.put(key, map1);
         } else {
-            object3 = map1.put(object1, object2);
+            object3 = map1.put(keyArgument, value);
         }
 
         return object3;

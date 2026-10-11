@@ -21,7 +21,7 @@ public class ASTContainingClause extends ZkmScriptSimpleNode {
     }
 
     public final boolean containsMatchingMember(ClassFileBase classFileBase, ClassHierarchyQuery classHierarchyQuery) throws ZkmException, IOException {
-        return this.jjtGetNumChildren() > 0 ? ((ASTComplexMemberSpecifier) this.jjtGetChild(0)).hasMatchingMember(classFileBase, classHierarchyQuery) : true;
+        return (!(this.jjtGetNumChildren() > 0) || (((ASTComplexMemberSpecifier) this.jjtGetChild(0)).hasMatchingMember(classFileBase, classHierarchyQuery)));
     }
 
     public String toScriptText() {
@@ -29,27 +29,27 @@ public class ASTContainingClause extends ZkmScriptSimpleNode {
         StringBuilder stringBuilder = new StringBuilder();
         int flowPredicate = ZkmScriptSimpleNode.getFlowPredicate();
         int bb = this.jjtGetNumChildren();
-        int ba = flowPredicate;
-        int bc = 0;
+        int flowPredicateValue = flowPredicate;
+        int childrenElementIndex = 0;
 
         while (true) {
-            if (bc < bb) {
-                DescribableSpec describableSpec = (DescribableSpec) this.jjtGetChild(bc);
-                if (ba == 0) {
+            if (childrenElementIndex < bb) {
+                DescribableSpec describableSpec = (DescribableSpec) this.jjtGetChild(childrenElementIndex);
+                if (flowPredicateValue == 0) {
                     stringBuilder1 = stringBuilder;
-                    if (ba != 0) {
+                    if (flowPredicateValue != 0) {
                         break;
                     }
 
                     stringBuilder.append(describableSpec.getSpecText());
-                    if (bc < bb - 1) {
+                    if (childrenElementIndex < bb - 1) {
                         stringBuilder.append(" && ");
                     }
 
-                    bc++;
+                    childrenElementIndex++;
                 }
 
-                if (ba == 0) {
+                if (flowPredicateValue == 0) {
                     continue;
                 }
             }

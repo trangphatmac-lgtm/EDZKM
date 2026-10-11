@@ -866,17 +866,17 @@ public abstract class ResolvedMethodRef extends ResolvedMemberRef {
 
     public final int getArgumentSlotCount() {
         List list1 = ConstantPoolEntry.getParameterTypes(this.nameAndType.getDescriptor());
-        int ba = list1.size();
-        int bb = ba;
+        int list1Size = list1.size();
+        int argumentSlotCount = list1Size;
 
-        for (int i = 0; i < ba; i++) {
-            String string = (String) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+            String string = (String) list1.get(elementIndex);
             if (string.equals("J") || string.equals("D")) {
-                bb++;
+                argumentSlotCount++;
             }
         }
 
-        return bb;
+        return argumentSlotCount;
     }
 
     public int getReturnValueCount() {
@@ -891,35 +891,35 @@ public abstract class ResolvedMethodRef extends ResolvedMemberRef {
             ObservableHolder observableHolder2,
             IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1
     ) throws ZkmException, IOException {
-        String string = this.getMemberName();
-        String string1 = this.getDescriptor();
-        MethodSignature methodSignature1 = new MethodSignature(string, string1);
+        String memberName = this.getMemberName();
+        String descriptor = this.getDescriptor();
+        MethodSignature methodSignature1 = new MethodSignature(memberName, descriptor);
         AbstractMethodInfo abstractMethodInfo = null;
-        String string2 = this.getReferencedClassName();
-        String string3 = string2;
+        String referencedClassName = this.getReferencedClassName();
+        String superclassName = referencedClassName;
         ClassFileBase classFileBase = this.getOwnerClass();
         Integer integer = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : null;
-        if (MethodSignature.isSignaturePolymorphic(string2, string, classMemberLookup1) && this.getOwnerClass().supportsJava7()) {
+        if (MethodSignature.isSignaturePolymorphic(referencedClassName, memberName, classMemberLookup1) && this.getOwnerClass().supportsJava7()) {
             ClasspathClassFile classpathClassFile = (ClasspathClassFile) classResolver1.getVersionedClass(
-                    string2, integer, "looking for class '" + string2 + "' which is referenced in class '" + this.getOwnerFilePath() + "'"
+                    referencedClassName, integer, "looking for class '" + referencedClassName + "' which is referenced in class '" + this.getOwnerFilePath() + "'"
             );
             return classpathClassFile.getOrCreateMethod(methodSignature1);
         }
 
         ClassFileBase classFileBase1 = null;
         HashSet hashSet = null;
-        if (string3.startsWith("[")) {
-            string3 = "java/lang/Object";
+        if (superclassName.startsWith("[")) {
+            superclassName = "java/lang/Object";
         }
 
         String string4 = "looking for method '"
                 + methodSignature1.formatDeclaration((Map) null)
                 + "' in class '"
-                + ZkmUtils.slashesToDots(string2)
+                + ZkmUtils.slashesToDots(referencedClassName)
                 + "' which is referenced in class '"
                 + this.getOwnerFilePath()
                 + "'";
-        ClassFileBase classFileBase2 = classResolver1.getVersionedClass(string3, integer, string4, ignoreMissingReferencesSpec1);
+        ClassFileBase classFileBase2 = classResolver1.getVersionedClass(superclassName, integer, string4, ignoreMissingReferencesSpec1);
 
         while (abstractMethodInfo == null && classFileBase2 != null) {
             abstractMethodInfo = findMethodInClass(classFileBase2, methodSignature1, classMemberLookup1);
@@ -932,13 +932,13 @@ public abstract class ResolvedMethodRef extends ResolvedMemberRef {
                 hashSet.add(classFileBase2);
             }
 
-            string3 = classFileBase2.getSuperclassName();
-            if (string3 == null) {
+            superclassName = classFileBase2.getSuperclassName();
+            if (superclassName == null) {
                 break;
             }
 
             Integer integer1 = classFileBase2.hasReleaseVersion() ? classFileBase2.getReleaseVersion() : integer;
-            classFileBase2 = classResolver1.getVersionedClass(string3, integer1, string4, ignoreMissingReferencesSpec1);
+            classFileBase2 = classResolver1.getVersionedClass(superclassName, integer1, string4, ignoreMissingReferencesSpec1);
         }
 
         if (abstractMethodInfo == null) {
@@ -949,18 +949,18 @@ public abstract class ResolvedMethodRef extends ResolvedMemberRef {
                         classFileBase2, methodSignature1, integer, classMemberLookup1, classResolver1, hashSet, string4, ignoreMissingReferencesSpec1
                 );
                 if (abstractMethodInfo == null) {
-                    string3 = classFileBase2.getSuperclassName();
-                    if (string3 == null) {
+                    superclassName = classFileBase2.getSuperclassName();
+                    if (superclassName == null) {
                         break;
                     }
 
                     Integer integer2 = classFileBase2.hasReleaseVersion() ? classFileBase2.getReleaseVersion() : integer;
-                    classFileBase2 = classResolver1.getVersionedClass(string3, integer2, string4, ignoreMissingReferencesSpec1);
+                    classFileBase2 = classResolver1.getVersionedClass(superclassName, integer2, string4, ignoreMissingReferencesSpec1);
                 }
             }
         }
 
-        observableHolder.setValue(string3);
+        observableHolder.setValue(superclassName);
         observableHolder1.setValue(classFileBase1);
         observableHolder2.setValue(hashSet);
         return abstractMethodInfo;
@@ -970,23 +970,23 @@ public abstract class ResolvedMethodRef extends ResolvedMemberRef {
         long ba = 84140148338121L;
         ba = 115200824007016L ^ ba;
         long bb = ba ^ 23945335188930L;
-        String string = this.nameAndType.getDescriptor();
-        return ConstantPoolEntry.getReferencedProgramClasses(string);
+        String descriptor = this.nameAndType.getDescriptor();
+        return ConstantPoolEntry.getReferencedProgramClasses(descriptor);
     }
 
     public ReflectionApiMethod findReflectionApiMethod(ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
-        String string = this.getSignatureString();
-        String string1 = this.getReferencedClassName();
-        Map map1 = REFLECTION_METHODS_BY_SIGNATURE.getInnerMap(string);
+        String signatureString = this.getSignatureString();
+        String referencedClassName = this.getReferencedClassName();
+        Map map1 = REFLECTION_METHODS_BY_SIGNATURE.getInnerMap(signatureString);
         if (map1 == null) {
             return null;
         }
 
-        if (map1.containsKey(string1)) {
-            return (ReflectionApiMethod) map1.get(string1);
+        if (map1.containsKey(referencedClassName)) {
+            return (ReflectionApiMethod) map1.get(referencedClassName);
         }
 
-        if (!SUBTYPE_MATCHED_SIGNATURES.contains(string)) {
+        if (!SUBTYPE_MATCHED_SIGNATURES.contains(signatureString)) {
             return null;
         }
 
@@ -994,12 +994,12 @@ public abstract class ResolvedMethodRef extends ResolvedMemberRef {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string2 = (String) entry.getKey();
-            if (!string2.equals("java/rmi/server/LoaderHandler") && !string2.equals("java/beans/beancontext/BeanContext")) {
-                if (classMemberLookup1.isSubclass(string1, string2)) {
+            String key = (String) entry.getKey();
+            if (!key.equals("java/rmi/server/LoaderHandler") && !key.equals("java/beans/beancontext/BeanContext")) {
+                if (classMemberLookup1.isSubclass(referencedClassName, key)) {
                     return (ReflectionApiMethod) entry.getValue();
                 }
-            } else if (classMemberLookup1.implementsInterface(string1, string2)) {
+            } else if (classMemberLookup1.implementsInterface(referencedClassName, key)) {
                 return (ReflectionApiMethod) entry.getValue();
             }
         }
@@ -1087,10 +1087,10 @@ public abstract class ResolvedMethodRef extends ResolvedMemberRef {
             IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1
     ) throws ZkmException, IOException {
         Integer integer1 = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : integer;
-        String[] strings = classFileBase.getInterfaceNames();
+        String[] interfaceNames = classFileBase.getInterfaceNames();
 
-        for (int i = 0; i < strings.length; i++) {
-            ClassFileBase classFileBase1 = classResolver1.getVersionedClass(strings[i], integer1, string, ignoreMissingReferencesSpec1);
+        for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+            ClassFileBase classFileBase1 = classResolver1.getVersionedClass(interfaceNames[interfaceNameIndex], integer1, string, ignoreMissingReferencesSpec1);
             if (classFileBase1 != null) {
                 AbstractMethodInfo abstractMethodInfo = findMethodInClass(classFileBase1, methodSignature1, classMemberLookup1);
                 if (abstractMethodInfo != null) {
@@ -1122,9 +1122,9 @@ public abstract class ResolvedMethodRef extends ResolvedMemberRef {
     }
 
     public ReflectionApiMethod getExactReflectionApiMethod() {
-        String string = this.getSignatureString();
-        String string1 = this.getReferencedClassName();
-        return (ReflectionApiMethod) REFLECTION_METHODS_BY_SIGNATURE.getValue(string, string1);
+        String signatureString = this.getSignatureString();
+        String referencedClassName = this.getReferencedClassName();
+        return (ReflectionApiMethod) REFLECTION_METHODS_BY_SIGNATURE.getValue(signatureString, referencedClassName);
     }
 
     public ResolvedMethodRef(

@@ -17,45 +17,37 @@ public class AccessFlags extends ClassFileComponent {
         this.flags = makePublic(this.flags);
     }
 
-    public static int makePrivate(int ba) {
-        int bb = ba;
-        bb &= -8;
-        return bb | 2;
+    public static int makePrivate(int flags) {
+        int updatedFlags = flags;
+        updatedFlags &= -8;
+        return updatedFlags | 2;
     }
 
-    public static boolean isEnum(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 16384) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isEnum(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 16384) != 0
+                : flags != 0;
     }
 
     public final boolean isSynthetic() {
         return isSynthetic(this.flags);
     }
 
-    public static boolean isInterface(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 512) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isInterface(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 512) != 0
+                : flags != 0;
     }
 
-    public static int setVolatileFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 64;
+    public static int setVolatileFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 64;
         } else {
-            bb &= -65;
+            updatedFlags &= -65;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
     static {
@@ -73,42 +65,38 @@ public class AccessFlags extends ClassFileComponent {
         return this.flags;
     }
 
-    public static int addStatic(int ba) {
-        return setStaticFlag(ba, true);
+    public static int addStatic(int flags) {
+        return setStaticFlag(flags, true);
     }
 
-    public static int addPublic(int ba) {
-        int bb = ba;
-        return bb | 1;
+    public static int addPublic(int flags) {
+        int updatedFlags = flags;
+        return updatedFlags | 1;
     }
 
-    public static boolean isAnnotation(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 8192) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isAnnotation(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 8192) != 0
+                : flags != 0;
     }
 
     public final void makeProtected() {
         this.flags = makeProtected(this.flags);
     }
 
-    public static int addEnum(int ba) {
-        return setEnumFlag(ba, true);
+    public static int addEnum(int flags) {
+        return setEnumFlag(flags, true);
     }
 
-    public static int setVarargsFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 128;
+    public static int setVarargsFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 128;
         } else {
-            bb &= -129;
+            updatedFlags &= -129;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
     public final boolean isInterface() {
@@ -119,780 +107,242 @@ public class AccessFlags extends ClassFileComponent {
         this.flags = setSyntheticFlag(this.flags, false);
     }
 
-    public static int addTransient(int ba) {
-        return setTransientFlag(ba, true);
+    public static int addTransient(int flags) {
+        return setTransientFlag(flags, true);
     }
 
     public final boolean isStatic() {
         return isStatic(this.flags);
     }
 
-    public static boolean isVarargs(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 128) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isVarargs(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 128) != 0
+                : flags != 0;
     }
 
-    public static int addSynthetic(int ba) {
-        return setSyntheticFlag(ba, true);
+    public static int addSynthetic(int flags) {
+        return setSyntheticFlag(flags, true);
     }
 
-    public static int makePackagePrivate(int ba) {
-        int bb = ba;
-        return bb & -8;
+    public static int makePackagePrivate(int flags) {
+        int updatedFlags = flags;
+        return updatedFlags & -8;
     }
 
     public final boolean isBridge() {
         return isBridge(this.flags);
     }
 
-    public static int addAnnotation(int ba) {
-        return setAnnotationFlag(ba, true);
+    public static int addAnnotation(int flags) {
+        return setAnnotationFlag(flags, true);
     }
 
     @Override
-    public void collectUsedConstants(char ba, int bb, UsedConstantsCollector usedConstantsCollector, char bc) {
+    public void collectUsedConstants(char traversalTag, int traversalSeed, UsedConstantsCollector collector, char traversalMode) {
     }
 
-    public static int setTransientFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 128;
+    public static int setTransientFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 128;
         } else {
-            bb &= -129;
+            updatedFlags &= -129;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
-    public static int setAbstractFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 1024;
+    public static int setAbstractFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 1024;
         } else {
-            bb &= -1025;
+            updatedFlags &= -1025;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
     public final void makePrivate() {
         this.flags = makePrivate(this.flags);
     }
 
-    public static boolean isAbstract(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 1024) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isAbstract(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 1024) != 0
+                : flags != 0;
     }
 
     public final void setStatic() {
         this.flags = setStaticFlag(this.flags, true);
     }
 
-    public static String formatModifiers(int ba, int bb, boolean bc, boolean bd) {
-        VisitableNode[] visitableNodes1;
-        StringBuilder stringBuilder;
-        int bg;
-        label398:
-        {
-            label399:
-            {
-                VisitableNode[] visitableNodes2 = ClassFileComponent.getFlowGuardNodes();
-                stringBuilder = new StringBuilder();
-                visitableNodes1 = visitableNodes2;
-                bg = ba;
-                if (visitableNodes1 != null) {
-                    if (isPublic(ba)) {
-                        StringBuilder stringBuilder1;
-                        String string13;
-                        if ((bd ? 1 : 0) != 0) {
-                            stringBuilder.append("!");
-                            stringBuilder1 = stringBuilder;
-                            string13 = "public";
-                        } else {
-                            stringBuilder1 = stringBuilder;
-                            string13 = "public";
-                        }
-
-                        stringBuilder1.append(string13);
-                        stringBuilder.append(" ");
-                    }
-
-                    bg = ba;
-                    if (visitableNodes1 == null) {
-                        break label399;
-                    }
-
-                    bg = ((isProtected(ba)) ? 1 : 0);
-                }
-
-                if (bg != 0) {
-                    StringBuilder stringBuilder2;
-                    String string;
-                    if ((bd ? 1 : 0) != 0) {
-                        stringBuilder.append("!");
-                        stringBuilder2 = stringBuilder;
-                        string = "protected";
-                    } else {
-                        stringBuilder2 = stringBuilder;
-                        string = "protected";
-                    }
-
-                    stringBuilder2.append(string);
-                    stringBuilder.append(" ");
-                }
-
-                bg = ba;
-                if (visitableNodes1 == null) {
-                    break label398;
-                }
-
-                bg = ((isPrivate(ba)) ? 1 : 0);
+    public static String formatModifiers(int flags, int parentKind, boolean includeExtendedModifiers, boolean negated) {
+        VisitableNode[] flowGuardNodes = ClassFileComponent.getFlowGuardNodes();
+        StringBuilder modifiers = new StringBuilder();
+        if (flowGuardNodes == null) {
+            // Preserve the alternate behavior exposed by setFlowGuardNodes(null).
+            if (flags != 0) {
+                appendModifier(modifiers, "protected", negated);
+                appendModifier(modifiers, "abstract", negated);
             }
-
-            if (bg != 0) {
-                StringBuilder stringBuilder3;
-                String string1;
-                if ((bd ? 1 : 0) != 0) {
-                    stringBuilder.append("!");
-                    stringBuilder3 = stringBuilder;
-                    string1 = "private";
-                } else {
-                    stringBuilder3 = stringBuilder;
-                    string1 = "private";
-                }
-
-                stringBuilder3.append(string1);
-                stringBuilder.append(" ");
+            if (parentKind != 0) {
+                appendModifier(modifiers, "static", negated);
             }
-
-            bg = bb;
+            if (flags != 0) {
+                appendModifier(modifiers, "enum", negated);
+            }
+            if (parentKind != 0) {
+                appendModifier(modifiers, "synthetic", negated);
+            }
+            return modifiers.toString();
         }
 
-        label383:
-        {
-            label382:
-            {
-                if (visitableNodes1 != null) {
-                    if (bg != 1) {
-                        bg = bb;
-                        if (visitableNodes1 == null) {
-                            break label383;
-                        }
-
-                        if (bb != 3) {
-                            break label382;
-                        }
-                    }
-
-                    bg = ba;
-                    if (visitableNodes1 == null) {
-                        break label383;
-                    }
-
-                    bg = ((isAbstract(ba)) ? 1 : 0);
-                }
-
-                if (bg != 0) {
-                    StringBuilder stringBuilder4;
-                    String string2;
-                    if ((bd ? 1 : 0) != 0) {
-                        stringBuilder.append("!");
-                        stringBuilder4 = stringBuilder;
-                        string2 = "abstract";
-                    } else {
-                        stringBuilder4 = stringBuilder;
-                        string2 = "abstract";
-                    }
-
-                    stringBuilder4.append(string2);
-                    stringBuilder.append(" ");
-                }
-            }
-
-            bg = bb;
+        if (isPublic(flags)) {
+            appendModifier(modifiers, "public", negated);
         }
-
-        label402:
-        {
-            label403:
-            {
-                label368:
-                {
-                    if (visitableNodes1 != null) {
-                        if (bg != 2) {
-                            bg = bb;
-                            if (visitableNodes1 == null) {
-                                break label403;
-                            }
-
-                            if (bb != 3) {
-                                break label368;
-                            }
-                        }
-
-                        bg = ba;
-                        if (visitableNodes1 == null) {
-                            break label403;
-                        }
-
-                        bg = ((isStatic(ba)) ? 1 : 0);
-                    }
-
-                    if (bg != 0) {
-                        StringBuilder stringBuilder5;
-                        String string3;
-                        if ((bd ? 1 : 0) != 0) {
-                            stringBuilder.append("!");
-                            stringBuilder5 = stringBuilder;
-                            string3 = "static";
-                        } else {
-                            stringBuilder5 = stringBuilder;
-                            string3 = "static";
-                        }
-
-                        stringBuilder5.append(string3);
-                        stringBuilder.append(" ");
-                    }
-                }
-
-                bg = ba;
-                if (visitableNodes1 == null) {
-                    break label402;
-                }
-
-                bg = ((isFinal(ba)) ? 1 : 0);
-            }
-
-            if (bg != 0) {
-                StringBuilder stringBuilder6;
-                String string4;
-                if ((bd ? 1 : 0) != 0) {
-                    stringBuilder.append("!");
-                    stringBuilder6 = stringBuilder;
-                    string4 = "final";
-                } else {
-                    stringBuilder6 = stringBuilder;
-                    string4 = "final";
-                }
-
-                stringBuilder6.append(string4);
-                stringBuilder.append(" ");
-            }
-
-            bg = bb;
+        if (isProtected(flags)) {
+            appendModifier(modifiers, "protected", negated);
         }
-
-        label353:
-        {
-            label405:
-            {
-                if (visitableNodes1 != null) {
-                    if (bg == 3) {
-                        bg = ba;
-                        if (visitableNodes1 == null) {
-                            break label353;
-                        }
-
-                        if (!isSynchronized(ba)) {
-                            break label405;
-                        }
-
-                        if ((bd ? 1 : 0) != 0) {
-                            stringBuilder.append("!");
-                        }
-
-                        stringBuilder.append("synchronized");
-                        stringBuilder.append(" ");
-                        if (visitableNodes1 != null) {
-                            break label405;
-                        }
-                    }
-
-                    bg = bb;
-                }
-
-                if (visitableNodes1 == null) {
-                    break label353;
-                }
-
-                if (bg == 1) {
-                    bg = (bc ? 1 : 0);
-                    if (visitableNodes1 == null) {
-                        break label353;
-                    }
-
-                    if ((bc ? 1 : 0) != 0) {
-                        bg = ba;
-                        if (visitableNodes1 == null) {
-                            break label353;
-                        }
-
-                        if (isSuper(ba)) {
-                            StringBuilder stringBuilder7;
-                            String string5;
-                            if ((bd ? 1 : 0) != 0) {
-                                stringBuilder.append("!");
-                                stringBuilder7 = stringBuilder;
-                                string5 = "super";
-                            } else {
-                                stringBuilder7 = stringBuilder;
-                                string5 = "super";
-                            }
-
-                            stringBuilder7.append(string5);
-                            stringBuilder.append(" ");
-                        }
-                    }
-                }
-            }
-
-            bg = bb;
+        if (isPrivate(flags)) {
+            appendModifier(modifiers, "private", negated);
         }
-
-        label331:
-        {
-            label407:
-            {
-                if (visitableNodes1 != null) {
-                    if (bg == 3) {
-                        bg = ba;
-                        if (visitableNodes1 == null) {
-                            break label331;
-                        }
-
-                        int be = ba;
-                        if (!isNative(be)) {
-                            break label407;
-                        }
-
-                        if ((bd ? 1 : 0) != 0) {
-                            stringBuilder.append("!");
-                        }
-
-                        stringBuilder.append("native");
-                        stringBuilder.append(" ");
-                        if (visitableNodes1 != null) {
-                            break label407;
-                        }
-                    }
-
-                    bg = bb;
-                }
-
-                if (visitableNodes1 != null) {
-                    if (bg != 1) {
-                        bg = bb;
-                        if (visitableNodes1 == null) {
-                            break label331;
-                        }
-
-                        if (bb != 2) {
-                            break label407;
-                        }
-                    }
-
-                    bg = ba;
-                    if (visitableNodes1 == null) {
-                        break label331;
-                    }
-
-                    bg = ((isEnum(ba)) ? 1 : 0);
-                }
-
-                if (bg != 0) {
-                    StringBuilder stringBuilder8;
-                    String string6;
-                    if ((bd ? 1 : 0) != 0) {
-                        stringBuilder.append("!");
-                        stringBuilder8 = stringBuilder;
-                        string6 = "enum";
-                    } else {
-                        stringBuilder8 = stringBuilder;
-                        string6 = "enum";
-                    }
-
-                    stringBuilder8.append(string6);
-                    stringBuilder.append(" ");
-                }
-            }
-
-            bg = bb;
+        if ((parentKind == 1 || parentKind == 3) && isAbstract(flags)) {
+            appendModifier(modifiers, "abstract", negated);
         }
-
-        label307:
-        if (visitableNodes1 != null) {
-            if (bg == 1) {
-                bg = ba;
-                if (visitableNodes1 == null) {
-                    break label307;
-                }
-
-                if (isModule(ba)) {
-                    StringBuilder stringBuilder9;
-                    String string7;
-                    if ((bd ? 1 : 0) != 0) {
-                        stringBuilder.append("!");
-                        stringBuilder9 = stringBuilder;
-                        string7 = "module";
-                    } else {
-                        stringBuilder9 = stringBuilder;
-                        string7 = "module";
-                    }
-
-                    stringBuilder9.append(string7);
-                    stringBuilder.append(" ");
-                }
-            }
-
-            bg = bb;
+        if ((parentKind == 2 || parentKind == 3) && isStatic(flags)) {
+            appendModifier(modifiers, "static", negated);
         }
-
-        label300:
-        {
-            label410:
-            {
-                if (visitableNodes1 != null) {
-                    if (bg == 2) {
-                        bg = ba;
-                        if (visitableNodes1 == null) {
-                            break label300;
-                        }
-
-                        if (!isVolatile(ba)) {
-                            break label410;
-                        }
-
-                        if ((bd ? 1 : 0) != 0) {
-                            stringBuilder.append("!");
-                        }
-
-                        stringBuilder.append("volatile");
-                        stringBuilder.append(" ");
-                        if (visitableNodes1 != null) {
-                            break label410;
-                        }
-                    }
-
-                    bg = bb;
-                }
-
-                if (visitableNodes1 == null) {
-                    break label300;
-                }
-
-                if (bg == 3) {
-                    bg = ba;
-                    if (visitableNodes1 == null) {
-                        break label300;
-                    }
-
-                    if (isBridge(ba)) {
-                        StringBuilder stringBuilder10;
-                        String string8;
-                        if ((bd ? 1 : 0) != 0) {
-                            stringBuilder.append("!");
-                            stringBuilder10 = stringBuilder;
-                            string8 = "bridge";
-                        } else {
-                            stringBuilder10 = stringBuilder;
-                            string8 = "bridge";
-                        }
-
-                        stringBuilder10.append(string8);
-                        stringBuilder.append(" ");
-                    }
-                }
-            }
-
-            bg = bb;
+        if (isFinal(flags)) {
+            appendModifier(modifiers, "final", negated);
         }
-
-        label281:
-        {
-            label412:
-            {
-                if (visitableNodes1 != null) {
-                    if (bg == 2) {
-                        bg = ba;
-                        if (visitableNodes1 == null) {
-                            break label281;
-                        }
-
-                        if (!isTransient(ba)) {
-                            break label412;
-                        }
-
-                        if ((bd ? 1 : 0) != 0) {
-                            stringBuilder.append("!");
-                        }
-
-                        stringBuilder.append("transient");
-                        stringBuilder.append(" ");
-                        if (visitableNodes1 != null) {
-                            break label412;
-                        }
-                    }
-
-                    bg = bb;
-                }
-
-                if (visitableNodes1 == null) {
-                    break label281;
-                }
-
-                if (bg == 3) {
-                    bg = (bc ? 1 : 0);
-                    if (visitableNodes1 == null) {
-                        break label281;
-                    }
-
-                    if ((bc ? 1 : 0) != 0) {
-                        bg = ba;
-                        if (visitableNodes1 == null) {
-                            break label281;
-                        }
-
-                        if (isVarargs(ba)) {
-                            StringBuilder stringBuilder11;
-                            String string9;
-                            if ((bd ? 1 : 0) != 0) {
-                                stringBuilder.append("!");
-                                stringBuilder11 = stringBuilder;
-                                string9 = "varargs";
-                            } else {
-                                stringBuilder11 = stringBuilder;
-                                string9 = "varargs";
-                            }
-
-                            stringBuilder11.append(string9);
-                            stringBuilder.append(" ");
-                        }
-                    }
-                }
+        if (parentKind == 3) {
+            if (isSynchronized(flags)) {
+                appendModifier(modifiers, "synchronized", negated);
             }
-
-            bg = (bc ? 1 : 0);
+        } else if (parentKind == 1 && includeExtendedModifiers && isSuper(flags)) {
+            appendModifier(modifiers, "super", negated);
         }
-
-        label259:
-        if (visitableNodes1 != null) {
-            if (bg != 0) {
-                bg = ba;
-                if (visitableNodes1 == null) {
-                    break label259;
-                }
-
-                int bf = ba;
-                if (isInterface(bf)) {
-                    StringBuilder stringBuilder12;
-                    String string10;
-                    if ((bd ? 1 : 0) != 0) {
-                        stringBuilder.append("!");
-                        stringBuilder12 = stringBuilder;
-                        string10 = "interface";
-                    } else {
-                        stringBuilder12 = stringBuilder;
-                        string10 = "interface";
-                    }
-
-                    stringBuilder12.append(string10);
-                    stringBuilder.append(" ");
-                }
+        if (parentKind == 3) {
+            if (isNative(flags)) {
+                appendModifier(modifiers, "native", negated);
             }
-
-            bg = bb;
+        } else if ((parentKind == 1 || parentKind == 2) && isEnum(flags)) {
+            appendModifier(modifiers, "enum", negated);
         }
-
-        label415:
-        {
-            label416:
-            {
-                label417:
-                {
-                    if (visitableNodes1 != null) {
-                        if (bg == 1) {
-                            bg = ba;
-                            if (visitableNodes1 == null) {
-                                break label416;
-                            }
-
-                            if (!isAnnotation(ba)) {
-                                break label417;
-                            }
-
-                            if ((bd ? 1 : 0) != 0) {
-                                stringBuilder.append("!");
-                            }
-
-                            stringBuilder.append("annotation");
-                            stringBuilder.append(" ");
-                            if (visitableNodes1 != null) {
-                                break label417;
-                            }
-                        }
-
-                        bg = bb;
-                    }
-
-                    if (visitableNodes1 == null) {
-                        break label416;
-                    }
-
-                    if (bg == 3) {
-                        bg = (bc ? 1 : 0);
-                        if (visitableNodes1 == null) {
-                            break label416;
-                        }
-
-                        if ((bc ? 1 : 0) != 0) {
-                            bg = ba;
-                            if (visitableNodes1 == null) {
-                                break label416;
-                            }
-
-                            if (isStrict(ba)) {
-                                StringBuilder stringBuilder13;
-                                String string11;
-                                if ((bd ? 1 : 0) != 0) {
-                                    stringBuilder.append("!");
-                                    stringBuilder13 = stringBuilder;
-                                    string11 = "strict";
-                                } else {
-                                    stringBuilder13 = stringBuilder;
-                                    string11 = "strict";
-                                }
-
-                                stringBuilder13.append(string11);
-                                stringBuilder.append(" ");
-                            }
-                        }
-                    }
-                }
-
-                bg = ba;
-                if (visitableNodes1 == null) {
-                    break label415;
-                }
-
-                bg = ((isSynthetic(ba)) ? 1 : 0);
+        if (parentKind == 1 && isModule(flags)) {
+            appendModifier(modifiers, "module", negated);
+        }
+        if (parentKind == 2) {
+            if (isVolatile(flags)) {
+                appendModifier(modifiers, "volatile", negated);
             }
-
-            if (bg == 0) {
-                return stringBuilder.toString();
+        } else if (parentKind == 3 && isBridge(flags)) {
+            appendModifier(modifiers, "bridge", negated);
+        }
+        if (parentKind == 2) {
+            if (isTransient(flags)) {
+                appendModifier(modifiers, "transient", negated);
             }
-
-            bg = (bd ? 1 : 0);
+        } else if (parentKind == 3 && includeExtendedModifiers && isVarargs(flags)) {
+            appendModifier(modifiers, "varargs", negated);
         }
-
-        StringBuilder stringBuilder14;
-        String string12;
-        if (bg != 0) {
-            stringBuilder.append("!");
-            stringBuilder14 = stringBuilder;
-            string12 = "synthetic";
-        } else {
-            stringBuilder14 = stringBuilder;
-            string12 = "synthetic";
+        if (includeExtendedModifiers && isInterface(flags)) {
+            appendModifier(modifiers, "interface", negated);
         }
-
-        stringBuilder14.append(string12);
-        stringBuilder.append(" ");
-        return stringBuilder.toString();
+        if (parentKind == 1) {
+            if (isAnnotation(flags)) {
+                appendModifier(modifiers, "annotation", negated);
+            }
+        } else if (parentKind == 3 && includeExtendedModifiers && isStrict(flags)) {
+            appendModifier(modifiers, "strict", negated);
+        }
+        if (isSynthetic(flags)) {
+            appendModifier(modifiers, "synthetic", negated);
+        }
+        return modifiers.toString();
     }
 
-    public static String formatModifiers(int ba, int bb, boolean bl) {
-        return formatModifiers(ba, bb, bl, false);
+    private static void appendModifier(StringBuilder modifiers, String modifier, boolean negated) {
+        if (negated) {
+            modifiers.append("!");
+        }
+        modifiers.append(modifier);
+        modifiers.append(" ");
     }
 
-    public static boolean isModule(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 32768) != 0 ? 1 : 0;
-        }
+    public static String formatModifiers(int flags, int parentKind, boolean includeExtendedModifiers) {
+        return formatModifiers(flags, parentKind, includeExtendedModifiers, false);
+    }
 
-        return bb != 0;
+    public static boolean isModule(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 32768) != 0
+                : flags != 0;
     }
 
     public final boolean isSynchronized() {
         return isSynchronized(this.flags);
     }
 
-    public static boolean isTransient(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 128) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isTransient(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 128) != 0
+                : flags != 0;
     }
 
-    public static int setFinalFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 16;
+    public static int setFinalFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 16;
         } else {
-            bb &= -17;
+            updatedFlags &= -17;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
-    public static int makeProtected(int ba) {
-        int bb = ba;
-        bb &= -8;
-        return bb | 4;
+    public static int makeProtected(int flags) {
+        int updatedFlags = flags;
+        updatedFlags &= -8;
+        return updatedFlags | 4;
     }
 
     public final boolean isPrivate() {
         return isPrivate(this.flags);
     }
 
-    public static int setSynchronizedFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 32;
+    public static int setSynchronizedFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 32;
         } else {
-            bb &= -33;
+            updatedFlags &= -33;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
-    public static boolean isVolatile(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 64) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isVolatile(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 64) != 0
+                : flags != 0;
     }
 
-    public static int setNativeFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 256;
+    public static int setNativeFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 256;
         } else {
-            bb &= -257;
+            updatedFlags &= -257;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
-    public static int addBridge(int ba) {
-        return setBridgeFlag(ba, true);
+    public static int addBridge(int flags) {
+        return setBridgeFlag(flags, true);
     }
 
     @Override
@@ -900,173 +350,141 @@ public class AccessFlags extends ClassFileComponent {
         return new AccessFlags(this.getParent(), this.flags);
     }
 
-    public static boolean isSynthetic(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 4096) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isSynthetic(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 4096) != 0
+                : flags != 0;
     }
 
     public final boolean isAbstract() {
         return isAbstract(this.flags);
     }
 
-    public static int addVolatile(int ba) {
-        return setVolatileFlag(ba, true);
+    public static int addVolatile(int flags) {
+        return setVolatileFlag(flags, true);
     }
 
     public final boolean isModule() {
         return isModule(this.flags);
     }
 
-    public static boolean isProtected(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 4) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isProtected(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 4) != 0
+                : flags != 0;
     }
 
-    public static boolean isNative(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 256) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isNative(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 256) != 0
+                : flags != 0;
     }
 
-    public static boolean isFinal(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 16) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isFinal(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 16) != 0
+                : flags != 0;
     }
 
     public final void setBridge() {
         this.flags = setBridgeFlag(this.flags, false);
     }
 
-    public static boolean isSynchronized(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 32) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isSynchronized(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 32) != 0
+                : flags != 0;
     }
 
-    public static int addNative(int ba) {
-        return setNativeFlag(ba, true);
+    public static int addNative(int flags) {
+        return setNativeFlag(flags, true);
     }
 
-    public static int addAbstract(int ba) {
-        return setAbstractFlag(ba, true);
+    public static int addAbstract(int flags) {
+        return setAbstractFlag(flags, true);
     }
 
-    public static boolean isPublic(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 1) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isPublic(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 1) != 0
+                : flags != 0;
     }
 
     public final void setAnnotation() {
         this.flags = setAnnotationFlag(this.flags, false);
     }
 
-    public static int setBridgeFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 64;
+    public static int setBridgeFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 64;
         } else {
-            bb &= -65;
+            updatedFlags &= -65;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
     public final boolean isVolatile() {
         return isVolatile(this.flags);
     }
 
-    public AccessFlags(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream) throws IOException {
-        super(classFileComponent);
-        this.flags = classFileInputStream.readUnsignedShort();
+    public AccessFlags(ClassFileComponent parent, ClassFileInputStream input) throws IOException {
+        super(parent);
+        this.flags = input.readUnsignedShort();
     }
 
-    public static int addFinal(int ba) {
-        return setFinalFlag(ba, true);
+    public static int addFinal(int flags) {
+        return setFinalFlag(flags, true);
     }
 
-    public static boolean isStrict(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 2048) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isStrict(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 2048) != 0
+                : flags != 0;
     }
 
-    public static boolean isSuper(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 32) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isSuper(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 32) != 0
+                : flags != 0;
     }
 
     public final void setEnum() {
         this.flags = setEnumFlag(this.flags, false);
     }
 
-    public static int setInterfaceFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 512;
+    public static int setInterfaceFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 512;
         } else {
-            bb &= -513;
+            updatedFlags &= -513;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
-    public static int setSyntheticFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 4096;
+    public static int setSyntheticFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 4096;
         } else {
-            bb &= -4097;
+            updatedFlags &= -4097;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
-    public static int setStaticFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 8;
+    public static int setStaticFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 8;
         } else {
-            bb &= -9;
+            updatedFlags &= -9;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
     public int getVisibilityRank() {
@@ -1083,29 +501,29 @@ public class AccessFlags extends ClassFileComponent {
         return isAnnotation(this.flags);
     }
 
-    public static int addInterface(int ba) {
-        return setInterfaceFlag(ba, true);
+    public static int addInterface(int flags) {
+        return setInterfaceFlag(flags, true);
     }
 
-    public static int makePublic(int ba) {
-        int bb = ba;
-        bb &= -8;
-        return bb | 1;
+    public static int makePublic(int flags) {
+        int updatedFlags = flags;
+        updatedFlags &= -8;
+        return updatedFlags | 1;
     }
 
     public final boolean isNative() {
         return isNative(this.flags);
     }
 
-    public static int setAnnotationFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 8192;
+    public static int setAnnotationFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 8192;
         } else {
-            bb &= -8193;
+            updatedFlags &= -8193;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
     public final boolean isPackagePrivate() {
@@ -1120,47 +538,39 @@ public class AccessFlags extends ClassFileComponent {
         this.flags = makePackagePrivate(this.flags);
     }
 
-    public final String formatModifiers(boolean bl) {
-        return formatModifiers(this.flags, this.getParentKind(), bl);
+    public final String formatModifiers(boolean includeExtendedModifiers) {
+        return formatModifiers(this.flags, this.getParentKind(), includeExtendedModifiers);
     }
 
-    public static int setEnumFlag(int ba, boolean bl) {
-        int bb = ba;
-        if (bl) {
-            bb |= 16384;
+    public static int setEnumFlag(int flags, boolean enabled) {
+        int updatedFlags = flags;
+        if (enabled) {
+            updatedFlags |= 16384;
         } else {
-            bb &= -16385;
+            updatedFlags &= -16385;
         }
 
-        return bb;
+        return updatedFlags;
     }
 
-    public static boolean isBridge(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 64) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isBridge(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 64) != 0
+                : flags != 0;
     }
 
-    public static boolean isPrivate(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 2) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isPrivate(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 2) != 0
+                : flags != 0;
     }
 
     public final boolean isProtected() {
         return isProtected(this.flags);
     }
 
-    public final void setFinal(boolean bl) {
-        this.flags = setFinalFlag(this.flags, bl);
+    public final void setFinal(boolean enabled) {
+        this.flags = setFinalFlag(this.flags, enabled);
     }
 
     public final void setVarargs() {
@@ -1171,8 +581,8 @@ public class AccessFlags extends ClassFileComponent {
         return isFinal(this.flags);
     }
 
-    public static int addSynchronized(int ba) {
-        return setSynchronizedFlag(ba, true);
+    public static int addSynchronized(int flags) {
+        return setSynchronizedFlag(flags, true);
     }
 
     public String getModifierString() {
@@ -1183,24 +593,20 @@ public class AccessFlags extends ClassFileComponent {
         return isSuper(this.flags);
     }
 
-    public AccessFlags(ClassFileComponent classFileComponent, int flags) {
-        super(classFileComponent);
+    public AccessFlags(ClassFileComponent parent, int flags) {
+        super(parent);
         this.flags = flags;
     }
 
-    public static int addProtected(int ba) {
-        int bb = ba;
-        return bb | 4;
+    public static int addProtected(int flags) {
+        int updatedFlags = flags;
+        return updatedFlags | 4;
     }
 
-    public static boolean isStatic(int ba) {
-        VisitableNode[] visitableNodes1 = ClassFileComponent.getFlowGuardNodes();
-        int bb = ba;
-        if (visitableNodes1 != null) {
-            bb = (ba & 8) != 0 ? 1 : 0;
-        }
-
-        return bb != 0;
+    public static boolean isStatic(int flags) {
+        return ClassFileComponent.getFlowGuardNodes() != null
+                ? (flags & 8) != 0
+                : flags != 0;
     }
 
     public final boolean isEnum() {
@@ -1211,12 +617,12 @@ public class AccessFlags extends ClassFileComponent {
         return isVarargs(this.flags);
     }
 
-    public static boolean isPackagePrivate(int ba) {
-        return (ba & 7) == 0;
+    public static boolean isPackagePrivate(int flags) {
+        return (flags & 7) == 0;
     }
 
-    public AccessFlags(ClassFileComponent classFileComponent) {
-        super(classFileComponent);
+    public AccessFlags(ClassFileComponent parent) {
+        super(parent);
         this.flags = 0;
     }
 
@@ -1224,8 +630,8 @@ public class AccessFlags extends ClassFileComponent {
         return isTransient(this.flags);
     }
 
-    public static int addPrivate(int ba) {
-        int bb = ba;
-        return bb | 2;
+    public static int addPrivate(int flags) {
+        int updatedFlags = flags;
+        return updatedFlags | 2;
     }
 }

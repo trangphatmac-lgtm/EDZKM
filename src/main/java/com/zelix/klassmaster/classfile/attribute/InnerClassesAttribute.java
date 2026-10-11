@@ -31,21 +31,21 @@ public class InnerClassesAttribute extends Attribute implements Utf8ConstantRepl
     public int removeTrimmedEntries(TrimProcessor trimProcessor1) {
         if (this.entries != null) {
             ArrayList arrayList = new ArrayList(this.entries.length);
-            int ba = 0;
+            int entryCountValue = 0;
             int bb = 0;
 
             for (InnerClassEntry[] innerClassEntrys = this.entries; bb < innerClassEntrys.length; innerClassEntrys = this.entries) {
-                if (!this.entries[ba].isInnerClassTrimmed(trimProcessor1)) {
-                    arrayList.add(this.entries[ba]);
+                if (!this.entries[entryCountValue].isInnerClassTrimmed(trimProcessor1)) {
+                    arrayList.add(this.entries[entryCountValue]);
                 }
 
-                bb = ++ba;
+                bb = ++entryCountValue;
             }
 
-            ba = arrayList.size();
-            if (ba < this.entries.length) {
-                this.entries = ((com.zelix.klassmaster.classfile.attribute.InnerClassEntry[]) (arrayList.toArray(new InnerClassEntry[ba])));
-                this.entryCount = ba;
+            entryCountValue = arrayList.size();
+            if (entryCountValue < this.entries.length) {
+                this.entries = ((com.zelix.klassmaster.classfile.attribute.InnerClassEntry[]) (arrayList.toArray(new InnerClassEntry[entryCountValue])));
+                this.entryCount = entryCountValue;
             }
         }
 
@@ -64,12 +64,12 @@ public class InnerClassesAttribute extends Attribute implements Utf8ConstantRepl
         super.writeRemapped(dataOutputStream1, map3, scriptEnvironment3);
         if (this.valid) {
             dataOutputStream.writeShort(this.entryCount);
-            int ba = 0;
+            int entryIndex = 0;
             int bb = 0;
 
-            for (int i = this.entryCount; bb < i; i = this.entryCount) {
-                this.entries[ba].writeRemapped(dataOutputStream, map1);
-                bb = ++ba;
+            for (int entryCountValue = this.entryCount; bb < entryCountValue; entryCountValue = this.entryCount) {
+                this.entries[entryIndex].writeRemapped(dataOutputStream, map1);
+                bb = ++entryIndex;
             }
         } else {
             dataOutputStream.write(this.rawBytes);
@@ -89,21 +89,21 @@ public class InnerClassesAttribute extends Attribute implements Utf8ConstantRepl
     public int removeEntriesForClasses(HashSet hashSet) {
         if (this.entries != null) {
             ArrayList arrayList = new ArrayList(this.entries.length);
-            int ba = 0;
+            int entryCountValue = 0;
             int bb = 0;
 
             for (InnerClassEntry[] innerClassEntrys = this.entries; bb < innerClassEntrys.length; innerClassEntrys = this.entries) {
-                if (!this.entries[ba].isInnerClassInSet(hashSet)) {
-                    arrayList.add(this.entries[ba]);
+                if (!this.entries[entryCountValue].isInnerClassInSet(hashSet)) {
+                    arrayList.add(this.entries[entryCountValue]);
                 }
 
-                bb = ++ba;
+                bb = ++entryCountValue;
             }
 
-            ba = arrayList.size();
-            if (ba < this.entries.length) {
-                this.entries = ((com.zelix.klassmaster.classfile.attribute.InnerClassEntry[]) (arrayList.toArray(new InnerClassEntry[ba])));
-                this.entryCount = ba;
+            entryCountValue = arrayList.size();
+            if (entryCountValue < this.entries.length) {
+                this.entries = ((com.zelix.klassmaster.classfile.attribute.InnerClassEntry[]) (arrayList.toArray(new InnerClassEntry[entryCountValue])));
+                this.entryCount = entryCountValue;
             }
         }
 
@@ -112,44 +112,44 @@ public class InnerClassesAttribute extends Attribute implements Utf8ConstantRepl
 
     public InnerClassesAttribute(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
             PrintWriter printWriter
     ) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         if (this.length >= 2) {
             this.entryCount = classFileInputStream.readUnsignedShort();
             if (this.entryCount * 8 + 2 == this.length) {
                 this.entries = new InnerClassEntry[this.entryCount];
-                int bb = 0;
+                int entryIndex = 0;
                 int bd = 0;
 
-                for (int i = this.entryCount; bd < i; i = this.entryCount) {
-                    this.entries[bb] = new InnerClassEntry(this, classFileInputStream, listMultimap, listMultimap1);
+                for (int entryCountValue = this.entryCount; bd < entryCountValue; entryCountValue = this.entryCount) {
+                    this.entries[entryIndex] = new InnerClassEntry(this, classFileInputStream, listMultimap, listMultimap1);
                     if (this.valid) {
-                        if (!this.entries[bb].valid) {
+                        if (!this.entries[entryIndex].valid) {
                             this.setValid();
                             printWriter.println("ERROR: " + this.getClassName() + " : " + "Invalid InnerClasses Attribute" + " (3)");
                         } else {
-                            String string1 = this.entries[bb].getInnerSimpleName();
-                            if (string1 != null) {
-                                String string2 = this.entries[bb].getInnerClassName();
-                                String string3 = this.entries[bb].getOuterClassName();
-                                if (string3 != null && string3.length() > string2.length() - string1.length()) {
+                            String innerSimpleName = this.entries[entryIndex].getInnerSimpleName();
+                            if (innerSimpleName != null) {
+                                String innerClassName = this.entries[entryIndex].getInnerClassName();
+                                String outerClassName = this.entries[entryIndex].getOuterClassName();
+                                if (outerClassName != null && outerClassName.length() > innerClassName.length() - innerSimpleName.length()) {
                                     printWriter.println(
                                             "ERROR: "
                                                     + this.getClassName()
                                                     + " : "
                                                     + "Invalid InnerClasses Attribute"
                                                     + " (5) : '"
-                                                    + string3
+                                                    + outerClassName
                                                     + "' : '"
-                                                    + string2
+                                                    + innerClassName
                                                     + "' : '"
-                                                    + string1
+                                                    + innerSimpleName
                                                     + "'"
                                     );
                                 }
@@ -157,7 +157,7 @@ public class InnerClassesAttribute extends Attribute implements Utf8ConstantRepl
                         }
                     }
 
-                    bd = ++bb;
+                    bd = ++entryIndex;
                 }
 
                 if (!this.valid) {
@@ -199,63 +199,63 @@ public class InnerClassesAttribute extends Attribute implements Utf8ConstantRepl
     public void collectUsedConstants(char bc, int bd, UsedConstantsCollector usedConstantsCollector, char be) {
         usedConstantsCollector.markUsed(this.nameConstant, this, this.getParent());
         if (this.entries != null) {
-            int ba = 0;
-            int bb = ba;
+            int entryIndex = 0;
+            int entryIndexValue = entryIndex;
 
-            for (InnerClassEntry[] innerClassEntrys = this.entries; bb < innerClassEntrys.length; innerClassEntrys = this.entries) {
-                this.entries[ba].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
-                bb = ++ba;
+            for (InnerClassEntry[] innerClassEntrys = this.entries; entryIndexValue < innerClassEntrys.length; innerClassEntrys = this.entries) {
+                this.entries[entryIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+                entryIndexValue = ++entryIndex;
             }
         }
     }
 
     public void syncInnerNames() {
         if (this.valid) {
-            int ba = 0;
-            int bb = ba;
+            int entryIndex = 0;
+            int entryIndexValue = entryIndex;
 
-            for (int i = this.entryCount; bb < i; i = this.entryCount) {
-                this.entries[ba].syncInnerNameWithClass();
-                bb = ++ba;
+            for (int entryCountValue = this.entryCount; entryIndexValue < entryCountValue; entryCountValue = this.entryCount) {
+                this.entries[entryIndex].syncInnerNameWithClass();
+                entryIndexValue = ++entryIndex;
             }
         }
     }
 
     public void writeEntries(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeShort(this.entryCount);
-        int ba = 0;
+        int entryIndex = 0;
         int bb = 0;
 
-        for (int i = this.entryCount; bb < i; i = this.entryCount) {
-            this.entries[ba].writeTo(dataOutputStream);
-            bb = ++ba;
+        for (int entryCountValue = this.entryCount; bb < entryCountValue; entryCountValue = this.entryCount) {
+            this.entries[entryIndex].writeTo(dataOutputStream);
+            bb = ++entryIndex;
         }
     }
 
     public void collectReferencedClasses(HashSet hashSet) {
         if (this.valid) {
-            int ba = 0;
-            int bb = ba;
+            int entryIndex = 0;
+            int entryIndexValue = entryIndex;
 
-            for (int i = this.entryCount; bb < i; i = this.entryCount) {
-                this.entries[ba].collectReferencedClasses(hashSet);
-                bb = ++ba;
+            for (int entryCountValue = this.entryCount; entryIndexValue < entryCountValue; entryCountValue = this.entryCount) {
+                this.entries[entryIndex].collectReferencedClasses(hashSet);
+                entryIndexValue = ++entryIndex;
             }
         }
     }
 
     public InnerClassEntry findEntryForClass(ClassConstantBase classConstantBase) {
         if (this.valid) {
-            int ba = 0;
-            int bb = ba;
+            int entryIndex = 0;
+            int entryIndexValue = entryIndex;
 
-            for (int i = this.entryCount; bb < i; i = this.entryCount) {
-                InnerClassEntry innerClassEntry1 = this.entries[ba];
+            for (int entryCountValue = this.entryCount; entryIndexValue < entryCountValue; entryCountValue = this.entryCount) {
+                InnerClassEntry innerClassEntry1 = this.entries[entryIndex];
                 if (innerClassEntry1.innerClass != null && innerClassEntry1.innerClass.getClassName().equals(classConstantBase.getClassName())) {
                     return innerClassEntry1;
                 }
 
-                bb = ++ba;
+                entryIndexValue = ++entryIndex;
             }
         }
 

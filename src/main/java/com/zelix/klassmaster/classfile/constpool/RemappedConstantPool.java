@@ -28,9 +28,9 @@ public class RemappedConstantPool extends AbstractConstantPool {
     public void writeEntries(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeShort(this.entries.length);
 
-        for (int i = 1; i < this.entries.length; i++) {
-            if (this.entries[i] != null) {
-                this.entries[i].writeRemappedTo(dataOutputStream, this.replacementMap);
+        for (int entryIndex = 1; entryIndex < this.entries.length; entryIndex++) {
+            if (this.entries[entryIndex] != null) {
+                this.entries[entryIndex].writeRemappedTo(dataOutputStream, this.replacementMap);
             }
         }
     }

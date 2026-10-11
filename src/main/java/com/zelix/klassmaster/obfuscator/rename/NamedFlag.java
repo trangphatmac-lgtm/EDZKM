@@ -8,8 +8,8 @@ public class NamedFlag {
         this.blocked = true;
     }
 
-    public NamedFlag(String string, boolean bl) {
-        this.name = string;
+    public NamedFlag(String nameArgument, boolean bl) {
+        this.name = nameArgument;
         this.blocked = true;
     }
 
@@ -21,7 +21,7 @@ public class NamedFlag {
         return this.blocked;
     }
 
-    public NamedFlag(String string) {
-        this.name = string;
+    public NamedFlag(String nameArgument) {
+        this.name = nameArgument;
     }
 }

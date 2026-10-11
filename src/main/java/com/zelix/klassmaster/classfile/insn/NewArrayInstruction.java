@@ -43,33 +43,33 @@ public class NewArrayInstruction extends Instruction {
     public StackFrameState computeFrameAfter(StackFrameState stackFrameState, Object object, Object object1, Object object2) throws ZkmException, IOException {
         VerifierType[] verifierTypes = stackFrameState.getStack();
         VerifierType[] verifierTypes1 = stackFrameState.getLocals();
-        int ba = verifierTypes.length;
-        VerifierType[] verifierTypes2 = VerifierType.createArray(ba);
-        System.arraycopy(verifierTypes, 0, verifierTypes2, 0, ba - 1);
+        int lengthValue = verifierTypes.length;
+        VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue);
+        System.arraycopy(verifierTypes, 0, verifierTypes2, 0, lengthValue - 1);
         switch (this.arrayTypeCode) {
             case 4:
-                verifierTypes2[ba - 1] = VerifierType.BOOLEAN_ARRAY;
+                verifierTypes2[lengthValue - 1] = VerifierType.BOOLEAN_ARRAY;
                 break;
             case 5:
-                verifierTypes2[ba - 1] = VerifierType.CHAR_ARRAY;
+                verifierTypes2[lengthValue - 1] = VerifierType.CHAR_ARRAY;
                 break;
             case 6:
-                verifierTypes2[ba - 1] = VerifierType.FLOAT_ARRAY;
+                verifierTypes2[lengthValue - 1] = VerifierType.FLOAT_ARRAY;
                 break;
             case 7:
-                verifierTypes2[ba - 1] = VerifierType.DOUBLE_ARRAY;
+                verifierTypes2[lengthValue - 1] = VerifierType.DOUBLE_ARRAY;
                 break;
             case 8:
-                verifierTypes2[ba - 1] = VerifierType.BYTE_ARRAY;
+                verifierTypes2[lengthValue - 1] = VerifierType.BYTE_ARRAY;
                 break;
             case 9:
-                verifierTypes2[ba - 1] = VerifierType.SHORT_ARRAY;
+                verifierTypes2[lengthValue - 1] = VerifierType.SHORT_ARRAY;
                 break;
             case 10:
-                verifierTypes2[ba - 1] = VerifierType.INT_ARRAY;
+                verifierTypes2[lengthValue - 1] = VerifierType.INT_ARRAY;
                 break;
             case 11:
-                verifierTypes2[ba - 1] = VerifierType.LONG_ARRAY;
+                verifierTypes2[lengthValue - 1] = VerifierType.LONG_ARRAY;
                 break;
             default:
                 Integer integer = this.arrayTypeCode;
@@ -82,21 +82,21 @@ public class NewArrayInstruction extends Instruction {
     @Override
     public void printDisassembly(PrintWriter printWriter, StringBuilder stringBuilder) throws UnknownOpcodeException {
         StringBuilder stringBuilder1 = new StringBuilder(100);
-        String string = this.getMnemonic();
-        stringBuilder1.append(string + " " + this.arrayTypeCode);
-        String string1 = typeNamesByCode[this.arrayTypeCode];
-        String string2 = this.getDescriptionComment();
-        string2 = Instruction.formatDescription(string2, string1);
-        if (string2.length() > 0) {
-            stringBuilder1.append("\t" + string2);
+        String mnemonic = this.getMnemonic();
+        stringBuilder1.append(mnemonic + " " + this.arrayTypeCode);
+        String typeNamesByCodeElement = typeNamesByCode[this.arrayTypeCode];
+        String descriptionComment = this.getDescriptionComment();
+        descriptionComment = Instruction.formatDescription(descriptionComment, typeNamesByCodeElement);
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);
     }
 
-    public NewArrayInstruction(String string) {
+    public NewArrayInstruction(String key) {
         super(188);
-        this.arrayTypeCode = (Integer) typeCodesByDescriptor.get(string);
+        this.arrayTypeCode = (Integer) typeCodesByDescriptor.get(key);
     }
 
     public NewArrayInstruction(int arrayTypeCode) {

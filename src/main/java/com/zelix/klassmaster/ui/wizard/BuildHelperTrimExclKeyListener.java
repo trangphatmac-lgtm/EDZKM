@@ -12,18 +12,18 @@ public class BuildHelperTrimExclKeyListener extends KeyAdapter {
     public void keyPressed(KeyEvent keyEvent) {
         try {
             if (keyEvent.getKeyCode() == 10) {
-                Object object = keyEvent.getSource();
+                Object source = keyEvent.getSource();
                 if (keyEvent.getSource() == this.trimExclusionsDialog.previousBtn) {
                     this.trimExclusionsDialog.goToPreviousStep();
-                } else if (object == this.trimExclusionsDialog.okBtn) {
+                } else if (source == this.trimExclusionsDialog.okBtn) {
                     this.trimExclusionsDialog.acceptParameters();
-                } else if (object == this.trimExclusionsDialog.testBtn) {
+                } else if (source == this.trimExclusionsDialog.testBtn) {
                     this.trimExclusionsDialog.runTestTrim();
-                } else if (object == this.trimExclusionsDialog.skipBtn) {
+                } else if (source == this.trimExclusionsDialog.skipBtn) {
                     this.trimExclusionsDialog.skipStep();
-                } else if (object == this.trimExclusionsDialog.cancelBtn) {
+                } else if (source == this.trimExclusionsDialog.cancelBtn) {
                     this.trimExclusionsDialog.cancelDialog();
-                } else if (object == this.trimExclusionsDialog.helpBtn) {
+                } else if (source == this.trimExclusionsDialog.helpBtn) {
                     this.trimExclusionsDialog.showHelp();
                 }
             }

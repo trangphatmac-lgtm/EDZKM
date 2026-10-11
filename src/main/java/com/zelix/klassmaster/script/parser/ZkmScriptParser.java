@@ -264,7 +264,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     public ZkmScriptToken jj_nt;
     public int jj_gen;
 
-    
+
 
 
 
@@ -276,21 +276,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.ComplexPackageSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 35: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[148] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 35) {
                 this.jj_consume_token(35);
                 this.ComplexPackageSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[148] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTAndPackageSpecifier);
             return;
         } catch (Throwable throwable) {
@@ -311,7 +302,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_1() {
-        return this.jj_scan_token(OR) ? true : this.jj_3R_93();
+        return ((this.jj_scan_token(OR)) || (this.jj_3R_93()));
     }
 
     public static void jj_la1_init_4() {
@@ -740,7 +731,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_5() {
-        return this.jj_scan_token(SCRAMBLE) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(SCRAMBLE)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_6() {
@@ -874,7 +865,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_2() {
-        return this.jj_3R_45() ? true : this.jj_scan_token(LPAREN);
+        return ((this.jj_3R_45()) || (this.jj_scan_token(LPAREN)));
     }
 
     public final void ExpectedInitialHash() throws ZkmScriptParseException {
@@ -1074,7 +1065,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    
+
 
 
 
@@ -1086,21 +1077,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.ComplexClassSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 35: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[158] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 35) {
                 this.jj_consume_token(35);
                 this.ComplexClassSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[158] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTAndClassSpecifier);
             return;
         } catch (Throwable throwable) {
@@ -1120,7 +1102,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    
+
 
 
 
@@ -1133,21 +1115,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
             this.jj_consume_token(62);
             this.QualifiedClassName();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 20: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[120] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 20) {
                 this.jj_consume_token(20);
                 this.QualifiedClassName();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[120] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTThrowsClause);
             return;
         } catch (Throwable throwable) {
@@ -1189,7 +1162,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_scan_token(RPAREN);
     }
 
-    
+
 
 
 
@@ -1199,48 +1172,25 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         boolean bl = true;
         this.jjtree.openNodeScope(aSTBracketedMemberSpecifier);
         try {
-            int n;
+            int jj_kindValue;
             ZkmScriptParser zkmScriptParser;
-            block13:
-            {
-                block12:
-                {
-                    switch (this.jj_nt.kind) {
-                        case 25: {
-                            this.jj_consume_token(25);
-                            aSTBracketedMemberSpecifier.setNegated();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[111] = this.jj_gen;
-                            break block12;
-                        }
-                    }
-                    zkmScriptParser = this;
-                    n = 28;
-                    break block13;
-                }
-                zkmScriptParser = this;
-                n = 28;
+            if (this.jj_nt.kind == 25) {
+                this.jj_consume_token(25);
+                aSTBracketedMemberSpecifier.setNegated();
+            } else {
+                this.jj_la1[111] = this.jj_gen;
             }
-            zkmScriptParser.jj_consume_token(n);
+            zkmScriptParser = this;
+            jj_kindValue = 28;
+            zkmScriptParser.jj_consume_token(jj_kindValue);
             this.AndMemberSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block10:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 34: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[112] = this.jj_gen;
-                        break block10;
-                    }
-                }
+            while (zkmScriptToken.kind == 34) {
                 this.jj_consume_token(34);
                 this.AndMemberSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[112] = this.jj_gen;
             this.jj_consume_token(29);
             this.jjtree.closeNodeScope(aSTBracketedMemberSpecifier);
             return;
@@ -1262,7 +1212,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_10() {
-        return this.jj_scan_token(WILDCARD_NAME) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(WILDCARD_NAME)) || (this.jj_scan_token(DOT)));
     }
 
     public final void ComplexMethodSpecifier() throws ZkmScriptParseException {
@@ -1380,7 +1330,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_13() {
-        return this.jj_scan_token(NORMAL) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(NORMAL)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_14() {
@@ -1579,7 +1529,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_3() {
-        return this.jj_scan_token(OR) ? true : this.jj_3R_123();
+        return ((this.jj_scan_token(OR)) || (this.jj_3R_123()));
     }
 
     public boolean jj_3R_18() {
@@ -1771,20 +1721,20 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
             ZkmScriptToken zkmScriptToken = this.jj_consume_token(GC);
             this.currentStatementKind = 36;
             ZkmScriptParser zkmScriptParser1;
-            byte ba;
+            byte jj_kindValue;
             switch (this.jj_nt.kind) {
                 case INTEGER_LITERAL:
                     this.IntegerLiteral();
                     zkmScriptParser1 = this;
-                    ba = 19;
+                    jj_kindValue = 19;
                     break;
                 default:
                     this.jj_la1[77] = this.jj_gen;
                     zkmScriptParser1 = this;
-                    ba = 19;
+                    jj_kindValue = 19;
             }
 
-            zkmScriptParser1.jj_consume_token(ba);
+            zkmScriptParser1.jj_consume_token(jj_kindValue);
             this.jjtree.closeNodeScope(aSTGarbageCollectStatement);
             bl = false;
             aSTGarbageCollectStatement.setLineNumber(zkmScriptToken.endLine);
@@ -1858,90 +1808,90 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
 
     public ZkmScriptParseException generateParseException() {
         this.jj_expentries.clear();
-        boolean[] bl = new boolean[218];
+        boolean[] booleanArray = new boolean[218];
         if (this.jj_kind >= 0) {
-            bl[this.jj_kind] = true;
+            booleanArray[this.jj_kind] = true;
             this.jj_kind = -1;
         }
 
-        int ba = 0;
-        int bi = ba;
+        int jj_expentryElement = 0;
+        int jj_expentryElementValue = jj_expentryElement;
 
-        for (short bj = 187; bi < bj; bj = 187) {
-            if (this.jj_la1[ba] == this.jj_gen) {
-                int bb = 0;
-                bi = bb;
+        for (short bj = 187; jj_expentryElementValue < bj; bj = 187) {
+            if (this.jj_la1[jj_expentryElement] == this.jj_gen) {
+                int jj_expentryElementValue2 = 0;
+                jj_expentryElementValue = jj_expentryElementValue2;
 
-                for (byte bg = 32; bi < bg; bg = 32) {
-                    int[] be;
-                    if ((jj_la1_0[ba] & 1 << bb) != 0) {
-                        bl[bb] = true;
-                        be = jj_la1_1;
+                for (byte bg = 32; jj_expentryElementValue < bg; bg = 32) {
+                    int[] jj_la1_1Value;
+                    if ((jj_la1_0[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[jj_expentryElementValue2] = true;
+                        jj_la1_1Value = jj_la1_1;
                     } else {
-                        be = jj_la1_1;
+                        jj_la1_1Value = jj_la1_1;
                     }
 
-                    if ((be[ba] & 1 << bb) != 0) {
-                        bl[32 + bb] = true;
+                    if ((jj_la1_1Value[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[32 + jj_expentryElementValue2] = true;
                     }
 
-                    if ((jj_la1_2[ba] & 1 << bb) != 0) {
-                        bl[64 + bb] = true;
+                    if ((jj_la1_2[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[64 + jj_expentryElementValue2] = true;
                     }
 
-                    if ((jj_la1_3[ba] & 1 << bb) != 0) {
-                        bl[96 + bb] = true;
+                    if ((jj_la1_3[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[96 + jj_expentryElementValue2] = true;
                     }
 
-                    if ((jj_la1_4[ba] & 1 << bb) != 0) {
-                        bl[128 + bb] = true;
+                    if ((jj_la1_4[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[128 + jj_expentryElementValue2] = true;
                     }
 
-                    int[] bf;
-                    if ((jj_la1_5[ba] & 1 << bb) != 0) {
-                        bl[160 + bb] = true;
-                        bf = jj_la1_6;
+                    int[] jj_la1_6Value;
+                    if ((jj_la1_5[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[160 + jj_expentryElementValue2] = true;
+                        jj_la1_6Value = jj_la1_6;
                     } else {
-                        bf = jj_la1_6;
+                        jj_la1_6Value = jj_la1_6;
                     }
 
-                    if ((bf[ba] & 1 << bb) != 0) {
-                        bl[192 + bb] = true;
+                    if ((jj_la1_6Value[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[192 + jj_expentryElementValue2] = true;
                     }
 
-                    bi = ++bb;
+                    jj_expentryElementValue = ++jj_expentryElementValue2;
                 }
             }
 
-            bi = ++ba;
+            jj_expentryElementValue = ++jj_expentryElement;
         }
 
-        ba = 0;
-        bi = 0;
+        jj_expentryElement = 0;
+        jj_expentryElementValue = 0;
 
-        for (short bh = 218; bi < bh; bh = 218) {
-            if (bl[ba]) {
+        for (short bh = 218; jj_expentryElementValue < bh; bh = 218) {
+            if (booleanArray[jj_expentryElement]) {
                 this.jj_expentry = new int[1];
-                this.jj_expentry[0] = ba;
+                this.jj_expentry[0] = jj_expentryElement;
                 this.jj_expentries.add(this.jj_expentry);
             }
 
-            bi = ++ba;
+            jj_expentryElementValue = ++jj_expentryElement;
         }
 
         this.jj_endpos = 0;
         this.jj_rescan_token();
         this.jj_add_error_token(0, 0);
-        int[][] bc = new int[this.jj_expentries.size()][];
-        int bd = 0;
-        bi = 0;
+        int[][] expectedTokenSequences = new int[this.jj_expentries.size()][];
+        int elementIndex = 0;
+        jj_expentryElementValue = 0;
 
-        for (List list1 = this.jj_expentries; bi < list1.size(); list1 = this.jj_expentries) {
-            bc[bd] = (int[]) this.jj_expentries.get(bd);
-            bi = ++bd;
+        for (List list1 = this.jj_expentries; jj_expentryElementValue < list1.size(); list1 = this.jj_expentries) {
+            expectedTokenSequences[elementIndex] = (int[]) this.jj_expentries.get(elementIndex);
+            jj_expentryElementValue = ++elementIndex;
         }
 
-        return new ZkmScriptParseException(this.token, bc, ZkmScriptConstants.TOKEN_IMAGE, this.currentStatementKind);
+        return new ZkmScriptParseException(this.token, expectedTokenSequences, ZkmScriptConstants.TOKEN_IMAGE, this.currentStatementKind);
     }
 
     public static void jj_la1_init_5() {
@@ -2158,10 +2108,9 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             ZkmScriptToken zkmScriptToken;
             ZkmScriptParser zkmScriptParser1;
-            byte ba;
+            byte jj_kindValue;
             zkmScriptToken = this.jj_consume_token(IGNORE_MISSING_REFERENCES);
             this.currentStatementKind = 161;
-            label82:
             switch (this.jj_nt.kind) {
                 case STAR:
                 case BANG:
@@ -2208,20 +2157,15 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
                     this.RenameFilterParameter();
                     ZkmScriptToken zkmScriptToken1 = this.jj_nt;
 
-                    while (true) {
-                        switch (zkmScriptToken1.kind) {
-                            case AND:
-                                this.jj_consume_token(AND);
-                                this.RenameFilterParameter();
-                                zkmScriptToken1 = this.jj_nt;
-                                break;
-                            default:
-                                this.jj_la1[30] = this.jj_gen;
-                                zkmScriptParser1 = this;
-                                ba = 19;
-                                break label82;
-                        }
+                    while (zkmScriptToken1.kind == AND) {
+                        this.jj_consume_token(AND);
+                        this.RenameFilterParameter();
+                        zkmScriptToken1 = this.jj_nt;
                     }
+                    this.jj_la1[30] = this.jj_gen;
+                    zkmScriptParser1 = this;
+                    jj_kindValue = 19;
+                    break;
                 case PLUS:
                 case CARET:
                 case RPAREN:
@@ -2377,10 +2321,10 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
                 default:
                     this.jj_la1[31] = this.jj_gen;
                     zkmScriptParser1 = this;
-                    ba = 19;
+                    jj_kindValue = 19;
             }
 
-            zkmScriptParser1.jj_consume_token(ba);
+            zkmScriptParser1.jj_consume_token(jj_kindValue);
             this.jjtree.closeNodeScope(aSTIgnoreMissingReferencesStatement);
             bl = false;
             aSTIgnoreMissingReferencesStatement.setLineNumber(zkmScriptToken.endLine);
@@ -2479,7 +2423,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_24() {
-        return this.jj_scan_token(GROUPINGS) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(GROUPINGS)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_25() {
@@ -2702,8 +2646,8 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         if (++this.jj_gc > 100) {
             this.jj_gc = 0;
 
-            for (int i = 0; i < this.jj_2_rtns.length; i++) {
-                ZkmScriptParserJJCalls zkmScriptParserJJCalls = this.jj_2_rtns[i];
+            for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < this.jj_2_rtns.length; jj_2_rtnIndex++) {
+                ZkmScriptParserJJCalls zkmScriptParserJJCalls = this.jj_2_rtns[jj_2_rtnIndex];
 
                 while (zkmScriptParserJJCalls != null) {
                     ZkmScriptParserJJCalls zkmScriptParserJJCalls1;
@@ -2930,7 +2874,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_scan_token(BANG);
     }
 
-    
+
 
 
 
@@ -2940,48 +2884,25 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         boolean bl = true;
         this.jjtree.openNodeScope(aSTBracketedMethodSpecifier);
         try {
-            int n;
+            int jj_kindValue;
             ZkmScriptParser zkmScriptParser;
-            block13:
-            {
-                block12:
-                {
-                    switch (this.jj_nt.kind) {
-                        case 25: {
-                            this.jj_consume_token(25);
-                            aSTBracketedMethodSpecifier.setNegated();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[174] = this.jj_gen;
-                            break block12;
-                        }
-                    }
-                    zkmScriptParser = this;
-                    n = 28;
-                    break block13;
-                }
-                zkmScriptParser = this;
-                n = 28;
+            if (this.jj_nt.kind == 25) {
+                this.jj_consume_token(25);
+                aSTBracketedMethodSpecifier.setNegated();
+            } else {
+                this.jj_la1[174] = this.jj_gen;
             }
-            zkmScriptParser.jj_consume_token(n);
+            zkmScriptParser = this;
+            jj_kindValue = 28;
+            zkmScriptParser.jj_consume_token(jj_kindValue);
             this.AndMethodSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block10:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 34: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[175] = this.jj_gen;
-                        break block10;
-                    }
-                }
+            while (zkmScriptToken.kind == 34) {
                 this.jj_consume_token(34);
                 this.AndMethodSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[175] = this.jj_gen;
             this.jj_consume_token(29);
             this.jjtree.closeNodeScope(aSTBracketedMethodSpecifier);
             return;
@@ -3171,7 +3092,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_scan_token(PRINT);
     }
 
-    
+
 
 
 
@@ -3183,21 +3104,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.ComplexMemberSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 35: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[113] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 35) {
                 this.jj_consume_token(35);
                 this.ComplexMemberSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[113] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTAndMemberSpecifier);
             return;
         } catch (Throwable throwable) {
@@ -3294,7 +3206,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_35() {
-        return this.jj_scan_token(RANDOM) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(RANDOM)) || (this.jj_scan_token(DOT)));
     }
 
     public final void ObfuscateParameter() throws ZkmScriptParseException {
@@ -4020,7 +3932,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    
+
 
 
 
@@ -4032,21 +3944,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.ComplexFieldSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 35: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[164] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 35) {
                 this.jj_consume_token(35);
                 this.ComplexFieldSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[164] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTAndFieldSpecifier);
             return;
         } catch (Throwable throwable) {
@@ -4582,7 +4485,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_54() {
-        return this.jj_scan_token(PACKAGE) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(PACKAGE)) || (this.jj_scan_token(DOT)));
     }
 
     public final void HideFieldNamesParameter() throws ZkmScriptParseException {
@@ -4623,31 +4526,31 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_scan_token(SYNTHETIC);
     }
 
-    public void jj_save(int ba, int bb) {
+    public void jj_save(int jj_2_rtnIndex, int bb) {
         com.zelix.klassmaster.script.ZkmScriptParserJJCalls zkmScriptParserJJCalls1 = null;
-        ZkmScriptParserJJCalls zkmScriptParserJJCalls = this.jj_2_rtns[ba];
-        int bc = zkmScriptParserJJCalls.gen;
+        ZkmScriptParserJJCalls zkmScriptParserJJCalls = this.jj_2_rtns[jj_2_rtnIndex];
+        int genValue = zkmScriptParserJJCalls.gen;
 
-        int bd;
+        int jj_genValue;
         while (true) {
-            if (bc <= this.jj_gen) {
+            if (genValue <= this.jj_gen) {
                 zkmScriptParserJJCalls1 = zkmScriptParserJJCalls;
-                bd = this.jj_gen;
+                jj_genValue = this.jj_gen;
                 break;
             }
 
             if (zkmScriptParserJJCalls.next == null) {
                 zkmScriptParserJJCalls = zkmScriptParserJJCalls.next = new ZkmScriptParserJJCalls();
                 zkmScriptParserJJCalls1 = zkmScriptParserJJCalls;
-                bd = this.jj_gen;
+                jj_genValue = this.jj_gen;
                 break;
             }
 
             zkmScriptParserJJCalls = zkmScriptParserJJCalls.next;
-            bc = zkmScriptParserJJCalls.gen;
+            genValue = zkmScriptParserJJCalls.gen;
         }
 
-        zkmScriptParserJJCalls1.gen = bd + bb - this.jj_la;
+        zkmScriptParserJJCalls1.gen = jj_genValue + bb - this.jj_la;
         zkmScriptParserJJCalls.first = this.token;
         zkmScriptParserJJCalls.arg = bb;
     }
@@ -5307,7 +5210,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_63() {
-        return this.jj_scan_token(OPEN) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(OPEN)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_64() {
@@ -5617,566 +5520,563 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    
 
 
 
+
+
+    private void parseRenameFilterParameterBody() throws ZkmScriptParseException {
+        if (this.jj_2_15()) {
+            this.ComplexModuleSpecifier();
+        } else if (this.jj_2_9()) {
+            this.ComplexPackageSpecifier();
+        } else if (this.jj_2_8()) {
+            this.StandAloneAnnotation();
+        } else if (this.jj_2_19()) {
+            this.ReferencingAnnotation();
+            this.jj_consume_token(28);
+            this.ReferencingAnnotationComponentName();
+            this.jj_consume_token(15);
+            if (this.jj_2_26()) {
+                this.ComplexPackageSpecifier();
+            }
+            this.ComplexClassSpecifier();
+            this.jj_consume_token(29);
+            switch (this.jj_nt.kind) {
+                case 66: {
+                    this.ExtendsClause();
+                    break;
+                }
+                default: {
+                    this.jj_la1[79] = this.jj_gen;
+                }
+            }
+            switch (this.jj_nt.kind) {
+                case 91: {
+                    this.ImplementsClause();
+                    break;
+                }
+                default: {
+                    this.jj_la1[80] = this.jj_gen;
+                }
+            }
+            switch (this.jj_nt.kind) {
+                case 23:
+                case 25:
+                case 27:
+                case 28:
+                case 37:
+                case 39:
+                case 40:
+                case 42:
+                case 43:
+                case 45:
+                case 46:
+                case 47:
+                case 48:
+                case 50:
+                case 51:
+                case 52:
+                case 54:
+                case 56:
+                case 57:
+                case 58:
+                case 59:
+                case 60:
+                case 61:
+                case 63:
+                case 64:
+                case 67:
+                case 68:
+                case 69:
+                case 71:
+                case 72:
+                case 73:
+                case 74:
+                case 75:
+                case 77:
+                case 80:
+                case 81:
+                case 82:
+                case 84:
+                case 85:
+                case 86:
+                case 87:
+                case 90:
+                case 99:
+                case 213:
+                case 214: {
+                    if (this.jj_2_6()) {
+                        this.MemberComplexAnnotationSpecifier();
+                    }
+                    while (this.jj_2_22()) {
+                        switch (this.jj_nt.kind) {
+                            case 40:
+                            case 50:
+                            case 52:
+                            case 57:
+                            case 58:
+                            case 59:
+                            case 67:
+                            case 68:
+                            case 72:
+                            case 75:
+                            case 77:
+                            case 82:
+                            case 84:
+                            case 99: {
+                                this.MemberModifier();
+                                continue;
+                            }
+                            case 25: {
+                                this.NegatedMemberModifier();
+                                continue;
+                            }
+                        }
+                        this.jj_la1[81] = this.jj_gen;
+                        this.jj_consume_token(-1);
+                        throw new ZkmScriptParseException();
+                    }
+                    if (this.jj_2_4()) {
+                        this.MethodSignature();
+                        break;
+                    }
+                    switch (this.jj_nt.kind) {
+                        case 23:
+                        case 25:
+                        case 28:
+                        case 37:
+                        case 39:
+                        case 40:
+                        case 42:
+                        case 43:
+                        case 45:
+                        case 46:
+                        case 47:
+                        case 48:
+                        case 51:
+                        case 52:
+                        case 56:
+                        case 60:
+                        case 61:
+                        case 63:
+                        case 64:
+                        case 69:
+                        case 71:
+                        case 74:
+                        case 77:
+                        case 80:
+                        case 81:
+                        case 85:
+                        case 86:
+                        case 87:
+                        case 90:
+                        case 213:
+                        case 214: {
+                            this.FieldSignature();
+                            break;
+                        }
+                        default: {
+                            this.jj_la1[82] = this.jj_gen;
+                            this.jj_consume_token(-1);
+                            throw new ZkmScriptParseException();
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    this.jj_la1[83] = this.jj_gen;
+                    break;
+                }
+            }
+        } else {
+            switch (this.jj_nt.kind) {
+                case 23:
+                case 25:
+                case 27:
+                case 28:
+                case 36:
+                case 37:
+                case 39:
+                case 40:
+                case 42:
+                case 43:
+                case 45:
+                case 46:
+                case 47:
+                case 48:
+                case 50:
+                case 51:
+                case 52:
+                case 56:
+                case 57:
+                case 60:
+                case 61:
+                case 63:
+                case 64:
+                case 67:
+                case 69:
+                case 71:
+                case 72:
+                case 74:
+                case 77:
+                case 80:
+                case 81:
+                case 83:
+                case 85:
+                case 86:
+                case 87:
+                case 90:
+                case 97:
+                case 210:
+                case 213:
+                case 214:
+                case 216: {
+                    if (this.jj_2_1()) {
+                        this.ClassComplexAnnotationSpecifier();
+                    }
+                    if (this.jj_2_2()) {
+                        switch (this.jj_nt.kind) {
+                            case 210: {
+                                this.JarQualifier();
+                                break;
+                            }
+                            default: {
+                                this.jj_la1[84] = this.jj_gen;
+                            }
+                        }
+                        switch (this.jj_nt.kind) {
+                            case 23:
+                            case 25:
+                            case 28:
+                            case 36:
+                            case 37:
+                            case 39:
+                            case 40:
+                            case 42:
+                            case 43:
+                            case 45:
+                            case 46:
+                            case 47:
+                            case 48:
+                            case 51:
+                            case 52:
+                            case 56:
+                            case 60:
+                            case 61:
+                            case 63:
+                            case 64:
+                            case 67:
+                            case 69:
+                            case 71:
+                            case 74:
+                            case 77:
+                            case 80:
+                            case 81:
+                            case 85:
+                            case 86:
+                            case 87:
+                            case 90:
+                            case 213:
+                            case 214: {
+                                this.ComplexPackageSpecifier();
+                                break;
+                            }
+                            default: {
+                                this.jj_la1[85] = this.jj_gen;
+                            }
+                        }
+                        this.LinkClassName();
+                        switch (this.jj_nt.kind) {
+                            case 66: {
+                                this.ExtendsClause();
+                                break;
+                            }
+                            default: {
+                                this.jj_la1[86] = this.jj_gen;
+                            }
+                        }
+                        switch (this.jj_nt.kind) {
+                            case 91: {
+                                this.ImplementsClause();
+                                break;
+                            }
+                            default: {
+                                this.jj_la1[87] = this.jj_gen;
+                            }
+                        }
+                        switch (this.jj_nt.kind) {
+                            case 56: {
+                                this.jj_consume_token(56);
+                                this.LinkPackageName();
+                                ZkmScriptToken zkmScriptToken = this.jj_nt;
+                                while (zkmScriptToken.kind == 20) {
+                                    this.jj_consume_token(20);
+                                    this.LinkPackageName();
+                                    zkmScriptToken = this.jj_nt;
+                                }
+                                this.jj_la1[88] = this.jj_gen;
+                                break;
+                            }
+                            default: {
+                                this.jj_la1[89] = this.jj_gen;
+                                break;
+                            }
+                        }
+                        return;
+                    } else {
+                        switch (this.jj_nt.kind) {
+                            case 23:
+                            case 25:
+                            case 28:
+                            case 36:
+                            case 37:
+                            case 39:
+                            case 40:
+                            case 42:
+                            case 43:
+                            case 45:
+                            case 46:
+                            case 47:
+                            case 48:
+                            case 50:
+                            case 51:
+                            case 52:
+                            case 56:
+                            case 57:
+                            case 60:
+                            case 61:
+                            case 63:
+                            case 64:
+                            case 67:
+                            case 69:
+                            case 71:
+                            case 72:
+                            case 74:
+                            case 77:
+                            case 80:
+                            case 81:
+                            case 83:
+                            case 85:
+                            case 86:
+                            case 87:
+                            case 90:
+                            case 97:
+                            case 210:
+                            case 213:
+                            case 214: {
+                                break;
+                            }
+                            default: {
+                                this.jj_la1[96] = this.jj_gen;
+                                this.jj_consume_token(-1);
+                                throw new ZkmScriptParseException();
+                            }
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    this.jj_la1[97] = this.jj_gen;
+                    this.jj_consume_token(-1);
+                    throw new ZkmScriptParseException();
+                }
+            }
+            while (this.jj_2_25()) {
+                switch (this.jj_nt.kind) {
+                    case 40:
+                    case 50:
+                    case 57:
+                    case 67:
+                    case 72:
+                    case 77:
+                    case 83:
+                    case 87: {
+                        this.ClassModifier();
+                        continue;
+                    }
+                    case 25: {
+                        this.NegatedClassModifier();
+                        continue;
+                    }
+                }
+                this.jj_la1[90] = this.jj_gen;
+                this.jj_consume_token(-1);
+                throw new ZkmScriptParseException();
+            }
+            if (this.jj_2_11()) {
+                this.JarQualifier();
+            }
+            if (this.jj_2_3()) {
+                this.ComplexPackageSpecifier();
+            }
+            this.ComplexClassSpecifier();
+            if (this.jj_2_28()) {
+                this.ContainingClause();
+            }
+            switch (this.jj_nt.kind) {
+                case 66: {
+                    this.ExtendsClause();
+                    break;
+                }
+                default: {
+                    this.jj_la1[91] = this.jj_gen;
+                }
+            }
+            switch (this.jj_nt.kind) {
+                case 91: {
+                    this.ImplementsClause();
+                    break;
+                }
+                default: {
+                    this.jj_la1[92] = this.jj_gen;
+                }
+            }
+            switch (this.jj_nt.kind) {
+                case 23:
+                case 25:
+                case 27:
+                case 28:
+                case 37:
+                case 39:
+                case 40:
+                case 42:
+                case 43:
+                case 45:
+                case 46:
+                case 47:
+                case 48:
+                case 50:
+                case 51:
+                case 52:
+                case 53:
+                case 54:
+                case 56:
+                case 57:
+                case 58:
+                case 59:
+                case 60:
+                case 61:
+                case 63:
+                case 64:
+                case 67:
+                case 68:
+                case 69:
+                case 71:
+                case 72:
+                case 73:
+                case 74:
+                case 75:
+                case 77:
+                case 80:
+                case 81:
+                case 82:
+                case 84:
+                case 85:
+                case 86:
+                case 87:
+                case 90:
+                case 99:
+                case 213:
+                case 214:
+                case 217: {
+                    if (this.jj_2_27()) {
+                        this.MemberComplexAnnotationSpecifier();
+                    }
+                    while (this.jj_2_10()) {
+                        switch (this.jj_nt.kind) {
+                            case 40:
+                            case 50:
+                            case 52:
+                            case 57:
+                            case 58:
+                            case 59:
+                            case 67:
+                            case 68:
+                            case 72:
+                            case 75:
+                            case 77:
+                            case 82:
+                            case 84:
+                            case 99: {
+                                this.MemberModifier();
+                                continue;
+                            }
+                            case 25: {
+                                this.NegatedMemberModifier();
+                                continue;
+                            }
+                        }
+                        this.jj_la1[93] = this.jj_gen;
+                        this.jj_consume_token(-1);
+                        throw new ZkmScriptParseException();
+                    }
+                    if (this.jj_2_7()) {
+                        this.MethodSignature();
+                        break;
+                    }
+                    if (this.jj_2_18()) {
+                        this.LinkMethodSignature();
+                        break;
+                    }
+                    switch (this.jj_nt.kind) {
+                        case 23:
+                        case 25:
+                        case 28:
+                        case 37:
+                        case 39:
+                        case 40:
+                        case 42:
+                        case 43:
+                        case 45:
+                        case 46:
+                        case 47:
+                        case 48:
+                        case 51:
+                        case 52:
+                        case 56:
+                        case 60:
+                        case 61:
+                        case 63:
+                        case 64:
+                        case 69:
+                        case 71:
+                        case 74:
+                        case 77:
+                        case 80:
+                        case 81:
+                        case 85:
+                        case 86:
+                        case 87:
+                        case 90:
+                        case 213:
+                        case 214: {
+                            this.FieldSignature();
+                            break;
+                        }
+                        default: {
+                            this.jj_la1[94] = this.jj_gen;
+                            this.jj_consume_token(-1);
+                            throw new ZkmScriptParseException();
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    this.jj_la1[95] = this.jj_gen;
+                    break;
+                }
+            }
+        }
+
+    }
 
     public final void RenameFilterParameter() throws ZkmScriptParseException {
         ASTRenameFilterParameter aSTRenameFilterParameter = new ASTRenameFilterParameter();
         boolean bl = true;
         this.jjtree.openNodeScope(aSTRenameFilterParameter);
         try {
-            block89:
-            {
-                if (this.jj_2_15()) {
-                    this.ComplexModuleSpecifier();
-                } else if (this.jj_2_9()) {
-                    this.ComplexPackageSpecifier();
-                } else if (this.jj_2_8()) {
-                    this.StandAloneAnnotation();
-                } else if (this.jj_2_19()) {
-                    this.ReferencingAnnotation();
-                    this.jj_consume_token(28);
-                    this.ReferencingAnnotationComponentName();
-                    this.jj_consume_token(15);
-                    if (this.jj_2_26()) {
-                        this.ComplexPackageSpecifier();
-                    }
-                    this.ComplexClassSpecifier();
-                    this.jj_consume_token(29);
-                    switch (this.jj_nt.kind) {
-                        case 66: {
-                            this.ExtendsClause();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[79] = this.jj_gen;
-                        }
-                    }
-                    switch (this.jj_nt.kind) {
-                        case 91: {
-                            this.ImplementsClause();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[80] = this.jj_gen;
-                        }
-                    }
-                    block8:
-                    switch (this.jj_nt.kind) {
-                        case 23:
-                        case 25:
-                        case 27:
-                        case 28:
-                        case 37:
-                        case 39:
-                        case 40:
-                        case 42:
-                        case 43:
-                        case 45:
-                        case 46:
-                        case 47:
-                        case 48:
-                        case 50:
-                        case 51:
-                        case 52:
-                        case 54:
-                        case 56:
-                        case 57:
-                        case 58:
-                        case 59:
-                        case 60:
-                        case 61:
-                        case 63:
-                        case 64:
-                        case 67:
-                        case 68:
-                        case 69:
-                        case 71:
-                        case 72:
-                        case 73:
-                        case 74:
-                        case 75:
-                        case 77:
-                        case 80:
-                        case 81:
-                        case 82:
-                        case 84:
-                        case 85:
-                        case 86:
-                        case 87:
-                        case 90:
-                        case 99:
-                        case 213:
-                        case 214: {
-                            if (this.jj_2_6()) {
-                                this.MemberComplexAnnotationSpecifier();
-                            }
-                            block64:
-                            while (this.jj_2_22()) {
-                                switch (this.jj_nt.kind) {
-                                    case 40:
-                                    case 50:
-                                    case 52:
-                                    case 57:
-                                    case 58:
-                                    case 59:
-                                    case 67:
-                                    case 68:
-                                    case 72:
-                                    case 75:
-                                    case 77:
-                                    case 82:
-                                    case 84:
-                                    case 99: {
-                                        this.MemberModifier();
-                                        continue block64;
-                                    }
-                                    case 25: {
-                                        this.NegatedMemberModifier();
-                                        continue block64;
-                                    }
-                                }
-                                this.jj_la1[81] = this.jj_gen;
-                                this.jj_consume_token(-1);
-                                throw new ZkmScriptParseException();
-                            }
-                            if (this.jj_2_4()) {
-                                this.MethodSignature();
-                                break;
-                            }
-                            switch (this.jj_nt.kind) {
-                                case 23:
-                                case 25:
-                                case 28:
-                                case 37:
-                                case 39:
-                                case 40:
-                                case 42:
-                                case 43:
-                                case 45:
-                                case 46:
-                                case 47:
-                                case 48:
-                                case 51:
-                                case 52:
-                                case 56:
-                                case 60:
-                                case 61:
-                                case 63:
-                                case 64:
-                                case 69:
-                                case 71:
-                                case 74:
-                                case 77:
-                                case 80:
-                                case 81:
-                                case 85:
-                                case 86:
-                                case 87:
-                                case 90:
-                                case 213:
-                                case 214: {
-                                    this.FieldSignature();
-                                    break block8;
-                                }
-                            }
-                            this.jj_la1[82] = this.jj_gen;
-                            this.jj_consume_token(-1);
-                            throw new ZkmScriptParseException();
-                        }
-                        default: {
-                            this.jj_la1[83] = this.jj_gen;
-                            break;
-                        }
-                    }
-                } else {
-                    block18:
-                    switch (this.jj_nt.kind) {
-                        case 23:
-                        case 25:
-                        case 27:
-                        case 28:
-                        case 36:
-                        case 37:
-                        case 39:
-                        case 40:
-                        case 42:
-                        case 43:
-                        case 45:
-                        case 46:
-                        case 47:
-                        case 48:
-                        case 50:
-                        case 51:
-                        case 52:
-                        case 56:
-                        case 57:
-                        case 60:
-                        case 61:
-                        case 63:
-                        case 64:
-                        case 67:
-                        case 69:
-                        case 71:
-                        case 72:
-                        case 74:
-                        case 77:
-                        case 80:
-                        case 81:
-                        case 83:
-                        case 85:
-                        case 86:
-                        case 87:
-                        case 90:
-                        case 97:
-                        case 210:
-                        case 213:
-                        case 214:
-                        case 216: {
-                            if (this.jj_2_1()) {
-                                this.ClassComplexAnnotationSpecifier();
-                            }
-                            if (this.jj_2_2()) {
-                                switch (this.jj_nt.kind) {
-                                    case 210: {
-                                        this.JarQualifier();
-                                        break;
-                                    }
-                                    default: {
-                                        this.jj_la1[84] = this.jj_gen;
-                                    }
-                                }
-                                switch (this.jj_nt.kind) {
-                                    case 23:
-                                    case 25:
-                                    case 28:
-                                    case 36:
-                                    case 37:
-                                    case 39:
-                                    case 40:
-                                    case 42:
-                                    case 43:
-                                    case 45:
-                                    case 46:
-                                    case 47:
-                                    case 48:
-                                    case 51:
-                                    case 52:
-                                    case 56:
-                                    case 60:
-                                    case 61:
-                                    case 63:
-                                    case 64:
-                                    case 67:
-                                    case 69:
-                                    case 71:
-                                    case 74:
-                                    case 77:
-                                    case 80:
-                                    case 81:
-                                    case 85:
-                                    case 86:
-                                    case 87:
-                                    case 90:
-                                    case 213:
-                                    case 214: {
-                                        this.ComplexPackageSpecifier();
-                                        break;
-                                    }
-                                    default: {
-                                        this.jj_la1[85] = this.jj_gen;
-                                    }
-                                }
-                                this.LinkClassName();
-                                switch (this.jj_nt.kind) {
-                                    case 66: {
-                                        this.ExtendsClause();
-                                        break;
-                                    }
-                                    default: {
-                                        this.jj_la1[86] = this.jj_gen;
-                                    }
-                                }
-                                switch (this.jj_nt.kind) {
-                                    case 91: {
-                                        this.ImplementsClause();
-                                        break;
-                                    }
-                                    default: {
-                                        this.jj_la1[87] = this.jj_gen;
-                                    }
-                                }
-                                block33:
-                                switch (this.jj_nt.kind) {
-                                    case 56: {
-                                        this.jj_consume_token(56);
-                                        this.LinkPackageName();
-                                        ZkmScriptToken zkmScriptToken = this.jj_nt;
-                                        while (true) {
-                                            switch (zkmScriptToken.kind) {
-                                                case 20: {
-                                                    break;
-                                                }
-                                                default: {
-                                                    this.jj_la1[88] = this.jj_gen;
-                                                    break block33;
-                                                }
-                                            }
-                                            this.jj_consume_token(20);
-                                            this.LinkPackageName();
-                                            zkmScriptToken = this.jj_nt;
-                                        }
-                                    }
-                                    default: {
-                                        this.jj_la1[89] = this.jj_gen;
-                                        break;
-                                    }
-                                }
-                                break block89;
-                            } else {
-                                switch (this.jj_nt.kind) {
-                                    case 23:
-                                    case 25:
-                                    case 28:
-                                    case 36:
-                                    case 37:
-                                    case 39:
-                                    case 40:
-                                    case 42:
-                                    case 43:
-                                    case 45:
-                                    case 46:
-                                    case 47:
-                                    case 48:
-                                    case 50:
-                                    case 51:
-                                    case 52:
-                                    case 56:
-                                    case 57:
-                                    case 60:
-                                    case 61:
-                                    case 63:
-                                    case 64:
-                                    case 67:
-                                    case 69:
-                                    case 71:
-                                    case 72:
-                                    case 74:
-                                    case 77:
-                                    case 80:
-                                    case 81:
-                                    case 83:
-                                    case 85:
-                                    case 86:
-                                    case 87:
-                                    case 90:
-                                    case 97:
-                                    case 210:
-                                    case 213:
-                                    case 214: {
-                                        break block18;
-                                    }
-                                }
-                                this.jj_la1[96] = this.jj_gen;
-                                this.jj_consume_token(-1);
-                                throw new ZkmScriptParseException();
-                            }
-                        }
-                        default: {
-                            this.jj_la1[97] = this.jj_gen;
-                            this.jj_consume_token(-1);
-                            throw new ZkmScriptParseException();
-                        }
-                    }
-                    block66:
-                    while (this.jj_2_25()) {
-                        switch (this.jj_nt.kind) {
-                            case 40:
-                            case 50:
-                            case 57:
-                            case 67:
-                            case 72:
-                            case 77:
-                            case 83:
-                            case 87: {
-                                this.ClassModifier();
-                                continue block66;
-                            }
-                            case 25: {
-                                this.NegatedClassModifier();
-                                continue block66;
-                            }
-                        }
-                        this.jj_la1[90] = this.jj_gen;
-                        this.jj_consume_token(-1);
-                        throw new ZkmScriptParseException();
-                    }
-                    if (this.jj_2_11()) {
-                        this.JarQualifier();
-                    }
-                    if (this.jj_2_3()) {
-                        this.ComplexPackageSpecifier();
-                    }
-                    this.ComplexClassSpecifier();
-                    if (this.jj_2_28()) {
-                        this.ContainingClause();
-                    }
-                    switch (this.jj_nt.kind) {
-                        case 66: {
-                            this.ExtendsClause();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[91] = this.jj_gen;
-                        }
-                    }
-                    switch (this.jj_nt.kind) {
-                        case 91: {
-                            this.ImplementsClause();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[92] = this.jj_gen;
-                        }
-                    }
-                    block52:
-                    switch (this.jj_nt.kind) {
-                        case 23:
-                        case 25:
-                        case 27:
-                        case 28:
-                        case 37:
-                        case 39:
-                        case 40:
-                        case 42:
-                        case 43:
-                        case 45:
-                        case 46:
-                        case 47:
-                        case 48:
-                        case 50:
-                        case 51:
-                        case 52:
-                        case 53:
-                        case 54:
-                        case 56:
-                        case 57:
-                        case 58:
-                        case 59:
-                        case 60:
-                        case 61:
-                        case 63:
-                        case 64:
-                        case 67:
-                        case 68:
-                        case 69:
-                        case 71:
-                        case 72:
-                        case 73:
-                        case 74:
-                        case 75:
-                        case 77:
-                        case 80:
-                        case 81:
-                        case 82:
-                        case 84:
-                        case 85:
-                        case 86:
-                        case 87:
-                        case 90:
-                        case 99:
-                        case 213:
-                        case 214:
-                        case 217: {
-                            if (this.jj_2_27()) {
-                                this.MemberComplexAnnotationSpecifier();
-                            }
-                            block67:
-                            while (this.jj_2_10()) {
-                                switch (this.jj_nt.kind) {
-                                    case 40:
-                                    case 50:
-                                    case 52:
-                                    case 57:
-                                    case 58:
-                                    case 59:
-                                    case 67:
-                                    case 68:
-                                    case 72:
-                                    case 75:
-                                    case 77:
-                                    case 82:
-                                    case 84:
-                                    case 99: {
-                                        this.MemberModifier();
-                                        continue block67;
-                                    }
-                                    case 25: {
-                                        this.NegatedMemberModifier();
-                                        continue block67;
-                                    }
-                                }
-                                this.jj_la1[93] = this.jj_gen;
-                                this.jj_consume_token(-1);
-                                throw new ZkmScriptParseException();
-                            }
-                            if (this.jj_2_7()) {
-                                this.MethodSignature();
-                                break;
-                            }
-                            if (this.jj_2_18()) {
-                                this.LinkMethodSignature();
-                                break;
-                            }
-                            switch (this.jj_nt.kind) {
-                                case 23:
-                                case 25:
-                                case 28:
-                                case 37:
-                                case 39:
-                                case 40:
-                                case 42:
-                                case 43:
-                                case 45:
-                                case 46:
-                                case 47:
-                                case 48:
-                                case 51:
-                                case 52:
-                                case 56:
-                                case 60:
-                                case 61:
-                                case 63:
-                                case 64:
-                                case 69:
-                                case 71:
-                                case 74:
-                                case 77:
-                                case 80:
-                                case 81:
-                                case 85:
-                                case 86:
-                                case 87:
-                                case 90:
-                                case 213:
-                                case 214: {
-                                    this.FieldSignature();
-                                    break block52;
-                                }
-                            }
-                            this.jj_la1[94] = this.jj_gen;
-                            this.jj_consume_token(-1);
-                            throw new ZkmScriptParseException();
-                        }
-                        default: {
-                            this.jj_la1[95] = this.jj_gen;
-                            break;
-                        }
-                    }
-                }
-            }
+            this.parseRenameFilterParameterBody();
             this.jjtree.closeNodeScope(aSTRenameFilterParameter);
             return;
         } catch (Throwable throwable) {
@@ -6265,11 +6165,11 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_4() {
-        return this.jj_scan_token(OR) ? true : this.jj_3R_100();
+        return ((this.jj_scan_token(OR)) || (this.jj_3R_100()));
     }
 
     public boolean jj_3R_68() {
-        return this.jj_scan_token(90) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(90)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_69() {
@@ -6277,7 +6177,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_5() {
-        return this.jj_scan_token(AND_AND) ? true : this.jj_3R_32();
+        return ((this.jj_scan_token(AND_AND)) || (this.jj_3R_32()));
     }
 
     public final ZkmScriptSimpleNode TrimExcludeStatement() throws ZkmScriptParseException {
@@ -6706,7 +6606,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_6() {
-        return this.jj_3R_53() ? true : this.jj_scan_token(DOT);
+        return ((this.jj_3R_53()) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_77() {
@@ -6772,7 +6672,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return false;
     }
 
-    
+
 
 
 
@@ -6782,48 +6682,25 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         boolean bl = true;
         this.jjtree.openNodeScope(aSTBracketedPackageSpecifier);
         try {
-            int n;
+            int jj_kindValue;
             ZkmScriptParser zkmScriptParser;
-            block13:
-            {
-                block12:
-                {
-                    switch (this.jj_nt.kind) {
-                        case 25: {
-                            this.jj_consume_token(25);
-                            aSTBracketedPackageSpecifier.setNegated();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[146] = this.jj_gen;
-                            break block12;
-                        }
-                    }
-                    zkmScriptParser = this;
-                    n = 28;
-                    break block13;
-                }
-                zkmScriptParser = this;
-                n = 28;
+            if (this.jj_nt.kind == 25) {
+                this.jj_consume_token(25);
+                aSTBracketedPackageSpecifier.setNegated();
+            } else {
+                this.jj_la1[146] = this.jj_gen;
             }
-            zkmScriptParser.jj_consume_token(n);
+            zkmScriptParser = this;
+            jj_kindValue = 28;
+            zkmScriptParser.jj_consume_token(jj_kindValue);
             this.AndPackageSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block10:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 34: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[147] = this.jj_gen;
-                        break block10;
-                    }
-                }
+            while (zkmScriptToken.kind == 34) {
                 this.jj_consume_token(34);
                 this.AndPackageSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[147] = this.jj_gen;
             this.jj_consume_token(29);
             this.jjtree.closeNodeScope(aSTBracketedPackageSpecifier);
             return;
@@ -6956,7 +6833,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_82() {
-        return this.jj_scan_token(ASCII) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(ASCII)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_83() {
@@ -7080,16 +6957,16 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         this.token = new ZkmScriptToken();
         this.token.next = this.jj_nt = this.token_source.getNextToken();
         this.jj_gen = 0;
-        int ba = 0;
+        int jj_la1ElementIndex = 0;
         int bc = 0;
 
         for (short bd = 187; bc < bd; bd = 187) {
-            this.jj_la1[ba] = -1;
-            bc = ++ba;
+            this.jj_la1[jj_la1ElementIndex] = -1;
+            bc = ++jj_la1ElementIndex;
         }
 
-        for (int i = 0; i < this.jj_2_rtns.length; i++) {
-            this.jj_2_rtns[i] = new ZkmScriptParserJJCalls();
+        for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < this.jj_2_rtns.length; jj_2_rtnIndex++) {
+            this.jj_2_rtns[jj_2_rtnIndex] = new ZkmScriptParserJJCalls();
         }
     }
 
@@ -8291,7 +8168,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_7() {
-        return this.jj_scan_token(OR) ? true : this.jj_3R_18();
+        return ((this.jj_scan_token(OR)) || (this.jj_3R_18()));
     }
 
     public final ZkmScriptSimpleNode DefaultMethodParameterChangesExcludeStatement() throws ZkmScriptParseException {
@@ -8416,11 +8293,11 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_112() {
-        return this.jj_scan_token(DELETE) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(DELETE)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3_8() {
-        return this.jj_scan_token(AT) ? true : this.jj_3R_213();
+        return ((this.jj_scan_token(AT)) || (this.jj_3R_213()));
     }
 
     public boolean jj_3R_113() {
@@ -8428,7 +8305,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_114() {
-        return this.jj_scan_token(NAME) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(NAME)) || (this.jj_scan_token(DOT)));
     }
 
     public final void ParameterComplexAnnotationSpecifier() throws ZkmScriptParseException {
@@ -8508,7 +8385,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_115() {
-        return this.jj_scan_token(CONTAINING) ? true : this.jj_scan_token(LBRACE);
+        return ((this.jj_scan_token(CONTAINING)) || (this.jj_scan_token(LBRACE)));
     }
 
     public final ZkmScriptSimpleNode ExcludeStatement() throws ZkmScriptParseException {
@@ -8564,57 +8441,58 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_scan_token(BANG);
     }
 
+    private void parseFileFilterComponents() throws ZkmScriptParseException {
+        this.jj_consume_token(30);
+        switch (this.jj_nt.kind) {
+            case 210: {
+                this.FileFilterComponent();
+                break;
+            }
+            case 25: {
+                this.NegatedFileFilterComponent();
+                break;
+            }
+            default: {
+                this.jj_la1[11] = this.jj_gen;
+                this.jj_consume_token(-1);
+                throw new ZkmScriptParseException();
+            }
+        }
+        while (true) {
+            switch (this.jj_nt.kind) {
+                case 34:
+                case 35: {
+                    break;
+                }
+                default: {
+                    this.jj_la1[12] = this.jj_gen;
+                    return;
+                }
+            }
+            switch (this.jj_nt.kind) {
+                case 35: {
+                    this.AndFileFilterComponent();
+                    continue;
+                }
+                case 34: {
+                    this.OrFileFilterComponent();
+                    continue;
+                }
+            }
+            break;
+        }
+        this.jj_la1[13] = this.jj_gen;
+        this.jj_consume_token(-1);
+        throw new ZkmScriptParseException();
+
+    }
+
     public final void FileFilter() throws ZkmScriptParseException {
         ASTFileFilter aSTFileFilter = new ASTFileFilter();
         boolean bl = true;
         this.jjtree.openNodeScope(aSTFileFilter);
         try {
-            block19:
-            {
-                this.jj_consume_token(30);
-                switch (this.jj_nt.kind) {
-                    case 210: {
-                        this.FileFilterComponent();
-                        break;
-                    }
-                    case 25: {
-                        this.NegatedFileFilterComponent();
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[11] = this.jj_gen;
-                        this.jj_consume_token(-1);
-                        throw new ZkmScriptParseException();
-                    }
-                }
-                block15:
-                while (true) {
-                    switch (this.jj_nt.kind) {
-                        case 34:
-                        case 35: {
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[12] = this.jj_gen;
-                            break block19;
-                        }
-                    }
-                    switch (this.jj_nt.kind) {
-                        case 35: {
-                            this.AndFileFilterComponent();
-                            continue block15;
-                        }
-                        case 34: {
-                            this.OrFileFilterComponent();
-                            continue block15;
-                        }
-                    }
-                    break;
-                }
-                this.jj_la1[13] = this.jj_gen;
-                this.jj_consume_token(-1);
-                throw new ZkmScriptParseException();
-            }
+            this.parseFileFilterComponents();
             this.jj_consume_token(31);
             this.jjtree.closeNodeScope(aSTFileFilter);
         } catch (Throwable throwable) {
@@ -8755,7 +8633,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_118() {
-        return this.jj_scan_token(ASCII) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(ASCII)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_2_12() {
@@ -8873,7 +8751,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_120() {
-        return this.jj_scan_token(TRIM) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(TRIM)) || (this.jj_scan_token(DOT)));
     }
 
     public final void ChangeLogOutParameter() throws ZkmScriptParseException {
@@ -8945,7 +8823,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_122() {
-        return this.jj_scan_token(GC) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(GC)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_123() {
@@ -8979,7 +8857,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_3R_133();
     }
 
-    
+
 
 
 
@@ -8991,21 +8869,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.ComplexAnnotationSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 35: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[137] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 35) {
                 this.jj_consume_token(35);
                 this.ComplexAnnotationSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[137] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTAndAnnotationSpecifier);
             return;
         } catch (Throwable throwable) {
@@ -9026,7 +8895,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_126() {
-        return this.jj_scan_token(OBFUSCATE) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(OBFUSCATE)) || (this.jj_scan_token(DOT)));
     }
 
     public final ZkmScriptSimpleNode Input() throws ZkmScriptParseException {
@@ -9511,7 +9380,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_134() {
-        return this.jj_scan_token(STAR) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(STAR)) || (this.jj_scan_token(DOT)));
     }
 
     public final void LiteralPackageComponent() throws ZkmScriptParseException {
@@ -9813,7 +9682,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_9() {
-        return this.jj_scan_token(AND_AND) ? true : this.jj_3R_80();
+        return ((this.jj_scan_token(AND_AND)) || (this.jj_3R_80()));
     }
 
     public boolean jj_3R_136() {
@@ -9862,7 +9731,6 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
             if (this.jj_2_14()) {
                 this.MemberSpecifierComplexAnnotationSpecifier();
             }
-            block11:
             while (this.jj_2_24()) {
                 switch (this.jj_nt.kind) {
                     case 40:
@@ -9880,11 +9748,11 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
                     case 84:
                     case 99: {
                         this.MemberSpecifierModifier();
-                        continue block11;
+                        continue;
                     }
                     case 25: {
                         this.NegatedMemberSpecifierModifier();
-                        continue block11;
+                        continue;
                     }
                 }
                 this.jj_la1[114] = this.jj_gen;
@@ -10124,7 +9992,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_144() {
-        return this.jj_scan_token(CLASSPATH) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(CLASSPATH)) || (this.jj_scan_token(DOT)));
     }
 
     public final void EncryptParameter() throws ZkmScriptParseException {
@@ -10245,51 +10113,48 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_146() {
-        return this.jj_scan_token(ENHANCED) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(ENHANCED)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_147() {
         return this.jj_scan_token(TRIM);
     }
 
-    public void jj_add_error_token(int ba, int jj_endpos) {
+    public void jj_add_error_token(int jj_lasttoken, int jj_endpos) {
         if (jj_endpos < 100) {
             if (jj_endpos == this.jj_endpos + 1) {
-                this.jj_lasttokens[this.jj_endpos++] = ba;
+                this.jj_lasttokens[this.jj_endpos++] = jj_lasttoken;
             } else if (this.jj_endpos != 0) {
                 this.jj_expentry = new int[this.jj_endpos];
                 int bc = 0;
                 int bg = 0;
 
-                for (int i = this.jj_endpos; bg < i; i = this.jj_endpos) {
+                for (int jj_endposValue = this.jj_endpos; bg < jj_endposValue; jj_endposValue = this.jj_endpos) {
                     this.jj_expentry[bc] = this.jj_lasttokens[bc];
                     bg = ++bc;
                 }
 
                 Iterator iterator = this.jj_expentries.iterator();
 
-                label45:
                 while (iterator.hasNext()) {
-                    int[] bd = (int[]) iterator.next();
-                    if (bd.length == this.jj_expentry.length) {
-                        int be = 0;
-                        bg = be;
-
-                        for (int[] jj_expentry = this.jj_expentry; bg < jj_expentry.length; jj_expentry = this.jj_expentry) {
-                            if (bd[be] != this.jj_expentry[be]) {
-                                continue label45;
+                    int[] existingSequence = (int[]) iterator.next();
+                    if (existingSequence.length == this.jj_expentry.length) {
+                        boolean matches = true;
+                        for (int tokenIndex = 0; tokenIndex < this.jj_expentry.length; tokenIndex++) {
+                            if (existingSequence[tokenIndex] != this.jj_expentry[tokenIndex]) {
+                                matches = false;
+                                break;
                             }
-
-                            bg = ++be;
                         }
-
-                        this.jj_expentries.add(this.jj_expentry);
-                        break;
+                        if (matches) {
+                            this.jj_expentries.add(this.jj_expentry);
+                            break;
+                        }
                     }
                 }
 
                 if (jj_endpos != 0) {
-                    this.jj_lasttokens[(this.jj_endpos = jj_endpos) - 1] = ba;
+                    this.jj_lasttokens[(this.jj_endpos = jj_endpos) - 1] = jj_lasttoken;
                 }
             }
         }
@@ -10769,20 +10634,20 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
 
     public void jj_rescan_token() {
         this.jj_rescan = true;
-        int ba = 0;
-        int bb = 0;
+        int jj_2_rtnIndex = 0;
+        int genValue = 0;
 
-        for (byte bc = 28; bb < bc; bc = 28) {
+        for (byte bc = 28; genValue < bc; bc = 28) {
             try {
-                ZkmScriptParserJJCalls zkmScriptParserJJCalls = this.jj_2_rtns[ba];
-                bb = zkmScriptParserJJCalls.gen;
+                ZkmScriptParserJJCalls zkmScriptParserJJCalls = this.jj_2_rtns[jj_2_rtnIndex];
+                genValue = zkmScriptParserJJCalls.gen;
 
                 while (true) {
                     ZkmScriptParserJJCalls zkmScriptParserJJCalls1;
-                    if (bb > this.jj_gen) {
+                    if (genValue > this.jj_gen) {
                         this.jj_la = zkmScriptParserJJCalls.arg;
                         this.jj_lastpos = this.jj_scanpos = zkmScriptParserJJCalls.first;
-                        switch (ba) {
+                        switch (jj_2_rtnIndex) {
                             case 0:
                                 this.jj_3R_141();
                                 zkmScriptParserJJCalls1 = zkmScriptParserJJCalls.next;
@@ -10907,12 +10772,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
                         break;
                     }
 
-                    bb = zkmScriptParserJJCalls.gen;
+                    genValue = zkmScriptParserJJCalls.gen;
                 }
             } catch (ZkmScriptParserLookaheadSuccess zkmScriptParserLookaheadSuccess) {
             }
 
-            bb = ++ba;
+            genValue = ++jj_2_rtnIndex;
         }
 
         this.jj_rescan = false;
@@ -10937,7 +10802,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_153() {
-        return this.jj_scan_token(KEEP) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(KEEP)) || (this.jj_scan_token(DOT)));
     }
 
     public final void AutoReflectionType() throws ZkmScriptParseException {
@@ -10988,7 +10853,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_10() {
-        return this.jj_3R_108() ? true : this.jj_scan_token(BANG);
+        return ((this.jj_3R_108()) || (this.jj_scan_token(BANG)));
     }
 
     public final void DeleteAnnotationsParameter() throws ZkmScriptParseException {
@@ -11100,10 +10965,10 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
             ZkmScriptToken zkmScriptToken = this.jj_consume_token(QUOTE_210);
             this.jjtree.closeNodeScope(zkmScriptASTStringLiteral);
             bl = false;
-            String string = zkmScriptToken.image;
-            string = string.substring(1, string.length() - 1);
-            string = ZkmStringUtils.replaceAll(string, ESCAPED_QUOTE, "\"");
-            zkmScriptASTStringLiteral.setValue(string);
+            String imageValue = zkmScriptToken.image;
+            imageValue = imageValue.substring(1, imageValue.length() - 1);
+            imageValue = ZkmStringUtils.replaceAll(imageValue, ESCAPED_QUOTE, "\"");
+            zkmScriptASTStringLiteral.setValue(imageValue);
         } finally {
             if (bl) {
                 this.jjtree.closeNodeScope(zkmScriptASTStringLiteral);
@@ -11552,10 +11417,10 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_11() {
-        return this.jj_scan_token(AT) ? true : this.jj_3R_213();
+        return ((this.jj_scan_token(AT)) || (this.jj_3R_213()));
     }
 
-    
+
 
 
 
@@ -11567,21 +11432,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.MethodParameter();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 20: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[178] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 20) {
                 this.jj_consume_token(20);
                 this.MethodParameter();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[178] = this.jj_gen;
             this.jjtree.closeNodeScope(zkmScriptASTMethodArguments);
             return;
         } catch (Throwable throwable) {
@@ -11602,7 +11458,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_169() {
-        return this.jj_scan_token(EXCLUDE) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(EXCLUDE)) || (this.jj_scan_token(DOT)));
     }
 
     public final void ModuleName() throws ZkmScriptParseException {
@@ -11638,7 +11494,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_170() {
-        return this.jj_scan_token(43) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(43)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_171() {
@@ -12062,15 +11918,15 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_179() {
-        return this.jj_scan_token(37) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(37)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3_12() {
-        return this.jj_scan_token(AND_AND) ? true : this.jj_3R_222();
+        return ((this.jj_scan_token(AND_AND)) || (this.jj_3R_222()));
     }
 
     public boolean jj_3R_180() {
-        return this.jj_scan_token(PRINT) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(PRINT)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_181() {
@@ -12275,7 +12131,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return true;
     }
 
-    
+
 
 
 
@@ -12285,48 +12141,25 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         boolean bl = true;
         this.jjtree.openNodeScope(aSTBracketedClassSpecifier);
         try {
-            int n;
+            int jj_kindValue;
             ZkmScriptParser zkmScriptParser;
-            block13:
-            {
-                block12:
-                {
-                    switch (this.jj_nt.kind) {
-                        case 25: {
-                            this.jj_consume_token(25);
-                            aSTBracketedClassSpecifier.setNegated();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[156] = this.jj_gen;
-                            break block12;
-                        }
-                    }
-                    zkmScriptParser = this;
-                    n = 28;
-                    break block13;
-                }
-                zkmScriptParser = this;
-                n = 28;
+            if (this.jj_nt.kind == 25) {
+                this.jj_consume_token(25);
+                aSTBracketedClassSpecifier.setNegated();
+            } else {
+                this.jj_la1[156] = this.jj_gen;
             }
-            zkmScriptParser.jj_consume_token(n);
+            zkmScriptParser = this;
+            jj_kindValue = 28;
+            zkmScriptParser.jj_consume_token(jj_kindValue);
             this.AndClassSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block10:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 34: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[157] = this.jj_gen;
-                        break block10;
-                    }
-                }
+            while (zkmScriptToken.kind == 34) {
                 this.jj_consume_token(34);
                 this.AndClassSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[157] = this.jj_gen;
             this.jj_consume_token(29);
             this.jjtree.closeNodeScope(aSTBracketedClassSpecifier);
             return;
@@ -12415,7 +12248,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         } else if (this.jj_scan_token(LPAREN)) {
             return true;
         } else {
-            return this.jj_3R_44() ? true : this.jj_scan_token(ASSIGN);
+            return ((this.jj_3R_44()) || (this.jj_scan_token(ASSIGN)));
         }
     }
 
@@ -12500,7 +12333,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return true;
     }
 
-    
+
 
 
 
@@ -12512,21 +12345,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.ComplexMethodSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 35: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[176] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 35) {
                 this.jj_consume_token(35);
                 this.ComplexMethodSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[176] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTAndMethodSpecifier);
             return;
         } catch (Throwable throwable) {
@@ -12951,7 +12775,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    public boolean jj_scan_token(int ba) {
+    public boolean jj_scan_token(int jj_lasttoken) {
         if (this.jj_scanpos == this.jj_lastpos) {
             this.jj_la--;
             if (this.jj_scanpos.next == null) {
@@ -12964,19 +12788,19 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
 
         if (this.jj_rescan) {
-            int bb = 0;
+            int jj_endposValue = 0;
 
             ZkmScriptToken zkmScriptToken;
             for (zkmScriptToken = this.token; zkmScriptToken != null && zkmScriptToken != this.jj_scanpos; zkmScriptToken = zkmScriptToken.next) {
-                bb++;
+                jj_endposValue++;
             }
 
             if (zkmScriptToken != null) {
-                this.jj_add_error_token(ba, bb);
+                this.jj_add_error_token(jj_lasttoken, jj_endposValue);
             }
         }
 
-        if (this.jj_scanpos.kind != ba) {
+        if (this.jj_scanpos.kind != jj_lasttoken) {
             return true;
         } else if (this.jj_la == 0 && this.jj_scanpos == this.jj_lastpos) {
             throw this.jj_ls;
@@ -13035,7 +12859,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_14() {
-        return this.jj_scan_token(OR) ? true : this.jj_3R_176();
+        return ((this.jj_scan_token(OR)) || (this.jj_3R_176()));
     }
 
     public boolean jj_3R_201() {
@@ -13046,7 +12870,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_scan_token(STAR);
     }
 
-    
+
 
 
 
@@ -13056,48 +12880,25 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         boolean bl = true;
         this.jjtree.openNodeScope(aSTBracketedFieldSpecifier);
         try {
-            int n;
+            int jj_kindValue;
             ZkmScriptParser zkmScriptParser;
-            block13:
-            {
-                block12:
-                {
-                    switch (this.jj_nt.kind) {
-                        case 25: {
-                            this.jj_consume_token(25);
-                            aSTBracketedFieldSpecifier.setNegated();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[162] = this.jj_gen;
-                            break block12;
-                        }
-                    }
-                    zkmScriptParser = this;
-                    n = 28;
-                    break block13;
-                }
-                zkmScriptParser = this;
-                n = 28;
+            if (this.jj_nt.kind == 25) {
+                this.jj_consume_token(25);
+                aSTBracketedFieldSpecifier.setNegated();
+            } else {
+                this.jj_la1[162] = this.jj_gen;
             }
-            zkmScriptParser.jj_consume_token(n);
+            zkmScriptParser = this;
+            jj_kindValue = 28;
+            zkmScriptParser.jj_consume_token(jj_kindValue);
             this.AndFieldSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block10:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 34: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[163] = this.jj_gen;
-                        break block10;
-                    }
-                }
+            while (zkmScriptToken.kind == 34) {
                 this.jj_consume_token(34);
                 this.AndFieldSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[163] = this.jj_gen;
             this.jj_consume_token(29);
             this.jjtree.closeNodeScope(aSTBracketedFieldSpecifier);
             return;
@@ -13205,7 +13006,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_15() {
-        return this.jj_scan_token(DOT) ? true : this.jj_3R_205();
+        return ((this.jj_scan_token(DOT)) || (this.jj_3R_205()));
     }
 
     public final void LocalVariablesParameter() throws ZkmScriptParseException {
@@ -13531,7 +13332,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_scan_token(EXCLUDE);
     }
 
-    
+
 
 
 
@@ -13543,21 +13344,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.RenameFilterParameter();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 38: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[53] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 38) {
                 this.jj_consume_token(38);
                 this.RenameFilterParameter();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[53] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTGrouping);
             return;
         } catch (Throwable throwable) {
@@ -13636,7 +13428,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_218() {
-        return this.jj_scan_token(RANDOMIZE) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(RANDOMIZE)) || (this.jj_scan_token(DOT)));
     }
 
     public static void jj_la1_init_2() {
@@ -13988,7 +13780,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_228() {
-        return this.jj_scan_token(SEARCH) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(SEARCH)) || (this.jj_scan_token(DOT)));
     }
 
     public final ZkmScriptSimpleNode MethodParameterObfuscationIncludeStatement() throws ZkmScriptParseException {
@@ -14049,11 +13841,11 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_231() {
-        return this.jj_scan_token(48) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(48)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3_16() {
-        return this.jj_3R_53() ? true : this.jj_scan_token(DOT);
+        return ((this.jj_3R_53()) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_2_23() {
@@ -14485,7 +14277,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         } while (!this.jj_3_16());
 
         this.jj_scanpos = zkmScriptToken;
-        return this.jj_3R_53() ? true : this.jj_scan_token(SLASH);
+        return ((this.jj_3R_53()) || (this.jj_scan_token(SLASH)));
     }
 
     public boolean jj_3R_240() {
@@ -14568,7 +14360,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return this.jj_scan_token(TRIM);
     }
 
-    
+
 
 
 
@@ -14578,48 +14370,25 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         boolean bl = true;
         this.jjtree.openNodeScope(aSTBracketedAnnotationSpecifier);
         try {
-            int n;
+            int jj_kindValue;
             ZkmScriptParser zkmScriptParser;
-            block13:
-            {
-                block12:
-                {
-                    switch (this.jj_nt.kind) {
-                        case 25: {
-                            this.jj_consume_token(25);
-                            aSTBracketedAnnotationSpecifier.setNegated();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[135] = this.jj_gen;
-                            break block12;
-                        }
-                    }
-                    zkmScriptParser = this;
-                    n = 28;
-                    break block13;
-                }
-                zkmScriptParser = this;
-                n = 28;
+            if (this.jj_nt.kind == 25) {
+                this.jj_consume_token(25);
+                aSTBracketedAnnotationSpecifier.setNegated();
+            } else {
+                this.jj_la1[135] = this.jj_gen;
             }
-            zkmScriptParser.jj_consume_token(n);
+            zkmScriptParser = this;
+            jj_kindValue = 28;
+            zkmScriptParser.jj_consume_token(jj_kindValue);
             this.AndAnnotationSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block10:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 34: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[136] = this.jj_gen;
-                        break block10;
-                    }
-                }
+            while (zkmScriptToken.kind == 34) {
                 this.jj_consume_token(34);
                 this.AndAnnotationSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[136] = this.jj_gen;
             this.jj_consume_token(29);
             this.jjtree.closeNodeScope(aSTBracketedAnnotationSpecifier);
             return;
@@ -14726,7 +14495,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_17() {
-        return this.jj_scan_token(AND_AND) ? true : this.jj_3R_198();
+        return ((this.jj_scan_token(AND_AND)) || (this.jj_3R_198()));
     }
 
     public final void NTStatement() throws ZkmScriptParseException {
@@ -15065,7 +14834,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_246() {
-        return this.jj_scan_token(ANNOTATION) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(ANNOTATION)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_247() {
@@ -15136,16 +14905,16 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
             ZkmScriptToken zkmScriptToken = this.jj_consume_token(GROUPINGS);
             this.currentStatementKind = 86;
             ZkmScriptParser zkmScriptParser1 = this;
-            byte ba = 30;
+            byte jj_kindValue = 30;
 
             while (true) {
-                zkmScriptParser1.jj_consume_token(ba);
+                zkmScriptParser1.jj_consume_token(jj_kindValue);
                 this.Grouping();
                 this.jj_consume_token(RBRACE);
                 switch (this.jj_nt.kind) {
                     case LBRACE:
                         zkmScriptParser1 = this;
-                        ba = 30;
+                        jj_kindValue = 30;
                         break;
                     default:
                         this.jj_la1[52] = this.jj_gen;
@@ -15274,7 +15043,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_18() {
-        return this.jj_3R_198() ? true : this.jj_scan_token(LPAREN);
+        return ((this.jj_3R_198()) || (this.jj_scan_token(LPAREN)));
     }
 
     public boolean jj_3R_253() {
@@ -15315,7 +15084,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    
+
 
 
 
@@ -15327,21 +15096,12 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.ComplexModuleSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block7:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 35: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[142] = this.jj_gen;
-                        break block7;
-                    }
-                }
+            while (zkmScriptToken.kind == 35) {
                 this.jj_consume_token(35);
                 this.ComplexModuleSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[142] = this.jj_gen;
             this.jjtree.closeNodeScope(aSTAndModuleSpecifier);
             return;
         } catch (Throwable throwable) {
@@ -15362,7 +15122,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_254() {
-        return this.jj_scan_token(BRIDGE) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(BRIDGE)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_255() {
@@ -15633,7 +15393,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_258() {
-        return this.jj_scan_token(ENUM) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(ENUM)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_259() {
@@ -15641,7 +15401,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_260() {
-        return this.jj_scan_token(EXECUTE) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(EXECUTE)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_261() {
@@ -15835,7 +15595,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_19() {
-        return this.jj_3R_198() ? true : this.jj_scan_token(LPAREN);
+        return ((this.jj_3R_198()) || (this.jj_scan_token(LPAREN)));
     }
 
     public final void LoadStatement() throws ZkmScriptParseException {
@@ -15863,71 +15623,51 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
                     this.jj_la1[4] = this.jj_gen;
             }
 
-            while (true) {
+            while (this.jj_nt.kind == EXPECTED_FINAL_SHA256 || this.jj_nt.kind == EXPECTED_INITIAL_SHA256) {
+                this.LoadParameter();
+            }
+            this.jj_la1[5] = this.jj_gen;
+            ZkmScriptToken nextArchiveToken = this.jj_nt;
+
+            while (nextArchiveToken.kind == MINUS || nextArchiveToken.kind == PLUS || nextArchiveToken.kind == QUOTE_210) {
                 switch (this.jj_nt.kind) {
-                    case EXPECTED_FINAL_SHA256:
-                    case EXPECTED_INITIAL_SHA256:
-                        this.LoadParameter();
+                    case MINUS:
+                        this.SkipArchivePath();
+                        nextArchiveToken = this.jj_nt;
+                        continue;
+                    case PLUS:
+                        this.UnSkipArchivePath();
+                        nextArchiveToken = this.jj_nt;
+                        continue;
+                    case QUOTE_210:
+                        this.StringLiteral();
+                        switch (this.jj_nt.kind) {
+                            case LBRACE:
+                                this.FileFilter();
+                                break;
+                            default:
+                                this.jj_la1[7] = this.jj_gen;
+                        }
                         break;
                     default:
-                        this.jj_la1[5] = this.jj_gen;
-                        ZkmScriptToken zkmScriptToken1 = this.jj_nt;
-
-                        label122:
-                        while (true) {
-                            switch (zkmScriptToken1.kind) {
-                                case MINUS:
-                                case PLUS:
-                                case QUOTE_210:
-                                    label115:
-                                    switch (this.jj_nt.kind) {
-                                        case MINUS:
-                                            this.SkipArchivePath();
-                                            zkmScriptToken1 = this.jj_nt;
-                                            continue;
-                                        case PLUS:
-                                            this.UnSkipArchivePath();
-                                            zkmScriptToken1 = this.jj_nt;
-                                            continue;
-                                        case QUOTE_210:
-                                            this.StringLiteral();
-                                            switch (this.jj_nt.kind) {
-                                                case LBRACE:
-                                                    this.FileFilter();
-                                                    break label115;
-                                                default:
-                                                    this.jj_la1[7] = this.jj_gen;
-                                                    break label115;
-                                            }
-                                        default:
-                                            this.jj_la1[9] = this.jj_gen;
-                                            this.jj_consume_token(-1);
-                                            throw new ZkmScriptParseException();
-                                    }
-
-                                    while (true) {
-                                        switch (this.jj_nt.kind) {
-                                            case EXPECTED_FINAL_SHA256:
-                                            case EXPECTED_INITIAL_SHA256:
-                                                this.LoadParameter();
-                                                break;
-                                            default:
-                                                this.jj_la1[8] = this.jj_gen;
-                                                zkmScriptToken1 = this.jj_nt;
-                                                continue label122;
-                                        }
-                                    }
-                                default:
-                                    this.jj_la1[6] = this.jj_gen;
-                                    this.jj_consume_token(SEMICOLON);
-                                    this.jjtree.closeNodeScope(aSTLoadStatement);
-                                    bl = false;
-                                    aSTLoadStatement.setLineNumber(zkmScriptToken.endLine);
-                                    return;
-                            }
-                        }
+                        this.jj_la1[9] = this.jj_gen;
+                        this.jj_consume_token(-1);
+                        throw new ZkmScriptParseException();
                 }
+
+                while (this.jj_nt.kind == EXPECTED_FINAL_SHA256 || this.jj_nt.kind == EXPECTED_INITIAL_SHA256) {
+                    this.LoadParameter();
+                }
+                this.jj_la1[8] = this.jj_gen;
+                nextArchiveToken = this.jj_nt;
             }
+
+            this.jj_la1[6] = this.jj_gen;
+            this.jj_consume_token(SEMICOLON);
+            this.jjtree.closeNodeScope(aSTLoadStatement);
+            bl = false;
+            aSTLoadStatement.setLineNumber(zkmScriptToken.endLine);
+            return;
         } catch (Throwable throwable) {
             if (bl) {
                 this.jjtree.clearNodeScope();
@@ -15984,7 +15724,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    
+
 
 
 
@@ -15996,36 +15736,18 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         try {
             this.Type();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block10:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 21: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[181] = this.jj_gen;
-                        break block10;
-                    }
-                }
+            while (zkmScriptToken.kind == 21) {
                 this.jj_consume_token(21);
                 this.Type();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[181] = this.jj_gen;
             ZkmScriptToken zkmScriptToken2 = this.jj_nt;
-            block11:
-            while (true) {
-                switch (zkmScriptToken2.kind) {
-                    case 17: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[182] = this.jj_gen;
-                        break block11;
-                    }
-                }
+            while (zkmScriptToken2.kind == 17) {
                 this.ArrayLevel();
                 zkmScriptToken2 = this.jj_nt;
             }
+            this.jj_la1[182] = this.jj_gen;
             this.jjtree.closeNodeScope(zkmScriptASTQualifiedType);
             return;
         } catch (Throwable throwable) {
@@ -16046,7 +15768,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_268() {
-        return this.jj_scan_token(LIGHT) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(LIGHT)) || (this.jj_scan_token(DOT)));
     }
 
     static {
@@ -16109,7 +15831,6 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
                     throw new ZkmScriptParseException();
                 }
             }
-            block6:
             switch (this.jj_nt.kind) {
                 case 24:
                 case 26: {
@@ -16117,17 +15838,20 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
                         case 26: {
                             this.jj_consume_token(26);
                             aSTComplexClassSpecifier.setExcludesClassName();
-                            break block6;
+                            break;
                         }
                         case 24: {
                             this.jj_consume_token(24);
                             aSTComplexClassSpecifier.setIncludesMembers();
-                            break block6;
+                            break;
+                        }
+                        default: {
+                            this.jj_la1[154] = this.jj_gen;
+                            this.jj_consume_token(-1);
+                            throw new ZkmScriptParseException();
                         }
                     }
-                    this.jj_la1[154] = this.jj_gen;
-                    this.jj_consume_token(-1);
-                    throw new ZkmScriptParseException();
+                    break;
                 }
                 default: {
                     this.jj_la1[155] = this.jj_gen;
@@ -16416,7 +16140,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    
+
 
 
 
@@ -16426,48 +16150,25 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         boolean bl = true;
         this.jjtree.openNodeScope(aSTBracketedModuleSpecifier);
         try {
-            int n;
+            int jj_kindValue;
             ZkmScriptParser zkmScriptParser;
-            block13:
-            {
-                block12:
-                {
-                    switch (this.jj_nt.kind) {
-                        case 25: {
-                            this.jj_consume_token(25);
-                            aSTBracketedModuleSpecifier.setNegated();
-                            break;
-                        }
-                        default: {
-                            this.jj_la1[140] = this.jj_gen;
-                            break block12;
-                        }
-                    }
-                    zkmScriptParser = this;
-                    n = 28;
-                    break block13;
-                }
-                zkmScriptParser = this;
-                n = 28;
+            if (this.jj_nt.kind == 25) {
+                this.jj_consume_token(25);
+                aSTBracketedModuleSpecifier.setNegated();
+            } else {
+                this.jj_la1[140] = this.jj_gen;
             }
-            zkmScriptParser.jj_consume_token(n);
+            zkmScriptParser = this;
+            jj_kindValue = 28;
+            zkmScriptParser.jj_consume_token(jj_kindValue);
             this.AndModuleSpecifier();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block10:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 34: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[141] = this.jj_gen;
-                        break block10;
-                    }
-                }
+            while (zkmScriptToken.kind == 34) {
                 this.jj_consume_token(34);
                 this.AndModuleSpecifier();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[141] = this.jj_gen;
             this.jj_consume_token(29);
             this.jjtree.closeNodeScope(aSTBracketedModuleSpecifier);
             return;
@@ -16493,7 +16194,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3R_274() {
-        return this.jj_scan_token(SYNTHETIC) ? true : this.jj_scan_token(DOT);
+        return ((this.jj_scan_token(SYNTHETIC)) || (this.jj_scan_token(DOT)));
     }
 
     public boolean jj_3R_275() {
@@ -16501,7 +16202,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_20() {
-        return this.jj_3R_198() ? true : this.jj_scan_token(LPAREN);
+        return ((this.jj_3R_198()) || (this.jj_scan_token(LPAREN)));
     }
 
     public final void ExceptionObfuscationParameter() throws ZkmScriptParseException {
@@ -16588,7 +16289,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
     }
 
     public boolean jj_3_21() {
-        return this.jj_scan_token(AND_AND) ? true : this.jj_3R_128();
+        return ((this.jj_scan_token(AND_AND)) || (this.jj_3R_128()));
     }
 
     public boolean jj_3R_277() {
@@ -16686,7 +16387,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         }
     }
 
-    
+
 
 
 
@@ -16710,17 +16411,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
             }
             this.QualifiedClassName();
             ZkmScriptToken zkmScriptToken = this.jj_nt;
-            block13:
-            while (true) {
-                switch (zkmScriptToken.kind) {
-                    case 20: {
-                        break;
-                    }
-                    default: {
-                        this.jj_la1[118] = this.jj_gen;
-                        break block13;
-                    }
-                }
+            while (zkmScriptToken.kind == 20) {
                 this.jj_consume_token(20);
                 switch (this.jj_nt.kind) {
                     case 25:
@@ -16736,6 +16427,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
                 this.QualifiedClassName();
                 zkmScriptToken = this.jj_nt;
             }
+            this.jj_la1[118] = this.jj_gen;
             this.jjtree.closeNodeScope(zkmScriptASTImplementsClause);
             return;
         } catch (Throwable throwable) {

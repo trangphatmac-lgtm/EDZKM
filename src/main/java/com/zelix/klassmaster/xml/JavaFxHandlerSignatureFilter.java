@@ -19,14 +19,14 @@ public class JavaFxHandlerSignatureFilter implements DescriptorMatcher {
     }
 
     @Override
-    public boolean matchesDescriptor(String string) throws ZkmException, IOException {
-        List list1 = ConstantPoolEntry.getParameterTypes(string);
-        int ba = list1.size();
-        if (ba == 0) {
+    public boolean matchesDescriptor(String descriptor) throws ZkmException, IOException {
+        List list1 = ConstantPoolEntry.getParameterTypes(descriptor);
+        int list1Size = list1.size();
+        if (list1Size == 0) {
             return true;
         }
 
-        if (ba == 1) {
+        if (list1Size == 1) {
             String string1 = (String) list1.get(0);
             if (string1.charAt(0) == '[') {
                 return false;
@@ -54,7 +54,7 @@ public class JavaFxHandlerSignatureFilter implements DescriptorMatcher {
             } catch (ClassFileLoadException classFileLoadException1) {
                 this.messageReporter.reportFatalError("FATAL ERROR:", classFileLoadException1.getMessage());
             }
-        } else if (ba == 3) {
+        } else if (list1Size == 3) {
             String string3 = (String) list1.get(0);
             if (string3.charAt(0) == '[') {
                 return false;

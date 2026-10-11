@@ -11,67 +11,67 @@ public class IndexedNameGenerator extends JavaKeywords {
     public final int subsequentCharRadix;
 
     public final char getSubsequentChar(int ba) {
-        char bb;
+        char subsequentChar;
         if (this.caseMode == 0) {
             if (ba <= 25) {
-                bb = (char) (97 + ba);
+                subsequentChar = (char) (97 + ba);
             } else if (ba <= 51) {
-                bb = (char) (39 + ba);
+                subsequentChar = (char) (39 + ba);
             } else {
-                bb = (char) (ba - 4);
+                subsequentChar = (char) (ba - 4);
             }
         } else if (ba <= 25) {
-            bb = (char) (97 + ba);
+            subsequentChar = (char) (97 + ba);
         } else {
-            bb = (char) (22 + ba);
+            subsequentChar = (char) (22 + ba);
         }
 
-        return bb;
+        return subsequentChar;
     }
 
-    public final String getNonKeywordName(int ba) {
-        String string;
+    public final String getNonKeywordName(int elementIndex) {
+        String nameAt;
         do {
-            string = this.getNameAt(ba);
-        } while (string == null);
+            nameAt = this.getNameAt(elementIndex);
+        } while (nameAt == null);
 
-        return string;
+        return nameAt;
     }
 
-    public final String getNameAt(int ba) {
-        if (ba < this.nameCache.size()) {
-            return (String) this.nameCache.get(ba);
+    public final String getNameAt(int elementIndex) {
+        if (elementIndex < this.nameCache.size()) {
+            return (String) this.nameCache.get(elementIndex);
         }
 
         int bb = 0;
-        this.charBuffer[bb++] = this.getFirstChar(ba % this.firstCharRadix);
+        this.charBuffer[bb++] = this.getFirstChar(elementIndex % this.firstCharRadix);
 
-        for (int i = ba / this.firstCharRadix; i > 0; i /= this.subsequentCharRadix) {
+        for (int i = elementIndex / this.firstCharRadix; i > 0; i /= this.subsequentCharRadix) {
             this.charBuffer[bb++] = this.getSubsequentChar(i % this.subsequentCharRadix);
         }
 
-        String string = new String(this.charBuffer, 0, bb);
+        String nameAt = new String(this.charBuffer, 0, bb);
         if (this.prefix != null) {
-            string = this.prefix + string;
+            nameAt = this.prefix + nameAt;
         }
 
-        if (JavaKeywords.RESERVED_WORDS.contains(string)) {
-            string = null;
+        if (JavaKeywords.RESERVED_WORDS.contains(nameAt)) {
+            nameAt = null;
         }
 
-        if (ba == this.nameCache.size()) {
-            this.nameCache.add(string);
+        if (elementIndex == this.nameCache.size()) {
+            this.nameCache.add(nameAt);
         }
 
-        return string;
+        return nameAt;
     }
 
     public IndexedNameGenerator() {
         this(null);
     }
 
-    public IndexedNameGenerator(String string) {
-        this.prefix = string;
+    public IndexedNameGenerator(String prefixArgument) {
+        this.prefix = prefixArgument;
         this.firstCharRadix = 52;
         this.subsequentCharRadix = 62;
     }

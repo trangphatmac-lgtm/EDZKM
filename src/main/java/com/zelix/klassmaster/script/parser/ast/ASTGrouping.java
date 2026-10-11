@@ -19,8 +19,8 @@ public class ASTGrouping extends ZkmScriptSimpleNode implements ScriptStatementI
         ZkmScriptNode zkmScriptNode = (ZkmScriptNode) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) this.jjtGetChild(childrenElementIndex);
             aSTRenameFilterParameter.execute(this, scriptEnvironment1);
             this.filterParameters.add(aSTRenameFilterParameter);
         }

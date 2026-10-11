@@ -23,8 +23,8 @@ public class ASTLparenClause2 extends ProGuardConfigSimpleNode implements ProGua
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
     }
 

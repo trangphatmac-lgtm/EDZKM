@@ -138,15 +138,15 @@ public class ZKMChangeLogConvert extends ChangeLogConvertConstants {
                 Iterator iterator = new TreeSet(map1.keySet()).iterator();
 
                 while (iterator.hasNext()) {
-                    String string = (String) iterator.next();
-                    String string1 = (String) map1.get(string);
+                    String key = (String) iterator.next();
+                    String string1 = (String) map1.get(key);
                     stringBuilder.setLength(0);
-                    stringBuilder.append(string);
+                    stringBuilder.append(key);
                     stringBuilder.append(" -> ");
                     stringBuilder.append(string1);
                     stringBuilder.append(':');
                     printWriter.println(stringBuilder.toString());
-                    ListMultimap listMultimap = this.changeLogMapping.copyRawFieldMappings(string);
+                    ListMultimap listMultimap = this.changeLogMapping.copyRawFieldMappings(key);
                     if (listMultimap != null) {
                         TreeSet treeSet = new TreeSet(listMultimap.keySet());
                         Iterator iterator1 = treeSet.iterator();
@@ -168,25 +168,16 @@ public class ZKMChangeLogConvert extends ChangeLogConvertConstants {
                         }
                     }
 
-                    ProgramClass programClass1;
-                    ChangeLogMapping changeLogMapping1;
-                    programClass1 = null;
-                    label128:
+                    ProgramClass programClass1 = null;
                     if (this.classResolver != null) {
                         try {
                             programClass1 = this.classResolver.loadProgramClass(ZkmUtils.dotsToSlashes(string1));
                         } catch (ClassLookupException classLookupException) {
                             this.scriptEnvironment.logError(classLookupException.getMessage());
-                            changeLogMapping1 = this.changeLogMapping;
-                            break label128;
                         }
-
-                        changeLogMapping1 = this.changeLogMapping;
-                    } else {
-                        changeLogMapping1 = this.changeLogMapping;
                     }
 
-                    ListMultimap listMultimap1 = changeLogMapping1.copyRawMethodMappings(string);
+                    ListMultimap listMultimap1 = this.changeLogMapping.copyRawMethodMappings(key);
                     if (listMultimap1 != null) {
                         TreeSet treeSet1 = new TreeSet(listMultimap1.keySet());
                         Iterator iterator2 = treeSet1.iterator();

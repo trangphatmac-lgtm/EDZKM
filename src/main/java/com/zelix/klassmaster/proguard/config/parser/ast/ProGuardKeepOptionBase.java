@@ -78,9 +78,9 @@ public abstract class ProGuardKeepOptionBase extends ProGuardClassSpecification 
 
         while (iterator1.hasNext()) {
             ProGuardClassNameEntry proGuardClassNameEntry = (ProGuardClassNameEntry) iterator1.next();
-            String string1 = proGuardClassNameEntry.getClassName();
+            String className = proGuardClassNameEntry.getClassName();
             if (super.memberSpecs.size() == 0) {
-                this.addKeepExclusion(proGuardConfigTranslator, string1, proGuardClassNameEntry.isNegated());
+                this.addKeepExclusion(proGuardConfigTranslator, className, proGuardClassNameEntry.isNegated());
             } else {
                 Iterator iterator = super.memberSpecs.iterator();
 
@@ -101,16 +101,16 @@ public abstract class ProGuardKeepOptionBase extends ProGuardClassSpecification 
                         }
                     }
 
-                    String string4 = string1 + ' ' + string2 + string3;
+                    String string4 = className + ' ' + string2 + string3;
                     this.addKeepExclusion(proGuardConfigTranslator, string4, proGuardClassNameEntry.isNegated());
                 }
 
                 if (this.appliesToClass() && !this.requiresMatchingMembers()) {
-                    if (string1.charAt(string1.length() - 1) == ASTRenameFilterParameter.CARET_TAG) {
-                        string1 = string1.substring(0, string1.length() - 1);
+                    if (className.charAt(className.length() - 1) == ASTRenameFilterParameter.CARET_TAG) {
+                        className = className.substring(0, className.length() - 1);
                     }
 
-                    this.addKeepExclusion(proGuardConfigTranslator, string1, proGuardClassNameEntry.isNegated());
+                    this.addKeepExclusion(proGuardConfigTranslator, className, proGuardClassNameEntry.isNegated());
                 }
             }
         }

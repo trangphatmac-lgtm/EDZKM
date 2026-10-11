@@ -53,24 +53,14 @@ public class InstructionReasonNote implements TrackedValue {
     @Override
     public int hashCode() {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        int ba = 0;
-        boolean bl = strictMergeDisabled;
-        String string;
-        if (!bl) {
-            if (this.instruction != null) {
-                ba = this.instruction.hashCode();
-            }
-
-            string = this.reason;
-        } else {
-            string = this.reason;
+        int hash = 0;
+        if (!strictMergeDisabled && this.instruction != null) {
+            hash = this.instruction.hashCode();
         }
-
-        if (string != null) {
-            ba ^= this.reason.hashCode();
+        if (this.reason != null) {
+            hash ^= this.reason.hashCode();
         }
-
-        return ba;
+        return hash;
     }
 
     @Override
@@ -78,9 +68,9 @@ public class InstructionReasonNote implements TrackedValue {
         return false;
     }
 
-    public InstructionReasonNote(Instruction instruction1, String string) {
+    public InstructionReasonNote(Instruction instruction1, String reasonArgument) {
         this.instruction = instruction1;
-        this.reason = string;
+        this.reason = reasonArgument;
     }
 
     @Override
@@ -104,85 +94,25 @@ public class InstructionReasonNote implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object otherArgument) {
         boolean strictMergeEnabled = StackFrameState.isStrictMergeEnabled();
-        boolean bl2 = object instanceof InstructionReasonNote;
-        if (strictMergeEnabled) {
-            if (bl2) {
-                boolean bl1;
-                InstructionReasonNote instructionReasonNote1;
-                label75:
-                {
-                    instructionReasonNote1 = (InstructionReasonNote) object;
-                    InstructionReasonNote instructionReasonNote2 = this;
-                    if (strictMergeEnabled) {
-                        if (this.instruction != null) {
-                            label63:
-                            {
-                                Instruction instruction1;
-                                if (strictMergeEnabled) {
-                                    if (instructionReasonNote1.instruction == null) {
-                                        break label63;
-                                    }
-
-                                    instruction1 = this.instruction;
-                                } else {
-                                    instruction1 = instructionReasonNote1.instruction;
-                                }
-
-                                bl1 = instruction1.equals(instructionReasonNote1.instruction);
-                                if (strictMergeEnabled) {
-                                    break label75;
-                                }
-                            }
-
-                            bl1 = false;
-                            if (strictMergeEnabled) {
-                                break label75;
-                            }
-                        }
-
-                        instructionReasonNote2 = instructionReasonNote1;
-                    }
-
-                    bl1 = instructionReasonNote2.instruction == null;
-                }
-
-                bl2 = bl1;
-                if (strictMergeEnabled) {
-                    if (bl1) {
-                        InstructionReasonNote instructionReasonNote3 = this;
-                        if (strictMergeEnabled) {
-                            if (this.reason != null) {
-                                String string;
-                                if (strictMergeEnabled) {
-                                    if (instructionReasonNote1.reason == null) {
-                                        return false;
-                                    }
-
-                                    string = this.reason;
-                                } else {
-                                    string = instructionReasonNote1.reason;
-                                }
-
-                                return string.equals(instructionReasonNote1.reason);
-                            }
-
-                            instructionReasonNote3 = instructionReasonNote1;
-                        }
-
-                        return instructionReasonNote3.reason == null;
-                    }
-
-                    bl2 = false;
-                }
-
-                return bl2;
-            }
-
-            bl2 = false;
+        if (!(otherArgument instanceof InstructionReasonNote)) {
+            return false;
+        }
+        if (!strictMergeEnabled) {
+            return true;
         }
 
-        return bl2;
+        InstructionReasonNote other = (InstructionReasonNote) otherArgument;
+        boolean sameInstruction = this.instruction == null
+                ? other.instruction == null
+                : other.instruction != null && this.instruction.equals(other.instruction);
+        if (!sameInstruction) {
+            return false;
+        }
+        return this.reason == null
+                ? other.reason == null
+                : other.reason != null && this.reason.equals(other.reason);
     }
+
 }

@@ -11,14 +11,14 @@ public class InclusionParamsButtonListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == InclusionParametersDialog.accessPreviousButton(this.inclusionParametersDialog)) {
+            Object source = actionEvent.getSource();
+            if (source == InclusionParametersDialog.accessPreviousButton(this.inclusionParametersDialog)) {
                 this.inclusionParametersDialog.goPrevious();
-            } else if (object == this.inclusionParametersDialog.okBtn) {
+            } else if (source == this.inclusionParametersDialog.okBtn) {
                 this.inclusionParametersDialog.acceptParameters();
-            } else if (object == this.inclusionParametersDialog.cancelBtn) {
+            } else if (source == this.inclusionParametersDialog.cancelBtn) {
                 this.inclusionParametersDialog.cancelDialog();
-            } else if (object == this.inclusionParametersDialog.helpBtn) {
+            } else if (source == this.inclusionParametersDialog.helpBtn) {
                 this.inclusionParametersDialog.showHelp();
             }
         } catch (Throwable throwable) {

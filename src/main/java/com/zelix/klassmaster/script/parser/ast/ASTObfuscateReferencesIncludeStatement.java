@@ -62,21 +62,21 @@ public class ASTObfuscateReferencesIncludeStatement extends ContainedInStatement
         }
     }
 
-    public static String formatIncludeStatement(List list1, int ba) {
-        int bb = list1.size();
-        if (bb > 0) {
-            String string = ZkmStringUtils.pad("", 76, ba, 32);
+    public static String formatIncludeStatement(List list1, int endIndex) {
+        int list1Size = list1.size();
+        if (list1Size > 0) {
+            String string = ZkmStringUtils.pad("", 76, endIndex, 32);
             StringBuffer stringBuffer = new StringBuffer(100);
-            stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR + ZkmStringUtils.pad("obfuscateReferencesInclude", 76, ba, 32));
+            stringBuffer.append(HiddenOptionFlags.LINE_SEPARATOR + ZkmStringUtils.pad("obfuscateReferencesInclude", 76, endIndex, 32));
 
-            for (int i = 0; i < bb; i++) {
-                Object object = list1.get(i);
-                if (i > 0) {
+            for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                Object object = list1.get(elementIndex);
+                if (elementIndex > 0) {
                     stringBuffer.append(string);
                 }
 
                 stringBuffer.append(object.toString());
-                if (i < bb - 1) {
+                if (elementIndex < list1Size - 1) {
                     stringBuffer.append(" and" + HiddenOptionFlags.LINE_SEPARATOR);
                 } else {
                     stringBuffer.append(";" + HiddenOptionFlags.LINE_SEPARATOR);

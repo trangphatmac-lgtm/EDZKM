@@ -7,8 +7,8 @@ import java.io.IOException;
 public class ObservableHolder extends ChangeObservable {
     public Object value;
 
-    public ObservableHolder(Object object) throws ZkmException, IOException {
-        this.setValue(object);
+    public ObservableHolder(Object valueArgument) throws ZkmException, IOException {
+        this.setValue(valueArgument);
     }
 
     public Object getValue() {
@@ -19,10 +19,10 @@ public class ObservableHolder extends ChangeObservable {
         return this.value == null;
     }
 
-    public void setValue(Object object) throws ZkmException, IOException {
-        this.value = object;
+    public void setValue(Object valueArgument) throws ZkmException, IOException {
+        this.value = valueArgument;
         this.setChanged();
-        this.notifyObservers(object, null, null);
+        this.notifyObservers(valueArgument, null, null);
     }
 
     public ObservableHolder() throws ZkmException, IOException {

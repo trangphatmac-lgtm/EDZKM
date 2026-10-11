@@ -50,8 +50,8 @@ public class ClasspathClassFile extends ClassFileBase {
     public LibraryMethod[] methods;
 
     public void indexMethods(Map map1, ListMultimap listMultimap, Map map2, DisableableMap disableableMap, DisableableMap disableableMap1) {
-        for (int i = 0; i < this.methodCount; i++) {
-            LibraryMethod libraryMethod = this.methods[i];
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            LibraryMethod libraryMethod = this.methods[methodIndex];
             map1.put(libraryMethod.getSignature(), libraryMethod);
             listMultimap.addValue(libraryMethod.getDescriptor(), libraryMethod.getSourceName());
             map2.put(libraryMethod.getNameTypeSignature(), libraryMethod);
@@ -78,8 +78,8 @@ public class ClasspathClassFile extends ClassFileBase {
     }
 
     @Override
-    public ConstantPoolEntry getConstantPoolEntry(int ba) {
-        return this.constantPool.getConstantPoolEntry(ba);
+    public ConstantPoolEntry getConstantPoolEntry(int entryIndex) {
+        return this.constantPool.getConstantPoolEntry(entryIndex);
     }
 
     public synchronized void addMethod(LibraryMethod libraryMethod) {
@@ -94,8 +94,8 @@ public class ClasspathClassFile extends ClassFileBase {
     public void applyMethodNameMapping(TwoKeyMap twoKeyMap, PairValueMap pairValueMap) throws ZkmException, IOException {
         Map map1 = twoKeyMap.getInnerMap(this.getClassName());
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].applyMethodRename(map1, pairValueMap);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].applyMethodRename(map1, pairValueMap);
         }
     }
 
@@ -103,22 +103,22 @@ public class ClasspathClassFile extends ClassFileBase {
     public void updateFieldReferences(ScriptEnvironment scriptEnvironment1, ClassMemberLookup classMemberLookup1) throws ZkmException, IOException {
         this.constantPool.resolveFieldRefs(scriptEnvironment1, classMemberLookup1);
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyFieldRenames();
-            } else if (this.attributes[i] instanceof RecordAttribute) {
-                ((RecordAttribute) this.attributes[i]).applyFieldRenames();
-            } else if (this.attributes[i] instanceof BootstrapMethodsAttribute) {
-                ((BootstrapMethodsAttribute) this.attributes[i]).updateRecordObjectMethodsNames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyFieldRenames();
+            } else if (this.attributes[attributeIndex] instanceof RecordAttribute) {
+                ((RecordAttribute) this.attributes[attributeIndex]).applyFieldRenames();
+            } else if (this.attributes[attributeIndex] instanceof BootstrapMethodsAttribute) {
+                ((BootstrapMethodsAttribute) this.attributes[attributeIndex]).updateRecordObjectMethodsNames();
             }
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].updateAttributesAfterFieldRename();
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].updateAttributesAfterFieldRename();
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].updateAttributesAfterFieldRename();
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].updateAttributesAfterFieldRename();
         }
     }
 
@@ -129,10 +129,10 @@ public class ClasspathClassFile extends ClassFileBase {
     public void updateClassNames(HashMap hashMap, MessageReporter messageReporter1) throws ZkmException, IOException {
         this.constantPool.applyClassRenames(hashMap, messageReporter1);
         LibraryMethod[] libraryMethods = this.getMethods();
-        int ba = libraryMethods.length;
+        int lengthValue = libraryMethods.length;
 
-        for (int i = 0; i < ba; i++) {
-            libraryMethods[i].remapDescriptor(hashMap);
+        for (int libraryMethodIndex = 0; libraryMethodIndex < lengthValue; libraryMethodIndex++) {
+            libraryMethods[libraryMethodIndex].remapDescriptor(hashMap);
         }
     }
 
@@ -155,24 +155,24 @@ public class ClasspathClassFile extends ClassFileBase {
             int ba = classFileInputStream.readUnsignedShort();
             int bb = classFileInputStream.readUnsignedShort();
             super.interfaceCount = classFileInputStream.readUnsignedShort();
-            int[] bc = new int[super.interfaceCount];
-            int bd = 0;
+            int[] integerArray = new int[super.interfaceCount];
+            int integerArrayElementIndex = 0;
             int bi = 0;
 
-            for (int i = super.interfaceCount; bi < i; i = super.interfaceCount) {
-                bc[bd] = classFileInputStream.readUnsignedShort();
-                bi = ++bd;
+            for (int interfaceCountValue = super.interfaceCount; bi < interfaceCountValue; interfaceCountValue = super.interfaceCount) {
+                integerArray[integerArrayElementIndex] = classFileInputStream.readUnsignedShort();
+                bi = ++integerArrayElementIndex;
             }
 
             Object object = null;
-            int[] bf = bc;
+            int[] integerArrayValue = integerArray;
             Integer integer = bb;
-            this.readClassConstants(ba, integer, bf, (ListMultimap) object);
+            this.readClassConstants(ba, integer, integerArrayValue, (ListMultimap) object);
             this.fieldCount = classFileInputStream.readUnsignedShort();
             this.fields = new LibraryFieldInfo[this.fieldCount];
 
-            for (int i = 0; i < this.fieldCount; i++) {
-                this.fields[i] = new LibraryFieldInfo(this, classFileInputStream, listMultimap);
+            for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+                this.fields[fieldIndex] = new LibraryFieldInfo(this, classFileInputStream, listMultimap);
             }
 
             PrintWriter printWriter = new PrintWriter(new ByteArrayOutputStream());
@@ -180,15 +180,15 @@ public class ClasspathClassFile extends ClassFileBase {
             this.methodCount = classFileInputStream.readUnsignedShort();
             this.methods = new LibraryMethod[this.methodCount];
 
-            for (int i = 0; i < this.methodCount; i++) {
-                this.methods[i] = new LibraryMethod(this, classFileInputStream, listMultimap, listMultimap1, listMultimap2, printWriter, threeKeyMultiMap);
+            for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+                this.methods[methodIndex] = new LibraryMethod(this, classFileInputStream, listMultimap, listMultimap1, listMultimap2, printWriter, threeKeyMultiMap);
             }
 
             this.attributeCount = classFileInputStream.readUnsignedShort();
             this.attributes = new Attribute[this.attributeCount];
 
-            for (int i = 0; i < this.attributeCount; i++) {
-                this.attributes[i] = Attribute.readClasspathAttribute(
+            for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+                this.attributes[attributeIndex] = Attribute.readClasspathAttribute(
                         this, classFileInputStream, listMultimap, listMultimap1, listMultimap2, printWriter, threeKeyMultiMap
                 );
             }
@@ -235,18 +235,18 @@ public class ClasspathClassFile extends ClassFileBase {
     public void remapClassNames(int ba, int bb, HashMap hashMap, Object object, Object object1, HashMap hashMap1, MessageReporter messageReporter1) throws ZkmException, IOException {
         this.constantPool.applyClassRenames(hashMap, messageReporter1);
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].remapClassNames(ba, bb, hashMap1, hashMap);
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].remapClassNames(ba, bb, hashMap1, hashMap);
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].remapClassNames(ba, bb, hashMap1, hashMap);
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].remapClassNames(ba, bb, hashMap1, hashMap);
         }
 
         this.trimInnerClassesAttribute();
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            Attribute attribute = this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            Attribute attribute = this.attributes[attributeIndex];
             HashMap hashMap2 = hashMap1;
             Integer integer = bb;
             attribute.remapClassNames(ba, integer, hashMap2, hashMap);
@@ -257,20 +257,20 @@ public class ClasspathClassFile extends ClassFileBase {
     public void updateMethodReferences(ScriptEnvironment scriptEnvironment1, ClassMemberLookup classMemberLookup1, Object object) throws ZkmException, IOException {
         this.constantPool.resolveMethodRefs(scriptEnvironment1, classMemberLookup1);
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyMethodRenames();
-            } else if (this.attributes[i] instanceof RecordAttribute) {
-                ((RecordAttribute) this.attributes[i]).applyMethodRenames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyMethodRenames();
+            } else if (this.attributes[attributeIndex] instanceof RecordAttribute) {
+                ((RecordAttribute) this.attributes[attributeIndex]).applyMethodRenames();
             }
         }
 
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].updateAttributesAfterMethodRename();
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].updateAttributesAfterMethodRename();
         }
 
-        for (int i = 0; i < this.methodCount; i++) {
-            this.methods[i].updateAttributesAfterMethodRename();
+        for (int methodIndex = 0; methodIndex < this.methodCount; methodIndex++) {
+            this.methods[methodIndex].updateAttributesAfterMethodRename();
         }
     }
 
@@ -330,8 +330,8 @@ public class ClasspathClassFile extends ClassFileBase {
     }
 
     public void applyFieldNameMapping(TwoKeyMap twoKeyMap) throws ZkmException, IOException {
-        for (int i = 0; i < this.fieldCount; i++) {
-            this.fields[i].applyFieldRename(twoKeyMap.getInnerMap(this.getClassName()));
+        for (int fieldIndex = 0; fieldIndex < this.fieldCount; fieldIndex++) {
+            this.fields[fieldIndex].applyFieldRename(twoKeyMap.getInnerMap(this.getClassName()));
         }
     }
 
@@ -341,23 +341,23 @@ public class ClasspathClassFile extends ClassFileBase {
     }
 
     public LibraryMethod createCodeMethod(
-            String string,
-            String string1,
+            String value,
+            String valueArgument,
             ArrayList arrayList,
-            int ba,
+            int maxLocals,
             LocalVariableList localVariableList1,
             ExceptionHandlerSpec[] exceptionHandlerSpecs,
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer
     ) throws ZkmProcessingException {
         MethodBytecode methodBytecode1 = new MethodBytecode(arrayList, localVariableList1, "Flow Obfuscation");
-        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this.constantPool, string);
+        ConstantUtf8 constantUtf8 = new ConstantUtf8(0, this.constantPool, value);
         list1.add(constantUtf8);
-        ConstantUtf8 constantUtf81 = new ConstantUtf8(0, this.constantPool, string1);
+        ConstantUtf8 constantUtf81 = new ConstantUtf8(0, this.constantPool, valueArgument);
         list1.add(constantUtf81);
         ConstantUtf8 constantUtf82 = new ConstantUtf8(0, this.constantPool, "Code");
         list1.add(constantUtf82);
-        CodeAttributeBody codeAttributeBody = new CodeAttributeBody(constantUtf82, 1, ba, methodBytecode1, exceptionHandlerSpecs);
+        CodeAttributeBody codeAttributeBody = new CodeAttributeBody(constantUtf82, 1, maxLocals, methodBytecode1, exceptionHandlerSpecs);
         Attribute[] attributes1 = new Attribute[]{codeAttributeBody};
         LibraryMethod libraryMethod = new LibraryMethod(this, constantUtf8, constantUtf81, attributes1, false, 2);
         libraryMethod.makePublic();

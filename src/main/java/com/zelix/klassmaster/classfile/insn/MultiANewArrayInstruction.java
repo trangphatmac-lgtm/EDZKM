@@ -57,13 +57,13 @@ public class MultiANewArrayInstruction extends ConstantRefInstruction {
     @Override
     public void printDisassembly(PrintWriter printWriter, StringBuilder stringBuilder) throws UnknownOpcodeException {
         StringBuilder stringBuilder1 = new StringBuilder(100);
-        String string = this.getMnemonic();
-        stringBuilder1.append(string + " " + this.constantEntry.getIndex() + " " + this.dimensions);
-        String string1 = Instruction.getDescriptionComment(this.opcode);
-        string1 = Instruction.formatDescription(string1, this.constantEntry.getValueString());
-        string1 = Instruction.formatDescription(string1, String.valueOf(this.dimensions));
-        if (string1.length() > 0) {
-            stringBuilder1.append("\t" + string1);
+        String mnemonic = this.getMnemonic();
+        stringBuilder1.append(mnemonic + " " + this.constantEntry.getIndex() + " " + this.dimensions);
+        String descriptionComment = Instruction.getDescriptionComment(this.opcode);
+        descriptionComment = Instruction.formatDescription(descriptionComment, this.constantEntry.getValueString());
+        descriptionComment = Instruction.formatDescription(descriptionComment, String.valueOf(this.dimensions));
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder.toString() + stringBuilder.toString() + stringBuilder1);
@@ -74,10 +74,10 @@ public class MultiANewArrayInstruction extends ConstantRefInstruction {
         VerifierType[] verifierTypes = stackFrameState.getStack();
         VerifierType[] verifierTypes1 = stackFrameState.getLocals();
         VerifierType[] verifierTypes2 = VerifierType.createArray(verifierTypes.length - this.dimensions + 1);
-        int ba = verifierTypes2.length;
-        System.arraycopy(verifierTypes, 0, verifierTypes2, 0, ba - 1);
-        String string = ((ResolvedClassConstant) this.constantEntry).getTypeDescriptor();
-        verifierTypes2[ba - 1] = VerifierType.forDescriptor(string);
+        int lengthValue = verifierTypes2.length;
+        System.arraycopy(verifierTypes, 0, verifierTypes2, 0, lengthValue - 1);
+        String typeDescriptor = ((ResolvedClassConstant) this.constantEntry).getTypeDescriptor();
+        verifierTypes2[lengthValue - 1] = VerifierType.forDescriptor(typeDescriptor);
         return new StackFrameState(verifierTypes2, verifierTypes1, stackFrameState.getSubroutineLocals(), stackFrameState.getHeldMonitors());
     }
 

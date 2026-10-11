@@ -34,17 +34,17 @@ public class RootPackageNode extends PackageTreeNodeBase {
     public void buildFromClasses(ClassFileBase[] classFileBases) {
         super.children.clear();
 
-        for (int i = 0; i < classFileBases.length; i++) {
-            this.addClassPackage(classFileBases[i].getClassName());
+        for (int classFileBaseIndex = 0; classFileBaseIndex < classFileBases.length; classFileBaseIndex++) {
+            this.addClassPackage(classFileBases[classFileBaseIndex].getClassName());
         }
 
         this.markArchiveOnlyPackages(classFileBases);
     }
 
     public void addClassPackageWithFlags(String string, Map map1) {
-        int ba = string.lastIndexOf(47);
-        if (ba != -1) {
-            String[] strings = splitPackagePath(string.substring(0, ba));
+        int endIndex = string.lastIndexOf(47);
+        if (endIndex != -1) {
+            String[] strings = splitPackagePath(string.substring(0, endIndex));
             if (strings.length > 0) {
                 this.addPackagePath(0, strings, map1);
             }
@@ -65,16 +65,16 @@ public class RootPackageNode extends PackageTreeNodeBase {
         HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(list1.size()));
         ListMultimap listMultimap1 = new ListMultimap(list1.size());
 
-        for (int i = 0; i < list1.size(); i++) {
-            String string = (String) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            String string = (String) list1.get(elementIndex);
             if (nameExclusionSet.isPackageExcluded(string)) {
                 hashMap.put(string, string);
                 listMultimap1.addValue(string, string);
             } else if (changeLogMapping1 != null && changeLogMapping1.hasPackageMapping(string)) {
-                String string3 = changeLogMapping1.getNewPackageName(string);
-                if (string3 != null) {
-                    hashMap.put(string, string3);
-                    listMultimap1.addValue(string3, string);
+                String newPackageName = changeLogMapping1.getNewPackageName(string);
+                if (newPackageName != null) {
+                    hashMap.put(string, newPackageName);
+                    listMultimap1.addValue(newPackageName, string);
                 } else {
                     hashMap.put(string, string);
                     listMultimap1.addValue(string, string);
@@ -82,9 +82,9 @@ public class RootPackageNode extends PackageTreeNodeBase {
             } else if (map1 != null && map1.containsKey(string)) {
                 NamedFlag namedFlag = (NamedFlag) map1.get(string);
                 if (!namedFlag.isBlocked()) {
-                    String string1 = namedFlag.getName();
-                    hashMap.put(string, string1);
-                    listMultimap1.addValue(string1, string);
+                    String nameValue = namedFlag.getName();
+                    hashMap.put(string, nameValue);
+                    listMultimap1.addValue(nameValue, string);
                 }
             }
         }
@@ -93,17 +93,17 @@ public class RootPackageNode extends PackageTreeNodeBase {
         Enumeration enumeration = listMultimap1.keys();
 
         while (enumeration.hasMoreElements()) {
-            String string4 = (String) enumeration.nextElement();
-            List list3 = listMultimap1.getValues(string4);
+            String keyValue = (String) enumeration.nextElement();
+            List list3 = listMultimap1.getValues(keyValue);
 
-            for (int i = 0; i < list3.size(); i++) {
-                String string2 = (String) list3.get(i);
-                List list2 = listMultimap.getValues(string2);
+            for (int elementIndexValue = 0; elementIndexValue < list3.size(); elementIndexValue++) {
+                String keyValue2 = (String) list3.get(elementIndexValue);
+                List list2 = listMultimap.getValues(keyValue2);
                 if (list2 != null) {
-                    for (int j = 0; j < list2.size(); j++) {
-                        ProgramClass programClass1 = (ProgramClass) list2.get(j);
+                    for (int elementIndexValue2 = 0; elementIndexValue2 < list2.size(); elementIndexValue2++) {
+                        ProgramClass programClass1 = (ProgramClass) list2.get(elementIndexValue2);
                         if (nameExclusionSet.isClassExcluded(programClass1)) {
-                            twoKeyMap.putValue(string4, programClass1.getSimpleName(), programClass1);
+                            twoKeyMap.putValue(keyValue, programClass1.getSimpleName(), programClass1);
                         }
                     }
                 }
@@ -111,26 +111,15 @@ public class RootPackageNode extends PackageTreeNodeBase {
         }
 
         if (!bl) {
-            label76:
-            {
-                packageTreeNodes = super.children.toArray(new PackageTreeNode[super.children.size()]);
-                List list4;
-                if (!bl1) {
-                    if (!HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
-                        Arrays.sort(packageTreeNodes);
-                        break label76;
-                    }
-
-                    list4 = Arrays.asList(packageTreeNodes);
-                } else {
-                    list4 = Arrays.asList(packageTreeNodes);
-                }
-
-                ZkmUtils.shuffleList(list4, ZkmUtils.createRandom(8));
+            packageTreeNodes = super.children.toArray(new PackageTreeNode[super.children.size()]);
+            if (!bl1 && !HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
+                Arrays.sort(packageTreeNodes);
+            } else {
+                ZkmUtils.shuffleList(Arrays.asList(packageTreeNodes), ZkmUtils.createRandom(8));
             }
 
-            for (int i = 0; i < packageTreeNodes.length; i++) {
-                PackageTreeNode packageTreeNode = ((com.zelix.klassmaster.obfuscator.rename.PackageTreeNode) (packageTreeNodes[i]));
+            for (int packageTreeNodeIndex = 0; packageTreeNodeIndex < packageTreeNodes.length; packageTreeNodeIndex++) {
+                PackageTreeNode packageTreeNode = ((com.zelix.klassmaster.obfuscator.rename.PackageTreeNode) (packageTreeNodes[packageTreeNodeIndex]));
                 packageTreeNode.assignNewNamesRecursively(
                         nameExclusionSet, changeLogMapping1, packageNameGeneratorBase, hashMap, listMultimap1, twoKeyMap, listMultimap, bl1
                 );
@@ -141,26 +130,26 @@ public class RootPackageNode extends PackageTreeNodeBase {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string5 = (String) entry.getKey();
-                String string6 = (String) hashMap.get(string5);
-                if (string6 == null) {
-                    NamedFlag namedFlag1 = (NamedFlag) map1.get(string5);
-                    String string7 = namedFlag1.getName();
-                    PackageTreeNodeBase packageTreeNodeBase = (PackageTreeNodeBase) map2.get(string7);
+                String key = (String) entry.getKey();
+                String value = (String) hashMap.get(key);
+                if (value == null) {
+                    NamedFlag namedFlag1 = (NamedFlag) map1.get(key);
+                    String nameValue2 = namedFlag1.getName();
+                    PackageTreeNodeBase packageTreeNodeBase = (PackageTreeNodeBase) map2.get(nameValue2);
                     if (packageTreeNodeBase == null) {
                     }
 
                     boolean archiveOnly = ((PackageTreeNode) entry.getValue()).isArchiveOnly();
                     ChangeLogMapping changeLogMapping2 = changeLogMapping1;
-                    string6 = packageNameGeneratorBase.generatePackageName(
-                            string7, archiveOnly, false, listMultimap1, twoKeyMap, (Set) null, changeLogMapping2, nameExclusionSet
+                    value = packageNameGeneratorBase.generatePackageName(
+                            nameValue2, archiveOnly, false, listMultimap1, twoKeyMap, (Set) null, changeLogMapping2, nameExclusionSet
                     );
-                    if (string7.length() > 0) {
-                        string6 = string7 + "/" + string6;
+                    if (nameValue2.length() > 0) {
+                        value = nameValue2 + "/" + value;
                     }
 
-                    hashMap.put(string5, string6);
-                    listMultimap1.addValue(string6, string5);
+                    hashMap.put(key, value);
+                    listMultimap1.addValue(value, key);
                 }
             }
         }
@@ -172,23 +161,23 @@ public class RootPackageNode extends PackageTreeNodeBase {
     public void checkChangeLogPackageClashes(TwoKeyMap twoKeyMap, NameExclusionSet nameExclusionSet, ChangeLogMapping changeLogMapping1) throws IOException {
         if (changeLogMapping1 != null) {
             ArrayList arrayList = changeLogMapping1.getSortedPackageNames();
-            int ba = arrayList.size();
+            int arrayListSize = arrayList.size();
 
-            for (int i = 0; i < ba; i++) {
-                String string = (String) arrayList.get(i);
-                String string1 = changeLogMapping1.getNewPackageName(string);
-                if (string1 == null) {
-                    string1 = string;
+            for (int elementIndex = 0; elementIndex < arrayListSize; elementIndex++) {
+                String newPackageNameValue2 = (String) arrayList.get(elementIndex);
+                String newPackageName = changeLogMapping1.getNewPackageName(newPackageNameValue2);
+                if (newPackageName == null) {
+                    newPackageName = newPackageNameValue2;
                 }
 
-                if (!nameExclusionSet.isPackageExcluded(string) && nameExclusionSet.isClassNameExcluded(string1)) {
+                if (!nameExclusionSet.isPackageExcluded(newPackageNameValue2) && nameExclusionSet.isClassNameExcluded(newPackageName)) {
                     changeLogMapping1.reportFatalError(
                             "Package \""
-                                    + ZkmUtils.slashesToDots(string)
+                                    + ZkmUtils.slashesToDots(newPackageNameValue2)
                                     + "\" is mapped to \""
-                                    + ZkmUtils.slashesToDots(string1)
+                                    + ZkmUtils.slashesToDots(newPackageName)
                                     + "\" but this would result in a clash with class \""
-                                    + ZkmUtils.slashesToDots(string1)
+                                    + ZkmUtils.slashesToDots(newPackageName)
                                     + "\" that will not be renamed."
                     );
                 }
@@ -198,16 +187,16 @@ public class RootPackageNode extends PackageTreeNodeBase {
             Enumeration enumeration = twoKeyMap.keys();
 
             while (enumeration.hasMoreElements()) {
-                String string7 = (String) enumeration.nextElement();
-                if (nameExclusionSet.isPackageExcluded(string7) || changeLogMapping1.hasPackageMapping(string7) && !changeLogMapping1.hasNewPackageName(string7)) {
-                    Map map1 = twoKeyMap.getInnerMap(string7);
+                String keyValue2 = (String) enumeration.nextElement();
+                if (nameExclusionSet.isPackageExcluded(keyValue2) || changeLogMapping1.hasPackageMapping(keyValue2) && !changeLogMapping1.hasNewPackageName(keyValue2)) {
+                    Map map1 = twoKeyMap.getInnerMap(keyValue2);
                     if (map1 != null) {
                         Iterator iterator = map1.entrySet().iterator();
 
                         while (iterator.hasNext()) {
                             Entry entry = (Entry) iterator.next();
-                            String string2 = (String) entry.getValue();
-                            hashMap.put(string2, string2);
+                            String value = (String) entry.getValue();
+                            hashMap.put(value, value);
                         }
                     }
                 }
@@ -216,30 +205,30 @@ public class RootPackageNode extends PackageTreeNodeBase {
             enumeration = twoKeyMap.keys();
 
             while (enumeration.hasMoreElements()) {
-                String string8 = (String) enumeration.nextElement();
-                if (!nameExclusionSet.isPackageExcluded(string8) && changeLogMapping1.hasPackageMapping(string8) && changeLogMapping1.hasNewPackageName(string8)) {
-                    String string9 = changeLogMapping1.getNewPackageName(string8);
-                    Map map2 = twoKeyMap.getInnerMap(string8);
+                String keyValue3 = (String) enumeration.nextElement();
+                if (!nameExclusionSet.isPackageExcluded(keyValue3) && changeLogMapping1.hasPackageMapping(keyValue3) && changeLogMapping1.hasNewPackageName(keyValue3)) {
+                    String newPackageNameValue = changeLogMapping1.getNewPackageName(keyValue3);
+                    Map map2 = twoKeyMap.getInnerMap(keyValue3);
                     if (map2 != null) {
                         Iterator iterator1 = map2.entrySet().iterator();
 
                         while (iterator1.hasNext()) {
                             Entry entry1 = (Entry) iterator1.next();
-                            String string3 = (String) entry1.getKey();
-                            String string4 = (String) entry1.getValue();
-                            String string5 = string9 + string3;
-                            String string6 = ((java.lang.String) (hashMap.put(string5, string4)));
-                            if (string6 != null) {
-                                hashMap.put(string5, string6);
+                            String key = (String) entry1.getKey();
+                            String valueValue = (String) entry1.getValue();
+                            String keyValue = newPackageNameValue + key;
+                            String valueValue2 = ((java.lang.String) (hashMap.put(keyValue, valueValue)));
+                            if (valueValue2 != null) {
+                                hashMap.put(keyValue, valueValue2);
                                 changeLogMapping1.reportFatalError(
                                         "Package \""
-                                                + ZkmUtils.slashesToDots(string8)
+                                                + ZkmUtils.slashesToDots(keyValue3)
                                                 + "\" is mapped to \""
-                                                + ZkmUtils.slashesToDots(string9)
+                                                + ZkmUtils.slashesToDots(newPackageNameValue)
                                                 + "\" but this would result in \""
-                                                + string6
+                                                + valueValue2
                                                 + "\" clashing with \""
-                                                + string4
+                                                + valueValue
                                                 + "\""
                                 );
                             }
@@ -254,11 +243,11 @@ public class RootPackageNode extends PackageTreeNodeBase {
             ListMultimap listMultimap,
             NameExclusionSet nameExclusionSet,
             ChangeLogMapping changeLogMapping1,
-            String string,
+            String value,
             TwoKeyMap twoKeyMap,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        HashMap hashMap = this.buildCollapseTargetMap(nameExclusionSet, changeLogMapping1, string);
+        HashMap hashMap = this.buildCollapseTargetMap(nameExclusionSet, changeLogMapping1, value);
         HashMap hashMap1 = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(hashMap.size()));
         ListMultimap listMultimap1 = new ListMultimap();
         Iterator iterator = hashMap.entrySet().iterator();
@@ -288,8 +277,8 @@ public class RootPackageNode extends PackageTreeNodeBase {
             Iterator iterator1 = set1.iterator();
 
             while (iterator1.hasNext()) {
-                String string1 = (String) iterator1.next();
-                List list1 = listMultimap.getValues(string1);
+                String keyValue = (String) iterator1.next();
+                List list1 = listMultimap.getValues(keyValue);
                 if (list1 != null && list1.size() > 0) {
                     boolean bl = this.checkSimpleNameClashes(hashMap2, list1, nameExclusionSet, changeLogMapping1, observableHolder);
                     if (bl) {
@@ -297,7 +286,7 @@ public class RootPackageNode extends PackageTreeNodeBase {
                     }
                 }
 
-                Map map1 = twoKeyMap.getInnerMap(string1);
+                Map map1 = twoKeyMap.getInnerMap(keyValue);
                 if (map1 != null && map1.size() > 0) {
                     boolean bl1 = this.checkNonClassFileClashes(hashMap3, map1, observableHolder);
                     if (bl1) {
@@ -309,18 +298,18 @@ public class RootPackageNode extends PackageTreeNodeBase {
             List list2 = listMultimap1.getValues(string2);
             Collections.sort(list2);
             if (list2.size() > 0) {
-                for (int i = 0; i < list2.size(); i++) {
-                    String string3 = (String) list2.get(i);
-                    List list3 = listMultimap.getValues(string3);
+                for (int elementIndex = 0; elementIndex < list2.size(); elementIndex++) {
+                    String key = (String) list2.get(elementIndex);
+                    List list3 = listMultimap.getValues(key);
                     NamedFlag namedFlag;
                     if (list3 != null) {
                         boolean bl2 = this.checkSimpleNameClashes(hashMap2, list3, nameExclusionSet, changeLogMapping1, observableHolder);
                         if (bl2) {
                             namedFlag = new NamedFlag(string2, true);
-                            hashMap1.put(string3, namedFlag);
+                            hashMap1.put(key, namedFlag);
                             scriptEnvironment1.logWarning(
                                     "Cannot collapse package '"
-                                            + ZkmUtils.slashesToDots(string3)
+                                            + ZkmUtils.slashesToDots(key)
                                             + "' into '"
                                             + ZkmUtils.slashesToDots(string2)
                                             + "' because : \""
@@ -329,14 +318,14 @@ public class RootPackageNode extends PackageTreeNodeBase {
                             );
                         } else {
                             namedFlag = new NamedFlag(string2);
-                            hashMap1.put(string3, namedFlag);
+                            hashMap1.put(key, namedFlag);
                         }
                     } else {
                         namedFlag = new NamedFlag(string2);
-                        hashMap1.put(string3, namedFlag);
+                        hashMap1.put(key, namedFlag);
                     }
 
-                    Map map2 = twoKeyMap.getInnerMap(string3);
+                    Map map2 = twoKeyMap.getInnerMap(key);
                     if (map2 != null && map2.size() > 0) {
                         boolean bl3 = this.checkNonClassFileClashes(hashMap3, map2, observableHolder);
                         if (bl3) {
@@ -346,7 +335,7 @@ public class RootPackageNode extends PackageTreeNodeBase {
 
                             scriptEnvironment1.logWarning(
                                     "Cannot collapse package '"
-                                            + ZkmUtils.slashesToDots(string3)
+                                            + ZkmUtils.slashesToDots(key)
                                             + "' into '"
                                             + ZkmUtils.slashesToDots(string2)
                                             + "' because : \""
@@ -385,20 +374,20 @@ public class RootPackageNode extends PackageTreeNodeBase {
 
             while (listIterator.hasNext()) {
                 String string = (String) listIterator.next();
-                String[] strings = getParentPackagePaths(string);
+                String[] parentPackagePaths = getParentPackagePaths(string);
 
-                for (int i = 0; i < strings.length; i++) {
-                    set1.add(strings[i]);
+                for (int parentPackagePathIndex = 0; parentPackagePathIndex < parentPackagePaths.length; parentPackagePathIndex++) {
+                    set1.add(parentPackagePaths[parentPackagePathIndex]);
                 }
             }
 
             Map map1 = this.getNodesByPath();
             ArrayList arrayList = changeLogMapping1.getSortedPackageNames();
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                String string1 = (String) arrayList.get(i);
-                if (!map1.containsKey(string1) && !set1.contains(string1)) {
-                    changeLogMapping1.removePackageMapping(string1);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                String key = (String) arrayList.get(elementIndex);
+                if (!map1.containsKey(key) && !set1.contains(key)) {
+                    changeLogMapping1.removePackageMapping(key);
                 }
             }
         }
@@ -407,19 +396,19 @@ public class RootPackageNode extends PackageTreeNodeBase {
     public static String[] getParentPackagePaths(String string) {
         String[] strings = splitPackagePath(string);
         int ba = Math.max(0, strings.length - 1);
-        String[] strings1 = new String[ba];
+        String[] parentPackagePaths = new String[ba];
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = 0; i < ba; i++) {
-            if (i > 0) {
+        for (int parentPackagePathIndex = 0; parentPackagePathIndex < ba; parentPackagePathIndex++) {
+            if (parentPackagePathIndex > 0) {
                 stringBuffer.append('/');
             }
 
-            stringBuffer.append(strings[i]);
-            strings1[i] = stringBuffer.toString();
+            stringBuffer.append(strings[parentPackagePathIndex]);
+            parentPackagePaths[parentPackagePathIndex] = stringBuffer.toString();
         }
 
-        return strings1;
+        return parentPackagePaths;
     }
 
     public void markArchiveOnlyPackages(ClassFileBase[] classFileBases) {
@@ -445,18 +434,18 @@ public class RootPackageNode extends PackageTreeNodeBase {
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
             PackageTreeNode packageTreeNode1 = (PackageTreeNode) entry.getKey();
-            boolean bl = true;
+            boolean archiveOnlyValue = true;
             Iterator iterator1 = ((List) entry.getValue()).iterator();
 
             while (iterator1.hasNext()) {
                 ClassFileBase classFileBase1 = (ClassFileBase) iterator1.next();
                 if (!classFileBase1.isFromArchive()) {
-                    bl = false;
+                    archiveOnlyValue = false;
                     break;
                 }
             }
 
-            packageTreeNode1.setArchiveOnly(bl);
+            packageTreeNode1.setArchiveOnly(archiveOnlyValue);
         }
     }
 
@@ -464,14 +453,14 @@ public class RootPackageNode extends PackageTreeNodeBase {
             Enumeration enumeration,
             NameExclusionSet nameExclusionSet,
             ChangeLogMapping changeLogMapping1,
-            boolean bl,
+            boolean randomizeNames,
             Boolean boolean1,
             Boolean boolean2,
-            String string,
+            String namePrefix,
             MixedCaseNamesMode mixedCaseNamesMode1,
             ClassPathResolver classPathResolver1,
             boolean bl1,
-            String string1,
+            String value,
             Iterator iterator,
             List list1,
             ScriptEnvironment scriptEnvironment1
@@ -484,10 +473,10 @@ public class RootPackageNode extends PackageTreeNodeBase {
 
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
-            String string2 = programClass1.getPackagePath();
-            listMultimap.addValue(string2, programClass1);
+            String packagePath = programClass1.getPackagePath();
+            listMultimap.addValue(packagePath, programClass1);
             if (programClass1.isPackageReferencedFromXml()) {
-                PackageTreeNode packageTreeNode = (PackageTreeNode) map2.get(string2);
+                PackageTreeNode packageTreeNode = (PackageTreeNode) map2.get(packagePath);
                 if (packageTreeNode != null) {
                     packageTreeNode.getTopLevelAncestor().setRequireLowerCaseStart();
                 }
@@ -495,23 +484,23 @@ public class RootPackageNode extends PackageTreeNodeBase {
         }
 
         if (bl1) {
-            map1 = this.buildCollapseMappings(listMultimap, nameExclusionSet, changeLogMapping1, string1, twoKeyMap, scriptEnvironment1);
+            map1 = this.buildCollapseMappings(listMultimap, nameExclusionSet, changeLogMapping1, value, twoKeyMap, scriptEnvironment1);
         }
 
-        PackageNameGenerator packageNameGenerator = new PackageNameGenerator(classPathResolver1, boolean1, boolean2, bl, string, mixedCaseNamesMode1, list1);
-        HashMap hashMap = this.assignPackageNames(nameExclusionSet, changeLogMapping1, packageNameGenerator, listMultimap, bl1, map1, bl);
+        PackageNameGenerator packageNameGenerator = new PackageNameGenerator(classPathResolver1, boolean1, boolean2, randomizeNames, namePrefix, mixedCaseNamesMode1, list1);
+        HashMap hashMap = this.assignPackageNames(nameExclusionSet, changeLogMapping1, packageNameGenerator, listMultimap, bl1, map1, randomizeNames);
         if (changeLogMapping1 != null) {
             ArrayList arrayList = changeLogMapping1.getSortedPackageNames();
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                String string3 = (String) arrayList.get(i);
-                if (!hashMap.containsKey(string3)) {
-                    String string4 = changeLogMapping1.getNewPackageName(string3);
-                    if (string4 == null) {
-                        string4 = string3;
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                String key = (String) arrayList.get(elementIndex);
+                if (!hashMap.containsKey(key)) {
+                    String newPackageName = changeLogMapping1.getNewPackageName(key);
+                    if (newPackageName == null) {
+                        newPackageName = key;
                     }
 
-                    hashMap.put(string3, string4);
+                    hashMap.put(key, newPackageName);
                 }
             }
         }
@@ -529,19 +518,19 @@ public class RootPackageNode extends PackageTreeNodeBase {
         boolean bl = false;
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < list1.size(); i++) {
-            ProgramClass programClass1 = (ProgramClass) list1.get(i);
-            String string = programClass1.getClassName();
-            if (changeLogMapping1 != null && changeLogMapping1.hasClassMapping(string)) {
-                String string2 = changeLogMapping1.getNewClassName(string);
-                if (string2 == null) {
-                    string2 = string;
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            ProgramClass programClass1 = (ProgramClass) list1.get(elementIndex);
+            String className = programClass1.getClassName();
+            if (changeLogMapping1 != null && changeLogMapping1.hasClassMapping(className)) {
+                String newClassName = changeLogMapping1.getNewClassName(className);
+                if (newClassName == null) {
+                    newClassName = className;
                 }
 
-                String string3 = ClassFileBase.stripPackage(string2);
-                ProgramClass programClass3 = ((com.zelix.klassmaster.classfile.ProgramClass) (map1.put(string3, programClass1)));
+                String key = ClassFileBase.stripPackage(newClassName);
+                ProgramClass programClass3 = ((com.zelix.klassmaster.classfile.ProgramClass) (map1.put(key, programClass1)));
                 if (programClass3 != null && programClass3 != programClass1) {
-                    map1.put(string3, programClass3);
+                    map1.put(key, programClass3);
                     observableHolder.setValue(
                             "Unqualified class names for classes '"
                                     + programClass3.getDottedClassName()
@@ -553,12 +542,12 @@ public class RootPackageNode extends PackageTreeNodeBase {
                     break;
                 }
 
-                arrayList.add(string3);
+                arrayList.add(key);
             } else if (nameExclusionSet.isClassExcluded(programClass1) || programClass1.getSimpleName().equals("package-info")) {
-                String string1 = programClass1.getSimpleName();
+                String simpleName = programClass1.getSimpleName();
                 ProgramClass programClass2 = ((com.zelix.klassmaster.classfile.ProgramClass) (map1.put(programClass1.getSimpleName(), programClass1)));
                 if (programClass2 != null && programClass2 != programClass1) {
-                    map1.put(string1, programClass2);
+                    map1.put(simpleName, programClass2);
                     observableHolder.setValue(
                             "Unqualified class names for classes '"
                                     + programClass2.getDottedClassName()
@@ -570,13 +559,13 @@ public class RootPackageNode extends PackageTreeNodeBase {
                     break;
                 }
 
-                arrayList.add(string1);
+                arrayList.add(simpleName);
             }
         }
 
         if (bl) {
-            for (int i = 0; i < arrayList.size(); i++) {
-                map1.remove(arrayList.get(i));
+            for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+                map1.remove(arrayList.get(elementIndexValue));
             }
         }
 
@@ -585,13 +574,13 @@ public class RootPackageNode extends PackageTreeNodeBase {
 
     public static String normalizePackageName(String string, ObservableHolder observableHolder) throws ZkmException, IOException {
         String string1 = string.trim();
-        String string2 = null;
+        String value = null;
         if (string1.length() > 0) {
             string1 = string1.replace('.', '/');
             if (string1.startsWith("/")) {
-                string2 = "Leading package separator character";
+                value = "Leading package separator character";
             } else if (string1.indexOf("//") > -1) {
-                string2 = "Duplicate package separator character";
+                value = "Duplicate package separator character";
             } else {
                 if (string1.endsWith("/")) {
                     string1 = string1.substring(0, string1.length() - 1);
@@ -599,12 +588,12 @@ public class RootPackageNode extends PackageTreeNodeBase {
 
                 StringTokenizer stringTokenizer = new StringTokenizer(string1, "/");
 
-                while (stringTokenizer.hasMoreTokens() && string2 == null) {
+                while (stringTokenizer.hasMoreTokens() && value == null) {
                     String string3 = stringTokenizer.nextToken();
 
-                    for (int i = 0; i < string3.length(); i++) {
-                        if (!Character.isJavaIdentifierPart(string3.charAt(i))) {
-                            string2 = "Invalid character '" + string3.charAt(i) + "'";
+                    for (int characterIndex = 0; characterIndex < string3.length(); characterIndex++) {
+                        if (!Character.isJavaIdentifierPart(string3.charAt(characterIndex))) {
+                            value = "Invalid character '" + string3.charAt(characterIndex) + "'";
                             break;
                         }
                     }
@@ -612,7 +601,7 @@ public class RootPackageNode extends PackageTreeNodeBase {
             }
         }
 
-        observableHolder.setValue(string2);
+        observableHolder.setValue(value);
         return string1;
     }
 
@@ -639,18 +628,18 @@ public class RootPackageNode extends PackageTreeNodeBase {
         Iterator iterator = listMultimap.keySet().iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            boolean bl = true;
-            Iterator iterator1 = listMultimap.getValues(string).iterator();
+            String key = (String) iterator.next();
+            boolean value = true;
+            Iterator iterator1 = listMultimap.getValues(key).iterator();
 
             while (iterator1.hasNext()) {
-                String string1 = (String) iterator1.next();
-                if (!((PackageTreeNode) map1.get(string1)).isArchiveOnly()) {
-                    bl = false;
+                String keyValue = (String) iterator1.next();
+                if (!((PackageTreeNode) map1.get(keyValue)).isArchiveOnly()) {
+                    value = false;
                 }
             }
 
-            treeMap.put(string, bl);
+            treeMap.put(key, value);
         }
 
         iterator = treeMap.entrySet().iterator();
@@ -668,13 +657,13 @@ public class RootPackageNode extends PackageTreeNodeBase {
             Iterator iterator = arrayList.iterator();
 
             while (iterator.hasNext()) {
-                String string = (String) iterator.next();
-                String string1 = changeLogMapping1.getNewPackageName(string);
-                if (string1 == null) {
-                    string1 = string;
+                String key = (String) iterator.next();
+                String newPackageName = changeLogMapping1.getNewPackageName(key);
+                if (newPackageName == null) {
+                    newPackageName = key;
                 }
 
-                hashMap.put(string, string1);
+                hashMap.put(key, newPackageName);
             }
         }
 
@@ -708,57 +697,57 @@ public class RootPackageNode extends PackageTreeNodeBase {
         Collections.sort(list1, Collections.reverseOrder());
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            string = string.replace(SystemEnvironmentConstants.PATH_SEPARATOR_CHAR, '/');
+            String value = (String) iterator.next();
+            value = value.replace(SystemEnvironmentConstants.PATH_SEPARATOR_CHAR, '/');
             boolean bl = false;
 
-            for (int i = 0; i < list1.size(); i++) {
-                String string1 = (String) list1.get(i);
-                if (string.startsWith(string1) && string.length() > string1.length() && string.charAt(string1.length()) == '/') {
-                    twoKeyMap.putValue(string1, string.substring(string1.length()), string);
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String prefix = (String) list1.get(elementIndex);
+                if (value.startsWith(prefix) && value.length() > prefix.length() && value.charAt(prefix.length()) == '/') {
+                    twoKeyMap.putValue(prefix, value.substring(prefix.length()), value);
                     bl = true;
                     break;
                 }
             }
 
             if (!bl) {
-                String string2;
-                if (string.charAt(0) == '/') {
-                    string2 = string;
+                String key;
+                if (value.charAt(0) == '/') {
+                    key = value;
                 } else {
-                    string2 = '/' + string;
+                    key = '/' + value;
                 }
 
-                twoKeyMap.putValue("", string2, string);
+                twoKeyMap.putValue("", key, value);
             }
         }
 
         return twoKeyMap;
     }
 
-    public HashMap buildCollapseTargetMap(NameExclusionSet nameExclusionSet, ChangeLogMapping changeLogMapping1, String string) throws IOException {
+    public HashMap buildCollapseTargetMap(NameExclusionSet nameExclusionSet, ChangeLogMapping changeLogMapping1, String valueArgument) throws IOException {
         HashMap hashMap = ZkmUtils.createHashMap();
         Iterator iterator = super.children.iterator();
 
         while (iterator.hasNext()) {
             PackageTreeNode packageTreeNode = (PackageTreeNode) iterator.next();
-            String string1 = packageTreeNode.getPackagePath();
-            String string2;
-            if (changeLogMapping1 != null && changeLogMapping1.hasPackageMapping(string1)) {
-                String string3 = changeLogMapping1.getNewPackageName(string1);
-                if (string3 != null) {
-                    string2 = string3;
+            String packagePath = packageTreeNode.getPackagePath();
+            String value;
+            if (changeLogMapping1 != null && changeLogMapping1.hasPackageMapping(packagePath)) {
+                String newPackageName = changeLogMapping1.getNewPackageName(packagePath);
+                if (newPackageName != null) {
+                    value = newPackageName;
                 } else {
-                    string2 = string1;
+                    value = packagePath;
                 }
-            } else if (nameExclusionSet.isPackageExcluded(string1)) {
-                string2 = string1;
+            } else if (nameExclusionSet.isPackageExcluded(packagePath)) {
+                value = packagePath;
             } else {
-                string2 = string;
+                value = valueArgument;
             }
 
-            hashMap.put(string1, string2);
-            packageTreeNode.collectRetainedPackageNames(hashMap, nameExclusionSet, changeLogMapping1, string2);
+            hashMap.put(packagePath, value);
+            packageTreeNode.collectRetainedPackageNames(hashMap, nameExclusionSet, changeLogMapping1, value);
         }
 
         return hashMap;
@@ -771,19 +760,19 @@ public class RootPackageNode extends PackageTreeNodeBase {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getKey();
-            String string1 = (String) entry.getValue();
-            String string2 = ((java.lang.String) (map1.put(string, string1)));
-            if (string2 != null && !string2.equals(string1)) {
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            String valueValue = ((java.lang.String) (map1.put(key, value)));
+            if (valueValue != null && !valueValue.equals(value)) {
                 bl = true;
-                observableHolder.setValue("Non-class files '" + string2 + "' and '" + string1 + "' would clash");
-                map1.put(string, string2);
+                observableHolder.setValue("Non-class files '" + valueValue + "' and '" + value + "' would clash");
+                map1.put(key, valueValue);
 
-                for (int i = 0; i < arrayList.size(); i++) {
-                    map1.remove(arrayList.get(i));
+                for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                    map1.remove(arrayList.get(elementIndex));
                 }
             } else {
-                arrayList.add(string);
+                arrayList.add(key);
             }
         }
 

@@ -16,10 +16,10 @@ public class LocalVariableTypeEntry extends LocalVariableEntry {
     public void remapDescriptorClassNames(Object object, Object object1, HashMap hashMap) throws ZkmProcessingException {
         int ba = (Integer) object1;
         int bb = (Integer) object;
-        String string = this.getDescriptorConstant().getValue();
-        String string1 = SignatureAttribute.remapSignature(string, bb, ba, hashMap, this);
-        if (!string.equals(string1)) {
-            this.getDescriptorConstant().setValue(string1);
+        String value = this.getDescriptorConstant().getValue();
+        String valueValue = SignatureAttribute.remapSignature(value, bb, ba, hashMap, this);
+        if (!value.equals(valueValue)) {
+            this.getDescriptorConstant().setValue(valueValue);
         }
     }
 

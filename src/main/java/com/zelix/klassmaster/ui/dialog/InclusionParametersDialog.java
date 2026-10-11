@@ -94,7 +94,7 @@ public class InclusionParametersDialog extends ParameterListDialog implements He
     }
 
     public InclusionParametersDialog(
-            String string,
+            String title,
             ZkmMainWindow zkmMainWindow,
             ReferenceObfIncludeStore referenceObfIncludeStore,
             ScriptEnvironment scriptEnvironment1,
@@ -102,7 +102,7 @@ public class InclusionParametersDialog extends ParameterListDialog implements He
     ) throws ZkmException, IOException {
         super(zkmMainWindow, scriptEnvironment1, dialogCallback1, 3);
         this.includeStore = referenceObfIncludeStore;
-        this.initComponents(string);
+        this.initComponents(title);
         SwingUtils.requestFocusOnEdt(super.okBtn);
     }
 
@@ -137,17 +137,17 @@ public class InclusionParametersDialog extends ParameterListDialog implements He
         container1.add(super.cancelBtn, "cancelBtn");
         container1.add(super.helpBtn, "helpBtn");
         ConstraintLayout constraintLayout2;
-        String[] strings;
+        String[] layoutConstraintsValue;
         if (this.includeStore.getEntryCount() == 0) {
             super.explanationArea.setText(noInclusionsHint);
             constraintLayout2 = constraintLayout1;
-            strings = layoutConstraints;
+            layoutConstraintsValue = layoutConstraints;
         } else {
             constraintLayout2 = constraintLayout1;
-            strings = layoutConstraints;
+            layoutConstraintsValue = layoutConstraints;
         }
 
-        constraintLayout2.setConstraints(strings);
+        constraintLayout2.setConstraints(layoutConstraintsValue);
     }
 
     @Override
@@ -177,12 +177,12 @@ public class InclusionParametersDialog extends ParameterListDialog implements He
             Enumeration enumeration = this.includeStore.enumerateEntries();
 
             while (enumeration.hasMoreElements()) {
-                String string = (String) enumeration.nextElement();
+                String key = (String) enumeration.nextElement();
 
                 try {
-                    RenameFilterModel renameFilterModel = this.parseParameter(string);
-                    if (renameFilterModel.toScriptText().equals(string)) {
-                        this.addParameter(string);
+                    RenameFilterModel renameFilterModel = this.parseParameter(key);
+                    if (renameFilterModel.toScriptText().equals(key)) {
+                        this.addParameter(key);
                     }
                 } catch (AssertionFailedException assertionFailedException) {
                     throw assertionFailedException;

@@ -87,26 +87,26 @@ public class ASTLoadStatement extends SummarizingStatementNode {
     }
 
     public void expandPathPattern(String string, Map map1, ArchiveSkipMode archiveSkipMode, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
-        String string1 = ZkmFileUtils.normalizeSeparators(string);
+        String valueValue = ZkmFileUtils.normalizeSeparators(string);
         File file1;
-        if (ZkmFileUtils.isRelativePath(string1)) {
-            file1 = new File(scriptEnvironment1.getDefaultDirectory(), string1);
+        if (ZkmFileUtils.isRelativePath(valueValue)) {
+            file1 = new File(scriptEnvironment1.getDefaultDirectory(), valueValue);
         } else {
-            file1 = new File(string1);
+            file1 = new File(valueValue);
         }
 
         if (file1.exists()) {
-            map1.put(file1.getAbsolutePath(), string1);
-        } else if (string1.indexOf("*") > -1
+            map1.put(file1.getAbsolutePath(), valueValue);
+        } else if (valueValue.indexOf("*") > -1
                 && (
-                ZkmFileUtils.looksLikeArchiveName(string1)
-                        || ZkmFileUtils.isXmlFileName(string1)
-                        || ZkmFileUtils.isYamlFileName(string1)
-                        || ZkmFileUtils.isPropertiesFileName(string1)
-                        || string1.toLowerCase().endsWith(".class")
+                ZkmFileUtils.looksLikeArchiveName(valueValue)
+                        || ZkmFileUtils.isXmlFileName(valueValue)
+                        || ZkmFileUtils.isYamlFileName(valueValue)
+                        || ZkmFileUtils.isPropertiesFileName(valueValue)
+                        || valueValue.toLowerCase().endsWith(".class")
         )) {
             ObservableHolder observableHolder = new ObservableHolder();
-            List list2 = ZkmFileUtils.expandFilePath(string1, scriptEnvironment1.getDefaultDirectory(), observableHolder);
+            List list2 = ZkmFileUtils.expandFilePath(valueValue, scriptEnvironment1.getDefaultDirectory(), observableHolder);
             if (!observableHolder.isValueNull()) {
                 scriptEnvironment1.logWarning(
                         (String) observableHolder.getValue()
@@ -124,8 +124,8 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                 Iterator iterator = list2.iterator();
 
                 while (iterator.hasNext()) {
-                    String string4 = (String) iterator.next();
-                    map1.put(string4, string1);
+                    String key = (String) iterator.next();
+                    map1.put(key, valueValue);
                 }
             } else {
                 scriptEnvironment1.logWarning(
@@ -138,8 +138,8 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                                 + "'"
                 );
             }
-        } else if (string1.endsWith("*")) {
-            String string2 = string1.substring(0, string1.length() - 1);
+        } else if (valueValue.endsWith("*")) {
+            String string2 = valueValue.substring(0, valueValue.length() - 1);
             if (ZkmFileUtils.isRelativePath(string2)) {
                 file1 = new File(scriptEnvironment1.getDefaultDirectory(), string2);
             } else {
@@ -147,14 +147,14 @@ public class ASTLoadStatement extends SummarizingStatementNode {
             }
 
             if (file1.exists() && file1.isDirectory()) {
-                map1.put(file1.getAbsolutePath(), string1);
+                map1.put(file1.getAbsolutePath(), valueValue);
                 DirectoryFileLister directoryFileLister = new DirectoryFileLister(file1);
                 List list1 = directoryFileLister.listSubdirectories();
-                int ba = list1.size();
+                int list1Size = list1.size();
 
-                for (int i = 0; i < ba; i++) {
-                    String string3 = (String) list1.get(i);
-                    map1.put(string3, string1);
+                for (int elementIndex = 0; elementIndex < list1Size; elementIndex++) {
+                    String keyValue = (String) list1.get(elementIndex);
+                    map1.put(keyValue, valueValue);
                 }
             } else if (file1.exists()) {
                 scriptEnvironment1.logFatalError("\"" + file1.getAbsolutePath() + "\" is not a directory");
@@ -163,7 +163,7 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                         "\""
                                 + file1.getAbsolutePath()
                                 + "\" does not exist"
-                                + (string1.endsWith("**") ? ". '**' not supported." : "")
+                                + (valueValue.endsWith("**") ? ". '**' not supported." : "")
                                 + " Specified path was '"
                                 + string
                                 + "' Default directory was '"
@@ -257,24 +257,24 @@ public class ASTLoadStatement extends SummarizingStatementNode {
 
         while (iterator3.hasNext()) {
             Entry entry1 = (Entry) iterator3.next();
-            String string2 = (String) entry1.getKey();
-            File file1 = new File(string2);
+            String key = (String) entry1.getKey();
+            File file1 = new File(key);
             OpenPathEntry openPathEntry1 = (OpenPathEntry) entry1.getValue();
             ArchivePathFilter archivePathFilter = openPathEntry1.getFilter();
-            if (!ZkmFileUtils.isKnownArchiveName(string2) && !file1.isDirectory() && !archivePathFilter.acceptsPath(string2)) {
+            if (!ZkmFileUtils.isKnownArchiveName(key) && !file1.isDirectory() && !archivePathFilter.acceptsPath(key)) {
                 messageReporter1.reportInfo(
-                        "INFO:", "Filtering out path '" + string2 + "' because it does not match specified filter '" + archivePathFilter.toFilterExpression() + "' (A)"
+                        "INFO:", "Filtering out path '" + key + "' because it does not match specified filter '" + archivePathFilter.toFilterExpression() + "' (A)"
                 );
             } else {
                 boolean bl = false;
-                if (linkedHashMap2.containsKey(string2)) {
-                    messageReporter1.reportInfo("INFO:", "Skipping path '" + string2 + "' because of parameter -\"" + (String) linkedHashMap2.get(string2) + "\" (A)");
-                    set1.add(string2);
-                    if (linkedHashMap3.containsKey(string2)) {
+                if (linkedHashMap2.containsKey(key)) {
+                    messageReporter1.reportInfo("INFO:", "Skipping path '" + key + "' because of parameter -\"" + (String) linkedHashMap2.get(key) + "\" (A)");
+                    set1.add(key);
+                    if (linkedHashMap3.containsKey(key)) {
                         messageReporter1.reportInfo(
-                                "INFO:", "Unskipping path '" + string2 + "' because of parameter +\"" + (String) linkedHashMap3.get(string2) + "\" (A)"
+                                "INFO:", "Unskipping path '" + key + "' because of parameter +\"" + (String) linkedHashMap3.get(key) + "\" (A)"
                         );
-                        set2.add(string2);
+                        set2.add(key);
                     } else {
                         bl = true;
                     }
@@ -282,7 +282,7 @@ public class ASTLoadStatement extends SummarizingStatementNode {
 
                 if (!bl) {
                     this.processInputPath(
-                            string2,
+                            key,
                             file1,
                             openPathEntry1,
                             linkedHashSet,
@@ -324,9 +324,9 @@ public class ASTLoadStatement extends SummarizingStatementNode {
     @Override
     public void executeStatement(Object object, Object object1, Object object2, Object object3) throws ZkmException, IOException {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object;
-        int ba = (Integer) object2;
-        int bb = (Integer) object1;
-        int bc = (Integer) object3;
+        int warningCountValue = (Integer) object2;
+        int messageCountValue = (Integer) object1;
+        int errorCountValue = (Integer) object3;
         ClassRepository classRepository1 = scriptEnvironment1.getClassRepository();
         PrintWriter printWriter = scriptEnvironment1.getLogWriter();
         LogMessageReporter logMessageReporter = new LogMessageReporter(scriptEnvironment1, ZkmScriptSimpleNode.getTimestampPrefix().length());
@@ -337,8 +337,8 @@ public class ASTLoadStatement extends SummarizingStatementNode {
         DedupPrintWriter dedupPrintWriter = new DedupPrintWriter(byteArrayOutputStream);
         PrintWriter printWriter1 = new PrintWriter(byteArrayOutputStream1);
         PrintWriter printWriter2 = new PrintWriter(byteArrayOutputStream2);
-        String string = ZkmScriptSimpleNode.getTimestampPrefix();
-        String string1 = string + " Opening classes...";
+        String timestampPrefix = ZkmScriptSimpleNode.getTimestampPrefix();
+        String string1 = timestampPrefix + " Opening classes...";
         printWriter.println(string1);
         System.out.println(string1);
         HashMap hashMap = ZkmUtils.createHashMap(27);
@@ -400,50 +400,50 @@ public class ASTLoadStatement extends SummarizingStatementNode {
         this.warnUnmatchedSkipClauses(hashSet, hashSet1, logMessageReporter);
         ScriptEnvironment scriptEnvironment3;
         ASTLoadStatement aSTLoadStatement1;
-        int bh;
-        int bi;
-        int bj;
+        int messageCountValue2;
+        int warningCountValue2;
+        int errorCountValue2;
         String string5;
         if (scriptEnvironment1.isVerbose()) {
-            this.printOpenedFiles(inputFileLocations3, string + " Opening JAD files from file system...", printWriter);
-            this.printOpenedFiles(inputFileLocations4, string + " Opening XML files from file system...", printWriter);
+            this.printOpenedFiles(inputFileLocations3, timestampPrefix + " Opening JAD files from file system...", printWriter);
+            this.printOpenedFiles(inputFileLocations4, timestampPrefix + " Opening XML files from file system...", printWriter);
             if (inputFileLocations1.length > 0) {
-                this.printOpenedFiles(inputFileLocations1, string + " Opening YAML files from file system...", printWriter);
+                this.printOpenedFiles(inputFileLocations1, timestampPrefix + " Opening YAML files from file system...", printWriter);
             }
 
             if (inputFileLocations2.length > 0) {
-                this.printOpenedFiles(inputFileLocations2, string + " Opening PROPERTIES files from file system...", printWriter);
+                this.printOpenedFiles(inputFileLocations2, timestampPrefix + " Opening PROPERTIES files from file system...", printWriter);
                 aSTLoadStatement1 = this;
                 scriptEnvironment3 = scriptEnvironment1;
-                bh = bb;
-                bi = ba;
-                bj = bc;
+                messageCountValue2 = messageCountValue;
+                warningCountValue2 = warningCountValue;
+                errorCountValue2 = errorCountValue;
                 string5 = "in parse of";
             } else {
                 aSTLoadStatement1 = this;
                 scriptEnvironment3 = scriptEnvironment1;
-                bh = bb;
-                bi = ba;
-                bj = bc;
+                messageCountValue2 = messageCountValue;
+                warningCountValue2 = warningCountValue;
+                errorCountValue2 = errorCountValue;
                 string5 = "in parse of";
             }
         } else {
             aSTLoadStatement1 = this;
             scriptEnvironment3 = scriptEnvironment1;
-            bh = bb;
-            bi = ba;
-            bj = bc;
+            messageCountValue2 = messageCountValue;
+            warningCountValue2 = warningCountValue;
+            errorCountValue2 = errorCountValue;
             string5 = "in parse of";
         }
 
-        aSTLoadStatement1.printMessageSummary(scriptEnvironment3, bh, bi, bj, string5);
-        bb = scriptEnvironment1.getMessageCount();
-        ba = scriptEnvironment1.getWarningCount();
-        bc = scriptEnvironment1.getErrorCount();
+        aSTLoadStatement1.printMessageSummary(scriptEnvironment3, messageCountValue2, warningCountValue2, errorCountValue2, string5);
+        messageCountValue = scriptEnvironment1.getMessageCount();
+        warningCountValue = scriptEnvironment1.getWarningCount();
+        errorCountValue = scriptEnvironment1.getErrorCount();
         MutableInt mutableInt = new MutableInt(0);
         scriptEnvironment1.clearTrimExclusionMemberSets();
         scriptEnvironment1.setMicroEditionClassesPresent(false);
-        String string6 = zipOutputTarget.getTempFilePath();
+        String tempFilePath = zipOutputTarget.getTempFilePath();
         PrintWriter printWriter4 = printWriter2;
         MutableInt mutableInt1 = mutableInt;
         PrintWriter printWriter3 = printWriter1;
@@ -458,7 +458,7 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                 hashSet3,
                 hashSet4,
                 hashSet5,
-                string6,
+                tempFilePath,
                 inputFileLocations3,
                 inputFileLocations4,
                 inputFileLocations1,
@@ -476,16 +476,16 @@ public class ASTLoadStatement extends SummarizingStatementNode {
         dedupPrintWriter.close();
         printWriter1.close();
         printWriter2.close();
-        this.printMessageSummary(scriptEnvironment1, bb, ba, bc, "while executing");
+        this.printMessageSummary(scriptEnvironment1, messageCountValue, warningCountValue, errorCountValue, "while executing");
         String string2 = byteArrayOutputStream1.toString();
         String string3 = byteArrayOutputStream.toString();
         String string4 = byteArrayOutputStream2.toString();
         PrintStream printStream = System.out;
         StringBuilder stringBuilder = new StringBuilder();
-        bh = string.length() + 1;
+        messageCountValue2 = timestampPrefix.length() + 1;
         Integer integer = 32;
         printStream.println(
-                stringBuilder.append(ZkmStringUtils.repeatChar(bh, integer)).append("Opened ").append(be).append(be > 1 ? " classes" : " class").toString()
+                stringBuilder.append(ZkmStringUtils.repeatChar(messageCountValue2, integer)).append("Opened ").append(be).append(be > 1 ? " classes" : " class").toString()
         );
         if (string3.length() > 0) {
             int bf = ZkmStringUtils.countOccurrences(string3, HiddenOptionFlags.LINE_SEPARATOR);
@@ -493,10 +493,10 @@ public class ASTLoadStatement extends SummarizingStatementNode {
             printWriter.println(string3);
             PrintStream printStream1 = System.err;
             StringBuilder stringBuilder1 = new StringBuilder();
-            bh = string.length() + 1;
+            messageCountValue2 = timestampPrefix.length() + 1;
             Integer integer1 = 32;
             printStream1.println(
-                    stringBuilder1.append(ZkmStringUtils.repeatChar(bh, integer1))
+                    stringBuilder1.append(ZkmStringUtils.repeatChar(messageCountValue2, integer1))
                             .append(bf)
                             .append(bf > 1 ? " errors" : " error")
                             .append(" detected during open!")
@@ -511,10 +511,10 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                 printWriter.println(string2);
                 PrintStream printStream2 = System.out;
                 StringBuilder stringBuilder2 = new StringBuilder();
-                bh = string.length() + 1;
+                messageCountValue2 = timestampPrefix.length() + 1;
                 Integer integer2 = 32;
                 printStream2.println(
-                        stringBuilder2.append(ZkmStringUtils.repeatChar(bh, integer2))
+                        stringBuilder2.append(ZkmStringUtils.repeatChar(messageCountValue2, integer2))
                                 .append(value)
                                 .append(value > 1 ? " API warnings" : " warning")
                                 .append(" detected during open.")
@@ -524,9 +524,9 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                 printWriter.println("API call warnings disabled.");
                 PrintStream printStream3 = System.out;
                 StringBuilder stringBuilder3 = new StringBuilder();
-                bh = string.length() + 1;
+                messageCountValue2 = timestampPrefix.length() + 1;
                 Integer integer3 = 32;
-                printStream3.println(stringBuilder3.append(ZkmStringUtils.repeatChar(bh, integer3)).append("API call warnings disabled.").toString());
+                printStream3.println(stringBuilder3.append(ZkmStringUtils.repeatChar(messageCountValue2, integer3)).append("API call warnings disabled.").toString());
             }
         }
 
@@ -551,46 +551,46 @@ public class ASTLoadStatement extends SummarizingStatementNode {
 
     public void warnUnmatchedSkipClauses(Set set1, Set set2, MessageReporter messageReporter1) {
         if (this.nestedSkipPaths.size() + this.skipPaths.size() > set1.size()) {
-            int ba = 0;
+            int elementIndex = 0;
             int be = 0;
 
             for (List list3 = this.skipPaths; be < list3.size(); list3 = this.skipPaths) {
-                String string = (String) this.skipPaths.get(ba);
+                String string = (String) this.skipPaths.get(elementIndex);
                 if (!set1.contains(string)) {
                     this.warnUnmatchedClause(string, "Skip", messageReporter1);
                 }
 
-                be = ++ba;
+                be = ++elementIndex;
             }
 
-            ba = 0;
+            elementIndex = 0;
             be = 0;
 
             for (List list1 = this.nestedSkipPaths; be < list1.size(); list1 = this.nestedSkipPaths) {
-                String string1 = (String) this.nestedSkipPaths.get(ba);
+                String string1 = (String) this.nestedSkipPaths.get(elementIndex);
                 if (!set1.contains(string1)) {
                     this.warnUnmatchedClause(string1, "Skip", messageReporter1);
                 }
 
-                be = ++ba;
+                be = ++elementIndex;
             }
         }
 
         if (this.nestedUnskipPaths.size() + this.unskipPaths.size() > set2.size()) {
-            int bb = 0;
-            int bd = bb;
+            int elementIndexValue = 0;
+            int elementIndexValue3 = elementIndexValue;
 
-            for (List list2 = this.unskipPaths; bd < list2.size(); list2 = this.unskipPaths) {
-                String string2 = (String) this.unskipPaths.get(bb);
+            for (List list2 = this.unskipPaths; elementIndexValue3 < list2.size(); list2 = this.unskipPaths) {
+                String string2 = (String) this.unskipPaths.get(elementIndexValue);
                 if (!set2.contains(string2)) {
                     this.warnUnmatchedClause(string2, "Unskip", messageReporter1);
                 }
 
-                bd = ++bb;
+                elementIndexValue3 = ++elementIndexValue;
             }
 
-            for (int i = 0; i < this.nestedUnskipPaths.size(); i++) {
-                String string3 = (String) this.nestedUnskipPaths.get(i);
+            for (int elementIndexValue2 = 0; elementIndexValue2 < this.nestedUnskipPaths.size(); elementIndexValue2++) {
+                String string3 = (String) this.nestedUnskipPaths.get(elementIndexValue2);
                 if (!set2.contains(string3)) {
                     this.warnUnmatchedClause(string3, "Unskip", messageReporter1);
                 }
@@ -650,8 +650,8 @@ public class ASTLoadStatement extends SummarizingStatementNode {
         ArrayList arrayList1 = new ArrayList();
         ArrayList arrayList2 = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptNode zkmScriptNode = this.jjtGetChild(childrenElementIndex);
             zkmScriptNode.execute(this, scriptEnvironment1);
             if (zkmScriptNode instanceof ScriptValueNode) {
                 String string = ((ScriptValueNode) zkmScriptNode).getValue().trim();
@@ -711,7 +711,7 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                                     + "' statement had "
                                     + zkmScriptNode.getClass().getName()
                                     + " as child "
-                                    + i
+                                    + childrenElementIndex
                                     + " at line "
                                     + this.getStatementLine()
                                     + ". (1)"
@@ -764,7 +764,7 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                                 + "' statement had "
                                 + zkmScriptNode.getClass().getName()
                                 + " as child "
-                                + i
+                                + childrenElementIndex
                                 + " at line "
                                 + this.getStatementLine()
                                 + ". (2)"
@@ -773,11 +773,11 @@ public class ASTLoadStatement extends SummarizingStatementNode {
         }
 
         this.openPathEntries = new ArrayList(linkedHashSet.size());
-        int bf = 0;
+        int elementIndex = 0;
 
-        for (Iterator iterator = linkedHashSet.iterator(); iterator.hasNext(); bf++) {
-            String string5 = (String) iterator.next();
-            this.openPathEntries.add(new OpenPathEntry(string5, (ArchivePathFilter) arrayList.get(bf), (String) arrayList1.get(bf), (String) arrayList2.get(bf)));
+        for (Iterator iterator = linkedHashSet.iterator(); iterator.hasNext(); elementIndex++) {
+            String pathValue = (String) iterator.next();
+            this.openPathEntries.add(new OpenPathEntry(pathValue, (ArchivePathFilter) arrayList.get(elementIndex), (String) arrayList1.get(elementIndex), (String) arrayList2.get(elementIndex)));
         }
 
         this.skipPaths = new ArrayList(linkedHashSet1);
@@ -815,12 +815,12 @@ public class ASTLoadStatement extends SummarizingStatementNode {
         if (!file1.exists()) {
             scriptEnvironment1.logFatalError("'" + file1.getAbsolutePath() + "' does not exist. (3)");
         } else if (file1.isFile() && !file1.isDirectory()) {
-            String string1 = openPathEntry.getExpectedInitialSha256();
-            if (string1 != null) {
-                this.verifySha256(file1, string1, scriptEnvironment1);
+            String expectedInitialSha256 = openPathEntry.getExpectedInitialSha256();
+            if (expectedInitialSha256 != null) {
+                this.verifySha256(file1, expectedInitialSha256, scriptEnvironment1);
             }
 
-            String string2 = openPathEntry.getExpectedFinalSha256();
+            String expectedFinalSha256 = openPathEntry.getExpectedFinalSha256();
             if (string.endsWith(".class")) {
                 set1.add(new InputFileLocation(openPathEntry.getExpectedFinalSha256(), file1));
                 scriptEnvironment1.setLooseClassFilesLoaded(true);
@@ -831,15 +831,15 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                     printWriter.println("\tFile '" + file1.getAbsolutePath() + "' has SHA256 hash '" + string3 + "'");
                 }
 
-                boolean bl = false;
+                boolean archiveFile = false;
 
                 try {
-                    bl = ZkmFileUtils.isArchiveFile(file1);
+                    archiveFile = ZkmFileUtils.isArchiveFile(file1);
                 } catch (IOException iOException1) {
                     scriptEnvironment1.logFatalError("FILE ERROR '" + file1.getAbsolutePath() + "' : " + iOException1);
                 }
 
-                if (bl) {
+                if (archiveFile) {
                     File file3 = null;
 
                     try {
@@ -852,7 +852,7 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                     boolean openNestedArchives = this.openNestedArchives;
                     List list5 = this.nestedSkipPaths;
                     List list6 = this.nestedUnskipPaths;
-                    String string4 = file1.getAbsolutePath();
+                    String absolutePath = file1.getAbsolutePath();
                     MessageReporter messageReporter2 = messageReporter1;
                     Set set11 = set10;
                     ZipOutputTarget zipOutputTarget1 = zipOutputTarget;
@@ -872,20 +872,20 @@ public class ASTLoadStatement extends SummarizingStatementNode {
                             set7,
                             set8,
                             set9,
-                            string4,
+                            absolutePath,
                             (SourceArchive) null,
                             zipOutputTarget1,
                             set11,
                             messageReporter2
                     );
                 } else if (string.endsWith(".jad")) {
-                    list1.add(new InputFileLocation(string2, file1));
+                    list1.add(new InputFileLocation(expectedFinalSha256, file1));
                 } else if (ZkmFileUtils.isXmlFileName(string)) {
-                    list2.add(new InputFileLocation(string2, file1));
+                    list2.add(new InputFileLocation(expectedFinalSha256, file1));
                 } else if (ZkmFileUtils.isYamlFileName(string)) {
-                    list3.add(new InputFileLocation(string2, file1));
+                    list3.add(new InputFileLocation(expectedFinalSha256, file1));
                 } else if (ZkmFileUtils.isPropertiesFileName(string)) {
-                    list4.add(new InputFileLocation(string2, file1));
+                    list4.add(new InputFileLocation(expectedFinalSha256, file1));
                 } else {
                     scriptEnvironment1.logFatalError("File '" + file1.getAbsolutePath() + "' not a recognized type.");
                 }

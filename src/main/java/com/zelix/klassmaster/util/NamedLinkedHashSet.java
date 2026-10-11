@@ -10,17 +10,17 @@ public class NamedLinkedHashSet extends LinkedHashSet implements NamedSet {
     public NamedLinkedHashSet() {
     }
 
-    public NamedLinkedHashSet(String string, Map map1) {
-        this(string, map1.keySet());
+    public NamedLinkedHashSet(String nameArgument, Map map1) {
+        this(nameArgument, map1.keySet());
     }
 
     public NamedLinkedHashSet(Collection collection1) {
         super(collection1);
     }
 
-    public NamedLinkedHashSet(String string, Collection collection1) {
+    public NamedLinkedHashSet(String nameArgument, Collection collection1) {
         super(collection1);
-        this.name = string;
+        this.name = nameArgument;
     }
 
     @Override

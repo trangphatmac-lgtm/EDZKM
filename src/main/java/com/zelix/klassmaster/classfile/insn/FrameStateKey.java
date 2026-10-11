@@ -11,12 +11,12 @@ public abstract class FrameStateKey {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeEnabled = StackFrameState.isStrictMergeEnabled();
-        boolean bl1 = object instanceof FrameStateKey;
+        boolean bl1 = other instanceof FrameStateKey;
         if (strictMergeEnabled) {
             if (bl1) {
-                return this.keyString.equals(((FrameStateKey) object).keyString);
+                return this.keyString.equals(((FrameStateKey) other).keyString);
             }
 
             bl1 = false;

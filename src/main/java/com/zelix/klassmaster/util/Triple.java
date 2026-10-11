@@ -3,8 +3,11 @@ package com.zelix.klassmaster.util;
 import java.io.Serializable;
 
 public class Triple implements Serializable {
+    /** first; the field name is retained for serialized settings compatibility. */
     public Object N;
+    /** second; the field name is retained for serialized settings compatibility. */
     public Object n;
+    /** third; the field name is retained for serialized settings compatibility. */
     public Object z;
 
     public Object getFirst() {
@@ -18,25 +21,25 @@ public class Triple implements Serializable {
             ba = 0 ^ this.N.hashCode();
         }
 
-        Object object;
+        Object third;
         if (this.n != null) {
             ba ^= this.n.hashCode();
-            object = this.z;
+            third = this.z;
         } else {
-            object = this.z;
+            third = this.z;
         }
 
-        if (object != null) {
+        if (third != null) {
             ba ^= this.z.hashCode();
         }
 
         return ba;
     }
 
-    public Triple(Object object, Object object1, Object object2) {
-        this.N = object;
-        this.n = object1;
-        this.z = object2;
+    public Triple(Object first, Object second, Object third) {
+        this.N = first;
+        this.n = second;
+        this.z = third;
     }
 
     public Object getThird() {
@@ -44,12 +47,12 @@ public class Triple implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Triple)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof Triple)) {
             return false;
         }
 
-        Triple triple1 = (Triple) object;
+        Triple triple1 = (Triple) other;
         return (this.N == null && triple1.N == null || this.N != null && triple1.N != null && this.N.equals(triple1.N))
                 && (this.n == null && triple1.n == null || this.n != null && triple1.n != null && this.n.equals(triple1.n))
                 && (this.z == null && triple1.z == null || this.z != null && triple1.z != null && this.z.equals(triple1.z));

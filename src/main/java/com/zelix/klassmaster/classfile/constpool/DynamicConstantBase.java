@@ -9,8 +9,8 @@ public abstract class DynamicConstantBase extends ResolvedDynamicConstantBase im
     public final int bootstrapMethodIndex;
     public final int nameAndTypeIndex;
 
-    public DynamicConstantBase(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public DynamicConstantBase(int index, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(index, abstractConstantPool);
         this.bootstrapMethodIndex = classFileInputStream.readUnsignedShort();
         this.nameAndTypeIndex = classFileInputStream.readUnsignedShort();
     }

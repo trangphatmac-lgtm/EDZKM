@@ -120,20 +120,11 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         jjtree.openNodeScope(changeLogASTMethodArguments);
         try {
             ChangeLogParser.QualifiedType();
-            block7:
-            while (true) {
-                switch (ChangeLogParser.jj_nt.H) {
-                    case 20: {
-                        break;
-                    }
-                    default: {
-                        ChangeLogParser.jj_la1[46] = jj_gen;
-                        break block7;
-                    }
-                }
+            while (ChangeLogParser.jj_nt.H == COMMA) {
                 ChangeLogParser.jj_consume_token(20);
                 ChangeLogParser.QualifiedType();
             }
+            ChangeLogParser.jj_la1[46] = jj_gen;
             jjtree.closeNodeScope(changeLogASTMethodArguments);
         } catch (Throwable throwable) {
             try {
@@ -160,7 +151,7 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
     }
 
     public static boolean jj_3_1() {
-        return jj_3R_43() ? true : jj_scan_token(LPAREN);
+        return ((jj_3R_43()) || (jj_scan_token(LPAREN)));
     }
 
     public static boolean jj_3R_6() {
@@ -256,9 +247,9 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         return jj_scan_token(ANNOTATION);
     }
 
-    public static void jj_save(int ba, int bb) {
+    public static void jj_save(int jj_2_rtnIndex, int bb) {
         ChangeLogParserJJCalls changeLogParserJJCalls;
-        for (changeLogParserJJCalls = jj_2_rtns[ba]; changeLogParserJJCalls.gen > jj_gen; changeLogParserJJCalls = changeLogParserJJCalls.next) {
+        for (changeLogParserJJCalls = jj_2_rtns[jj_2_rtnIndex]; changeLogParserJJCalls.gen > jj_gen; changeLogParserJJCalls = changeLogParserJJCalls.next) {
             if (changeLogParserJJCalls.next == null) {
                 changeLogParserJJCalls = changeLogParserJJCalls.next = new ChangeLogParserJJCalls();
                 break;
@@ -327,44 +318,38 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         boolean bl = true;
         jjtree.openNodeScope(changeLogASTMethodSignature);
         try {
-            int n;
-            block10:
-            {
-                ChangeLogParser.Name();
-                ChangeLogParser.jj_consume_token(14);
-                switch (ChangeLogParser.jj_nt.H) {
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 36:
-                    case 37:
-                    case 42:
-                    case 43:
-                    case 48:
-                    case 52:
-                    case 57:
-                    case 58:
-                    case 64:
-                    case 67:
-                    case 75:
-                    case 76:
-                    case 77: {
-                        ChangeLogParser.MethodArguments();
-                        break;
-                    }
-                    default: {
-                        ChangeLogParser.jj_la1[43] = jj_gen;
-                        n = 17;
-                        break block10;
-                    }
+            ChangeLogParser.Name();
+            ChangeLogParser.jj_consume_token(14);
+            switch (ChangeLogParser.jj_nt.H) {
+                case 25:
+                case 26:
+                case 27:
+                case 28:
+                case 31:
+                case 32:
+                case 33:
+                case 36:
+                case 37:
+                case 42:
+                case 43:
+                case 48:
+                case 52:
+                case 57:
+                case 58:
+                case 64:
+                case 67:
+                case 75:
+                case 76:
+                case 77: {
+                    ChangeLogParser.MethodArguments();
+                    break;
                 }
-                n = 17;
+                default: {
+                    ChangeLogParser.jj_la1[43] = jj_gen;
+
+                }
             }
-            ChangeLogParser.jj_consume_token(n);
+            ChangeLogParser.jj_consume_token(17);
             jjtree.closeNodeScope(changeLogASTMethodSignature);
         } catch (Throwable throwable) {
             try {
@@ -430,46 +415,35 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         return jj_scan_token(NAME);
     }
 
-    public static void jj_add_error_token(int ba, int bb) {
-        if (bb < 100) {
-            if (bb == jj_endpos + 1) {
-                jj_lasttokens[jj_endpos++] = ba;
+    public static void jj_add_error_token(int tokenKind, int endPosition) {
+        if (endPosition < 100) {
+            if (endPosition == jj_endpos + 1) {
+                jj_lasttokens[jj_endpos++] = tokenKind;
             } else if (jj_endpos != 0) {
                 jj_expentry = new int[jj_endpos];
-                int bc = 0;
-                int bh = bc;
+                int tokenIndex = 0;
+                int copyCursor = tokenIndex;
 
-                for (int i = jj_endpos; bh < i; i = jj_endpos) {
-                    jj_expentry[bc] = jj_lasttokens[bc];
-                    bh = ++bc;
+                for (int jj_endposValue = jj_endpos; copyCursor < jj_endposValue; jj_endposValue = jj_endpos) {
+                    jj_expentry[tokenIndex] = jj_lasttokens[tokenIndex];
+                    copyCursor = ++tokenIndex;
                 }
 
-                Iterator iterator = jj_expentries.iterator();
+                Iterator expectedSequences = jj_expentries.iterator();
 
-                label45:
-                while (iterator.hasNext()) {
-                    int[] bd = (int[]) iterator.next();
-                    if (bd.length == jj_expentry.length) {
-                        int be = 0;
-                        bh = be;
-
-                        for (int[] bg = jj_expentry; bh < bg.length; bg = jj_expentry) {
-                            if (bd[be] != jj_expentry[be]) {
-                                continue label45;
-                            }
-
-                            bh = ++be;
-                        }
-
+                while (expectedSequences.hasNext()) {
+                    int[] expectedTokens = (int[]) expectedSequences.next();
+                    if (expectedTokens.length == jj_expentry.length
+                            && java.util.Arrays.equals(expectedTokens, jj_expentry)) {
                         jj_expentries.add(jj_expentry);
                         break;
                     }
                 }
 
-                if (bb != 0) {
-                    int[] bf = jj_lasttokens;
-                    jj_endpos = bb;
-                    bf[bb - 1] = ba;
+                if (endPosition != 0) {
+                    int[] lastTokens = jj_lasttokens;
+                    jj_endpos = endPosition;
+                    lastTokens[endPosition - 1] = tokenKind;
                 }
             }
         }
@@ -487,7 +461,6 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                 ChangeLogParser.MethodReturnType();
             }
             ChangeLogParser.MethodSignature();
-            block2:
             switch (ChangeLogParser.jj_nt.H) {
                 case 24: {
                     ChangeLogParser.jj_consume_token(24);
@@ -515,10 +488,12 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                         switch (ChangeLogParser.jj_nt.H) {
                             case 16: {
                                 ChangeLogParser.ParameterChangeLookupData();
-                                break block2;
+                                break;
+                            }
+                            default: {
+                                ChangeLogParser.jj_la1[32] = jj_gen;
                             }
                         }
-                        ChangeLogParser.jj_la1[32] = jj_gen;
                         break;
                     }
                     switch (ChangeLogParser.jj_nt.H) {
@@ -553,12 +528,15 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                         case 76:
                         case 77: {
                             ChangeLogParser.NewMethodName();
-                            break block2;
+                            break;
+                        }
+                        default: {
+                            ChangeLogParser.jj_la1[33] = jj_gen;
+                            ChangeLogParser.jj_consume_token(-1);
+                            throw new ChangeLogParseException();
                         }
                     }
-                    ChangeLogParser.jj_la1[33] = jj_gen;
-                    ChangeLogParser.jj_consume_token(-1);
-                    throw new ChangeLogParseException();
+                    break;
                 }
                 case 64: {
                     ChangeLogParser.jj_consume_token(64);
@@ -569,10 +547,12 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                     switch (ChangeLogParser.jj_nt.H) {
                         case 16: {
                             ChangeLogParser.ParameterChangeLookupData();
-                            break block2;
+                            break;
+                        }
+                        default: {
+                            ChangeLogParser.jj_la1[34] = jj_gen;
                         }
                     }
-                    ChangeLogParser.jj_la1[34] = jj_gen;
                     break;
                 }
                 case 68: {
@@ -580,10 +560,12 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                     switch (ChangeLogParser.jj_nt.H) {
                         case 16: {
                             ChangeLogParser.ParameterChangeLookupData();
-                            break block2;
+                            break;
+                        }
+                        default: {
+                            ChangeLogParser.jj_la1[35] = jj_gen;
                         }
                     }
-                    ChangeLogParser.jj_la1[35] = jj_gen;
                     break;
                 }
                 default: {
@@ -665,19 +647,10 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                     throw new ChangeLogParseException();
                 }
             }
-            block11:
-            while (true) {
-                switch (ChangeLogParser.jj_nt.H) {
-                    case 76: {
-                        break;
-                    }
-                    default: {
-                        ChangeLogParser.jj_la1[58] = jj_gen;
-                        break block11;
-                    }
-                }
+            while (ChangeLogParser.jj_nt.H == ALPHANUMERIC_LITERAL) {
                 ChangeLogParser.Alphanumeric();
             }
+            ChangeLogParser.jj_la1[58] = jj_gen;
             jjtree.closeNodeScope(aSTFieldData);
         } catch (Throwable throwable) {
             try {
@@ -781,43 +754,19 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
             ChangeLogParser.OldLineNumber();
             ChangeLogParser.jj_consume_token(24);
             ChangeLogParser.NewLineNumber();
-            block2:
-            switch (ChangeLogParser.jj_nt.H) {
-                case 20:
-                case 25: {
-                    switch (ChangeLogParser.jj_nt.H) {
-                        case 25: {
-                            ChangeLogParser.jj_consume_token(25);
-                            ChangeLogParser.NewLineNumber();
-                            break block2;
-                        }
-                        case 20: {
-                            int n = 20;
-                            block14:
-                            while (true) {
-                                ChangeLogParser.jj_consume_token(n);
-                                ChangeLogParser.NewLineNumber();
-                                switch (ChangeLogParser.jj_nt.H) {
-                                    case 20: {
-                                        n = 20;
-                                        continue block14;
-                                    }
-                                }
-                                break;
-                            }
-                            ChangeLogParser.jj_la1[51] = jj_gen;
-                            ChangeLogParser.jj_consume_token(25);
-                            ChangeLogParser.NewLineNumber();
-                            break block2;
-                        }
-                    }
-                    ChangeLogParser.jj_la1[52] = jj_gen;
-                    ChangeLogParser.jj_consume_token(-1);
-                    throw new ChangeLogParseException();
-                }
-                default: {
-                    ChangeLogParser.jj_la1[53] = jj_gen;
-                }
+            if (ChangeLogParser.jj_nt.H == AND) {
+                ChangeLogParser.jj_consume_token(AND);
+                ChangeLogParser.NewLineNumber();
+            } else if (ChangeLogParser.jj_nt.H == COMMA) {
+                do {
+                    ChangeLogParser.jj_consume_token(COMMA);
+                    ChangeLogParser.NewLineNumber();
+                } while (ChangeLogParser.jj_nt.H == COMMA);
+                ChangeLogParser.jj_la1[51] = jj_gen;
+                ChangeLogParser.jj_consume_token(AND);
+                ChangeLogParser.NewLineNumber();
+            } else {
+                ChangeLogParser.jj_la1[53] = jj_gen;
             }
             jjtree.closeNodeScope(aSTLineNumberChange);
             return;
@@ -848,40 +797,15 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         jjtree.openNodeScope(changeLogASTNameList);
         try {
             ChangeLogParser.Name();
-            block11:
-            while (true) {
-                block15:
-                {
-                    switch (ChangeLogParser.jj_nt.H) {
-                        case 21:
-                        case 22: {
-                            break;
-                        }
-                        default: {
-                            ChangeLogParser.jj_la1[38] = jj_gen;
-                            break block11;
-                        }
-                    }
-                    switch (ChangeLogParser.jj_nt.H) {
-                        case 22: {
-                            ChangeLogParser.jj_consume_token(22);
-                            break block15;
-                        }
-                        case 21: {
-                            ChangeLogParser.jj_consume_token(21);
-                            break;
-                        }
-                        default: {
-                            ChangeLogParser.jj_la1[39] = jj_gen;
-                            ChangeLogParser.jj_consume_token(-1);
-                            throw new ChangeLogParseException();
-                        }
-                    }
-                    ChangeLogParser.Name();
-                    continue;
+            while (ChangeLogParser.jj_nt.H == DOT || ChangeLogParser.jj_nt.H == SLASH) {
+                if (ChangeLogParser.jj_nt.H == DOT) {
+                    ChangeLogParser.jj_consume_token(DOT);
+                } else {
+                    ChangeLogParser.jj_consume_token(SLASH);
                 }
                 ChangeLogParser.Name();
             }
+            ChangeLogParser.jj_la1[38] = jj_gen;
             jjtree.closeNodeScope(changeLogASTNameList);
         } catch (Throwable throwable) {
             try {
@@ -1074,70 +998,70 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
 
     public static ChangeLogParseException generateParseException() {
         jj_expentries.clear();
-        boolean[] bl = new boolean[78];
+        boolean[] booleanArray = new boolean[78];
         if (jj_kind >= 0) {
-            bl[jj_kind] = true;
+            booleanArray[jj_kind] = true;
             jj_kind = -1;
         }
 
-        int ba = 0;
-        int bh = ba;
+        int jj_expentryElement = 0;
+        int jj_expentryElementValue = jj_expentryElement;
 
-        for (byte bi = 60; bh < bi; bi = 60) {
-            if (jj_la1[ba] == jj_gen) {
-                int bb = 0;
-                bh = bb;
+        for (byte bi = 60; jj_expentryElementValue < bi; bi = 60) {
+            if (jj_la1[jj_expentryElement] == jj_gen) {
+                int jj_expentryElementValue2 = 0;
+                jj_expentryElementValue = jj_expentryElementValue2;
 
-                for (byte bf = 32; bh < bf; bf = 32) {
-                    if ((jj_la1_0[ba] & 1 << bb) != 0) {
-                        bl[bb] = true;
+                for (byte bf = 32; jj_expentryElementValue < bf; bf = 32) {
+                    if ((jj_la1_0[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[jj_expentryElementValue2] = true;
                     }
 
-                    int[] be;
-                    if ((jj_la1_1[ba] & 1 << bb) != 0) {
-                        bl[32 + bb] = true;
-                        be = jj_la1_2;
+                    int[] jj_la1_2Value;
+                    if ((jj_la1_1[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[32 + jj_expentryElementValue2] = true;
+                        jj_la1_2Value = jj_la1_2;
                     } else {
-                        be = jj_la1_2;
+                        jj_la1_2Value = jj_la1_2;
                     }
 
-                    if ((be[ba] & 1 << bb) != 0) {
-                        bl[64 + bb] = true;
+                    if ((jj_la1_2Value[jj_expentryElement] & 1 << jj_expentryElementValue2) != 0) {
+                        booleanArray[64 + jj_expentryElementValue2] = true;
                     }
 
-                    bh = ++bb;
+                    jj_expentryElementValue = ++jj_expentryElementValue2;
                 }
             }
 
-            bh = ++ba;
+            jj_expentryElementValue = ++jj_expentryElement;
         }
 
-        ba = 0;
-        bh = ba;
+        jj_expentryElement = 0;
+        jj_expentryElementValue = jj_expentryElement;
 
-        for (byte bg = 78; bh < bg; bg = 78) {
-            if (bl[ba]) {
+        for (byte bg = 78; jj_expentryElementValue < bg; bg = 78) {
+            if (booleanArray[jj_expentryElement]) {
                 jj_expentry = new int[1];
-                jj_expentry[0] = ba;
+                jj_expentry[0] = jj_expentryElement;
                 jj_expentries.add(jj_expentry);
             }
 
-            bh = ++ba;
+            jj_expentryElementValue = ++jj_expentryElement;
         }
 
         jj_endpos = 0;
         jj_rescan_token();
         jj_add_error_token(0, 0);
-        int[][] bc = new int[jj_expentries.size()][];
-        int bd = 0;
-        bh = 0;
+        int[][] expectedTokenSequences = new int[jj_expentries.size()][];
+        int elementIndex = 0;
+        jj_expentryElementValue = 0;
 
-        for (List list1 = jj_expentries; bh < list1.size(); list1 = jj_expentries) {
-            bc[bd] = (int[]) jj_expentries.get(bd);
-            bh = ++bd;
+        for (List list1 = jj_expentries; jj_expentryElementValue < list1.size(); list1 = jj_expentries) {
+            expectedTokenSequences[elementIndex] = (int[]) jj_expentries.get(elementIndex);
+            jj_expentryElementValue = ++elementIndex;
         }
 
-        return new ChangeLogParseException(token, bc, ChangeLogConstants.TOKEN_IMAGE);
+        return new ChangeLogParseException(token, expectedTokenSequences, ChangeLogConstants.TOKEN_IMAGE);
     }
 
     public static boolean jj_3R_25() {
@@ -1165,10 +1089,10 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
             ChangeLogToken changeLogToken = jj_consume_token(QUOTE_73);
             jjtree.closeNodeScope(changeLogASTStringLiteral);
             bl = false;
-            String string = changeLogToken.k;
-            string = string.substring(1, string.length() - 1);
-            string = ZkmStringUtils.replaceAll(string, "\"\"", "\"");
-            changeLogASTStringLiteral.setValue(string);
+            String value = changeLogToken.k;
+            value = value.substring(1, value.length() - 1);
+            value = ZkmStringUtils.replaceAll(value, "\"\"", "\"");
+            changeLogASTStringLiteral.setValue(value);
         } finally {
             if (bl) {
                 jjtree.closeNodeScope(changeLogASTStringLiteral);
@@ -1255,7 +1179,7 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         return jj_scan_token(FINAL);
     }
 
-    private static ChangeLogToken jj_consume_token(int ba) throws ChangeLogParseException {
+    private static ChangeLogToken jj_consume_token(int jj_kindArgument) throws ChangeLogParseException {
         ChangeLogToken changeLogToken = token;
         if ((token = jj_nt).h != null) {
             jj_nt = jj_nt.h;
@@ -1263,10 +1187,10 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
             jj_nt = jj_nt.h = ChangeLogTokenManager.getNextToken();
         }
 
-        if (token.H != ba) {
+        if (token.H != jj_kindArgument) {
             jj_nt = token;
             token = changeLogToken;
-            jj_kind = ba;
+            jj_kind = jj_kindArgument;
             throw generateParseException();
         }
 
@@ -1274,8 +1198,8 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         if (++jj_gc > 100) {
             jj_gc = 0;
 
-            for (int i = 0; i < jj_2_rtns.length; i++) {
-                ChangeLogParserJJCalls changeLogParserJJCalls = jj_2_rtns[i];
+            for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < jj_2_rtns.length; jj_2_rtnIndex++) {
+                ChangeLogParserJJCalls changeLogParserJJCalls = jj_2_rtns[jj_2_rtnIndex];
 
                 while (changeLogParserJJCalls != null) {
                     ChangeLogParserJJCalls changeLogParserJJCalls1;
@@ -1319,7 +1243,7 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
     }
 
     public static boolean jj_3R_37() {
-        return jj_scan_token(LBRACKET) ? true : jj_scan_token(RBRACKET);
+        return ((jj_scan_token(LBRACKET)) || (jj_scan_token(RBRACKET)));
     }
 
     public static boolean jj_3R_38() {
@@ -1404,7 +1328,7 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         return false;
     }
 
-    private static boolean jj_scan_token(int ba) {
+    private static boolean jj_scan_token(int tokenKindArgument) {
         if (jj_scanpos == jj_lastpos) {
             jj_la--;
             if (jj_scanpos.h == null) {
@@ -1417,19 +1341,19 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         }
 
         if (jj_rescan) {
-            int bb = 0;
+            int endPositionValue = 0;
 
             ChangeLogToken changeLogToken;
             for (changeLogToken = token; changeLogToken != null && changeLogToken != jj_scanpos; changeLogToken = changeLogToken.h) {
-                bb++;
+                endPositionValue++;
             }
 
             if (changeLogToken != null) {
-                jj_add_error_token(ba, bb);
+                jj_add_error_token(tokenKindArgument, endPositionValue);
             }
         }
 
-        if (jj_scanpos.H != ba) {
+        if (jj_scanpos.H != tokenKindArgument) {
             return true;
         } else if (jj_la == 0 && jj_scanpos == jj_lastpos) {
             throw jj_ls;
@@ -1773,20 +1697,11 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         jjtree.openNodeScope(aSTDisregardedNameList);
         try {
             ChangeLogParser.Name();
-            block7:
-            while (true) {
-                switch (ChangeLogParser.jj_nt.H) {
-                    case 22: {
-                        break;
-                    }
-                    default: {
-                        ChangeLogParser.jj_la1[40] = jj_gen;
-                        break block7;
-                    }
-                }
+            while (ChangeLogParser.jj_nt.H == DOT) {
                 ChangeLogParser.jj_consume_token(22);
                 ChangeLogParser.Name();
             }
+            ChangeLogParser.jj_la1[40] = jj_gen;
             jjtree.closeNodeScope(aSTDisregardedNameList);
         } catch (Throwable throwable) {
             try {
@@ -2224,16 +2139,16 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         token = new ChangeLogToken();
         token.h = jj_nt = ChangeLogTokenManager.getNextToken();
         jj_gen = 0;
-        int ba = 0;
+        int jj_la1ElementIndex = 0;
         int bc = 0;
 
         for (byte bd = 60; bc < bd; bd = 60) {
-            jj_la1[ba] = -1;
-            bc = ++ba;
+            jj_la1[jj_la1ElementIndex] = -1;
+            bc = ++jj_la1ElementIndex;
         }
 
-        for (int i = 0; i < jj_2_rtns.length; i++) {
-            jj_2_rtns[i] = new ChangeLogParserJJCalls();
+        for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < jj_2_rtns.length; jj_2_rtnIndex++) {
+            jj_2_rtns[jj_2_rtnIndex] = new ChangeLogParserJJCalls();
         }
     }
 
@@ -2259,135 +2174,66 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                     jj_la1[0] = jj_gen;
             }
 
-            while (true) {
-                switch (jj_nt.H) {
-                    case 41:
-                        ModuleChange();
-                        break;
-                    default:
-                        jj_la1[1] = jj_gen;
-
-                        while (true) {
-                            switch (jj_nt.H) {
-                                case 46:
-                                    PackageChange();
-                                    break;
-                                default:
-                                    jj_la1[2] = jj_gen;
-
-                                    while (true) {
-                                        switch (jj_nt.H) {
-                                            case 35:
-                                                ClassChange();
-                                                break;
-                                            default:
-                                                jj_la1[3] = jj_gen;
-
-                                                while (true) {
-                                                    switch (jj_nt.H) {
-                                                        case 69:
-                                                            AutoReflectionClassName();
-                                                            break;
-                                                        default:
-                                                            jj_la1[4] = jj_gen;
-
-                                                            while (true) {
-                                                                switch (jj_nt.H) {
-                                                                    case 70:
-                                                                        ObfuscateReferencesClassName();
-                                                                        break;
-                                                                    default:
-                                                                        jj_la1[5] = jj_gen;
-
-                                                                        while (true) {
-                                                                            switch (jj_nt.H) {
-                                                                                case 71:
-                                                                                    MethodParameterClassNames();
-                                                                                    break;
-                                                                                default:
-                                                                                    jj_la1[6] = jj_gen;
-                                                                                    label214:
-                                                                                    switch (jj_nt.H) {
-                                                                                        case 62:
-                                                                                        case 66:
-                                                                                            switch (jj_nt.H) {
-                                                                                                case 62:
-                                                                                                    while (true) {
-                                                                                                        PackageFlowObfuscationData();
-                                                                                                        switch (jj_nt.H) {
-                                                                                                            case 62:
-                                                                                                                break;
-                                                                                                            default:
-                                                                                                                jj_la1[10] = jj_gen;
-
-                                                                                                                while (true) {
-                                                                                                                    switch (jj_nt.H) {
-                                                                                                                        case 60:
-                                                                                                                            MemberFlowObfuscationData();
-                                                                                                                            break;
-                                                                                                                        default:
-                                                                                                                            jj_la1[11] = jj_gen;
-                                                                                                                            break label214;
-                                                                                                                    }
-                                                                                                                }
-                                                                                                        }
-                                                                                                    }
-                                                                                                case 66:
-                                                                                                    while (true) {
-                                                                                                        MainFlowObfuscationData();
-                                                                                                        switch (jj_nt.H) {
-                                                                                                            case 66:
-                                                                                                                break;
-                                                                                                            default:
-                                                                                                                jj_la1[7] = jj_gen;
-
-                                                                                                                while (true) {
-                                                                                                                    switch (jj_nt.H) {
-                                                                                                                        case 62:
-                                                                                                                            PackageFlowObfuscationData();
-                                                                                                                            break;
-                                                                                                                        default:
-                                                                                                                            jj_la1[8] = jj_gen;
-
-                                                                                                                            while (true) {
-                                                                                                                                switch (jj_nt.H) {
-                                                                                                                                    case 60:
-                                                                                                                                        MemberFlowObfuscationData();
-                                                                                                                                        break;
-                                                                                                                                    default:
-                                                                                                                                        jj_la1[9] = jj_gen;
-                                                                                                                                        break label214;
-                                                                                                                                }
-                                                                                                                            }
-                                                                                                                    }
-                                                                                                                }
-                                                                                                        }
-                                                                                                    }
-                                                                                                default:
-                                                                                                    jj_la1[12] = jj_gen;
-                                                                                                    jj_consume_token(-1);
-                                                                                                    throw new ChangeLogParseException();
-                                                                                            }
-                                                                                        default:
-                                                                                            jj_la1[13] = jj_gen;
-                                                                                    }
-
-                                                                                    jj_consume_token(EOF);
-                                                                                    jjtree.closeNodeScope(changeLogASTInput);
-                                                                                    bl = false;
-                                                                                    return changeLogASTInput;
-                                                                            }
-                                                                        }
-                                                                }
-                                                            }
-                                                    }
-                                                }
-                                        }
-                                    }
-                            }
-                        }
-                }
+            while (jj_nt.H == MODULE) {
+                ModuleChange();
             }
+            jj_la1[1] = jj_gen;
+
+            while (jj_nt.H == PACKAGE) {
+                PackageChange();
+            }
+            jj_la1[2] = jj_gen;
+
+            while (jj_nt.H == 35) {
+                ClassChange();
+            }
+            jj_la1[3] = jj_gen;
+
+            while (jj_nt.H == AUTO_REFLECTION_CLASS) {
+                AutoReflectionClassName();
+            }
+            jj_la1[4] = jj_gen;
+
+            while (jj_nt.H == OBFUSCATE_REFERENCES_CLASS) {
+                ObfuscateReferencesClassName();
+            }
+            jj_la1[5] = jj_gen;
+
+            while (jj_nt.H == METHOD_PARAMETER_CHANGE_CLASSES) {
+                MethodParameterClassNames();
+            }
+            jj_la1[6] = jj_gen;
+
+            if (jj_nt.H == FORWARD_CLASS) {
+                do {
+                    PackageFlowObfuscationData();
+                } while (jj_nt.H == FORWARD_CLASS);
+                jj_la1[10] = jj_gen;
+                while (jj_nt.H == MEMBER_CLASS) {
+                    MemberFlowObfuscationData();
+                }
+                jj_la1[11] = jj_gen;
+            } else if (jj_nt.H == TRACE_BACK_CLASS) {
+                do {
+                    MainFlowObfuscationData();
+                } while (jj_nt.H == TRACE_BACK_CLASS);
+                jj_la1[7] = jj_gen;
+                while (jj_nt.H == FORWARD_CLASS) {
+                    PackageFlowObfuscationData();
+                }
+                jj_la1[8] = jj_gen;
+                while (jj_nt.H == MEMBER_CLASS) {
+                    MemberFlowObfuscationData();
+                }
+                jj_la1[9] = jj_gen;
+            } else {
+                jj_la1[13] = jj_gen;
+            }
+
+            jj_consume_token(EOF);
+            jjtree.closeNodeScope(changeLogASTInput);
+            bl = false;
+            return changeLogASTInput;
         } catch (Throwable throwable) {
             if (bl) {
                 jjtree.clearNodeScope();
@@ -2625,33 +2471,15 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         jjtree.openNodeScope(changeLogASTQualifiedType);
         try {
             ChangeLogParser.Type();
-            block10:
-            while (true) {
-                switch (ChangeLogParser.jj_nt.H) {
-                    case 22: {
-                        break;
-                    }
-                    default: {
-                        ChangeLogParser.jj_la1[47] = jj_gen;
-                        break block10;
-                    }
-                }
+            while (ChangeLogParser.jj_nt.H == DOT) {
                 ChangeLogParser.jj_consume_token(22);
                 ChangeLogParser.Type();
             }
-            block11:
-            while (true) {
-                switch (ChangeLogParser.jj_nt.H) {
-                    case 18: {
-                        break;
-                    }
-                    default: {
-                        ChangeLogParser.jj_la1[48] = jj_gen;
-                        break block11;
-                    }
-                }
+            ChangeLogParser.jj_la1[47] = jj_gen;
+            while (ChangeLogParser.jj_nt.H == LBRACKET) {
                 ChangeLogParser.ArrayLevel();
             }
+            ChangeLogParser.jj_la1[48] = jj_gen;
             jjtree.closeNodeScope(changeLogASTQualifiedType);
         } catch (Throwable throwable) {
             try {
@@ -2675,19 +2503,19 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
 
     public static void jj_rescan_token() {
         jj_rescan = true;
-        int ba = 0;
+        int jj_2_rtnIndex = 0;
         int bb = 0;
 
         for (byte bc = 6; bb < bc; bc = 6) {
             try {
-                ChangeLogParserJJCalls changeLogParserJJCalls = jj_2_rtns[ba];
+                ChangeLogParserJJCalls changeLogParserJJCalls = jj_2_rtns[jj_2_rtnIndex];
 
                 do {
                     ChangeLogParserJJCalls changeLogParserJJCalls1;
                     if (changeLogParserJJCalls.gen > jj_gen) {
                         jj_la = changeLogParserJJCalls.arg;
                         jj_lastpos = jj_scanpos = changeLogParserJJCalls.first;
-                        switch (ba) {
+                        switch (jj_2_rtnIndex) {
                             case 0:
                                 jj_3R_26();
                                 changeLogParserJJCalls1 = changeLogParserJJCalls.next;
@@ -2724,7 +2552,7 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
             } catch (ChangeLogParserLookaheadSuccess changeLogParserLookaheadSuccess) {
             }
 
-            bb = ++ba;
+            bb = ++jj_2_rtnIndex;
         }
 
         jj_rescan = false;
@@ -2877,7 +2705,7 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         if (jj_3R_7()) {
             return true;
         } else {
-            return jj_3R_43() ? true : jj_scan_token(LPAREN);
+            return ((jj_3R_43()) || (jj_scan_token(LPAREN)));
         }
     }
 
@@ -2909,7 +2737,7 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
     }
 
     public static boolean jj_3_3() {
-        return jj_scan_token(DOT) ? true : jj_3R_42();
+        return ((jj_scan_token(DOT)) || (jj_3R_42()));
     }
 
     public static final void ClassChange() throws ChangeLogParseException {
@@ -2948,137 +2776,101 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                     ChangeLogParser.jj_la1[20] = jj_gen;
                 }
             }
-            block9:
-            switch (ChangeLogParser.jj_nt.H) {
-                case 55: {
-                    ChangeLogParser.jj_consume_token(55);
-                    ChangeLogParser.DisregardedNameList();
-                    while (true) {
-                        switch (ChangeLogParser.jj_nt.H) {
-                            case 25:
-                            case 26:
-                            case 27:
-                            case 28:
-                            case 30:
-                            case 31:
-                            case 32:
-                            case 33:
-                            case 34:
-                            case 36:
-                            case 37:
-                            case 38:
-                            case 39:
-                            case 40:
-                            case 42:
-                            case 43:
-                            case 45:
-                            case 47:
-                            case 48:
-                            case 49:
-                            case 50:
-                            case 51:
-                            case 52:
-                            case 53:
-                            case 54:
-                            case 57:
-                            case 58:
-                            case 59:
-                            case 61:
-                            case 64:
-                            case 67:
-                            case 75:
-                            case 76:
-                            case 77: {
-                                break;
-                            }
-                            default: {
-                                ChangeLogParser.jj_la1[21] = jj_gen;
-                                break block9;
-                            }
-                        }
-                        ChangeLogParser.FieldNameChange();
-                    }
+            if (ChangeLogParser.jj_nt.H == FIELDS_OF) {
+                ChangeLogParser.jj_consume_token(55);
+                ChangeLogParser.DisregardedNameList();
+                while (ChangeLogParser.jj_nt.H == AND
+                        || ChangeLogParser.jj_nt.H == ENUM
+                        || ChangeLogParser.jj_nt.H == 27
+                        || ChangeLogParser.jj_nt.H == 28
+                        || ChangeLogParser.jj_nt.H == FINAL
+                        || ChangeLogParser.jj_nt.H == FALSE
+                        || ChangeLogParser.jj_nt.H == LIGHT
+                        || ChangeLogParser.jj_nt.H == 33
+                        || ChangeLogParser.jj_nt.H == INIT
+                        || ChangeLogParser.jj_nt.H == NORMAL
+                        || ChangeLogParser.jj_nt.H == BRIDGE
+                        || ChangeLogParser.jj_nt.H == PUBLIC
+                        || ChangeLogParser.jj_nt.H == STATIC
+                        || ChangeLogParser.jj_nt.H == NATIVE
+                        || ChangeLogParser.jj_nt.H == EXECUTE
+                        || ChangeLogParser.jj_nt.H == EXCLUDE
+                        || ChangeLogParser.jj_nt.H == CLINIT
+                        || ChangeLogParser.jj_nt.H == PRIVATE
+                        || ChangeLogParser.jj_nt.H == ENHANCED
+                        || ChangeLogParser.jj_nt.H == ABSTRACT
+                        || ChangeLogParser.jj_nt.H == VOLATILE
+                        || ChangeLogParser.jj_nt.H == PROTECTED
+                        || ChangeLogParser.jj_nt.H == SYNTHETIC
+                        || ChangeLogParser.jj_nt.H == INTERFACE
+                        || ChangeLogParser.jj_nt.H == TRANSIENT
+                        || ChangeLogParser.jj_nt.H == 57
+                        || ChangeLogParser.jj_nt.H == ANNOTATION
+                        || ChangeLogParser.jj_nt.H == PACKAGE_INFO
+                        || ChangeLogParser.jj_nt.H == SYNCHRONIZED
+                        || ChangeLogParser.jj_nt.H == NAME_NOT_CHANGED
+                        || ChangeLogParser.jj_nt.H == SIGNATURE_NOT_CHANGED
+                        || ChangeLogParser.jj_nt.H == INTEGER_LITERAL
+                        || ChangeLogParser.jj_nt.H == ALPHANUMERIC_LITERAL
+                        || ChangeLogParser.jj_nt.H == NAME) {
+                    ChangeLogParser.FieldNameChange();
                 }
-                default: {
-                    ChangeLogParser.jj_la1[22] = jj_gen;
-                }
+                ChangeLogParser.jj_la1[21] = jj_gen;
+            } else {
+                ChangeLogParser.jj_la1[22] = jj_gen;
             }
-            block15:
-            switch (ChangeLogParser.jj_nt.H) {
-                case 56: {
-                    ChangeLogParser.jj_consume_token(56);
-                    ChangeLogParser.DisregardedNameList();
-                    while (true) {
-                        switch (ChangeLogParser.jj_nt.H) {
-                            case 25:
-                            case 26:
-                            case 27:
-                            case 28:
-                            case 30:
-                            case 31:
-                            case 32:
-                            case 33:
-                            case 34:
-                            case 36:
-                            case 37:
-                            case 38:
-                            case 39:
-                            case 40:
-                            case 42:
-                            case 43:
-                            case 45:
-                            case 47:
-                            case 48:
-                            case 49:
-                            case 50:
-                            case 51:
-                            case 52:
-                            case 53:
-                            case 54:
-                            case 57:
-                            case 58:
-                            case 59:
-                            case 61:
-                            case 64:
-                            case 67:
-                            case 75:
-                            case 76:
-                            case 77: {
-                                break;
-                            }
-                            default: {
-                                ChangeLogParser.jj_la1[23] = jj_gen;
-                                break block15;
-                            }
-                        }
-                        ChangeLogParser.MethodNameChange();
-                    }
+            if (ChangeLogParser.jj_nt.H == METHODS_OF) {
+                ChangeLogParser.jj_consume_token(56);
+                ChangeLogParser.DisregardedNameList();
+                while (ChangeLogParser.jj_nt.H == AND
+                        || ChangeLogParser.jj_nt.H == ENUM
+                        || ChangeLogParser.jj_nt.H == 27
+                        || ChangeLogParser.jj_nt.H == 28
+                        || ChangeLogParser.jj_nt.H == FINAL
+                        || ChangeLogParser.jj_nt.H == FALSE
+                        || ChangeLogParser.jj_nt.H == LIGHT
+                        || ChangeLogParser.jj_nt.H == 33
+                        || ChangeLogParser.jj_nt.H == INIT
+                        || ChangeLogParser.jj_nt.H == NORMAL
+                        || ChangeLogParser.jj_nt.H == BRIDGE
+                        || ChangeLogParser.jj_nt.H == PUBLIC
+                        || ChangeLogParser.jj_nt.H == STATIC
+                        || ChangeLogParser.jj_nt.H == NATIVE
+                        || ChangeLogParser.jj_nt.H == EXECUTE
+                        || ChangeLogParser.jj_nt.H == EXCLUDE
+                        || ChangeLogParser.jj_nt.H == CLINIT
+                        || ChangeLogParser.jj_nt.H == PRIVATE
+                        || ChangeLogParser.jj_nt.H == ENHANCED
+                        || ChangeLogParser.jj_nt.H == ABSTRACT
+                        || ChangeLogParser.jj_nt.H == VOLATILE
+                        || ChangeLogParser.jj_nt.H == PROTECTED
+                        || ChangeLogParser.jj_nt.H == SYNTHETIC
+                        || ChangeLogParser.jj_nt.H == INTERFACE
+                        || ChangeLogParser.jj_nt.H == TRANSIENT
+                        || ChangeLogParser.jj_nt.H == 57
+                        || ChangeLogParser.jj_nt.H == ANNOTATION
+                        || ChangeLogParser.jj_nt.H == PACKAGE_INFO
+                        || ChangeLogParser.jj_nt.H == SYNCHRONIZED
+                        || ChangeLogParser.jj_nt.H == NAME_NOT_CHANGED
+                        || ChangeLogParser.jj_nt.H == SIGNATURE_NOT_CHANGED
+                        || ChangeLogParser.jj_nt.H == INTEGER_LITERAL
+                        || ChangeLogParser.jj_nt.H == ALPHANUMERIC_LITERAL
+                        || ChangeLogParser.jj_nt.H == NAME) {
+                    ChangeLogParser.MethodNameChange();
                 }
-                default: {
-                    ChangeLogParser.jj_la1[24] = jj_gen;
-                }
+                ChangeLogParser.jj_la1[23] = jj_gen;
+            } else {
+                ChangeLogParser.jj_la1[24] = jj_gen;
             }
-            block21:
-            switch (ChangeLogParser.jj_nt.H) {
-                case 65: {
-                    ChangeLogParser.jj_consume_token(65);
-                    ChangeLogParser.DisregardedNameList();
-                    while (true) {
-                        switch (ChangeLogParser.jj_nt.H) {
-                            case 75: {
-                                break;
-                            }
-                            default: {
-                                ChangeLogParser.jj_la1[25] = jj_gen;
-                                break block21;
-                            }
-                        }
-                        ChangeLogParser.LineNumberChange();
-                    }
+            if (ChangeLogParser.jj_nt.H == LINE_NUMBERS_OF) {
+                ChangeLogParser.jj_consume_token(65);
+                ChangeLogParser.DisregardedNameList();
+                while (ChangeLogParser.jj_nt.H == INTEGER_LITERAL) {
+                    ChangeLogParser.LineNumberChange();
                 }
-                default: {
-                    ChangeLogParser.jj_la1[26] = jj_gen;
-                }
+                ChangeLogParser.jj_la1[25] = jj_gen;
+            } else {
+                ChangeLogParser.jj_la1[26] = jj_gen;
             }
             jjtree.closeNodeScope(aSTClassChange);
         } catch (Throwable throwable) {
@@ -3302,7 +3094,6 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         try {
             ChangeLogParser.jj_consume_token(46);
             ChangeLogParser.OldPackageName();
-            block2:
             switch (ChangeLogParser.jj_nt.H) {
                 case 24: {
                     ChangeLogParser.jj_consume_token(24);
@@ -3338,10 +3129,12 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
                         case 76:
                         case 77: {
                             ChangeLogParser.NewPackageName();
-                            break block2;
+                            break;
+                        }
+                        default: {
+                            ChangeLogParser.jj_la1[17] = jj_gen;
                         }
                     }
-                    ChangeLogParser.jj_la1[17] = jj_gen;
                     break;
                 }
                 case 64: {
@@ -3824,16 +3617,16 @@ public class ChangeLogParser implements ChangeLogTreeConstants, ChangeLogConstan
         token.h = jj_nt = ChangeLogTokenManager.getNextToken();
         jjtree.reset();
         jj_gen = 0;
-        int ba = 0;
+        int jj_la1ElementIndex = 0;
         int bc = 0;
 
         for (byte bd = 60; bc < bd; bd = 60) {
-            jj_la1[ba] = -1;
-            bc = ++ba;
+            jj_la1[jj_la1ElementIndex] = -1;
+            bc = ++jj_la1ElementIndex;
         }
 
-        for (int i = 0; i < jj_2_rtns.length; i++) {
-            jj_2_rtns[i] = new ChangeLogParserJJCalls();
+        for (int jj_2_rtnIndex = 0; jj_2_rtnIndex < jj_2_rtns.length; jj_2_rtnIndex++) {
+            jj_2_rtns[jj_2_rtnIndex] = new ChangeLogParserJJCalls();
         }
     }
 

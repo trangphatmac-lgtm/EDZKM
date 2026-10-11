@@ -9,8 +9,8 @@ import com.zelix.klassmaster.util.ListMultimap;
 import java.io.IOException;
 
 public class SyntheticAttribute extends Attribute {
-    public SyntheticAttribute(ClassFileComponent classFileComponent, int ba, String string, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+    public SyntheticAttribute(ClassFileComponent classFileComponent, int constantPoolIndex, String attributeName, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
     }
 
     public SyntheticAttribute(ConstantUtf8 constantUtf8) {

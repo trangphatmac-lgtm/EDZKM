@@ -14,10 +14,10 @@ public class PropertiesClassRefScanner {
     public PropertiesClassRefScanner(BufferedReader bufferedReader, String string, Map map1) throws IOException {
         String string1;
         while ((string1 = bufferedReader.readLine()) != null) {
-            int ba = ZkmStringUtils.skipWhitespace(string1, 0);
+            int beginIndex = ZkmStringUtils.skipWhitespace(string1, 0);
             String string2;
-            if (ba > 0) {
-                string2 = string1.substring(ba);
+            if (beginIndex > 0) {
+                string2 = string1.substring(beginIndex);
             } else {
                 string2 = string1;
             }
@@ -33,13 +33,13 @@ public class PropertiesClassRefScanner {
                             bl = true;
                         }
                     } else if (bl) {
-                        String string4 = ZkmUtils.dotsToSlashes(string3);
-                        if (!string4.endsWith(";")
-                                && string4.indexOf("[") == -1
-                                && string4.indexOf(".") == -1
-                                && string4.indexOf("<") == -1
-                                && string4.indexOf(">") == -1) {
-                            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string4);
+                        String key = ZkmUtils.dotsToSlashes(string3);
+                        if (!key.endsWith(";")
+                                && key.indexOf("[") == -1
+                                && key.indexOf(".") == -1
+                                && key.indexOf("<") == -1
+                                && key.indexOf(">") == -1) {
+                            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
                             if (programClass1 != null) {
                                 map1.put(programClass1, "Referenced in '" + string + "'");
                             }

@@ -11,16 +11,16 @@ public class SkippableStepButtonListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.dialog.previousBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.dialog.previousBtn) {
                 this.dialog.onPrevious();
-            } else if (object == this.dialog.okBtn) {
+            } else if (source == this.dialog.okBtn) {
                 this.dialog.onOk();
-            } else if (object == this.dialog.skipBtn) {
+            } else if (source == this.dialog.skipBtn) {
                 this.dialog.skipStep();
-            } else if (object == this.dialog.cancelBtn) {
+            } else if (source == this.dialog.cancelBtn) {
                 this.dialog.onCancel();
-            } else if (object == this.dialog.helpBtn) {
+            } else if (source == this.dialog.helpBtn) {
                 this.dialog.showHelp();
             }
         } catch (Throwable throwable) {

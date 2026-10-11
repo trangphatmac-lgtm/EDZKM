@@ -16,17 +16,17 @@ public class SoftReferenceMap implements Map {
     public String mapName;
 
     @Override
-    public synchronized Object get(Object object) {
+    public synchronized Object get(Object key) {
         Map map1 = (Map) this.mapReference.get();
         if (map1 == null) {
             map1 = this.recreateClearedMap();
         }
 
-        return map1.get(object);
+        return map1.get(key);
     }
 
-    public SoftReferenceMap(String string) {
-        this(string, (int) defaultCapacity);
+    public SoftReferenceMap(String mapNameArgument) {
+        this(mapNameArgument, (int) defaultCapacity);
     }
 
     public void resetMap() {
@@ -66,13 +66,13 @@ public class SoftReferenceMap implements Map {
     }
 
     @Override
-    public synchronized Object put(Object object, Object object1) {
+    public synchronized Object put(Object key, Object value) {
         Map map1 = (Map) this.mapReference.get();
         if (map1 == null) {
             map1 = this.recreateClearedMap();
         }
 
-        return map1.put(object, object1);
+        return map1.put(key, value);
     }
 
     @Override
@@ -96,9 +96,9 @@ public class SoftReferenceMap implements Map {
         }
     }
 
-    public SoftReferenceMap(String string, int initialCapacity) {
+    public SoftReferenceMap(String mapNameArgument, int initialCapacity) {
         this.initialCapacity = initialCapacity;
-        this.mapName = string;
+        this.mapName = mapNameArgument;
         this.resetMap();
     }
 
@@ -117,9 +117,9 @@ public class SoftReferenceMap implements Map {
         this.resetMap();
         Map map1 = (Map) this.mapReference.get();
         if (this.logWriters != null) {
-            for (int i = 0; i < this.logWriters.length; i++) {
-                this.logWriters[i].println(this.mapName + clearedMessageSuffix);
-                this.logWriters[i].flush();
+            for (int logWriterIndex = 0; logWriterIndex < this.logWriters.length; logWriterIndex++) {
+                this.logWriters[logWriterIndex].println(this.mapName + clearedMessageSuffix);
+                this.logWriters[logWriterIndex].flush();
             }
         }
 
@@ -127,13 +127,13 @@ public class SoftReferenceMap implements Map {
     }
 
     @Override
-    public synchronized boolean containsKey(Object object) {
+    public synchronized boolean containsKey(Object key) {
         Map map1 = (Map) this.mapReference.get();
         if (map1 == null) {
             this.recreateClearedMap();
             return false;
         } else {
-            return map1.containsKey(object);
+            return map1.containsKey(key);
         }
     }
 
@@ -149,13 +149,13 @@ public class SoftReferenceMap implements Map {
     }
 
     @Override
-    public synchronized Object remove(Object object) {
+    public synchronized Object remove(Object key) {
         Map map1 = (Map) this.mapReference.get();
         if (map1 == null) {
             map1 = this.recreateClearedMap();
         }
 
-        return map1.remove(object);
+        return map1.remove(key);
     }
 
     @Override

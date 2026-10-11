@@ -12,8 +12,8 @@ import java.io.PrintStream;
 public abstract class SummarizingStatementNode extends ScriptStatementNode implements ScriptStatementInfo {
     public int lineNumber;
 
-    public SummarizingStatementNode(int ba) {
-        super(ba);
+    public SummarizingStatementNode(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     public void setLineNumber(int lineNumber) {

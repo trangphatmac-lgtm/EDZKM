@@ -13,8 +13,8 @@ public class TableSwitchInstruction extends SwitchInstruction {
     public final int lowValue;
     public final int highValue;
 
-    public TableSwitchInstruction(ClassFileInputStream classFileInputStream, int ba, ListMultimap listMultimap) throws IOException {
-        super(170, classFileInputStream, ba);
+    public TableSwitchInstruction(ClassFileInputStream classFileInputStream, int switchOffsetArgument, ListMultimap listMultimap) throws IOException {
+        super(170, classFileInputStream, switchOffsetArgument);
         int bb = classFileInputStream.readInt();
         this.lowValue = classFileInputStream.readInt();
         this.highValue = classFileInputStream.readInt();
@@ -24,7 +24,7 @@ public class TableSwitchInstruction extends SwitchInstruction {
         int bc = 0;
         int be = 0;
 
-        for (int i = this.caseCount; be < i; i = this.caseCount) {
+        for (int caseCountValue = this.caseCount; be < caseCountValue; caseCountValue = this.caseCount) {
             int bd = classFileInputStream.readInt();
             Integer integer = Instruction.integerCache.valueOf(super.switchOffset + bd);
             listMultimap.addValue(integer, this);
@@ -42,13 +42,13 @@ public class TableSwitchInstruction extends SwitchInstruction {
         super.writeTo(dataOutputStream);
         dataOutputStream.writeInt(this.lowValue);
         dataOutputStream.writeInt(this.highValue);
-        int ba = 0;
+        int targetLabelIndex = 0;
         int bb = 0;
 
-        for (int i = this.caseCount; bb < i; i = this.caseCount) {
-            LabelInstruction labelInstruction = this.targetLabels[ba];
+        for (int caseCountValue = this.caseCount; bb < caseCountValue; caseCountValue = this.caseCount) {
+            LabelInstruction labelInstruction = this.targetLabels[targetLabelIndex];
             dataOutputStream.writeInt(labelInstruction.getOffset() - super.switchOffset);
-            bb = ++ba;
+            bb = ++targetLabelIndex;
         }
     }
 
@@ -60,7 +60,7 @@ public class TableSwitchInstruction extends SwitchInstruction {
         int bb = 0;
         int bc = 0;
 
-        for (int i = this.caseCount; bc < i; i = this.caseCount) {
+        for (int caseCountValue = this.caseCount; bc < caseCountValue; caseCountValue = this.caseCount) {
             this.targetLabels[bb] = labelInstructions[bb];
             bc = ++bb;
         }
@@ -83,16 +83,16 @@ public class TableSwitchInstruction extends SwitchInstruction {
         StringBuilder stringBuilder1 = new StringBuilder();
         stringBuilder1.append(this.getMnemonic());
         printWriter.println(stringBuilder.toString() + stringBuilder1.toString());
-        Object object = this.targetLabels[this.targetLabels.length - 1];
-        printWriter.println(stringBuilder.toString() + "\tdefault: goto " + (object != null ? ((LabelInstruction) object).getLabelName() : object));
-        int ba = 0;
+        Object targetLabel = this.targetLabels[this.targetLabels.length - 1];
+        printWriter.println(stringBuilder.toString() + "\tdefault: goto " + (targetLabel != null ? ((LabelInstruction) targetLabel).getLabelName() : targetLabel));
+        int targetLabelIndex = 0;
         int bc = 0;
 
-        for (int i = this.caseCount; bc < i; i = this.caseCount) {
-            Object object1 = this.targetLabels[ba];
-            int bb = this.lowValue + ba;
-            printWriter.println(stringBuilder.toString() + "\tcase " + bb + ": goto " + (object1 != null ? ((LabelInstruction) object1).getLabelName() : object1));
-            bc = ++ba;
+        for (int caseCountValue = this.caseCount; bc < caseCountValue; caseCountValue = this.caseCount) {
+            Object targetLabelValue = this.targetLabels[targetLabelIndex];
+            int bb = this.lowValue + targetLabelIndex;
+            printWriter.println(stringBuilder.toString() + "\tcase " + bb + ": goto " + (targetLabelValue != null ? ((LabelInstruction) targetLabelValue).getLabelName() : targetLabelValue));
+            bc = ++targetLabelIndex;
         }
     }
 }

@@ -12,7 +12,7 @@ public enum ArchiveSkipMode {
         return this.prefix;
     }
 
-    ArchiveSkipMode(String string1) {
-        this.prefix = string1;
+    ArchiveSkipMode(String prefixArgument) {
+        this.prefix = prefixArgument;
     }
 }

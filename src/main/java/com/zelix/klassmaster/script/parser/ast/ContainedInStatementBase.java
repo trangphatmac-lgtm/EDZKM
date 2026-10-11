@@ -8,16 +8,16 @@ import java.io.IOException;
 import java.util.List;
 
 public abstract class ContainedInStatementBase extends ParameterListStatement {
-    public ContainedInStatementBase(int ba) {
-        super(ba);
+    public ContainedInStatementBase(int nodeTypeId) {
+        super(nodeTypeId);
     }
 
     @Override
     public void processParameters(int ba, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
         ASTContainedInClause aSTContainedInClause = null;
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptNode zkmScriptNode = this.jjtGetChild(childrenElementIndex);
             if (zkmScriptNode instanceof ASTContainedInClause) {
                 aSTContainedInClause = (ASTContainedInClause) zkmScriptNode;
             } else {

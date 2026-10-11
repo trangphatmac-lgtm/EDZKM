@@ -17,16 +17,16 @@ public class AccessFlagsSpec {
         this.forbiddenFlags = AccessFlags.addProtected(this.forbiddenFlags);
     }
 
-    public final void setStaticRequired(boolean bl) {
-        this.requiredFlags = AccessFlags.setStaticFlag(this.requiredFlags, bl);
+    public final void setStaticRequired(boolean staticRequired) {
+        this.requiredFlags = AccessFlags.setStaticFlag(this.requiredFlags, staticRequired);
     }
 
-    public final void setNativeForbidden(boolean bl) {
-        this.forbiddenFlags = AccessFlags.setNativeFlag(this.forbiddenFlags, bl);
+    public final void setNativeForbidden(boolean nativeForbidden) {
+        this.forbiddenFlags = AccessFlags.setNativeFlag(this.forbiddenFlags, nativeForbidden);
     }
 
-    public final void setVolatileRequired(boolean bl) {
-        this.requiredFlags = AccessFlags.setVolatileFlag(this.requiredFlags, bl);
+    public final void setVolatileRequired(boolean volatileRequired) {
+        this.requiredFlags = AccessFlags.setVolatileFlag(this.requiredFlags, volatileRequired);
     }
 
     public final boolean isNativeForbidden() {
@@ -42,16 +42,16 @@ public class AccessFlagsSpec {
         return AccessFlags.isTransient(this.forbiddenFlags);
     }
 
-    public final void setVolatileForbidden(boolean bl) {
-        this.forbiddenFlags = AccessFlags.setVolatileFlag(this.forbiddenFlags, bl);
+    public final void setVolatileForbidden(boolean volatileForbidden) {
+        this.forbiddenFlags = AccessFlags.setVolatileFlag(this.forbiddenFlags, volatileForbidden);
     }
 
     public final void forbidPrivate() {
         this.forbiddenFlags = AccessFlags.addPrivate(this.forbiddenFlags);
     }
 
-    public final void setSynchronizedForbidden(boolean bl) {
-        this.forbiddenFlags = AccessFlags.setSynchronizedFlag(this.forbiddenFlags, bl);
+    public final void setSynchronizedForbidden(boolean synchronizedForbidden) {
+        this.forbiddenFlags = AccessFlags.setSynchronizedFlag(this.forbiddenFlags, synchronizedForbidden);
     }
 
     public final boolean isStaticRequired() {
@@ -80,8 +80,8 @@ public class AccessFlagsSpec {
         this.packageRequired = false;
     }
 
-    public final void setSynchronizedRequired(boolean bl) {
-        this.requiredFlags = AccessFlags.setSynchronizedFlag(this.requiredFlags, bl);
+    public final void setSynchronizedRequired(boolean synchronizedRequired) {
+        this.requiredFlags = AccessFlags.setSynchronizedFlag(this.requiredFlags, synchronizedRequired);
     }
 
     public final boolean isPackageForbidden() {
@@ -104,12 +104,12 @@ public class AccessFlagsSpec {
         this.forbiddenFlags = AccessFlags.addEnum(this.forbiddenFlags);
     }
 
-    public final void setTransientForbidden(boolean bl) {
-        this.forbiddenFlags = AccessFlags.setTransientFlag(this.forbiddenFlags, bl);
+    public final void setTransientForbidden(boolean transientForbidden) {
+        this.forbiddenFlags = AccessFlags.setTransientFlag(this.forbiddenFlags, transientForbidden);
     }
 
-    public final void setTransientRequired(boolean bl) {
-        this.requiredFlags = AccessFlags.setTransientFlag(this.requiredFlags, bl);
+    public final void setTransientRequired(boolean transientRequired) {
+        this.requiredFlags = AccessFlags.setTransientFlag(this.requiredFlags, transientRequired);
     }
 
     public final void forbidAnnotation() {
@@ -136,16 +136,16 @@ public class AccessFlagsSpec {
         this.forbiddenFlags = AccessFlags.addNative(this.forbiddenFlags);
     }
 
-    public final void setFinalRequired(boolean bl) {
-        this.requiredFlags = AccessFlags.setFinalFlag(this.requiredFlags, bl);
+    public final void setFinalRequired(boolean finalRequired) {
+        this.requiredFlags = AccessFlags.setFinalFlag(this.requiredFlags, finalRequired);
     }
 
     public boolean isContradictory() {
         return (this.requiredFlags & this.forbiddenFlags) != 0 || this.packageRequired && this.packageForbidden;
     }
 
-    public final void setNativeRequired(boolean bl) {
-        this.requiredFlags = AccessFlags.setNativeFlag(this.requiredFlags, bl);
+    public final void setNativeRequired(boolean nativeRequired) {
+        this.requiredFlags = AccessFlags.setNativeFlag(this.requiredFlags, nativeRequired);
     }
 
     public final boolean isFinalRequired() {
@@ -182,12 +182,12 @@ public class AccessFlagsSpec {
         this.packageRequired = false;
     }
 
-    public final void setInterfaceRequired(boolean bl) {
-        this.requiredFlags = AccessFlags.setInterfaceFlag(this.requiredFlags, bl);
+    public final void setInterfaceRequired(boolean interfaceRequired) {
+        this.requiredFlags = AccessFlags.setInterfaceFlag(this.requiredFlags, interfaceRequired);
     }
 
-    public final void setInterfaceForbidden(boolean bl) {
-        this.forbiddenFlags = AccessFlags.setInterfaceFlag(this.forbiddenFlags, bl);
+    public final void setInterfaceForbidden(boolean interfaceForbidden) {
+        this.forbiddenFlags = AccessFlags.setInterfaceFlag(this.forbiddenFlags, interfaceForbidden);
     }
 
     public final void forbidTransient() {
@@ -198,8 +198,8 @@ public class AccessFlagsSpec {
         this.forbiddenFlags = AccessFlags.addTransient(forbiddenFlags);
     }
 
-    public final void setFinalForbidden(boolean bl) {
-        this.forbiddenFlags = AccessFlags.setFinalFlag(this.forbiddenFlags, bl);
+    public final void setFinalForbidden(boolean finalForbidden) {
+        this.forbiddenFlags = AccessFlags.setFinalFlag(this.forbiddenFlags, finalForbidden);
     }
 
     public final void forbidBridge() {
@@ -278,8 +278,8 @@ public class AccessFlagsSpec {
         return AccessFlags.isPrivate(this.requiredFlags);
     }
 
-    public final void setAbstractForbidden(boolean bl) {
-        this.forbiddenFlags = AccessFlags.setAbstractFlag(this.forbiddenFlags, bl);
+    public final void setAbstractForbidden(boolean abstractForbidden) {
+        this.forbiddenFlags = AccessFlags.setAbstractFlag(this.forbiddenFlags, abstractForbidden);
     }
 
     public final boolean isInterfaceForbidden() {
@@ -298,19 +298,19 @@ public class AccessFlagsSpec {
         }
     }
 
-    public final void setStaticForbidden(boolean bl) {
-        this.forbiddenFlags = AccessFlags.setStaticFlag(this.forbiddenFlags, bl);
+    public final void setStaticForbidden(boolean staticForbidden) {
+        this.forbiddenFlags = AccessFlags.setStaticFlag(this.forbiddenFlags, staticForbidden);
     }
 
     public final boolean isInterfaceRequired() {
         return AccessFlags.isInterface(this.requiredFlags);
     }
 
-    public boolean matches(int ba) {
-        return (this.requiredFlags & ba) == this.requiredFlags
-                && (this.forbiddenFlags & ba) == 0
-                && (!this.packageRequired || AccessFlags.isPackagePrivate(ba))
-                && (!this.packageForbidden || !AccessFlags.isPackagePrivate(ba));
+    public boolean matches(int flags) {
+        return (this.requiredFlags & flags) == this.requiredFlags
+                && (this.forbiddenFlags & flags) == 0
+                && (!this.packageRequired || AccessFlags.isPackagePrivate(flags))
+                && (!this.packageForbidden || !AccessFlags.isPackagePrivate(flags));
     }
 
     public final void requireBridge() {
@@ -346,8 +346,8 @@ public class AccessFlagsSpec {
         this.requiredFlags = AccessFlags.addAnnotation(this.requiredFlags);
     }
 
-    public final void setAbstractRequired(boolean bl) {
-        this.requiredFlags = AccessFlags.setAbstractFlag(this.requiredFlags, bl);
+    public final void setAbstractRequired(boolean abstractRequired) {
+        this.requiredFlags = AccessFlags.setAbstractFlag(this.requiredFlags, abstractRequired);
     }
 
     public AccessFlagsSpec(int memberKind) {

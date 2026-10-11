@@ -9,64 +9,60 @@ public class JJTChangeLogParserState {
     private boolean nodeCreated;
     private List nodes = new ArrayList();
     private List marks = new ArrayList();
-    private int sp = 0;
-    private int mk = 0;
+    private int stackPointer = 0;
+    private int scopeMark = 0;
 
-    public void closeNodeScope(ChangeLogNode changeLogNode) {
-        int ba = this.nodeArity();
-        this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
+    public void closeNodeScope(ChangeLogNode parentNode) {
+        int remainingChildren = this.nodeArity();
+        this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
 
-        while (true) {
-            int bb = ba;
-            ba += -1;
-            if (bb <= 0) {
-                changeLogNode.jjtOpen();
-                this.pushNode(changeLogNode);
-                this.nodeCreated = true;
-                return;
-            }
-
-            ChangeLogNode changeLogNode1 = this.popNode();
-            changeLogNode1.jjtSetParent(changeLogNode);
-            changeLogNode.jjtAddChild(changeLogNode1, ba);
+        while (remainingChildren > 0) {
+            remainingChildren--;
+            ChangeLogNode childNode = this.popNode();
+            childNode.jjtSetParent(parentNode);
+            parentNode.jjtAddChild(childNode, remainingChildren);
         }
+
+        parentNode.jjtOpen();
+        this.pushNode(parentNode);
+        this.nodeCreated = true;
     }
 
     public void pushNode(ChangeLogNode changeLogNode) {
         this.nodes.add(changeLogNode);
-        this.sp++;
+        this.stackPointer++;
     }
 
     public ChangeLogNode popNode() {
-        if (--this.sp < this.mk) {
-            this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
+        if (--this.stackPointer < this.scopeMark) {
+            this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
         }
 
         return (ChangeLogNode) this.nodes.remove(this.nodes.size() - 1);
     }
 
     public int nodeArity() {
-        return this.sp - this.mk;
+        return this.stackPointer - this.scopeMark;
     }
 
     public void clearNodeScope() {
-        while (this.sp > this.mk) {
+        while (this.stackPointer > this.scopeMark) {
             this.popNode();
         }
 
-        this.mk = (Integer) this.marks.remove(this.marks.size() - 1);
+        this.scopeMark = (Integer) this.marks.remove(this.marks.size() - 1);
     }
 
     public void openNodeScope(ChangeLogNode changeLogNode) {
-        this.marks.add(this.mk);
-        this.mk = this.sp;
+        this.marks.add(this.scopeMark);
+        this.scopeMark = this.stackPointer;
         changeLogNode.jjtClose();
     }
 
     public void reset() {
         this.nodes.clear();
         this.marks.clear();
-        this.sp = 0;
-        this.mk = 0;
+        this.stackPointer = 0;
+        this.scopeMark = 0;
     }
 }

@@ -35,23 +35,23 @@ public class BrowserTextViewUpdater implements NodeVisitor, EdtCallback {
             }
 
             try {
-                String string = classFileComponent.formatDeclaration();
-                String string1;
+                String text = classFileComponent.formatDeclaration();
+                String textValue;
                 char ba;
                 char bb;
-                if (string.length() > 512000) {
-                    string = string.substring(0, 512000) + TRUNCATED_NOTICE;
-                    string1 = string;
+                if (text.length() > 512000) {
+                    text = text.substring(0, 512000) + TRUNCATED_NOTICE;
+                    textValue = text;
                     ba = 0;
                     bb = '?';
                 } else {
-                    string1 = string;
+                    textValue = text;
                     ba = 0;
                     bb = '?';
                 }
 
-                string = string1.replace(ba, bb);
-                this.textArea.setText(string);
+                text = textValue.replace(ba, bb);
+                this.textArea.setText(text);
                 this.textArea.setCaretPosition(0);
                 if (classFileComponent instanceof ProgramClass) {
                     this.textArea.setToolTipText(GuiResources.getTooltipText("BROWSER_VIEW_CLASS"));
@@ -70,8 +70,8 @@ public class BrowserTextViewUpdater implements NodeVisitor, EdtCallback {
     }
 
     @Override
-    public void handleObservedChange(ObservableModel observableModel1, Object object, Object object1, Object object2) throws ZkmException, IOException {
-        new EdtCallbackInvoker(this, observableModel1, object, object1, object2);
+    public void handleObservedChange(ObservableModel observableModel1, Object changeArg1, Object changeArg2, Object changeArg3) throws ZkmException, IOException {
+        new EdtCallbackInvoker(this, observableModel1, changeArg1, changeArg2, changeArg3);
     }
 
     public BrowserTextViewUpdater(SelectionHolder selectionHolder1, JTextArea jTextArea, ZkmScrollPane zkmScrollPane) {

@@ -30,8 +30,8 @@ public class ScriptPreprocessor {
     public boolean isBlank(String string) {
         int ba = string.length();
 
-        for (int i = 0; i < ba; i++) {
-            if (string.charAt(i) != ' ') {
+        for (int characterIndex = 0; characterIndex < ba; characterIndex++) {
+            if (string.charAt(characterIndex) != ' ') {
                 return false;
             }
         }
@@ -46,9 +46,9 @@ public class ScriptPreprocessor {
     public String describeIncludeChain(ArrayList arrayList) {
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-            String string = (String) arrayList.get(i);
-            if (i == arrayList.size() - 1) {
+        for (int elementIndex = arrayList.size() - 1; elementIndex >= 0; elementIndex += -1) {
+            String string = (String) arrayList.get(elementIndex);
+            if (elementIndex == arrayList.size() - 1) {
                 stringBuffer.append("'" + string + "'");
             } else {
                 stringBuffer.append(" included in '" + string + "'");
@@ -59,8 +59,8 @@ public class ScriptPreprocessor {
     }
 
     public String processIncludeDirective(String string, ArrayList arrayList) throws ZkmException {
-        int ba = string.indexOf("include");
-        if (ba == -1) {
+        int endIndex = string.indexOf("include");
+        if (endIndex == -1) {
             throw new ZkmProcessingException(
                     "PREPROCESSOR ERROR: Missing 'include' within '"
                             + this.directiveStart
@@ -71,44 +71,44 @@ public class ScriptPreprocessor {
             );
         }
 
-        if (!this.isBlank(string.substring(0, ba))) {
+        if (!this.isBlank(string.substring(0, endIndex))) {
             throw new ZkmProcessingException(
                     "PREPROCESSOR ERROR: Invalid 'include' directive '"
                             + this.directiveStart
                             + string
                             + this.directiveEnd
                             + "'. String '"
-                            + string.substring(0, ba)
+                            + string.substring(0, endIndex)
                             + "' is extraneous in file "
                             + this.describeIncludeChain(arrayList)
             );
         }
 
-        int bb = string.indexOf("\"", ba + "include".length());
-        if (bb > -1) {
-            if (this.isBlank(string.substring(ba + "include".length(), bb))) {
-                int bc = string.indexOf("\"", bb + "\"".length());
-                if (bc > -1) {
-                    String string1 = string.substring(bb + "\"".length(), bc);
-                    if (!this.isBlank(string.substring(bc + "\"".length()))) {
+        int endIndexValue = string.indexOf("\"", endIndex + "include".length());
+        if (endIndexValue > -1) {
+            if (this.isBlank(string.substring(endIndex + "include".length(), endIndexValue))) {
+                int endIndexValue2 = string.indexOf("\"", endIndexValue + "\"".length());
+                if (endIndexValue2 > -1) {
+                    String absolutePathValue = string.substring(endIndexValue + "\"".length(), endIndexValue2);
+                    if (!this.isBlank(string.substring(endIndexValue2 + "\"".length()))) {
                         throw new ZkmProcessingException(
                                 "PREPROCESSOR ERROR: Invalid 'include' directive '"
                                         + this.directiveStart
                                         + string
                                         + this.directiveEnd
                                         + "'. String '"
-                                        + string.substring(bc + "\"".length())
+                                        + string.substring(endIndexValue2 + "\"".length())
                                         + "' is extraneous in file "
                                         + this.describeIncludeChain(arrayList)
                         );
                     }
 
-                    String string2;
-                    if (ZkmFileUtils.isRelativePath(string1)) {
+                    String absolutePath;
+                    if (ZkmFileUtils.isRelativePath(absolutePathValue)) {
                         if (this.includeDirectory != null) {
-                            File file1 = new File(this.includeDirectory, string1);
+                            File file1 = new File(this.includeDirectory, absolutePathValue);
                             if (!file1.exists()) {
-                                File file2 = new File(USER_DIR, string1);
+                                File file2 = new File(USER_DIR, absolutePathValue);
                                 if (!file2.exists()) {
                                     throw new ZkmProcessingException(
                                             "PREPROCESSOR ERROR: Could not find either '"
@@ -126,19 +126,19 @@ public class ScriptPreprocessor {
                                     );
                                 }
 
-                                string2 = file2.getAbsolutePath();
+                                absolutePath = file2.getAbsolutePath();
                             } else {
-                                string2 = file1.getAbsolutePath();
+                                absolutePath = file1.getAbsolutePath();
                             }
                         } else {
-                            File file3 = new File(USER_DIR, string1);
-                            string2 = file3.getAbsolutePath();
+                            File file3 = new File(USER_DIR, absolutePathValue);
+                            absolutePath = file3.getAbsolutePath();
                         }
                     } else {
-                        string2 = string1;
+                        absolutePath = absolutePathValue;
                     }
 
-                    return this.preprocessFile(string2, ZkmUtils.copyArrayList(arrayList));
+                    return this.preprocessFile(absolutePath, ZkmUtils.copyArrayList(arrayList));
                 } else {
                     throw new ZkmProcessingException(
                             "PREPROCESSOR ERROR: Missing closing '\"' in 'include' directive '"
@@ -156,7 +156,7 @@ public class ScriptPreprocessor {
                                 + string
                                 + this.directiveEnd
                                 + "'. String '"
-                                + string.substring(ba + "include".length(), bb)
+                                + string.substring(endIndex + "include".length(), endIndexValue)
                                 + "' is extraneous in file "
                                 + this.describeIncludeChain(arrayList)
                 );
@@ -173,100 +173,46 @@ public class ScriptPreprocessor {
         }
     }
 
-    public String substituteProperties(String string) {
-        StringBuffer stringBuffer = new StringBuffer((int) (string.length() * 1.2));
-        int ba = 0;
-
-        int bb;
-        while ((bb = string.indexOf(this.delimiter, ba)) > -1) {
-            stringBuffer.append(string.substring(ba, bb));
-            StringBuffer stringBuffer1;
-            String string4;
-            if (bb != 0 && string.charAt(bb - 1) == '<') {
-                stringBuffer1 = stringBuffer;
-                string4 = this.delimiter;
-            } else if (bb < string.length() - 3) {
-                if (string.charAt(bb + 1) != '>') {
-                    int bc = string.indexOf(this.delimiter, bb + this.delimiter.length());
-                    if (bc > -1) {
-                        label54:
-                        if (bc > bb + this.delimiter.length()) {
-                            String string3;
-                            int bd;
-                            String string5;
-                            if (bb > this.delimiter.length()) {
-                                if (string.charAt(bb - this.delimiter.length()) == '<') {
-                                    if (string.length() - bc >= this.delimiter.length()) {
-                                        if (string.charAt(bc + this.delimiter.length()) == '>') {
-                                            stringBuffer1 = stringBuffer;
-                                            string4 = this.delimiter;
-                                            break label54;
-                                        }
-
-                                        string3 = string;
-                                        bd = bb;
-                                        string5 = this.delimiter;
-                                    } else {
-                                        string3 = string;
-                                        bd = bb;
-                                        string5 = this.delimiter;
-                                    }
-                                } else {
-                                    string3 = string;
-                                    bd = bb;
-                                    string5 = this.delimiter;
-                                }
-                            } else {
-                                string3 = string;
-                                bd = bb;
-                                string5 = this.delimiter;
-                            }
-
-                            String string1 = string3.substring(bd + string5.length(), bc);
-                            String string2 = null;
-                            if (this.properties != null) {
-                                string2 = this.properties.getProperty(string1);
-                            }
-
-                            if (string2 == null) {
-                                string2 = System.getProperty(string1);
-                            }
-
-                            if (string2 != null) {
-                                stringBuffer.append(string2);
-                                ba = bc + this.delimiter.length();
-                            } else {
-                                stringBuffer.append(this.delimiter);
-                                ba = bb + this.delimiter.length();
-                            }
-                            continue;
-                        } else {
-                            stringBuffer1 = stringBuffer;
-                            string4 = this.delimiter;
+    public String substituteProperties(String text) {
+        StringBuffer result = new StringBuffer((int) (text.length() * 1.2));
+        int nextOffset = 0;
+        int openingDelimiter;
+        while ((openingDelimiter = text.indexOf(this.delimiter, nextOffset)) > -1) {
+            result.append(text.substring(nextOffset, openingDelimiter));
+            if (!(openingDelimiter != 0 && text.charAt(openingDelimiter - 1) == '<')
+                    && openingDelimiter < text.length() - 3
+                    && text.charAt(openingDelimiter + 1) != '>') {
+                int closingDelimiter = text.indexOf(this.delimiter, openingDelimiter + this.delimiter.length());
+                if (closingDelimiter > -1 && closingDelimiter > openingDelimiter + this.delimiter.length()) {
+                    boolean directiveBoundary = openingDelimiter > this.delimiter.length()
+                            && text.charAt(openingDelimiter - this.delimiter.length()) == '<'
+                            && text.length() - closingDelimiter >= this.delimiter.length()
+                            && text.charAt(closingDelimiter + this.delimiter.length()) == '>';
+                    if (!directiveBoundary) {
+                        String propertyName = text.substring(openingDelimiter + this.delimiter.length(), closingDelimiter);
+                        String propertyValue = null;
+                        if (this.properties != null) {
+                            propertyValue = this.properties.getProperty(propertyName);
                         }
-                    } else {
-                        stringBuffer1 = stringBuffer;
-                        string4 = this.delimiter;
+                        if (propertyValue == null) {
+                            propertyValue = System.getProperty(propertyName);
+                        }
+                        if (propertyValue != null) {
+                            result.append(propertyValue);
+                            nextOffset = closingDelimiter + this.delimiter.length();
+                        } else {
+                            result.append(this.delimiter);
+                            nextOffset = openingDelimiter + this.delimiter.length();
+                        }
+                        continue;
                     }
-
-                    stringBuffer1.append(string4);
-                    ba = bb + this.delimiter.length();
-                    continue;
                 }
-
-                stringBuffer1 = stringBuffer;
-                string4 = this.delimiter;
-            } else {
-                stringBuffer1 = stringBuffer;
-                string4 = this.delimiter;
             }
-
-            stringBuffer1.append(string4);
-            ba = bb + this.delimiter.length();
+            result.append(this.delimiter);
+            nextOffset = openingDelimiter + this.delimiter.length();
         }
-
-        stringBuffer.append(string.substring(ba));
-        return stringBuffer.toString();
+        result.append(text.substring(nextOffset));
+        return result.toString();
     }
 
     public String preprocessFile(String string, ArrayList arrayList) throws ZkmException {
@@ -282,16 +228,16 @@ public class ScriptPreprocessor {
             while (true) {
                 int ba = be;
                 if (be == -1) {
-                    String string1 = stringBuffer1.toString();
-                    string1 = this.substituteProperties(string1);
+                    String textValue = stringBuffer1.toString();
+                    textValue = this.substituteProperties(textValue);
                     int bb = 0;
-                    String string3 = string1;
+                    String textValue2 = textValue;
 
                     int bc;
-                    for (String string4 = this.directiveStart; (bc = string3.indexOf(string4, bb)) > -1; string4 = this.directiveStart) {
-                        stringBuffer.append(string1.substring(bb, bc));
-                        int bd = string1.indexOf(this.directiveEnd, bc);
-                        if (bd <= -1) {
+                    for (String directiveStartValue = this.directiveStart; (bc = textValue2.indexOf(directiveStartValue, bb)) > -1; directiveStartValue = this.directiveStart) {
+                        stringBuffer.append(textValue.substring(bb, bc));
+                        int endIndex = textValue.indexOf(this.directiveEnd, bc);
+                        if (endIndex <= -1) {
                             throw new ZkmProcessingException(
                                     "PREPROCESSOR ERROR: '"
                                             + this.directiveStart
@@ -302,13 +248,13 @@ public class ScriptPreprocessor {
                             );
                         }
 
-                        String string2 = this.processIncludeDirective(string1.substring(bc + this.directiveStart.length(), bd), arrayList);
+                        String string2 = this.processIncludeDirective(textValue.substring(bc + this.directiveStart.length(), endIndex), arrayList);
                         stringBuffer.append(string2);
-                        bb = bd + this.directiveEnd.length();
-                        string3 = string1;
+                        bb = endIndex + this.directiveEnd.length();
+                        textValue2 = textValue;
                     }
 
-                    stringBuffer.append(string1.substring(bb));
+                    stringBuffer.append(textValue.substring(bb));
                     return stringBuffer.toString();
                 }
 

@@ -21,17 +21,17 @@ public class ASTClassChange extends ChangeLogEntryNode implements ClassNameNodeS
     public String sourceName;
     public ListMultimap fieldChanges;
 
-    public void setSourceName(String string) {
-        this.sourceName = string;
+    public void setSourceName(String sourceNameArgument) {
+        this.sourceName = sourceNameArgument;
     }
 
-    public void addFieldChange(Object object, String string, String string1, Integer integer) {
+    public void addFieldChange(Object object, String name, String type, Integer integer) {
         if (this.fieldChanges == null) {
-            int ba = ZkmUtils.getPrimeCapacity(this.childCount);
-            this.fieldChanges = new ListMultimap(ba);
+            int primeCapacity = ZkmUtils.getPrimeCapacity(this.childCount);
+            this.fieldChanges = new ListMultimap(primeCapacity);
         }
 
-        this.fieldChanges.addValue(new ChangeLogClassKey(string, string1, integer), object);
+        this.fieldChanges.addValue(new ChangeLogClassKey(name, type, integer), object);
     }
 
     @Override
@@ -58,17 +58,17 @@ public class ASTClassChange extends ChangeLogEntryNode implements ClassNameNodeS
     public void applyToChangeLog(Object object) throws ZkmException, IOException {
         AbstractChangeLog abstractChangeLog = (AbstractChangeLog) object;
         AbstractChangeLog abstractChangeLog1;
-        String string1;
+        String newClassNameValue;
         if (this.newClassName == null) {
             this.newClassName = this.oldClassName;
             abstractChangeLog1 = abstractChangeLog;
-            string1 = this.newClassName;
+            newClassNameValue = this.newClassName;
         } else {
             abstractChangeLog1 = abstractChangeLog;
-            string1 = this.newClassName;
+            newClassNameValue = this.newClassName;
         }
 
-        abstractChangeLog1.addClassMapping(string1, this.oldClassName);
+        abstractChangeLog1.addClassMapping(newClassNameValue, this.oldClassName);
         if (this.sourceName != null) {
             abstractChangeLog.addSourceNameMapping(this.oldClassName, this.sourceName);
         }
@@ -82,8 +82,8 @@ public class ASTClassChange extends ChangeLogEntryNode implements ClassNameNodeS
             int ba = 27634284;
             char bb = '\ue1fb';
             ListMultimap listMultimap = this.methodChanges;
-            String string = this.oldClassName;
-            abstractChangeLog.addMethodMappings(string, listMultimap);
+            String oldClassNameValue = this.oldClassName;
+            abstractChangeLog.addMethodMappings(oldClassNameValue, listMultimap);
         }
 
         if (this.lineNumberChanges != null) {
@@ -92,42 +92,42 @@ public class ASTClassChange extends ChangeLogEntryNode implements ClassNameNodeS
     }
 
     public void addMethodChange(
-            String string,
+            String name,
             String string1,
-            String string2,
+            String type,
             Integer integer,
-            String string3,
+            String newName,
             String string4,
-            boolean bl,
-            String string5,
-            String string6,
+            boolean parametersObfuscated,
+            String parameterChangeData,
+            String paramChangeNodeData,
             Boolean boolean1
     ) {
-        String string8 = string1;
-        String string7 = string4;
+        String parameterTypes = string1;
+        String newParameterTypes = string4;
         if (this.methodChanges == null) {
             this.methodChanges = new ListMultimap(Math.min(40, this.childCount));
         }
 
-        if (string8 == null) {
-            string8 = "";
+        if (parameterTypes == null) {
+            parameterTypes = "";
         }
 
-        if (string7 == null) {
-            string7 = "";
+        if (newParameterTypes == null) {
+            newParameterTypes = "";
         }
 
-        boolean bl1 = string5 != null && string5.length() > 0 || bl;
+        boolean signatureChanged = parameterChangeData != null && parameterChangeData.length() > 0 || parametersObfuscated;
         this.methodChanges
-                .addValue(new ChangeLogMemberKey(string, string8, string2, integer), new NewNameMapping(string3, string7, bl, string5, string6, bl1, boolean1));
+                .addValue(new ChangeLogMemberKey(name, parameterTypes, type, integer), new NewNameMapping(newName, newParameterTypes, parametersObfuscated, parameterChangeData, paramChangeNodeData, signatureChanged, boolean1));
     }
 
     public ASTClassChange() {
         super(7);
     }
 
-    public void setNewClassName(String string) {
-        this.newClassName = string;
+    public void setNewClassName(String newClassNameArgument) {
+        this.newClassName = newClassNameArgument;
     }
 
     static {

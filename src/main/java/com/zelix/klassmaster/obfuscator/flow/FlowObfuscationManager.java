@@ -108,8 +108,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
     public final Map groupsByClass;
     public Object extensionHook;
 
-    public void addFieldType(Object object, Object object1) {
-        ((SyncIndexedSet) this.fieldTypesByGroup.get(object)).add(object1);
+    public void addFieldType(Object key, Object object1) {
+        ((SyncIndexedSet) this.fieldTypesByGroup.get(key)).add(object1);
     }
 
     public ListMultimap getPackageFieldsByPackage() {
@@ -119,10 +119,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
         while (iterator.hasNext()) {
             FlowFieldPair flowFieldPair = (FlowFieldPair) iterator.next();
-            String string = flowFieldPair.getPackageName();
+            String packageName = flowFieldPair.getPackageName();
             OpaquePredicateField opaquePredicateField = flowFieldPair.getPackageField();
-            if ((OpaquePredicateField) twoKeyMap.putValue(string, opaquePredicateField, opaquePredicateField) == null) {
-                listMultimap.addValue(string, opaquePredicateField);
+            if ((OpaquePredicateField) twoKeyMap.putValue(packageName, opaquePredicateField, opaquePredicateField) == null) {
+                listMultimap.addValue(packageName, opaquePredicateField);
             }
         }
 
@@ -138,40 +138,40 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         if (changeLogMemberEntry.hasNoField()) {
             return false;
         } else {
-            String string = changeLogMemberEntry.getFieldDescriptor();
-            String string1 = changeLogMemberEntry.getFieldTypeName();
-            String string2 = changeLogMemberEntry.getClassName();
+            String fieldDescriptor = changeLogMemberEntry.getFieldDescriptor();
+            String fieldTypeName = changeLogMemberEntry.getFieldTypeName();
+            String className = changeLogMemberEntry.getClassName();
             String string3 = "' is associated with a Flow Obfuscation "
                     + (changeLogMemberEntry.isTraceBackEntry() ? "TraceBackClass:" : "ForwardClass:")
                     + " but it has been used in an earlier flow obfuscation pass. You have probably used the wrong input change log! Otherwise, you must distribute this application as a whole.";
             Set set1 = inheritedMemberAnalyzer.getVisibleFieldSignatures(classFileBase);
             Set set2 = inheritedMemberAnalyzer.getVisibleMethodNameTypes(classFileBase);
-            if (set1 != null && set1.contains(new FieldSignature(changeLogMemberEntry.getFieldName(), string))) {
-                observableHolder.setValue("Field '" + string1 + " " + changeLogMemberEntry.getFieldName() + "' in class '" + string2 + string3);
+            if (set1 != null && set1.contains(new FieldSignature(changeLogMemberEntry.getFieldName(), fieldDescriptor))) {
+                observableHolder.setValue("Field '" + fieldTypeName + " " + changeLogMemberEntry.getFieldName() + "' in class '" + className + string3);
                 return true;
             } else if (changeLogMemberEntry.getSetterMethodName() != null
                     && set2 != null
-                    && set2.contains(new FieldNameTypeSignature(changeLogMemberEntry.getSetterMethodName(), OpaquePredicateField.setterDescriptorFor(string)))) {
+                    && set2.contains(new FieldNameTypeSignature(changeLogMemberEntry.getSetterMethodName(), OpaquePredicateField.setterDescriptorFor(fieldDescriptor)))) {
                 observableHolder.setValue(
-                        "Method '" + changeLogMemberEntry.getSetterMethodName() + OpaquePredicateField.setterDescriptorFor(string) + "' in class '" + string2 + string3
+                        "Method '" + changeLogMemberEntry.getSetterMethodName() + OpaquePredicateField.setterDescriptorFor(fieldDescriptor) + "' in class '" + className + string3
                 );
                 return true;
             } else if (changeLogMemberEntry.getGetterMethodName() != null
                     && set2 != null
-                    && set2.contains(new FieldNameTypeSignature(changeLogMemberEntry.getGetterMethodName(), OpaquePredicateField.getterDescriptorFor(string)))) {
+                    && set2.contains(new FieldNameTypeSignature(changeLogMemberEntry.getGetterMethodName(), OpaquePredicateField.getterDescriptorFor(fieldDescriptor)))) {
                 observableHolder.setValue(
-                        "Method '" + changeLogMemberEntry.getGetterMethodName() + OpaquePredicateField.getterDescriptorFor(string) + "' in class '" + string2 + string3
+                        "Method '" + changeLogMemberEntry.getGetterMethodName() + OpaquePredicateField.getterDescriptorFor(fieldDescriptor) + "' in class '" + className + string3
                 );
                 return true;
             } else if (changeLogMemberEntry.getAltGetterMethodName() != null
                     && set2 != null
-                    && set2.contains(new FieldNameTypeSignature(changeLogMemberEntry.getAltGetterMethodName(), OpaquePredicateField.getterDescriptorFor(string)))) {
+                    && set2.contains(new FieldNameTypeSignature(changeLogMemberEntry.getAltGetterMethodName(), OpaquePredicateField.getterDescriptorFor(fieldDescriptor)))) {
                 observableHolder.setValue(
                         "Method '"
                                 + changeLogMemberEntry.getAltGetterMethodName()
-                                + OpaquePredicateField.getterDescriptorFor(string)
+                                + OpaquePredicateField.getterDescriptorFor(fieldDescriptor)
                                 + "' in class '"
-                                + string2
+                                + className
                                 + string3
                 );
                 return true;
@@ -181,7 +181,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         }
     }
 
-    public CountingBag findCandidateClasses(Object object, CountingBag countingBag, ChangeLogMapping changeLogMapping1) {
+    public CountingBag findCandidateClasses(Object key, CountingBag countingBag, ChangeLogMapping changeLogMapping1) {
         if (this.changeLogClassesByName == null) {
             this.changeLogClassesByName = new ListMultimap();
             Map map1 = changeLogMapping1.getMemberClassEntries();
@@ -189,8 +189,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string = ZkmUtils.dotsToSlashes((String) entry.getKey());
-                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string);
+                String keyValue = ZkmUtils.dotsToSlashes((String) entry.getKey());
+                ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(keyValue);
                 if (programClass1 != null) {
                     ObjectPair objectPair = (ObjectPair) entry.getValue();
                     ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) objectPair.getFirst();
@@ -201,7 +201,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             }
         }
 
-        List list1 = this.changeLogClassesByName.getValues(object);
+        List list1 = this.changeLogClassesByName.getValues(key);
         if (list1 != null && list1.size() > 0) {
             HashSet hashSet = ZkmUtils.createHashSet(7);
             HashSet hashSet1 = ZkmUtils.createHashSet(7);
@@ -278,19 +278,19 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             ChangeLogMemberEntry changeLogMemberEntry, ClasspathClassFile classpathClassFile, InheritedMemberAnalyzer inheritedMemberAnalyzer
     ) throws ZkmException, IOException {
         FlowObfuscationGroup flowObfuscationGroup = (FlowObfuscationGroup) this.groupsByClass.get(classpathClassFile);
-        String string = changeLogMemberEntry.getFieldDescriptor();
-        this.addFieldType(flowObfuscationGroup, string);
+        String fieldDescriptor = changeLogMemberEntry.getFieldDescriptor();
+        this.addFieldType(flowObfuscationGroup, fieldDescriptor);
         classpathClassFile.getClassName();
-        LibraryFieldInfo libraryFieldInfo = (LibraryFieldInfo) classpathClassFile.findField(changeLogMemberEntry.getFieldName(), string);
+        LibraryFieldInfo libraryFieldInfo = (LibraryFieldInfo) classpathClassFile.findField(changeLogMemberEntry.getFieldName(), fieldDescriptor);
         if (libraryFieldInfo == null) {
-            libraryFieldInfo = classpathClassFile.createField(changeLogMemberEntry.getFieldName(), string, changeLogMemberEntry.hasSetterMethod() ? 1 : 4);
+            libraryFieldInfo = classpathClassFile.createField(changeLogMemberEntry.getFieldName(), fieldDescriptor, changeLogMemberEntry.hasSetterMethod() ? 1 : 4);
             inheritedMemberAnalyzer.addField(libraryFieldInfo);
         }
 
         OpaquePredicateField opaquePredicateField;
         if (changeLogMemberEntry.hasSetterMethod()) {
             ArrayList arrayList = new ArrayList();
-            MethodSignature methodSignature1 = new MethodSignature(changeLogMemberEntry.getSetterMethodName(), OpaquePredicateField.setterDescriptorFor(string));
+            MethodSignature methodSignature1 = new MethodSignature(changeLogMemberEntry.getSetterMethodName(), OpaquePredicateField.setterDescriptorFor(fieldDescriptor));
             AbstractMethodInfo abstractMethodInfo = classpathClassFile.findMethod(methodSignature1);
             if (abstractMethodInfo == null) {
                 abstractMethodInfo = this.createLibrarySetter(
@@ -298,7 +298,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                 );
             }
 
-            methodSignature1 = new MethodSignature(changeLogMemberEntry.getGetterMethodName(), OpaquePredicateField.getterDescriptorFor(string));
+            methodSignature1 = new MethodSignature(changeLogMemberEntry.getGetterMethodName(), OpaquePredicateField.getterDescriptorFor(fieldDescriptor));
             AbstractMethodInfo abstractMethodInfo1 = classpathClassFile.findMethod(methodSignature1);
             if (abstractMethodInfo1 == null) {
                 abstractMethodInfo1 = this.createLibraryGetter(
@@ -307,8 +307,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             }
 
             AbstractMethodInfo abstractMethodInfo2 = null;
-            if (string.equals("I") || string.equals("Z")) {
-                methodSignature1 = new MethodSignature(changeLogMemberEntry.getAltGetterMethodName(), OpaquePredicateField.getterDescriptorFor(string));
+            if (fieldDescriptor.equals("I") || fieldDescriptor.equals("Z")) {
+                methodSignature1 = new MethodSignature(changeLogMemberEntry.getAltGetterMethodName(), OpaquePredicateField.getterDescriptorFor(fieldDescriptor));
                 abstractMethodInfo2 = classpathClassFile.findMethod(methodSignature1);
                 if (abstractMethodInfo2 == null) {
                     abstractMethodInfo2 = this.createLibraryNegatedGetter(
@@ -340,11 +340,11 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         ArrayList arrayList = new ArrayList();
         if (opaquePredicateField.isString()) {
             opaquePredicateField.getFieldType();
-            String string1 = new IndexedNameGenerator().getNonKeywordName(random1.nextInt(Integer.MAX_VALUE));
-            arrayList.add(Instruction.createStringConstantLoad(string1, constantPool1, list1));
+            String nonKeywordName = new IndexedNameGenerator().getNonKeywordName(random1.nextInt(Integer.MAX_VALUE));
+            arrayList.add(Instruction.createStringConstantLoad(nonKeywordName, constantPool1, list1));
         } else if (opaquePredicateField.isObjectType()) {
-            String string = opaquePredicateField.getFieldType();
-            ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant(string.substring(1, string.length() - 1), list1);
+            String fieldType = opaquePredicateField.getFieldType();
+            ResolvedClassConstant resolvedClassConstant = constantPool1.getOrCreateClassConstant(fieldType.substring(1, fieldType.length() - 1), list1);
             arrayList.add(new TypeInstruction(resolvedClassConstant));
             arrayList.add(SimpleInstruction.forOpcode(89));
             ResolvedMethodRefConstant resolvedMethodRefConstant = constantPool1.getOrAddMethodRef(
@@ -353,32 +353,32 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             arrayList.add(new ConstantRefInstruction(183, resolvedMethodRefConstant));
         } else if (opaquePredicateField.isPrimitiveArray()) {
             arrayList.add(Instruction.createIntConstantPush(random1.nextInt(5) + 1, constantPool1, list1));
-            String string2 = opaquePredicateField.getFieldType();
-            String string4 = string2.substring(string2.lastIndexOf(91) + 1);
-            arrayList.add(new NewArrayInstruction(string4));
+            String fieldTypeValue = opaquePredicateField.getFieldType();
+            String key = fieldTypeValue.substring(fieldTypeValue.lastIndexOf(91) + 1);
+            arrayList.add(new NewArrayInstruction(key));
         } else if (opaquePredicateField.isObjectArray()) {
             arrayList.add(Instruction.createIntConstantPush(random1.nextInt(5) + 1, constantPool1, list1));
             String string3;
             ConstantPool constantPool2;
             String string5;
             String string6;
-            byte ba;
+            byte searchCharacter;
             if (bl) {
                 string3 = opaquePredicateField.getFieldDescriptor();
                 constantPool2 = constantPool1;
                 string5 = string3;
                 string6 = string3;
-                ba = 91;
+                searchCharacter = 91;
             } else {
                 string3 = opaquePredicateField.getFieldType();
                 constantPool2 = constantPool1;
                 string5 = string3;
                 string6 = string3;
-                ba = 91;
+                searchCharacter = 91;
             }
 
             ResolvedClassConstant resolvedClassConstant1 = constantPool2.getOrCreateClassConstant(
-                    string5.substring(string6.lastIndexOf(ba) + 2, string3.length() - 1), list1
+                    string5.substring(string6.lastIndexOf(searchCharacter) + 2, string3.length() - 1), list1
             );
             arrayList.add(new ConstantRefInstruction(189, resolvedClassConstant1));
         }
@@ -386,8 +386,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         return arrayList;
     }
 
-    public FlowFieldPair getFieldPair(Object object) {
-        return (FlowFieldPair) this.fieldPairsByClass.get(object);
+    public FlowFieldPair getFieldPair(Object key) {
+        return (FlowFieldPair) this.fieldPairsByClass.get(key);
     }
 
     public OpaquePredicateField createPredicateFieldFromChangeLog(
@@ -398,10 +398,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             Random random1
     ) throws ZkmException, IOException {
         FlowObfuscationGroup flowObfuscationGroup = (FlowObfuscationGroup) this.groupsByClass.get(programClass1);
-        String string = changeLogMemberEntry.getFieldDescriptor();
-        this.addFieldType(flowObfuscationGroup, string);
+        String fieldDescriptor = changeLogMemberEntry.getFieldDescriptor();
+        this.addFieldType(flowObfuscationGroup, fieldDescriptor);
         FieldInfo fieldInfo = programClass1.createStaticField(
-                changeLogMemberEntry.getFieldName(), string, changeLogMemberEntry.hasSetterMethod() ? 1 : 4, inheritedMemberAnalyzer, classMemberLookup1
+                changeLogMemberEntry.getFieldName(), fieldDescriptor, changeLogMemberEntry.hasSetterMethod() ? 1 : 4, inheritedMemberAnalyzer, classMemberLookup1
         );
         OpaquePredicateField opaquePredicateField;
         if (changeLogMemberEntry.hasSetterMethod()) {
@@ -413,9 +413,9 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                     programClass1, changeLogMemberEntry.getGetterMethodName(), fieldInfo, arrayList, inheritedMemberAnalyzer, classMemberLookup1
             );
             MethodInfo methodInfo3 = null;
-            String string1 = changeLogMemberEntry.getAltGetterMethodName();
-            if ((string.equals("I") || string.equals("Z")) && string1 != null) {
-                methodInfo3 = this.createNamedNegatedGetter(programClass1, string1, methodInfo2, arrayList, inheritedMemberAnalyzer, classMemberLookup1, random1);
+            String altGetterMethodName = changeLogMemberEntry.getAltGetterMethodName();
+            if ((fieldDescriptor.equals("I") || fieldDescriptor.equals("Z")) && altGetterMethodName != null) {
+                methodInfo3 = this.createNamedNegatedGetter(programClass1, altGetterMethodName, methodInfo2, arrayList, inheritedMemberAnalyzer, classMemberLookup1, random1);
             }
 
             programClass1.getClassConstantPool().appendEntries(arrayList);
@@ -431,8 +431,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         return this.random;
     }
 
-    public ClassFileBase findLibraryClass(Object object, SetMultiMap setMultiMap) {
-        Set set1 = setMultiMap.getValues(object);
+    public ClassFileBase findLibraryClass(Object key, SetMultiMap setMultiMap) {
+        Set set1 = setMultiMap.getValues(key);
         if (set1 != null) {
             Iterator iterator = set1.iterator();
 
@@ -469,14 +469,14 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             ClassInitOrderHandler classInitOrderHandler1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer
     ) throws ZkmException, IOException {
-        String string = changeLogMemberEntry.getInternalClassName();
+        String internalClassName = changeLogMemberEntry.getInternalClassName();
         changeLogMemberEntry.getFieldName();
         changeLogMemberEntry.getFieldDescriptor();
         changeLogMemberEntry.getFieldTypeName();
         OpaquePredicateField opaquePredicateField = null;
-        String string1 = ZkmUtils.slashesToDots(string);
-        this.changeLogMapping.getFlowEntryFieldNames(string);
-        if (!this.changeLogMapping.hasClassMapping(string) && !this.changeLogMapping.isRemovedClass(string)) {
+        String string1 = ZkmUtils.slashesToDots(internalClassName);
+        this.changeLogMapping.getFlowEntryFieldNames(internalClassName);
+        if (!this.changeLogMapping.hasClassMapping(internalClassName) && !this.changeLogMapping.isRemovedClass(internalClassName)) {
             this.changeLogMapping
                     .reportFatalError(
                             "Class '"
@@ -486,7 +486,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                                     + " but does not appear in the main part of the change log. (C)"
                     );
         } else {
-            String string2 = changeLogMemberEntry.getNewClassName();
+            String newClassName = changeLogMemberEntry.getNewClassName();
             if (!changeLogMemberEntry.hasNoField() && !changeLogMemberEntry.hasIncompleteMapping()) {
                 this.changeLogMapping
                         .reportFatalError(
@@ -497,17 +497,17 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                                         + " but its entry in the main part of the change log is corrupt."
                         );
             } else {
-                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string);
+                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(internalClassName);
                 if (classFileBase != null) {
                     ObservableHolder observableHolder = new ObservableHolder();
                     if (changeLogMemberEntry.hasCustomReferenceType()) {
                         FlowObfuscationGroup flowObfuscationGroup = (FlowObfuscationGroup) this.groupsByClass.get(classFileBase);
-                        String string3 = changeLogMemberEntry.getArrayElementClassName();
-                        ClassFileBase classFileBase1 = ClassHierarchyNode.findClassFile(string3);
+                        String arrayElementClassName = changeLogMemberEntry.getArrayElementClassName();
+                        ClassFileBase classFileBase1 = ClassHierarchyNode.findClassFile(arrayElementClassName);
                         if (classFileBase1 == null || !flowObfuscationGroup.isCommonClass(classFileBase1)) {
                             observableHolder.setValue(
                                     "Type '"
-                                            + ZkmUtils.slashesToDots(string3)
+                                            + ZkmUtils.slashesToDots(arrayElementClassName)
                                             + "' appears in Flow Obfuscation "
                                             + (bl ? "TraceBackClass:" : "ForwardClass:")
                                             + " '"
@@ -586,7 +586,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                         this.changeLogMapping.logError((String) observableHolder.getValue());
                     }
                 } else {
-                    ClassFileBase classFileBase2 = this.findLibraryClass(string, setMultiMap);
+                    ClassFileBase classFileBase2 = this.findLibraryClass(internalClassName, setMultiMap);
                     if (classFileBase2 == null) {
                         ProgramClass programClass1 = this.findHostClassForChangeLogEntry(
                                 changeLogMemberEntry,
@@ -599,8 +599,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                                 classInitOrderHandler1
                         );
                         if (programClass1 != null) {
-                            map1.put(string, programClass1.getClassName());
-                            String string4 = changeLogMemberEntry.getFieldTypeName();
+                            map1.put(internalClassName, programClass1.getClassName());
+                            String fieldTypeName = changeLogMemberEntry.getFieldTypeName();
                             opaquePredicateField = this.getOrCreateChangeLogField(
                                     changeLogMemberEntry,
                                     programClass1,
@@ -612,13 +612,13 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                                     inheritedMemberAnalyzer,
                                     classMemberLookup1
                             );
-                            map3.put(new Triple(programClass1.getClassName(), opaquePredicateField.getFieldName(), string4), changeLogMemberEntry.getNewFieldName());
+                            map3.put(new Triple(programClass1.getClassName(), opaquePredicateField.getFieldName(), fieldTypeName), changeLogMemberEntry.getNewFieldName());
                             if (changeLogMemberEntry.hasSetterMethod()) {
                                 if (opaquePredicateField.hasSetter()) {
                                     AbstractMethodInfo abstractMethodInfo = opaquePredicateField.getSetter();
                                     twoKeyMap3.putValue(
                                             programClass1.getClassName(),
-                                            new Triple(abstractMethodInfo.getSourceName(), string4, "void"),
+                                            new Triple(abstractMethodInfo.getSourceName(), fieldTypeName, "void"),
                                             changeLogMemberEntry.getNewSetterMethodName()
                                     );
                                 }
@@ -627,7 +627,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                                     AbstractMethodInfo abstractMethodInfo1 = opaquePredicateField.getGetter();
                                     twoKeyMap3.putValue(
                                             programClass1.getClassName(),
-                                            new Triple(abstractMethodInfo1.getSourceName(), "", string4),
+                                            new Triple(abstractMethodInfo1.getSourceName(), "", fieldTypeName),
                                             changeLogMemberEntry.getNewGetterMethodName()
                                     );
                                 }
@@ -636,7 +636,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                                     AbstractMethodInfo abstractMethodInfo2 = opaquePredicateField.getNegatedGetter();
                                     twoKeyMap3.putValue(
                                             programClass1.getClassName(),
-                                            new Triple(abstractMethodInfo2.getSourceName(), "", string4),
+                                            new Triple(abstractMethodInfo2.getSourceName(), "", fieldTypeName),
                                             changeLogMemberEntry.getNewAltGetterMethodName()
                                     );
                                 }
@@ -672,7 +672,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
     public MethodInfo createNamedSetter(
             ProgramClass programClass1,
-            String string,
+            String valueArgument,
             FieldInfo fieldInfo,
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
@@ -684,7 +684,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         this.emitSetterBody(arrayList, localVariableList1, programClass1, fieldInfo, list1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
         MethodInfo methodInfo1 = programClass1.createPublicStaticMethod(
-                string, string1, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
+                valueArgument, string1, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
         );
         this.generatedMethods.add(methodInfo1);
         return methodInfo1;
@@ -695,18 +695,18 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
     ) throws ZkmProcessingException, IOException {
         HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(classFileBases.length));
 
-        for (int i = 0; i < namedSets.length; i++) {
-            ClassGroupingSet classGroupingSet = new ClassGroupingSet(namedSets[i]);
+        for (int namedSetIndex = 0; namedSetIndex < namedSets.length; namedSetIndex++) {
+            ClassGroupingSet classGroupingSet = new ClassGroupingSet(namedSets[namedSetIndex]);
             FlowObfuscationGroup flowObfuscationGroup = new FlowObfuscationGroup(classGroupingSet);
             list1.add(flowObfuscationGroup);
         }
 
         indexGroupsByClass(list1, hashMap);
 
-        for (int i = 0; i < programClass1.length; i++) {
-            String string1 = programClass1[i].getClassName();
-            if (!changeLogMapping1.hasClassMapping(string1)) {
-                String string = ZkmUtils.slashesToDots(string1);
+        for (int programClass1ElementIndex = 0; programClass1ElementIndex < programClass1.length; programClass1ElementIndex++) {
+            String className = programClass1[programClass1ElementIndex].getClassName();
+            if (!changeLogMapping1.hasClassMapping(className)) {
+                String string = ZkmUtils.slashesToDots(className);
                 throw new ZkmProcessingException(
                         "'deriveGroupingsFromInputChangeLog' specified but opened class '"
                                 + string
@@ -728,20 +728,20 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             ClassMemberLookup classMemberLookup1,
             Random random1
     ) throws ZkmProcessingException {
-        String string = methodInfo1.getDescriptor();
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string, 5);
+        String descriptor = methodInfo1.getDescriptor();
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, 5);
         ArrayList arrayList = new ArrayList();
         this.emitNegatedGetterBody(arrayList, localVariableList1, programClass1, methodInfo1, list1, random1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
         MethodInfo methodInfo2 = programClass1.createUniquelyNamedPublicStaticMethod(
-                string, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
+                descriptor, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
         );
         this.generatedMethods.add(methodInfo2);
         return methodInfo2;
     }
 
     public static HashMap buildGroups(ProgramClass[] programClass1, ClassFileBase[] classFileBases, NamedSet[] namedSets, List list1) throws ZkmException, IOException {
-        int ba = namedSets.length;
+        int lengthValue = namedSets.length;
         HashSet hashSet = ZkmUtils.createHashSet();
         HashSet hashSet1 = ZkmUtils.createHashSet();
 
@@ -749,8 +749,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             if (!programClass2.isInterface() || programClass2.supportsJava8()) {
                 LinkedHashSet linkedHashSet = new LinkedHashSet();
 
-                for (int i = 0; i < ba; i++) {
-                    NamedSet namedSet = namedSets[i];
+                for (int namedSetIndex = 0; namedSetIndex < lengthValue; namedSetIndex++) {
+                    NamedSet namedSet = namedSets[namedSetIndex];
                     if (namedSet.contains(programClass2)) {
                         linkedHashSet.add(new IdentityValueHolder(namedSet));
                     }
@@ -773,8 +773,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            NamedSet namedSet2 = namedSets[i];
+        for (int namedSetIndexValue = 0; namedSetIndexValue < lengthValue; namedSetIndexValue++) {
+            NamedSet namedSet2 = namedSets[namedSetIndexValue];
             if (!hashSet.contains(new IdentityValueHolder(namedSet2))) {
                 arrayList.add(new ClassGroupingSet(namedSet2));
             }
@@ -790,8 +790,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             boolean bl1 = false;
             HashSet hashSet5 = (HashSet) iterator3.next();
 
-            for (int i = arrayList1.size() - 1; i >= 0; i += -1) {
-                HashSet hashSet2 = (HashSet) arrayList1.get(i);
+            for (int elementIndex = arrayList1.size() - 1; elementIndex >= 0; elementIndex += -1) {
+                HashSet hashSet2 = (HashSet) arrayList1.get(elementIndex);
                 if (hashSet2.size() <= hashSet5.size()) {
                     break;
                 }
@@ -814,17 +814,17 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             HashSet hashSet4 = (HashSet) iterator3.next();
             NamedSet[] namedSets1 = ((com.zelix.klassmaster.util.NamedSet[]) (hashSet4.toArray(new NamedSet[hashSet4.size()])));
             ClassGroupingSet classGroupingSet2 = new ClassGroupingSet(namedSets1[0]);
-            int bi = namedSets1.length;
+            int lengthValue2 = namedSets1.length;
 
-            for (int i = 1; i < bi; i++) {
-                classGroupingSet2 = classGroupingSet2.mergeIfOverlapping(new ClassGroupingSet(namedSets1[i]));
+            for (int namedSets1ElementIndex = 1; namedSets1ElementIndex < lengthValue2; namedSets1ElementIndex++) {
+                classGroupingSet2 = classGroupingSet2.mergeIfOverlapping(new ClassGroupingSet(namedSets1[namedSets1ElementIndex]));
             }
 
             arrayList.add(classGroupingSet2);
         }
 
         Collections.sort(arrayList);
-        int be = arrayList.size();
+        int arrayListSize = arrayList.size();
         Iterator iterator4 = arrayList.iterator();
 
         while (iterator4.hasNext()) {
@@ -833,11 +833,11 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             list1.add(flowObfuscationGroup);
         }
 
-        for (int i = be - 1; i >= 0; i += -1) {
-            ClassGroupingSet classGroupingSet1 = (ClassGroupingSet) arrayList.get(i);
+        for (int elementIndexValue = arrayListSize - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+            ClassGroupingSet classGroupingSet1 = (ClassGroupingSet) arrayList.get(elementIndexValue);
 
-            for (int j = i - 1; j >= 0; j += -1) {
-                ClassGroupingSet classGroupingSet3 = (ClassGroupingSet) arrayList.get(j);
+            for (int elementIndexValue2 = elementIndexValue - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+                ClassGroupingSet classGroupingSet3 = (ClassGroupingSet) arrayList.get(elementIndexValue2);
                 NamedSet namedSet3 = classGroupingSet1.getSharedSets(classGroupingSet3);
                 if (namedSet3.size() > 0) {
                     NamedSet namedSet1 = ZkmUtils.createNamedSet();
@@ -862,10 +862,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                         }
 
                         if (bl) {
-                            FlowObfuscationGroup flowObfuscationGroup1 = (FlowObfuscationGroup) list1.get(i);
+                            FlowObfuscationGroup flowObfuscationGroup1 = (FlowObfuscationGroup) list1.get(elementIndexValue);
                             flowObfuscationGroup1.removeMemberClass(classFileBase);
                         } else {
-                            FlowObfuscationGroup flowObfuscationGroup2 = (FlowObfuscationGroup) list1.get(j);
+                            FlowObfuscationGroup flowObfuscationGroup2 = (FlowObfuscationGroup) list1.get(elementIndexValue2);
                             flowObfuscationGroup2.removeMemberClass(classFileBase);
                         }
                     }
@@ -886,11 +886,11 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             ClassHierarchyQuery classHierarchyQuery,
             Map map1
     ) throws ZkmException, IOException {
-        int ba = programClass1.length;
+        int lengthValue = programClass1.length;
         TwoKeyMap twoKeyMap = new TwoKeyMap();
 
-        for (int i = 0; i < ba; i++) {
-            ProgramClass programClass2 = programClass1[i];
+        for (int programClass1ElementIndex = 0; programClass1ElementIndex < lengthValue; programClass1ElementIndex++) {
+            ProgramClass programClass2 = programClass1[programClass1ElementIndex];
             if ((!programClass2.isInterface() || programClass2.supportsJava8()) && !programClass2.isGenerated()) {
                 Enumeration enumeration = programClass2.enumerateInputLocations();
 
@@ -915,9 +915,9 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                 arrayList.add(enumeration1.nextElement());
             }
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                String string = (String) arrayList.get(i);
-                EnumerableMap enumerableMap = readOnlyMultiMap.getInnerMap(string);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                String key = (String) arrayList.get(elementIndex);
+                EnumerableMap enumerableMap = readOnlyMultiMap.getInnerMap(key);
                 Map map2 = enumerableMap.copyMap();
                 Iterator iterator = map2.keySet().iterator();
 
@@ -929,7 +929,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                 }
 
                 if (map2.size() > 0) {
-                    twoKeyMap.putInnerMap(string, map2);
+                    twoKeyMap.putInnerMap(key, map2);
                 }
             }
 
@@ -939,10 +939,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                 PrintWriter printWriter = groupingsSpec1.getLogWriter();
                 printWriter.println("\tMatched groupings:");
 
-                for (int i = 0; i < arrayList.size(); i++) {
-                    String string1 = (String) arrayList.get(i);
-                    printWriter.println("\tGrouping \"" + string1 + "\"");
-                    EnumerableMap enumerableMap1 = readOnlyMultiMap.getInnerMap(string1);
+                for (int elementIndexValue = 0; elementIndexValue < arrayList.size(); elementIndexValue++) {
+                    String keyValue2 = (String) arrayList.get(elementIndexValue);
+                    printWriter.println("\tGrouping \"" + keyValue2 + "\"");
+                    EnumerableMap enumerableMap1 = readOnlyMultiMap.getInnerMap(keyValue2);
                     ArrayList arrayList1 = new ArrayList();
                     Enumeration enumeration3 = enumerableMap1.keys();
 
@@ -953,8 +953,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
                     Collections.sort(arrayList1);
 
-                    for (int j = 0; j < arrayList1.size(); j++) {
-                        LabeledTuple labeledTuple = (LabeledTuple) arrayList1.get(j);
+                    for (int elementIndexValue2 = 0; elementIndexValue2 < arrayList1.size(); elementIndexValue2++) {
+                        LabeledTuple labeledTuple = (LabeledTuple) arrayList1.get(elementIndexValue2);
                         printWriter.println("\t\t" + AbstractExclusionSpec.formatClassWithModifiers((ClassFileBase) labeledTuple.getFirst(), classHierarchyQuery));
                     }
                 }
@@ -974,9 +974,9 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         Enumeration enumeration2 = twoKeyMap.keys();
 
         while (enumeration2.hasMoreElements()) {
-            String string2 = (String) enumeration2.nextElement();
-            Map map3 = twoKeyMap.getInnerMap(string2);
-            namedSets1[bd++] = ZkmUtils.createNamedSetFromMap(string2, map3);
+            String keyValue = (String) enumeration2.nextElement();
+            Map map3 = twoKeyMap.getInnerMap(keyValue);
+            namedSets1[bd++] = ZkmUtils.createNamedSetFromMap(keyValue, map3);
         }
 
         return namedSets1;
@@ -992,18 +992,18 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         LabelInstruction labelInstruction = new LabelInstruction(true, 1);
         arrayList.add(new BranchInstruction(154, labelInstruction));
         ArrayList arrayList1;
-        short ba;
+        short instancesByOpcodeElementIndex;
         if (abstractMethodInfo.getDescriptor().equals("()Z")) {
             arrayList.add(SimpleInstruction.forOpcode(4));
             arrayList1 = arrayList;
-            ba = 172;
+            instancesByOpcodeElementIndex = 172;
         } else {
             arrayList.add(Instruction.createIntPush(random1.nextInt(126) + 1));
             arrayList1 = arrayList;
-            ba = 172;
+            instancesByOpcodeElementIndex = 172;
         }
 
-        arrayList1.add(SimpleInstruction.forOpcode(ba));
+        arrayList1.add(SimpleInstruction.forOpcode(instancesByOpcodeElementIndex));
         arrayList.add(labelInstruction);
         arrayList.add(SimpleInstruction.forOpcode(3));
         arrayList.add(SimpleInstruction.forOpcode(172));
@@ -1021,18 +1021,18 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             ClassMemberLookup classMemberLookup1
     ) throws ZkmException, IOException {
         OpaquePredicateField opaquePredicateField = null;
-        String string = changeLogMemberEntry.getFieldName();
-        String string1 = changeLogMemberEntry.getFieldDescriptor();
-        String string2 = changeLogMemberEntry.getFieldTypeName();
-        String string3 = classFileBase.getClassName();
+        String fieldName = changeLogMemberEntry.getFieldName();
+        String fieldDescriptor = changeLogMemberEntry.getFieldDescriptor();
+        String fieldTypeName = changeLogMemberEntry.getFieldTypeName();
+        String className = classFileBase.getClassName();
         if (!changeLogMemberEntry.hasNoField()) {
             if (classFileBase.isProgramClass()) {
-                opaquePredicateField = (OpaquePredicateField) twoKeyMap.getValue(classFileBase, string);
+                opaquePredicateField = (OpaquePredicateField) twoKeyMap.getValue(classFileBase, fieldName);
                 if (opaquePredicateField == null) {
                     if (this.isUsedInEarlierPass(changeLogMemberEntry, classFileBase, inheritedMemberAnalyzer, new ObservableHolder())) {
                         opaquePredicateField = this.createPredicateField((ProgramClass) classFileBase, inheritedMemberAnalyzer, classMemberLookup1, random1);
-                        String string4 = opaquePredicateField.getFieldName();
-                        map1.put(new Triple(string3, string, string2), string4);
+                        String fieldNameValue = opaquePredicateField.getFieldName();
+                        map1.put(new Triple(className, fieldName, fieldTypeName), fieldNameValue);
                         if (changeLogMemberEntry.hasSetterMethod()) {
                             twoKeyMap1.putValue(
                                     classFileBase.getClassName(),
@@ -1061,17 +1061,17 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                     OpaquePredicateField opaquePredicateField1 = (OpaquePredicateField) twoKeyMap.putValue(
                             classFileBase, opaquePredicateField.getFieldName(), opaquePredicateField
                     );
-                } else if (string1 != null && !opaquePredicateField.getFieldType().equals(string1)) {
+                } else if (fieldDescriptor != null && !opaquePredicateField.getFieldType().equals(fieldDescriptor)) {
                     changeLogMapping1.logError(
                             "The field '"
-                                    + string
+                                    + fieldName
                                     + "' in class '"
                                     + classFileBase.getDottedClassName()
                                     + "' appears in the change log more than once but with different types.  You must distribute this application as a whole."
                     );
                 }
             } else {
-                opaquePredicateField = (OpaquePredicateField) twoKeyMap.getValue(classFileBase, string);
+                opaquePredicateField = (OpaquePredicateField) twoKeyMap.getValue(classFileBase, fieldName);
                 if (opaquePredicateField == null) {
                     opaquePredicateField = this.createLibraryPredicateField(changeLogMemberEntry, (ClasspathClassFile) classFileBase, inheritedMemberAnalyzer);
                 }
@@ -1098,7 +1098,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
     public MethodInfo createNamedGetter(
             ProgramClass programClass1,
-            String string,
+            String valueArgument,
             FieldInfo fieldInfo,
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
@@ -1110,7 +1110,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         this.emitGetterBody(arrayList, programClass1, fieldInfo, list1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
         MethodInfo methodInfo1 = programClass1.createPublicStaticMethod(
-                string, string1, arrayList, 0, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
+                valueArgument, string1, arrayList, 0, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
         );
         this.generatedMethods.add(methodInfo1);
         return methodInfo1;
@@ -1129,10 +1129,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         return hashSet;
     }
 
-    public String pickRandomFieldType(Object object, Random random1) {
-        SyncIndexedSet syncIndexedSet = (SyncIndexedSet) this.fieldTypesByGroup.get(object);
-        int ba = random1.nextInt(syncIndexedSet.size());
-        return (String) syncIndexedSet.getElementAt(ba);
+    public String pickRandomFieldType(Object key, Random random1) {
+        SyncIndexedSet syncIndexedSet = (SyncIndexedSet) this.fieldTypesByGroup.get(key);
+        int elementIndex = random1.nextInt(syncIndexedSet.size());
+        return (String) syncIndexedSet.getElementAt(elementIndex);
     }
 
     public boolean hasNonZeroValuedField() {
@@ -1150,20 +1150,20 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
     public MethodInfo createNamedNegatedGetter(
             ProgramClass programClass1,
-            String string,
+            String valueArgument,
             MethodInfo methodInfo1,
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
             ClassMemberLookup classMemberLookup1,
             Random random1
     ) throws ZkmProcessingException {
-        String string1 = methodInfo1.getDescriptor();
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, 5);
+        String descriptor = methodInfo1.getDescriptor();
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, 5);
         ArrayList arrayList = new ArrayList();
         this.emitNegatedGetterBody(arrayList, localVariableList1, programClass1, methodInfo1, list1, random1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
         MethodInfo methodInfo2 = programClass1.createPublicStaticMethod(
-                string, string1, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
+                valueArgument, descriptor, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
         );
         this.generatedMethods.add(methodInfo2);
         return methodInfo2;
@@ -1171,50 +1171,50 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
     public LibraryMethod createLibraryNegatedGetter(
             ClasspathClassFile classpathClassFile,
-            String string,
+            String valueArgument,
             AbstractMethodInfo abstractMethodInfo,
             List list1,
             InheritedMemberAnalyzer inheritedMemberAnalyzer,
             Random random1
     ) throws ZkmProcessingException {
-        String string1 = abstractMethodInfo.getDescriptor();
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, 5);
+        String descriptor = abstractMethodInfo.getDescriptor();
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, 5);
         ArrayList arrayList = new ArrayList();
         this.emitNegatedGetterBody(arrayList, localVariableList1, classpathClassFile, abstractMethodInfo, list1, random1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
-        return classpathClassFile.createCodeMethod(string, string1, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer);
+        return classpathClassFile.createCodeMethod(valueArgument, descriptor, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer);
     }
 
     public void emitGetterBody(ArrayList arrayList, ClassFileBase classFileBase, AbstractFieldInfo abstractFieldInfo, List list1) {
-        String string = abstractFieldInfo.getDescriptor();
+        String descriptor = abstractFieldInfo.getDescriptor();
         ResolvedFieldRef resolvedFieldRef = classFileBase.getConstantPool()
                 .getOrCreateFieldRef(abstractFieldInfo.getClassName(), abstractFieldInfo.getSourceName(), abstractFieldInfo.getDescriptor(), list1, abstractFieldInfo);
         arrayList.add(new ConstantRefInstruction(178, resolvedFieldRef));
         ArrayList arrayList1;
-        short ba;
-        if (!string.equals("I")) {
-            if (!string.equals("Z")) {
+        short instancesByOpcodeElementIndex;
+        if (!descriptor.equals("I")) {
+            if (!descriptor.equals("Z")) {
                 arrayList.add(SimpleInstruction.forOpcode(176));
                 return;
             }
 
             arrayList1 = arrayList;
-            ba = 172;
+            instancesByOpcodeElementIndex = 172;
         } else {
             arrayList1 = arrayList;
-            ba = 172;
+            instancesByOpcodeElementIndex = 172;
         }
 
-        arrayList1.add(SimpleInstruction.forOpcode(ba));
+        arrayList1.add(SimpleInstruction.forOpcode(instancesByOpcodeElementIndex));
     }
 
     public void emitSetterBody(
             ArrayList arrayList, LocalVariableList localVariableList1, ClassFileBase classFileBase, AbstractFieldInfo abstractFieldInfo, List list1
     ) {
-        String string = abstractFieldInfo.getDescriptor();
+        String descriptor = abstractFieldInfo.getDescriptor();
         ResolvedFieldRef resolvedFieldRef = classFileBase.getConstantPool()
                 .getOrCreateFieldRef(abstractFieldInfo.getClassName(), abstractFieldInfo.getSourceName(), abstractFieldInfo.getDescriptor(), list1, abstractFieldInfo);
-        if (!string.equals("I") && !string.equals("Z")) {
+        if (!descriptor.equals("I") && !descriptor.equals("Z")) {
             arrayList.add(Instruction.createObjectLoad(0, localVariableList1, 2));
         } else {
             arrayList.add(Instruction.createIntLoad(0, localVariableList1, 2));
@@ -1271,16 +1271,16 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
                 Collections.sort(arrayList);
                 Collections.reverse(arrayList);
-                int ba = flowObfuscationGroup.getPackageNames().size();
-                HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(ba));
+                int packageNamesSize = flowObfuscationGroup.getPackageNames().size();
+                HashMap hashMap = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(packageNamesSize));
                 HashMap hashMap1 = ZkmUtils.createHashMap(hashMap.size());
                 Iterator iterator2 = arrayList.iterator();
 
                 while (iterator2.hasNext()) {
                     WeightedObject weightedObject = (WeightedObject) iterator2.next();
                     MethodBytecode methodBytecode1 = (MethodBytecode) weightedObject.value;
-                    String string = methodBytecode1.getPackagePath();
-                    if (ba <= hashMap.size() && ba <= hashMap1.size() || weightedObject.weight < 10.0F) {
+                    String packagePath = methodBytecode1.getPackagePath();
+                    if (packageNamesSize <= hashMap.size() && packageNamesSize <= hashMap1.size() || weightedObject.weight < 10.0F) {
                         break;
                     }
 
@@ -1289,10 +1289,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                             && !methodBytecode1.getOwningClass().isMultiRelease()
                             && !methodBytecode1.isStaticInitializer()
                             && !methodBytecode1.isPrivate()) {
-                        if (!hashMap.containsKey(string)) {
-                            hashMap.put(string, methodBytecode1);
-                        } else if (!hashMap1.containsKey(string)) {
-                            hashMap1.put(string, methodBytecode1);
+                        if (!hashMap.containsKey(packagePath)) {
+                            hashMap.put(packagePath, methodBytecode1);
+                        } else if (!hashMap1.containsKey(packagePath)) {
+                            hashMap1.put(packagePath, methodBytecode1);
                         }
                     }
                 }
@@ -1334,22 +1334,22 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             ProgramClass programClass1, InheritedMemberAnalyzer inheritedMemberAnalyzer, ClassMemberLookup classMemberLookup1, Random random1
     ) throws ZkmException, IOException {
         FlowObfuscationGroup flowObfuscationGroup = (FlowObfuscationGroup) this.groupsByClass.get(programClass1);
-        String string = this.pickRandomFieldType(flowObfuscationGroup, random1);
+        String descriptor = this.pickRandomFieldType(flowObfuscationGroup, random1);
         OpaquePredicateField opaquePredicateField;
         if (this.isAdvancedModeEnabled()) {
-            FieldInfo fieldInfo = programClass1.createUniquelyNamedStaticField(string, 1, false, inheritedMemberAnalyzer, classMemberLookup1, 2);
+            FieldInfo fieldInfo = programClass1.createUniquelyNamedStaticField(descriptor, 1, false, inheritedMemberAnalyzer, classMemberLookup1, 2);
             ArrayList arrayList = new ArrayList();
             MethodInfo methodInfo1 = this.createSetter(programClass1, fieldInfo, arrayList, inheritedMemberAnalyzer, classMemberLookup1);
             MethodInfo methodInfo2 = this.createGetter(programClass1, fieldInfo, arrayList, inheritedMemberAnalyzer, classMemberLookup1);
             MethodInfo methodInfo3 = null;
-            if (string.equals("I") || string.equals("Z")) {
+            if (descriptor.equals("I") || descriptor.equals("Z")) {
                 methodInfo3 = this.createNegatedGetter(programClass1, methodInfo2, arrayList, inheritedMemberAnalyzer, classMemberLookup1, random1);
             }
 
             programClass1.getClassConstantPool().appendEntries(arrayList);
             opaquePredicateField = new OpaquePredicateField(fieldInfo, methodInfo1, methodInfo2, methodInfo3, random1);
         } else {
-            FieldInfo fieldInfo1 = programClass1.createUniquelyNamedStaticField(string, 4, false, inheritedMemberAnalyzer, classMemberLookup1, 2);
+            FieldInfo fieldInfo1 = programClass1.createUniquelyNamedStaticField(descriptor, 4, false, inheritedMemberAnalyzer, classMemberLookup1, 2);
             opaquePredicateField = new OpaquePredicateField(fieldInfo1);
         }
 
@@ -1368,41 +1368,27 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             boolean deriveGroupingsFromChangeLog,
             boolean useFixedSeed
     ) throws ZkmException, IOException {
-        label44:
-        {
-            this.groups = new ArrayList();
-            this.groupFields = new ArrayList();
-            this.packageFieldsByPackage = new ListMultimap();
-            this.groupFieldByPackageField = ZkmUtils.createHashMap();
-            this.generatedMethods = ZkmUtils.createHashSet();
-            this.primaryCallerClasses = ZkmUtils.createHashSet();
-            this.secondaryCallerClasses = ZkmUtils.createHashSet();
-            this.programClasses = programClass1;
-            this.classFiles = classFileBases;
-            this.groupingsSpec = groupingsSpec1;
-            this.changeLogMapping = changeLogMapping1;
-            this.classMemberLookup = classMemberLookup1;
-            this.processingStatistics = processingStatistics1;
-            this.staticInitCalleeAnalyzer = staticInitCalleeAnalyzer1;
-            this.deriveGroupingsFromChangeLog = deriveGroupingsFromChangeLog;
-            this.fieldPairsByClass = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(classFileBases.length));
-            this.useFixedSeed = useFixedSeed;
-            FlowObfuscationManager flowObfuscationManager1;
-            short bb;
-            if (!this.useFixedSeed) {
-                if (!HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
-                    this.random = ZkmUtils.createSeededRandom(this.programClasses.length);
-                    break label44;
-                }
-
-                flowObfuscationManager1 = this;
-                bb = 128;
-            } else {
-                flowObfuscationManager1 = this;
-                bb = 128;
-            }
-
-            flowObfuscationManager1.random = ZkmUtils.createRandom(bb);
+        this.groups = new ArrayList();
+        this.groupFields = new ArrayList();
+        this.packageFieldsByPackage = new ListMultimap();
+        this.groupFieldByPackageField = ZkmUtils.createHashMap();
+        this.generatedMethods = ZkmUtils.createHashSet();
+        this.primaryCallerClasses = ZkmUtils.createHashSet();
+        this.secondaryCallerClasses = ZkmUtils.createHashSet();
+        this.programClasses = programClass1;
+        this.classFiles = classFileBases;
+        this.groupingsSpec = groupingsSpec1;
+        this.changeLogMapping = changeLogMapping1;
+        this.classMemberLookup = classMemberLookup1;
+        this.processingStatistics = processingStatistics1;
+        this.staticInitCalleeAnalyzer = staticInitCalleeAnalyzer1;
+        this.deriveGroupingsFromChangeLog = deriveGroupingsFromChangeLog;
+        this.fieldPairsByClass = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(classFileBases.length));
+        this.useFixedSeed = useFixedSeed;
+        if (!this.useFixedSeed && !HiddenOptionFlags.RANDOMIZE_OBFUSCATION) {
+            this.random = ZkmUtils.createSeededRandom(this.programClasses.length);
+        } else {
+            this.random = ZkmUtils.createRandom(128);
         }
 
         this.random.nextBoolean();
@@ -1451,25 +1437,25 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
     public MethodInfo createGetter(
             ProgramClass programClass1, FieldInfo fieldInfo, List list1, InheritedMemberAnalyzer inheritedMemberAnalyzer, ClassMemberLookup classMemberLookup1
     ) throws ZkmProcessingException {
-        String string = OpaquePredicateField.getterDescriptorFor(fieldInfo.getDescriptor());
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string, 5);
+        String descriptor = OpaquePredicateField.getterDescriptorFor(fieldInfo.getDescriptor());
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, 5);
         ArrayList arrayList = new ArrayList();
         this.emitGetterBody(arrayList, programClass1, fieldInfo, list1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
         MethodInfo methodInfo1 = programClass1.createUniquelyNamedPublicStaticMethod(
-                string, arrayList, 0, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
+                descriptor, arrayList, 0, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
         );
         this.generatedMethods.add(methodInfo1);
         return methodInfo1;
     }
 
-    public void addArrayFieldType(Object object, ClassFileBase classFileBase) {
+    public void addArrayFieldType(Object key, ClassFileBase classFileBase) {
         StringBuilder stringBuilder = new StringBuilder(classFileBase.getClassName().length() + 3);
         stringBuilder.append('[');
         stringBuilder.append('L');
         stringBuilder.append(classFileBase.getClassName());
         stringBuilder.append(';');
-        ((SyncIndexedSet) this.fieldTypesByGroup.get(object)).add(stringBuilder.toString());
+        ((SyncIndexedSet) this.fieldTypesByGroup.get(key)).add(stringBuilder.toString());
     }
 
     public boolean hasExcludedChangeLogMembers(
@@ -1481,107 +1467,107 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             ClassMemberLookup classMemberLookup1,
             ObservableHolder observableHolder
     ) throws ZkmException, IOException {
-        boolean bl = false;
-        String string = changeLogMemberEntry.getFieldName();
-        String string1 = changeLogMemberEntry.getInternalClassName();
-        String string2 = changeLogMemberEntry.getClassName();
-        String string3 = changeLogMemberEntry.getFieldTypeName();
-        String string4 = changeLogMemberEntry.getFieldDescriptor();
-        if (string != null) {
-            String string5 = changeLogMemberEntry.getNewFieldName();
+        boolean excludedChangeLogMembers = false;
+        String fieldName = changeLogMemberEntry.getFieldName();
+        String internalClassName = changeLogMemberEntry.getInternalClassName();
+        String className = changeLogMemberEntry.getClassName();
+        String fieldTypeName = changeLogMemberEntry.getFieldTypeName();
+        String fieldDescriptor = changeLogMemberEntry.getFieldDescriptor();
+        if (fieldName != null) {
+            String newFieldName = changeLogMemberEntry.getNewFieldName();
             FieldInfo fieldInfo = null;
             if (classFileBase.isProgramClass()) {
-                fieldInfo = classMemberLookup1.findField(string1, string5, string4);
+                fieldInfo = classMemberLookup1.findField(internalClassName, newFieldName, fieldDescriptor);
             }
 
             if (fieldInfo != null && fieldInfo.isProgramMember() && nameExclusionSet.isFieldExcluded(fieldInfo)) {
                 observableHolder.setValue(
                         "Class '"
-                                + string2
+                                + className
                                 + "' appears as a Flow Obfuscation "
                                 + (changeLogMemberEntry.isTraceBackEntry() ? "TraceBackClass:" : "ForwardClass:")
                                 + " but it is now incompatible. You must distribute this application as a whole. : "
                                 + fieldInfo.toDisplayString()
                 );
-                ObjectPair objectPair = new ObjectPair(string, string3);
-                twoKeyMap.putValue(string1, objectPair, objectPair);
-                bl = true;
+                ObjectPair objectPair = new ObjectPair(fieldName, fieldTypeName);
+                twoKeyMap.putValue(internalClassName, objectPair, objectPair);
+                excludedChangeLogMembers = true;
             }
 
             if (changeLogMemberEntry.getSetterMethodName() != null) {
-                String string6 = changeLogMemberEntry.getNewSetterMethodName();
+                String newSetterMethodName = changeLogMemberEntry.getNewSetterMethodName();
                 MethodInfo methodInfo1 = null;
                 if (classFileBase.isProgramClass()) {
                     methodInfo1 = classMemberLookup1.findDeclaredMethod(
-                            (ProgramClass) classFileBase, new MethodSignature(string6, OpaquePredicateField.setterDescriptorFor(string4))
+                            (ProgramClass) classFileBase, new MethodSignature(newSetterMethodName, OpaquePredicateField.setterDescriptorFor(fieldDescriptor))
                     );
                 }
 
                 if (methodInfo1 != null && methodInfo1.isProgramMember() && nameExclusionSet.isMethodExcluded(methodInfo1)) {
                     observableHolder.setValue(
                             "Class '"
-                                    + string2
+                                    + className
                                     + "' appears as a Flow Obfuscation "
                                     + (changeLogMemberEntry.isTraceBackEntry() ? "TraceBackClass:" : "ForwardClass:")
                                     + " but it is now incompatible. You must distribute this application as a whole. : "
                                     + methodInfo1.toDisplayString()
                                     + " (A)"
                     );
-                    map1.put(string1, new Triple(changeLogMemberEntry.getSetterMethodName(), string3, "void"));
-                    bl = true;
+                    map1.put(internalClassName, new Triple(changeLogMemberEntry.getSetterMethodName(), fieldTypeName, "void"));
+                    excludedChangeLogMembers = true;
                 }
             }
 
             if (changeLogMemberEntry.getGetterMethodName() != null) {
-                String string7 = changeLogMemberEntry.getNewGetterMethodName();
+                String newGetterMethodName = changeLogMemberEntry.getNewGetterMethodName();
                 MethodInfo methodInfo2 = null;
                 if (classFileBase.isProgramClass()) {
                     methodInfo2 = classMemberLookup1.findDeclaredMethod(
-                            (ProgramClass) classFileBase, new MethodSignature(string7, OpaquePredicateField.getterDescriptorFor(string4))
+                            (ProgramClass) classFileBase, new MethodSignature(newGetterMethodName, OpaquePredicateField.getterDescriptorFor(fieldDescriptor))
                     );
                 }
 
                 if (methodInfo2 != null && methodInfo2.isProgramMember() && nameExclusionSet.isMethodExcluded(methodInfo2)) {
                     observableHolder.setValue(
                             "Class '"
-                                    + string2
+                                    + className
                                     + "' appears as a Flow Obfuscation "
                                     + (changeLogMemberEntry.isTraceBackEntry() ? "TraceBackClass:" : "ForwardClass:")
                                     + " but it is now incompatible. You must distribute this application as a whole. : "
                                     + methodInfo2.toDisplayString()
                                     + " (B)"
                     );
-                    map1.put(string1, new Triple(changeLogMemberEntry.getGetterMethodName(), "", string3));
-                    bl = true;
+                    map1.put(internalClassName, new Triple(changeLogMemberEntry.getGetterMethodName(), "", fieldTypeName));
+                    excludedChangeLogMembers = true;
                 }
             }
 
             if (changeLogMemberEntry.getAltGetterMethodName() != null) {
-                String string8 = changeLogMemberEntry.getNewAltGetterMethodName();
+                String newAltGetterMethodName = changeLogMemberEntry.getNewAltGetterMethodName();
                 MethodInfo methodInfo3 = null;
                 if (classFileBase.isProgramClass()) {
                     methodInfo3 = classMemberLookup1.findDeclaredMethod(
-                            (ProgramClass) classFileBase, new MethodSignature(string8, OpaquePredicateField.getterDescriptorFor(string4))
+                            (ProgramClass) classFileBase, new MethodSignature(newAltGetterMethodName, OpaquePredicateField.getterDescriptorFor(fieldDescriptor))
                     );
                 }
 
                 if (methodInfo3 != null && methodInfo3.isProgramMember() && nameExclusionSet.isMethodExcluded(methodInfo3)) {
                     observableHolder.setValue(
                             "Class '"
-                                    + string2
+                                    + className
                                     + "' appears as a Flow Obfuscation "
                                     + (changeLogMemberEntry.isTraceBackEntry() ? "TraceBackClass:" : "ForwardClass:")
                                     + " but it is now incompatible. You must distribute this application as a whole. : "
                                     + methodInfo3.toDisplayString()
                                     + " (C)"
                     );
-                    map1.put(string1, new Triple(changeLogMemberEntry.getAltGetterMethodName(), "", string3));
-                    bl = true;
+                    map1.put(internalClassName, new Triple(changeLogMemberEntry.getAltGetterMethodName(), "", fieldTypeName));
+                    excludedChangeLogMembers = true;
                 }
             }
         }
 
-        return bl;
+        return excludedChangeLogMembers;
     }
 
     public SetMultiMap assignPredicateFields(
@@ -1608,25 +1594,25 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         if (this.changeLogMapping != null) {
             ArrayList arrayList = this.changeLogMapping.getOldClassNames();
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                hashSet.add(ClassFileBase.getPackagePath(ZkmUtils.dotsToSlashes((String) arrayList.get(i))));
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                hashSet.add(ClassFileBase.getPackagePath(ZkmUtils.dotsToSlashes((String) arrayList.get(elementIndex))));
             }
         }
 
-        int be = hashSet.size();
-        int bf = this.programClasses.length;
-        CountingBag countingBag = new CountingBag(bf);
+        int hashSetSize = hashSet.size();
+        int lengthValue = this.programClasses.length;
+        CountingBag countingBag = new CountingBag(lengthValue);
         CountingBag countingBag1 = new CountingBag(1);
 
-        for (int i = 0; i < bf; i++) {
-            this.programClasses[i].countReferencedProgramClasses(countingBag);
+        for (int programClasseIndex = 0; programClasseIndex < lengthValue; programClasseIndex++) {
+            this.programClasses[programClasseIndex].countReferencedProgramClasses(countingBag);
         }
 
         List list1 = classHierarchy1.getTopProgramNodes();
-        int bc = list1.size();
+        int list1Size = list1.size();
 
-        for (int i = 0; i < bc; i++) {
-            ((ClassHierarchyNode) list1.get(i)).sumSubtreeCounts(new MutableInt(0), new MutableInt(0), countingBag, countingBag1);
+        for (int elementIndexValue = 0; elementIndexValue < list1Size; elementIndexValue++) {
+            ((ClassHierarchyNode) list1.get(elementIndexValue)).sumSubtreeCounts(new MutableInt(0), new MutableInt(0), countingBag, countingBag1);
         }
 
         TwoKeyMap twoKeyMap = new TwoKeyMap();
@@ -1654,8 +1640,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
             while (iterator1.hasNext()) {
                 OpaquePredicateField opaquePredicateField = (OpaquePredicateField) iterator1.next();
-                String string = opaquePredicateField.getOwnerClassName();
-                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string);
+                String ownerClassName = opaquePredicateField.getOwnerClassName();
+                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(ownerClassName);
                 if (flowObfuscationGroup.isCommonClass(classFileBase)) {
                     flowObfuscationGroup.setGroupField(opaquePredicateField);
                     break;
@@ -1665,17 +1651,17 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             iterator1 = flowObfuscationGroup.getSortedPackageNames().iterator();
 
             while (iterator1.hasNext()) {
-                String string3 = (String) iterator1.next();
-                List list3 = this.packageFieldsByPackage.getValues(string3);
+                String key = (String) iterator1.next();
+                List list3 = this.packageFieldsByPackage.getValues(key);
                 if (list3 != null) {
                     Iterator iterator4 = list3.iterator();
 
                     while (iterator4.hasNext()) {
                         OpaquePredicateField opaquePredicateField1 = (OpaquePredicateField) iterator4.next();
-                        String string1 = opaquePredicateField1.getOwnerClassName();
-                        ClassFileBase classFileBase1 = ClassHierarchyNode.findClassFile(string1);
+                        String ownerClassNameValue = opaquePredicateField1.getOwnerClassName();
+                        ClassFileBase classFileBase1 = ClassHierarchyNode.findClassFile(ownerClassNameValue);
                         if (flowObfuscationGroup.isCommonClass(classFileBase1)) {
-                            flowObfuscationGroup.putPackageField(string3, opaquePredicateField1);
+                            flowObfuscationGroup.putPackageField(key, opaquePredicateField1);
                             break;
                         }
                     }
@@ -1695,7 +1681,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                     inheritedMemberAnalyzer,
                     this.staticInitCalleeAnalyzer,
                     classMemberLookup1,
-                    be,
+                    hashSetSize,
                     flowObfuscationExclusions,
                     classInitOrderHandler1,
                     1
@@ -1710,14 +1696,14 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                         inheritedMemberAnalyzer,
                         this.staticInitCalleeAnalyzer,
                         classMemberLookup1,
-                        be,
+                        hashSetSize,
                         flowObfuscationExclusions,
                         classInitOrderHandler1,
                         2
                 );
             }
 
-            if (be == 1 && !flowObfuscationGroup.hasAllFields()) {
+            if (hashSetSize == 1 && !flowObfuscationGroup.hasAllFields()) {
                 iterator3 = list2.iterator();
                 this.assignFieldsFromCandidates(
                         iterator3,
@@ -1728,7 +1714,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                         inheritedMemberAnalyzer,
                         this.staticInitCalleeAnalyzer,
                         classMemberLookup1,
-                        be,
+                        hashSetSize,
                         flowObfuscationExclusions,
                         classInitOrderHandler1,
                         3
@@ -1748,7 +1734,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                             inheritedMemberAnalyzer,
                             this.staticInitCalleeAnalyzer,
                             classMemberLookup1,
-                            be,
+                            hashSetSize,
                             flowObfuscationExclusions,
                             classInitOrderHandler1,
                             4
@@ -1756,20 +1742,20 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                 }
 
                 if (!flowObfuscationGroup.hasAllFields()) {
-                    String string4 = opaquePredicateField7.getOwnerClassName();
-                    ClassFileBase classFileBase3 = ClassHierarchyNode.findClassFile(string4);
+                    String ownerClassNameValue2 = opaquePredicateField7.getOwnerClassName();
+                    ClassFileBase classFileBase3 = ClassHierarchyNode.findClassFile(ownerClassNameValue2);
                     if (classFileBase3.isProgramClass()) {
                         Iterator iterator6 = flowObfuscationGroup.getSortedPackageNames().iterator();
 
                         while (iterator6.hasNext()) {
-                            String string2 = (String) iterator6.next();
-                            if (flowObfuscationGroup.getPackageField(string2) == null) {
+                            String keyValue = (String) iterator6.next();
+                            if (flowObfuscationGroup.getPackageField(keyValue) == null) {
                                 OpaquePredicateField opaquePredicateField2 = this.createPredicateField(
                                         (ProgramClass) classFileBase3, inheritedMemberAnalyzer, classMemberLookup1, this.random
                                 );
-                                this.packageFieldsByPackage.addValue(string2, opaquePredicateField2);
+                                this.packageFieldsByPackage.addValue(keyValue, opaquePredicateField2);
                                 twoKeyMap.putValue(classFileBase3, opaquePredicateField2.getFieldName(), opaquePredicateField2);
-                                flowObfuscationGroup.putPackageField(string2, opaquePredicateField2);
+                                flowObfuscationGroup.putPackageField(keyValue, opaquePredicateField2);
                             }
                         }
                     }
@@ -1790,11 +1776,11 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             }
         }
 
-        int bg = 0;
+        int programClasseIndexValue = 0;
         int bh = 0;
 
         for (ProgramClass[] programClass2 = this.programClasses; bh < programClass2.length; programClass2 = this.programClasses) {
-            ProgramClass programClass1 = this.programClasses[bg];
+            ProgramClass programClass1 = this.programClasses[programClasseIndexValue];
             FlowObfuscationGroup flowObfuscationGroup2 = (FlowObfuscationGroup) this.groupsByClass.get(programClass1);
             if (flowObfuscationGroup2 != null) {
                 OpaquePredicateField opaquePredicateField4 = flowObfuscationGroup2.getGroupField();
@@ -1814,7 +1800,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                 }
             }
 
-            bh = ++bg;
+            bh = ++programClasseIndexValue;
         }
 
         return setMultiMap;
@@ -1823,13 +1809,13 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
     public MethodInfo createSetter(
             ProgramClass programClass1, FieldInfo fieldInfo, List list1, InheritedMemberAnalyzer inheritedMemberAnalyzer, ClassMemberLookup classMemberLookup1
     ) throws ZkmProcessingException {
-        String string = OpaquePredicateField.setterDescriptorFor(fieldInfo.getDescriptor());
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string, 5);
+        String descriptor = OpaquePredicateField.setterDescriptorFor(fieldInfo.getDescriptor());
+        LocalVariableList localVariableList1 = new LocalVariableList(true, descriptor, 5);
         ArrayList arrayList = new ArrayList();
         this.emitSetterBody(arrayList, localVariableList1, programClass1, fieldInfo, list1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
         MethodInfo methodInfo1 = programClass1.createUniquelyNamedPublicStaticMethod(
-                string, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
+                descriptor, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer, classMemberLookup1
         );
         this.generatedMethods.add(methodInfo1);
         return methodInfo1;
@@ -1864,14 +1850,14 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
     }
 
     public LibraryMethod createLibraryGetter(
-            ClasspathClassFile classpathClassFile, String string, AbstractFieldInfo abstractFieldInfo, List list1, InheritedMemberAnalyzer inheritedMemberAnalyzer
+            ClasspathClassFile classpathClassFile, String valueArgument, AbstractFieldInfo abstractFieldInfo, List list1, InheritedMemberAnalyzer inheritedMemberAnalyzer
     ) throws ZkmProcessingException {
-        String string1 = OpaquePredicateField.getterDescriptorFor(abstractFieldInfo.getDescriptor());
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, 5);
+        String valueValue = OpaquePredicateField.getterDescriptorFor(abstractFieldInfo.getDescriptor());
+        LocalVariableList localVariableList1 = new LocalVariableList(true, valueValue, 5);
         ArrayList arrayList = new ArrayList();
         this.emitGetterBody(arrayList, classpathClassFile, abstractFieldInfo, list1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
-        return classpathClassFile.createCodeMethod(string, string1, arrayList, 0, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer);
+        return classpathClassFile.createCodeMethod(valueArgument, valueValue, arrayList, 0, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer);
     }
 
     public boolean canHostPredicateField(
@@ -1881,15 +1867,15 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             ClassMemberLookup classMemberLookup1,
             boolean bl
     ) throws ZkmException, IOException {
-        String string = programClass1.getClassName();
+        String className = programClass1.getClassName();
         Set set1 = programClass1.getAnnotationTypes();
         return !programClass1.isInterface()
                 && (programClass1.isPublic() || bl)
                 && !programClass1.isMultiRelease()
                 && (flowObfuscationExclusions == null || !flowObfuscationExclusions.isExcludedFromPredicateFields(programClass1))
                 && (classInitOrderHandler1 == null || !classInitOrderHandler1.isLaterInitializedClass(programClass1))
-                && !classMemberLookup1.isSubclass(string, "org/eclipse/osgi/util/NLS")
-                && !classMemberLookup1.implementsInterface(string, "javax/ejb/EnterpriseBean")
+                && !classMemberLookup1.isSubclass(className, "org/eclipse/osgi/util/NLS")
+                && !classMemberLookup1.implementsInterface(className, "javax/ejb/EnterpriseBean")
                 && (set1 == null || !set1.contains("javax/ejb/Stateful") && !set1.contains("javax/ejb/Stateless") && !set1.contains("javax/ejb/MessageDriven"));
     }
 
@@ -1917,10 +1903,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             Iterator iterator1 = set1.iterator();
 
             while (iterator1.hasNext()) {
-                String string1 = (String) iterator1.next();
-                String string2 = (String) ZkmUtils.mapOrSelf(string1, map1);
-                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string2);
-                ZkmAssert.assertNotNullMessage(classFileBase, new String[]{string1, ", ", string2});
+                String key = (String) iterator1.next();
+                String keyValue = (String) ZkmUtils.mapOrSelf(key, map1);
+                ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(keyValue);
+                ZkmAssert.assertNotNullMessage(classFileBase, new String[]{key, ", ", keyValue});
                 if (!classFileBase.isInterface() || classFileBase.supportsJava8()) {
                     arrayList.add(classFileBase);
                 }
@@ -1963,9 +1949,9 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string = (String) entry.getKey();
-            String string1 = ZkmUtils.dotsToSlashes(string);
-            ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(string1);
+            String key = (String) entry.getKey();
+            String keyValue4 = ZkmUtils.dotsToSlashes(key);
+            ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(keyValue4);
             if (classFileBase != null && (!classFileBase.isInterface() || classFileBase.supportsJava8())) {
                 ObjectPair objectPair = (ObjectPair) entry.getValue();
                 ChangeLogMemberEntry changeLogMemberEntry = (ChangeLogMemberEntry) objectPair.getFirst();
@@ -2016,10 +2002,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         Enumeration enumeration1 = listMultimap.keys();
 
         while (enumeration1.hasMoreElements() && bl) {
-            String string2 = (String) enumeration1.nextElement();
-            String string3 = ZkmUtils.dotsToSlashes(string2);
-            if (hashSet.contains(string3)) {
-                List list1 = listMultimap.getValues(string2);
+            String keyValue5 = (String) enumeration1.nextElement();
+            String keyValue6 = ZkmUtils.dotsToSlashes(keyValue5);
+            if (hashSet.contains(keyValue6)) {
+                List list1 = listMultimap.getValues(keyValue5);
                 Iterator iterator3 = list1.iterator();
 
                 while (iterator3.hasNext()) {
@@ -2047,7 +2033,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                             inheritedMemberAnalyzer
                     );
                     if (opaquePredicateField != null) {
-                        this.packageFieldsByPackage.addValue(string3, opaquePredicateField);
+                        this.packageFieldsByPackage.addValue(keyValue6, opaquePredicateField);
                         hashMap.put(changeLogMemberEntry4, opaquePredicateField);
                         ClassFileBase classFileBase1 = ClassHierarchyNode.findClassFile(opaquePredicateField.getOwnerClassName());
                         setMultiMap.addValue(classFileBase1, opaquePredicateField.getFieldSignature());
@@ -2064,12 +2050,12 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
             while (iterator1.hasNext()) {
                 Entry entry1 = (Entry) iterator1.next();
-                String string5 = (String) entry1.getKey();
-                String string8 = ZkmUtils.dotsToSlashes(string5);
-                ClassFileBase classFileBase3 = ClassHierarchyNode.findClassFile(string8);
+                String keyValue = (String) entry1.getKey();
+                String keyValue7 = ZkmUtils.dotsToSlashes(keyValue);
+                ClassFileBase classFileBase3 = ClassHierarchyNode.findClassFile(keyValue7);
                 if (classFileBase3 != null) {
                     if (classFileBase3.isInterface() && !classFileBase3.supportsJava8()) {
-                        this.changeLogMapping.logMessage("Class '" + string5 + "' has been changed to be an interface. No action required.");
+                        this.changeLogMapping.logMessage("Class '" + keyValue + "' has been changed to be an interface. No action required.");
                     } else {
                         ObjectPair objectPair2 = (ObjectPair) entry1.getValue();
                         ChangeLogMemberEntry changeLogMemberEntry2 = (ChangeLogMemberEntry) objectPair2.getFirst();
@@ -2079,7 +2065,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                         if (opaquePredicateField1 == null || opaquePredicateField2 == null) {
                             bl = false;
                             this.changeLogMapping
-                                    .logError("Class '" + string5 + "' affected by a change in class grouping (B). You must distribute this application as a whole.");
+                                    .logError("Class '" + keyValue + "' affected by a change in class grouping (B). You must distribute this application as a whole.");
                         } else if (this.isFieldClassInAllGroupings(classFileBase3, opaquePredicateField1)
                                 && this.isFieldClassInAllGroupings(classFileBase3, opaquePredicateField2)) {
                             this.fieldPairsByClass
@@ -2087,7 +2073,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                         } else {
                             bl = false;
                             this.changeLogMapping
-                                    .logError("Class '" + string5 + "' affected by a change in class grouping (A). You must distribute this application as a whole.");
+                                    .logError("Class '" + keyValue + "' affected by a change in class grouping (A). You must distribute this application as a whole.");
                         }
                     }
                 }
@@ -2102,9 +2088,9 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
         while (iterator2.hasNext()) {
             Entry entry2 = (Entry) iterator2.next();
-            String string6 = (String) entry2.getKey();
-            String string9 = (String) entry2.getValue();
-            this.changeLogMapping.renameMappedClass(string6, string9);
+            String keyValue2 = (String) entry2.getKey();
+            String valueValue = (String) entry2.getValue();
+            this.changeLogMapping.renameMappedClass(keyValue2, valueValue);
         }
 
         iterator2 = hashMap3.entrySet().iterator();
@@ -2112,22 +2098,22 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         while (iterator2.hasNext()) {
             Entry entry3 = (Entry) iterator2.next();
             Triple triple = (Triple) entry3.getKey();
-            String string10 = (String) entry3.getValue();
-            this.changeLogMapping.renameRawFieldMapping((String) triple.getFirst(), (String) triple.getSecond(), (String) triple.getThird(), string10);
+            String valueValue2 = (String) entry3.getValue();
+            this.changeLogMapping.renameRawFieldMapping((String) triple.getFirst(), (String) triple.getSecond(), (String) triple.getThird(), valueValue2);
         }
 
         Enumeration enumeration2 = twoKeyMap1.keys();
 
         while (enumeration2.hasMoreElements()) {
-            String string4 = (String) enumeration2.nextElement();
-            Map map2 = twoKeyMap1.getInnerMap(string4);
+            String keyValue8 = (String) enumeration2.nextElement();
+            Map map2 = twoKeyMap1.getInnerMap(keyValue8);
             Iterator iterator4 = map2.keySet().iterator();
 
             while (iterator4.hasNext()) {
                 ObjectPair objectPair1 = (ObjectPair) iterator4.next();
-                String string12 = (String) objectPair1.getFirst();
-                String string13 = (String) objectPair1.getSecond();
-                this.changeLogMapping.removeRawFieldMapping(string4, string12, string13);
+                String first = (String) objectPair1.getFirst();
+                String second = (String) objectPair1.getSecond();
+                this.changeLogMapping.removeRawFieldMapping(keyValue8, first, second);
             }
         }
 
@@ -2136,8 +2122,8 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         while (iterator2.hasNext()) {
             Entry entry4 = (Entry) iterator2.next();
             Triple triple1 = (Triple) entry4.getKey();
-            String string11 = (String) entry4.getValue();
-            this.changeLogMapping.addRawFieldMapping((String) triple1.getFirst(), (String) triple1.getSecond(), (String) triple1.getThird(), string11);
+            String valueValue3 = (String) entry4.getValue();
+            this.changeLogMapping.addRawFieldMapping((String) triple1.getFirst(), (String) triple1.getSecond(), (String) triple1.getThird(), valueValue3);
         }
 
         iterator2 = twoKeyMap2.entrySet().iterator();
@@ -2170,7 +2156,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
         while (iterator2.hasNext()) {
             Entry entry7 = (Entry) iterator2.next();
-            String string7 = (String) entry7.getKey();
+            String keyValue3 = (String) entry7.getKey();
             Map map4 = (Map) entry7.getValue();
             Iterator iterator6 = map4.entrySet().iterator();
 
@@ -2178,7 +2164,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                 Entry entry9 = (Entry) iterator6.next();
                 Triple triple4 = (Triple) entry9.getKey();
                 this.changeLogMapping
-                        .addRawMethodMapping(string7, (String) triple4.getFirst(), (String) triple4.getSecond(), (String) triple4.getThird(), (String) entry9.getValue());
+                        .addRawMethodMapping(keyValue3, (String) triple4.getFirst(), (String) triple4.getSecond(), (String) triple4.getThird(), (String) entry9.getValue());
             }
         }
 
@@ -2231,20 +2217,20 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                     flowObfuscationGroup.setGroupField(opaquePredicateField);
                 } else {
                     boolean bl = false;
-                    String string = null;
+                    String packagePath = null;
                     if (bb != 1 && bb != 2 && bb != 3) {
                         Iterator iterator1 = flowObfuscationGroup.getSortedPackageNames().iterator();
 
                         while (iterator1.hasNext()) {
-                            string = (String) iterator1.next();
-                            if (flowObfuscationGroup.getPackageField(string) == null) {
+                            packagePath = (String) iterator1.next();
+                            if (flowObfuscationGroup.getPackageField(packagePath) == null) {
                                 bl = true;
                                 break;
                             }
                         }
                     } else {
-                        string = programClass1.getPackagePath();
-                        if (flowObfuscationGroup.getPackageField(string) != null) {
+                        packagePath = programClass1.getPackagePath();
+                        if (flowObfuscationGroup.getPackageField(packagePath) != null) {
                             continue;
                         }
 
@@ -2253,10 +2239,10 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
 
                     if (bl) {
                         OpaquePredicateField opaquePredicateField1 = this.createPredicateField(programClass1, inheritedMemberAnalyzer, classMemberLookup1, random1);
-                        this.packageFieldsByPackage.addValue(string, opaquePredicateField1);
+                        this.packageFieldsByPackage.addValue(packagePath, opaquePredicateField1);
                         twoKeyMap.putValue(programClass1, opaquePredicateField1.getFieldName(), opaquePredicateField1);
                         setMultiMap.addValue(programClass1, opaquePredicateField1.getFieldSignature());
-                        flowObfuscationGroup.putPackageField(string, opaquePredicateField1);
+                        flowObfuscationGroup.putPackageField(packagePath, opaquePredicateField1);
                     }
                 }
             }
@@ -2264,14 +2250,14 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
     }
 
     public LibraryMethod createLibrarySetter(
-            ClasspathClassFile classpathClassFile, String string, LibraryFieldInfo libraryFieldInfo, List list1, InheritedMemberAnalyzer inheritedMemberAnalyzer
+            ClasspathClassFile classpathClassFile, String valueArgument, LibraryFieldInfo libraryFieldInfo, List list1, InheritedMemberAnalyzer inheritedMemberAnalyzer
     ) throws ZkmProcessingException {
-        String string1 = OpaquePredicateField.setterDescriptorFor(libraryFieldInfo.getDescriptor());
-        LocalVariableList localVariableList1 = new LocalVariableList(true, string1, 5);
+        String valueValue = OpaquePredicateField.setterDescriptorFor(libraryFieldInfo.getDescriptor());
+        LocalVariableList localVariableList1 = new LocalVariableList(true, valueValue, 5);
         ArrayList arrayList = new ArrayList();
         this.emitSetterBody(arrayList, localVariableList1, classpathClassFile, libraryFieldInfo, list1);
         ExceptionHandlerSpec[] exceptionHandlerSpecs = new ExceptionHandlerSpec[0];
-        return classpathClassFile.createCodeMethod(string, string1, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer);
+        return classpathClassFile.createCodeMethod(valueArgument, valueValue, arrayList, 1, localVariableList1, exceptionHandlerSpecs, list1, inheritedMemberAnalyzer);
     }
 
     public boolean isSecondaryCallerClass(Object object) {
@@ -2325,25 +2311,25 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
         return this.groups;
     }
 
-    public boolean isFieldClassInAllGroupings(Object object, OpaquePredicateField opaquePredicateField) {
+    public boolean isFieldClassInAllGroupings(Object key, OpaquePredicateField opaquePredicateField) {
         ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(opaquePredicateField.getOwnerClassName());
         if (this.groupingSetsByClass == null) {
             this.groupingSetsByClass = new ListMultimap(this.classFiles.length);
-            int ba = 0;
+            int groupingSetIndex = 0;
             int bb = 0;
 
             for (NamedSet[] namedSets = this.groupingSets; bb < namedSets.length; namedSets = this.groupingSets) {
-                Iterator iterator = this.groupingSets[ba].iterator();
+                Iterator iterator = this.groupingSets[groupingSetIndex].iterator();
 
                 while (iterator.hasNext()) {
-                    this.groupingSetsByClass.addValue(iterator.next(), this.groupingSets[ba]);
+                    this.groupingSetsByClass.addValue(iterator.next(), this.groupingSets[groupingSetIndex]);
                 }
 
-                bb = ++ba;
+                bb = ++groupingSetIndex;
             }
         }
 
-        List list1 = this.groupingSetsByClass.getValues(object);
+        List list1 = this.groupingSetsByClass.getValues(key);
         if (list1 != null) {
             Iterator iterator1 = list1.iterator();
 
@@ -2398,27 +2384,27 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             return null;
         }
 
-        String string = changeLogMemberEntry.getFieldName();
-        String string1 = changeLogMemberEntry.getInternalClassName();
-        String string2 = changeLogMemberEntry.getNewClassName();
-        String string3 = changeLogMemberEntry.getFieldDescriptor();
-        if (map1.containsKey(string1)) {
-            ProgramClass programClass1 = (ProgramClass) map1.get(string1);
-            String string4 = programClass1.getClassName();
-            FieldInfo fieldInfo = classMemberLookup1.findField(string4, string, string3);
+        String fieldName = changeLogMemberEntry.getFieldName();
+        String internalClassName = changeLogMemberEntry.getInternalClassName();
+        String newClassName = changeLogMemberEntry.getNewClassName();
+        String fieldDescriptor = changeLogMemberEntry.getFieldDescriptor();
+        if (map1.containsKey(internalClassName)) {
+            ProgramClass programClass1 = (ProgramClass) map1.get(internalClassName);
+            String className = programClass1.getClassName();
+            FieldInfo fieldInfo = classMemberLookup1.findField(className, fieldName, fieldDescriptor);
             MethodInfo methodInfo1 = changeLogMemberEntry.getSetterMethodName() != null
                     ? classMemberLookup1.findDeclaredMethod(
-                    programClass1, new MethodSignature(changeLogMemberEntry.getNewSetterMethodName(), OpaquePredicateField.setterDescriptorFor(string3))
+                    programClass1, new MethodSignature(changeLogMemberEntry.getNewSetterMethodName(), OpaquePredicateField.setterDescriptorFor(fieldDescriptor))
             )
                     : null;
             MethodInfo methodInfo2 = changeLogMemberEntry.getGetterMethodName() != null
                     ? classMemberLookup1.findDeclaredMethod(
-                    programClass1, new MethodSignature(changeLogMemberEntry.getNewGetterMethodName(), OpaquePredicateField.getterDescriptorFor(string3))
+                    programClass1, new MethodSignature(changeLogMemberEntry.getNewGetterMethodName(), OpaquePredicateField.getterDescriptorFor(fieldDescriptor))
             )
                     : null;
             MethodInfo methodInfo3 = changeLogMemberEntry.getAltGetterMethodName() != null
                     ? classMemberLookup1.findDeclaredMethod(
-                    programClass1, new MethodSignature(changeLogMemberEntry.getNewAltGetterMethodName(), OpaquePredicateField.getterDescriptorFor(string3))
+                    programClass1, new MethodSignature(changeLogMemberEntry.getNewAltGetterMethodName(), OpaquePredicateField.getterDescriptorFor(fieldDescriptor))
             )
                     : null;
             if ((fieldInfo == null || !nameExclusionSet.isFieldExcluded(fieldInfo))
@@ -2429,36 +2415,36 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
             }
         }
 
-        if (changeLogMapping1.isNewClassName(string2) && !changeLogMapping1.getOriginalClassName(string2).equals(string1)) {
+        if (changeLogMapping1.isNewClassName(newClassName) && !changeLogMapping1.getOriginalClassName(newClassName).equals(internalClassName)) {
             return null;
         }
 
-        CountingBag countingBag1 = this.findCandidateClasses(string1, countingBag, changeLogMapping1);
+        CountingBag countingBag1 = this.findCandidateClasses(internalClassName, countingBag, changeLogMapping1);
         if (countingBag1 != null) {
-            String string5 = ClassFileBase.getPackagePath(string1);
+            String packagePath = ClassFileBase.getPackagePath(internalClassName);
             Iterator iterator = countingBag1.getSortedByCount().iterator();
 
             while (iterator.hasNext()) {
                 ProgramClass programClass2 = (ProgramClass) iterator.next();
-                String string6 = programClass2.getClassName();
-                if (programClass2.getPackagePath().equals(string5)
-                        && !changeLogMapping1.hasClassMapping(string6)
-                        && !nameExclusionSet.isClassNameExcluded(string6)
+                String classNameValue = programClass2.getClassName();
+                if (programClass2.getPackagePath().equals(packagePath)
+                        && !changeLogMapping1.hasClassMapping(classNameValue)
+                        && !nameExclusionSet.isClassNameExcluded(classNameValue)
                         && this.canHostPredicateField(programClass2, flowObfuscationExclusions, classInitOrderHandler1, classMemberLookup1, false)) {
-                    FieldInfo fieldInfo1 = classMemberLookup1.findField(string6, string, string3);
+                    FieldInfo fieldInfo1 = classMemberLookup1.findField(classNameValue, fieldName, fieldDescriptor);
                     MethodInfo methodInfo4 = changeLogMemberEntry.getSetterMethodName() != null
                             ? classMemberLookup1.findDeclaredMethod(
-                            programClass2, new MethodSignature(changeLogMemberEntry.getNewSetterMethodName(), OpaquePredicateField.setterDescriptorFor(string3))
+                            programClass2, new MethodSignature(changeLogMemberEntry.getNewSetterMethodName(), OpaquePredicateField.setterDescriptorFor(fieldDescriptor))
                     )
                             : null;
                     MethodInfo methodInfo5 = changeLogMemberEntry.getGetterMethodName() != null
                             ? classMemberLookup1.findDeclaredMethod(
-                            programClass2, new MethodSignature(changeLogMemberEntry.getNewGetterMethodName(), OpaquePredicateField.getterDescriptorFor(string3))
+                            programClass2, new MethodSignature(changeLogMemberEntry.getNewGetterMethodName(), OpaquePredicateField.getterDescriptorFor(fieldDescriptor))
                     )
                             : null;
                     MethodInfo methodInfo6 = changeLogMemberEntry.getAltGetterMethodName() != null
                             ? classMemberLookup1.findDeclaredMethod(
-                            programClass2, new MethodSignature(changeLogMemberEntry.getNewAltGetterMethodName(), OpaquePredicateField.getterDescriptorFor(string3))
+                            programClass2, new MethodSignature(changeLogMemberEntry.getNewAltGetterMethodName(), OpaquePredicateField.getterDescriptorFor(fieldDescriptor))
                     )
                             : null;
                     if ((fieldInfo1 == null || !nameExclusionSet.isFieldExcluded(fieldInfo1))
@@ -2466,7 +2452,7 @@ public class FlowObfuscationManager extends EncodedClassNameSource {
                             && (methodInfo5 == null || !nameExclusionSet.isMethodExcluded(methodInfo5))
                             && (methodInfo6 == null || !nameExclusionSet.isMethodExcluded(methodInfo6))
                             && !map1.containsValue(programClass2)) {
-                        map1.put(string1, programClass2);
+                        map1.put(internalClassName, programClass2);
                         return programClass2;
                     }
                 }

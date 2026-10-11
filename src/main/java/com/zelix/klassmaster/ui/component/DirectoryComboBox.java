@@ -62,24 +62,24 @@ public class DirectoryComboBox extends JComboBox implements ItemListener, Proper
         }
 
         DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
-        int ba = 0;
-        int bc = 0;
+        int fileSystemRootIndex = 0;
+        int elementIndexValue = 0;
 
-        for (File[] files = this.fileSystemRoots; bc < files.length; files = this.fileSystemRoots) {
-            defaultComboBoxModel.addElement(this.fileSystemRoots[ba]);
-            if (file3 != null && file3.equals(this.fileSystemRoots[ba])) {
-                int bb = 1;
-                bc = bb;
+        for (File[] files = this.fileSystemRoots; elementIndexValue < files.length; files = this.fileSystemRoots) {
+            defaultComboBoxModel.addElement(this.fileSystemRoots[fileSystemRootIndex]);
+            if (file3 != null && file3.equals(this.fileSystemRoots[fileSystemRootIndex])) {
+                int elementIndex = 1;
+                elementIndexValue = elementIndex;
 
-                for (ArrayList arrayList = this.ancestorDirectories; bc < arrayList.size(); arrayList = this.ancestorDirectories) {
-                    defaultComboBoxModel.addElement(this.ancestorDirectories.get(bb));
-                    bc = ++bb;
+                for (ArrayList arrayList = this.ancestorDirectories; elementIndexValue < arrayList.size(); arrayList = this.ancestorDirectories) {
+                    defaultComboBoxModel.addElement(this.ancestorDirectories.get(elementIndex));
+                    elementIndexValue = ++elementIndex;
                 }
 
                 defaultComboBoxModel.addElement(this.currentDirectory);
             }
 
-            bc = ++ba;
+            elementIndexValue = ++fileSystemRootIndex;
         }
 
         this.comboModel = defaultComboBoxModel;
@@ -91,12 +91,12 @@ public class DirectoryComboBox extends JComboBox implements ItemListener, Proper
         this.fileSystemRoots = File.listRoots();
         this.comboModel = new DefaultComboBoxModel();
         this.setModel(this.comboModel);
-        int ba = 0;
+        int fileSystemRootIndex = 0;
         int bb = 0;
 
         for (File[] files = this.fileSystemRoots; bb < files.length; files = this.fileSystemRoots) {
-            this.comboModel.addElement(this.fileSystemRoots[ba]);
-            bb = ++ba;
+            this.comboModel.addElement(this.fileSystemRoots[fileSystemRootIndex]);
+            bb = ++fileSystemRootIndex;
         }
 
         this.setRenderer(new DirectoryComboBoxRenderer(this));

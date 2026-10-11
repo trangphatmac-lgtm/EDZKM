@@ -170,12 +170,12 @@ public class IncludeParamTypeDialog extends OwnedFrameDialogBase implements Acti
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object == this.okBtn) {
+            Object source = actionEvent.getSource();
+            if (source == this.okBtn) {
                 this.confirmSelection();
-            } else if (object == this.cancelBtn) {
+            } else if (source == this.cancelBtn) {
                 this.cancelDialog();
-            } else if (object == this.helpBtn) {
+            } else if (source == this.helpBtn) {
                 this.showHelp();
             }
         } catch (Throwable throwable) {

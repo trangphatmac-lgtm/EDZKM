@@ -48,7 +48,7 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         return predicateFlag;
     }
 
-    public List findMethodsByOriginalName(Object object) {
+    public List findMethodsByOriginalName(Object key) {
         if (this.methodRenameMap == null) {
             return null;
         }
@@ -71,7 +71,7 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         }
 
         ArrayList arrayList = new ArrayList();
-        Map map1 = this.methodsByOriginalName.getInnerMap(object);
+        Map map1 = this.methodsByOriginalName.getInnerMap(key);
         if (map1 != null) {
             Iterator iterator1 = map1.entrySet().iterator();
 
@@ -87,15 +87,15 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         return arrayList;
     }
 
-    public final void addFieldReferenceByClassName(String string, String string1, Map map1, Object object) {
+    public final void addFieldReferenceByClassName(String string, String string1, Map map1, Object value) {
         for (ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(ZkmUtils.dotsToSlashes(string));
              classHierarchyNode != null;
              classHierarchyNode = classHierarchyNode.getSuperclassNode()
         ) {
             FieldInfo[] fieldInfos;
             if ((fieldInfos = this.classMemberLookup.findFieldsByName(classHierarchyNode.getClassName(), string1)) != null) {
-                for (int i = 0; i < fieldInfos.length; i++) {
-                    map1.put(fieldInfos[i], object);
+                for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+                    map1.put(fieldInfos[fieldInfoIndex], value);
                 }
                 break;
             }
@@ -175,8 +175,8 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         super.elementStack.pop();
     }
 
-    public final boolean addTypedFieldReference(ProgramClass programClass1, ClassFileBase classFileBase, String string, Map map1, Object object) {
-        FieldSignature fieldSignature = new FieldSignature(string, ZkmUtils.concatStrings(new String[]{"L", classFileBase.getClassName(), ";"}));
+    public final boolean addTypedFieldReference(ProgramClass programClass1, ClassFileBase classFileBase, String nameArgument, Map map1, Object value) {
+        FieldSignature fieldSignature = new FieldSignature(nameArgument, ZkmUtils.concatStrings(new String[]{"L", classFileBase.getClassName(), ";"}));
 
         for (ProgramClass programClass2 = programClass1;
              programClass2 != null;
@@ -184,7 +184,7 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         ) {
             FieldInfo fieldInfo = programClass2.findFieldBySignature(fieldSignature);
             if (fieldInfo != null) {
-                map1.put(fieldInfo, object);
+                map1.put(fieldInfo, value);
                 return true;
             }
         }
@@ -213,17 +213,17 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         return arrayList;
     }
 
-    public final String addClassReference(String string, Map map1, ObservableHolder observableHolder, Object object) throws ZkmException, IOException {
-        String string1 = (String) ZkmUtils.mapOrSelf(ZkmUtils.dotsToSlashes(string), this.classRenameMap);
-        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(string1);
+    public final String addClassReference(String string, Map map1, ObservableHolder observableHolder, Object value) throws ZkmException, IOException {
+        String key = (String) ZkmUtils.mapOrSelf(ZkmUtils.dotsToSlashes(string), this.classRenameMap);
+        ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(key);
         if (programClass1 != null) {
-            map1.put(programClass1, object);
+            map1.put(programClass1, value);
             if (observableHolder != null) {
                 observableHolder.setValue(programClass1);
             }
         }
 
-        return ZkmUtils.slashesToDots(string1);
+        return ZkmUtils.slashesToDots(key);
     }
 
     public final void addClassNameReferences(String string, Map map1, String string1, String string2, boolean bl) throws ZkmException, IOException {
@@ -324,10 +324,10 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         Enumeration enumeration = xmlElementNode.getAttributeNames();
 
         while (enumeration.hasMoreElements()) {
-            String string1 = (String) enumeration.nextElement();
-            String string2 = (String) xmlElementNode.getAttributeValue(string1).getValue();
-            String string3 = string + string1 + "' attribute";
-            this.addClassNameReferences(string2, map1, string3, string1, false);
+            String key = (String) enumeration.nextElement();
+            String value = (String) xmlElementNode.getAttributeValue(key).getValue();
+            String string3 = string + key + "' attribute";
+            this.addClassNameReferences(value, map1, string3, key, false);
         }
     }
 
@@ -351,11 +351,11 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
     }
 
     public final ClassFileBase resolveClass(String string) throws ZkmException, IOException {
-        String string1 = (String) ZkmUtils.mapOrSelf(ZkmUtils.dotsToSlashes(string), this.classRenameMap);
+        String key = (String) ZkmUtils.mapOrSelf(ZkmUtils.dotsToSlashes(string), this.classRenameMap);
         ClassFileBase classFileBase = null;
 
         try {
-            classFileBase = this.classResolver.findClassFile(string1);
+            classFileBase = this.classResolver.findClassFile(key);
         } catch (ClassFileLoadException classFileLoadException) {
         }
 
@@ -477,7 +477,7 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                 : string;
     }
 
-    public final void addMethodReference(String string, MethodSignature methodSignature1, Map map1, Object object) {
+    public final void addMethodReference(String string, MethodSignature methodSignature1, Map map1, Object value) {
         if (string != null) {
             ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(ZkmUtils.dotsToSlashes(string));
 
@@ -487,7 +487,7 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                 if (programClass1 != null) {
                     MethodInfo methodInfo1 = this.classMemberLookup.findDeclaredMethod(programClass1, methodSignature1);
                     if (methodInfo1 != null) {
-                        map1.put(methodInfo1, object);
+                        map1.put(methodInfo1, value);
                         break;
                     }
 
@@ -502,12 +502,12 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
     }
 
     public void addTypeReference(String string, Map map1, String string1) throws ZkmException, IOException {
-        int ba = string.indexOf("[]");
+        int endIndex = string.indexOf("[]");
         String string2;
-        if (ba == -1) {
+        if (endIndex == -1) {
             string2 = string;
         } else {
-            string2 = string.substring(0, ba);
+            string2 = string.substring(0, endIndex);
         }
 
         if (!string2.equals("byte")
@@ -523,18 +523,18 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
     }
 
     public final String addClassReference(String string, Map map1, String string1) throws ZkmException, IOException {
-        String string2 = string1;
-        return this.addClassReference(string, map1, (ObservableHolder) null, string2);
+        String value = string1;
+        return this.addClassReference(string, map1, (ObservableHolder) null, value);
     }
 
     public static boolean alwaysTrue() {
         return true;
     }
 
-    public final List findFieldsOfType(String string, ClassFileBase classFileBase) {
+    public final List findFieldsOfType(String nameArgument, ClassFileBase classFileBase) {
         ArrayList arrayList = new ArrayList();
         FieldInfo[] fieldInfos = this.classMemberLookup
-                .findFieldsBySignature(new FieldSignature(string, ZkmUtils.concatStrings(new String[]{"L", classFileBase.getClassName(), ";"})));
+                .findFieldsBySignature(new FieldSignature(nameArgument, ZkmUtils.concatStrings(new String[]{"L", classFileBase.getClassName(), ";"})));
         if (fieldInfos != null) {
             for (FieldInfo fieldInfo : fieldInfos) {
                 if (fieldInfo.hasAccessFlags(0) && ("javafx/fxml/FXML" == null || fieldInfo.getAnnotationTypes().contains("javafx/fxml/FXML"))) {
@@ -548,25 +548,25 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
 
     public final boolean addMatchingMethodReferences(
             String string,
-            String string1,
-            Object object,
+            String key,
+            Object valueArgument,
             DescriptorMatcher descriptorMatcher,
             String string2,
             int ba,
             Map map1,
             Map map2,
             TwoKeyMap twoKeyMap,
-            String string3
+            String value
     ) throws ZkmException, IOException {
         List list1 = this.findMatchingMethods(string, descriptorMatcher, string2, ba);
         Iterator iterator = list1.iterator();
 
         while (iterator.hasNext()) {
             MethodInfo methodInfo1 = (MethodInfo) iterator.next();
-            map2.put(methodInfo1, string3);
-            map1.put(methodInfo1.getOwnerProgramClass(), string3);
-            if (string1 != null) {
-                twoKeyMap.putValue(methodInfo1, string1, object);
+            map2.put(methodInfo1, value);
+            map1.put(methodInfo1.getOwnerProgramClass(), value);
+            if (key != null) {
+                twoKeyMap.putValue(methodInfo1, key, valueArgument);
             }
         }
 
@@ -574,47 +574,47 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
     }
 
     public static XmlContentHandler createAnalysisHandler(
-            String string,
+            String key,
             String string1,
             ResourceFileIndex resourceFileIndex1,
             ClassMemberLookup classMemberLookup1,
             ClassResolver classResolver1,
             MessageReporter messageReporter1
     ) {
-        XmlConfigFileType xmlConfigFileType = detectConfigFileType(string, string1);
+        XmlConfigFileType xmlConfigFileType = detectConfigFileType(key, string1);
         switch (XmlDescriptorTypeSwitchMap.CONFIG_FILE_TYPE_SWITCH[xmlConfigFileType.ordinal()]) {
             case 1:
-                return new EjbJarXmlHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new EjbJarXmlHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             case 2:
-                return new ApplicationXmlHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new ApplicationXmlHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             case 3:
-                return new AppClientXmlHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new AppClientXmlHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             case 4:
-                return new WebXmlReferenceHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new WebXmlReferenceHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             case 5:
-                return new SpringBeansXmlHandler(string, resourceFileIndex1, classMemberLookup1, classResolver1, messageReporter1);
+                return new SpringBeansXmlHandler(key, resourceFileIndex1, classMemberLookup1, classResolver1, messageReporter1);
             case 6:
-                return new HibernateMappingHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new HibernateMappingHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             case 7:
-                return new AndroidManifestXmlHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new AndroidManifestXmlHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             case 8:
-                return new IbatisXmlHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new IbatisXmlHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             case 9:
-                return new TaglibXmlUpdater(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new TaglibXmlUpdater(key, classMemberLookup1, classResolver1, messageReporter1);
             case 10:
-                return new FxmlFileUpdater(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new FxmlFileUpdater(key, classMemberLookup1, classResolver1, messageReporter1);
             case 11:
-                return new E4XmiXmlHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new E4XmiXmlHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             case 12:
-                return new SpringXmlUpdater(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new SpringXmlUpdater(key, classMemberLookup1, classResolver1, messageReporter1);
             case 13:
-                return new GenericXmlFileHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new GenericXmlFileHandler(key, classMemberLookup1, classResolver1, messageReporter1);
             default:
-                return new GenericXmlFileHandler(string, classMemberLookup1, classResolver1, messageReporter1);
+                return new GenericXmlFileHandler(key, classMemberLookup1, classResolver1, messageReporter1);
         }
     }
 
-    public List findFieldsByOriginalSignature(String string, ClassFileBase classFileBase) {
+    public List findFieldsByOriginalSignature(String nameArgument, ClassFileBase classFileBase) {
         if (this.fieldRenameMap == null) {
             return null;
         }
@@ -635,7 +635,7 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
             }
         }
 
-        FieldSignature fieldSignature1 = new FieldSignature(string, ZkmUtils.concatStrings(new String[]{"L", classFileBase.getOriginalClassName(), ";"}));
+        FieldSignature fieldSignature1 = new FieldSignature(nameArgument, ZkmUtils.concatStrings(new String[]{"L", classFileBase.getOriginalClassName(), ";"}));
         ArrayList arrayList = new ArrayList();
         Map map1 = this.fieldsByOriginalSignature.getInnerMap(fieldSignature1);
         if (map1 != null) {
@@ -666,13 +666,13 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
     public final boolean addHierarchyMethodReferences(
             ProgramClass programClass1,
             String string,
-            String string1,
-            Object object,
+            String key,
+            Object valueArgument,
             DescriptorMatcher descriptorMatcher,
             int ba,
             Map map1,
             TwoKeyMap twoKeyMap,
-            Object object1
+            Object value
     ) throws ZkmException, IOException {
         ProgramClass programClass2 = programClass1;
         boolean bl = false;
@@ -685,9 +685,9 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                 AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) iterator.next();
                 if (abstractMethodInfo.hasAccessFlags(ba) && descriptorMatcher.matchesDescriptor(abstractMethodInfo.getDescriptor())) {
                     bl = true;
-                    map1.put((MethodInfo) abstractMethodInfo, object1);
-                    if (string1 != null) {
-                        twoKeyMap.putValue((MethodInfo) abstractMethodInfo, string1, object);
+                    map1.put((MethodInfo) abstractMethodInfo, value);
+                    if (key != null) {
+                        twoKeyMap.putValue((MethodInfo) abstractMethodInfo, key, valueArgument);
                     }
                 }
             }
@@ -696,8 +696,8 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                 break;
             }
 
-            String string2 = programClass2.getSuperclassName();
-            programClass2 = ClassHierarchyNode.findProgramClass(string2);
+            String superclassName = programClass2.getSuperclassName();
+            programClass2 = ClassHierarchyNode.findProgramClass(superclassName);
         }
 
         return bl;
@@ -715,9 +715,9 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         this.rewriteElement(xmlElementNode1, list2);
     }
 
-    public final String getRenamedTypedFieldName(ClassFileBase classFileBase, ClassFileBase classFileBase1, String string) {
+    public final String getRenamedTypedFieldName(ClassFileBase classFileBase, ClassFileBase classFileBase1, String nameArgument) {
         if (this.fieldRenameMap != null) {
-            FieldSignature fieldSignature = new FieldSignature(string, ZkmUtils.concatStrings(new String[]{"L", classFileBase1.getOriginalClassName(), ";"}));
+            FieldSignature fieldSignature = new FieldSignature(nameArgument, ZkmUtils.concatStrings(new String[]{"L", classFileBase1.getOriginalClassName(), ";"}));
 
             for (ClassFileBase classFileBase2 = classFileBase;
                  classFileBase2 != null;
@@ -731,17 +731,17 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
 
             return null;
         } else {
-            return string;
+            return nameArgument;
         }
     }
 
-    public final boolean addMatchingFieldReferences(ClassFileBase classFileBase, String string, Map map1, Object object) {
-        List list1 = this.findFieldsOfType(string, classFileBase);
+    public final boolean addMatchingFieldReferences(ClassFileBase classFileBase, String nameArgument, Map map1, Object value) {
+        List list1 = this.findFieldsOfType(nameArgument, classFileBase);
         Iterator iterator = list1.iterator();
 
         while (iterator.hasNext()) {
             FieldInfo fieldInfo = (FieldInfo) iterator.next();
-            map1.put(fieldInfo, object);
+            map1.put(fieldInfo, value);
         }
 
         return list1.size() > 0;
@@ -781,13 +781,13 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         this.messageReporter = messageReporter1;
     }
 
-    public final String resolveRenamedMethodByName(String string, DescriptorMatcher descriptorMatcher, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public final String resolveRenamedMethodByName(String key, DescriptorMatcher descriptorMatcher, ObservableHolder observableHolder) throws ZkmException, IOException {
         if (this.methodRenameMap == null) {
-            return string;
+            return key;
         }
 
         ArrayList arrayList = new ArrayList();
-        Iterator iterator = this.findMethodsByOriginalName(string).iterator();
+        Iterator iterator = this.findMethodsByOriginalName(key).iterator();
 
         while (iterator.hasNext()) {
             AbstractMethodInfo abstractMethodInfo = (AbstractMethodInfo) iterator.next();
@@ -798,13 +798,13 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
             }
         }
 
-        int ba = arrayList.size();
-        if (ba == 0) {
-            observableHolder.setValue("No method found matching '" + string + "'");
+        int arrayListSize = arrayList.size();
+        if (arrayListSize == 0) {
+            observableHolder.setValue("No method found matching '" + key + "'");
             return null;
         }
 
-        if (ba == 1) {
+        if (arrayListSize == 1) {
             return ((AbstractMethodInfo) arrayList.get(0)).getSourceName();
         }
 
@@ -820,13 +820,13 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
             return (String) hashSet.iterator().next();
         }
 
-        observableHolder.setValue("More than one candidate method found matching '" + string + "' : " + ZkmUtils.toQuotedListString(hashSet));
+        observableHolder.setValue("More than one candidate method found matching '" + key + "' : " + ZkmUtils.toQuotedListString(hashSet));
         return null;
     }
 
-    public final String getPropertyNameFromAccessor(String string, String string1, String string2) {
-        if (string1.startsWith(string) && string1.length() > string.length()) {
-            String string3 = MethodSignature.toPropertyName(string1, string);
+    public final String getPropertyNameFromAccessor(String prefix, String string1, String string2) {
+        if (string1.startsWith(prefix) && string1.length() > prefix.length()) {
+            String string3 = MethodSignature.toPropertyName(string1, prefix);
             return string2 != null && string3.toUpperCase().equals(string2.toUpperCase()) ? string2 : string3;
         } else {
             return null;
@@ -836,20 +836,20 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
     public final boolean addHierarchyMethodReferences(
             ProgramClass programClass1,
             String string,
-            String string1,
-            Object object,
+            String key,
+            Object valueArgument,
             DescriptorMatcher descriptorMatcher,
             Map map1,
             TwoKeyMap twoKeyMap,
-            String string2
+            String value
     ) throws ZkmException, IOException {
-        return this.addHierarchyMethodReferences(programClass1, string, string1, object, descriptorMatcher, 0, map1, twoKeyMap, string2);
+        return this.addHierarchyMethodReferences(programClass1, string, key, valueArgument, descriptorMatcher, 0, map1, twoKeyMap, value);
     }
 
-    public final String resolveRenamedFieldName(ClassFileBase classFileBase, String string, ObservableHolder observableHolder) throws ZkmException, IOException {
-        List list1 = this.findFieldsByOriginalSignature(string, classFileBase);
+    public final String resolveRenamedFieldName(ClassFileBase classFileBase, String nameArgument, ObservableHolder observableHolder) throws ZkmException, IOException {
+        List list1 = this.findFieldsByOriginalSignature(nameArgument, classFileBase);
         if (list1 == null) {
-            observableHolder.setValue("No field method found matching '" + string + "' (2)");
+            observableHolder.setValue("No field method found matching '" + nameArgument + "' (2)");
             return null;
         }
 
@@ -863,13 +863,13 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
             }
         }
 
-        int ba = arrayList.size();
-        if (ba == 0) {
-            observableHolder.setValue("No field method found matching '" + string + "' (1)");
+        int arrayListSize = arrayList.size();
+        if (arrayListSize == 0) {
+            observableHolder.setValue("No field method found matching '" + nameArgument + "' (1)");
             return null;
         }
 
-        if (ba == 1) {
+        if (arrayListSize == 1) {
             return ((AbstractFieldInfo) arrayList.get(0)).getSourceName();
         }
 
@@ -885,17 +885,17 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
             return (String) hashSet.iterator().next();
         }
 
-        observableHolder.setValue("More than one candidate method found matching '" + string + "' : " + ZkmUtils.toQuotedListString(hashSet));
+        observableHolder.setValue("More than one candidate method found matching '" + nameArgument + "' : " + ZkmUtils.toQuotedListString(hashSet));
         return null;
     }
 
-    public boolean isReferenceAttribute(String string, boolean bl, String string1) {
+    public boolean isReferenceAttribute(String string, boolean bl, String searchText) {
         if (string == null || string.length() == 0) {
             return false;
         }
 
         if (string.endsWith("name")) {
-            if (string.toLowerCase().indexOf(string1) > -1) {
+            if (string.toLowerCase().indexOf(searchText) > -1) {
                 return true;
             }
 
@@ -906,9 +906,9 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                 string2 = this.getCurrentElementName();
             }
 
-            return string2 != null && string2.toLowerCase().indexOf(string1) > -1;
+            return string2 != null && string2.toLowerCase().indexOf(searchText) > -1;
         } else {
-            return string.equals("ejb-link") ? false : string.indexOf("jndi") == -1;
+            return (!(string.equals("ejb-link")) && (string.indexOf("jndi") == -1));
         }
     }
 
@@ -916,15 +916,15 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         return ((String) ZkmUtils.mapOrSelf(string.replace('.', '/'), this.classRenameMap)).replace('/', '.');
     }
 
-    public final void addFieldReference(ProgramClass programClass1, String string, Map map1, Object object) {
+    public final void addFieldReference(ProgramClass programClass1, String string, Map map1, Object value) {
         for (ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(programClass1.getClassName());
              classHierarchyNode != null;
              classHierarchyNode = classHierarchyNode.getSuperclassNode()
         ) {
             FieldInfo[] fieldInfos;
             if ((fieldInfos = this.classMemberLookup.findFieldsByName(classHierarchyNode.getClassName(), string)) != null) {
-                for (int i = 0; i < fieldInfos.length; i++) {
-                    map1.put(fieldInfos[i], object);
+                for (int fieldInfoIndex = 0; fieldInfoIndex < fieldInfos.length; fieldInfoIndex++) {
+                    map1.put(fieldInfos[fieldInfoIndex], value);
                 }
                 break;
             }
@@ -932,7 +932,7 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
     }
 
     public static XmlContentHandler createUpdateHandler(
-            String string,
+            String key,
             String string1,
             EnumerableMap enumerableMap,
             EnumerableMap enumerableMap1,
@@ -944,27 +944,27 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
             ClassResolver classResolver1,
             MessageReporter messageReporter1
     ) {
-        XmlConfigFileType xmlConfigFileType = detectConfigFileType(string, string1);
+        XmlConfigFileType xmlConfigFileType = detectConfigFileType(key, string1);
         switch (XmlDescriptorTypeSwitchMap.CONFIG_FILE_TYPE_SWITCH[xmlConfigFileType.ordinal()]) {
             case 1:
                 return new EjbJarXmlHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 2:
                 return new ApplicationXmlHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 3:
                 return new AppClientXmlHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 4:
                 return new WebXmlReferenceHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 5:
                 return new SpringBeansXmlHandler(
-                        string,
+                        key,
                         enumerableMap,
                         readOnlyMultiMap,
                         readOnlyMultiMap1,
@@ -976,23 +976,23 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                 );
             case 6:
                 return new HibernateMappingHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 7:
                 return new AndroidManifestXmlHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 8:
                 return new IbatisXmlHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 9:
                 return new TaglibXmlUpdater(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 10:
                 return new FxmlFileUpdater(
-                        string,
+                        key,
                         enumerableMap,
                         enumerableMap1,
                         readOnlyMultiMap,
@@ -1004,27 +1004,27 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                 );
             case 11:
                 return new E4XmiXmlHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 12:
                 return new SpringXmlUpdater(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             case 13:
                 return new GenericXmlFileHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
             default:
                 return new GenericXmlFileHandler(
-                        string, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
+                        key, enumerableMap, readOnlyMultiMap, readOnlyMultiMap1, resourcePathTranslator1, classMemberLookup1, classResolver1, messageReporter1
                 );
         }
     }
 
     public final String updateReferenceValue(String string, String string1, boolean bl) throws IOException {
-        String string2 = string;
+        String renamedClassName = string;
         if (string.length() >= 3 && string1 != null && string1.length() > 0) {
-            boolean bl2;
+            boolean noColonSplitXmlNames;
             if (string.indexOf(58) == -1) {
                 if (string.indexOf(33) == -1) {
                     if (string.indexOf(60) == -1) {
@@ -1036,45 +1036,45 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                                             int ba = string.indexOf(47, 1);
                                             if (ba > -1) {
                                                 if (ba < string.length() - 1 && this.isReferenceAttribute(string1, bl, "file")) {
-                                                    string2 = this.resourcePathTranslator.translateResourcePath(string);
-                                                    return string2;
+                                                    renamedClassName = this.resourcePathTranslator.translateResourcePath(string);
+                                                    return renamedClassName;
                                                 }
                                             } else if (string.indexOf(47) == -1) {
                                                 int bb = string.indexOf(46);
                                                 if (bb > 0 && bb < string.length() - 1 && this.isReferenceAttribute(string1, bl, "class")) {
-                                                    string2 = this.getRenamedClassName(string);
+                                                    renamedClassName = this.getRenamedClassName(string);
                                                 }
 
-                                                return string2;
+                                                return renamedClassName;
                                             }
 
-                                            return string2;
+                                            return renamedClassName;
                                         }
 
-                                        bl2 = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
+                                        noColonSplitXmlNames = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
                                     } else {
-                                        bl2 = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
+                                        noColonSplitXmlNames = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
                                     }
                                 } else {
-                                    bl2 = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
+                                    noColonSplitXmlNames = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
                                 }
                             } else {
-                                bl2 = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
+                                noColonSplitXmlNames = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
                             }
                         } else {
-                            bl2 = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
+                            noColonSplitXmlNames = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
                         }
                     } else {
-                        bl2 = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
+                        noColonSplitXmlNames = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
                     }
                 } else {
-                    bl2 = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
+                    noColonSplitXmlNames = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
                 }
             } else {
-                bl2 = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
+                noColonSplitXmlNames = HiddenOptionFlags.NO_COLON_SPLIT_XML_NAMES;
             }
 
-            if (!bl2
+            if (!noColonSplitXmlNames
                     && string1.equals("class")
                     && string.indexOf(58) > 3
                     && string.indexOf(33) == -1
@@ -1092,8 +1092,8 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                     String string3 = strings[i];
                     int bd = string3.indexOf(46);
                     if (bd > 0 && bd < string3.length() - 1 && string3.length() > 3) {
-                        String string4 = this.getRenamedClassName(string3);
-                        stringBuilder.append(string4);
+                        String renamedClassNameValue = this.getRenamedClassName(string3);
+                        stringBuilder.append(renamedClassNameValue);
                         if (i < strings.length - 1) {
                             stringBuilder.append(":");
                         }
@@ -1103,12 +1103,12 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
                 }
 
                 if (bl1) {
-                    string2 = stringBuilder.toString();
+                    renamedClassName = stringBuilder.toString();
                 }
             }
         }
 
-        return string2;
+        return renamedClassName;
     }
 
     public final String renamePackagePath(String string) {
@@ -1121,9 +1121,9 @@ public abstract class XmlConfigFileHandler extends XmlResourceParserBase {
         Enumeration enumeration = xmlElementNode.getAttributeNames();
 
         while (enumeration.hasMoreElements()) {
-            String string = (String) enumeration.nextElement();
-            ObservableHolder observableHolder = xmlElementNode.getAttributeValue(string);
-            observableHolder.setValue(this.updateReferenceValue((String) observableHolder.getValue(), string, false));
+            String key = (String) enumeration.nextElement();
+            ObservableHolder observableHolder = xmlElementNode.getAttributeValue(key);
+            observableHolder.setValue(this.updateReferenceValue((String) observableHolder.getValue(), key, false));
         }
 
         ((List) object1).add(xmlElementNode);

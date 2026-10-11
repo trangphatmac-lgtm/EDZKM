@@ -129,9 +129,9 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public int indexOfStackMapTable() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof StackMapTableAttribute) {
-                return i;
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof StackMapTableAttribute) {
+                return attributeIndex;
             }
         }
 
@@ -279,8 +279,8 @@ public class CodeAttributeBody extends Attribute {
 
             stackMapTableAttribute1.setFrames(stackMapTableFrames);
             if (stackMapTableAttribute != null) {
-                int bd = this.indexOfStackMapTable();
-                this.attributes[bd] = stackMapTableAttribute1;
+                int attributeIndex = this.indexOfStackMapTable();
+                this.attributes[attributeIndex] = stackMapTableAttribute1;
             } else if (stackMapTableAttribute1.getFrameCount() > 0) {
                 Attribute[] attributes1 = new Attribute[this.attributeCount + 1];
                 System.arraycopy(this.attributes, 0, attributes1, 0, this.attributeCount);
@@ -297,9 +297,9 @@ public class CodeAttributeBody extends Attribute {
     public final void resolveAttributeReferences(
             ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
             }
         }
     }
@@ -343,14 +343,14 @@ public class CodeAttributeBody extends Attribute {
         this.bytecode.writeCode(dataOutputStream);
         dataOutputStream.writeShort(this.exceptionTableLength);
 
-        for (int i = 0; i < this.exceptionTableLength; i++) {
-            this.exceptionTable[i].writeTo(dataOutputStream);
+        for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTableLength; exceptionTableElementIndex++) {
+            this.exceptionTable[exceptionTableElementIndex].writeTo(dataOutputStream);
         }
 
         dataOutputStream.writeShort(this.attributeCount);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            this.attributes[i].write(dataOutputStream);
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            this.attributes[attributeIndex].write(dataOutputStream);
         }
     }
 
@@ -391,26 +391,26 @@ public class CodeAttributeBody extends Attribute {
                 }
             }
 
-            int[][] bb;
+            int[][] integerArrayArray;
             if (ba > 0) {
                 this.bytecode.recomputeOffsets();
-                int bc = 0;
-                bb = new int[ba][2];
+                int integerArrayArrayElementIndex = 0;
+                integerArrayArray = new int[ba][2];
 
-                for (int i = 0; i < this.exceptionTableLength; i++) {
-                    ExceptionTableEntry exceptionTableEntry2 = this.exceptionTable[i];
+                for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTableLength; exceptionTableElementIndex++) {
+                    ExceptionTableEntry exceptionTableEntry2 = this.exceptionTable[exceptionTableElementIndex];
                     if (exceptionTableEntry2.isNewlyCreated()) {
-                        bb[bc][0] = exceptionTableEntry2.getStartIndex();
-                        bb[bc][1] = exceptionTableEntry2.getEndIndex();
-                        bc++;
+                        integerArrayArray[integerArrayArrayElementIndex][0] = exceptionTableEntry2.getStartIndex();
+                        integerArrayArray[integerArrayArrayElementIndex][1] = exceptionTableEntry2.getEndIndex();
+                        integerArrayArrayElementIndex++;
                     }
                 }
             } else {
-                bb = new int[0][0];
+                integerArrayArray = new int[0][0];
             }
 
             this.bytecode
-                    .applyLongEncryption(list1, bl, bb, long1, localVariableIndex1, intCounter, constantPool1, list2, commonSuperTypeResolver1, classHierarchyQuery);
+                    .applyLongEncryption(list1, bl, integerArrayArray, long1, localVariableIndex1, intCounter, constantPool1, list2, commonSuperTypeResolver1, classHierarchyQuery);
             if (!bl && this.maxLocals < intCounter.getValue()) {
                 this.setMaxLocals(intCounter.getValue());
             }
@@ -424,9 +424,9 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public StackMapAttribute getStackMapAttribute() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof StackMapAttribute) {
-                return (StackMapAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof StackMapAttribute) {
+                return (StackMapAttribute) this.attributes[attributeIndex];
             }
         }
 
@@ -434,8 +434,8 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public boolean removeDeadInstructions(MethodFlowAnalyzer methodFlowAnalyzer, boolean bl, ScriptEnvironment scriptEnvironment1) {
-        int[] ba = methodFlowAnalyzer.findDeadCodeIndices();
-        if (ba.length <= 0) {
+        int[] integerArray = methodFlowAnalyzer.findDeadCodeIndices();
+        if (integerArray.length <= 0) {
             return false;
         }
 
@@ -447,31 +447,31 @@ public class CodeAttributeBody extends Attribute {
         StackMapTableAttribute stackMapTableAttribute = null;
         this.bytecode.collectLabelReferences(setMultiMap);
 
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof LineNumberTableAttribute) {
-                lineNumberTableAttribute = (LineNumberTableAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof LineNumberTableAttribute) {
+                lineNumberTableAttribute = (LineNumberTableAttribute) this.attributes[attributeIndex];
                 lineNumberTableAttribute.registerLabelTargets(setMultiMap);
-            } else if (this.attributes[i] instanceof LocalVariableTableAttribute) {
-                localVariableTableAttribute = (LocalVariableTableAttribute) this.attributes[i];
+            } else if (this.attributes[attributeIndex] instanceof LocalVariableTableAttribute) {
+                localVariableTableAttribute = (LocalVariableTableAttribute) this.attributes[attributeIndex];
                 localVariableTableAttribute.registerLabelTargets(setMultiMap);
-            } else if (this.attributes[i] instanceof LocalVariableTypeTableAttribute) {
-                localVariableTypeTableAttribute = (LocalVariableTypeTableAttribute) this.attributes[i];
+            } else if (this.attributes[attributeIndex] instanceof LocalVariableTypeTableAttribute) {
+                localVariableTypeTableAttribute = (LocalVariableTypeTableAttribute) this.attributes[attributeIndex];
                 localVariableTableAttribute.registerLabelTargets(setMultiMap);
-            } else if (this.attributes[i] instanceof StackMapTableAttribute) {
-                stackMapTableAttribute = (StackMapTableAttribute) this.attributes[i];
+            } else if (this.attributes[attributeIndex] instanceof StackMapTableAttribute) {
+                stackMapTableAttribute = (StackMapTableAttribute) this.attributes[attributeIndex];
                 stackMapTableAttribute.collectLabelReferences(setMultiMap);
-            } else if (this.attributes[i] instanceof StackMapAttribute) {
-                stackMapAttribute = (StackMapAttribute) this.attributes[i];
+            } else if (this.attributes[attributeIndex] instanceof StackMapAttribute) {
+                stackMapAttribute = (StackMapAttribute) this.attributes[attributeIndex];
                 stackMapAttribute.collectLabelReferences(setMultiMap);
             }
         }
 
-        for (int i = 0; i < this.exceptionTableLength; i++) {
-            this.exceptionTable[i].registerLabelTargets(setMultiMap);
+        for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTableLength; exceptionTableElementIndex++) {
+            this.exceptionTable[exceptionTableElementIndex].registerLabelTargets(setMultiMap);
         }
 
         boolean bl1 = ((MethodInfo) this.getParent()).collectTypeAnnotationTargets(setMultiMap);
-        HashSet hashSet = this.bytecode.collectLabelsAt(ba);
+        HashSet hashSet = this.bytecode.collectLabelsAt(integerArray);
         if (lineNumberTableAttribute != null) {
             lineNumberTableAttribute.removeEntriesAtLabels(hashSet, setMultiMap);
         }
@@ -494,9 +494,9 @@ public class CodeAttributeBody extends Attribute {
 
         ArrayList arrayList = new ArrayList(this.exceptionTable.length);
 
-        for (int i = 0; i < this.exceptionTableLength; i++) {
-            if (!this.exceptionTable[i].unlinkIfRangeRemoved(hashSet, ba, setMultiMap)) {
-                arrayList.add(this.exceptionTable[i]);
+        for (int exceptionTableElementIndexValue = 0; exceptionTableElementIndexValue < this.exceptionTableLength; exceptionTableElementIndexValue++) {
+            if (!this.exceptionTable[exceptionTableElementIndexValue].unlinkIfRangeRemoved(hashSet, integerArray, setMultiMap)) {
+                arrayList.add(this.exceptionTable[exceptionTableElementIndexValue]);
             }
         }
 
@@ -510,7 +510,7 @@ public class CodeAttributeBody extends Attribute {
             ((MethodInfo) this.getParent()).pruneTypeAnnotationTargets(hashSet, setMultiMap);
         }
 
-        this.bytecode.removeDeadInstructions(ba, bl, scriptEnvironment1);
+        this.bytecode.removeDeadInstructions(integerArray, bl, scriptEnvironment1);
         methodFlowAnalyzer.release();
         return true;
     }
@@ -529,8 +529,8 @@ public class CodeAttributeBody extends Attribute {
 
     public CodeAttributeBody(
             ClassFileComponent classFileComponent,
-            int ba,
-            String string,
+            int constantPoolIndex,
+            String attributeName,
             ClassFileInputStream classFileInputStream,
             ListMultimap listMultimap,
             ListMultimap listMultimap1,
@@ -544,7 +544,7 @@ public class CodeAttributeBody extends Attribute {
             ThreeKeyMultiMap threeKeyMultiMap,
             ListMultimap listMultimap8
     ) throws ZkmProcessingException, IOException {
-        super(classFileComponent, ba, string, classFileInputStream, listMultimap);
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         this.maxStack = classFileInputStream.readUnsignedShort();
         this.maxLocals = classFileInputStream.readUnsignedShort();
         this.bytecode = new MethodBytecode(
@@ -553,15 +553,15 @@ public class CodeAttributeBody extends Attribute {
         this.exceptionTableLength = classFileInputStream.readUnsignedShort();
         this.exceptionTable = new ExceptionTableEntry[this.exceptionTableLength];
 
-        for (int i = 0; i < this.exceptionTableLength; i++) {
-            this.exceptionTable[i] = new ExceptionTableEntry(this, classFileInputStream, listMultimap8, listMultimap5);
+        for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTableLength; exceptionTableElementIndex++) {
+            this.exceptionTable[exceptionTableElementIndex] = new ExceptionTableEntry(this, classFileInputStream, listMultimap8, listMultimap5);
         }
 
         this.attributeCount = classFileInputStream.readUnsignedShort();
         this.attributes = new Attribute[this.attributeCount];
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            this.attributes[i] = Attribute.readAttribute(
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            this.attributes[attributeIndex] = Attribute.readAttribute(
                     this,
                     classFileInputStream,
                     this.bytecode.getLocalVariableList(),
@@ -577,9 +577,9 @@ public class CodeAttributeBody extends Attribute {
                     listMultimap8,
                     threeKeyMultiMap
             );
-            if (this.attributes[i] instanceof AbstractStackMapAttribute) {
+            if (this.attributes[attributeIndex] instanceof AbstractStackMapAttribute) {
                 ((ProgramClass) this.getOwningClass()).setHasStackMaps(true);
-            } else if (this.attributes[i] instanceof LineNumberTableAttribute) {
+            } else if (this.attributes[attributeIndex] instanceof LineNumberTableAttribute) {
                 ((ProgramClass) this.getOwningClass()).setHasLineNumberTables(true);
             }
         }
@@ -590,9 +590,9 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public int indexOfStackMap() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof StackMapAttribute) {
-                return i;
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof StackMapAttribute) {
+                return attributeIndex;
             }
         }
 
@@ -624,26 +624,26 @@ public class CodeAttributeBody extends Attribute {
                 }
             }
 
-            int[][] bb;
+            int[][] integerArrayArray;
             if (ba > 0) {
                 this.bytecode.recomputeOffsets();
-                int bc = 0;
-                bb = new int[ba][2];
+                int integerArrayArrayElementIndex = 0;
+                integerArrayArray = new int[ba][2];
 
-                for (int i = 0; i < this.exceptionTableLength; i++) {
-                    ExceptionTableEntry exceptionTableEntry2 = this.exceptionTable[i];
+                for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTableLength; exceptionTableElementIndex++) {
+                    ExceptionTableEntry exceptionTableEntry2 = this.exceptionTable[exceptionTableElementIndex];
                     if (exceptionTableEntry2.isNewlyCreated()) {
-                        bb[bc][0] = exceptionTableEntry2.getStartIndex();
-                        bb[bc][1] = exceptionTableEntry2.getEndIndex();
-                        bc++;
+                        integerArrayArray[integerArrayArrayElementIndex][0] = exceptionTableEntry2.getStartIndex();
+                        integerArrayArray[integerArrayArrayElementIndex][1] = exceptionTableEntry2.getEndIndex();
+                        integerArrayArrayElementIndex++;
                     }
                 }
             } else {
-                bb = new int[0][0];
+                integerArrayArray = new int[0][0];
             }
 
             this.bytecode
-                    .applyIntegerEncryption(list1, bl, bb, long1, localVariableIndex1, intCounter, constantPool1, list2, commonSuperTypeResolver1, classHierarchyQuery);
+                    .applyIntegerEncryption(list1, bl, integerArrayArray, long1, localVariableIndex1, intCounter, constantPool1, list2, commonSuperTypeResolver1, classHierarchyQuery);
             if (!bl && this.maxLocals < intCounter.getValue()) {
                 this.setMaxLocals(intCounter.getValue());
             }
@@ -658,8 +658,8 @@ public class CodeAttributeBody extends Attribute {
             stringBuffer.append("   ");
         }
 
-        for (int i = 0; i < this.exceptionTable.length; i++) {
-            this.exceptionTable[i].printEntry(printWriter, stringBuffer);
+        for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTable.length; exceptionTableElementIndex++) {
+            this.exceptionTable[exceptionTableElementIndex].printEntry(printWriter, stringBuffer);
         }
     }
 
@@ -671,14 +671,14 @@ public class CodeAttributeBody extends Attribute {
         return this.bytecode.hasLongConstants();
     }
 
-    public void applyCodeInsertion(CodeInsertion codeInsertion, int ba, int bb) throws ZkmProcessingException {
+    public void applyCodeInsertion(CodeInsertion codeInsertion, int maxStackArgument, int maxLocalsArgument) throws ZkmProcessingException {
         if (this.bytecode != null) {
-            if (this.getMaxStack() < ba) {
-                this.setMaxStack(ba);
+            if (this.getMaxStack() < maxStackArgument) {
+                this.setMaxStack(maxStackArgument);
             }
 
-            if (this.getMaxLocals() < bb) {
-                this.setMaxLocals(bb);
+            if (this.getMaxLocals() < maxLocalsArgument) {
+                this.setMaxLocals(maxLocalsArgument);
             }
 
             this.bytecode.applyCodeInsertion(codeInsertion, "Method Parameter List Changing");
@@ -702,8 +702,8 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public boolean hasLocalVariableTable() {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof LocalVariableTableBase) {
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof LocalVariableTableBase) {
                 return true;
             }
         }
@@ -714,23 +714,23 @@ public class CodeAttributeBody extends Attribute {
     public void retainParameterLocalVariables() {
         List list1 = this.getNormalizedParameterTypes();
         if (list1 != null && list1.size() > 0) {
-            int ba = this.isMethodStatic() ? 0 : 1;
+            int integerValue = this.isMethodStatic() ? 0 : 1;
             HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(list1.size()));
 
-            for (int i = 0; i < list1.size(); i++) {
-                String string = (String) list1.get(i);
-                hashSet.add(integerCache.valueOf(ba));
-                ba++;
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String string = (String) list1.get(elementIndex);
+                hashSet.add(integerCache.valueOf(integerValue));
+                integerValue++;
                 if (string.equals("D") || string.equals("J")) {
-                    ba++;
+                    integerValue++;
                 }
             }
 
-            int bc = this.attributes.length;
+            int lengthValue = this.attributes.length;
 
-            for (int i = 0; i < bc; i++) {
-                if (this.attributes[i] instanceof LocalVariableTableBase) {
-                    ((LocalVariableTableBase) this.attributes[i]).retainEntriesForLocals(hashSet);
+            for (int attributeIndex = 0; attributeIndex < lengthValue; attributeIndex++) {
+                if (this.attributes[attributeIndex] instanceof LocalVariableTableBase) {
+                    ((LocalVariableTableBase) this.attributes[attributeIndex]).retainEntriesForLocals(hashSet);
                 }
             }
         } else {
@@ -786,10 +786,10 @@ public class CodeAttributeBody extends Attribute {
         this.bytecode.collectReferenceObfuscationSites(twoKeySetMultiMap, referenceObfuscator, commonSuperTypeResolver1, classHierarchyQuery);
     }
 
-    public int[] insertInstructions(List list1, int ba, int bb, int bc, String string, List list2) throws ZkmProcessingException {
+    public int[] insertInstructions(List list1, int ba, int maxStackArgument, int bc, String string, List list2) throws ZkmProcessingException {
         if (this.bytecode != null) {
-            if (this.getMaxStack() < bb) {
-                this.setMaxStack(bb);
+            if (this.getMaxStack() < maxStackArgument) {
+                this.setMaxStack(maxStackArgument);
             }
 
             int maxLocals = this.getMaxLocals();
@@ -817,9 +817,9 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public final void collectAttributeReferences(Set set1) {
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).collectReferencedClasses(set1);
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).collectReferencedClasses(set1);
             }
         }
     }
@@ -839,9 +839,9 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public boolean hasLineNumber(int ba) {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof LineNumberTableAttribute) {
-                return ((LineNumberTableAttribute) this.attributes[i]).hasLineNumber(ba);
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof LineNumberTableAttribute) {
+                return ((LineNumberTableAttribute) this.attributes[attributeIndex]).hasLineNumber(ba);
             }
         }
 
@@ -859,18 +859,18 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public void removeAttributesOfType(Class class1) {
-        int ba = this.attributes.length;
+        int lengthValue = this.attributes.length;
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            if (!class1.isInstance(this.attributes[i])) {
-                arrayList.add(this.attributes[i]);
+        for (int attributeIndex = 0; attributeIndex < lengthValue; attributeIndex++) {
+            if (!class1.isInstance(this.attributes[attributeIndex])) {
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
-        int bc = arrayList.size();
-        if (bc < ba) {
-            this.attributes = new Attribute[bc];
+        int arrayListSize = arrayList.size();
+        if (arrayListSize < lengthValue) {
+            this.attributes = new Attribute[arrayListSize];
             this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(this.attributes)));
         }
 
@@ -895,19 +895,19 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public final void updateAttributesAfterMethodRename() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyMethodRenames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyMethodRenames();
             }
         }
     }
 
     public void obfuscateLocalVariableNames() {
-        int ba = this.attributes.length;
+        int lengthValue = this.attributes.length;
 
-        for (int i = 0; i < ba; i++) {
-            if (this.attributes[i] instanceof LocalVariableTableBase) {
-                ((LocalVariableTableBase) this.attributes[i]).obfuscateNames();
+        for (int attributeIndex = 0; attributeIndex < lengthValue; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof LocalVariableTableBase) {
+                ((LocalVariableTableBase) this.attributes[attributeIndex]).obfuscateNames();
             }
         }
     }
@@ -992,34 +992,34 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public final void updateAttributesAfterFieldRename() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof ReferencingAttribute) {
-                ((ReferencingAttribute) this.attributes[i]).applyFieldRenames();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof ReferencingAttribute) {
+                ((ReferencingAttribute) this.attributes[attributeIndex]).applyFieldRenames();
             }
         }
     }
 
     public void removeLocalVariableTypeTable() {
-        int ba = this.attributes.length;
+        int lengthValue = this.attributes.length;
         Vector vector = new Vector();
 
-        for (int i = 0; i < ba; i++) {
-            if (!(this.attributes[i] instanceof LocalVariableTypeTableAttribute)) {
-                if (this.attributes[i] instanceof TypeAnnotationsAttribute) {
-                    TypeAnnotationsAttribute typeAnnotationsAttribute = (TypeAnnotationsAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < lengthValue; attributeIndex++) {
+            if (!(this.attributes[attributeIndex] instanceof LocalVariableTypeTableAttribute)) {
+                if (this.attributes[attributeIndex] instanceof TypeAnnotationsAttribute) {
+                    TypeAnnotationsAttribute typeAnnotationsAttribute = (TypeAnnotationsAttribute) this.attributes[attributeIndex];
                     typeAnnotationsAttribute.removeSignatureDependentAnnotations();
                     if (!typeAnnotationsAttribute.isEmpty()) {
-                        vector.add(this.attributes[i]);
+                        vector.add(this.attributes[attributeIndex]);
                     }
                 } else {
-                    vector.add(this.attributes[i]);
+                    vector.add(this.attributes[attributeIndex]);
                 }
             }
         }
 
-        int bc = vector.size();
-        if (bc < ba) {
-            this.attributes = new Attribute[bc];
+        int vectorSize = vector.size();
+        if (vectorSize < lengthValue) {
+            this.attributes = new Attribute[vectorSize];
             this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (vector.toArray(this.attributes)));
         }
 
@@ -1080,11 +1080,11 @@ public class CodeAttributeBody extends Attribute {
         if (this.bytecode != null) {
             ListMultimap listMultimap = new ListMultimap();
             MethodFlowAnalyzer methodFlowAnalyzer = null;
-            int ba = this.attributes.length;
+            int lengthValue = this.attributes.length;
 
-            for (int i = 0; i < ba; i++) {
-                if (this.attributes[i] instanceof LocalVariableTableAttribute) {
-                    LocalVariableTableAttribute localVariableTableAttribute = (LocalVariableTableAttribute) this.attributes[i];
+            for (int attributeIndex = 0; attributeIndex < lengthValue; attributeIndex++) {
+                if (this.attributes[attributeIndex] instanceof LocalVariableTableAttribute) {
+                    LocalVariableTableAttribute localVariableTableAttribute = (LocalVariableTableAttribute) this.attributes[attributeIndex];
                     if (methodFlowAnalyzer == null) {
                         methodFlowAnalyzer = this.bytecode.createFlowAnalyzer(commonSuperTypeResolver1, classHierarchyQuery);
                     }
@@ -1132,16 +1132,16 @@ public class CodeAttributeBody extends Attribute {
         this.exceptionTable = new ExceptionTableEntry[this.exceptionTableLength];
         ClassFileInputStream classFileInputStream = ClassFileInputStream.fromBytes(rawCodeAttribute.getExceptionTableBytes(), false);
 
-        for (int i = 0; i < this.exceptionTableLength; i++) {
-            this.exceptionTable[i] = new ExceptionTableEntry(this, classFileInputStream, listMultimap, listMultimap4);
+        for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTableLength; exceptionTableElementIndex++) {
+            this.exceptionTable[exceptionTableElementIndex] = new ExceptionTableEntry(this, classFileInputStream, listMultimap, listMultimap4);
         }
 
         this.attributeCount = rawCodeAttribute.getAttributeCount();
         this.attributes = new Attribute[this.attributeCount];
         ClassFileInputStream classFileInputStream1 = ClassFileInputStream.fromBytes(rawCodeAttribute.getAttributeBytes(), false);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            this.attributes[i] = Attribute.readAttribute(
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            this.attributes[attributeIndex] = Attribute.readAttribute(
                     this,
                     classFileInputStream1,
                     this.bytecode.getLocalVariableList(),
@@ -1169,7 +1169,7 @@ public class CodeAttributeBody extends Attribute {
 
     public boolean applyAutoReflectionHandling(
             List list1,
-            String string,
+            String value,
             List list2,
             boolean bl,
             boolean bl1,
@@ -1179,9 +1179,7 @@ public class CodeAttributeBody extends Attribute {
             boolean bl3,
             ScriptEnvironment scriptEnvironment1
     ) throws ZkmException, IOException {
-        return this.bytecode != null
-                ? this.bytecode.applyAutoReflection(list1, string, list2, bl, bl1, bl2, commonSuperTypeResolver1, classMemberLookup1, bl3, scriptEnvironment1)
-                : false;
+        return ((this.bytecode != null) && (this.bytecode.applyAutoReflection(list1, value, list2, bl, bl1, bl2, commonSuperTypeResolver1, classMemberLookup1, bl3, scriptEnvironment1)));
     }
 
     public void applyParameterChanges(
@@ -1229,12 +1227,12 @@ public class CodeAttributeBody extends Attribute {
 
     public void trimAttributes(TrimProcessor trimProcessor1, TrimOptions trimOptions1, ScriptEnvironment scriptEnvironment1, PrintWriter printWriter) throws IOException {
         PrintWriter printWriter1 = scriptEnvironment1.getLogWriter();
-        int ba = this.attributes.length;
+        int lengthValue = this.attributes.length;
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < ba; i++) {
-            if (this.attributes[i] instanceof UnknownAttribute && trimOptions1.c) {
-                UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < lengthValue; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof UnknownAttribute && trimOptions1.c) {
+                UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[attributeIndex];
                 if (scriptEnvironment1.isVerbose()) {
                     printWriter1.println(
                             "\tDeleting unknown attribute '"
@@ -1254,19 +1252,19 @@ public class CodeAttributeBody extends Attribute {
                                 + "' in class "
                                 + ZkmUtils.slashesToDots(this.getClassName())
                 );
-            } else if (this.attributes[i] instanceof ReferencingAttribute && trimOptions1.d) {
-                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[i];
+            } else if (this.attributes[attributeIndex] instanceof ReferencingAttribute && trimOptions1.d) {
+                ReferencingAttribute referencingAttribute = (ReferencingAttribute) this.attributes[attributeIndex];
                 if (trimProcessor1.hasAnnotationRetainedClasses() && !referencingAttribute.trimAnnotations(trimProcessor1, scriptEnvironment1, printWriter)) {
-                    arrayList.add(this.attributes[i]);
+                    arrayList.add(this.attributes[attributeIndex]);
                 }
             } else {
-                arrayList.add(this.attributes[i]);
+                arrayList.add(this.attributes[attributeIndex]);
             }
         }
 
-        int bc = arrayList.size();
-        if (bc < ba) {
-            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[bc])));
+        int arrayListSize = arrayList.size();
+        if (arrayListSize < lengthValue) {
+            this.attributes = ((com.zelix.klassmaster.classfile.attribute.Attribute[]) (arrayList.toArray(new Attribute[arrayListSize])));
         }
 
         this.attributeCount = this.attributes.length;
@@ -1292,20 +1290,20 @@ public class CodeAttributeBody extends Attribute {
 
     @Override
     public int getLength() {
-        int ba = 4 + this.bytecode.getSerializedLength() + 2 + this.exceptionTableLength * 8 + 2;
+        int lengthValue = 4 + this.bytecode.getSerializedLength() + 2 + this.exceptionTableLength * 8 + 2;
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            ba += this.attributes[i].getTotalSize();
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            lengthValue += this.attributes[attributeIndex].getTotalSize();
         }
 
-        this.length = ba;
-        return ba;
+        this.length = lengthValue;
+        return lengthValue;
     }
 
     public StackMapTableAttribute getStackMapTableAttribute() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof StackMapTableAttribute) {
-                return (StackMapTableAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof StackMapTableAttribute) {
+                return (StackMapTableAttribute) this.attributes[attributeIndex];
             }
         }
 
@@ -1370,8 +1368,8 @@ public class CodeAttributeBody extends Attribute {
 
             stackMapAttribute1.setFrames(stackMapEntrys);
             if (stackMapAttribute != null) {
-                int ba = this.indexOfStackMap();
-                this.attributes[ba] = stackMapAttribute1;
+                int attributeIndex = this.indexOfStackMap();
+                this.attributes[attributeIndex] = stackMapAttribute1;
             } else if (stackMapAttribute1.getFrameCount() > 0) {
                 Attribute[] attributes1 = new Attribute[this.attributeCount + 1];
                 System.arraycopy(this.attributes, 0, attributes1, 0, this.attributeCount);
@@ -1386,9 +1384,9 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public Map getLocalVariableNameMap() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof LocalVariableTableAttribute) {
-                return ((LocalVariableTableAttribute) this.attributes[i]).getLocalNamesByIndex();
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof LocalVariableTableAttribute) {
+                return ((LocalVariableTableAttribute) this.attributes[attributeIndex]).getLocalNamesByIndex();
             }
         }
 
@@ -1410,15 +1408,15 @@ public class CodeAttributeBody extends Attribute {
         this.bytecode.writeCodeRemapped(dataOutputStream, map1);
         dataOutputStream.writeShort(this.exceptionTableLength);
 
-        for (int i = 0; i < this.exceptionTableLength; i++) {
-            this.exceptionTable[i].writeRemapped(dataOutputStream, map1);
+        for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTableLength; exceptionTableElementIndex++) {
+            this.exceptionTable[exceptionTableElementIndex].writeRemapped(dataOutputStream, map1);
         }
 
         dataOutputStream.writeShort(this.attributeCount);
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            if (this.attributes[i] instanceof UnknownAttribute && this.attributes[i].getLength() > 0) {
-                UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof UnknownAttribute && this.attributes[attributeIndex].getLength() > 0) {
+                UnknownAttribute unknownAttribute = (UnknownAttribute) this.attributes[attributeIndex];
                 if (unknownAttribute.isCommonAcrossClasses()) {
                     scriptEnvironment1.logWarning(
                             "Method contain unknown attribute '"
@@ -1438,7 +1436,7 @@ public class CodeAttributeBody extends Attribute {
                 }
             }
 
-            Attribute attribute = this.attributes[i];
+            Attribute attribute = this.attributes[attributeIndex];
             ScriptEnvironment scriptEnvironment3 = scriptEnvironment1;
             Map map3 = map1;
             attribute.writeRemapped(dataOutputStream, map3, scriptEnvironment3);
@@ -1477,8 +1475,8 @@ public class CodeAttributeBody extends Attribute {
     public void collectReferencedClasses(Set set1, Set set2, Set set3, Set set4) {
         this.bytecode.collectReferencedMembers(set1, set2, set3, set4);
 
-        for (int i = 0; i < this.exceptionTable.length; i++) {
-            ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(this.exceptionTable[i].getCatchTypeName());
+        for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTable.length; exceptionTableElementIndex++) {
+            ClassFileBase classFileBase = ClassHierarchyNode.findClassFile(this.exceptionTable[exceptionTableElementIndex].getCatchTypeName());
             if (classFileBase != null) {
                 if (classFileBase.isMultiRelease()) {
                     set1.addAll(classFileBase.getAllVersions());
@@ -1541,8 +1539,8 @@ public class CodeAttributeBody extends Attribute {
         HashMap hashMap1 = (HashMap) object3;
         int bb = (Integer) object;
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            Attribute attribute = this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            Attribute attribute = this.attributes[attributeIndex];
             HashMap hashMap3 = hashMap1;
             HashMap hashMap2 = hashMap;
             Integer integer = ba;
@@ -1574,8 +1572,8 @@ public class CodeAttributeBody extends Attribute {
         this.bytecode.collectReferencedProgramMembers(set1, set2, set3, set4);
         ClassFileBase classFileBase = this.getOwningClass();
 
-        for (int i = 0; i < this.exceptionTable.length; i++) {
-            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(this.exceptionTable[i].getCatchTypeName());
+        for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTable.length; exceptionTableElementIndex++) {
+            ProgramClass programClass1 = ClassHierarchyNode.findProgramClass(this.exceptionTable[exceptionTableElementIndex].getCatchTypeName());
             if (programClass1 != null) {
                 if (classFileBase.isVersionedVariant() && programClass1.hasVersionedVariants()) {
                     programClass1 = (ProgramClass) programClass1.selectVersionForRelease(classFileBase.getReleaseVersion());
@@ -1587,7 +1585,7 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public boolean storesToField(FieldInfo fieldInfo) {
-        return this.bytecode != null ? this.bytecode.storesToField(fieldInfo) : false;
+        return ((this.bytecode != null) && (this.bytecode.storesToField(fieldInfo)));
     }
 
     public int[] getLineNumbers() {
@@ -1618,27 +1616,27 @@ public class CodeAttributeBody extends Attribute {
                 }
             }
 
-            int[][] bb;
+            int[][] integerArrayArray;
             if (ba > 0) {
                 this.bytecode.recomputeOffsets();
-                int bc = 0;
-                bb = new int[ba][2];
+                int integerArrayArrayElementIndex = 0;
+                integerArrayArray = new int[ba][2];
 
-                for (int i = 0; i < this.exceptionTableLength; i++) {
-                    ExceptionTableEntry exceptionTableEntry2 = this.exceptionTable[i];
+                for (int exceptionTableElementIndex = 0; exceptionTableElementIndex < this.exceptionTableLength; exceptionTableElementIndex++) {
+                    ExceptionTableEntry exceptionTableEntry2 = this.exceptionTable[exceptionTableElementIndex];
                     if (exceptionTableEntry2.isNewlyCreated()) {
-                        bb[bc][0] = exceptionTableEntry2.getStartIndex();
-                        bb[bc][1] = exceptionTableEntry2.getEndIndex();
-                        bc++;
+                        integerArrayArray[integerArrayArrayElementIndex][0] = exceptionTableEntry2.getStartIndex();
+                        integerArrayArray[integerArrayArrayElementIndex][1] = exceptionTableEntry2.getEndIndex();
+                        integerArrayArrayElementIndex++;
                     }
                 }
             } else {
-                bb = new int[0][0];
+                integerArrayArray = new int[0][0];
             }
 
             this.bytecode
                     .applyStringEncryption(
-                            list1, bl, map1, bb, listMultimap, long1, localVariableIndex1, intCounter, constantPool1, list2, commonSuperTypeResolver1, classHierarchyQuery
+                            list1, bl, map1, integerArrayArray, listMultimap, long1, localVariableIndex1, intCounter, constantPool1, list2, commonSuperTypeResolver1, classHierarchyQuery
                     );
             if (!bl && this.maxLocals < intCounter.getValue()) {
                 this.setMaxLocals(intCounter.getValue());
@@ -1651,9 +1649,9 @@ public class CodeAttributeBody extends Attribute {
     }
 
     public LineNumberTableAttribute getLineNumberTableAttribute() {
-        for (int i = 0; i < this.attributes.length; i++) {
-            if (this.attributes[i] instanceof LineNumberTableAttribute) {
-                return (LineNumberTableAttribute) this.attributes[i];
+        for (int attributeIndex = 0; attributeIndex < this.attributes.length; attributeIndex++) {
+            if (this.attributes[attributeIndex] instanceof LineNumberTableAttribute) {
+                return (LineNumberTableAttribute) this.attributes[attributeIndex];
             }
         }
 
@@ -1667,14 +1665,14 @@ public class CodeAttributeBody extends Attribute {
 
             while (iterator.hasNext()) {
                 ExceptionTableEntry exceptionTableEntry1 = (ExceptionTableEntry) iterator.next();
-                int ba = this.exceptionTable.length;
+                int lengthValue = this.exceptionTable.length;
                 boolean bl1 = false;
 
-                for (int i = this.exceptionTable.length - 1; i >= 0; i += -1) {
-                    ExceptionTableEntry exceptionTableEntry2 = this.exceptionTable[i];
+                for (int lengthValue2 = this.exceptionTable.length - 1; lengthValue2 >= 0; lengthValue2 += -1) {
+                    ExceptionTableEntry exceptionTableEntry2 = this.exceptionTable[lengthValue2];
                     if (exceptionTableEntry1.isOutsideRange(exceptionTableEntry2.getOffset(0), exceptionTableEntry2.getOffset(1))) {
                         if (!bl1 && exceptionTableEntry1.getOffset(0) < exceptionTableEntry2.getOffset(0)) {
-                            ba = i;
+                            lengthValue = lengthValue2;
                         } else {
                             bl1 = true;
                         }
@@ -1685,15 +1683,15 @@ public class CodeAttributeBody extends Attribute {
                             break;
                         }
 
-                        ba = i;
+                        lengthValue = lengthValue2;
                     }
                 }
 
-                if (lists[ba] == null) {
-                    lists[ba] = new ArrayList();
+                if (lists[lengthValue] == null) {
+                    lists[lengthValue] = new ArrayList();
                 }
 
-                lists[ba].add(exceptionTableEntry1);
+                lists[lengthValue].add(exceptionTableEntry1);
             }
 
             LinkedList linkedList = new LinkedList();
@@ -1702,18 +1700,18 @@ public class CodeAttributeBody extends Attribute {
                 linkedList.add(exceptionTableEntry3);
             }
 
-            for (int i = lists.length - 1; i >= 0; i += -1) {
-                List list2 = lists[i];
+            for (int listIndex = lists.length - 1; listIndex >= 0; listIndex += -1) {
+                List list2 = lists[listIndex];
                 if (list2 != null) {
                     Collections.sort(list2, ExceptionTableEntry.getComparator());
                     Iterator iterator1 = list2.iterator();
 
                     while (iterator1.hasNext()) {
                         ExceptionTableEntry exceptionTableEntry4 = (ExceptionTableEntry) iterator1.next();
-                        if (i == lists.length - 1) {
+                        if (listIndex == lists.length - 1) {
                             linkedList.add(exceptionTableEntry4);
                         } else {
-                            linkedList.add(i, exceptionTableEntry4);
+                            linkedList.add(listIndex, exceptionTableEntry4);
                         }
                     }
                 }

@@ -16,13 +16,16 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class PersistedStringList implements Serializable {
-    public transient boolean p;
+    // Preserve the existing serialized identity while recovering non-persistent member names.
+    private static final long serialVersionUID = -3783585091275300098L;
+
+    public transient boolean saved;
     public Map l = new LinkedHashMap();
 
     public final Enumeration enumerateEntries() {
-        ZkmAssert.assertNotNull(this.l, "Unexpected null value (A) : " + this.p);
+        ZkmAssert.assertNotNull(this.l, "Unexpected null value (A) : " + this.saved);
         Set set1 = this.l.keySet();
-        ZkmAssert.assertNotNull(set1, "Unexpected null value (B) : " + this.p);
+        ZkmAssert.assertNotNull(set1, "Unexpected null value (B) : " + this.saved);
         return Collections.enumeration(set1);
     }
 
@@ -33,8 +36,8 @@ public abstract class PersistedStringList implements Serializable {
     public void setEntries(List list1) {
         this.l.clear();
 
-        for (int i = 0; i < list1.size(); i++) {
-            String string = (String) list1.get(i);
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            String string = (String) list1.get(elementIndex);
             this.l.put(string, string);
         }
     }
@@ -52,23 +55,23 @@ public abstract class PersistedStringList implements Serializable {
         try {
             objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
             objectOutputStream.writeObject(this);
-            this.p = true;
+            this.saved = true;
             try {
                 objectOutputStream.close();
-            } catch (final IOException ex) {
+            } catch (final IOException ioException) {
             }
-        } catch (final IOException ex2) {
+        } catch (final IOException ioExceptionValue) {
         } finally {
             if (objectOutputStream != null) {
                 try {
                     objectOutputStream.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
             }
         }
     }
 
     public final boolean isSaved() {
-        return this.p;
+        return this.saved;
     }
 }

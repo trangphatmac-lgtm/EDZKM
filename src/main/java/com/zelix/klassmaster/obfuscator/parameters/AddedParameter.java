@@ -15,38 +15,16 @@ public class AddedParameter {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object otherArgument) {
         boolean predicateFlagClear = OpaquePredicateBase.isPredicateFlagClear();
-        int ba = ((object instanceof AddedParameter) ? 1 : 0);
-        if (!predicateFlagClear) {
-            if ((ba != 0)) {
-                AddedParameter addedParameter1 = (AddedParameter) object;
-                ba = this.index;
-                AddedParameter addedParameter2 = addedParameter1;
-                if (!predicateFlagClear) {
-                    if (this.index != addedParameter1.index) {
-                        return false;
-                    }
-
-                    ba = this.typeChar;
-                    if (predicateFlagClear) {
-                        return this.typeChar != 0;
-                    }
-
-                    addedParameter2 = addedParameter1;
-                }
-
-                if (ba == addedParameter2.typeChar) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            ba = 0;
+        if (!(otherArgument instanceof AddedParameter)) {
+            return false;
         }
-
-        return ba != 0;
+        if (predicateFlagClear) {
+            return true;
+        }
+        AddedParameter other = (AddedParameter) otherArgument;
+        return this.index == other.index && this.typeChar == other.typeChar;
     }
 
     @Override

@@ -53,17 +53,8 @@ public class NullReflectionValue implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
-        boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        boolean bl1 = object instanceof NullReflectionValue;
-        if (!strictMergeDisabled) {
-            if (bl1) {
-                return true;
-            }
-
-            bl1 = false;
-        }
-
-        return bl1;
+    public boolean equals(Object other) {
+        StackFrameState.isStrictMergeDisabled();
+        return other instanceof NullReflectionValue;
     }
 }

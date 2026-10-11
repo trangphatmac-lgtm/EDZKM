@@ -16,8 +16,8 @@ public class GotoInstruction extends BranchInstruction {
         );
     }
 
-    public GotoInstruction(ClassFileInputStream classFileInputStream, int ba, ListMultimap listMultimap) throws IOException {
-        super(167, classFileInputStream, ba, listMultimap);
+    public GotoInstruction(ClassFileInputStream classFileInputStream, int bytecodeOffset, ListMultimap listMultimap) throws IOException {
+        super(167, classFileInputStream, bytecodeOffset, listMultimap);
     }
 
     public GotoInstruction(LabelInstruction labelInstruction) {

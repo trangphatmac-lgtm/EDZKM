@@ -13,23 +13,14 @@ public class StackTraceTranslateThread extends Thread {
     @Override
     public void run() {
         try {
-            Runnable runnable;
-            label16:
-            {
-                try {
-                    this.translatedTrace = this.translateDialog
-                            .translator
-                            .translate(this.translateDialog.traceArea.getText(), this.translateDialog.useBytecodeChk.isSelected());
-                } catch (StackTraceTranslateException stackTraceTranslateException) {
-                    this.translatedTrace = stackTraceTranslateException.getMessage();
-                    runnable = this.doneRunnable;
-                    break label16;
-                }
-
-                runnable = this.doneRunnable;
+            try {
+                this.translatedTrace = this.translateDialog.translator.translate(
+                        this.translateDialog.traceArea.getText(), this.translateDialog.useBytecodeChk.isSelected());
+            } catch (StackTraceTranslateException translationException) {
+                this.translatedTrace = translationException.getMessage();
             }
 
-            SwingUtilities.invokeLater(runnable);
+            SwingUtilities.invokeLater(this.doneRunnable);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }

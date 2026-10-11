@@ -51,11 +51,11 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
         this.minHeight = null;
         this.defaultRightPad = null;
         this.defaultBottomPad = null;
-        int ba = 0;
+        int constraintLineIndex = 0;
         int bg = 0;
 
-        for (String[] strings2 = this.constraintLines; bg < strings2.length; strings2 = this.constraintLines) {
-            StringTokenizer stringTokenizer = new StringTokenizer(this.constraintLines[ba], "=");
+        for (String[] constraintLinesValue = this.constraintLines; bg < constraintLinesValue.length; constraintLinesValue = this.constraintLines) {
+            StringTokenizer stringTokenizer = new StringTokenizer(this.constraintLines[constraintLineIndex], "=");
             int bb = stringTokenizer.countTokens();
             String[] strings1 = new String[bb];
 
@@ -63,37 +63,37 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
                 strings1[i] = stringTokenizer.nextToken().trim();
             }
 
-            String string3 = strings1[bb - 1];
+            String expressionText = strings1[bb - 1];
 
             for (int i = 0; i < bb - 1; i++) {
-                String string = strings1[i];
-                int be = string.indexOf(".");
-                if (be == -1) {
-                    this.variables.put(string, new LayoutExpression(this, string3));
+                String key = strings1[i];
+                int endIndex = key.indexOf(".");
+                if (endIndex == -1) {
+                    this.variables.put(key, new LayoutExpression(this, expressionText));
                 } else {
-                    if (be == string.length() - 1 || string.lastIndexOf(".") != be) {
-                        this.reportError("Property '" + string + "' is invalid. : '" + this.constraintLines[ba] + "'");
+                    if (endIndex == key.length() - 1 || key.lastIndexOf(".") != endIndex) {
+                        this.reportError("Property '" + key + "' is invalid. : '" + this.constraintLines[constraintLineIndex] + "'");
                     }
 
-                    String string1 = string.substring(0, be).trim();
-                    String string2 = string.substring(be + 1).trim();
-                    if (string1.equals("container")) {
-                        this.setContainerProperty(string2, string3);
-                    } else if (string1.equals("layout")) {
-                        this.setLayoutProperty(string2, string3);
+                    String keyValue = key.substring(0, endIndex).trim();
+                    String string2 = key.substring(endIndex + 1).trim();
+                    if (keyValue.equals("container")) {
+                        this.setContainerProperty(string2, expressionText);
+                    } else if (keyValue.equals("layout")) {
+                        this.setLayoutProperty(string2, expressionText);
                     } else {
-                        Component component1 = (Component) this.componentsByName.get(string1);
-                        ((LayoutComponentSpec) this.specsByComponent.get(component1)).setProperty(string2, string3);
+                        Component component1 = (Component) this.componentsByName.get(keyValue);
+                        ((LayoutComponentSpec) this.specsByComponent.get(component1)).setProperty(string2, expressionText);
                     }
                 }
             }
 
-            bg = ++ba;
+            bg = ++constraintLineIndex;
         }
 
-        for (int i = 0; i < this.layoutSizeExpressions.length; i++) {
-            if (this.layoutSizeExpressions[i] != null) {
-                this.layoutSizeExpressions[i].prepare();
+        for (int layoutSizeExpressionIndex = 0; layoutSizeExpressionIndex < this.layoutSizeExpressions.length; layoutSizeExpressionIndex++) {
+            if (this.layoutSizeExpressions[layoutSizeExpressionIndex] != null) {
+                this.layoutSizeExpressions[layoutSizeExpressionIndex].prepare();
             }
         }
 
@@ -106,18 +106,18 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
     }
 
     @Override
-    public void addLayoutComponent(String string, Component component1) {
+    public void addLayoutComponent(String key, Component component1) {
         synchronized (component1.getTreeLock()) {
-            Component component2 = ((java.awt.Component) (this.componentsByName.put(string, component1)));
+            Component component2 = ((java.awt.Component) (this.componentsByName.put(key, component1)));
             Map map1;
             if (component2 != null) {
-                this.reportError("Multiple components with the name '" + string + "': " + component2 + " : " + component1);
+                this.reportError("Multiple components with the name '" + key + "': " + component2 + " : " + component1);
                 map1 = this.specsByComponent;
             } else {
                 map1 = this.specsByComponent;
             }
 
-            map1.put(component1, new LayoutComponentSpec(string, component1, this));
+            map1.put(component1, new LayoutComponentSpec(key, component1, this));
         }
     }
 
@@ -128,17 +128,17 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
                 throw new IllegalArgumentException("'addLayoutComponent' constraint must be a name String");
             }
 
-            String string = (String) object;
-            Component component2 = ((java.awt.Component) (this.componentsByName.put(string, component1)));
+            String key = (String) object;
+            Component component2 = ((java.awt.Component) (this.componentsByName.put(key, component1)));
             Map map1;
             if (component2 != null) {
-                this.reportError("Multiple components with the name '" + string + "': " + component2 + " : " + component1);
+                this.reportError("Multiple components with the name '" + key + "': " + component2 + " : " + component1);
                 map1 = this.specsByComponent;
             } else {
                 map1 = this.specsByComponent;
             }
 
-            map1.put(component1, new LayoutComponentSpec(string, component1, this));
+            map1.put(component1, new LayoutComponentSpec(key, component1, this));
         }
     }
 
@@ -175,8 +175,8 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
         return 0.5F;
     }
 
-    public LayoutExpression getVariable(Object object) {
-        return (LayoutExpression) this.variables.get(object);
+    public LayoutExpression getVariable(Object key) {
+        return (LayoutExpression) this.variables.get(key);
     }
 
     public void resolveComponents(Container container1, ArrayList arrayList, boolean bl) {
@@ -195,8 +195,8 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
             bl1 = false;
             ArrayList arrayList1 = ZkmUtils.copyArrayList(arrayList);
 
-            for (int i = 0; i < arrayList1.size(); i++) {
-                Component component1 = (Component) arrayList1.get(i);
+            for (int elementIndex = 0; elementIndex < arrayList1.size(); elementIndex++) {
+                Component component1 = (Component) arrayList1.get(elementIndex);
                 LayoutComponentSpec layoutComponentSpec = (LayoutComponentSpec) this.specsByComponent.get(component1);
                 if (layoutComponentSpec != null) {
                     if (layoutComponentSpec.resolve(bl)) {
@@ -222,13 +222,13 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
 
     public void parseConstraints(String string) {
         StringTokenizer stringTokenizer = new StringTokenizer(string, ";");
-        String[] strings = new String[stringTokenizer.countTokens()];
+        String[] constraints = new String[stringTokenizer.countTokens()];
 
-        for (int i = 0; i < strings.length; i++) {
-            strings[i] = stringTokenizer.nextToken().trim();
+        for (int constraintIndex = 0; constraintIndex < constraints.length; constraintIndex++) {
+            constraints[constraintIndex] = stringTokenizer.nextToken().trim();
         }
 
-        this.setConstraints(strings);
+        this.setConstraints(constraints);
     }
 
     public static String getPropertyName(int ba) {
@@ -284,8 +284,8 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
             if (arrayList.size() > 0) {
                 StringBuffer stringBuffer = new StringBuffer();
 
-                for (int i = 0; i < arrayList.size(); i++) {
-                    LayoutComponentSpec layoutComponentSpec = (LayoutComponentSpec) this.specsByComponent.get(arrayList.get(i));
+                for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                    LayoutComponentSpec layoutComponentSpec = (LayoutComponentSpec) this.specsByComponent.get(arrayList.get(elementIndex));
                     stringBuffer.append(lineSeparator + layoutComponentSpec.toDebugString());
                 }
 
@@ -300,56 +300,56 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
 
         this.resetComponentSpecs();
         Insets insets = container1.getInsets();
-        int ba = -1;
-        int bb = -1;
+        int integerValue = -1;
+        int integer1Value = -1;
         if (integer != null) {
-            ba = integer;
+            integerValue = integer;
         }
 
         if (integer1 != null) {
-            bb = integer1;
+            integer1Value = integer1;
         }
 
-        int bj;
-        if (ba != -1) {
-            if (bb != -1) {
-                return new Dimension(ba + insets.left + insets.right, bb + insets.top + insets.bottom);
+        int componentCountValue;
+        if (integerValue != -1) {
+            if (integer1Value != -1) {
+                return new Dimension(integerValue + insets.left + insets.right, integer1Value + insets.top + insets.bottom);
             }
 
-            bj = container1.getComponentCount();
+            componentCountValue = container1.getComponentCount();
         } else {
-            bj = container1.getComponentCount();
+            componentCountValue = container1.getComponentCount();
         }
 
-        int bc = bj;
-        ArrayList arrayList = new ArrayList(bc);
+        int componentCountValue2 = componentCountValue;
+        ArrayList arrayList = new ArrayList(componentCountValue2);
         this.resolveComponents(container1, arrayList, false);
 
         boolean bl;
         do {
             bl = false;
 
-            for (int i = 0; i < arrayList.size(); i++) {
-                Component component1 = (Component) arrayList.get(i);
+            for (int elementIndex = 0; elementIndex < arrayList.size(); elementIndex++) {
+                Component component1 = (Component) arrayList.get(elementIndex);
                 LayoutComponentSpec layoutComponentSpec = (LayoutComponentSpec) this.specsByComponent.get(component1);
-                bl = layoutComponentSpec.resolvePreferredSize() ? true : bl;
+                bl = ((layoutComponentSpec.resolvePreferredSize()) || (bl));
             }
         } while (bl);
 
-        int bg = 0;
+        int defaultRightPadValue = 0;
         if (this.defaultRightPad != null) {
-            bg = this.defaultRightPad;
+            defaultRightPadValue = this.defaultRightPad;
         }
 
-        int bh = 0;
+        int defaultBottomPadValue = 0;
         if (this.defaultBottomPad != null) {
-            bh = this.defaultBottomPad;
+            defaultBottomPadValue = this.defaultBottomPad;
         }
 
-        int bi = 0;
-        int be = 0;
+        int integerValue2 = 0;
+        int integer1Value2 = 0;
 
-        for (int i = 0; i < bc; i++) {
+        for (int i = 0; i < componentCountValue2; i++) {
             Component component2 = container1.getComponent(i);
             LayoutComponentSpec layoutComponentSpec1 = (LayoutComponentSpec) this.specsByComponent.get(component2);
             if (!layoutComponentSpec1.isBoundsResolved()) {
@@ -357,34 +357,34 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
             }
 
             Point point = layoutComponentSpec1.getBottomRight();
-            point.x = point.x + Math.max(layoutComponentSpec1.getRightPad(), bg);
-            point.y = point.y + Math.max(layoutComponentSpec1.getBottomPad(), bh);
-            if (point.x > bi) {
-                bi = point.x;
+            point.x = point.x + Math.max(layoutComponentSpec1.getRightPad(), defaultRightPadValue);
+            point.y = point.y + Math.max(layoutComponentSpec1.getBottomPad(), defaultBottomPadValue);
+            if (point.x > integerValue2) {
+                integerValue2 = point.x;
             }
 
-            if (point.y > be) {
-                be = point.y;
+            if (point.y > integer1Value2) {
+                integer1Value2 = point.y;
             }
         }
 
-        if (ba == -1) {
-            ba = bi;
+        if (integerValue == -1) {
+            integerValue = integerValue2;
         }
 
-        if (bb == -1) {
-            bb = be;
+        if (integer1Value == -1) {
+            integer1Value = integer1Value2;
         }
 
         if (this.minWidth != null) {
-            ba = Math.max(ba, this.minWidth);
+            integerValue = Math.max(integerValue, this.minWidth);
         }
 
         if (this.minHeight != null) {
-            bb = Math.max(bb, this.minHeight);
+            integer1Value = Math.max(integer1Value, this.minHeight);
         }
 
-        return new Dimension(ba + insets.left + insets.right, bb + insets.top + insets.bottom);
+        return new Dimension(integerValue + insets.left + insets.right, integer1Value + insets.top + insets.bottom);
     }
 
     @Override
@@ -392,23 +392,23 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
         return 0.5F;
     }
 
-    public String setLayoutProperty(String string, String string1) {
+    public String setLayoutProperty(String string, String expressionText) {
         int ba;
         try {
-            ba = Integer.parseInt(string1);
+            ba = Integer.parseInt(expressionText);
         } catch (NumberFormatException numberFormatException) {
             if (string.equals("width")) {
-                this.layoutSizeExpressions[0] = new LayoutExpression(this, string1);
+                this.layoutSizeExpressions[0] = new LayoutExpression(this, expressionText);
             } else if (string.equals("height")) {
-                this.layoutSizeExpressions[1] = new LayoutExpression(this, string1);
+                this.layoutSizeExpressions[1] = new LayoutExpression(this, expressionText);
             } else if (string.equals("minWidth")) {
-                this.layoutSizeExpressions[2] = new LayoutExpression(this, string1);
+                this.layoutSizeExpressions[2] = new LayoutExpression(this, expressionText);
             } else {
                 if (!string.equals("minHeight")) {
                     return "Property '" + string + "' is not valid for the '" + "layout" + "' object.";
                 }
 
-                this.layoutSizeExpressions[3] = new LayoutExpression(this, string1);
+                this.layoutSizeExpressions[3] = new LayoutExpression(this, expressionText);
             }
 
             return null;
@@ -514,42 +514,42 @@ public class ConstraintLayout implements LayoutManager2, LayoutConstraintMarker 
         this.container = container1;
     }
 
-    public LayoutComponentSpec getComponentSpec(String string) {
-        Object object = this.componentsByName.get(string);
+    public LayoutComponentSpec getComponentSpec(String key) {
+        Object keyValue = this.componentsByName.get(key);
         Map map1;
-        if (object == null) {
-            this.reportError("Component '" + string + "' has not been added to the container.");
+        if (keyValue == null) {
+            this.reportError("Component '" + key + "' has not been added to the container.");
             map1 = this.specsByComponent;
         } else {
             map1 = this.specsByComponent;
         }
 
-        return (LayoutComponentSpec) map1.get(object);
+        return (LayoutComponentSpec) map1.get(keyValue);
     }
 
     public void resolveLayoutSizes() {
         if (!this.layoutSizesResolved) {
-            int ba = 0;
-            int bb = ba;
+            int layoutSizeExpressionIndex = 0;
+            int layoutSizeExpressionIndexValue = layoutSizeExpressionIndex;
 
-            for (LayoutExpression[] layoutExpressions = this.layoutSizeExpressions; bb < layoutExpressions.length; layoutExpressions = this.layoutSizeExpressions) {
-                if (this.layoutSizeExpressions[ba] != null && this.layoutSizeExpressions[ba].tryEvaluate(false)) {
-                    switch (ba) {
+            for (LayoutExpression[] layoutExpressions = this.layoutSizeExpressions; layoutSizeExpressionIndexValue < layoutExpressions.length; layoutExpressions = this.layoutSizeExpressions) {
+                if (this.layoutSizeExpressions[layoutSizeExpressionIndex] != null && this.layoutSizeExpressions[layoutSizeExpressionIndex].tryEvaluate(false)) {
+                    switch (layoutSizeExpressionIndex) {
                         case 0:
-                            this.layoutWidth = this.layoutSizeExpressions[ba].getValue();
+                            this.layoutWidth = this.layoutSizeExpressions[layoutSizeExpressionIndex].getValue();
                             break;
                         case 1:
-                            this.layoutHeight = this.layoutSizeExpressions[ba].getValue();
+                            this.layoutHeight = this.layoutSizeExpressions[layoutSizeExpressionIndex].getValue();
                             break;
                         case 2:
-                            this.minWidth = this.layoutSizeExpressions[ba].getValue();
+                            this.minWidth = this.layoutSizeExpressions[layoutSizeExpressionIndex].getValue();
                             break;
                         case 3:
-                            this.minHeight = this.layoutSizeExpressions[ba].getValue();
+                            this.minHeight = this.layoutSizeExpressions[layoutSizeExpressionIndex].getValue();
                     }
                 }
 
-                bb = ++ba;
+                layoutSizeExpressionIndexValue = ++layoutSizeExpressionIndex;
             }
 
             this.layoutSizesResolved = true;

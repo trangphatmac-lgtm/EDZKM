@@ -8,10 +8,10 @@ public abstract class OrAnnotationSpecifierNode extends OrSpecifierNode implemen
     @Override
     public boolean matchesAnyAnnotation(Set set1) {
         boolean bl = false;
-        int ba = this.children.length;
+        int lengthValue = this.children.length;
 
-        for (int i = 0; i < ba; i++) {
-            if (((AnnotationMatcher) this.children[i]).matchesAnyAnnotation(set1)) {
+        for (int childrenElementIndex = 0; childrenElementIndex < lengthValue; childrenElementIndex++) {
+            if (((AnnotationMatcher) this.children[childrenElementIndex]).matchesAnyAnnotation(set1)) {
                 bl = true;
                 break;
             }

@@ -31,7 +31,7 @@ public class ASTMethodParameterChangesIncludeStatement extends ParameterListStat
         this.printMessageSummary(scriptEnvironment1, ba, bb, bc, "while executing");
     }
 
-    public ASTMethodParameterChangesIncludeStatement(int ba) {
-        super(ba);
+    public ASTMethodParameterChangesIncludeStatement(int nodeTypeId) {
+        super(nodeTypeId);
     }
 }

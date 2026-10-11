@@ -18,9 +18,9 @@ public abstract class MonitorInstruction extends Instruction {
         stringBuilder1.append(stringBuilder);
         stringBuilder1.append(stringBuilder);
         stringBuilder1.append(this.getMnemonic());
-        String string = Instruction.getDescriptionComment(this.opcode);
-        if (string.length() > 0) {
-            stringBuilder1.append("\t" + string);
+        String descriptionComment = Instruction.getDescriptionComment(this.opcode);
+        if (descriptionComment.length() > 0) {
+            stringBuilder1.append("\t" + descriptionComment);
         }
 
         printWriter.println(stringBuilder1.toString());
@@ -65,10 +65,10 @@ public abstract class MonitorInstruction extends Instruction {
     public StackFrameState computeFrameAfter(StackFrameState stackFrameState, Object object, Object object1, Object object2) throws ZkmException, IOException {
         VerifierType[] verifierTypes = stackFrameState.getLocals();
         VerifierType[] verifierTypes1 = stackFrameState.getStack();
-        int ba = verifierTypes1.length;
+        int lengthValue = verifierTypes1.length;
         SubroutineLocalsBitSet subroutineLocalsBitSet = stackFrameState.getSubroutineLocals();
-        VerifierType[] verifierTypes2 = VerifierType.createArray(ba - 1);
-        System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, ba - 1);
+        VerifierType[] verifierTypes2 = VerifierType.createArray(lengthValue - 1);
+        System.arraycopy(verifierTypes1, 0, verifierTypes2, 0, lengthValue - 1);
         this.lockedObjectType = verifierTypes1[verifierTypes1.length - 1];
         StackFrameState stackFrameState1 = new StackFrameState(verifierTypes2, verifierTypes, subroutineLocalsBitSet, stackFrameState.getHeldMonitors());
         this.updateHeldMonitors(stackFrameState1);
@@ -85,8 +85,8 @@ public abstract class MonitorInstruction extends Instruction {
         return false;
     }
 
-    public MonitorInstruction(int ba) {
-        super(ba);
+    public MonitorInstruction(int opcodeArgument) {
+        super(opcodeArgument);
     }
 
     @Override

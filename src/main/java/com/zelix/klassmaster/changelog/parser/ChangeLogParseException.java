@@ -13,19 +13,19 @@ public class ChangeLogParseException extends Exception implements ChangeLogConst
         this.specialConstructor = false;
     }
 
-    public ChangeLogParseException(ChangeLogToken changeLogToken, int[][] expectedTokenSequences, String[] strings) {
+    public ChangeLogParseException(ChangeLogToken changeLogToken, int[][] expectedTokenSequences, String[] tokenImageArgument) {
         super("");
         this.specialConstructor = true;
         this.currentToken = changeLogToken;
         this.expectedTokenSequences = expectedTokenSequences;
-        this.tokenImage = strings;
+        this.tokenImage = tokenImageArgument;
     }
 
     public String addEscapes(String string) {
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = 0; i < string.length(); i++) {
-            switch (string.charAt(i)) {
+        for (int characterIndex = 0; characterIndex < string.length(); characterIndex++) {
+            switch (string.charAt(characterIndex)) {
                 case '\u0000':
                     break;
                 case '\b':
@@ -54,7 +54,7 @@ public class ChangeLogParseException extends Exception implements ChangeLogConst
                     break;
                 default:
                     char ba;
-                    if ((ba = string.charAt(i)) >= ' ' && ba <= '~') {
+                    if ((ba = string.charAt(characterIndex)) >= ' ' && ba <= '~') {
                         stringBuffer.append(ba);
                     } else {
                         String string1 = "0000" + Integer.toString(ba, 16);
@@ -73,21 +73,21 @@ public class ChangeLogParseException extends Exception implements ChangeLogConst
         }
 
         String string = "";
-        int ba = 0;
+        int lengthValue = 0;
         int bb = 0;
-        int bf = 0;
+        int expectedTokenSequenceElementIndexValue = 0;
 
-        for (int[][] expectedTokenSequences = this.expectedTokenSequences; bf < expectedTokenSequences.length; expectedTokenSequences = this.expectedTokenSequences) {
-            if (ba < this.expectedTokenSequences[bb].length) {
-                ba = this.expectedTokenSequences[bb].length;
+        for (int[][] expectedTokenSequences = this.expectedTokenSequences; expectedTokenSequenceElementIndexValue < expectedTokenSequences.length; expectedTokenSequences = this.expectedTokenSequences) {
+            if (lengthValue < this.expectedTokenSequences[bb].length) {
+                lengthValue = this.expectedTokenSequences[bb].length;
             }
 
-            int bc = 0;
-            bf = bc;
+            int expectedTokenSequenceElementIndex = 0;
+            expectedTokenSequenceElementIndexValue = expectedTokenSequenceElementIndex;
 
-            for (int[][] be = this.expectedTokenSequences; bf < be[bb].length; be = this.expectedTokenSequences) {
-                string = string + this.tokenImage[this.expectedTokenSequences[bb][bc]] + " ";
-                bf = ++bc;
+            for (int[][] expectedTokenSequencesValue = this.expectedTokenSequences; expectedTokenSequenceElementIndexValue < expectedTokenSequencesValue[bb].length; expectedTokenSequencesValue = this.expectedTokenSequences) {
+                string = string + this.tokenImage[this.expectedTokenSequences[bb][expectedTokenSequenceElementIndex]] + " ";
+                expectedTokenSequenceElementIndexValue = ++expectedTokenSequenceElementIndex;
             }
 
             if (this.expectedTokenSequences[bb][this.expectedTokenSequences[bb].length - 1] != 0) {
@@ -95,14 +95,14 @@ public class ChangeLogParseException extends Exception implements ChangeLogConst
             }
 
             string = string + this.eol + "    ";
-            bf = ++bb;
+            expectedTokenSequenceElementIndexValue = ++bb;
         }
 
         String string2 = this.currentToken.k;
         ChangeLogToken changeLogToken = this.currentToken.h;
         String string1 = "Zelix KlassMaster encountered \"";
 
-        for (int i = 0; i < ba; i++) {
+        for (int i = 0; i < lengthValue; i++) {
             if (i != 0) {
                 string1 = string1 + " ";
             }

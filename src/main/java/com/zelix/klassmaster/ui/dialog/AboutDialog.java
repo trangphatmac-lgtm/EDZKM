@@ -56,18 +56,18 @@ public class AboutDialog extends EscapeClosingDialogBase implements ActionListen
         this.okBtn.addActionListener(this);
         container1.add(this.okBtn, "okBtn");
         ConstraintLayout constraintLayout2;
-        String[] strings;
+        String[] layoutSpecValue;
         if (!this.bannerPnl.isPrimaryImageLoaded()) {
             this.okBtn.setBackground(BannerPnl.FALLBACK_BACKGROUND);
             this.okBtn.setForeground(Color.black);
             constraintLayout2 = constraintLayout1;
-            strings = layoutSpec;
+            layoutSpecValue = layoutSpec;
         } else {
             constraintLayout2 = constraintLayout1;
-            strings = layoutSpec;
+            layoutSpecValue = layoutSpec;
         }
 
-        constraintLayout2.setConstraints(strings);
+        constraintLayout2.setConstraints(layoutSpecValue);
         SwingUtils.packOnEdt(this);
         this.setResizable(false);
         AboutDialogEnterKeyListener aboutDialogEnterKeyListener = new AboutDialogEnterKeyListener(this);

@@ -15,18 +15,18 @@ public class NewFolderButton extends JButton {
     public NewFolderButton() {
         Icon icon1 = FileIconProvider.getNewFolderIcon();
         NewFolderButton newFolderButton2;
-        String string;
+        String toolTipText;
         if (icon1 != null) {
             this.setIcon(icon1);
             newFolderButton2 = this;
-            string = "New Folder";
+            toolTipText = "New Folder";
         } else {
             this.setText(fallbackText);
             newFolderButton2 = this;
-            string = "New Folder";
+            toolTipText = "New Folder";
         }
 
-        newFolderButton2.setToolTipText(string);
+        newFolderButton2.setToolTipText(toolTipText);
     }
 
     @Override

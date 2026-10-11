@@ -18,7 +18,7 @@ public abstract class XmlResourceParserBase implements XmlContentHandler {
     }
 
     public boolean isWithinElement(String string) {
-        return this.elementStack.isEmpty() ? false : this.findOpenElementDepth(string) != -1;
+        return (!(this.elementStack.isEmpty()) && (this.findOpenElementDepth(string) != -1));
     }
 
     @Override
@@ -34,9 +34,9 @@ public abstract class XmlResourceParserBase implements XmlContentHandler {
     public static String extractDoctype(String string) {
         int ba = string.indexOf("<!DOCTYPE");
         if (ba > -1) {
-            int bb = string.indexOf(">", ba);
-            if (bb > ba) {
-                return string.substring(ba, bb);
+            int endIndex = string.indexOf(">", ba);
+            if (endIndex > ba) {
+                return string.substring(ba, endIndex);
             }
         }
 
@@ -44,8 +44,8 @@ public abstract class XmlResourceParserBase implements XmlContentHandler {
     }
 
     public final XmlElementNode getOpenElement(int ba) {
-        int bb = this.elementStack.size();
-        return !this.elementStack.isEmpty() && ba < bb ? (XmlElementNode) this.elementStack.peekAt(ba) : null;
+        int elementStackSize = this.elementStack.size();
+        return !this.elementStack.isEmpty() && ba < elementStackSize ? (XmlElementNode) this.elementStack.peekAt(ba) : null;
     }
 
     public static boolean isPredicateFlagClear() {
@@ -70,9 +70,9 @@ public abstract class XmlResourceParserBase implements XmlContentHandler {
     public static String extractSchemaLocation(String string) {
         int ba = string.indexOf(":schemaLocation=\"");
         if (ba > -1) {
-            int bb = string.indexOf("\"", ba + ":schemaLocation=\"".length());
-            if (bb > ba) {
-                return string.substring(ba + ":schemaLocation=\"".length(), bb);
+            int endIndex = string.indexOf("\"", ba + ":schemaLocation=\"".length());
+            if (endIndex > ba) {
+                return string.substring(ba + ":schemaLocation=\"".length(), endIndex);
             }
         }
 
@@ -145,8 +145,8 @@ public abstract class XmlResourceParserBase implements XmlContentHandler {
     }
 
     public String getOpenElementName(int ba) {
-        int bb = this.elementStack.size();
-        return !this.elementStack.isEmpty() && ba < bb ? ((XmlElementNode) this.elementStack.peekAt(ba)).getTagName() : null;
+        int elementStackSize = this.elementStack.size();
+        return !this.elementStack.isEmpty() && ba < elementStackSize ? ((XmlElementNode) this.elementStack.peekAt(ba)).getTagName() : null;
     }
 
     @Override

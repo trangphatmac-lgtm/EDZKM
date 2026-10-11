@@ -7,8 +7,8 @@ public class UninitializedType extends UninitializedThisValueType {
         return this.newInstruction;
     }
 
-    public UninitializedType(String string, TypeInstruction typeInstruction) {
-        super(string);
+    public UninitializedType(String descriptor, TypeInstruction typeInstruction) {
+        super(descriptor);
         this.newInstruction = typeInstruction;
     }
 

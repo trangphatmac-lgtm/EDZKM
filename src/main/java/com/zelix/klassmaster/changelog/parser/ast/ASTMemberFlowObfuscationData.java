@@ -10,8 +10,8 @@ public class ASTMemberFlowObfuscationData extends FlowObfuscationDataNode {
     public void applyToChangeLog(Object object) throws ZkmException, IOException {
         if (super.className != null) {
             List list1 = super.values;
-            String string = super.className;
-            super.changeLog.addMemberFlowObfuscationData(string, list1);
+            String classNameValue = super.className;
+            super.changeLog.addMemberFlowObfuscationData(classNameValue, list1);
         }
     }
 

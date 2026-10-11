@@ -36,8 +36,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
 
     @Override
     public String getOriginalClassName(Object object) {
-        String string = (String) object;
-        return this.classRepository.getOriginalClassName(string);
+        String key = (String) object;
+        return this.classRepository.getOriginalClassName(key);
     }
 
     @Override
@@ -45,11 +45,11 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
         return this.classRepository.getClassAnnotations(string, integer, bl);
     }
 
-    public boolean isMissingFieldIgnored(ClassFileBase classFileBase, String string, String string1, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public boolean isMissingFieldIgnored(ClassFileBase classFileBase, String key, String string1, ObservableHolder observableHolder) throws ZkmException, IOException {
         observableHolder.clearValue();
         if (this.filterParameters.isEmpty()) {
             observableHolder.setValue("No explicit specifications so ALL ignored by default");
-            this.ignoredMemberRefs.addValue(classFileBase.getClassName(), string, string1);
+            this.ignoredMemberRefs.addValue(classFileBase.getClassName(), key, string1);
             return true;
         }
 
@@ -57,15 +57,15 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
 
         while (iterator.hasNext()) {
             ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) iterator.next();
-            if (aSTRenameFilterParameter.isFieldSpecifier() && aSTRenameFilterParameter.matchesFieldSpec(this, classFileBase, string, string1)) {
+            if (aSTRenameFilterParameter.isFieldSpecifier() && aSTRenameFilterParameter.matchesFieldSpec(this, classFileBase, key, string1)) {
                 observableHolder.setValue(aSTRenameFilterParameter.toScriptText());
-                this.ignoredMemberRefs.addValue(classFileBase.getClassName(), string, string1);
+                this.ignoredMemberRefs.addValue(classFileBase.getClassName(), key, string1);
                 return true;
             }
 
             if (aSTRenameFilterParameter.isClassSpecifier() && aSTRenameFilterParameter.isClassPlusSpec()) {
                 observableHolder.setValue(aSTRenameFilterParameter.toScriptText());
-                this.ignoredMemberRefs.addValue(classFileBase.getClassName(), string, string1);
+                this.ignoredMemberRefs.addValue(classFileBase.getClassName(), key, string1);
                 return true;
             }
         }
@@ -74,8 +74,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsAnnotatedInterface(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.implementsAnnotatedInterface(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean implementsAnnotatedInterface(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.implementsAnnotatedInterface(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     public boolean isClassIgnored(Object object) {
@@ -83,8 +83,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean extendsAnnotatedClassByOriginalName(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.extendsAnnotatedClassByOriginalName(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean extendsAnnotatedClassByOriginalName(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.extendsAnnotatedClassByOriginalName(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     public ScriptEnvironment getScriptEnvironment() {
@@ -92,8 +92,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsInterface(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.implementsInterface(string, string1);
+    public final boolean implementsInterface(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.implementsInterface(key, keyArgument);
     }
 
     @Override
@@ -103,8 +103,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean isSubclassByOriginalName(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.isSubclassByOriginalName(string, string1);
+    public final boolean isSubclassByOriginalName(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.isSubclassByOriginalName(key, keyArgument);
     }
 
     @Override
@@ -121,8 +121,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsAnnotatedInterfaceByOriginalName(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.implementsAnnotatedInterfaceByOriginalName(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean implementsAnnotatedInterfaceByOriginalName(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.implementsAnnotatedInterfaceByOriginalName(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     @Override
@@ -131,8 +131,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean extendsAnnotatedClass(String string, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
-        return this.classRepository.extendsAnnotatedClass(string, string1, aSTComplexAnnotationSpecifier);
+    public final boolean extendsAnnotatedClass(String key, String string1, ASTComplexAnnotationSpecifier aSTComplexAnnotationSpecifier) throws ZkmException, IOException {
+        return this.classRepository.extendsAnnotatedClass(key, string1, aSTComplexAnnotationSpecifier);
     }
 
     public IgnoreMissingReferencesSpec(ClassRepository classRepository1, List list1, ScriptEnvironment scriptEnvironment1) {
@@ -143,15 +143,15 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean isSubclass(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.isSubclass(string, string1);
+    public final boolean isSubclass(String key, String keyArgument) throws ZkmException, IOException {
+        return this.classRepository.isSubclass(key, keyArgument);
     }
 
-    public boolean isMissingMethodIgnored(ClassFileBase classFileBase, String string, String string1, ObservableHolder observableHolder) throws ZkmException, IOException {
+    public boolean isMissingMethodIgnored(ClassFileBase classFileBase, String key, String string1, ObservableHolder observableHolder) throws ZkmException, IOException {
         observableHolder.clearValue();
         if (this.filterParameters.isEmpty()) {
             observableHolder.setValue("No explicit specifications so ALL ignored by default");
-            this.ignoredMemberRefs.addValue(classFileBase.getClassName(), string, string1);
+            this.ignoredMemberRefs.addValue(classFileBase.getClassName(), key, string1);
             return true;
         }
 
@@ -159,15 +159,15 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
 
         while (iterator.hasNext()) {
             ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) iterator.next();
-            if (aSTRenameFilterParameter.isMethodSpecifier() && aSTRenameFilterParameter.matchesMethodSpec(this, classFileBase, string, string1)) {
+            if (aSTRenameFilterParameter.isMethodSpecifier() && aSTRenameFilterParameter.matchesMethodSpec(this, classFileBase, key, string1)) {
                 observableHolder.setValue(aSTRenameFilterParameter.toScriptText());
-                this.ignoredMemberRefs.addValue(classFileBase.getClassName(), string, string1);
+                this.ignoredMemberRefs.addValue(classFileBase.getClassName(), key, string1);
                 return true;
             }
 
             if (aSTRenameFilterParameter.isClassSpecifier() && aSTRenameFilterParameter.isClassPlusSpec()) {
                 observableHolder.setValue(aSTRenameFilterParameter.toScriptText());
-                this.ignoredMemberRefs.addValue(classFileBase.getClassName(), string, string1);
+                this.ignoredMemberRefs.addValue(classFileBase.getClassName(), key, string1);
                 return true;
             }
         }
@@ -184,8 +184,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
         HashSet hashSet = ZkmUtils.createHashSet();
         ArrayList arrayList = new ArrayList();
 
-        for (int i = 0; i < list1.size(); i++) {
-            Enumeration enumeration = ((ParameterListStatement) list1.get(i)).getRenameFilterParameters();
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            Enumeration enumeration = ((ParameterListStatement) list1.get(elementIndex)).getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
                 ASTRenameFilterParameter aSTRenameFilterParameter = (ASTRenameFilterParameter) enumeration.nextElement();
@@ -199,8 +199,8 @@ public class IgnoreMissingReferencesSpec implements ClassHierarchyQuery {
     }
 
     @Override
-    public final boolean implementsInterfaceByOriginalName(String string, String string1) throws ZkmException, IOException {
-        return this.classRepository.implementsInterfaceByOriginalName(string, string1);
+    public final boolean implementsInterfaceByOriginalName(String keyArgument, String key) throws ZkmException, IOException {
+        return this.classRepository.implementsInterfaceByOriginalName(keyArgument, key);
     }
 
     public void validateFilterParameters() {

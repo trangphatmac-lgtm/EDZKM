@@ -12,7 +12,9 @@ import java.util.List;
 import java.io.ObjectInputStream;
 
 public class ExclusionWizardSettings extends WizardAppSettings implements Serializable {
+    /** packageSelected; the field name is retained for serialized settings compatibility. */
     public boolean g = false;
+    /** selectedPackageName; the field name is retained for serialized settings compatibility. */
     public String h = null;
 
     public String getSelectedPackageName() {
@@ -32,27 +34,27 @@ public class ExclusionWizardSettings extends WizardAppSettings implements Serial
                 final ExclusionWizardSettings exclusionWizardSettings = (ExclusionWizardSettings) objectInputStream.readObject();
                 if (exclusionWizardSettings.l == null) {
                     exclusionWizardSettings.l = new LinkedHashMap();
-                    exclusionWizardSettings.p = true;
+                    exclusionWizardSettings.saved = true;
                 } else {
-                    exclusionWizardSettings.p = true;
+                    exclusionWizardSettings.saved = true;
                 }
                 final ExclusionWizardSettings exclusionWizardSettings2 = exclusionWizardSettings;
                 try {
                     objectInputStream.close();
-                } catch (final IOException ex) {
+                } catch (final IOException ioException) {
                 }
                 return exclusionWizardSettings2;
-            } catch (final IOException ex2) {
-            } catch (final ClassNotFoundException ex3) {
-            } catch (final ClassCastException ex4) {
-            } catch (final AssertionFailedException ex5) {
-                throw ex5;
-            } catch (final Throwable t) {
+            } catch (final IOException ioExceptionValue) {
+            } catch (final ClassNotFoundException classNotFoundException) {
+            } catch (final ClassCastException classCastException) {
+            } catch (final AssertionFailedException assertionFailedException) {
+                throw assertionFailedException;
+            } catch (final Throwable throwable) {
             } finally {
                 if (objectInputStream != null) {
                     try {
                         objectInputStream.close();
-                    } catch (final IOException ex6) {
+                    } catch (final IOException ioExceptionValue2) {
                     }
                 }
             }
@@ -64,67 +66,67 @@ public class ExclusionWizardSettings extends WizardAppSettings implements Serial
         return string != null && string.length() > 0 && string.indexOf("*") == -1 && string.indexOf("^") == -1 && string.charAt(string.length() - 1) == '.';
     }
 
-    public void setPackageSelection(boolean bl, String string) {
-        this.g = bl;
-        this.h = string;
+    public void setPackageSelection(boolean packageSelected, String selectedPackageName) {
+        this.g = packageSelected;
+        this.h = selectedPackageName;
     }
 
     @Override
     public void setEntries(List list1) {
         super.l.clear();
         int ba = 0;
-        String string = null;
+        String selectedPackageName = null;
 
-        for (int i = 0; i < list1.size(); i++) {
-            String string1 = (String) list1.get(i);
-            super.l.put(string1, string1);
-            if (this.isExactPackageName(string1)) {
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            String selectedPackageNameValue = (String) list1.get(elementIndex);
+            super.l.put(selectedPackageNameValue, selectedPackageNameValue);
+            if (this.isExactPackageName(selectedPackageNameValue)) {
                 if (++ba == 1) {
-                    string = string1;
+                    selectedPackageName = selectedPackageNameValue;
                 }
             }
         }
 
-        boolean bl;
+        boolean packageSelected;
         if (super.f != null) {
             if (super.f.length() > 0) {
                 if (super.d) {
                     if (!super.l.containsKey(super.f)) {
                         super.d = false;
-                        bl = this.g;
+                        packageSelected = this.g;
                     } else {
-                        bl = this.g;
+                        packageSelected = this.g;
                     }
                 } else if (super.l.containsKey(super.f)) {
                     super.d = true;
-                    bl = this.g;
+                    packageSelected = this.g;
                 } else {
-                    bl = this.g;
+                    packageSelected = this.g;
                 }
             } else {
-                bl = this.g;
+                packageSelected = this.g;
             }
         } else {
-            bl = this.g;
+            packageSelected = this.g;
         }
 
-        if (bl) {
+        if (packageSelected) {
             if (!super.l.containsKey(this.h)) {
                 this.g = false;
-                bl = this.g;
+                packageSelected = this.g;
             } else {
-                bl = this.g;
+                packageSelected = this.g;
             }
         } else if (super.l.containsKey(this.h)) {
             this.g = true;
-            bl = this.g;
+            packageSelected = this.g;
         } else {
-            bl = this.g;
+            packageSelected = this.g;
         }
 
-        if (!bl && ba > 0) {
+        if (!packageSelected && ba > 0) {
             this.g = true;
-            this.h = string;
+            this.h = selectedPackageName;
         }
     }
 }

@@ -20,7 +20,7 @@ public class ConstantFieldref extends ConstantMemberRef implements ResolvableCon
         return TAG;
     }
 
-    public ConstantFieldref(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, classFileInputStream, abstractConstantPool);
+    public ConstantFieldref(int index, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(index, classFileInputStream, abstractConstantPool);
     }
 }

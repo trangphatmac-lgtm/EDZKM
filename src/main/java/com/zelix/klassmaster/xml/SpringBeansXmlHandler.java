@@ -38,13 +38,13 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
         TwoKeyMap twoKeyMap = (TwoKeyMap) object2;
         Map map3 = (Map) object1;
         Map map2 = (Map) object;
-        String string = xmlElementNode.getTagName();
-        String string1 = this.getOpenElementName(1);
-        if (string.equalsIgnoreCase("bean") && string1 != null && string1.equalsIgnoreCase("beans")) {
+        String tagName = xmlElementNode.getTagName();
+        String openElementName = this.getOpenElementName(1);
+        if (tagName.equalsIgnoreCase("bean") && openElementName != null && openElementName.equalsIgnoreCase("beans")) {
             boolean bl = false;
             boolean bl1 = false;
-            String string14 = "reference in '" + super.resourceName + "' by '" + string + "' tag";
-            String string16 = null;
+            String valueValue14 = "reference in '" + super.resourceName + "' by '" + tagName + "' tag";
+            String dottedClassName = null;
             ObservableHolder observableHolder6 = xmlElementNode.getAttributeValue("class");
             List list1 = null;
             ObservableHolder observableHolder7 = xmlElementNode.getAttributeValue("id");
@@ -59,63 +59,63 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
             }
 
             if (observableHolder6 != null) {
-                String string17 = (String) observableHolder6.getValue();
+                String valueValue = (String) observableHolder6.getValue();
                 ObservableHolder observableHolder3 = new ObservableHolder();
-                string16 = this.addClassReference(string17, map1, observableHolder3, string14 + " '" + "class" + "' attribute");
+                dottedClassName = this.addClassReference(valueValue, map1, observableHolder3, valueValue14 + " '" + "class" + "' attribute");
                 if (!observableHolder3.isValueNull() && list1 != null) {
                     Iterator iterator = list1.iterator();
 
                     while (iterator.hasNext()) {
-                        String string5 = (String) iterator.next();
-                        ProgramClass programClass7 = (ProgramClass) super.beanClasses.put(string5, observableHolder3.getValue());
+                        String key = (String) iterator.next();
+                        ProgramClass programClass7 = (ProgramClass) super.beanClasses.put(key, observableHolder3.getValue());
                     }
                 }
             }
 
-            if (string16 == null) {
+            if (dottedClassName == null) {
                 ObservableHolder observableHolder9 = xmlElementNode.getAttributeValue("factory-bean");
                 if (observableHolder9 != null) {
-                    String string18 = (String) observableHolder9.getValue();
-                    ProgramClass programClass4 = (ProgramClass) super.beanClasses.get(string18);
+                    String valueValue2 = (String) observableHolder9.getValue();
+                    ProgramClass programClass4 = (ProgramClass) super.beanClasses.get(valueValue2);
                     if (programClass4 != null && list1 != null) {
-                        string16 = programClass4.getDottedClassName();
+                        dottedClassName = programClass4.getDottedClassName();
                         Iterator iterator4 = list1.iterator();
 
                         while (iterator4.hasNext()) {
-                            String string6 = (String) iterator4.next();
-                            super.beanClasses.put(string6, programClass4);
+                            String keyValue = (String) iterator4.next();
+                            super.beanClasses.put(keyValue, programClass4);
                         }
                     }
                 }
             }
 
-            if (string16 == null) {
+            if (dottedClassName == null) {
                 ObservableHolder observableHolder10 = xmlElementNode.getAttributeValue("parent");
                 if (observableHolder10 != null && list1 != null) {
                     bl1 = true;
-                    String string19 = (String) observableHolder10.getValue();
+                    String valueValue3 = (String) observableHolder10.getValue();
                     Iterator iterator2 = list1.iterator();
 
                     while (iterator2.hasNext()) {
-                        String string20 = (String) iterator2.next();
-                        super.beanParents.put(string20, string19);
-                        String string7 = string19;
+                        String keyValue2 = (String) iterator2.next();
+                        super.beanParents.put(keyValue2, valueValue3);
+                        String keyValue3 = valueValue3;
                         ProgramClass programClass2 = null;
 
-                        while (string7 != null && programClass2 == null) {
-                            programClass2 = (ProgramClass) super.beanClasses.get(string7);
+                        while (keyValue3 != null && programClass2 == null) {
+                            programClass2 = (ProgramClass) super.beanClasses.get(keyValue3);
                             if (programClass2 != null) {
-                                string16 = programClass2.getDottedClassName();
-                                super.beanClasses.put(string20, programClass2);
+                                dottedClassName = programClass2.getDottedClassName();
+                                super.beanClasses.put(keyValue2, programClass2);
                             } else {
-                                string7 = (String) super.beanParents.get(string7);
+                                keyValue3 = (String) super.beanParents.get(keyValue3);
                             }
                         }
                     }
                 }
             }
 
-            if (string16 == null) {
+            if (dottedClassName == null) {
                 ObservableHolder observableHolder11 = xmlElementNode.getAttributeValue("abstract");
                 if (observableHolder11 != null && ((String) observableHolder11.getValue()).equalsIgnoreCase("true")) {
                     bl = true;
@@ -124,19 +124,19 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                         Iterator iterator3 = list1.iterator();
 
                         while (iterator3.hasNext()) {
-                            String string21 = (String) iterator3.next();
+                            String keyValue4 = (String) iterator3.next();
                             AbstractXmlBeanRef abstractXmlBeanRef1 = new AbstractXmlBeanRef(xmlElementNode, xmlElementNode2);
-                            super.abstractBeans.put(string21, abstractXmlBeanRef1);
+                            super.abstractBeans.put(keyValue4, abstractXmlBeanRef1);
                         }
                     }
                 }
             }
 
-            if (string16 == null) {
+            if (dottedClassName == null) {
                 if (!bl) {
                     if (HiddenOptionFlags.ASSERT_SPRING_BEAN_CLASS) {
                         Object[] objects2 = new Object[]{super.resourceName, xmlElementNode, 0};
-                        ZkmAssert.assertNotNullArgs(string16, objects2);
+                        ZkmAssert.assertNotNullArgs(dottedClassName, objects2);
                     } else {
                         super.messageReporter.reportError("ERROR:", "Could not identify bean class in : '" + super.resourceName + "' : '" + xmlElementNode + "' (A)");
                     }
@@ -145,18 +145,18 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                 return;
             }
 
-            ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(ZkmUtils.dotsToSlashes(string16));
+            ProgramClass programClass3 = ClassHierarchyNode.findProgramClass(ZkmUtils.dotsToSlashes(dottedClassName));
             if (programClass3 != null) {
                 DescriptorMatcher descriptorMatcher1 = WildcardStringMatcher.MATCH_ALL;
-                String string12 = string14;
+                String valueValue15 = valueValue14;
                 TwoKeyMap twoKeyMap1 = twoKeyMap;
                 Map map5 = map3;
                 Map map4 = map1;
                 Integer integer = 0;
                 Object object4 = null;
                 DescriptorMatcher descriptorMatcher = descriptorMatcher1;
-                Object object3 = null;
-                this.addMatchingMethodReferences("<init>", (String) null, object3, descriptorMatcher, (String) object4, integer, map4, map5, twoKeyMap1, string12);
+                Object valueValue17 = null;
+                this.addMatchingMethodReferences("<init>", (String) null, valueValue17, descriptorMatcher, (String) object4, integer, map4, map5, twoKeyMap1, valueValue15);
             }
 
             boolean bl2 = false;
@@ -164,37 +164,37 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
             Enumeration enumeration1 = xmlElementNode.getAttributeNames();
 
             while (enumeration1.hasMoreElements()) {
-                String string22 = (String) enumeration1.nextElement();
-                ObservableHolder observableHolder12 = xmlElementNode.getAttributeValue(string22);
-                String string26 = (String) observableHolder12.getValue();
-                String string8 = string14 + " '" + string22 + "' attribute";
-                if (!string22.equalsIgnoreCase("class")) {
-                    if (string22.equalsIgnoreCase("init-method")) {
-                        MethodSignature methodSignature4 = new MethodSignature(string26, "()V");
+                String keyValue8 = (String) enumeration1.nextElement();
+                ObservableHolder observableHolder12 = xmlElementNode.getAttributeValue(keyValue8);
+                String valueValue4 = (String) observableHolder12.getValue();
+                String valueValue16 = valueValue14 + " '" + keyValue8 + "' attribute";
+                if (!keyValue8.equalsIgnoreCase("class")) {
+                    if (keyValue8.equalsIgnoreCase("init-method")) {
+                        MethodSignature methodSignature4 = new MethodSignature(valueValue4, "()V");
                         Object[] objects1 = new Object[]{methodSignature4, super.resourceName, xmlElementNode, 1};
-                        ZkmAssert.assertNotNullArgs(string16, objects1);
-                        this.addMethodReference(string16, methodSignature4, map3, string8);
+                        ZkmAssert.assertNotNullArgs(dottedClassName, objects1);
+                        this.addMethodReference(dottedClassName, methodSignature4, map3, valueValue16);
                         bl2 = true;
-                    } else if (string22.equalsIgnoreCase("destroy-method")) {
-                        MethodSignature methodSignature3 = new MethodSignature(string26, "()V");
+                    } else if (keyValue8.equalsIgnoreCase("destroy-method")) {
+                        MethodSignature methodSignature3 = new MethodSignature(valueValue4, "()V");
                         Object[] objects = new Object[]{methodSignature3, super.resourceName, xmlElementNode, 2};
-                        ZkmAssert.assertNotNullArgs(string16, objects);
-                        this.addMethodReference(string16, methodSignature3, map3, string8);
+                        ZkmAssert.assertNotNullArgs(dottedClassName, objects);
+                        this.addMethodReference(dottedClassName, methodSignature3, map3, valueValue16);
                         bl3 = true;
-                    } else if (string22.equalsIgnoreCase("factory-method")) {
+                    } else if (keyValue8.equalsIgnoreCase("factory-method")) {
                         if (programClass3 != null) {
                             this.addHierarchyMethodReferences(
-                                    programClass3, string26, (String) null, null, BeanPropertyXmlHandler.ANY_METHOD_DESCRIPTOR, 8, map3, twoKeyMap, string14
+                                    programClass3, valueValue4, (String) null, null, BeanPropertyXmlHandler.ANY_METHOD_DESCRIPTOR, 8, map3, twoKeyMap, valueValue14
                             );
                         }
-                    } else if (string22.equalsIgnoreCase("parent")) {
+                    } else if (keyValue8.equalsIgnoreCase("parent")) {
                         bl1 = true;
                         if (list1 != null) {
                             Iterator iterator1 = list1.iterator();
 
                             while (iterator1.hasNext()) {
-                                String string9 = (String) iterator1.next();
-                                super.beanParents.put(string9, string26);
+                                String keyValue5 = (String) iterator1.next();
+                                super.beanParents.put(keyValue5, valueValue4);
                             }
                         }
                     }
@@ -202,7 +202,7 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
             }
 
             if (bl1) {
-                String string23 = null;
+                String keyValue6 = null;
                 Map map6;
                 if (list1 != null) {
                     Iterator iterator5 = list1.iterator();
@@ -213,9 +213,9 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                             break;
                         }
 
-                        String string27 = (String) iterator5.next();
-                        string23 = (String) super.beanParents.get(string27);
-                        if (string23 != null) {
+                        String keyValue7 = (String) iterator5.next();
+                        keyValue6 = (String) super.beanParents.get(keyValue7);
+                        if (keyValue6 != null) {
                             map6 = super.abstractBeans;
                             break;
                         }
@@ -224,20 +224,20 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                     map6 = super.abstractBeans;
                 }
 
-                AbstractXmlBeanRef abstractXmlBeanRef2 = (AbstractXmlBeanRef) map6.get(string23);
+                AbstractXmlBeanRef abstractXmlBeanRef2 = (AbstractXmlBeanRef) map6.get(keyValue6);
 
-                while (string23 != null && abstractXmlBeanRef2 != null) {
+                while (keyValue6 != null && abstractXmlBeanRef2 != null) {
                     XmlElementNode xmlElementNode4 = abstractXmlBeanRef2.getBeanElement();
                     if (!bl2
                             && xmlElementNode4.getAttributeValue("default-init-method") != null
                             && xmlElementNode4.getAttributeValue("default-init-method").getValue() != null) {
-                        String string28 = (String) xmlElementNode4.getAttributeValue("default-init-method").getValue();
-                        MethodSignature methodSignature5 = new MethodSignature(string28, "()V");
+                        String valueValue5 = (String) xmlElementNode4.getAttributeValue("default-init-method").getValue();
+                        MethodSignature methodSignature5 = new MethodSignature(valueValue5, "()V");
                         this.addMethodReference(
-                                string16,
+                                dottedClassName,
                                 methodSignature5,
                                 map3,
-                                "reference in '" + super.resourceName + "' by '" + "bean" + "' tag " + "default-init-method" + "='" + string28 + "'"
+                                "reference in '" + super.resourceName + "' by '" + "bean" + "' tag " + "default-init-method" + "='" + valueValue5 + "'"
                         );
                         bl2 = true;
                     }
@@ -245,13 +245,13 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                     if (!bl3
                             && xmlElementNode4.getAttributeValue("default-destroy-method") != null
                             && xmlElementNode4.getAttributeValue("default-destroy-method").getValue() != null) {
-                        String string29 = (String) xmlElementNode4.getAttributeValue("default-destroy-method").getValue();
-                        MethodSignature methodSignature6 = new MethodSignature(string29, "()V");
+                        String valueValue6 = (String) xmlElementNode4.getAttributeValue("default-destroy-method").getValue();
+                        MethodSignature methodSignature6 = new MethodSignature(valueValue6, "()V");
                         this.addMethodReference(
-                                string16,
+                                dottedClassName,
                                 methodSignature6,
                                 map3,
-                                "reference in '" + super.resourceName + "' by '" + "bean" + "' tag " + "default-destroy-method" + "='" + string29 + "'"
+                                "reference in '" + super.resourceName + "' by '" + "bean" + "' tag " + "default-destroy-method" + "='" + valueValue6 + "'"
                         );
                         bl3 = true;
                     }
@@ -260,13 +260,13 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                     if (!bl2
                             && xmlElementNode5.getAttributeValue("default-init-method") != null
                             && xmlElementNode5.getAttributeValue("default-init-method").getValue() != null) {
-                        String string30 = (String) xmlElementNode5.getAttributeValue("default-init-method").getValue();
-                        MethodSignature methodSignature7 = new MethodSignature(string30, "()V");
+                        String valueValue7 = (String) xmlElementNode5.getAttributeValue("default-init-method").getValue();
+                        MethodSignature methodSignature7 = new MethodSignature(valueValue7, "()V");
                         this.addMethodReference(
-                                string16,
+                                dottedClassName,
                                 methodSignature7,
                                 map3,
-                                "reference in '" + super.resourceName + "' by '" + "beans" + "' tag " + "default-init-method" + "='" + string30 + "'"
+                                "reference in '" + super.resourceName + "' by '" + "beans" + "' tag " + "default-init-method" + "='" + valueValue7 + "'"
                         );
                         if (programClass3 != null) {
                             super.resourceFileIndex.addDefaultMethodClass(super.resourceName, "default-init-method", programClass3);
@@ -278,13 +278,13 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                     if (!bl3
                             && xmlElementNode5.getAttributeValue("default-destroy-method") != null
                             && xmlElementNode5.getAttributeValue("default-destroy-method").getValue() != null) {
-                        String string31 = (String) xmlElementNode5.getAttributeValue("default-destroy-method").getValue();
-                        MethodSignature methodSignature8 = new MethodSignature(string31, "()V");
+                        String valueValue8 = (String) xmlElementNode5.getAttributeValue("default-destroy-method").getValue();
+                        MethodSignature methodSignature8 = new MethodSignature(valueValue8, "()V");
                         this.addMethodReference(
-                                string16,
+                                dottedClassName,
                                 methodSignature8,
                                 map3,
-                                "reference in '" + super.resourceName + "' by '" + "beans" + "' tag " + "default-destroy-method" + "='" + string31 + "'"
+                                "reference in '" + super.resourceName + "' by '" + "beans" + "' tag " + "default-destroy-method" + "='" + valueValue8 + "'"
                         );
                         if (programClass3 != null) {
                             super.resourceFileIndex.addDefaultMethodClass(super.resourceName, "default-destroy-method", programClass3);
@@ -299,17 +299,17 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                     while (iterator6.hasNext()) {
                         ObservableHolder observableHolder4 = ((XmlElementNode) iterator6.next()).getAttributeValue("name");
                         if (observableHolder4 != null) {
-                            String string10 = (String) observableHolder4.getValue();
-                            String string11 = "reference in '" + super.resourceName + "' by '" + string + "' tag '" + "name" + "' attribute (B)";
+                            String valueValue9 = (String) observableHolder4.getValue();
+                            String valueValue18 = "reference in '" + super.resourceName + "' by '" + tagName + "' tag '" + "name" + "' attribute (B)";
                             if (programClass3 != null) {
-                                this.addPropertyAccessorReferences(programClass3, string10, map3, twoKeyMap, string11);
+                                this.addPropertyAccessorReferences(programClass3, valueValue9, map3, twoKeyMap, valueValue18);
                             }
                         }
                     }
 
-                    string23 = (String) super.beanParents.get(string23);
-                    if (string23 != null) {
-                        abstractXmlBeanRef2 = (AbstractXmlBeanRef) super.abstractBeans.get(string23);
+                    keyValue6 = (String) super.beanParents.get(keyValue6);
+                    if (keyValue6 != null) {
+                        abstractXmlBeanRef2 = (AbstractXmlBeanRef) super.abstractBeans.get(keyValue6);
                     }
                 }
             }
@@ -318,13 +318,13 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
             if (!bl2
                     && xmlElementNode3.getAttributeValue("default-init-method") != null
                     && xmlElementNode3.getAttributeValue("default-init-method").getValue() != null) {
-                String string24 = (String) xmlElementNode3.getAttributeValue("default-init-method").getValue();
-                MethodSignature methodSignature1 = new MethodSignature(string24, "()V");
+                String valueValue10 = (String) xmlElementNode3.getAttributeValue("default-init-method").getValue();
+                MethodSignature methodSignature1 = new MethodSignature(valueValue10, "()V");
                 this.addMethodReference(
-                        string16,
+                        dottedClassName,
                         methodSignature1,
                         map3,
-                        "reference in '" + super.resourceName + "' by '" + "beans" + "' tag " + "default-init-method" + "='" + string24 + "'"
+                        "reference in '" + super.resourceName + "' by '" + "beans" + "' tag " + "default-init-method" + "='" + valueValue10 + "'"
                 );
                 if (programClass3 != null) {
                     super.resourceFileIndex.addDefaultMethodClass(super.resourceName, "default-init-method", programClass3);
@@ -334,39 +334,39 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
             if (!bl3
                     && xmlElementNode3.getAttributeValue("default-destroy-method") != null
                     && xmlElementNode3.getAttributeValue("default-destroy-method").getValue() != null) {
-                String string25 = (String) xmlElementNode3.getAttributeValue("default-destroy-method").getValue();
-                MethodSignature methodSignature2 = new MethodSignature(string25, "()V");
+                String valueValue11 = (String) xmlElementNode3.getAttributeValue("default-destroy-method").getValue();
+                MethodSignature methodSignature2 = new MethodSignature(valueValue11, "()V");
                 this.addMethodReference(
-                        string16,
+                        dottedClassName,
                         methodSignature2,
                         map3,
-                        "reference in '" + super.resourceName + "' by '" + "beans" + "' tag " + "default-destroy-method" + "='" + string25 + "'"
+                        "reference in '" + super.resourceName + "' by '" + "beans" + "' tag " + "default-destroy-method" + "='" + valueValue11 + "'"
                 );
                 if (programClass3 != null) {
                     super.resourceFileIndex.addDefaultMethodClass(super.resourceName, "default-destroy-method", programClass3);
                 }
             }
-        } else if (string.equalsIgnoreCase("import") && string1 != null && string1.equalsIgnoreCase("beans")) {
+        } else if (tagName.equalsIgnoreCase("import") && openElementName != null && openElementName.equalsIgnoreCase("beans")) {
             Enumeration enumeration = xmlElementNode.getAttributeNames();
 
             while (enumeration.hasMoreElements()) {
-                String string13 = (String) enumeration.nextElement();
-                if (string13.equalsIgnoreCase("resource")) {
-                    ObservableHolder observableHolder5 = xmlElementNode.getAttributeValue(string13);
-                    String string15 = (String) observableHolder5.getValue();
-                    this.processImportResource(string15);
+                String keyValue9 = (String) enumeration.nextElement();
+                if (keyValue9.equalsIgnoreCase("resource")) {
+                    ObservableHolder observableHolder5 = xmlElementNode.getAttributeValue(keyValue9);
+                    String valueValue12 = (String) observableHolder5.getValue();
+                    this.processImportResource(valueValue12);
                 }
             }
-        } else if (string.equalsIgnoreCase("property") && string1 != null && string1.equalsIgnoreCase("bean")) {
+        } else if (tagName.equalsIgnoreCase("property") && openElementName != null && openElementName.equalsIgnoreCase("bean")) {
             ObservableHolder observableHolder = xmlElementNode.getAttributeValue("name");
             if (observableHolder != null) {
-                String string2 = (String) observableHolder.getValue();
-                String string3 = "reference in '" + super.resourceName + "' by '" + string + "' tag '" + "name" + "' attribute (A)";
+                String valueValue13 = (String) observableHolder.getValue();
+                String valueValue19 = "reference in '" + super.resourceName + "' by '" + tagName + "' tag '" + "name" + "' attribute (A)";
                 String string4 = this.findEnclosingBeanClassName();
                 if (string4 != null) {
                     ProgramClass programClass1 = this.findProgramClass(string4);
                     if (programClass1 != null) {
-                        this.addPropertyAccessorReferences(programClass1, string2, map3, twoKeyMap, string3);
+                        this.addPropertyAccessorReferences(programClass1, valueValue13, map3, twoKeyMap, valueValue19);
                     }
                 } else {
                     XmlElementNode xmlElementNode1 = this.getOpenElement(1);
@@ -387,20 +387,20 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
         }
     }
 
-    public ProgramClass findChildBeanClass(Object object, ListMultimap listMultimap) {
-        List list1 = listMultimap.getValues(object);
+    public ProgramClass findChildBeanClass(Object keyArgument, ListMultimap listMultimap) {
+        List list1 = listMultimap.getValues(keyArgument);
         ProgramClass programClass1 = null;
         if (list1 != null) {
             Iterator iterator = list1.iterator();
 
             while (iterator.hasNext()) {
-                String string = (String) iterator.next();
-                programClass1 = (ProgramClass) super.beanClasses.get(string);
+                String key = (String) iterator.next();
+                programClass1 = (ProgramClass) super.beanClasses.get(key);
                 if (programClass1 != null) {
                     break;
                 }
 
-                programClass1 = this.findChildBeanClass(string, listMultimap);
+                programClass1 = this.findChildBeanClass(key, listMultimap);
                 if (programClass1 != null) {
                     break;
                 }
@@ -413,25 +413,25 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
     public String findEnclosingBeanClassName() {
         for (int i = 0; i < super.elementStack.size(); i++) {
             XmlElementNode xmlElementNode = (XmlElementNode) super.elementStack.peekAt(i);
-            String string = xmlElementNode.getTagName();
+            String tagName = xmlElementNode.getTagName();
             XmlElementNode xmlElementNode1;
-            String string9;
-            if (!string.equals("beans")) {
-                if (!string.equals("bean")) {
+            String keyValue;
+            if (!tagName.equals("beans")) {
+                if (!tagName.equals("bean")) {
                     continue;
                 }
 
                 xmlElementNode1 = xmlElementNode;
                 long bj = 24856730383790L;
-                string9 = "id";
+                keyValue = "id";
             } else {
                 xmlElementNode1 = xmlElementNode;
                 long bb = 24856730383790L;
-                string9 = "id";
+                keyValue = "id";
             }
 
-            String string3 = string9;
-            ObservableHolder observableHolder = xmlElementNode1.getAttributeValue(string3);
+            String keyValue2 = keyValue;
+            ObservableHolder observableHolder = xmlElementNode1.getAttributeValue(keyValue2);
             List list1 = null;
             if (observableHolder != null) {
                 ProgramClass programClass1 = (ProgramClass) super.beanClasses.get(observableHolder.getValue());
@@ -445,8 +445,8 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                     Iterator iterator = list1.iterator();
 
                     while (iterator.hasNext()) {
-                        String string1 = (String) iterator.next();
-                        ProgramClass programClass2 = (ProgramClass) super.beanClasses.get(string1);
+                        String key = (String) iterator.next();
+                        ProgramClass programClass2 = (ProgramClass) super.beanClasses.get(key);
                         if (programClass2 != null) {
                             return programClass2.getDottedClassName();
                         }
@@ -461,93 +461,64 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
 
             ObservableHolder observableHolder3 = xmlElementNode.getAttributeValue("factory-bean");
             if (observableHolder3 != null) {
-                String string6 = (String) observableHolder3.getValue();
-                ProgramClass programClass4 = (ProgramClass) super.beanClasses.get(string6);
+                String valueValue = (String) observableHolder3.getValue();
+                ProgramClass programClass4 = (ProgramClass) super.beanClasses.get(valueValue);
                 if (programClass4 != null) {
                     return programClass4.getDottedClassName();
                 }
 
                 xmlElementNode1 = xmlElementNode;
                 long bc = 24856730383790L;
-                string9 = "abstract";
+                keyValue = "abstract";
             } else {
                 xmlElementNode1 = xmlElementNode;
                 long bd = 24856730383790L;
-                string9 = "abstract";
+                keyValue = "abstract";
             }
 
-            label106:
-            {
-                String string4 = string9;
-                ObservableHolder observableHolder4 = xmlElementNode1.getAttributeValue(string4);
-                if (observableHolder == null) {
-                    if (list1 == null) {
-                        xmlElementNode1 = xmlElementNode;
-                        long bi = 24856730383790L;
-                        string9 = "parent";
-                        break label106;
+            ObservableHolder observableHolder4 = xmlElementNode1.getAttributeValue(keyValue);
+            if ((observableHolder != null || list1 != null && list1.size() > 0) && observableHolder4 != null) {
+                if (((String) observableHolder4.getValue()).equalsIgnoreCase("true")) {
+                    if (this.childBeansByParent == null) {
+                        this.childBeansByParent = new ListMultimap();
+                        Iterator iterator1 = super.beanParents.entrySet().iterator();
+
+                        while (iterator1.hasNext()) {
+                            Entry entry = (Entry) iterator1.next();
+                            this.childBeansByParent.addValue(entry.getValue(), entry.getKey());
+                        }
                     }
 
-                    if (list1.size() <= 0) {
-                        xmlElementNode1 = xmlElementNode;
-                        long bh = 24856730383790L;
-                        string9 = "parent";
-                        break label106;
-                    }
-                }
-
-                if (observableHolder4 != null) {
-                    if (((String) observableHolder4.getValue()).equalsIgnoreCase("true")) {
-                        if (this.childBeansByParent == null) {
-                            this.childBeansByParent = new ListMultimap();
-                            Iterator iterator1 = super.beanParents.entrySet().iterator();
-
-                            while (iterator1.hasNext()) {
-                                Entry entry = (Entry) iterator1.next();
-                                this.childBeansByParent.addValue(entry.getValue(), entry.getKey());
-                            }
-                        }
-
-                        ArrayList arrayList = new ArrayList();
-                        if (observableHolder != null) {
-                            String string7 = (String) observableHolder.getValue();
-                            arrayList.add(string7);
-                        } else {
-                            arrayList.addAll(list1);
-                        }
-
-                        Iterator iterator2 = arrayList.iterator();
-
-                        while (iterator2.hasNext()) {
-                            String string2 = (String) iterator2.next();
-                            ProgramClass programClass3 = this.findChildBeanClass(string2, this.childBeansByParent);
-                            if (programClass3 != null) {
-                                return programClass3.getDottedClassName();
-                            }
-                        }
-
-                        xmlElementNode1 = xmlElementNode;
-                        long be = 24856730383790L;
-                        string9 = "parent";
+                    ArrayList arrayList = new ArrayList();
+                    if (observableHolder != null) {
+                        String valueValue2 = (String) observableHolder.getValue();
+                        arrayList.add(valueValue2);
                     } else {
-                        xmlElementNode1 = xmlElementNode;
-                        long bf = 24856730383790L;
-                        string9 = "parent";
+                        arrayList.addAll(list1);
                     }
-                } else {
-                    xmlElementNode1 = xmlElementNode;
-                    long bg = 24856730383790L;
-                    string9 = "parent";
+
+                    Iterator iterator2 = arrayList.iterator();
+
+                    while (iterator2.hasNext()) {
+                        String keyValue4 = (String) iterator2.next();
+                        ProgramClass programClass3 = this.findChildBeanClass(keyValue4, this.childBeansByParent);
+                        if (programClass3 != null) {
+                            return programClass3.getDottedClassName();
+                        }
+                    }
+
                 }
             }
+            xmlElementNode1 = xmlElementNode;
+            keyValue = "parent";
 
-            String string5 = string9;
-            ObservableHolder observableHolder5 = xmlElementNode1.getAttributeValue(string5);
+            String keyValue3 = keyValue;
+            ObservableHolder observableHolder5 = xmlElementNode1.getAttributeValue(keyValue3);
             if (observableHolder5 != null) {
-                String string8 = (String) observableHolder5.getValue();
+                String valueValue3 = (String) observableHolder5.getValue();
 
-                for (ProgramClass programClass5 = null; string8 != null && programClass5 == null; string8 = (String) super.beanParents.get(string8)) {
-                    programClass5 = (ProgramClass) super.beanClasses.get(string8);
+                for (ProgramClass programClass5 = null; valueValue3 != null && programClass5 == null; valueValue3 = (String) super.beanParents.get(valueValue3)) {
+                    programClass5 = (ProgramClass) super.beanClasses.get(valueValue3);
                     if (programClass5 != null) {
                         return programClass5.getDottedClassName();
                     }
@@ -562,27 +533,27 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
     public void rewriteElement(Object object, Object object1) throws ZkmException, IOException {
         List list1 = (List) object1;
         XmlElementNode xmlElementNode = (XmlElementNode) object;
-        String string = xmlElementNode.getTagName();
-        String string1 = this.getOpenElementName(1);
+        String tagName = xmlElementNode.getTagName();
+        String openElementName = this.getOpenElementName(1);
         String string2 = this.findEnclosingBeanClassName();
         boolean predicateFlag = XmlConfigFileHandler.getPredicateFlag();
-        String string3 = null;
-        boolean bl = predicateFlag;
+        String renamedClassName = null;
+        boolean predicateFlagValue = predicateFlag;
         if (string2 != null) {
-            string3 = this.getRenamedClassName(string2);
+            renamedClassName = this.getRenamedClassName(string2);
         }
 
-        if (string.equalsIgnoreCase("bean") && string1 != null && string1.equalsIgnoreCase("beans")) {
+        if (tagName.equalsIgnoreCase("bean") && openElementName != null && openElementName.equalsIgnoreCase("beans")) {
             ObservableHolder observableHolder = xmlElementNode.getAttributeValue("class");
             if (observableHolder != null) {
-                String string4 = (String) observableHolder.getValue();
-                if (!string4.equals(string3)) {
-                    observableHolder.setValue(string3);
+                String valueValue = (String) observableHolder.getValue();
+                if (!valueValue.equals(renamedClassName)) {
+                    observableHolder.setValue(renamedClassName);
                 }
             }
         }
 
-        if (string.equalsIgnoreCase("beans") && string1 == null) {
+        if (tagName.equalsIgnoreCase("beans") && openElementName == null) {
             SetMultiMap setMultiMap = super.resourceFileIndex.getDefaultMethodClasses(super.resourceName);
             if (setMultiMap != null) {
                 Object[] objects = new Object[0];
@@ -590,66 +561,66 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
 
                 while (iterator.hasNext()) {
                     Entry entry = (Entry) iterator.next();
-                    String string18 = (String) entry.getKey();
-                    ObservableHolder observableHolder9 = xmlElementNode.getAttributeValue(string18);
+                    String key = (String) entry.getKey();
+                    ObservableHolder observableHolder9 = xmlElementNode.getAttributeValue(key);
                     if (observableHolder9 != null) {
-                        String string21 = (String) observableHolder9.getValue();
-                        MethodSignature methodSignature3 = new MethodSignature(string21, "()V");
+                        String valueValue2 = (String) observableHolder9.getValue();
+                        MethodSignature methodSignature3 = new MethodSignature(valueValue2, "()V");
                         Set set1 = (Set) entry.getValue();
                         StringBuilder stringBuilder = new StringBuilder();
-                        String string26 = null;
+                        String valueValue3 = null;
                         BooleanFlag booleanFlag1 = new BooleanFlag();
                         Iterator iterator1 = set1.iterator();
 
                         while (iterator1.hasNext()) {
                             ProgramClass programClass1 = (ProgramClass) iterator1.next();
-                            String string29 = this.getRenamedMethodName(programClass1.getDottedClassName(), methodSignature3, booleanFlag1);
+                            String renamedMethodName = this.getRenamedMethodName(programClass1.getDottedClassName(), methodSignature3, booleanFlag1);
                             if (stringBuilder.length() > 0) {
                                 stringBuilder.append(",");
                             }
 
                             stringBuilder.append(programClass1.getDottedClassName());
-                            if (string26 == null) {
+                            if (valueValue3 == null) {
                                 if (booleanFlag1.getValue()) {
-                                    string26 = string29;
+                                    valueValue3 = renamedMethodName;
                                 }
-                            } else if (booleanFlag1.getValue() && !string29.equals(string26)) {
+                            } else if (booleanFlag1.getValue() && !renamedMethodName.equals(valueValue3)) {
                                 super.messageReporter
                                         .reportError(
                                                 "ERROR:",
                                                 "Clashing new method names for attribute '"
-                                                        + string18
+                                                        + key
                                                         + "' of tag '"
                                                         + "beans"
                                                         + "' in  XML file '"
                                                         + super.resourceName
                                                         + "' : '"
-                                                        + string26
+                                                        + valueValue3
                                                         + "' '"
-                                                        + string29
+                                                        + renamedMethodName
                                                         + "' : '"
                                                         + stringBuilder
                                                         + "'"
                                         );
                             }
 
-                            if (bl) {
+                            if (predicateFlagValue) {
                                 break;
                             }
                         }
 
-                        if (!string21.equals(string26)) {
-                            observableHolder9.setValue(string26);
+                        if (!valueValue2.equals(valueValue3)) {
+                            observableHolder9.setValue(valueValue3);
                         }
                     }
 
-                    if (bl) {
+                    if (predicateFlagValue) {
                         break;
                     }
                 }
             }
-        } else if (string.equalsIgnoreCase("bean") && string1 != null && string1.equalsIgnoreCase("beans")) {
-            if (string3 == null) {
+        } else if (tagName.equalsIgnoreCase("bean") && openElementName != null && openElementName.equalsIgnoreCase("beans")) {
+            if (renamedClassName == null) {
                 list1.add(xmlElementNode);
                 return;
             }
@@ -657,42 +628,42 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
             Enumeration enumeration2 = xmlElementNode.getAttributeNames();
 
             while (enumeration2.hasMoreElements()) {
-                String string16 = (String) enumeration2.nextElement();
-                ObservableHolder observableHolder6 = xmlElementNode.getAttributeValue(string16);
-                String string17 = (String) observableHolder6.getValue();
-                if (!string16.equalsIgnoreCase("class")) {
-                    if (string16.equalsIgnoreCase("init-method")) {
-                        MethodSignature methodSignature1 = new MethodSignature(string17, "()V");
-                        String string19 = this.getRenamedMethodName(string3, methodSignature1, new BooleanFlag());
-                        if (!string17.equals(string19)) {
-                            observableHolder6.setValue(string19);
+                String keyValue = (String) enumeration2.nextElement();
+                ObservableHolder observableHolder6 = xmlElementNode.getAttributeValue(keyValue);
+                String valueValue4 = (String) observableHolder6.getValue();
+                if (!keyValue.equalsIgnoreCase("class")) {
+                    if (keyValue.equalsIgnoreCase("init-method")) {
+                        MethodSignature methodSignature1 = new MethodSignature(valueValue4, "()V");
+                        String renamedMethodNameValue = this.getRenamedMethodName(renamedClassName, methodSignature1, new BooleanFlag());
+                        if (!valueValue4.equals(renamedMethodNameValue)) {
+                            observableHolder6.setValue(renamedMethodNameValue);
                         }
-                    } else if (string16.equalsIgnoreCase("destroy-method")) {
-                        MethodSignature methodSignature2 = new MethodSignature(string17, "()V");
-                        String string20 = this.getRenamedMethodName(string3, methodSignature2, new BooleanFlag());
-                        if (!string17.equals(string20)) {
-                            observableHolder6.setValue(string20);
+                    } else if (keyValue.equalsIgnoreCase("destroy-method")) {
+                        MethodSignature methodSignature2 = new MethodSignature(valueValue4, "()V");
+                        String renamedMethodNameValue2 = this.getRenamedMethodName(renamedClassName, methodSignature2, new BooleanFlag());
+                        if (!valueValue4.equals(renamedMethodNameValue2)) {
+                            observableHolder6.setValue(renamedMethodNameValue2);
                         }
-                    } else if (string16.equalsIgnoreCase("factory-method")) {
+                    } else if (keyValue.equalsIgnoreCase("factory-method")) {
                         ObservableHolder observableHolder8 = new ObservableHolder();
                         BooleanFlag booleanFlag = new BooleanFlag();
-                        String string22 = this.resolveRenamedMethodName(string3, string17, 8, observableHolder8, booleanFlag);
-                        if (string22 != null) {
-                            if (!string17.equals(string22)) {
-                                observableHolder6.setValue(string22);
+                        String valueValue5 = this.resolveRenamedMethodName(renamedClassName, valueValue4, 8, observableHolder8, booleanFlag);
+                        if (valueValue5 != null) {
+                            if (!valueValue4.equals(valueValue5)) {
+                                observableHolder6.setValue(valueValue5);
                             }
                         } else if (booleanFlag.getValue()) {
                             super.messageReporter
                                     .reportError(
                                             "ERROR:",
                                             "Could not update '"
-                                                    + string16
+                                                    + keyValue
                                                     + "' attribute of tag '"
-                                                    + string
+                                                    + tagName
                                                     + "' in  XML file '"
                                                     + super.resourceName
                                                     + "' : existing value is '"
-                                                    + string17
+                                                    + valueValue4
                                                     + "' : \""
                                                     + (String) observableHolder8.getValue()
                                                     + "\""
@@ -701,85 +672,83 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                     }
                 }
 
-                if (bl) {
+                if (predicateFlagValue) {
                     break;
                 }
             }
-        } else if (string.equalsIgnoreCase("import") && string1 != null && string1.equalsIgnoreCase("beans")) {
+        } else if (tagName.equalsIgnoreCase("import") && openElementName != null && openElementName.equalsIgnoreCase("beans")) {
             Enumeration enumeration1 = xmlElementNode.getAttributeNames();
 
             while (enumeration1.hasMoreElements()) {
-                String string15 = (String) enumeration1.nextElement();
-                ObservableHolder observableHolder5 = xmlElementNode.getAttributeValue(string15);
-                String string5 = (String) observableHolder5.getValue();
-                label145:
-                if (string15.equalsIgnoreCase("resource")) {
-                    if (string5.startsWith("classpath:") || string5.startsWith("classpath*:") || string5.startsWith("file:")) {
-                        int ba = string5.indexOf(":");
-                        String string6 = string5.substring(0, ba + 1);
-                        String string7 = string5.substring(ba + 1);
-                        if (string7.startsWith("/")) {
+                String keyValue2 = (String) enumeration1.nextElement();
+                ObservableHolder observableHolder5 = xmlElementNode.getAttributeValue(keyValue2);
+                String valueValue6 = (String) observableHolder5.getValue();
+                if (keyValue2.equalsIgnoreCase("resource")) {
+                    if (valueValue6.startsWith("classpath:") || valueValue6.startsWith("classpath*:") || valueValue6.startsWith("file:")) {
+                        int ba = valueValue6.indexOf(":");
+                        String string6 = valueValue6.substring(0, ba + 1);
+                        String valueValue14 = valueValue6.substring(ba + 1);
+                        if (valueValue14.startsWith("/")) {
                             string6 = string6 + "/";
-                            string7 = string7.substring(1);
+                            valueValue14 = valueValue14.substring(1);
                         }
 
                         ObservableHolder observableHolder2 = new ObservableHolder();
                         ObservableHolder observableHolder3 = new ObservableHolder();
-                        String string8 = ZkmFileUtils.splitPath(string7, observableHolder2, observableHolder3);
-                        String string9 = (String) observableHolder2.getValue();
-                        if (string9.length() > 0) {
-                            String string10 = (String) observableHolder3.getValue();
-                            String string11 = this.renamePackagePath(string9);
-                            if (!string11.equals(string9)) {
-                                String string12 = string6 + string11 + string8 + string10;
-                                observableHolder5.setValue(string12);
+                        String string8 = ZkmFileUtils.splitPath(valueValue14, observableHolder2, observableHolder3);
+                        String valueValue7 = (String) observableHolder2.getValue();
+                        if (valueValue7.length() > 0) {
+                            String valueValue8 = (String) observableHolder3.getValue();
+                            String string11 = this.renamePackagePath(valueValue7);
+                            if (!string11.equals(valueValue7)) {
+                                String valueValue9 = string6 + string11 + string8 + valueValue8;
+                                observableHolder5.setValue(valueValue9);
                             }
                         }
 
-                        if (!bl) {
-                            break label145;
+                    }
+
+                    if (predicateFlagValue || !(valueValue6.startsWith("classpath:") || valueValue6.startsWith("classpath*:") || valueValue6.startsWith("file:"))) {
+                        ObservableHolder observableHolder7 = new ObservableHolder();
+                        ObservableHolder observableHolder10 = new ObservableHolder();
+                        ZkmFileUtils.splitPath(super.entryName, observableHolder7, observableHolder10);
+                        String valueValue10 = (String) observableHolder7.getValue();
+                        String string24 = "";
+                        String valueValue15 = valueValue6;
+                        if (valueValue15.startsWith("/")) {
+                            new StringBuilder().append(string24).append("/").toString();
+                            valueValue15.substring(1);
                         }
-                    }
 
-                    ObservableHolder observableHolder7 = new ObservableHolder();
-                    ObservableHolder observableHolder10 = new ObservableHolder();
-                    ZkmFileUtils.splitPath(super.entryName, observableHolder7, observableHolder10);
-                    String string23 = (String) observableHolder7.getValue();
-                    String string24 = "";
-                    String string25 = string5;
-                    if (string25.startsWith("/")) {
-                        new StringBuilder().append(string24).append("/").toString();
-                        string25.substring(1);
-                    }
-
-                    String string27 = (String) observableHolder7.getValue();
-                    if (string27.length() > 0) {
-                        String string28 = this.translateRelativePath(string23, string5, true);
-                        if (!string28.equals(string5)) {
-                            observableHolder5.setValue(string28);
+                        String valueValue11 = (String) observableHolder7.getValue();
+                        if (valueValue11.length() > 0) {
+                            String valueValue12 = this.translateRelativePath(valueValue10, valueValue6, true);
+                            if (!valueValue12.equals(valueValue6)) {
+                                observableHolder5.setValue(valueValue12);
+                            }
                         }
                     }
                 }
 
-                if (bl) {
+                if (predicateFlagValue) {
                     break;
                 }
             }
-        } else if (string.equalsIgnoreCase("property") && string1 != null && string1.equalsIgnoreCase("bean")) {
+        } else if (tagName.equalsIgnoreCase("property") && openElementName != null && openElementName.equalsIgnoreCase("bean")) {
             ObservableHolder observableHolder4 = xmlElementNode.getAttributeValue("name");
             if (observableHolder4 != null) {
-                String string14 = (String) observableHolder4.getValue();
-                if (string3 != null) {
-                    this.resolveRenamedPropertyName(string3, string2, string14, observableHolder4);
+                String valueValue13 = (String) observableHolder4.getValue();
+                if (renamedClassName != null) {
+                    this.resolveRenamedPropertyName(renamedClassName, string2, valueValue13, observableHolder4);
                 }
             }
         } else {
             Enumeration enumeration = xmlElementNode.getAttributeNames();
 
             while (enumeration.hasMoreElements()) {
-                String string13 = (String) enumeration.nextElement();
-                ObservableHolder observableHolder1 = xmlElementNode.getAttributeValue(string13);
-                observableHolder1.setValue(this.updateReferenceValue((String) observableHolder1.getValue(), string13, false));
+                String keyValue3 = (String) enumeration.nextElement();
+                ObservableHolder observableHolder1 = xmlElementNode.getAttributeValue(keyValue3);
+                observableHolder1.setValue(this.updateReferenceValue((String) observableHolder1.getValue(), keyValue3, false));
             }
         }
 
@@ -858,15 +827,15 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
     }
 
     public SpringBeansXmlHandler(
-            String string, ResourceFileIndex resourceFileIndex1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1, MessageReporter messageReporter1
+            String key, ResourceFileIndex resourceFileIndex1, ClassMemberLookup classMemberLookup1, ClassResolver classResolver1, MessageReporter messageReporter1
     ) {
-        super(string, resourceFileIndex1, classMemberLookup1, classResolver1, messageReporter1);
-        Map map1 = resourceFileIndex1.getBeanClasses(string);
+        super(key, resourceFileIndex1, classMemberLookup1, classResolver1, messageReporter1);
+        Map map1 = resourceFileIndex1.getBeanClasses(key);
         if (map1 != null) {
             super.beanClasses.putAll(map1);
         }
 
-        Map map2 = resourceFileIndex1.getBeanParents(string);
+        Map map2 = resourceFileIndex1.getBeanParents(key);
         if (map2 != null) {
             super.beanParents.putAll(map2);
         }
@@ -883,44 +852,44 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
             Iterator iterator = list1.iterator();
 
             while (iterator.hasNext()) {
-                String string = (String) iterator.next();
-                uniqueWorkQueue.enqueue(string);
-                hashSet.add(string);
+                String bufferElement = (String) iterator.next();
+                uniqueWorkQueue.enqueue(bufferElement);
+                hashSet.add(bufferElement);
             }
 
             while (!uniqueWorkQueue.isEmpty()) {
-                String string3 = (String) uniqueWorkQueue.dequeue();
-                List list3 = super.resourceFileIndex.getImportingFiles(string3);
+                String key = (String) uniqueWorkQueue.dequeue();
+                List list3 = super.resourceFileIndex.getImportingFiles(key);
                 if (list3 != null) {
                     Iterator iterator1 = list3.iterator();
 
                     while (iterator1.hasNext()) {
-                        String string1 = (String) iterator1.next();
-                        Map map1 = super.resourceFileIndex.getBeanParents(string1);
+                        String keyValue = (String) iterator1.next();
+                        Map map1 = super.resourceFileIndex.getBeanParents(keyValue);
                         ResourceFileIndex resourceFileIndex1;
                         if (map1 != null) {
-                            super.resourceFileIndex.addBeanParents(string3, map1);
+                            super.resourceFileIndex.addBeanParents(key, map1);
                             resourceFileIndex1 = super.resourceFileIndex;
                         } else {
                             resourceFileIndex1 = super.resourceFileIndex;
                         }
 
-                        Map map2 = resourceFileIndex1.getBeanClasses(string1);
+                        Map map2 = resourceFileIndex1.getBeanClasses(keyValue);
                         if (map2 != null) {
-                            super.resourceFileIndex.addBeanClasses(string3, map2);
+                            super.resourceFileIndex.addBeanClasses(key, map2);
                             resourceFileIndex1 = super.resourceFileIndex;
                         } else {
                             resourceFileIndex1 = super.resourceFileIndex;
                         }
 
-                        List list2 = resourceFileIndex1.getImportedFiles(string3);
+                        List list2 = resourceFileIndex1.getImportedFiles(key);
                         if (list2 != null) {
                             Iterator iterator2 = list2.iterator();
 
                             while (iterator2.hasNext()) {
-                                String string2 = (String) iterator2.next();
-                                if (hashSet.add(string2)) {
-                                    uniqueWorkQueue.enqueue(string2);
+                                String bufferElementValue = (String) iterator2.next();
+                                if (hashSet.add(bufferElementValue)) {
+                                    uniqueWorkQueue.enqueue(bufferElementValue);
                                 }
                             }
                         }
@@ -931,7 +900,7 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
     }
 
     public SpringBeansXmlHandler(
-            String string,
+            String key,
             EnumerableMap enumerableMap,
             ReadOnlyMultiMap readOnlyMultiMap,
             ReadOnlyMultiMap readOnlyMultiMap1,
@@ -942,7 +911,7 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
             MessageReporter messageReporter1
     ) {
         super(
-                string,
+                key,
                 enumerableMap,
                 readOnlyMultiMap,
                 readOnlyMultiMap1,
@@ -952,12 +921,12 @@ public class SpringBeansXmlHandler extends SpringXmlHandlerBase {
                 classResolver1,
                 messageReporter1
         );
-        Map map1 = resourceFileIndex1.getBeanClasses(string);
+        Map map1 = resourceFileIndex1.getBeanClasses(key);
         if (map1 != null) {
             super.beanClasses.putAll(map1);
         }
 
-        Map map2 = resourceFileIndex1.getBeanParents(string);
+        Map map2 = resourceFileIndex1.getBeanParents(key);
         if (map2 != null) {
             super.beanParents.putAll(map2);
         }

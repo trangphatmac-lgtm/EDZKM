@@ -33,8 +33,8 @@ public class MethodParameterEntry extends ClassFileComponent implements Utf8Cons
     public void obfuscateName() {
         if (this.nameConstant != null) {
             if (HiddenOptionFlags.MARK_RENAMED_LOCALS) {
-                String string = this.nameConstant.getValue() + (int) nameSeparator + "a";
-                this.nameConstant.setValue(string);
+                String value = this.nameConstant.getValue() + (int) nameSeparator + "a";
+                this.nameConstant.setValue(value);
             } else {
                 this.nameConstant.setValue("a");
             }
@@ -66,10 +66,10 @@ public class MethodParameterEntry extends ClassFileComponent implements Utf8Cons
 
     public MethodParameterEntry(ClassFileComponent classFileComponent, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
         super(classFileComponent);
-        int ba = classFileInputStream.readUnsignedShort();
+        int constantPoolIndex = classFileInputStream.readUnsignedShort();
         this.accessFlags = classFileInputStream.readUnsignedShort();
-        if (ba != 0) {
-            ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(ba);
+        if (constantPoolIndex != 0) {
+            ConstantPoolEntry constantPoolEntry = this.getConstantPoolEntry(constantPoolIndex);
             if (constantPoolEntry instanceof ConstantUtf8) {
                 this.nameConstant = (ConstantUtf8) constantPoolEntry;
                 listMultimap.addValue(this.nameConstant, this);
@@ -90,7 +90,7 @@ public class MethodParameterEntry extends ClassFileComponent implements Utf8Cons
 
     public void writeRemapped(DataOutputStream dataOutputStream, Map map1) throws IOException {
         DataOutputStream dataOutputStream1;
-        int ba;
+        int accessFlagsValue;
         if (this.nameConstant != null) {
             ConstantPoolEntry constantPoolEntry = (ConstantPoolEntry) map1.get(this.nameConstant);
             if (constantPoolEntry != null) {
@@ -100,14 +100,14 @@ public class MethodParameterEntry extends ClassFileComponent implements Utf8Cons
             }
 
             dataOutputStream1 = dataOutputStream;
-            ba = this.accessFlags;
+            accessFlagsValue = this.accessFlags;
         } else {
             dataOutputStream.writeShort(0);
             dataOutputStream1 = dataOutputStream;
-            ba = this.accessFlags;
+            accessFlagsValue = this.accessFlags;
         }
 
-        dataOutputStream1.writeShort(ba);
+        dataOutputStream1.writeShort(accessFlagsValue);
     }
 
     public int getEntrySize() {

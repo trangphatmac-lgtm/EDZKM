@@ -18,8 +18,8 @@ public class ASTQualifiedClassName extends ZkmScriptSimpleNode {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object1;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            ZkmScriptNode zkmScriptNode1 = this.jjtGetChild(i);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            ZkmScriptNode zkmScriptNode1 = this.jjtGetChild(childrenElementIndex);
             zkmScriptNode1.execute(this, scriptEnvironment1);
             QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) zkmScriptNode1;
             this.nameBuilder.append(qualifiedNameMatcher.getSpecText());

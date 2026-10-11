@@ -13,15 +13,15 @@ public class GenericTree {
     private ObjectTreeNode root;
     private ObjectTreeNode currentNode;
 
-    public void addChild(Object object) {
-        this.currentNode = ObjectTreeNode.addChildTo(this.currentNode, object);
-        this.nodeByValue.put(object, this.currentNode);
+    public void addChild(Object key) {
+        this.currentNode = ObjectTreeNode.addChildTo(this.currentNode, key);
+        this.nodeByValue.put(key, this.currentNode);
     }
 
-    public GenericTree(Object object) {
-        this.root = new ObjectTreeNode(this, object);
+    public GenericTree(Object key) {
+        this.root = new ObjectTreeNode(this, key);
         this.currentNode = this.root;
-        this.nodeByValue.put(object, this.currentNode);
+        this.nodeByValue.put(key, this.currentNode);
     }
 
     public Iterator nodeIterator() {
@@ -66,10 +66,10 @@ public class GenericTree {
         genericTree.removeNode(objectTreeNode);
     }
 
-    public void addSibling(Object object) {
+    public void addSibling(Object key) {
         if (this.currentNode != this.root) {
-            this.currentNode = ObjectTreeNode.addChildTo(ObjectTreeNode.getParentOf(this.currentNode), object);
-            this.nodeByValue.put(object, this.currentNode);
+            this.currentNode = ObjectTreeNode.addChildTo(ObjectTreeNode.getParentOf(this.currentNode), key);
+            this.nodeByValue.put(key, this.currentNode);
         } else {
             throw new ZkmRuntimeException("Cannot add sibling to root");
         }
@@ -84,8 +84,8 @@ public class GenericTree {
         }
     }
 
-    public boolean moveToValue(Object object) {
-        ObjectTreeNode objectTreeNode = (ObjectTreeNode) this.nodeByValue.get(object);
+    public boolean moveToValue(Object key) {
+        ObjectTreeNode objectTreeNode = (ObjectTreeNode) this.nodeByValue.get(key);
         if (objectTreeNode != null) {
             this.currentNode = objectTreeNode;
             return true;

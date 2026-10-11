@@ -11,8 +11,8 @@ public class ASTNegatedMemberSpecifierModifier extends ScriptValueNode {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object1;
         ASTMemberModifierHelper aSTMemberModifierHelper = (ASTMemberModifierHelper) this.jjtGetChild(0);
         aSTMemberModifierHelper.execute(this, scriptEnvironment1);
-        String string = aSTMemberModifierHelper.getValue();
-        ((ASTMemberSpecifier) object).addModifier("!" + string);
+        String value = aSTMemberModifierHelper.getValue();
+        ((ASTMemberSpecifier) object).addModifier("!" + value);
     }
 
     public ASTNegatedMemberSpecifierModifier() {

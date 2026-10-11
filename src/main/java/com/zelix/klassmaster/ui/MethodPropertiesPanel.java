@@ -12,26 +12,26 @@ import javax.swing.DefaultListModel;
 
 public class MethodPropertiesPanel extends MemberPropertiesPanel {
     @Override
-    public void applyAccessFlags(int ba) throws ZkmException, IOException {
+    public void applyAccessFlags(int accessFlags) throws ZkmException, IOException {
         ClassRepository classRepository1;
-        if ((ba & 1024) != 0) {
-            if ((ba & 2) != 0) {
+        if ((accessFlags & 1024) != 0) {
+            if ((accessFlags & 2) != 0) {
                 throw new InvalidEditException("An abstract method cannot also be private");
             }
 
-            if ((ba & 8) != 0) {
+            if ((accessFlags & 8) != 0) {
                 throw new InvalidEditException("An abstract method cannot also be static");
             }
 
-            if ((ba & 16) != 0) {
+            if ((accessFlags & 16) != 0) {
                 throw new InvalidEditException("An abstract method cannot also be final");
             }
 
-            if ((ba & 256) != 0) {
+            if ((accessFlags & 256) != 0) {
                 throw new InvalidEditException("An abstract method cannot also be native");
             }
 
-            if ((ba & 32) != 0) {
+            if ((accessFlags & 32) != 0) {
                 throw new InvalidEditException("An abstract method cannot also be synchronized");
             }
 
@@ -41,7 +41,7 @@ public class MethodPropertiesPanel extends MemberPropertiesPanel {
         }
 
         synchronized (classRepository1) {
-            super.memberInfo.setAccessFlags(ba);
+            super.memberInfo.setAccessFlags(accessFlags);
         }
     }
 

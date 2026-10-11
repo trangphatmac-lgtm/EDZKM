@@ -42,7 +42,7 @@ public class ASTComplexClassSpecifier extends NameMatchingSpecifierNode implemen
     @Override
     public boolean isLiteralName() {
         QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) this.jjtGetChild(0);
-        return qualifiedNameMatcher instanceof ASTClassName ? ((ASTClassName) qualifiedNameMatcher).isExactName() : false;
+        return ((qualifiedNameMatcher instanceof ASTClassName) && (((ASTClassName) qualifiedNameMatcher).isExactName()));
     }
 
     @Override
@@ -65,9 +65,9 @@ public class ASTComplexClassSpecifier extends NameMatchingSpecifierNode implemen
         double ba = 1.0;
         QualifiedNameMatcher qualifiedNameMatcher = (QualifiedNameMatcher) this.jjtGetChild(0);
         if (qualifiedNameMatcher instanceof ASTClassName) {
-            String string = qualifiedNameMatcher.getSpecText();
-            if (string != null && !ASTRenameFilterParameter.isAnyWildcard(string)) {
-                if (!ASTRenameFilterParameter.containsWildcard(string)) {
+            String specText = qualifiedNameMatcher.getSpecText();
+            if (specText != null && !ASTRenameFilterParameter.isAnyWildcard(specText)) {
+                if (!ASTRenameFilterParameter.containsWildcard(specText)) {
                     ba *= 0.1;
                 } else {
                     ba *= 0.5;
@@ -104,12 +104,12 @@ public class ASTComplexClassSpecifier extends NameMatchingSpecifierNode implemen
     public String getSpecText() {
         int flowPredicate = ZkmScriptSimpleNode.getFlowPredicate();
         StringBuilder stringBuilder = new StringBuilder();
-        String string = ((QualifiedNameMatcher) this.jjtGetChild(0)).getSpecText();
+        String specText = ((QualifiedNameMatcher) this.jjtGetChild(0)).getSpecText();
         if (flowPredicate == 0) {
-            stringBuilder = stringBuilder.append(string);
-            string = this.excludesClassName ? "^" : "";
+            stringBuilder = stringBuilder.append(specText);
+            specText = this.excludesClassName ? "^" : "";
         }
 
-        return stringBuilder.append(string).append(this.includesMembers ? MEMBERS_SUFFIX : "").toString();
+        return stringBuilder.append(specText).append(this.includesMembers ? MEMBERS_SUFFIX : "").toString();
     }
 }

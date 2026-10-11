@@ -23,8 +23,8 @@ public class ClassPropertiesListView implements NodeVisitor, EdtCallback {
     public DefaultListModel listModel;
 
     @Override
-    public void handleObservedChange(ObservableModel observableModel1, Object object, Object object1, Object object2) throws ZkmException, IOException {
-        new EdtCallbackInvoker(this, observableModel1, object, object1, object2);
+    public void handleObservedChange(ObservableModel observableModel1, Object changeArg1, Object changeArg2, Object changeArg3) throws ZkmException, IOException {
+        new EdtCallbackInvoker(this, observableModel1, changeArg1, changeArg2, changeArg3);
     }
 
     public ClassPropertiesListView(SelectionHolder selectionHolder1, PlatformAwareJList platformAwareJList) {

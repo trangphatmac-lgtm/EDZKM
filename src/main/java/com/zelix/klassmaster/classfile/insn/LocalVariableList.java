@@ -18,23 +18,23 @@ public class LocalVariableList implements LocalVariableProvider {
     }
 
     public void clearWideFlagsFrom(int ba) {
-        for (int i = ba; i < this.slots.size(); i++) {
-            LocalVariableSlot localVariableSlot1 = (LocalVariableSlot) this.slots.get(i);
+        for (int elementIndex = ba; elementIndex < this.slots.size(); elementIndex++) {
+            LocalVariableSlot localVariableSlot1 = (LocalVariableSlot) this.slots.get(elementIndex);
             localVariableSlot1.clearWideFirstHalf();
             localVariableSlot1.clearWideSecondHalf();
         }
     }
 
-    public LocalVariableSlot insertSlot(int ba, boolean bl, int bb) {
+    public LocalVariableSlot insertSlot(int index, boolean bl, int insertionKind) {
         LocalVariableSlot localVariableSlot1;
         if (bl) {
-            LocalVariableSlot localVariableSlot2 = new LocalVariableSlot(ba + 1, false, true, bb);
-            this.slots.add(ba, localVariableSlot2);
-            localVariableSlot1 = new LocalVariableSlot(ba, true, false, bb);
-            this.slots.add(ba, localVariableSlot1);
+            LocalVariableSlot localVariableSlot2 = new LocalVariableSlot(index + 1, false, true, insertionKind);
+            this.slots.add(index, localVariableSlot2);
+            localVariableSlot1 = new LocalVariableSlot(index, true, false, insertionKind);
+            this.slots.add(index, localVariableSlot1);
         } else {
-            localVariableSlot1 = new LocalVariableSlot(ba, bb);
-            this.slots.add(ba, localVariableSlot1);
+            localVariableSlot1 = new LocalVariableSlot(index, insertionKind);
+            this.slots.add(index, localVariableSlot1);
         }
 
         return localVariableSlot1;
@@ -45,11 +45,11 @@ public class LocalVariableList implements LocalVariableProvider {
     }
 
     public int renumberSlots() {
-        int ba = 0;
+        int index = 0;
 
-        for (int i = 0; i < this.slots.size(); i++) {
-            ((LocalVariableSlot) this.slots.get(i)).replaceIndex(ba);
-            ba++;
+        for (int elementIndex = 0; elementIndex < this.slots.size(); elementIndex++) {
+            ((LocalVariableSlot) this.slots.get(elementIndex)).replaceIndex(index);
+            index++;
         }
 
         return ((LocalVariableSlot) this.slots.get(this.slots.size() - 1)).getIndex();
@@ -62,15 +62,15 @@ public class LocalVariableList implements LocalVariableProvider {
     public boolean shuffleSlots(int ba, int bb, Random random1) {
         ArrayList arrayList = new ArrayList(this.slots.size());
 
-        for (int i = ba; i < bb; i++) {
+        for (int elementIndex = ba; elementIndex < bb; elementIndex++) {
             ArrayList arrayList1 = new ArrayList();
             arrayList.add(arrayList1);
-            LocalVariableSlot localVariableSlot1 = (LocalVariableSlot) this.slots.get(i);
+            LocalVariableSlot localVariableSlot1 = (LocalVariableSlot) this.slots.get(elementIndex);
             arrayList1.add(localVariableSlot1);
-            int bc = i;
+            int elementIndexValue = elementIndex;
 
-            while (localVariableSlot1.isWideFirstHalf() || localVariableSlot1.isWideSecondHalf() && bc < bb - 1) {
-                localVariableSlot1 = (LocalVariableSlot) this.slots.get(++bc);
+            while (localVariableSlot1.isWideFirstHalf() || localVariableSlot1.isWideSecondHalf() && elementIndexValue < bb - 1) {
+                localVariableSlot1 = (LocalVariableSlot) this.slots.get(++elementIndexValue);
                 if (!localVariableSlot1.isWideFirstHalf() && !localVariableSlot1.isWideSecondHalf()) {
                     break;
                 }
@@ -78,7 +78,7 @@ public class LocalVariableList implements LocalVariableProvider {
                 arrayList1.add(localVariableSlot1);
             }
 
-            i += arrayList1.size() - 1;
+            elementIndex += arrayList1.size() - 1;
         }
 
         boolean bl = false;
@@ -109,8 +109,8 @@ public class LocalVariableList implements LocalVariableProvider {
     public LocalVariableList(MethodBytecode methodBytecode1, int ba) {
         this.methodBytecode = methodBytecode1;
         this.slots = new ArrayList(ba);
-        String string = this.methodBytecode.getMethod().getDescriptor();
-        this.addParameterSlots(this.methodBytecode.isStatic(), string);
+        String descriptor = this.methodBytecode.getMethod().getDescriptor();
+        this.addParameterSlots(this.methodBytecode.isStatic(), descriptor);
     }
 
     public static boolean isWideType(String string) {
@@ -126,7 +126,7 @@ public class LocalVariableList implements LocalVariableProvider {
     }
 
     @Override
-    public LocalVariableSlot lookupSlot(int ba, LocalVariableAccessKind localVariableAccessKind, int bb) {
+    public LocalVariableSlot lookupSlot(int ba, LocalVariableAccessKind localVariableAccessKind, int insertionKind) {
         LocalVariableSlot localVariableSlot1;
         if (this.slots.size() > ba) {
             localVariableSlot1 = (LocalVariableSlot) this.slots.get(ba);
@@ -138,7 +138,7 @@ public class LocalVariableList implements LocalVariableProvider {
                     localVariableSlot2.clearWideFirstHalf();
                     localVariableSlot2.markWideSecondHalf();
                 } else {
-                    LocalVariableSlot localVariableSlot4 = new LocalVariableSlot(ba + 1, false, true, bb);
+                    LocalVariableSlot localVariableSlot4 = new LocalVariableSlot(ba + 1, false, true, insertionKind);
                     this.slots.add(localVariableSlot4);
                 }
             } else {
@@ -152,18 +152,18 @@ public class LocalVariableList implements LocalVariableProvider {
                 localVariableSlot1.clearWideSecondHalf();
             }
         } else {
-            for (int i = this.slots.size(); i < ba; i++) {
-                LocalVariableSlot localVariableSlot3 = new LocalVariableSlot(i, bb);
+            for (int slotsSize = this.slots.size(); slotsSize < ba; slotsSize++) {
+                LocalVariableSlot localVariableSlot3 = new LocalVariableSlot(slotsSize, insertionKind);
                 this.slots.add(localVariableSlot3);
             }
 
             if (localVariableAccessKind.isWide()) {
-                localVariableSlot1 = new LocalVariableSlot(ba, true, false, bb);
+                localVariableSlot1 = new LocalVariableSlot(ba, true, false, insertionKind);
                 this.slots.add(localVariableSlot1);
-                LocalVariableSlot localVariableSlot6 = new LocalVariableSlot(ba + 1, false, true, bb);
+                LocalVariableSlot localVariableSlot6 = new LocalVariableSlot(ba + 1, false, true, insertionKind);
                 this.slots.add(localVariableSlot6);
             } else {
-                localVariableSlot1 = new LocalVariableSlot(ba, bb);
+                localVariableSlot1 = new LocalVariableSlot(ba, insertionKind);
                 this.slots.add(localVariableSlot1);
             }
         }
@@ -171,18 +171,18 @@ public class LocalVariableList implements LocalVariableProvider {
         return localVariableSlot1;
     }
 
-    public LocalVariableSlot getSlotAt(int ba) {
-        return !this.slots.isEmpty() && ba <= this.slots.size() - 1 ? (LocalVariableSlot) this.slots.get(ba) : null;
+    public LocalVariableSlot getSlotAt(int elementIndex) {
+        return !this.slots.isEmpty() && elementIndex <= this.slots.size() - 1 ? (LocalVariableSlot) this.slots.get(elementIndex) : null;
     }
 
     public void moveTrailingSlots(int ba, Integer integer) {
-        int bb = this.slots.size();
-        int bc = bb - ba;
-        if (bc != 0) {
+        int slotsSize = this.slots.size();
+        int elementIndex = slotsSize - ba;
+        if (elementIndex != 0) {
             ArrayList arrayList = new ArrayList(ba);
 
-            for (int i = bc; i < bb; i++) {
-                LocalVariableSlot localVariableSlot1 = (LocalVariableSlot) this.slots.remove(bc);
+            for (int elementIndexValue = elementIndex; elementIndexValue < slotsSize; elementIndexValue++) {
+                LocalVariableSlot localVariableSlot1 = (LocalVariableSlot) this.slots.remove(elementIndex);
                 arrayList.add(localVariableSlot1);
             }
 
@@ -191,37 +191,37 @@ public class LocalVariableList implements LocalVariableProvider {
         }
     }
 
-    public LocalVariableList(boolean bl, String string, int ba) {
+    public LocalVariableList(boolean bl, String descriptor, int ba) {
         this.slots = new ArrayList(ba);
-        this.addParameterSlots(bl, string);
+        this.addParameterSlots(bl, descriptor);
     }
 
-    public LocalVariableSlot removeSlot(int ba) {
-        LocalVariableSlot localVariableSlot1 = (LocalVariableSlot) this.slots.remove(ba);
+    public LocalVariableSlot removeSlot(int elementIndex) {
+        LocalVariableSlot localVariableSlot1 = (LocalVariableSlot) this.slots.remove(elementIndex);
         if (localVariableSlot1.isWideFirstHalf()) {
-            LocalVariableSlot localVariableSlot2 = (LocalVariableSlot) this.slots.remove(ba);
+            LocalVariableSlot localVariableSlot2 = (LocalVariableSlot) this.slots.remove(elementIndex);
         }
 
         return localVariableSlot1;
     }
 
-    public void addParameterSlots(boolean bl, String string) {
-        List list1 = MethodSignature.splitParameterDescriptors(string);
+    public void addParameterSlots(boolean bl, String descriptor) {
+        List list1 = MethodSignature.splitParameterDescriptors(descriptor);
         int ba = 0;
         if (!bl) {
             ba++;
             this.slots.add(new LocalVariableSlot(0));
         }
 
-        for (int i = 0; i < list1.size(); i++) {
-            if (isWideType((String) list1.get(i))) {
-                int bc = ba++;
-                this.slots.add(new LocalVariableSlot(bc, true, false));
-                int bd = ba++;
-                this.slots.add(new LocalVariableSlot(bd, false, true));
+        for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+            if (isWideType((String) list1.get(elementIndex))) {
+                int index = ba++;
+                this.slots.add(new LocalVariableSlot(index, true, false));
+                int indexValue = ba++;
+                this.slots.add(new LocalVariableSlot(indexValue, false, true));
             } else {
-                int be = ba++;
-                this.slots.add(new LocalVariableSlot(be));
+                int indexValue2 = ba++;
+                this.slots.add(new LocalVariableSlot(indexValue2));
             }
         }
     }

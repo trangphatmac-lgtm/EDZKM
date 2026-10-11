@@ -65,8 +65,8 @@ public class FileSelectorDialog extends EscapeClosingDialogBase implements Actio
             boolean bl = false;
             File[] files = (File[]) propertyChangeEvent.getNewValue();
 
-            for (int i = 0; i < files.length; i++) {
-                if (ZkmClasspath.isRuntimeArchivePath(files[i].getAbsolutePath())) {
+            for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+                if (ZkmClasspath.isRuntimeArchivePath(files[fileIndex].getAbsolutePath())) {
                     bl = true;
                     break;
                 }
@@ -98,9 +98,9 @@ public class FileSelectorDialog extends EscapeClosingDialogBase implements Actio
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            if (object instanceof JButton) {
-                JButton jButton = (JButton) object;
+            Object source = actionEvent.getSource();
+            if (source instanceof JButton) {
+                JButton jButton = (JButton) source;
                 if (jButton == this.okBtn) {
                     this.onOk();
                 }
@@ -158,9 +158,9 @@ public class FileSelectorDialog extends EscapeClosingDialogBase implements Actio
         this.setResizable(true);
     }
 
-    private FileSelectorDialog(JFrame jFrame, String string, String string1) {
+    private FileSelectorDialog(JFrame jFrame, String string, String selectedPathArgument) {
         super(jFrame, string, true);
-        this.selectedPath = string1;
+        this.selectedPath = selectedPathArgument;
         this.buildLayout();
         this.showCenteredOnOwner();
     }
@@ -169,9 +169,9 @@ public class FileSelectorDialog extends EscapeClosingDialogBase implements Actio
         File[] files = this.fileSelector.getSelectedFiles();
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = 0; i < files.length; i++) {
-            stringBuffer.append(files[i].getAbsolutePath());
-            if (i < files.length - 1) {
+        for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
+            stringBuffer.append(files[fileIndex].getAbsolutePath());
+            if (fileIndex < files.length - 1) {
                 stringBuffer.append(File.pathSeparator);
             }
         }
@@ -184,8 +184,8 @@ public class FileSelectorDialog extends EscapeClosingDialogBase implements Actio
     public void keyReleased(KeyEvent keyEvent) {
     }
 
-    public static String selectBootstrapArchive(JFrame jFrame, String string, String string1) {
-        return (new FileSelectorDialog(jFrame, string, string1)).selectedPath;
+    public static String selectBootstrapArchive(JFrame jFrame, String string, String selectedPathArgument) {
+        return (new FileSelectorDialog(jFrame, string, selectedPathArgument)).selectedPath;
     }
 
     public void onCancel() throws ZkmException, IOException {

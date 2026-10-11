@@ -23,14 +23,14 @@ public class StringConstantNameRef implements TrackedValue {
         this(resolvedStringConstant, true, null);
     }
 
-    private StringConstantNameRef(ResolvedStringConstant resolvedStringConstant, boolean isFullSignature, String string) {
+    private StringConstantNameRef(ResolvedStringConstant resolvedStringConstant, boolean isFullSignature, String accessorPrefixArgument) {
         if (resolvedStringConstant == null) {
             throw new IllegalArgumentException();
         }
 
         this.stringConstant = resolvedStringConstant;
         this.isFullSignature = isFullSignature;
-        this.accessorPrefix = string;
+        this.accessorPrefix = accessorPrefixArgument;
     }
 
     public final ResolvedStringConstant getStringConstant() {
@@ -38,16 +38,16 @@ public class StringConstantNameRef implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object other) {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        if (object != null) {
-            boolean bl1 = this.getClass().equals(object.getClass());
+        if (other != null) {
+            boolean bl1 = this.getClass().equals(other.getClass());
             if (strictMergeDisabled) {
                 return bl1;
             }
 
             if (bl1) {
-                StringConstantNameRef stringConstantNameRef1 = (StringConstantNameRef) object;
+                StringConstantNameRef stringConstantNameRef1 = (StringConstantNameRef) other;
                 StringConstantNameRef stringConstantNameRef2 = this;
                 if (!strictMergeDisabled) {
                     if (this.stringConstant != null) {
@@ -117,21 +117,21 @@ public class StringConstantNameRef implements TrackedValue {
 
     @Override
     public String getNormalizedName() {
-        String string = this.getStringValue();
-        if (string == null) {
+        String stringValue = this.getStringValue();
+        if (stringValue == null) {
             return null;
         }
 
-        int ba = string.lastIndexOf((int) separatorCode);
+        int ba = stringValue.lastIndexOf((int) separatorCode);
         if (ba > -1) {
-            string = string.substring(ba + 1);
+            stringValue = stringValue.substring(ba + 1);
         }
 
-        if (string.startsWith("L") && string.endsWith(";")) {
-            string = string.substring(1, string.length() - 1);
+        if (stringValue.startsWith("L") && stringValue.endsWith(";")) {
+            stringValue = stringValue.substring(1, stringValue.length() - 1);
         }
 
-        return string;
+        return stringValue;
     }
 
     public StringConstantNameRef(ResolvedStringConstant resolvedStringConstant) {
@@ -152,8 +152,8 @@ public class StringConstantNameRef implements TrackedValue {
         return true;
     }
 
-    public StringConstantNameRef(ResolvedStringConstant resolvedStringConstant, String string) {
-        this(resolvedStringConstant, false, string);
+    public StringConstantNameRef(ResolvedStringConstant resolvedStringConstant, String accessorPrefixArgument) {
+        this(resolvedStringConstant, false, accessorPrefixArgument);
     }
 
     static {

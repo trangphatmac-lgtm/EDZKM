@@ -22,8 +22,8 @@ public class ZkmScriptASTQualifiedType extends ZkmScriptSimpleNode {
         ZkmScriptNode zkmScriptNode = (ZkmScriptNode) object;
         int ba = this.jjtGetNumChildren();
 
-        for (int i = 0; i < ba; i++) {
-            this.jjtGetChild(i).execute(this, scriptEnvironment1);
+        for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
         }
 
         TypeTextHolder typeTextHolder = (TypeTextHolder) zkmScriptNode;
@@ -40,32 +40,32 @@ public class ZkmScriptASTQualifiedType extends ZkmScriptSimpleNode {
 
     public String toDescriptor() {
         StringBuilder stringBuilder = new StringBuilder();
-        int ba = this.nameParts.size();
-        if (ba != 0) {
+        int namePartsSize = this.nameParts.size();
+        if (namePartsSize != 0) {
             int bb = 0;
             int bd = bb;
 
-            for (int i = this.arrayDimensions; bd < i; i = this.arrayDimensions) {
+            for (int arrayDimensionsValue = this.arrayDimensions; bd < arrayDimensionsValue; arrayDimensionsValue = this.arrayDimensions) {
                 stringBuilder.append("[");
                 bd = ++bb;
             }
 
-            if (ba == 1) {
-                String string1 = (String) this.nameParts.get(0);
-                String string = (String) primitiveDescriptors.get(string1);
+            if (namePartsSize == 1) {
+                String key = (String) this.nameParts.get(0);
+                String string = (String) primitiveDescriptors.get(key);
                 if (string != null) {
                     stringBuilder.append(string);
                 } else {
                     stringBuilder.append("L");
-                    stringBuilder.append(string1);
+                    stringBuilder.append(key);
                     stringBuilder.append(";");
                 }
             } else {
                 stringBuilder.append("L");
 
-                for (int i = 0; i < ba; i++) {
-                    String string2 = (String) this.nameParts.get(i);
-                    if (i > 0) {
+                for (int elementIndex = 0; elementIndex < namePartsSize; elementIndex++) {
+                    String string2 = (String) this.nameParts.get(elementIndex);
+                    if (elementIndex > 0) {
                         stringBuilder.append("/");
                     }
 

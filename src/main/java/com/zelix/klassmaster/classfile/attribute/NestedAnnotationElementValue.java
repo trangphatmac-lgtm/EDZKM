@@ -24,29 +24,29 @@ public class NestedAnnotationElementValue extends AnnotationElementValue {
     public void updateAfterClassRename(Object object, Object object1) {
         HashMap hashMap1 = (HashMap) object1;
         HashMap hashMap = (HashMap) object;
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (AnnotationElementValue[] annotationElementValues = this.elementValues;
              bb < annotationElementValues.length;
              annotationElementValues = this.elementValues
         ) {
-            this.elementValues[ba].updateAfterClassRename(hashMap, hashMap1);
-            bb = ++ba;
+            this.elementValues[elementValueIndex].updateAfterClassRename(hashMap, hashMap1);
+            bb = ++elementValueIndex;
         }
     }
 
     @Override
     public void updateAfterFieldRename() {
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (AnnotationElementValue[] annotationElementValues = this.elementValues;
              bb < annotationElementValues.length;
              annotationElementValues = this.elementValues
         ) {
-            this.elementValues[ba].updateAfterFieldRename();
-            bb = ++ba;
+            this.elementValues[elementValueIndex].updateAfterFieldRename();
+            bb = ++elementValueIndex;
         }
     }
 
@@ -56,44 +56,44 @@ public class NestedAnnotationElementValue extends AnnotationElementValue {
         Set set2 = (Set) object;
         Set set1 = (Set) object3;
         Set set3 = (Set) object1;
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (AnnotationElementValue[] annotationElementValues = this.elementValues;
              bb < annotationElementValues.length;
              annotationElementValues = this.elementValues
         ) {
-            this.elementValues[ba].collectReferencedMembers(set2, set3, set4, set1);
-            bb = ++ba;
+            this.elementValues[elementValueIndex].collectReferencedMembers(set2, set3, set4, set1);
+            bb = ++elementValueIndex;
         }
     }
 
     @Override
     public String getValueTypeDescriptor() {
-        String string = null;
-        int ba = 0;
+        String valueTypeDescriptor = null;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (AnnotationElementValue[] annotationElementValues = this.elementValues;
              bb < annotationElementValues.length;
              annotationElementValues = this.elementValues
         ) {
-            if (ba == 0) {
-                string = this.elementValues[ba].getValueTypeDescriptor();
-                if (string == null) {
+            if (elementValueIndex == 0) {
+                valueTypeDescriptor = this.elementValues[elementValueIndex].getValueTypeDescriptor();
+                if (valueTypeDescriptor == null) {
                     return null;
                 }
             } else {
-                String string1 = this.elementValues[ba].getValueTypeDescriptor();
-                if (string1 == null || !string.equals(string1)) {
+                String valueTypeDescriptorValue = this.elementValues[elementValueIndex].getValueTypeDescriptor();
+                if (valueTypeDescriptorValue == null || !valueTypeDescriptor.equals(valueTypeDescriptorValue)) {
                     return null;
                 }
             }
 
-            bb = ++ba;
+            bb = ++elementValueIndex;
         }
 
-        return string != null ? "[" + string : null;
+        return valueTypeDescriptor != null ? "[" + valueTypeDescriptor : null;
     }
 
     public AnnotationElementValue[] getElementValues() {
@@ -104,15 +104,15 @@ public class NestedAnnotationElementValue extends AnnotationElementValue {
     public void collectReferencedClasses(Object object) {
         Set set1 = (Set) object;
         if (this.isValid()) {
-            int ba = 0;
-            int bb = ba;
+            int elementValueIndex = 0;
+            int elementValueIndexValue = elementValueIndex;
 
             for (AnnotationElementValue[] annotationElementValues = this.elementValues;
-                 bb < annotationElementValues.length;
+                 elementValueIndexValue < annotationElementValues.length;
                  annotationElementValues = this.elementValues
             ) {
-                this.elementValues[ba].collectReferencedClasses(set1);
-                bb = ++ba;
+                this.elementValues[elementValueIndex].collectReferencedClasses(set1);
+                elementValueIndexValue = ++elementValueIndex;
             }
         }
     }
@@ -122,15 +122,15 @@ public class NestedAnnotationElementValue extends AnnotationElementValue {
         ClassResolver classResolver1 = (ClassResolver) object;
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object2;
         IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1 = (IgnoreMissingReferencesSpec) object1;
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (AnnotationElementValue[] annotationElementValues = this.elementValues;
              bb < annotationElementValues.length;
              annotationElementValues = this.elementValues
         ) {
-            this.elementValues[ba].resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
-            bb = ++ba;
+            this.elementValues[elementValueIndex].resolveReferences(classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+            bb = ++elementValueIndex;
         }
     }
 
@@ -147,18 +147,18 @@ public class NestedAnnotationElementValue extends AnnotationElementValue {
         int bf = (int) (bi << 48 >>> 48);
         dataOutputStream.writeByte(this.getTag());
         dataOutputStream.writeShort(this.elementValues.length);
-        int bg = 0;
+        int elementValueIndex = 0;
         int bh = 0;
         AnnotationElementValue[] annotationElementValues = this.elementValues;
 
         while (true) {
             if (bh < annotationElementValues.length) {
-                this.elementValues[bg].write(bd, dataOutputStream, (char) be, (char) bf);
+                this.elementValues[elementValueIndex].write(bd, dataOutputStream, (char) be, (char) bf);
             } else if (bc > 0) {
                 return;
             }
 
-            bh = ++bg;
+            bh = ++elementValueIndex;
             annotationElementValues = this.elementValues;
         }
     }
@@ -170,18 +170,18 @@ public class NestedAnnotationElementValue extends AnnotationElementValue {
 
     @Override
     public void collectUsedConstants(char bd, int ba, UsedConstantsCollector usedConstantsCollector, char be) {
-        int bb = 0;
+        int elementValueIndex = 0;
         int bc = 0;
         AnnotationElementValue[] annotationElementValues = this.elementValues;
 
         while (true) {
             if (bc < annotationElementValues.length) {
-                this.elementValues[bb].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+                this.elementValues[elementValueIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
             } else if (ba > 0) {
                 return;
             }
 
-            bc = ++bb;
+            bc = ++elementValueIndex;
             annotationElementValues = this.elementValues;
         }
     }
@@ -197,60 +197,60 @@ public class NestedAnnotationElementValue extends AnnotationElementValue {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object1;
         dataOutputStream.writeByte(this.getTag());
         dataOutputStream.writeShort(this.elementValues.length);
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (AnnotationElementValue[] annotationElementValues = this.elementValues;
              bb < annotationElementValues.length;
              annotationElementValues = this.elementValues
         ) {
-            this.elementValues[ba].writeRemapped(dataOutputStream, map1, scriptEnvironment1);
-            bb = ++ba;
+            this.elementValues[elementValueIndex].writeRemapped(dataOutputStream, map1, scriptEnvironment1);
+            bb = ++elementValueIndex;
         }
     }
 
     @Override
     public void updateAfterMethodRename() {
-        int ba = 0;
+        int elementValueIndex = 0;
         int bb = 0;
 
         for (AnnotationElementValue[] annotationElementValues = this.elementValues;
              bb < annotationElementValues.length;
              annotationElementValues = this.elementValues
         ) {
-            this.elementValues[ba].updateAfterMethodRename();
-            bb = ++ba;
+            this.elementValues[elementValueIndex].updateAfterMethodRename();
+            bb = ++elementValueIndex;
         }
     }
 
     @Override
     public int getByteLength() {
-        int ba = 1;
-        ba += 2;
-        int bb = 0;
+        int byteLength = 1;
+        byteLength += 2;
+        int elementValueIndex = 0;
         int bc = 0;
 
         for (AnnotationElementValue[] annotationElementValues = this.elementValues;
              bc < annotationElementValues.length;
              annotationElementValues = this.elementValues
         ) {
-            ba += this.elementValues[bb].getByteLength();
-            bc = ++bb;
+            byteLength += this.elementValues[elementValueIndex].getByteLength();
+            bc = ++elementValueIndex;
         }
 
-        return ba;
+        return byteLength;
     }
 
     @Override
     public void replaceUtf8Constant(ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81) {
     }
 
-    public NestedAnnotationElementValue(ClassFileComponent classFileComponent, int ba, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
-        super(classFileComponent, ba);
+    public NestedAnnotationElementValue(ClassFileComponent classFileComponent, int tag, ClassFileInputStream classFileInputStream, ListMultimap listMultimap) throws IOException {
+        super(classFileComponent, tag);
         int bb = classFileInputStream.readUnsignedShort();
         this.elementValues = new AnnotationElementValue[bb];
 
-        for (int i = 0; i < bb; i++) {
+        for (int elementValueIndex = 0; elementValueIndex < bb; elementValueIndex++) {
             AnnotationElementValue annotationElementValue = AnnotationElementValue.readElementValue(this, classFileInputStream, listMultimap);
             if (!annotationElementValue.isValid()) {
                 this.setValid();
@@ -258,7 +258,7 @@ public class NestedAnnotationElementValue extends AnnotationElementValue {
                 return;
             }
 
-            this.elementValues[i] = annotationElementValue;
+            this.elementValues[elementValueIndex] = annotationElementValue;
         }
     }
 }

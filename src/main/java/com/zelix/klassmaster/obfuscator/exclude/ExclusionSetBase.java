@@ -28,12 +28,12 @@ public abstract class ExclusionSetBase extends AbstractExclusionSpec {
 
     public abstract boolean excludeClass(ProgramClass programClass1, String string) throws ZkmException, IOException;
 
-    public final Enumeration findClassesDeclaringMethod(String string) {
-        return this.classRepository.enumerateMethodSignaturesNamed(string);
+    public final Enumeration findClassesDeclaringMethod(String key) {
+        return this.classRepository.enumerateMethodSignaturesNamed(key);
     }
 
-    public Enumeration findClassesDeclaringField(String string) {
-        return this.classRepository.enumerateFieldsNamed(string);
+    public Enumeration findClassesDeclaringField(String key) {
+        return this.classRepository.enumerateFieldsNamed(key);
     }
 
     public boolean hasNoIncludedMethods() {
@@ -45,20 +45,20 @@ public abstract class ExclusionSetBase extends AbstractExclusionSpec {
             return false;
         }
 
-        boolean bl = this.excludedClasses.containsKey(programClass1);
-        if (!bl && programClass1.hasVersionedVariants()) {
+        boolean classOrOuterExcluded = this.excludedClasses.containsKey(programClass1);
+        if (!classOrOuterExcluded && programClass1.hasVersionedVariants()) {
             Iterator iterator = programClass1.getVersionedVariants().iterator();
 
             while (iterator.hasNext()) {
                 ClassFileBase classFileBase = (ClassFileBase) iterator.next();
-                bl = this.excludedClasses.containsKey(classFileBase);
-                if (bl) {
+                classOrOuterExcluded = this.excludedClasses.containsKey(classFileBase);
+                if (classOrOuterExcluded) {
                     break;
                 }
             }
         }
 
-        return bl;
+        return classOrOuterExcluded;
     }
 
     public Enumeration getExcludedMethods() {
@@ -117,8 +117,8 @@ public abstract class ExclusionSetBase extends AbstractExclusionSpec {
         return new ArrayEnumeration(fieldInfos);
     }
 
-    public final boolean isClassNameExcluded(String string) {
-        ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(string);
+    public final boolean isClassNameExcluded(String key) {
+        ClassHierarchyNode classHierarchyNode = ClassHierarchyNode.findNode(key);
         if (classHierarchyNode != null) {
             ProgramClass programClass1 = classHierarchyNode.getProgramClass();
             if (programClass1 != null) {
@@ -148,8 +148,8 @@ public abstract class ExclusionSetBase extends AbstractExclusionSpec {
         return new ArrayEnumeration(methodInfos);
     }
 
-    public final boolean isClassIncluded(Object object) {
-        return this.includedClasses.containsKey(object);
+    public final boolean isClassIncluded(Object key) {
+        return this.includedClasses.containsKey(key);
     }
 
     public Enumeration getCandidateMethods() {
@@ -159,20 +159,20 @@ public abstract class ExclusionSetBase extends AbstractExclusionSpec {
         return ArrayEnumeration.fromCollection(hashSet);
     }
 
-    public boolean isMethodExcluded(Object object) {
-        return this.excludedMethods.containsKey(object);
+    public boolean isMethodExcluded(Object key) {
+        return this.excludedMethods.containsKey(key);
     }
 
-    public boolean isFieldExcluded(Object object) {
-        return this.excludedFields.containsKey(object);
+    public boolean isFieldExcluded(Object key) {
+        return this.excludedFields.containsKey(key);
     }
 
     public final Enumeration getIncludedClasses() {
         return ArrayEnumeration.fromCollection(this.includedClasses.keySet());
     }
 
-    public final boolean isClassExcluded(Object object) {
-        return this.excludedClasses.containsKey(object);
+    public final boolean isClassExcluded(Object key) {
+        return this.excludedClasses.containsKey(key);
     }
 
     public final Enumeration getExcludedClasses() {

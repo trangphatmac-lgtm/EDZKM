@@ -39,14 +39,14 @@ public class LibraryFieldInfo extends AbstractFieldInfo {
         super(classFileComponent, classFileInputStream, listMultimap);
         this.attributes = new Attribute[this.attributeCount];
 
-        for (int i = 0; i < this.attributeCount; i++) {
-            int bb = classFileInputStream.readUnsignedShort();
-            ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(bb);
+        for (int attributeIndex = 0; attributeIndex < this.attributeCount; attributeIndex++) {
+            int constantPoolIndex = classFileInputStream.readUnsignedShort();
+            ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(constantPoolIndex);
             if (constantPoolEntry == null) {
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Illegal constant pool index in attribute : "
-                                + bb
+                                + constantPoolIndex
                                 + " : File is probably corrupt (H)"
                 );
             }
@@ -55,23 +55,23 @@ public class LibraryFieldInfo extends AbstractFieldInfo {
                 throw new ClassFileFormatException(
                         classFileComponent.getOwningClass().getLocationName()
                                 + " : Invalid attribute : "
-                                + bb
+                                + constantPoolIndex
                                 + " : '"
                                 + constantPoolEntry.getClass().getName()
                                 + "' : File is probably corrupt (I)"
                 );
             }
 
-            String string = ((ConstantUtf8) constantPoolEntry).getValue();
-            this.attributes[i] = new IgnoredAttribute(classFileComponent, bb, string, classFileInputStream, listMultimap);
+            String value = ((ConstantUtf8) constantPoolEntry).getValue();
+            this.attributes[attributeIndex] = new IgnoredAttribute(classFileComponent, constantPoolIndex, value, classFileInputStream, listMultimap);
         }
     }
 
     public LibraryFieldInfo(ClassFileBase classFileBase, ConstantUtf8 constantUtf8, ConstantUtf8 constantUtf81, Attribute[] attributes1) {
         super(classFileBase, constantUtf8, constantUtf81, attributes1, 2);
 
-        for (int i = 0; i < attributes1.length; i++) {
-            attributes1[i].setParent(this);
+        for (int attributes1ElementIndex = 0; attributes1ElementIndex < attributes1.length; attributes1ElementIndex++) {
+            attributes1[attributes1ElementIndex].setParent(this);
         }
     }
 }

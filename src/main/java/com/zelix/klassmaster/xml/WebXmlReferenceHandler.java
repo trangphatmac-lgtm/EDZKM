@@ -85,8 +85,8 @@ public class WebXmlReferenceHandler extends XmlConfigFileHandler {
             String string3 = resourcePathTranslator1.translateResourcePath(string);
             list1.add(string3);
         } else {
-            String string2 = this.getRenamedClassName(string);
-            list1.add(string2);
+            String renamedClassName = this.getRenamedClassName(string);
+            list1.add(renamedClassName);
         }
     }
 

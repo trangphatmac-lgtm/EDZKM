@@ -12,10 +12,10 @@ public class MessageDialogButtonListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        Object object = actionEvent.getSource();
-        if (object == this.messageBoxDialog.okBtn) {
+        Object source = actionEvent.getSource();
+        if (source == this.messageBoxDialog.okBtn) {
             this.messageBoxDialog.closeDialog();
-        } else if (object == this.messageBoxDialog.copyBtn) {
+        } else if (source == this.messageBoxDialog.copyBtn) {
             this.messageBoxDialog.copyMessageToClipboard();
         }
     }

@@ -12,10 +12,10 @@ public class CopyableMessageButtonListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        Object object = actionEvent.getSource();
-        if (object == this.dialog.okBtn) {
+        Object source = actionEvent.getSource();
+        if (source == this.dialog.okBtn) {
             this.dialog.closeDialog();
-        } else if (object == this.dialog.copyBtn) {
+        } else if (source == this.dialog.copyBtn) {
             this.dialog.copyMessageToClipboard();
         }
     }

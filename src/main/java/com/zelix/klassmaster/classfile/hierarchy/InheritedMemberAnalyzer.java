@@ -27,8 +27,8 @@ public class InheritedMemberAnalyzer {
     public final SetMultiMap visibleMethodsByClass;
     public final SetMultiMap relatedClassesByClass;
 
-    public Set getVisibleFieldSignatures(Object object) {
-        Set set1 = this.visibleFieldsByClass.getValues(object);
+    public Set getVisibleFieldSignatures(Object key) {
+        Set set1 = this.visibleFieldsByClass.getValues(key);
         if (set1 == null) {
             return ZkmUtils.createHashSet(13);
         }
@@ -44,8 +44,8 @@ public class InheritedMemberAnalyzer {
         return hashSet;
     }
 
-    public Set getVisibleMethodNameTypes(Object object) {
-        Set set1 = this.visibleMethodsByClass.getValues(object);
+    public Set getVisibleMethodNameTypes(Object key) {
+        Set set1 = this.visibleMethodsByClass.getValues(key);
         HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(set1.size()));
         Iterator iterator = set1.iterator();
 
@@ -58,8 +58,8 @@ public class InheritedMemberAnalyzer {
     }
 
     public InheritedMemberAnalyzer(ClassFileBase[] classFileBases, ClassResolver classResolver1) throws ZkmException, IOException {
-        int ba = classFileBases.length;
-        this.classSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(ba));
+        int lengthValue = classFileBases.length;
+        this.classSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(lengthValue));
 
         for (ClassFileBase classFileBase : classFileBases) {
             this.classSet.add(classFileBase);
@@ -74,17 +74,17 @@ public class InheritedMemberAnalyzer {
         }
 
         this.classes = ((com.zelix.klassmaster.classfile.ClassFileBase[]) (this.classSet.toArray(new ClassFileBase[this.classSet.size()])));
-        ba = this.classes.length;
+        lengthValue = this.classes.length;
         this.classResolver = classResolver1;
         this.interfaceFields = ZkmUtils.createHashSet();
         this.interfaceMethods = ZkmUtils.createHashSet();
-        SetMultiMap setMultiMap = new SetMultiMap(ba, true);
-        SetMultiMap setMultiMap1 = new SetMultiMap(ba, true);
-        SetMultiMap setMultiMap2 = new SetMultiMap(ba, true);
+        SetMultiMap setMultiMap = new SetMultiMap(lengthValue, true);
+        SetMultiMap setMultiMap1 = new SetMultiMap(lengthValue, true);
+        SetMultiMap setMultiMap2 = new SetMultiMap(lengthValue, true);
         this.analyzeAllClasses(setMultiMap, setMultiMap1, setMultiMap2);
-        this.visibleFieldsByClass = new SetMultiMap(ba, true);
-        this.visibleMethodsByClass = new SetMultiMap(ba, true);
-        this.relatedClassesByClass = new SetMultiMap(ba, true);
+        this.visibleFieldsByClass = new SetMultiMap(lengthValue, true);
+        this.visibleMethodsByClass = new SetMultiMap(lengthValue, true);
+        this.relatedClassesByClass = new SetMultiMap(lengthValue, true);
         this.buildVisibleMemberMaps(setMultiMap, setMultiMap1, setMultiMap2);
     }
 
@@ -116,11 +116,11 @@ public class InheritedMemberAnalyzer {
             arrayList1.add(hashSet1);
             AbstractFieldInfo[] abstractFieldInfos = classFileBase.getFields();
 
-            for (int i = 0; i < abstractFieldInfos.length; i++) {
-                AbstractFieldInfo abstractFieldInfo = abstractFieldInfos[i];
+            for (int abstractFieldInfoIndex = 0; abstractFieldInfoIndex < abstractFieldInfos.length; abstractFieldInfoIndex++) {
+                AbstractFieldInfo abstractFieldInfo = abstractFieldInfos[abstractFieldInfoIndex];
 
-                for (int j = 0; j < arrayList1.size(); j++) {
-                    Set set5 = (Set) arrayList1.get(j);
+                for (int elementIndex = 0; elementIndex < arrayList1.size(); elementIndex++) {
+                    Set set5 = (Set) arrayList1.get(elementIndex);
                     set5.add(abstractFieldInfo);
                 }
 
@@ -135,22 +135,22 @@ public class InheritedMemberAnalyzer {
             arrayList2.add(hashSet2);
             AbstractMethodInfo[] abstractMethodInfos = classFileBase.getDeclaredMethods();
 
-            for (int i = 0; i < abstractMethodInfos.length; i++) {
-                AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[i];
+            for (int abstractMethodInfoIndex = 0; abstractMethodInfoIndex < abstractMethodInfos.length; abstractMethodInfoIndex++) {
+                AbstractMethodInfo abstractMethodInfo = abstractMethodInfos[abstractMethodInfoIndex];
                 if (classFileBase.isInterface()) {
                     set2.add(abstractMethodInfo);
                 }
 
-                for (int j = 0; j < arrayList2.size(); j++) {
-                    Set set6 = (Set) arrayList2.get(j);
+                for (int elementIndexValue = 0; elementIndexValue < arrayList2.size(); elementIndexValue++) {
+                    Set set6 = (Set) arrayList2.get(elementIndexValue);
                     set6.add(abstractMethodInfo);
                 }
             }
 
             if (!classFileBase.getClassName().equals("java/lang/Object")) {
-                String string2 = classFileBase.getSuperclassName();
+                String superclassName = classFileBase.getSuperclassName();
                 Integer integer = classFileBase.hasReleaseVersion() ? classFileBase.getReleaseVersion() : null;
-                ClassFileBase classFileBase3 = this.classResolver.getVersionedClass(string2, integer, string);
+                ClassFileBase classFileBase3 = this.classResolver.getVersionedClass(superclassName, integer, string);
                 Iterator iterator5 = arrayList.iterator();
 
                 while (iterator5.hasNext()) {
@@ -159,11 +159,11 @@ public class InheritedMemberAnalyzer {
                 }
 
                 this.collectHierarchyMembers(classFileBase3, arrayList, setMultiMap, arrayList1, setMultiMap1, arrayList2, setMultiMap2, set1, set2, string);
-                String[] strings = classFileBase.getInterfaceNames();
+                String[] interfaceNames = classFileBase.getInterfaceNames();
 
-                for (int i = 0; i < strings.length; i++) {
-                    String string1 = strings[i];
-                    ClassFileBase classFileBase2 = this.classResolver.getVersionedClass(string1, integer, string);
+                for (int interfaceNameIndex = 0; interfaceNameIndex < interfaceNames.length; interfaceNameIndex++) {
+                    String interfaceName = interfaceNames[interfaceNameIndex];
+                    ClassFileBase classFileBase2 = this.classResolver.getVersionedClass(interfaceName, integer, string);
                     Iterator iterator = arrayList.iterator();
 
                     while (iterator.hasNext()) {
@@ -192,8 +192,8 @@ public class InheritedMemberAnalyzer {
             while (iterator2.hasNext()) {
                 AbstractFieldInfo abstractFieldInfo1 = (AbstractFieldInfo) iterator2.next();
 
-                for (int i = 0; i < list2.size(); i++) {
-                    Set set4 = (Set) list2.get(i);
+                for (int elementIndexValue2 = 0; elementIndexValue2 < list2.size(); elementIndexValue2++) {
+                    Set set4 = (Set) list2.get(elementIndexValue2);
                     set4.add(abstractFieldInfo1);
                 }
             }
@@ -204,8 +204,8 @@ public class InheritedMemberAnalyzer {
             while (iterator4.hasNext()) {
                 AbstractMethodInfo abstractMethodInfo1 = (AbstractMethodInfo) iterator4.next();
 
-                for (int i = 0; i < list3.size(); i++) {
-                    Set set11 = (Set) list3.get(i);
+                for (int elementIndexValue3 = 0; elementIndexValue3 < list3.size(); elementIndexValue3++) {
+                    Set set11 = (Set) list3.get(elementIndexValue3);
                     set11.add(abstractMethodInfo1);
                 }
             }
@@ -281,8 +281,8 @@ public class InheritedMemberAnalyzer {
         return this.methodCreationLock;
     }
 
-    public Set getVisibleMethodSignatures(Object object) {
-        Set set1 = this.visibleMethodsByClass.getValues(object);
+    public Set getVisibleMethodSignatures(Object key) {
+        Set set1 = this.visibleMethodsByClass.getValues(key);
         HashSet hashSet = ZkmUtils.createHashSet(ZkmUtils.getPrimeCapacity(set1.size()));
         Iterator iterator = set1.iterator();
 
@@ -313,11 +313,11 @@ public class InheritedMemberAnalyzer {
     }
 
     public void analyzeAllClasses(SetMultiMap setMultiMap, SetMultiMap setMultiMap1, SetMultiMap setMultiMap2) throws ZkmException, IOException {
-        int ba = 0;
+        int classeIndex = 0;
         int bb = 0;
 
         for (ClassFileBase[] classFileBases = this.classes; bb < classFileBases.length; classFileBases = this.classes) {
-            ClassFileBase classFileBase = this.classes[ba];
+            ClassFileBase classFileBase = this.classes[classeIndex];
             String string = "analyzing fields and methods in the inheritance hierarchy of class '" + classFileBase.getLocationName() + "'";
             this.collectHierarchyMembers(
                     classFileBase,
@@ -331,12 +331,12 @@ public class InheritedMemberAnalyzer {
                     this.interfaceMethods,
                     string
             );
-            bb = ++ba;
+            bb = ++classeIndex;
         }
     }
 
-    public Set getVisibleFieldNames(Object object) {
-        Set set1 = this.visibleFieldsByClass.getValues(object);
+    public Set getVisibleFieldNames(Object key) {
+        Set set1 = this.visibleFieldsByClass.getValues(key);
         if (set1 == null) {
             return ZkmUtils.createHashSet(13);
         }

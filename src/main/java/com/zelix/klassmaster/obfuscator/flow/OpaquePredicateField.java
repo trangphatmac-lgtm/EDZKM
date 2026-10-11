@@ -241,8 +241,8 @@ public class OpaquePredicateField implements Comparable {
     }
 
     @Override
-    public int compareTo(Object object) {
-        return this.compareField((OpaquePredicateField) object);
+    public int compareTo(Object otherArgument) {
+        return this.compareField((OpaquePredicateField) otherArgument);
     }
 
     public String getGetterDescriptor() {
@@ -272,36 +272,15 @@ public class OpaquePredicateField implements Comparable {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object otherArgument) {
         boolean strictMergeEnabled = StackFrameState.isStrictMergeEnabled();
-        boolean bl1 = object instanceof OpaquePredicateField;
-        if (strictMergeEnabled) {
-            if (bl1) {
-                OpaquePredicateField opaquePredicateField1 = (OpaquePredicateField) object;
-                String string = this.fieldName;
-                if (strictMergeEnabled) {
-                    if (!this.fieldName.equals(opaquePredicateField1.fieldName)) {
-                        return false;
-                    }
-
-                    string = this.ownerClassName;
-                }
-
-                bl1 = string.equals(opaquePredicateField1.ownerClassName);
-                if (!strictMergeEnabled) {
-                    return bl1;
-                }
-
-                if (bl1) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            bl1 = false;
+        if (!(otherArgument instanceof OpaquePredicateField)) {
+            return false;
         }
-
-        return bl1;
+        if (!strictMergeEnabled) {
+            return true;
+        }
+        OpaquePredicateField other = (OpaquePredicateField) otherArgument;
+        return this.fieldName.equals(other.fieldName) && this.ownerClassName.equals(other.ownerClassName);
     }
 }

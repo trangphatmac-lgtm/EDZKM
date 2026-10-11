@@ -71,18 +71,18 @@ public class ResourceFileIndex {
         Iterator iterator = this.standaloneFiles.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            String string3 = (String) ((Entry) iterator.next()).getKey();
-            if (this.matchesPathPattern(string1, string3, string)) {
-                arrayList.add(string3);
+            String key = (String) ((Entry) iterator.next()).getKey();
+            if (this.matchesPathPattern(string1, key, string)) {
+                arrayList.add(key);
             }
         }
 
         return arrayList;
     }
 
-    public void addImport(String string, String string1) {
-        this.importersByFile.addValue(string, string1);
-        this.importsByFile.addValue(string1, string);
+    public void addImport(String key, String keyArgument) {
+        this.importersByFile.addValue(key, keyArgument);
+        this.importsByFile.addValue(keyArgument, key);
     }
 
     public void clear() {
@@ -95,12 +95,12 @@ public class ResourceFileIndex {
         this.importsByFile.clear();
     }
 
-    public void addArchiveEntry(Object object, Object object1) {
-        this.archiveEntries.addValue(object, object1);
+    public void addArchiveEntry(Object key, Object object1) {
+        this.archiveEntries.addValue(key, object1);
     }
 
-    public Map getBeanParents(Object object) {
-        return this.beanParentsByFile.getInnerMap(object);
+    public Map getBeanParents(Object key) {
+        return this.beanParentsByFile.getInnerMap(key);
     }
 
     public List loadMatchingConfigFiles(String string, String string1, XmlConfigFileType xmlConfigFileType, MessageReporter messageReporter1) throws ZkmException, IOException {
@@ -113,41 +113,41 @@ public class ResourceFileIndex {
         Iterator iterator = list1.iterator();
 
         while (iterator.hasNext()) {
-            String string2 = (String) iterator.next();
-            if (this.archiveEntries.containsKey(string2)) {
-                List list2 = this.archiveEntries.getValues(string2);
+            String key = (String) iterator.next();
+            if (this.archiveEntries.containsKey(key)) {
+                List list2 = this.archiveEntries.getValues(key);
                 Iterator iterator1 = list2.iterator();
 
                 while (iterator1.hasNext()) {
                     SourceArchive sourceArchive1 = (SourceArchive) iterator1.next();
-                    String string4 = sourceArchive1.getFilePath();
+                    String filePath = sourceArchive1.getFilePath();
 
                     ArchiveZipFile archiveZipFile;
                     try {
-                        archiveZipFile = new ArchiveZipFile(string4);
+                        archiveZipFile = new ArchiveZipFile(filePath);
                     } catch (IOException iOException2) {
                         messageReporter1.reportError(
-                                "ERROR:", "Could not open '" + string4 + "' as an archive file : " + sourceArchive1.getOriginalPath() + " : " + iOException2.getMessage()
+                                "ERROR:", "Could not open '" + filePath + "' as an archive file : " + sourceArchive1.getOriginalPath() + " : " + iOException2.getMessage()
                         );
                         continue;
                     }
 
-                    ZipEntry zipEntry1 = archiveZipFile.getEntry(string2);
+                    ZipEntry zipEntry1 = archiveZipFile.getEntry(key);
                     ObservableHolder observableHolder = new ObservableHolder();
                     MutableInt mutableInt = new MutableInt(0);
                     MutableInt mutableInt1 = new MutableInt(0);
                     MutableInt mutableInt2 = new MutableInt(Integer.MAX_VALUE);
 
-                    String string3;
+                    String content;
                     try {
-                        string3 = XmlResourceProcessor.readZipEntryContent(archiveZipFile, zipEntry1, observableHolder, mutableInt, mutableInt1, mutableInt2);
+                        content = XmlResourceProcessor.readZipEntryContent(archiveZipFile, zipEntry1, observableHolder, mutableInt, mutableInt1, mutableInt2);
                     } catch (IOException iOException1) {
                         messageReporter1.reportError(
                                 "ERROR:",
                                 "Could not get contents of  '"
                                         + zipEntry1.getName()
                                         + "' in '"
-                                        + string4
+                                        + filePath
                                         + "' : "
                                         + sourceArchive1.getOriginalPath()
                                         + " : "
@@ -156,33 +156,33 @@ public class ResourceFileIndex {
                         continue;
                     }
 
-                    XmlConfigFileType xmlConfigFileType1 = XmlConfigFileHandler.detectConfigFileType(string2, string3);
+                    XmlConfigFileType xmlConfigFileType1 = XmlConfigFileHandler.detectConfigFileType(key, content);
                     if (xmlConfigFileType1 == xmlConfigFileType) {
                         arrayList.add(
                                 new TextResourceContent(
-                                        observableHolder, mutableInt, mutableInt1, mutableInt2, ZkmFileUtils.describeEntryWithOriginal(archiveZipFile, zipEntry1), string3
+                                        observableHolder, mutableInt, mutableInt1, mutableInt2, ZkmFileUtils.describeEntryWithOriginal(archiveZipFile, zipEntry1), content
                                 )
                         );
                     }
                 }
             }
 
-            if (this.standaloneFiles.containsKey(string2)) {
+            if (this.standaloneFiles.containsKey(key)) {
                 ObservableHolder observableHolder1 = new ObservableHolder();
                 MutableInt mutableInt3 = new MutableInt(0);
                 MutableInt mutableInt4 = new MutableInt(0);
                 MutableInt mutableInt5 = new MutableInt(Integer.MAX_VALUE);
 
                 try {
-                    String string5 = XmlResourceProcessor.readFileContent(
-                            (File) this.standaloneFiles.get(string2), observableHolder1, mutableInt3, mutableInt4, mutableInt5
+                    String contentValue = XmlResourceProcessor.readFileContent(
+                            (File) this.standaloneFiles.get(key), observableHolder1, mutableInt3, mutableInt4, mutableInt5
                     );
-                    XmlConfigFileType xmlConfigFileType2 = XmlConfigFileHandler.detectConfigFileType(string2, string5);
+                    XmlConfigFileType xmlConfigFileType2 = XmlConfigFileHandler.detectConfigFileType(key, contentValue);
                     if (xmlConfigFileType2 == xmlConfigFileType) {
-                        arrayList.add(new TextResourceContent(observableHolder1, mutableInt3, mutableInt4, mutableInt5, string2, string5));
+                        arrayList.add(new TextResourceContent(observableHolder1, mutableInt3, mutableInt4, mutableInt5, key, contentValue));
                     }
                 } catch (IOException iOException) {
-                    messageReporter1.reportError("ERROR:", "Could not get read contents of  '" + string2 + "' : " + iOException.getMessage());
+                    messageReporter1.reportError("ERROR:", "Could not get read contents of  '" + key + "' : " + iOException.getMessage());
                 }
             }
         }
@@ -190,41 +190,41 @@ public class ResourceFileIndex {
         return arrayList;
     }
 
-    public void addBeanParents(String string, Map map1) {
+    public void addBeanParents(String key, Map map1) {
         Iterator iterator = map1.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            String string1 = (String) this.beanParentsByFile.putValue(string, entry.getKey(), entry.getValue());
+            String string1 = (String) this.beanParentsByFile.putValue(key, entry.getKey(), entry.getValue());
         }
     }
 
-    public void addBeanClasses(String string, Map map1) {
+    public void addBeanClasses(String key, Map map1) {
         Iterator iterator = map1.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            ProgramClass programClass1 = (ProgramClass) this.beanClassesByFile.putValue(string, entry.getKey(), entry.getValue());
+            ProgramClass programClass1 = (ProgramClass) this.beanClassesByFile.putValue(key, entry.getKey(), entry.getValue());
         }
     }
 
-    public Map getBeanClasses(Object object) {
-        return this.beanClassesByFile.getInnerMap(object);
+    public Map getBeanClasses(Object key) {
+        return this.beanClassesByFile.getInnerMap(key);
     }
 
-    public List getImportedFiles(Object object) {
-        return this.importsByFile.getValues(object);
+    public List getImportedFiles(Object key) {
+        return this.importsByFile.getValues(key);
     }
 
-    public void addDefaultMethodClass(String string, String string1, ProgramClass programClass1) {
-        this.defaultMethodClasses.addValue(string, "beans", string1, programClass1);
+    public void addDefaultMethodClass(String key, String keyArgument, ProgramClass programClass1) {
+        this.defaultMethodClasses.addValue(key, "beans", keyArgument, programClass1);
     }
 
-    public List getImportingFiles(Object object) {
-        return this.importersByFile.getValues(object);
+    public List getImportingFiles(Object key) {
+        return this.importersByFile.getValues(key);
     }
 
-    public SetMultiMap getDefaultMethodClasses(String string) {
-        return this.defaultMethodClasses.getSetMultiMap(string, "beans");
+    public SetMultiMap getDefaultMethodClasses(String key) {
+        return this.defaultMethodClasses.getSetMultiMap(key, "beans");
     }
 }

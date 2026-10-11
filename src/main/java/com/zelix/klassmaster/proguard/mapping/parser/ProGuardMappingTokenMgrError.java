@@ -32,8 +32,8 @@ public class ProGuardMappingTokenMgrError extends Error {
     public static final String addEscapes(String string) {
         StringBuffer stringBuffer = new StringBuffer();
 
-        for (int i = 0; i < string.length(); i++) {
-            switch (string.charAt(i)) {
+        for (int characterIndex = 0; characterIndex < string.length(); characterIndex++) {
+            switch (string.charAt(characterIndex)) {
                 case '\u0000':
                     break;
                 case '\b':
@@ -62,7 +62,7 @@ public class ProGuardMappingTokenMgrError extends Error {
                     break;
                 default:
                     char ba;
-                    if ((ba = string.charAt(i)) >= ' ' && ba <= '~') {
+                    if ((ba = string.charAt(characterIndex)) >= ' ' && ba <= '~') {
                         stringBuffer.append(ba);
                     } else {
                         String string1 = "0000" + Integer.toString(ba, 16);

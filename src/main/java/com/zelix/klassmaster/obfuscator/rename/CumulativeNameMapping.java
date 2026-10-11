@@ -18,24 +18,24 @@ public class CumulativeNameMapping extends ComposableNameMapping {
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                Object object = entry.getKey();
-                Object object1 = entry.getValue();
-                twoKeyMap.putValue(object1, object, object);
+                Object key = entry.getKey();
+                Object value = entry.getValue();
+                twoKeyMap.putValue(value, key, key);
             }
 
             iterator = map1.entrySet().iterator();
 
             while (iterator.hasNext()) {
                 Entry entry1 = (Entry) iterator.next();
-                Object object3 = entry1.getKey();
-                Object object4 = entry1.getValue();
-                Map map2 = twoKeyMap.getInnerMap(object3);
+                Object keyValue = entry1.getKey();
+                Object valueValue = entry1.getValue();
+                Map map2 = twoKeyMap.getInnerMap(keyValue);
                 if (map2 != null) {
-                    for (Object object2 : map2.keySet()) {
-                        super.mapping.put(object2, object4);
+                    for (Object keyValue2 : map2.keySet()) {
+                        super.mapping.put(keyValue2, valueValue);
                     }
                 } else {
-                    super.mapping.put(object3, object4);
+                    super.mapping.put(keyValue, valueValue);
                 }
             }
         }

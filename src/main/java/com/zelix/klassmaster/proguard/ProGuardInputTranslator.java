@@ -46,7 +46,7 @@ public class ProGuardInputTranslator {
         }
 
         Set set2;
-        String string5;
+        String userDir;
         if (string != null) {
             set1.add(string);
             String string3 = readZkmScriptInDir(string, string2, observableHolder);
@@ -55,13 +55,13 @@ public class ProGuardInputTranslator {
             }
 
             set2 = set1;
-            string5 = ZkmFileUtils.USER_DIR;
+            userDir = ZkmFileUtils.USER_DIR;
         } else {
             set2 = set1;
-            string5 = ZkmFileUtils.USER_DIR;
+            userDir = ZkmFileUtils.USER_DIR;
         }
 
-        set2.add(string5);
+        set2.add(userDir);
         String string4 = readZkmScriptInDir(ZkmFileUtils.USER_DIR, string2, observableHolder);
         return string4 != null ? string4 : null;
     }
@@ -72,18 +72,18 @@ public class ProGuardInputTranslator {
             observableHolder.setValue(file1.getAbsolutePath());
             LineCommentStripper lineCommentStripper = new LineCommentStripper();
             String string2 = ZkmFileUtils.readFileTransformed(file1, string1, lineCommentStripper);
-            int ba = string2.indexOf("/*");
-            if (ba > -1) {
+            int endIndex = string2.indexOf("/*");
+            if (endIndex > -1) {
                 StringBuilder stringBuilder = new StringBuilder();
 
-                while (ba > -1) {
-                    stringBuilder.append(string2.substring(0, ba));
-                    int bb = string2.indexOf("*/", ba + 2);
+                while (endIndex > -1) {
+                    stringBuilder.append(string2.substring(0, endIndex));
+                    int bb = string2.indexOf("*/", endIndex + 2);
                     if (bb > -1) {
                         string2 = string2.substring(bb + 2);
-                        ba = string2.indexOf("/*");
+                        endIndex = string2.indexOf("/*");
                     } else {
-                        ba = -1;
+                        endIndex = -1;
                     }
                 }
 
@@ -97,50 +97,50 @@ public class ProGuardInputTranslator {
         }
     }
 
-    public static int findLastFileOptionEnd(String string, int ba, ObservableHolder observableHolder) throws ZkmException, IOException {
-        int bb = findNextFileOptionEnd(string, ba, observableHolder);
+    public static int findLastFileOptionEnd(String string, int integerArgument, ObservableHolder observableHolder) throws ZkmException, IOException {
+        int integerValue = findNextFileOptionEnd(string, integerArgument, observableHolder);
         boolean bl = true;
 
-        while (bb > 0 && bl) {
-            int bc = ZkmStringUtils.skipWhitespace(string, bb);
-            if (bc != -1 && string.charAt(bc) == '-') {
-                bb = findNextFileOptionEnd(string, bb, observableHolder);
+        while (integerValue > 0 && bl) {
+            int characterIndex = ZkmStringUtils.skipWhitespace(string, integerValue);
+            if (characterIndex != -1 && string.charAt(characterIndex) == '-') {
+                integerValue = findNextFileOptionEnd(string, integerValue, observableHolder);
             } else {
                 bl = false;
             }
         }
 
-        return bb;
+        return integerValue;
     }
 
-    public static String translateToZkmScript(final String s, final Properties properties) throws ZkmException, IOException {
+    public static String translateToZkmScript(final String text, final Properties properties) throws ZkmException, IOException {
         final ObservableHolder observableHolder = new ObservableHolder();
         final StringWriter out = new StringWriter();
         final ObservableHolder observableHolder2 = new ObservableHolder();
-        final File writeStringToTempFile = ZkmFileUtils.writeStringToTempFile(s, observableHolder2);
+        final File writeStringToTempFile = ZkmFileUtils.writeStringToTempFile(text, observableHolder2);
         if (!observableHolder2.isValueNull()) {
             return (String) observableHolder2.getValue();
         }
         try {
             return parseConfigFile(writeStringToTempFile, new PrintWriter(out), observableHolder, properties).buildZkmScript("ProGuardInputTranslator", true, true, new ArrayList());
-        } catch (final AssertionFailedException ex) {
-            throw ex;
-        } catch (final Throwable t) {
+        } catch (final AssertionFailedException assertionFailedExceptionValue) {
+            throw assertionFailedExceptionValue;
+        } catch (final Throwable throwableValue) {
             out.flush();
             final String string = out.toString();
             final File file = new File("ZKM_PG_log.txt");
             PrintWriter printWriter = null;
             String s2;
             try {
-                s2 = "ERROR: Error while translating input from ProGuard to Zelix KlassMaster format : '" + t.getMessage() + "' (B)";
+                s2 = "ERROR: Error while translating input from ProGuard to Zelix KlassMaster format : '" + throwableValue.getMessage() + "' (B)";
                 printWriter = new PrintWriter(new FileWriter(file));
                 printWriter.println(string);
                 printWriter.println(s2);
                 s2 = s2 + ZkmAssert.lineSeparator + "See '" + file.getAbsolutePath() + "' for more detail. Any error message line numbers will refer to the content appearing two lines after the '" + "Expanded and preprocessed ProGuard style input" + "' line.";
                 printWriter.flush();
                 printWriter.close();
-            } catch (final IOException ex2) {
-                s2 = "ERROR: Error while translating input from ProGuard to Zelix KlassMaster format : '" + t.getMessage() + "' (C)";
+            } catch (final IOException ioException) {
+                s2 = "ERROR: Error while translating input from ProGuard to Zelix KlassMaster format : '" + throwableValue.getMessage() + "' (C)";
             } finally {
                 if (printWriter != null) {
                     printWriter.close();
@@ -150,18 +150,18 @@ public class ProGuardInputTranslator {
         } finally {
             try {
                 out.close();
-            } catch (final IOException ex3) {
+            } catch (final IOException ioExceptionValue) {
             }
             try {
                 if (observableHolder.getValue() != null) {
                     ((Reader) observableHolder.getValue()).close();
                 }
-            } catch (final IOException ex4) {
+            } catch (final IOException ioExceptionValue2) {
             }
         }
     }
 
-    public static void t() {
+    public static void clearOptionPositions() {
         optionPositions = null;
     }
 
@@ -171,58 +171,58 @@ public class ProGuardInputTranslator {
         StringBuilder stringBuilder = new StringBuilder();
         int ba = 0;
 
-        for (int i = string.indexOf("-include"); i > -1; i = string.indexOf("-include", ba)) {
+        for (int endIndex = string.indexOf("-include"); endIndex > -1; endIndex = string.indexOf("-include", ba)) {
             String string4;
-            int bf;
+            int endIndexValue;
             String string5;
-            if (i - 1 > ba) {
-                String string1 = string.substring(ba, i);
+            if (endIndex - 1 > ba) {
+                String string1 = string.substring(ba, endIndex);
                 stringBuilder.append(string1);
                 stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
                 string4 = string;
-                bf = i;
+                endIndexValue = endIndex;
                 string5 = "-include";
             } else {
                 string4 = string;
-                bf = i;
+                endIndexValue = endIndex;
                 string5 = "-include";
             }
 
-            int be = ZkmStringUtils.skipWhitespace(string4, bf + string5.length());
-            if (be == -1) {
+            int beginIndex = ZkmStringUtils.skipWhitespace(string4, endIndexValue + string5.length());
+            if (beginIndex == -1) {
                 throw new ProGuardIncludeException("No contents for '-include' in file '" + ((File) objectStack.peek()).getAbsolutePath() + "'");
             }
 
-            int bc = be;
-            char bd = string.charAt(bc);
+            int beginIndexValue = beginIndex;
+            char bd = string.charAt(beginIndexValue);
             boolean bl = false;
 
-            for (boolean bl1 = Character.isWhitespace(bd); !bl1 || bd == ' ' && bl; bl1 = Character.isWhitespace(bd)) {
+            for (boolean whitespace = Character.isWhitespace(bd); !whitespace || bd == ' ' && bl; whitespace = Character.isWhitespace(bd)) {
                 if (bd == '"') {
                     bl = !bl;
                 }
 
-                bd = string.charAt(++bc);
+                bd = string.charAt(++beginIndexValue);
             }
 
-            String string2 = string.substring(be, bc);
-            if (string2.startsWith("\"") && string2.endsWith("\"")) {
-                string2 = string2.substring(1, string2.length() - 1);
+            String pathnameValue = string.substring(beginIndex, beginIndexValue);
+            if (pathnameValue.startsWith("\"") && pathnameValue.endsWith("\"")) {
+                pathnameValue = pathnameValue.substring(1, pathnameValue.length() - 1);
             }
 
-            if (string2.indexOf("\"") > -1) {
+            if (pathnameValue.indexOf("\"") > -1) {
                 throw new ProGuardIncludeException(
-                        "Broken string literal in '-include' in file '" + ((File) objectStack.peek()).getAbsolutePath() + "' : '" + string2 + "'"
+                        "Broken string literal in '-include' in file '" + ((File) objectStack.peek()).getAbsolutePath() + "' : '" + pathnameValue + "'"
                 );
             }
 
-            String string3 = readIncludeFile(string2, properties1, properties2, objectStack, map1, printWriter);
+            String string3 = readIncludeFile(pathnameValue, properties1, properties2, objectStack, map1, printWriter);
             stringBuilder.append(string3);
             if (!string3.endsWith(HiddenOptionFlags.LINE_SEPARATOR)) {
                 stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
             }
 
-            ba = bc + 1;
+            ba = beginIndexValue + 1;
         }
 
         stringBuilder.append(string.substring(ba, string.length()));
@@ -230,8 +230,8 @@ public class ProGuardInputTranslator {
     }
 
     public static String readIncludeFile(final String pathname, final Properties properties, final Properties properties2, final ObjectStack objectStack, final Map map, final PrintWriter printWriter) throws ProGuardIncludeException, IOException {
-        final StringBuilder sb = new StringBuilder();
-        final StringBuilder sb2 = new StringBuilder();
+        final StringBuilder stringBuilderValue = new StringBuilder();
+        final StringBuilder stringBuilderValue2 = new StringBuilder();
         BufferedReader bufferedReader = null;
         final File file = new File(pathname);
         printWriter.println("Expanding '-include' '" + file.getAbsolutePath() + "'");
@@ -242,37 +242,37 @@ public class ProGuardInputTranslator {
             objectStack.push(file);
             try {
                 bufferedReader = new BufferedReader(new FileReader(file));
-            } catch (final IOException ex) {
-                throw new ProGuardIncludeException("File error while processing '-include' of file '" + file.getAbsolutePath() + "'" + ((objectStack.size() > 1) ? (" in file '" + ((File) objectStack.peekAt(1)).getAbsolutePath() + "'") : "") + " : '" + ex.getMessage() + "'");
+            } catch (final IOException ioException) {
+                throw new ProGuardIncludeException("File error while processing '-include' of file '" + file.getAbsolutePath() + "'" + ((objectStack.size() > 1) ? (" in file '" + ((File) objectStack.peekAt(1)).getAbsolutePath() + "'") : "") + " : '" + ioException.getMessage() + "'");
             }
             String str;
             while ((str = bufferedReader.readLine()) != null) {
-                sb.append(str);
-                sb.append(HiddenOptionFlags.LINE_SEPARATOR);
+                stringBuilderValue.append(str);
+                stringBuilderValue.append(HiddenOptionFlags.LINE_SEPARATOR);
                 final int index = str.indexOf("#");
                 if (index > -1) {
                     str = str.substring(0, index);
                 }
                 final String trim = str.trim();
                 if (trim.length() > 0) {
-                    sb2.append(trim);
-                    sb2.append(HiddenOptionFlags.LINE_SEPARATOR);
+                    stringBuilderValue2.append(trim);
+                    stringBuilderValue2.append(HiddenOptionFlags.LINE_SEPARATOR);
                 }
             }
             try {
                 bufferedReader.close();
-            } catch (final IOException ex2) {
+            } catch (final IOException ioExceptionValue) {
             }
         } finally {
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (final IOException ex3) {
+                } catch (final IOException ioExceptionValue2) {
                 }
             }
         }
-        map.put(file, sb.toString());
-        final String expandIncludes = expandIncludes(substituteProperties(sb2.toString(), properties, properties2), properties, properties2, objectStack, map, printWriter);
+        map.put(file, stringBuilderValue.toString());
+        final String expandIncludes = expandIncludes(substituteProperties(stringBuilderValue2.toString(), properties, properties2), properties, properties2, objectStack, map, printWriter);
         final File file2 = (File) objectStack.pop();
         return expandIncludes;
     }
@@ -282,22 +282,22 @@ public class ProGuardInputTranslator {
     }
 
     public static int findNextFileOptionEnd(String string, Integer integer, ObservableHolder observableHolder) throws ZkmException, IOException {
-        int[] ba = new int[ProGuardOptionNames.FILE_ARG_OPTIONS.length];
+        int[] integerArray = new int[ProGuardOptionNames.FILE_ARG_OPTIONS.length];
 
-        for (int i = 0; i < ba.length; i++) {
-            ba[i] = string.indexOf(ProGuardOptionNames.FILE_ARG_OPTIONS[i], integer);
+        for (int i = 0; i < integerArray.length; i++) {
+            integerArray[i] = string.indexOf(ProGuardOptionNames.FILE_ARG_OPTIONS[i], integer);
         }
 
-        int bd = -1;
+        int integerArrayElement = -1;
 
-        for (int i = 0; i < ba.length; i++) {
-            if (ba[i] > -1 && (bd == -1 || ba[i] < bd)) {
-                bd = ba[i];
+        for (int i = 0; i < integerArray.length; i++) {
+            if (integerArray[i] > -1 && (integerArrayElement == -1 || integerArray[i] < integerArrayElement)) {
+                integerArrayElement = integerArray[i];
                 observableHolder.setValue(ProGuardOptionNames.FILE_ARG_OPTIONS[i]);
             }
         }
 
-        return bd > -1 ? bd + ((String) observableHolder.getValue()).length() : bd;
+        return integerArrayElement > -1 ? integerArrayElement + ((String) observableHolder.getValue()).length() : integerArrayElement;
     }
 
     public static int[] getOptionPositions() {
@@ -310,35 +310,35 @@ public class ProGuardInputTranslator {
         int bd = string.indexOf("<", 0);
 
         while (true) {
-            int bb = bd;
+            int endIndex = bd;
             if (bd <= -1) {
                 stringBuilder.append(string.substring(ba));
                 return stringBuilder.toString();
             }
 
-            stringBuilder.append(string.substring(ba, bb));
-            int bc = string.indexOf(">", bb + "<".length());
-            if (bc > -1 && bc > bb + "<".length()) {
-                String string1 = string.substring(bb + "<".length(), bc);
-                String string2 = null;
+            stringBuilder.append(string.substring(ba, endIndex));
+            int endIndexValue = string.indexOf(">", endIndex + "<".length());
+            if (endIndexValue > -1 && endIndexValue > endIndex + "<".length()) {
+                String string1 = string.substring(endIndex + "<".length(), endIndexValue);
+                String property = null;
                 if (properties1 != null) {
-                    string2 = properties1.getProperty(string1);
+                    property = properties1.getProperty(string1);
                 }
 
-                if (string2 == null) {
-                    string2 = properties2.getProperty(string1);
+                if (property == null) {
+                    property = properties2.getProperty(string1);
                 }
 
-                if (string2 != null) {
-                    stringBuilder.append(string2);
-                    ba = bc + ">".length();
+                if (property != null) {
+                    stringBuilder.append(property);
+                    ba = endIndexValue + ">".length();
                 } else {
                     stringBuilder.append("<");
-                    ba = bb + "<".length();
+                    ba = endIndex + "<".length();
                 }
             } else {
                 stringBuilder.append("<");
-                ba = bb + "<".length();
+                ba = endIndex + "<".length();
             }
 
             bd = string.indexOf("<", ba);
@@ -346,26 +346,26 @@ public class ProGuardInputTranslator {
     }
 
     public static String quoteFileArguments(String string) throws ZkmException, IOException {
-        int ba = string.length();
+        int endIndex = string.length();
         StringBuilder stringBuilder = new StringBuilder();
-        int bb = 0;
+        int beginIndex = 0;
         ObservableHolder observableHolder = new ObservableHolder();
 
-        for (int i = findLastFileOptionEnd(string, 0, observableHolder); i > -1; i = findLastFileOptionEnd(string, bb, observableHolder)) {
-            String string1 = string.substring(bb, i).trim();
-            stringBuilder.append(string.substring(bb, i));
-            int bd = ZkmStringUtils.skipWhitespace(string, i);
-            if (bd == -1) {
-                bb = ba;
+        for (int i = findLastFileOptionEnd(string, 0, observableHolder); i > -1; i = findLastFileOptionEnd(string, beginIndex, observableHolder)) {
+            String string1 = string.substring(beginIndex, i).trim();
+            stringBuilder.append(string.substring(beginIndex, i));
+            int endIndexValue = ZkmStringUtils.skipWhitespace(string, i);
+            if (endIndexValue == -1) {
+                beginIndex = endIndex;
                 break;
             }
 
-            stringBuilder.append(string.substring(i, bd));
-            int be = bd;
-            char bf = string.charAt(be);
+            stringBuilder.append(string.substring(i, endIndexValue));
+            int characterIndex = endIndexValue;
+            char bf = string.charAt(characterIndex);
             char bg = 0;
-            if (string.length() > be + 1) {
-                bg = string.charAt(be + 1);
+            if (string.length() > characterIndex + 1) {
+                bg = string.charAt(characterIndex + 1);
             }
 
             if (bf == '\'') {
@@ -375,7 +375,7 @@ public class ProGuardInputTranslator {
             boolean bl = false;
             boolean bl1 = true;
 
-            while (be < ba && (!Character.isWhitespace(bf) || bf == ' ' && bl)) {
+            while (characterIndex < endIndex && (!Character.isWhitespace(bf) || bf == ' ' && bl)) {
                 if (bf == '"' && !isQuoteTerminator(bg)) {
                     bl = !bl;
                 }
@@ -409,15 +409,15 @@ public class ProGuardInputTranslator {
                     bl1 = true;
                 }
 
-                if (++be < ba) {
-                    bf = string.charAt(be);
+                if (++characterIndex < endIndex) {
+                    bf = string.charAt(characterIndex);
                     if (bf == '\'') {
                         bf = '"';
                     }
                 }
 
-                if (string.length() > be + 1) {
-                    bg = string.charAt(be + 1);
+                if (string.length() > characterIndex + 1) {
+                    bg = string.charAt(characterIndex + 1);
                 }
             }
 
@@ -425,10 +425,10 @@ public class ProGuardInputTranslator {
                 stringBuilder.append("\"");
             }
 
-            bb = be;
+            beginIndex = characterIndex;
         }
 
-        stringBuilder.append(string.substring(bb, ba));
+        stringBuilder.append(string.substring(beginIndex, endIndex));
         return stringBuilder.toString();
     }
 
@@ -574,13 +574,13 @@ public class ProGuardInputTranslator {
             proGuardConfigTranslator.loadTemplateStatements(string2, (String) observableHolder5.getValue());
         }
 
-        String string9 = proGuardConfigTranslator.buildZkmScript("ProGuardInputTranslator", true, true, new ArrayList());
+        String text = proGuardConfigTranslator.buildZkmScript("ProGuardInputTranslator", true, true, new ArrayList());
         observableHolder.setValue(proGuardConfigTranslator.getPrintSeedsFile());
         observableHolder1.setValue(proGuardConfigTranslator.getPrintUsageFile());
         observableHolder2.setValue(proGuardConfigTranslator.getBaseDirectory());
         booleanFlag.setValue(proGuardConfigTranslator.isVerbose());
         observableHolder3.setValue(null);
-        File file2 = ZkmFileUtils.writeStringToTempFile(string9, observableHolder3);
+        File file2 = ZkmFileUtils.writeStringToTempFile(text, observableHolder3);
         if (file2 == null) {
             String string8 = "ERROR: Error while attempting to create temporary file (B) : '" + (String) observableHolder3.getValue() + "'.";
             if (!bl) {
@@ -594,7 +594,7 @@ public class ProGuardInputTranslator {
     }
 
     static {
-        t();
+        clearOptionPositions();
     }
 
     private ProGuardInputTranslator() {

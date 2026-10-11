@@ -54,7 +54,7 @@ public class ZkmScriptTreeState {
     }
 
     public void clearNodeScope() {
-        for (int i = this.stackSize; i > this.currentMark; i = this.stackSize) {
+        for (int stackSizeValue = this.stackSize; stackSizeValue > this.currentMark; stackSizeValue = this.stackSize) {
             this.popNode();
         }
 

@@ -12,8 +12,8 @@ public class ConstantLong extends NumericConstantEntry implements ConstantKeyPro
     public long value;
     public boolean inProgramPool;
 
-    public ConstantLong(int ba, AbstractConstantPool abstractConstantPool, ConstantLong constantLong1) {
-        super(ba, abstractConstantPool);
+    public ConstantLong(int index, AbstractConstantPool abstractConstantPool, ConstantLong constantLong1) {
+        super(index, abstractConstantPool);
         this.value = constantLong1.value;
         this.inProgramPool = constantLong1.inProgramPool;
     }
@@ -33,15 +33,15 @@ public class ConstantLong extends NumericConstantEntry implements ConstantKeyPro
     }
 
     @Override
-    public void setValueFromString(String string) throws ZkmException, IOException {
-        long ba;
+    public void setValueFromString(String valueFromString) throws ZkmException, IOException {
+        long valueValue;
         try {
-            ba = Long.valueOf(string);
+            valueValue = Long.valueOf(valueFromString);
         } catch (NumberFormatException numberFormatException) {
-            throw new InvalidEditException(string + " is not a valid long");
+            throw new InvalidEditException(valueFromString + " is not a valid long");
         }
 
-        this.value = ba;
+        this.value = valueValue;
         this.notifyObservers();
     }
 
@@ -100,8 +100,8 @@ public class ConstantLong extends NumericConstantEntry implements ConstantKeyPro
         this.value = value;
     }
 
-    public ConstantLong(int ba, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
-        super(ba, abstractConstantPool);
+    public ConstantLong(int index, ClassFileInputStream classFileInputStream, AbstractConstantPool abstractConstantPool) throws IOException {
+        super(index, abstractConstantPool);
         this.value = classFileInputStream.readLong();
         this.inProgramPool = abstractConstantPool.isProgramPool();
     }

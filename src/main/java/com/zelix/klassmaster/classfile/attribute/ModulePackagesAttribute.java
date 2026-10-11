@@ -28,8 +28,8 @@ public class ModulePackagesAttribute extends ParsedAttributeBase implements Utf8
         this.nameConstant.registerUsage(usedConstantsCollector, this, this.getParent());
         if (super.valid) {
             final ResolvedPackageConstant[] packages = this.packages;
-            for (int length = packages.length, i = 0; i < length; ++i) {
-                packages[i].registerUsage(usedConstantsCollector, this, this.getParent());
+            for (int length = packages.length, packageIndex = 0; packageIndex < length; ++packageIndex) {
+                packages[packageIndex].registerUsage(usedConstantsCollector, this, this.getParent());
             }
         }
     }
@@ -40,82 +40,72 @@ public class ModulePackagesAttribute extends ParsedAttributeBase implements Utf8
         if (super.valid) {
             dataOutputStream.writeShort(this.packages.length);
             final ResolvedPackageConstant[] packages = this.packages;
-            for (int length = packages.length, i = 0; i < length; ++i) {
-                dataOutputStream.writeShort(packages[i].getIndex());
+            for (int length = packages.length, packageIndex = 0; packageIndex < length; ++packageIndex) {
+                dataOutputStream.writeShort(packages[packageIndex].getIndex());
             }
         } else {
             dataOutputStream.write(super.rawBytes);
         }
     }
 
-    public ModulePackagesAttribute(final ClassFileComponent classFileComponent, final int n, final String s, final ClassFileInputStream classFileInputStream, final ListMultimap listMultimap) throws ClassFileFormatException, IOException {
-        super(classFileComponent, n, s, classFileInputStream, listMultimap);
+    public ModulePackagesAttribute(final ClassFileComponent classFileComponent, final int constantPoolIndex, final String attributeName, final ClassFileInputStream classFileInputStream, final ListMultimap listMultimap) throws ClassFileFormatException, IOException {
+        super(classFileComponent, constantPoolIndex, attributeName, classFileInputStream, listMultimap);
         classFileInputStream.read(super.rawBytes = new byte[this.length]);
         final ClassFileInputStream fromBytes = ClassFileInputStream.fromBytes(super.rawBytes, false);
-        Throwable t = null;
-        ResolvedPackageConstant[] array = null;
-        Label_0305:
-        {
-            Label_0301:
-            {
-                try {
-                    final int unsignedShort = fromBytes.readUnsignedShort();
-                    this.packages = new ResolvedPackageConstant[unsignedShort];
-                    for (int i = 0; i < unsignedShort; ++i) {
-                        final int unsignedShort2 = fromBytes.readUnsignedShort();
-                        final ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(unsignedShort2);
-                        if (constantPoolEntry == null) {
-                            super.valid = false;
-                            throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + unsignedShort2 + " : File is probably corrupt (AD)");
-                        }
-                        if (!(constantPoolEntry instanceof ResolvedPackageConstant)) {
-                            super.valid = false;
-                            throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : " + unsignedShort2 + " : '" + ((ResolvedPackageConstant) constantPoolEntry).getClass().getName() + "' : File is probably corrupt (AE)");
-                        }
-                        this.packages[i] = (ResolvedPackageConstant) constantPoolEntry;
-                    }
-                    if (fromBytes != null) {
-                        fromBytes.close();
-                        break Label_0301;
-                    }
-                } catch (final Throwable t2) {
-                    t = t2;
-                    throw t2;
-                } finally {
-                    if (fromBytes != null) {
-                        if (t != null) {
-                            try {
-                                fromBytes.close();
-                            } catch (final Throwable exception) {
-                                t.addSuppressed(exception);
-                            }
-                        } else {
-                            fromBytes.close();
-                        }
-                    }
+        Throwable throwableValue = null;
+        try {
+            final int unsignedShort = fromBytes.readUnsignedShort();
+            this.packages = new ResolvedPackageConstant[unsignedShort];
+            for (int packageIndex = 0; packageIndex < unsignedShort; ++packageIndex) {
+                final int unsignedShort2 = fromBytes.readUnsignedShort();
+                final ConstantPoolEntry constantPoolEntry = classFileComponent.getConstantPoolEntry(unsignedShort2);
+                if (constantPoolEntry == null) {
+                    super.valid = false;
+                    throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Illegal constant pool index in attribute : " + unsignedShort2 + " : File is probably corrupt (AD)");
                 }
-                array = this.packages;
-                break Label_0305;
+                if (!(constantPoolEntry instanceof ResolvedPackageConstant)) {
+                    super.valid = false;
+                    throw new ClassFileFormatException(classFileComponent.getOwningClass().getLocationName() + " : Invalid attribute : " + unsignedShort2 + " : '" + ((ResolvedPackageConstant) constantPoolEntry).getClass().getName() + "' : File is probably corrupt (AE)");
+                }
+                this.packages[packageIndex] = (ResolvedPackageConstant) constantPoolEntry;
             }
-            array = this.packages;
+            if (fromBytes != null) {
+                fromBytes.close();
+            }
+        } catch (final Throwable throwable) {
+            throwableValue = throwable;
+            throw throwable;
+        } finally {
+            if (fromBytes != null) {
+                if (throwableValue != null) {
+                    try {
+                        fromBytes.close();
+                    } catch (final Throwable exception) {
+                        throwableValue.addSuppressed(exception);
+                    }
+                } else {
+                    fromBytes.close();
+                }
+            }
         }
+        ResolvedPackageConstant[] array = this.packages;
         if (!ZkmUtils.allUnique(array)) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append("Invalid 'Module' attribute in class '");
-            sb.append(this.getLocationName());
-            sb.append("' : Duplicate package names : ");
-            int n2 = 0;
+            final StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Invalid 'Module' attribute in class '");
+            stringBuilder.append(this.getLocationName());
+            stringBuilder.append("' : Duplicate package names : ");
+            int packageIndexValue = 0;
             int j = 0;
             ResolvedPackageConstant[] array2 = this.packages;
             while (j < array2.length) {
-                sb.append(this.packages[n2].getValueString());
-                if (n2 < this.packages.length - 1) {
-                    sb.append(", ");
+                stringBuilder.append(this.packages[packageIndexValue].getValueString());
+                if (packageIndexValue < this.packages.length - 1) {
+                    stringBuilder.append(", ");
                 }
-                n2 = (j = n2 + 1);
+                packageIndexValue = (j = packageIndexValue + 1);
                 array2 = this.packages;
             }
-            ZkmAssert.assertTrue(false, new String[]{sb.toString()});
+            ZkmAssert.assertTrue(false, new String[]{stringBuilder.toString()});
         }
     }
 
@@ -129,8 +119,8 @@ public class ModulePackagesAttribute extends ParsedAttributeBase implements Utf8
         if (super.valid) {
             dataOutputStream.writeShort(this.packages.length);
             final ResolvedPackageConstant[] packages = this.packages;
-            for (int length = packages.length, i = 0; i < length; ++i) {
-                dataOutputStream.writeShort(packages[i].getIndex());
+            for (int length = packages.length, packageIndex = 0; packageIndex < length; ++packageIndex) {
+                dataOutputStream.writeShort(packages[packageIndex].getIndex());
             }
         } else {
             dataOutputStream.write(super.rawBytes);

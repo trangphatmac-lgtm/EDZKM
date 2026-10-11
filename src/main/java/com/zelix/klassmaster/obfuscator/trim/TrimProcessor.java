@@ -435,8 +435,8 @@ public class TrimProcessor extends ExclusionHandlerBase {
                     ClassBeforeMemberComparator classBeforeMemberComparator = new ClassBeforeMemberComparator(this);
                     Collections.sort(list1, classBeforeMemberComparator);
 
-                    for (int i = 0; i < list1.size(); i++) {
-                        Object object = list1.get(i);
+                    for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                        Object object = list1.get(elementIndex);
                         if (object instanceof ProgramClass) {
                             ProgramClass programClass5 = (ProgramClass) object;
                             this.markClassReachable(programClass5, uniqueWorkQueue, true);
@@ -503,10 +503,10 @@ public class TrimProcessor extends ExclusionHandlerBase {
 
         Collections.sort(arrayList);
         String string3 = bl ? "Would trim" : "Trimmed";
-        int bb = arrayList.size();
+        int arrayListSize = arrayList.size();
 
-        for (int i = 0; i < bb; i++) {
-            ProgramClass programClass2 = (ProgramClass) arrayList.get(i);
+        for (int elementIndex = 0; elementIndex < arrayListSize; elementIndex++) {
+            ProgramClass programClass2 = (ProgramClass) arrayList.get(elementIndex);
             String string = programClass2.hasReleaseVersion() ? " (multirelease version " + programClass2.getReleaseVersion() + ")" : "";
             if (!bl && super.scriptEnvironment.isVerbose()) {
                 super.logWriter.println("\tTrimmed class \"" + AbstractExclusionSpec.formatClass(programClass2, classHierarchyQuery, false) + "\"" + string);
@@ -552,10 +552,10 @@ public class TrimProcessor extends ExclusionHandlerBase {
             }
         }
 
-        int bc = arrayList1.size();
+        int arrayList1Size = arrayList1.size();
 
-        for (int i = 0; i < bc; i++) {
-            FieldInfo fieldInfo1 = (FieldInfo) arrayList1.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < arrayList1Size; elementIndexValue++) {
+            FieldInfo fieldInfo1 = (FieldInfo) arrayList1.get(elementIndexValue);
             ProgramClass programClass4 = fieldInfo1.getProgramClass();
             String string1 = programClass4.hasReleaseVersion() ? " (multirelease version " + programClass4.getReleaseVersion() + ")" : "";
             if (!bl && super.scriptEnvironment.isVerbose()) {
@@ -595,10 +595,10 @@ public class TrimProcessor extends ExclusionHandlerBase {
         }
 
         Collections.sort(arrayList2, memberNameComparator);
-        int be = arrayList2.size();
+        int arrayList2Size = arrayList2.size();
 
-        for (int i = 0; i < be; i++) {
-            MethodInfo methodInfo2 = (MethodInfo) arrayList2.get(i);
+        for (int elementIndexValue2 = 0; elementIndexValue2 < arrayList2Size; elementIndexValue2++) {
+            MethodInfo methodInfo2 = (MethodInfo) arrayList2.get(elementIndexValue2);
             ProgramClass programClass5 = methodInfo2.getOwnerProgramClass();
             String string2 = programClass5.hasReleaseVersion() ? " (multirelease version " + programClass5.getReleaseVersion() + ")" : "";
             if (!bl && super.scriptEnvironment.isVerbose()) {
@@ -728,24 +728,24 @@ public class TrimProcessor extends ExclusionHandlerBase {
         }
     }
 
-    public EnumerableMap getTrimmedFieldsOfClass(Object object) {
-        Map map1 = this.trimmedFieldsByClass.getInnerMap(object);
+    public EnumerableMap getTrimmedFieldsOfClass(Object key) {
+        Map map1 = this.trimmedFieldsByClass.getInnerMap(key);
         return map1 != null ? new EnumerableMap(map1) : null;
     }
 
     public static ParameterListStatement parseInternalDefaultTrimExclude(ScriptEnvironment scriptEnvironment1, Throwable throwable) throws ZkmException, IOException {
-        String string = scriptEnvironment1.getDefaultTrimExcludeFile();
+        String defaultTrimExcludeFile = scriptEnvironment1.getDefaultTrimExcludeFile();
         if (throwable != null) {
-            System.err.println("\"" + string + "\" had a parse error and will be ignored. See \"" + scriptEnvironment1.getLogFileName() + "\" for more detail.");
+            System.err.println("\"" + defaultTrimExcludeFile + "\" had a parse error and will be ignored. See \"" + scriptEnvironment1.getLogFileName() + "\" for more detail.");
             scriptEnvironment1.logWarning(
                     "\""
-                            + string
+                            + defaultTrimExcludeFile
                             + "\" had a parse error :"
                             + HiddenOptionFlags.LINE_SEPARATOR
                             + throwable.getMessage()
                             + HiddenOptionFlags.LINE_SEPARATOR
                             + "Will use the internal default trim statement and ignore \""
-                            + string
+                            + defaultTrimExcludeFile
                             + "\"."
             );
         }
@@ -904,8 +904,8 @@ public class TrimProcessor extends ExclusionHandlerBase {
     public void matchLibraryOverrideMethods() throws ZkmException, IOException {
         MethodInfo[] methodInfos = this.libraryOverrideCollector.getLibraryOverridingMethods();
 
-        for (int i = 0; i < methodInfos.length; i++) {
-            MethodInfo methodInfo1 = methodInfos[i];
+        for (int methodInfoIndex = 0; methodInfoIndex < methodInfos.length; methodInfoIndex++) {
+            MethodInfo methodInfo1 = methodInfos[methodInfoIndex];
             this.matchMethod(methodInfo1);
             ProgramClass programClass1 = methodInfo1.getOwnerProgramClass();
             if (methodInfo1.isStatic()) {
@@ -953,8 +953,8 @@ public class TrimProcessor extends ExclusionHandlerBase {
         return null;
     }
 
-    public EnumerableMap getTrimmedMethodsOfClass(Object object) {
-        Map map1 = this.trimmedMethodsByClass.getInnerMap(object);
+    public EnumerableMap getTrimmedMethodsOfClass(Object key) {
+        Map map1 = this.trimmedMethodsByClass.getInnerMap(key);
         return map1 != null ? new EnumerableMap(map1) : null;
     }
 
@@ -1196,20 +1196,20 @@ public class TrimProcessor extends ExclusionHandlerBase {
 
     public final void initCandidates(Enumeration enumeration, int ba) {
         ArrayList arrayList = new ArrayList();
-        int bb = ZkmUtils.getPrimeCapacity(ba);
-        super.includedClasses = ZkmUtils.createHashMap(bb);
-        super.excludedClasses = ZkmUtils.createHashMap(bb);
+        int primeCapacity = ZkmUtils.getPrimeCapacity(ba);
+        super.includedClasses = ZkmUtils.createHashMap(primeCapacity);
+        super.excludedClasses = ZkmUtils.createHashMap(primeCapacity);
         super.includedFields = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(ba * 5));
         super.excludedFields = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(ba * 5));
         this.includedMethods = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(ba * 5));
         this.excludedMethods = ZkmUtils.createHashMap(ZkmUtils.getPrimeCapacity(ba * 5));
-        this.instantiatedClasses = ZkmUtils.createHashSet(bb);
-        this.pendingStaticFields = new TwoKeyMap(bb, ZkmUtils.getPrimeCapacity(5));
-        this.pendingInstanceFields = new TwoKeyMap(bb, ZkmUtils.getPrimeCapacity(5));
-        this.pendingStaticMethods = new TwoKeyMap(bb, ZkmUtils.getPrimeCapacity(5));
-        this.pendingInstanceMethods = new TwoKeyMap(bb, ZkmUtils.getPrimeCapacity(5));
-        this.trimmedFieldsByClass = new TwoKeyMap(bb);
-        this.trimmedMethodsByClass = new TwoKeyMap(bb);
+        this.instantiatedClasses = ZkmUtils.createHashSet(primeCapacity);
+        this.pendingStaticFields = new TwoKeyMap(primeCapacity, ZkmUtils.getPrimeCapacity(5));
+        this.pendingInstanceFields = new TwoKeyMap(primeCapacity, ZkmUtils.getPrimeCapacity(5));
+        this.pendingStaticMethods = new TwoKeyMap(primeCapacity, ZkmUtils.getPrimeCapacity(5));
+        this.pendingInstanceMethods = new TwoKeyMap(primeCapacity, ZkmUtils.getPrimeCapacity(5));
+        this.trimmedFieldsByClass = new TwoKeyMap(primeCapacity);
+        this.trimmedMethodsByClass = new TwoKeyMap(primeCapacity);
 
         while (enumeration.hasMoreElements()) {
             ProgramClass programClass1 = (ProgramClass) enumeration.nextElement();
@@ -1375,11 +1375,11 @@ public class TrimProcessor extends ExclusionHandlerBase {
             this.initCandidates(classRepository1.enumerateProgramClasses(), classRepository1.getClassCount());
             HashMap hashMap = ZkmUtils.createHashMap();
             ArrayList arrayList = new ArrayList();
-            int ba = 0;
+            int elementIndex = 0;
             int bl = 0;
 
             for (List list4 = super.exclusionStatements; bl < list4.size(); list4 = super.exclusionStatements) {
-                ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(ba);
+                ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
                 Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
                 while (enumeration.hasMoreElements()) {
@@ -1393,19 +1393,19 @@ public class TrimProcessor extends ExclusionHandlerBase {
                     }
                 }
 
-                bl = ++ba;
+                bl = ++elementIndex;
             }
 
             if (scriptEnvironment1.isVerbose() && arrayList.size() > 0) {
                 super.logWriter.println("\tTrim exclusion parameters:");
 
-                for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-                    super.logWriter.println("\t\t" + arrayList.get(i));
+                for (int elementIndexValue = arrayList.size() - 1; elementIndexValue >= 0; elementIndexValue += -1) {
+                    super.logWriter.println("\t\t" + arrayList.get(elementIndexValue));
                 }
             }
 
-            for (int i = arrayList.size() - 1; i >= 0; i += -1) {
-                ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) arrayList.get(i);
+            for (int elementIndexValue2 = arrayList.size() - 1; elementIndexValue2 >= 0; elementIndexValue2 += -1) {
+                ASTRenameFilterParameter aSTRenameFilterParameter3 = (ASTRenameFilterParameter) arrayList.get(elementIndexValue2);
                 if (aSTRenameFilterParameter3.isPackageSpecifier()) {
                     scriptEnvironment1.logMessage(
                             "Parameter '" + aSTRenameFilterParameter3 + "' in 'trimExclude' statement is a 'package' level parameter. It will be ignored.", true
@@ -1436,11 +1436,11 @@ public class TrimProcessor extends ExclusionHandlerBase {
             if (super.unexclusionStatements != null) {
                 HashMap hashMap1 = ZkmUtils.createHashMap();
                 ArrayList arrayList1 = new ArrayList();
-                int be = 0;
+                int elementIndexValue3 = 0;
                 bl = 0;
 
                 for (List list3 = super.unexclusionStatements; bl < list3.size(); list3 = super.unexclusionStatements) {
-                    ParameterListStatement parameterListStatement2 = (ParameterListStatement) super.unexclusionStatements.get(be);
+                    ParameterListStatement parameterListStatement2 = (ParameterListStatement) super.unexclusionStatements.get(elementIndexValue3);
                     Enumeration enumeration1 = parameterListStatement2.getRenameFilterParameters();
 
                     while (enumeration1.hasMoreElements()) {
@@ -1454,14 +1454,14 @@ public class TrimProcessor extends ExclusionHandlerBase {
                         }
                     }
 
-                    bl = ++be;
+                    bl = ++elementIndexValue3;
                 }
 
                 if (scriptEnvironment1.isVerbose() && arrayList1.size() > 0) {
                     super.logWriter.println("\tTrim unexclusion parameters:");
 
-                    for (int i = arrayList1.size() - 1; i >= 0; i += -1) {
-                        super.logWriter.println("\t\t\"" + arrayList1.get(i) + "\"");
+                    for (int elementIndexValue4 = arrayList1.size() - 1; elementIndexValue4 >= 0; elementIndexValue4 += -1) {
+                        super.logWriter.println("\t\t\"" + arrayList1.get(elementIndexValue4) + "\"");
                     }
                 }
 
@@ -1471,8 +1471,8 @@ public class TrimProcessor extends ExclusionHandlerBase {
                             true
                     );
                 } else {
-                    for (int i = arrayList1.size() - 1; i >= 0; i += -1) {
-                        ASTRenameFilterParameter aSTRenameFilterParameter4 = (ASTRenameFilterParameter) arrayList1.get(i);
+                    for (int elementIndexValue5 = arrayList1.size() - 1; elementIndexValue5 >= 0; elementIndexValue5 += -1) {
+                        ASTRenameFilterParameter aSTRenameFilterParameter4 = (ASTRenameFilterParameter) arrayList1.get(elementIndexValue5);
                         if (aSTRenameFilterParameter4.isPackageSpecifier()) {
                             scriptEnvironment1.logWarning(
                                     "Parameter '" + aSTRenameFilterParameter4 + "' in 'trimUnexclude' statement is a 'package' level parameter. It will be ignored.", true
@@ -1520,13 +1520,13 @@ public class TrimProcessor extends ExclusionHandlerBase {
                 if (scriptEnvironment1.isVerbose() && arrayList2.size() > 0) {
                     super.logWriter.println("\tDefault trim exclusion parameters:");
 
-                    for (int i = arrayList2.size() - 1; i >= 0; i += -1) {
-                        super.logWriter.println("\t\t\"" + arrayList2.get(i) + "\"");
+                    for (int elementIndexValue6 = arrayList2.size() - 1; elementIndexValue6 >= 0; elementIndexValue6 += -1) {
+                        super.logWriter.println("\t\t\"" + arrayList2.get(elementIndexValue6) + "\"");
                     }
                 }
 
-                for (int i = arrayList2.size() - 1; i >= 0; i += -1) {
-                    ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) arrayList2.get(i);
+                for (int elementIndexValue7 = arrayList2.size() - 1; elementIndexValue7 >= 0; elementIndexValue7 += -1) {
+                    ASTRenameFilterParameter aSTRenameFilterParameter2 = (ASTRenameFilterParameter) arrayList2.get(elementIndexValue7);
                     if (aSTRenameFilterParameter2.isPackageSpecifier()) {
                         scriptEnvironment1.logWarning(
                                 "Parameter '" + aSTRenameFilterParameter2 + "' in default 'trimExclude' is a 'package' level parameter. It will be ignored.", true
@@ -1582,8 +1582,8 @@ public class TrimProcessor extends ExclusionHandlerBase {
                 ClassReasonComparator classReasonComparator = new ClassReasonComparator(this);
                 Collections.sort(arrayList3, classReasonComparator);
 
-                for (int i = 0; i < arrayList3.size(); i++) {
-                    Entry entry = (Entry) arrayList3.get(i);
+                for (int elementIndexValue8 = 0; elementIndexValue8 < arrayList3.size(); elementIndexValue8++) {
+                    Entry entry = (Entry) arrayList3.get(elementIndexValue8);
                     this.excludeClass((ProgramClass) entry.getKey(), (String) entry.getValue());
                 }
             }
@@ -1594,8 +1594,8 @@ public class TrimProcessor extends ExclusionHandlerBase {
                 ArrayList arrayList4 = new ArrayList(map2.entrySet());
                 Collections.sort(arrayList4, trimmedMemberComparator);
 
-                for (int i = 0; i < arrayList4.size(); i++) {
-                    Entry entry1 = (Entry) arrayList4.get(i);
+                for (int elementIndexValue9 = 0; elementIndexValue9 < arrayList4.size(); elementIndexValue9++) {
+                    Entry entry1 = (Entry) arrayList4.get(elementIndexValue9);
                     this.matchField((FieldInfo) entry1.getKey(), (String) entry1.getValue());
                 }
             }
@@ -1605,8 +1605,8 @@ public class TrimProcessor extends ExclusionHandlerBase {
                 ArrayList arrayList5 = new ArrayList(map3.entrySet());
                 Collections.sort(arrayList5, trimmedMemberComparator);
 
-                for (int i = 0; i < arrayList5.size(); i++) {
-                    Entry entry2 = (Entry) arrayList5.get(i);
+                for (int elementIndexValue10 = 0; elementIndexValue10 < arrayList5.size(); elementIndexValue10++) {
+                    Entry entry2 = (Entry) arrayList5.get(elementIndexValue10);
                     this.matchMethod((MethodInfo) entry2.getKey(), (String) entry2.getValue());
                 }
             }
@@ -1653,22 +1653,22 @@ public class TrimProcessor extends ExclusionHandlerBase {
     }
 
     public static ParameterListStatement loadDefaultTrimExclude(ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
-        String string = scriptEnvironment1.getDefaultTrimExcludeFile();
+        String defaultTrimExcludeFile = scriptEnvironment1.getDefaultTrimExcludeFile();
         boolean bl = false;
 
         BufferedReader bufferedReader;
         try {
-            File file1 = new File(string);
+            File file1 = new File(defaultTrimExcludeFile);
             bufferedReader = ZkmFileUtils.openReader(file1, HiddenOptionFlags.SCRIPT_ENCODING);
-            scriptEnvironment1.logLine("Using '" + string + "' for default trim exclusions");
+            scriptEnvironment1.logLine("Using '" + defaultTrimExcludeFile + "' for default trim exclusions");
         } catch (FileNotFoundException fileNotFoundException) {
             bufferedReader = new BufferedReader(new StringReader(DEFAULT_TRIM_EXCLUDE));
             bl = true;
-            scriptEnvironment1.logLine("Using internal default trim exclusions. File '" + string + "' not found");
+            scriptEnvironment1.logLine("Using internal default trim exclusions. File '" + defaultTrimExcludeFile + "' not found");
         } catch (IOException iOException) {
             bufferedReader = new BufferedReader(new StringReader(DEFAULT_TRIM_EXCLUDE));
             bl = true;
-            scriptEnvironment1.logLine("Using internal default trim exclusions. Error opening file '" + string + "' : " + iOException);
+            scriptEnvironment1.logLine("Using internal default trim exclusions. Error opening file '" + defaultTrimExcludeFile + "' : " + iOException);
         }
 
         try {

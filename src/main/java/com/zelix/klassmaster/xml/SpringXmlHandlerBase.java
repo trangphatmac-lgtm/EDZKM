@@ -29,16 +29,16 @@ public abstract class SpringXmlHandlerBase extends BeanPropertyXmlHandler {
             ObservableHolder observableHolder = new ObservableHolder();
             ObservableHolder observableHolder1 = new ObservableHolder();
             ZkmFileUtils.splitPath(super.entryName, observableHolder, observableHolder1);
-            String string2 = (String) observableHolder.getValue();
-            String string3 = string;
-            if (string3.startsWith("/")) {
-                string3 = string3.substring(1);
+            String value = (String) observableHolder.getValue();
+            String valueValue2 = string;
+            if (valueValue2.startsWith("/")) {
+                valueValue2 = valueValue2.substring(1);
             }
 
-            ZkmFileUtils.splitPath(string3, observableHolder, observableHolder1);
-            String string5 = (String) observableHolder.getValue();
-            string5 = (String) observableHolder1.getValue();
-            list1 = this.resolveImportedResources(string3, string2);
+            ZkmFileUtils.splitPath(valueValue2, observableHolder, observableHolder1);
+            String valueValue = (String) observableHolder.getValue();
+            valueValue = (String) observableHolder1.getValue();
+            list1 = this.resolveImportedResources(valueValue2, value);
         } else {
             int ba = string.indexOf(":");
             String string1 = string.substring(ba + 1);
@@ -53,8 +53,8 @@ public abstract class SpringXmlHandlerBase extends BeanPropertyXmlHandler {
             Iterator iterator = list1.iterator();
 
             while (iterator.hasNext()) {
-                String string4 = (String) iterator.next();
-                this.resourceFileIndex.addImport(string4, super.resourceName);
+                String key = (String) iterator.next();
+                this.resourceFileIndex.addImport(key, super.resourceName);
             }
         }
     }

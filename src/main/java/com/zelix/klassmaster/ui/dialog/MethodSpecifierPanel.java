@@ -83,15 +83,15 @@ public class MethodSpecifierPanel extends ExcludeParamTabPanel implements ItemLi
                 switch (i) {
                     case 0:
                         RenameFilterModel renameFilterModel2 = super.filterModel;
-                        boolean bl2 = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndex = platformAwareJList.isSelectedIndex(i);
                         Integer integer = 3;
-                        renameFilterModel2.setMemberStatic(bl2, integer);
+                        renameFilterModel2.setMemberStatic(selectedIndex, integer);
                         break;
                     case 1:
                         RenameFilterModel renameFilterModel1 = super.filterModel;
-                        boolean bl1 = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndexValue = platformAwareJList.isSelectedIndex(i);
                         Integer integer1 = 3;
-                        renameFilterModel1.setMemberFinal(bl1, integer1);
+                        renameFilterModel1.setMemberFinal(selectedIndexValue, integer1);
                         break;
                     case 2:
                         super.filterModel.setMemberSynchronized(platformAwareJList.isSelectedIndex(i));
@@ -104,15 +104,15 @@ public class MethodSpecifierPanel extends ExcludeParamTabPanel implements ItemLi
                         break;
                     case 5:
                         RenameFilterModel renameFilterModel = super.filterModel;
-                        boolean bl = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndexValue2 = platformAwareJList.isSelectedIndex(i);
                         Integer integer2 = 3;
-                        renameFilterModel.setMemberNotStatic(bl, integer2);
+                        renameFilterModel.setMemberNotStatic(selectedIndexValue2, integer2);
                         break;
                     case 6:
                         RenameFilterModel renameFilterModel3 = super.filterModel;
-                        boolean bl3 = platformAwareJList.isSelectedIndex(i);
+                        boolean selectedIndexValue3 = platformAwareJList.isSelectedIndex(i);
                         Integer integer3 = 3;
-                        renameFilterModel3.setMemberNotFinal(bl3, integer3);
+                        renameFilterModel3.setMemberNotFinal(selectedIndexValue3, integer3);
                         break;
                     case 7:
                         super.filterModel.setMemberNotSynchronized(platformAwareJList.isSelectedIndex(i));
@@ -132,15 +132,15 @@ public class MethodSpecifierPanel extends ExcludeParamTabPanel implements ItemLi
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         try {
-            Object object = actionEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = actionEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
     }
 
-    public MethodSpecifierPanel(JFrame jFrame, RenameFilterModel renameFilterModel, int ba) {
-        super(jFrame, renameFilterModel, ba);
+    public MethodSpecifierPanel(JFrame jFrame, RenameFilterModel renameFilterModel, int exclusionType) {
+        super(jFrame, renameFilterModel, exclusionType);
         this.buildPanel();
     }
 
@@ -208,14 +208,14 @@ public class MethodSpecifierPanel extends ExcludeParamTabPanel implements ItemLi
 
     @Override
     public void focusGained(FocusEvent focusEvent) {
-        Object object = focusEvent.getSource();
-        if (object == this.nameFld) {
+        Object source = focusEvent.getSource();
+        if (source == this.nameFld) {
             super.hintLabel.setText("Enter name of the method. May contain the \"*\" wildcard.");
-        } else if (object == this.argumentsTypeFld) {
+        } else if (source == this.argumentsTypeFld) {
             super.hintLabel.setText("Enter comma separated fully qualified class names or primitive types.");
-        } else if (object == this.throwsFld) {
+        } else if (source == this.throwsFld) {
             super.hintLabel.setText("Enter comma separated list of fully qualified class names. May not contain wildcards.");
-        } else if (object == this.annotatedByFld) {
+        } else if (source == this.annotatedByFld) {
             super.hintLabel.setText("Enter a fully qualified class name. May contain the \"*\" wildcard.");
         }
     }
@@ -307,8 +307,8 @@ public class MethodSpecifierPanel extends ExcludeParamTabPanel implements ItemLi
     public void focusLost(FocusEvent focusEvent) {
         try {
             super.hintLabel.setText(" ");
-            Object object = focusEvent.getSource();
-            this.commitFieldValue(object);
+            Object source = focusEvent.getSource();
+            this.commitFieldValue(source);
         } catch (Throwable throwable) {
             throw ZkmUtils.<RuntimeException>sneakyThrow(throwable);
         }
@@ -316,18 +316,18 @@ public class MethodSpecifierPanel extends ExcludeParamTabPanel implements ItemLi
 
     public void commitFieldValue(Object object) throws ZkmException, IOException {
         if (object == this.nameFld) {
-            String string = this.nameFld.getText().trim();
-            if (string.length() == 0) {
+            String methodName = this.nameFld.getText().trim();
+            if (methodName.length() == 0) {
                 this.nameFld.setText(super.filterModel.getMethodName());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Method name must be specified. Field restored.");
             } else {
-                super.filterModel.setMethodName(string);
+                super.filterModel.setMethodName(methodName);
             }
         } else if (object == this.argumentsTypeFld) {
-            String string1 = this.argumentsTypeFld.getText().trim();
+            String parameterTypes = this.argumentsTypeFld.getText().trim();
             RenameFilterModel renameFilterModel;
-            if (string1.length() > 1) {
-                if (string1.indexOf("*") != -1) {
+            if (parameterTypes.length() > 1) {
+                if (parameterTypes.indexOf("*") != -1) {
                     this.argumentsTypeFld.setText(super.filterModel.getParameterTypesText());
                     MessageBoxDialog.showMessageLater(
                             super.ownerFrame, "Argument type must either be a single \"*\" or else cannot contain wildcards. Field restored."
@@ -340,14 +340,14 @@ public class MethodSpecifierPanel extends ExcludeParamTabPanel implements ItemLi
                 renameFilterModel = super.filterModel;
             }
 
-            renameFilterModel.setParameterTypes(string1);
+            renameFilterModel.setParameterTypes(parameterTypes);
         } else if (object == this.throwsFld) {
-            String string2 = this.throwsFld.getText().trim();
-            if (string2.indexOf("*") != -1) {
+            String throwsNames = this.throwsFld.getText().trim();
+            if (throwsNames.indexOf("*") != -1) {
                 this.throwsFld.setText(super.filterModel.getThrowsText());
                 MessageBoxDialog.showMessageLater(super.ownerFrame, "Throws class names cannot contain wildcards. Field restored.");
             } else {
-                super.filterModel.setThrowsNames(string2);
+                super.filterModel.setThrowsNames(throwsNames);
             }
         } else if (object == this.annotatedByFld) {
             super.filterModel.setMemberAnnotation(this.annotatedByFld.getText().trim());

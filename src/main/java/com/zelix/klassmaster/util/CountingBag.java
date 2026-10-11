@@ -44,11 +44,11 @@ public class CountingBag implements Collection {
     }
 
     @Override
-    public synchronized boolean add(Object object) {
-        MutableInt mutableInt = (MutableInt) this.counts.get(object);
+    public synchronized boolean add(Object key) {
+        MutableInt mutableInt = (MutableInt) this.counts.get(key);
         if (mutableInt == null) {
             mutableInt = new MutableInt(1);
-            this.counts.put(object, mutableInt);
+            this.counts.put(key, mutableInt);
         } else {
             mutableInt.incrementAndGet();
         }
@@ -58,7 +58,7 @@ public class CountingBag implements Collection {
 
     @Override
     public synchronized boolean retainAll(Collection collection1) {
-        int ba = this.counts.size();
+        int countsSize = this.counts.size();
         Iterator iterator = this.counts.keySet().iterator();
 
         while (iterator.hasNext()) {
@@ -68,7 +68,7 @@ public class CountingBag implements Collection {
             }
         }
 
-        return ba != this.counts.size();
+        return countsSize != this.counts.size();
     }
 
     @Override
@@ -76,33 +76,33 @@ public class CountingBag implements Collection {
         this.counts.clear();
     }
 
-    public synchronized void addCount(Object object, int ba) {
-        MutableInt mutableInt = (MutableInt) this.counts.get(object);
+    public synchronized void addCount(Object key, int value) {
+        MutableInt mutableInt = (MutableInt) this.counts.get(key);
         if (mutableInt == null) {
-            this.counts.put(object, new MutableInt(ba));
+            this.counts.put(key, new MutableInt(value));
         } else {
-            mutableInt.setValue(ba);
+            mutableInt.setValue(value);
         }
     }
 
     public synchronized List getSortedByCount() {
-        int ba = this.counts.size();
-        RankedValue[] rankedValues = new RankedValue[ba];
+        int countsSize = this.counts.size();
+        RankedValue[] rankedValues = new RankedValue[countsSize];
         int bb = 0;
         Iterator iterator = this.counts.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Entry entry = (Entry) iterator.next();
-            Object object = entry.getKey();
+            Object key = entry.getKey();
             MutableInt mutableInt = (MutableInt) entry.getValue();
-            rankedValues[bb++] = new RankedValue(mutableInt.getValue(), object);
+            rankedValues[bb++] = new RankedValue(mutableInt.getValue(), key);
         }
 
         Arrays.sort(rankedValues);
-        ArrayList arrayList = new ArrayList(ba);
+        ArrayList arrayList = new ArrayList(countsSize);
 
-        for (int i = ba - 1; i >= 0; i += -1) {
-            arrayList.add(rankedValues[i].getValue());
+        for (int rankedValueIndex = countsSize - 1; rankedValueIndex >= 0; rankedValueIndex += -1) {
+            arrayList.add(rankedValues[rankedValueIndex].getValue());
         }
 
         return arrayList;
@@ -132,11 +132,11 @@ public class CountingBag implements Collection {
     }
 
     @Override
-    public synchronized boolean remove(Object object) {
-        MutableInt mutableInt = (MutableInt) this.counts.get(object);
+    public synchronized boolean remove(Object key) {
+        MutableInt mutableInt = (MutableInt) this.counts.get(key);
         if (mutableInt != null) {
             if (mutableInt.getValue() == 1) {
-                this.counts.remove(object);
+                this.counts.remove(key);
             } else {
                 mutableInt.decrementAndGet();
             }
@@ -148,20 +148,20 @@ public class CountingBag implements Collection {
     }
 
     @Override
-    public boolean contains(Object object) {
-        return this.counts.containsKey(object);
+    public boolean contains(Object key) {
+        return this.counts.containsKey(key);
     }
 
     @Override
     public synchronized boolean removeAll(Collection collection1) {
-        int ba = this.counts.size();
+        int countsSize = this.counts.size();
         Iterator iterator = collection1.iterator();
 
         while (iterator.hasNext()) {
             this.counts.remove(iterator.next());
         }
 
-        return ba != this.counts.size();
+        return countsSize != this.counts.size();
     }
 
     @Override
@@ -200,8 +200,8 @@ public class CountingBag implements Collection {
         return this.counts.size();
     }
 
-    public synchronized int getCount(Object object) {
-        MutableInt mutableInt = (MutableInt) this.counts.get(object);
+    public synchronized int getCount(Object key) {
+        MutableInt mutableInt = (MutableInt) this.counts.get(key);
         return mutableInt == null ? 0 : mutableInt.getValue();
     }
 

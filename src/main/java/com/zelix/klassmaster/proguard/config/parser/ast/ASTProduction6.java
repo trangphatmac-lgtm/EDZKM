@@ -42,13 +42,13 @@ public class ASTProduction6 extends ProGuardConfigSimpleNode implements ProGuard
         Iterator iterator = list1.iterator();
 
         while (iterator.hasNext()) {
-            String string = (String) iterator.next();
-            if (ACCESS_TO_NEGATED_ACCESS.containsKey(string)) {
-                hashSet.add(string);
-            } else if (NEGATED_ACCESS_MODIFIERS.contains(string)) {
-                hashSet1.add(string);
+            String key = (String) iterator.next();
+            if (ACCESS_TO_NEGATED_ACCESS.containsKey(key)) {
+                hashSet.add(key);
+            } else if (NEGATED_ACCESS_MODIFIERS.contains(key)) {
+                hashSet1.add(key);
             } else {
-                hashSet2.add(string);
+                hashSet2.add(key);
             }
         }
 
@@ -58,11 +58,11 @@ public class ASTProduction6 extends ProGuardConfigSimpleNode implements ProGuard
 
             while (iterator.hasNext()) {
                 Entry entry = (Entry) iterator.next();
-                String string1 = (String) entry.getKey();
-                if (!hashSet.contains(string1)) {
-                    String string2 = (String) entry.getValue();
-                    if (!hashSet1.contains(string2)) {
-                        list2.add(string2);
+                String keyValue = (String) entry.getKey();
+                if (!hashSet.contains(keyValue)) {
+                    String value = (String) entry.getValue();
+                    if (!hashSet1.contains(value)) {
+                        list2.add(value);
                     }
                 }
             }
@@ -89,16 +89,16 @@ public class ASTProduction6 extends ProGuardConfigSimpleNode implements ProGuard
         this.argumentTypes = list1;
     }
 
-    public void setMemberType(String string) {
-        this.memberType = string;
+    public void setMemberType(String memberTypeArgument) {
+        this.memberType = memberTypeArgument;
     }
 
     @Override
     public final void translate(Object object1, Object object) throws ZkmException, IOException {
         ProGuardConfigTranslator proGuardConfigTranslator = (ProGuardConfigTranslator) object;
 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < this.jjtGetNumChildren(); childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
 
         ASTLbraceClause aSTLbraceClause = (ASTLbraceClause) this.jjtGetParent();
@@ -139,16 +139,16 @@ public class ASTProduction6 extends ProGuardConfigSimpleNode implements ProGuard
 
         if (this.isMethod) {
             stringBuilder.append('(');
-            int bb = 0;
-            int bc = bb;
+            int elementIndex = 0;
+            int elementIndexValue = elementIndex;
 
-            for (List list1 = this.argumentTypes; bc < list1.size(); list1 = this.argumentTypes) {
-                stringBuilder.append(ProGuardWildcardConverter.convertParameterPattern((String) this.argumentTypes.get(bb)));
-                if (bb < this.argumentTypes.size() - 1) {
+            for (List list1 = this.argumentTypes; elementIndexValue < list1.size(); list1 = this.argumentTypes) {
+                stringBuilder.append(ProGuardWildcardConverter.convertParameterPattern((String) this.argumentTypes.get(elementIndex)));
+                if (elementIndex < this.argumentTypes.size() - 1) {
                     stringBuilder.append(',');
                 }
 
-                bc = ++bb;
+                elementIndexValue = ++elementIndex;
             }
 
             stringBuilder.append(')');
@@ -157,8 +157,8 @@ public class ASTProduction6 extends ProGuardConfigSimpleNode implements ProGuard
     }
 
     @Override
-    public void setAnnotationName(String string) {
-        this.annotationName = string;
+    public void setAnnotationName(String annotationNameArgument) {
+        this.annotationName = annotationNameArgument;
     }
 
     public void markAsField() {

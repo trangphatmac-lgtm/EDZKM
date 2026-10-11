@@ -14,23 +14,23 @@ public class SharedSequenceClassNamer extends FileClassNameGenerator {
             ClassRenameClashChecker classRenameClashChecker,
             boolean bl,
             boolean bl1,
-            String string,
-            int ba,
-            int bb,
-            boolean bl2,
+            String namePrefix,
+            int keepInnerClassInfoMode,
+            int keepGenericsInfoMode,
+            boolean randomizeNamesArgument,
             MixedCaseNamesMode mixedCaseNamesMode1,
             HashMap hashMap,
             ListMultimap listMultimap,
             Map map1,
             List list1
     ) {
-        super(classRenameClashChecker, bl, bl1, string, ba, bb, bl2, mixedCaseNamesMode1, hashMap, listMultimap, map1, list1);
+        super(classRenameClashChecker, bl, bl1, namePrefix, keepInnerClassInfoMode, keepGenericsInfoMode, randomizeNamesArgument, mixedCaseNamesMode1, hashMap, listMultimap, map1, list1);
     }
 
     @Override
-    public UniqueNameGenerator createNameGenerator(char[] ba, char[] bb, char[] bc, char[] bd, List list1) {
+    public UniqueNameGenerator createNameGenerator(char[] destinationArray, char[] subsequentChars, char[] destinationArrayArgument, char[] subsequentCharsArgument, List list1) {
         if (this.sharedGenerator == null) {
-            this.sharedGenerator = new UniqueNameGenerator(ba, bb, bc, bd, list1, super.randomizeNames);
+            this.sharedGenerator = new UniqueNameGenerator(destinationArray, subsequentChars, destinationArrayArgument, subsequentCharsArgument, list1, super.randomizeNames);
         }
 
         return this.sharedGenerator;

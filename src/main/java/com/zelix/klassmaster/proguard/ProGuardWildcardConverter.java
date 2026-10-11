@@ -55,20 +55,20 @@ public class ProGuardWildcardConverter {
     public static String collapseWildcards(String string) {
         StringBuilder stringBuilder = new StringBuilder();
         boolean bl = false;
-        char[] ba = string.toCharArray();
+        char[] characterArray = string.toCharArray();
 
-        for (int i = 0; i < ba.length; i++) {
-            char bc = ba[i];
-            if (bc == '*') {
+        for (int characterArrayElementIndex = 0; characterArrayElementIndex < characterArray.length; characterArrayElementIndex++) {
+            char characterArrayElement = characterArray[characterArrayElementIndex];
+            if (characterArrayElement == '*') {
                 if (!bl) {
-                    stringBuilder.append(bc);
+                    stringBuilder.append(characterArrayElement);
                     bl = true;
                 }
-            } else if (bc == '.' && i > 0 && i == ba.length - 3 && ba[i + 1] == '*' && ba[i + 2] == '*') {
+            } else if (characterArrayElement == '.' && characterArrayElementIndex > 0 && characterArrayElementIndex == characterArray.length - 3 && characterArray[characterArrayElementIndex + 1] == '*' && characterArray[characterArrayElementIndex + 2] == '*') {
                 stringBuilder.append('*');
-                stringBuilder.append(bc);
+                stringBuilder.append(characterArrayElement);
             } else {
-                stringBuilder.append(bc);
+                stringBuilder.append(characterArrayElement);
                 bl = false;
             }
         }

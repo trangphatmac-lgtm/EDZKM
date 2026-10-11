@@ -25,8 +25,8 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
 
         while (iterator.hasNext()) {
             NamePatternEntry namePatternEntry = (NamePatternEntry) iterator.next();
-            String string = this.translateClassSpec(namePatternEntry.getPattern(), proGuardConfigTranslator);
-            arrayList.add(new ProGuardClassNameEntry(string, namePatternEntry.isNegated(), namePatternEntry.isInList()));
+            String className = this.translateClassSpec(namePatternEntry.getPattern(), proGuardConfigTranslator);
+            arrayList.add(new ProGuardClassNameEntry(className, namePatternEntry.isNegated(), namePatternEntry.isInList()));
         }
 
         return arrayList;
@@ -70,11 +70,11 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
                     aSTLbraceClause = this.ifOption.getClassSpecClause();
                     List list1 = aSTLbraceClause.getClassNamePatterns();
                     if (list1.size() == 1) {
-                        String string2 = ((NamePatternEntry) list1.get(0)).getPattern();
-                        if (string2.equals("*.*")) {
+                        String pattern = ((NamePatternEntry) list1.get(0)).getPattern();
+                        if (pattern.equals("*.*")) {
                             string1 = "*.*";
-                        } else if (string2.startsWith("*")) {
-                            String string3 = string2.substring(1);
+                        } else if (pattern.startsWith("*")) {
+                            String string3 = pattern.substring(1);
                             if (string3.length() > 0) {
                                 string1 = "<link>" + string3;
                                 bl = true;
@@ -88,7 +88,7 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
                                             + ". : '"
                                             + string1
                                             + "' : '"
-                                            + string2
+                                            + pattern
                                             + "'. (A)"
                             );
                         }
@@ -119,7 +119,7 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
 
         StringBuilder stringBuilder = new StringBuilder();
         if (aSTLbraceClause != null && aSTLbraceClause.hasAnnotation()) {
-            String string5 = aSTLbraceClause.getAnnotationText(6471, 31638, -27990);
+            String annotationTextValue = aSTLbraceClause.getAnnotationText(6471, 31638, -27990);
             if (bl) {
                 proGuardConfigTranslator.logWarning(
                         "Does not support more complicated <n> syntax in '"
@@ -127,19 +127,19 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
                                 + "' at line "
                                 + this.getLineNumber()
                                 + ". : '"
-                                + string5
+                                + annotationTextValue
                                 + "' : '"
                                 + string1
                                 + "'. (D)"
                 );
             }
 
-            stringBuilder.append(string5);
+            stringBuilder.append(annotationTextValue);
         }
 
         if (this.annotationText != null) {
             StringBuilder stringBuilder2;
-            String string9;
+            String annotationTextValue2;
             if (bl) {
                 proGuardConfigTranslator.logWarning(
                         "Does not support more complicated <n> syntax in '"
@@ -153,17 +153,17 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
                                 + "'. (E)"
                 );
                 stringBuilder2 = stringBuilder;
-                string9 = this.annotationText;
+                annotationTextValue2 = this.annotationText;
             } else {
                 stringBuilder2 = stringBuilder;
-                string9 = this.annotationText;
+                annotationTextValue2 = this.annotationText;
             }
 
-            stringBuilder2.append(string9);
+            stringBuilder2.append(annotationTextValue2);
         }
 
         if (aSTLbraceClause != null && aSTLbraceClause.hasModifiers()) {
-            String string6 = aSTLbraceClause.getModifiersText(103429512437761L);
+            String modifiersTextValue = aSTLbraceClause.getModifiersText(103429512437761L);
             if (bl) {
                 proGuardConfigTranslator.logWarning(
                         "Does not support more complicated <n> syntax in '"
@@ -173,11 +173,11 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
                                 + ". : '"
                                 + string1
                                 + "' : '"
-                                + string6
+                                + modifiersTextValue
                                 + "'. (F)"
                 );
             } else {
-                stringBuilder.append(string6);
+                stringBuilder.append(modifiersTextValue);
             }
         }
 
@@ -209,20 +209,20 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
         }
 
         int ba = aSTLbraceClause != null ? aSTLbraceClause.getFieldSpecs().size() + aSTLbraceClause.getMethodSpecs().size() : 0;
-        int bb = this.memberSpecs.size();
-        if (this.requiresMatchingMembers() && bb > 0 || ba > 0) {
+        int memberSpecsSize = this.memberSpecs.size();
+        if (this.requiresMatchingMembers() && memberSpecsSize > 0 || ba > 0) {
             if (bl) {
                 proGuardConfigTranslator.logWarning(
                         "Does not support more complicated <n> syntax in '" + this.getOptionName() + "' at line " + this.getLineNumber() + ". : '" + string1 + "'. (H)"
                 );
             } else {
                 stringBuilder.append(" containing {");
-                if (bb > 1) {
+                if (memberSpecsSize > 1) {
                     stringBuilder.append('(');
                 }
 
                 stringBuilder.append(this.buildMemberSpecsText());
-                if (bb > 1) {
+                if (memberSpecsSize > 1) {
                     stringBuilder.append(')');
                 }
 
@@ -232,29 +232,29 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
 
         boolean bl1 = false;
         boolean bl2 = false;
-        String string7;
+        String inheritanceTextValue;
         if (aSTLbraceClause != null) {
             if (aSTLbraceClause.hasInheritanceClause()) {
-                String string4 = aSTLbraceClause.getInheritanceText(4252833208356L);
-                stringBuilder.append(string4);
-                if (string4.indexOf("extends ") > -1) {
+                String inheritanceTextValue2 = aSTLbraceClause.getInheritanceText(4252833208356L);
+                stringBuilder.append(inheritanceTextValue2);
+                if (inheritanceTextValue2.indexOf("extends ") > -1) {
                     bl1 = true;
                 }
 
-                if (string4.indexOf("implements ") > -1) {
+                if (inheritanceTextValue2.indexOf("implements ") > -1) {
                     bl2 = true;
-                    string7 = this.inheritanceText;
+                    inheritanceTextValue = this.inheritanceText;
                 } else {
-                    string7 = this.inheritanceText;
+                    inheritanceTextValue = this.inheritanceText;
                 }
             } else {
-                string7 = this.inheritanceText;
+                inheritanceTextValue = this.inheritanceText;
             }
         } else {
-            string7 = this.inheritanceText;
+            inheritanceTextValue = this.inheritanceText;
         }
 
-        if (string7 != null) {
+        if (inheritanceTextValue != null) {
             if (bl1 && this.inheritanceText.indexOf("extends ") > -1) {
                 proGuardConfigTranslator.logWarning(
                         "Does not support more complicated <n> syntax in '"
@@ -269,7 +269,7 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
                 );
             } else {
                 StringBuilder stringBuilder1;
-                String string8;
+                String inheritanceTextValue3;
                 if (bl2) {
                     if (this.inheritanceText.indexOf("implements ") > -1) {
                         proGuardConfigTranslator.logWarning(
@@ -287,21 +287,21 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
                     }
 
                     stringBuilder1 = stringBuilder;
-                    string8 = this.inheritanceText;
+                    inheritanceTextValue3 = this.inheritanceText;
                 } else {
                     stringBuilder1 = stringBuilder;
-                    string8 = this.inheritanceText;
+                    inheritanceTextValue3 = this.inheritanceText;
                 }
 
-                stringBuilder1.append(string8);
+                stringBuilder1.append(inheritanceTextValue3);
             }
         }
 
         return stringBuilder.toString();
     }
 
-    public void setInheritanceText(String string) {
-        this.inheritanceText = string;
+    public void setInheritanceText(String inheritanceTextArgument) {
+        this.inheritanceText = inheritanceTextArgument;
     }
 
     public void addMemberSpec(Object object) {
@@ -337,13 +337,13 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
         }
 
         linkedHashSet1.addAll(set1);
-        int bb = linkedHashSet.size();
+        int linkedHashSetSize = linkedHashSet.size();
         int ba = 0;
 
         for (Iterator iterator = linkedHashSet.iterator(); iterator.hasNext(); ba++) {
             String string = (String) iterator.next();
             stringBuilder.append(string);
-            if (ba < bb - 1) {
+            if (ba < linkedHashSetSize - 1) {
                 stringBuilder.append(" && ");
             }
         }
@@ -351,13 +351,13 @@ public abstract class ProGuardClassSpecification extends ProGuardOptionNode {
         return stringBuilder.toString();
     }
 
-    public void setModifiersText(String string) {
-        this.modifiersText = string;
+    public void setModifiersText(String modifiersTextArgument) {
+        this.modifiersText = modifiersTextArgument;
     }
 
     public abstract boolean requiresMatchingMembers();
 
-    public void setAnnotationText(String string) {
-        this.annotationText = string;
+    public void setAnnotationText(String annotationTextArgument) {
+        this.annotationText = annotationTextArgument;
     }
 }

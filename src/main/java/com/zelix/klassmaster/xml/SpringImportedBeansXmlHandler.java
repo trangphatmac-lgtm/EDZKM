@@ -40,11 +40,11 @@ public class SpringImportedBeansXmlHandler extends SpringXmlHandlerBase {
 
     @Override
     public void analyzeElement(XmlElementNode xmlElementNode, Map map1, Object object, Object object1, Object object2) throws ZkmException, IOException {
-        String string = xmlElementNode.getTagName();
-        String string1 = this.getOpenElementName(1);
-        if (string.equalsIgnoreCase("bean") && string1 != null && string1.equalsIgnoreCase("beans")) {
-            String string8 = "reference in '" + super.resourceName + "' by '" + string + "' tag";
-            String string9 = null;
+        String tagName = xmlElementNode.getTagName();
+        String openElementName = this.getOpenElementName(1);
+        if (tagName.equalsIgnoreCase("bean") && openElementName != null && openElementName.equalsIgnoreCase("beans")) {
+            String string8 = "reference in '" + super.resourceName + "' by '" + tagName + "' tag";
+            String dottedClassName = null;
             ObservableHolder observableHolder6 = xmlElementNode.getAttributeValue("class");
             List list1 = null;
             ObservableHolder observableHolder1 = xmlElementNode.getAttributeValue("id");
@@ -70,67 +70,67 @@ public class SpringImportedBeansXmlHandler extends SpringXmlHandlerBase {
                 }
             }
 
-            String string7 = string17;
-            ObservableHolder observableHolder7 = xmlElementNode3.getAttributeValue(string7);
+            String keyValue6 = string17;
+            ObservableHolder observableHolder7 = xmlElementNode3.getAttributeValue(keyValue6);
             if (observableHolder6 != null) {
-                String string4 = (String) observableHolder6.getValue();
+                String value = (String) observableHolder6.getValue();
                 ObservableHolder observableHolder3 = new ObservableHolder();
-                string9 = this.addClassReference(string4, map1, observableHolder3, string8 + " '" + "class" + "' attribute");
+                dottedClassName = this.addClassReference(value, map1, observableHolder3, string8 + " '" + "class" + "' attribute");
                 if (!observableHolder3.isValueNull() && list1 != null) {
                     Iterator iterator = list1.iterator();
 
                     while (iterator.hasNext()) {
-                        String string5 = (String) iterator.next();
-                        ProgramClass programClass3 = (ProgramClass) super.beanClasses.put(string5, observableHolder3.getValue());
+                        String key = (String) iterator.next();
+                        ProgramClass programClass3 = (ProgramClass) super.beanClasses.put(key, observableHolder3.getValue());
                     }
                 }
             }
 
-            if (string9 == null) {
+            if (dottedClassName == null) {
                 ObservableHolder observableHolder8 = xmlElementNode.getAttributeValue("factory-bean");
                 if (observableHolder8 != null) {
-                    String string11 = (String) observableHolder8.getValue();
-                    ProgramClass programClass2 = (ProgramClass) super.beanClasses.get(string11);
+                    String valueValue = (String) observableHolder8.getValue();
+                    ProgramClass programClass2 = (ProgramClass) super.beanClasses.get(valueValue);
                     if (programClass2 != null) {
-                        string9 = programClass2.getDottedClassName();
+                        dottedClassName = programClass2.getDottedClassName();
                         if (list1 != null) {
                             Iterator iterator3 = list1.iterator();
 
                             while (iterator3.hasNext()) {
-                                String string6 = (String) iterator3.next();
-                                super.beanClasses.put(string6, programClass2);
+                                String keyValue = (String) iterator3.next();
+                                super.beanClasses.put(keyValue, programClass2);
                             }
                         }
                     }
                 }
             }
 
-            if (string9 == null && observableHolder7 != null && list1 != null) {
-                String string10 = (String) observableHolder7.getValue();
+            if (dottedClassName == null && observableHolder7 != null && list1 != null) {
+                String valueValue2 = (String) observableHolder7.getValue();
                 Iterator iterator2 = list1.iterator();
 
                 while (iterator2.hasNext()) {
-                    String string13 = (String) iterator2.next();
-                    super.beanParents.put(string13, string10);
-                    String string14 = string10;
+                    String keyValue2 = (String) iterator2.next();
+                    super.beanParents.put(keyValue2, valueValue2);
+                    String keyValue3 = valueValue2;
                     ProgramClass programClass1 = null;
 
-                    while (string14 != null && programClass1 == null) {
-                        programClass1 = (ProgramClass) super.beanClasses.get(string10);
+                    while (keyValue3 != null && programClass1 == null) {
+                        programClass1 = (ProgramClass) super.beanClasses.get(valueValue2);
                         if (programClass1 != null) {
-                            string9 = programClass1.getDottedClassName();
+                            dottedClassName = programClass1.getDottedClassName();
                         } else {
-                            string14 = (String) super.beanParents.get(string14);
+                            keyValue3 = (String) super.beanParents.get(keyValue3);
                         }
                     }
 
                     if (programClass1 != null) {
-                        super.beanClasses.put(string13, programClass1);
+                        super.beanClasses.put(keyValue2, programClass1);
                     }
                 }
             }
 
-            if (string9 == null) {
+            if (dottedClassName == null) {
                 ObservableHolder observableHolder9 = xmlElementNode.getAttributeValue("abstract");
                 if (observableHolder9 != null && ((String) observableHolder9.getValue()).equalsIgnoreCase("true")) {
                     XmlElementNode xmlElementNode2 = this.getOpenElement(1);
@@ -139,8 +139,8 @@ public class SpringImportedBeansXmlHandler extends SpringXmlHandlerBase {
                         Iterator iterator4 = list1.iterator();
 
                         while (iterator4.hasNext()) {
-                            String string15 = (String) iterator4.next();
-                            super.abstractBeans.put(string15, abstractXmlBeanRef1);
+                            String keyValue4 = (String) iterator4.next();
+                            super.abstractBeans.put(keyValue4, abstractXmlBeanRef1);
                         }
                     }
                 }
@@ -150,13 +150,13 @@ public class SpringImportedBeansXmlHandler extends SpringXmlHandlerBase {
                 Iterator iterator1 = list1.iterator();
 
                 while (iterator1.hasNext()) {
-                    String string12 = (String) iterator1.next();
-                    if (!super.beanParents.containsKey(string12)) {
-                        super.beanParents.put(string12, observableHolder7.getValue());
+                    String keyValue5 = (String) iterator1.next();
+                    if (!super.beanParents.containsKey(keyValue5)) {
+                        super.beanParents.put(keyValue5, observableHolder7.getValue());
                     }
                 }
             }
-        } else if (string.equalsIgnoreCase("property") && string1 != null && string1.equalsIgnoreCase("bean")) {
+        } else if (tagName.equalsIgnoreCase("property") && openElementName != null && openElementName.equalsIgnoreCase("bean")) {
             XmlElementNode xmlElementNode1 = this.getOpenElement(1);
             ObservableHolder observableHolder4 = xmlElementNode1.getAttributeValue("abstract");
             if (observableHolder4 != null && ((String) observableHolder4.getValue()).equalsIgnoreCase("true")) {
@@ -168,15 +168,15 @@ public class SpringImportedBeansXmlHandler extends SpringXmlHandlerBase {
                     }
                 }
             }
-        } else if (string.equalsIgnoreCase("import") && string1 != null && string1.equalsIgnoreCase("beans")) {
+        } else if (tagName.equalsIgnoreCase("import") && openElementName != null && openElementName.equalsIgnoreCase("beans")) {
             Enumeration enumeration = xmlElementNode.getAttributeNames();
 
             while (enumeration.hasMoreElements()) {
-                String string2 = (String) enumeration.nextElement();
-                if (string2.equalsIgnoreCase("resource")) {
-                    ObservableHolder observableHolder = xmlElementNode.getAttributeValue(string2);
-                    String string3 = (String) observableHolder.getValue();
-                    this.processImportResource(string3);
+                String keyValue7 = (String) enumeration.nextElement();
+                if (keyValue7.equalsIgnoreCase("resource")) {
+                    ObservableHolder observableHolder = xmlElementNode.getAttributeValue(keyValue7);
+                    String valueValue3 = (String) observableHolder.getValue();
+                    this.processImportResource(valueValue3);
                 }
             }
         }

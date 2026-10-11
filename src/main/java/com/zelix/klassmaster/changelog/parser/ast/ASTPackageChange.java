@@ -23,8 +23,8 @@ public class ASTPackageChange extends ChangeLogEntryNode {
         ((AbstractChangeLog) object).incrementPackageCount();
     }
 
-    public void setOldPackageName(String string) {
-        this.oldPackageName = string;
+    public void setOldPackageName(String oldPackageNameArgument) {
+        this.oldPackageName = oldPackageNameArgument;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ASTPackageChange extends ChangeLogEntryNode {
         super.changeLog.addPackageMapping(this.newPackageName, this.oldPackageName);
     }
 
-    public void setNewPackageName(String string) {
-        this.newPackageName = string;
+    public void setNewPackageName(String newPackageNameArgument) {
+        this.newPackageName = newPackageNameArgument;
     }
 }

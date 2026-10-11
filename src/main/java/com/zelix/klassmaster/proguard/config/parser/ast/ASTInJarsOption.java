@@ -23,92 +23,49 @@ public class ASTInJarsOption
         return "";
     }
 
-    public static String buildFileFilterExpression(Set set, ObservableHolder observableHolder) throws ZkmException, IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        int n = set.size();
-        int n2 = 0;
-        boolean bl = false;
-        String string = null;
-        stringBuilder.append('{');
-        for (String string2 : (java.lang.Iterable<String>) (Object) (set)) {
-            int n3;
-            StringBuilder stringBuilder2;
-            boolean bl2;
-            String string3;
-            block6:
-            {
-                String string4;
-                StringBuilder stringBuilder3;
-                block12:
-                {
-                    block9:
-                    {
-                        block7:
-                        {
-                            String string5;
-                            StringBuilder stringBuilder4;
-                            block11:
-                            {
-                                block10:
-                                {
-                                    block8:
-                                    {
-                                        string3 = string2.trim();
-                                        bl2 = false;
-                                        if (string3.startsWith("!")) {
-                                            bl2 = true;
-                                            string3 = string3.substring(1);
-                                        }
-                                        if (string3.startsWith("**")) {
-                                            string3 = string3.substring(1);
-                                        }
-                                        if (n2 <= 0) break block6;
-                                        if (!bl) break block7;
-                                        if (!bl2) break block8;
-                                        if (n2 == n - 1) break block9;
-                                        break block10;
-                                    }
-                                    stringBuilder4 = stringBuilder;
-                                    string5 = " && ";
-                                    break block11;
-                                }
-                                stringBuilder4 = stringBuilder;
-                                string5 = " && ";
-                            }
-                            stringBuilder4.append(string5);
-                            if (!ASTInJarsOption.getFileExtension(string3).equals(string)) {
-                                observableHolder.setValue("File filters in ProGuard '-injars' command may be too complicated for translation : '" + string2 + "' preceded by negated filter with '" + string + "' suffix.");
-                            }
-                            break block6;
-                        }
-                        stringBuilder3 = stringBuilder;
-                        string4 = " || ";
-                        break block12;
+    public static String buildFileFilterExpression(Set filters, ObservableHolder warning) throws ZkmException, IOException {
+        StringBuilder expression = new StringBuilder();
+        int filterCount = filters.size();
+        int filterIndex = 0;
+        boolean previousNegated = false;
+        String previousExtension = null;
+        expression.append('{');
+        for (String rawFilter : (java.lang.Iterable<String>) (Object) filters) {
+            String filter = rawFilter.trim();
+            boolean negated = false;
+            if (filter.startsWith("!")) {
+                negated = true;
+                filter = filter.substring(1);
+            }
+            if (filter.startsWith("**")) {
+                filter = filter.substring(1);
+            }
+            if (filterIndex > 0) {
+                if (previousNegated && !(negated && filterIndex == filterCount - 1)) {
+                    expression.append(" && ");
+                    if (!getFileExtension(filter).equals(previousExtension)) {
+                        warning.setValue("File filters in ProGuard '-injars' command may be too complicated for translation : '"
+                                + rawFilter + "' preceded by negated filter with '" + previousExtension + "' suffix.");
                     }
-                    stringBuilder3 = stringBuilder;
-                    string4 = " || ";
+                } else {
+                    expression.append(" || ");
                 }
-                stringBuilder3.append(string4);
             }
-            if (bl2) {
-                stringBuilder.append("!");
-                bl = true;
-                string = ASTInJarsOption.getFileExtension(string3);
-                stringBuilder2 = stringBuilder;
-                n3 = 34;
+            if (negated) {
+                expression.append('!');
+                previousNegated = true;
+                previousExtension = getFileExtension(filter);
             } else {
-                bl = false;
-                string = null;
-                stringBuilder2 = stringBuilder;
-                n3 = 34;
+                previousNegated = false;
+                previousExtension = null;
             }
-            stringBuilder2.append((char) n3);
-            stringBuilder.append(string3);
-            stringBuilder.append('\"');
-            ++n2;
+            expression.append('"');
+            expression.append(filter);
+            expression.append('"');
+            filterIndex++;
         }
-        stringBuilder.append('}');
-        return stringBuilder.toString();
+        expression.append('}');
+        return expression.toString();
     }
 
     @Override
@@ -122,22 +79,22 @@ public class ASTInJarsOption
         this.jjtGetNumChildren();
         ASTTildeClause aSTTildeClause = (ASTTildeClause) this.jjtGetChild(0);
         Set set = aSTTildeClause.getPaths();
-        int n = set.size();
+        int setSize = set.size();
         int n2 = 0;
-        for (String string : (java.lang.Iterable<String>) (Object) (set)) {
+        for (String key : (java.lang.Iterable<String>) (Object) (set)) {
             char c;
-            if (!ZkmFileUtils.looksLikeArchiveName(string) && (c = string.charAt(string.length() - 1)) != '*') {
-                string = string + (c == ZkmFileUtils.FILE_SEPARATOR_CHAR || c == '/' || c == '\\' ? "" : Character.valueOf(ZkmFileUtils.FILE_SEPARATOR_CHAR)) + "*";
+            if (!ZkmFileUtils.looksLikeArchiveName(key) && (c = key.charAt(key.length() - 1)) != '*') {
+                key = key + (c == ZkmFileUtils.FILE_SEPARATOR_CHAR || c == '/' || c == '\\' ? "" : Character.valueOf(ZkmFileUtils.FILE_SEPARATOR_CHAR)) + "*";
             }
-            if (n2 == n - 1 && aSTTildeClause.hasFileFilters()) {
+            if (n2 == setSize - 1 && aSTTildeClause.hasFileFilters()) {
                 ObservableHolder observableHolder = new ObservableHolder();
-                String string2 = ASTInJarsOption.buildFileFilterExpression(aSTTildeClause.getFileFilters(), observableHolder);
-                proGuardConfigTranslator.addOpenArchive(string, string2);
+                String value = ASTInJarsOption.buildFileFilterExpression(aSTTildeClause.getFileFilters(), observableHolder);
+                proGuardConfigTranslator.addOpenArchive(key, value);
                 if (!observableHolder.isValueNull()) {
                     proGuardConfigTranslator.logWarning((String) observableHolder.getValue());
                 }
             } else {
-                proGuardConfigTranslator.addOpenArchive(string, "");
+                proGuardConfigTranslator.addOpenArchive(key, "");
             }
             ++n2;
         }

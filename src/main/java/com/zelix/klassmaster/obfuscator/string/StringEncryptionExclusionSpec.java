@@ -90,18 +90,18 @@ public class StringEncryptionExclusionSpec extends ExclusionHandlerBase {
     }
 
     public final void applyExclusionStatements() throws ZkmException, IOException {
-        int ba;
+        int exclusionStatementsSize;
         if (super.exclusionStatements == null) {
-            ba = 0;
+            exclusionStatementsSize = 0;
         } else {
-            ba = super.exclusionStatements.size();
+            exclusionStatementsSize = super.exclusionStatements.size();
         }
 
         HashMap hashMap = ZkmUtils.createHashMap();
         Vector vector = new Vector();
 
-        for (int i = 0; i < ba; i++) {
-            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(i);
+        for (int elementIndex = 0; elementIndex < exclusionStatementsSize; elementIndex++) {
+            ParameterListStatement parameterListStatement = (ParameterListStatement) super.exclusionStatements.get(elementIndex);
             Enumeration enumeration = parameterListStatement.getRenameFilterParameters();
 
             while (enumeration.hasMoreElements()) {
@@ -160,18 +160,18 @@ public class StringEncryptionExclusionSpec extends ExclusionHandlerBase {
             }
         }
 
-        int bc;
+        int unexclusionStatementsSize;
         if (super.unexclusionStatements == null) {
-            bc = 0;
+            unexclusionStatementsSize = 0;
         } else {
-            bc = super.unexclusionStatements.size();
+            unexclusionStatementsSize = super.unexclusionStatements.size();
         }
 
         HashMap hashMap1 = ZkmUtils.createHashMap();
         Vector vector1 = new Vector();
 
-        for (int i = 0; i < bc; i++) {
-            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(i);
+        for (int elementIndexValue = 0; elementIndexValue < unexclusionStatementsSize; elementIndexValue++) {
+            ParameterListStatement parameterListStatement1 = (ParameterListStatement) super.unexclusionStatements.get(elementIndexValue);
             Enumeration enumeration1 = parameterListStatement1.getRenameFilterParameters();
 
             while (enumeration1.hasMoreElements()) {
@@ -307,13 +307,13 @@ public class StringEncryptionExclusionSpec extends ExclusionHandlerBase {
         }
     }
 
-    public Enumeration getExcludedFields(Object object) {
-        List list1 = this.excludedFieldsByClass.getValues(object);
+    public Enumeration getExcludedFields(Object key) {
+        List list1 = this.excludedFieldsByClass.getValues(key);
         return list1 != null ? Collections.enumeration(list1) : new EmptyEnumeration();
     }
 
-    public Enumeration getExcludedMethods(Object object) {
-        List list1 = this.excludedMethodsByClass.getValues(object);
+    public Enumeration getExcludedMethods(Object key) {
+        List list1 = this.excludedMethodsByClass.getValues(key);
         return list1 != null ? Collections.enumeration(list1) : new EmptyEnumeration();
     }
 
@@ -351,12 +351,12 @@ public class StringEncryptionExclusionSpec extends ExclusionHandlerBase {
         }
     }
 
-    public boolean hasExcludedFields(Object object) {
-        return this.excludedFieldsByClass.containsKey(object);
+    public boolean hasExcludedFields(Object key) {
+        return this.excludedFieldsByClass.containsKey(key);
     }
 
-    public boolean hasExcludedMethods(Object object) {
-        return this.excludedMethodsByClass.containsKey(object);
+    public boolean hasExcludedMethods(Object key) {
+        return this.excludedMethodsByClass.containsKey(key);
     }
 
     public final void excludeField(FieldInfo fieldInfo, String string) throws ZkmException, IOException {

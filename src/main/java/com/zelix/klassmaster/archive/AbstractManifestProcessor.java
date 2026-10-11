@@ -42,18 +42,18 @@ public abstract class AbstractManifestProcessor {
         ArrayList arrayList = new ArrayList();
 
         for (String string4 : strings) {
-            String string5 = string4.trim();
-            int ba = string5.indexOf(46);
-            if (string5.length() >= 3 && ba > 0 && ba < string5.length() - 1 && string5.indexOf(47) == -1 && isDottedIdentifier(string5, ".")) {
-                String string6 = translateClassOrPathName(string5, enumerableMap1, booleanFlag1);
+            String key = string4.trim();
+            int ba = key.indexOf(46);
+            if (key.length() >= 3 && ba > 0 && ba < key.length() - 1 && key.indexOf(47) == -1 && isDottedIdentifier(key, ".")) {
+                String value = translateClassOrPathName(key, enumerableMap1, booleanFlag1);
                 if (booleanFlag1.getValue()) {
-                    hashMap.put(string5, string6);
-                    arrayList.add(string5);
+                    hashMap.put(key, value);
+                    arrayList.add(key);
                 } else {
-                    String string7 = translateDottedClassName(string5, enumerableMap, booleanFlag1);
+                    String valueValue = translateDottedClassName(key, enumerableMap, booleanFlag1);
                     if (booleanFlag1.getValue()) {
-                        hashMap.put(string5, string7);
-                        arrayList.add(string5);
+                        hashMap.put(key, valueValue);
+                        arrayList.add(key);
                     }
                 }
             }
@@ -64,15 +64,15 @@ public abstract class AbstractManifestProcessor {
         Iterator iterator = arrayList.iterator();
 
         while (iterator.hasNext()) {
-            String string11 = (String) iterator.next();
-            int be = string1.indexOf(string11, bd);
-            String string12 = string1.substring(bd, be);
+            String searchText = (String) iterator.next();
+            int endIndex = string1.indexOf(searchText, bd);
+            String string12 = string1.substring(bd, endIndex);
             if (string12.length() > 0) {
                 arrayList1.add(string12);
             }
 
-            arrayList1.add(string11);
-            bd = be + string11.length();
+            arrayList1.add(searchText);
+            bd = endIndex + searchText.length();
         }
 
         if (bd < string1.length()) {
@@ -84,46 +84,46 @@ public abstract class AbstractManifestProcessor {
         HashSet hashSet1 = ZkmUtils.createHashSet();
         StringBuilder stringBuilder = new StringBuilder();
         boolean bl6 = false;
-        String string13 = null;
+        String keyValue2 = null;
         boolean bl7 = false;
         boolean bl1 = false;
         boolean bl2 = false;
-        int bb = arrayList1.size();
+        int arrayList1Size = arrayList1.size();
 
-        for (int i = 0; i < bb; i++) {
-            String string8 = (String) arrayList1.get(i);
-            if (hashMap.containsKey(string8)) {
-                String string9 = (String) ZkmUtils.mapOrSelf(string8, hashMap);
-                boolean bl3 = hashSet.add(string8);
+        for (int elementIndex = 0; elementIndex < arrayList1Size; elementIndex++) {
+            String keyValue = (String) arrayList1.get(elementIndex);
+            if (hashMap.containsKey(keyValue)) {
+                String string9 = (String) ZkmUtils.mapOrSelf(keyValue, hashMap);
+                boolean bl3 = hashSet.add(keyValue);
                 boolean bl4 = !hashSet1.add(string9) && bl3 && !HiddenOptionFlags.ALLOW_DUPLICATE_MANIFEST_ENTRIES;
                 bl1 = bl1 || bl4;
                 boolean bl5 = string9.length() == 0;
                 bl7 = bl7 || bl5;
                 if (!bl5 && !bl4) {
-                    if (string13 != null && (string13.indexOf(59) > -1 || bl6 || stringBuilder.length() == 0)) {
-                        stringBuilder.append(string13);
-                        string13 = null;
+                    if (keyValue2 != null && (keyValue2.indexOf(59) > -1 || bl6 || stringBuilder.length() == 0)) {
+                        stringBuilder.append(keyValue2);
+                        keyValue2 = null;
                     }
 
                     stringBuilder.append(string9);
                     bl6 = true;
                 }
-            } else if (i < bb - 1) {
+            } else if (elementIndex < arrayList1Size - 1) {
                 bl2 = true;
-                string13 = string8;
+                keyValue2 = keyValue;
             } else {
-                if (string13 != null && (string13.indexOf(59) > -1 || bl6 || stringBuilder.length() == 0)) {
-                    if (string13.trim().endsWith(",") && string8.trim().startsWith(",")) {
-                        int bf = string13.lastIndexOf(44);
-                        string13 = string13.substring(0, bf) + (bf < string13.length() - 2 ? string13.substring(bf + 1) : "");
+                if (keyValue2 != null && (keyValue2.indexOf(59) > -1 || bl6 || stringBuilder.length() == 0)) {
+                    if (keyValue2.trim().endsWith(",") && keyValue.trim().startsWith(",")) {
+                        int endIndexValue = keyValue2.lastIndexOf(44);
+                        keyValue2 = keyValue2.substring(0, endIndexValue) + (endIndexValue < keyValue2.length() - 2 ? keyValue2.substring(endIndexValue + 1) : "");
                     }
 
-                    stringBuilder.append(string13);
-                    string13 = null;
+                    stringBuilder.append(keyValue2);
+                    keyValue2 = null;
                     bl6 = false;
                 }
 
-                stringBuilder.append(string8);
+                stringBuilder.append(keyValue);
             }
         }
 
@@ -146,7 +146,7 @@ public abstract class AbstractManifestProcessor {
     }
 
     public final String translateClassListAttribute(
-            String string,
+            String key,
             EnumerableMap enumerableMap,
             EnumerableMap enumerableMap1,
             BooleanFlag booleanFlag,
@@ -154,17 +154,17 @@ public abstract class AbstractManifestProcessor {
             boolean bl,
             MessageReporter messageReporter1
     ) {
-        String string2 = this.getUnwrappedHeaderValue(string);
-        return this.wrapManifestLine(translateClassListValue(string, string2, enumerableMap, enumerableMap1, booleanFlag, string1, bl, messageReporter1));
+        String unwrappedHeaderValue = this.getUnwrappedHeaderValue(key);
+        return this.wrapManifestLine(translateClassListValue(key, unwrappedHeaderValue, enumerableMap, enumerableMap1, booleanFlag, string1, bl, messageReporter1));
     }
 
     public String parseHeaderLine(String string) throws ZkmException {
-        int ba = string.indexOf(":");
-        if (ba > 0 && ba != string.length() - 1) {
-            String string1 = string.substring(0, ba).trim();
-            string1 = this.normalizeHeaderName(string1);
-            if (!this.headers.containsKey(string1)) {
-                String string2 = string.substring(ba + 1);
+        int endIndex = string.indexOf(":");
+        if (endIndex > 0 && endIndex != string.length() - 1) {
+            String key = string.substring(0, endIndex).trim();
+            key = this.normalizeHeaderName(key);
+            if (!this.headers.containsKey(key)) {
+                String string2 = string.substring(endIndex + 1);
                 ArrayListMultiMap arrayListMultiMap;
                 if (string2.length() > 0) {
                     if (string2.charAt(0) == ' ') {
@@ -177,12 +177,12 @@ public abstract class AbstractManifestProcessor {
                     arrayListMultiMap = this.headers;
                 }
 
-                arrayListMultiMap.addValue(string1, string2);
-                return string1;
-            } else if (string1.equals("Name")) {
+                arrayListMultiMap.addValue(key, string2);
+                return key;
+            } else if (key.equals("Name")) {
                 throw new ZkmException("Two 'Name' headers in the one manifest section.  Header '" + string + "' must be preceded by a blank line.");
             } else {
-                throw new ZkmException("Two '" + string1 + "' headers in the one manifest section: '" + string + "'");
+                throw new ZkmException("Two '" + key + "' headers in the one manifest section: '" + string + "'");
             }
         } else {
             throw new ZkmException("Invalid Manifest attribute '" + string + "' - " + ZkmUtils.toHexArrayLiteral(string.getBytes()));
@@ -235,14 +235,14 @@ public abstract class AbstractManifestProcessor {
         }
     }
 
-    public final String getUnwrappedHeaderValue(String string) {
-        List list1 = this.headers.getValues(string);
+    public final String getUnwrappedHeaderValue(String key) {
+        List list1 = this.headers.getValues(key);
         if (list1 != null) {
             StringBuilder stringBuilder = new StringBuilder();
 
-            for (int i = 0; i < list1.size(); i++) {
-                String string1 = (String) list1.get(i);
-                if (i > 0) {
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String string1 = (String) list1.get(elementIndex);
+                if (elementIndex > 0) {
                     string1 = string1.substring(1);
                 }
 
@@ -256,31 +256,31 @@ public abstract class AbstractManifestProcessor {
     }
 
     public static String lookupRenamedName(String string, EnumerableMap enumerableMap, boolean bl, BooleanFlag booleanFlag) {
-        String string1 = string.trim().replace('.', '/');
-        String string2 = (String) enumerableMap.get(string1);
-        if (string2 == null) {
-            string2 = string1;
+        String key = string.trim().replace('.', '/');
+        String keyValue = (String) enumerableMap.get(key);
+        if (keyValue == null) {
+            keyValue = key;
             booleanFlag.setValue(false);
         } else {
             booleanFlag.setValue(true);
         }
 
-        return bl ? string2.replace('/', '.') : string2;
+        return bl ? keyValue.replace('/', '.') : keyValue;
     }
 
     public final boolean hasNoHeaders() {
         return this.headers.getKeyCount() == 0;
     }
 
-    public final String getRawHeaderValue(String string) {
-        List list1 = this.headers.getValues(string);
+    public final String getRawHeaderValue(String key) {
+        List list1 = this.headers.getValues(key);
         if (list1 != null) {
             StringBuilder stringBuilder = new StringBuilder();
 
-            for (int i = 0; i < list1.size(); i++) {
-                String string1 = (String) list1.get(i);
+            for (int elementIndex = 0; elementIndex < list1.size(); elementIndex++) {
+                String string1 = (String) list1.get(elementIndex);
                 stringBuilder.append(string1);
-                if (i < list1.size() - 1) {
+                if (elementIndex < list1.size() - 1) {
                     stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
                 }
             }
@@ -303,7 +303,7 @@ public abstract class AbstractManifestProcessor {
 
     public AbstractManifestProcessor(BufferedReader bufferedReader) throws ZkmException, IOException {
         boolean bl = false;
-        String string = null;
+        String key = null;
 
         String string1;
         while ((string1 = bufferedReader.readLine()) != null) {
@@ -318,9 +318,9 @@ public abstract class AbstractManifestProcessor {
             } else {
                 bl = true;
                 if (string1.charAt(0) == ' ') {
-                    this.headers.addValue(string, string1);
+                    this.headers.addValue(key, string1);
                 } else {
-                    string = this.parseHeaderLine(string1);
+                    key = this.parseHeaderLine(string1);
                 }
             }
         }
@@ -340,22 +340,22 @@ public abstract class AbstractManifestProcessor {
             return string;
         }
 
-        int bb = 0;
-        int bc = 72;
-        StringBuilder stringBuilder = new StringBuilder(string.substring(bb, 72));
+        int beginIndex = 0;
+        int beginIndexValue = 72;
+        StringBuilder stringBuilder = new StringBuilder(string.substring(beginIndex, 72));
 
-        while (ba - bc > 71) {
-            bb = bc;
-            bc = bb + 72 - 1;
+        while (ba - beginIndexValue > 71) {
+            beginIndex = beginIndexValue;
+            beginIndexValue = beginIndex + 72 - 1;
             stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
             stringBuilder.append(' ');
-            stringBuilder.append(string.substring(bb, bc));
+            stringBuilder.append(string.substring(beginIndex, beginIndexValue));
         }
 
-        if (bc < ba) {
+        if (beginIndexValue < ba) {
             stringBuilder.append(HiddenOptionFlags.LINE_SEPARATOR);
             stringBuilder.append(' ');
-            stringBuilder.append(string.substring(bc));
+            stringBuilder.append(string.substring(beginIndexValue));
         }
 
         return stringBuilder.toString();

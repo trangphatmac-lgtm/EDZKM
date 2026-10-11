@@ -48,8 +48,8 @@ public class ASTDontWarnOption extends ProGuardOptionNode implements ProGuardCla
             );
         }
 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-            this.jjtGetChild(i).translate(this, proGuardConfigTranslator);
+        for (int childrenElementIndex = 0; childrenElementIndex < this.jjtGetNumChildren(); childrenElementIndex++) {
+            this.jjtGetChild(childrenElementIndex).translate(this, proGuardConfigTranslator);
         }
 
         Iterator iterator = this.classNamePatterns.iterator();
@@ -68,8 +68,8 @@ public class ASTDontWarnOption extends ProGuardOptionNode implements ProGuardCla
                 );
                 iterator.remove();
             } else {
-                String string = ProGuardWildcardConverter.convertClassPattern(namePatternEntry.getPattern());
-                namePatternEntry.setPattern(string);
+                String pattern = ProGuardWildcardConverter.convertClassPattern(namePatternEntry.getPattern());
+                namePatternEntry.setPattern(pattern);
             }
         }
 

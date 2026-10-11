@@ -35,11 +35,11 @@ public class ResolvedStackTraceLine implements StackTraceLineInfo {
         if (stackTraceFrameLine1.getLineNumber(0, long1) > -1) {
             stackTraceFrameLine1 = this.frameLine;
             Long long2 = 121982683753216L;
-            int ba = stackTraceFrameLine1.getLineNumber(0, long2);
+            int lineNumber = stackTraceFrameLine1.getLineNumber(0, long2);
             Iterator iterator = list1.iterator();
 
             while (iterator.hasNext()) {
-                if (!((MethodInfo) iterator.next()).hasLineNumber(ba)) {
+                if (!((MethodInfo) iterator.next()).hasLineNumber(lineNumber)) {
                     iterator.remove();
                 }
             }
@@ -116,32 +116,32 @@ public class ResolvedStackTraceLine implements StackTraceLineInfo {
     public ResolvedStackTraceLine(StackTraceFrameLine stackTraceFrameLine, ClasspathClassResolver classpathClassResolver, boolean bl) throws ZkmException, IOException {
         this.frameLine = stackTraceFrameLine;
         if (classpathClassResolver != null && this.isValidFrame()) {
-            String string = stackTraceFrameLine.getClassName();
-            String string1 = stackTraceFrameLine.getMethodDescriptor();
+            String className = stackTraceFrameLine.getClassName();
+            String methodDescriptor = stackTraceFrameLine.getMethodDescriptor();
 
             try {
-                this.programClass = classpathClassResolver.loadProgramClass(ZkmUtils.dotsToSlashes(string));
+                this.programClass = classpathClassResolver.loadProgramClass(ZkmUtils.dotsToSlashes(className));
             } catch (TraceClassNotFoundException traceClassNotFoundException) {
                 if (bl) {
-                    stackTraceFrameLine.setErrorMessage("Class '" + string + "' not found in the change log or the obfuscated bytecode classpath.");
+                    stackTraceFrameLine.setErrorMessage("Class '" + className + "' not found in the change log or the obfuscated bytecode classpath.");
                     return;
                 }
 
                 throw new StackTraceTranslateException(
                         "Class '"
-                                + string
+                                + className
                                 + "' is in the change log but NOT in the obfuscated bytecode classpath. The obfuscated bytecode classpath is incorrect or incomplete."
                 );
             } catch (ClassLookupException classLookupException) {
                 throw new StackTraceTranslateException(classLookupException.getMessage());
             }
 
-            if (string1 != null) {
-                MethodSignature methodSignature1 = new MethodSignature(stackTraceFrameLine.getMethodName(), ZkmUtils.dotsToSlashes(string1));
+            if (methodDescriptor != null) {
+                MethodSignature methodSignature1 = new MethodSignature(stackTraceFrameLine.getMethodName(), ZkmUtils.dotsToSlashes(methodDescriptor));
                 MethodInfo methodInfo1 = this.programClass.findMethodBySignature(methodSignature1);
                 if (methodInfo1 == null) {
                     if (bl) {
-                        stackTraceFrameLine.setErrorMessage("Method '" + methodSignature1.formatSignature() + "' in class '" + string + "' not found.");
+                        stackTraceFrameLine.setErrorMessage("Method '" + methodSignature1.formatSignature() + "' in class '" + className + "' not found.");
                         return;
                     }
 
@@ -157,7 +157,7 @@ public class ResolvedStackTraceLine implements StackTraceLineInfo {
                 }
 
                 TraceMethodCandidate traceMethodCandidate = new TraceMethodCandidate(
-                        stackTraceFrameLine.getMethodName() + ZkmUtils.dotsToSlashes(string1), methodInfo1
+                        stackTraceFrameLine.getMethodName() + ZkmUtils.dotsToSlashes(methodDescriptor), methodInfo1
                 );
                 this.methodCandidates.add(traceMethodCandidate);
             } else {

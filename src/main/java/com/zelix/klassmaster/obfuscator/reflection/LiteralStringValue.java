@@ -6,8 +6,8 @@ import com.zelix.klassmaster.classfile.insn.TrackedValue;
 public class LiteralStringValue implements TrackedValue {
     public final String value;
 
-    public LiteralStringValue(String string) {
-        this.value = string;
+    public LiteralStringValue(String valueArgument) {
+        this.value = valueArgument;
     }
 
     @Override
@@ -36,56 +36,25 @@ public class LiteralStringValue implements TrackedValue {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object otherArgument) {
         boolean strictMergeEnabled = StackFrameState.isStrictMergeEnabled();
-        boolean bl1 = object instanceof LiteralStringValue;
-        if (strictMergeEnabled) {
-            if (bl1) {
-                LiteralStringValue literalStringValue1 = (LiteralStringValue) object;
-                LiteralStringValue literalStringValue2 = this;
-                if (strictMergeEnabled) {
-                    if (this.value != null) {
-                        String string;
-                        if (strictMergeEnabled) {
-                            if (literalStringValue1.value == null) {
-                                return false;
-                            }
-
-                            string = this.value;
-                        } else {
-                            string = literalStringValue1.value;
-                        }
-
-                        return string.equals(literalStringValue1.value);
-                    }
-
-                    literalStringValue2 = literalStringValue1;
-                }
-
-                return literalStringValue2.value == null;
-            }
-
-            bl1 = false;
+        if (!(otherArgument instanceof LiteralStringValue)) {
+            return false;
         }
-
-        return bl1;
+        if (!strictMergeEnabled) {
+            return true;
+        }
+        LiteralStringValue other = (LiteralStringValue) otherArgument;
+        return this.value == null ? other.value == null : other.value != null && this.value.equals(other.value);
     }
 
     @Override
     public int hashCode() {
         boolean strictMergeDisabled = StackFrameState.isStrictMergeDisabled();
-        String string;
-        if (!strictMergeDisabled) {
-            if (this.value == null) {
-                return 0;
-            }
-
-            string = this.value;
-        } else {
-            string = this.value;
+        if (!strictMergeDisabled && this.value == null) {
+            return 0;
         }
-
-        return string.hashCode();
+        return this.value.hashCode();
     }
 
     @Override

@@ -48,12 +48,12 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                 set1.add(super.annotationClass);
             }
 
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
-            for (int i = super.elementCount; bb < i; i = super.elementCount) {
-                super.elements[ba].collectReferencedClasses(set1);
-                bb = ++ba;
+            for (int elementCountValue = super.elementCount; bb < elementCountValue; elementCountValue = super.elementCount) {
+                super.elements[elementIndex].collectReferencedClasses(set1);
+                bb = ++elementIndex;
             }
         }
     }
@@ -64,24 +64,24 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
         Map map1 = (Map) object;
         ConstantUtf8 constantUtf8 = (ConstantUtf8) map1.get(super.typeConstant);
         DataOutputStream dataOutputStream1;
-        int bd;
+        int elementCountValue;
         if (constantUtf8 != null) {
             dataOutputStream.writeShort(constantUtf8.getIndex());
             dataOutputStream1 = dataOutputStream;
-            bd = super.elementCount;
+            elementCountValue = super.elementCount;
         } else {
             dataOutputStream.writeShort(super.typeConstant.getIndex());
             dataOutputStream1 = dataOutputStream;
-            bd = super.elementCount;
+            elementCountValue = super.elementCount;
         }
 
-        dataOutputStream1.writeShort(bd);
-        int ba = 0;
+        dataOutputStream1.writeShort(elementCountValue);
+        int elementIndex = 0;
         int bb = 0;
 
-        for (int i = super.elementCount; bb < i; i = super.elementCount) {
-            super.elements[ba].writeRemapped(dataOutputStream, map1, scriptEnvironment1);
-            bb = ++ba;
+        for (int elementCountValue2 = super.elementCount; bb < elementCountValue2; elementCountValue2 = super.elementCount) {
+            super.elements[elementIndex].writeRemapped(dataOutputStream, map1, scriptEnvironment1);
+            bb = ++elementIndex;
         }
     }
 
@@ -106,11 +106,11 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
             ClassFileComponent classFileComponent, int ba, ConstantPoolEntry constantPoolEntry, ClassFileInputStream classFileInputStream, ListMultimap listMultimap
     ) throws IOException {
         super(classFileComponent, ba, constantPoolEntry, classFileInputStream, listMultimap);
-        int bb = 0;
+        int elementIndex = 0;
         int bg = 0;
 
-        for (int i = super.elementCount; bg < i; i = super.elementCount) {
-            AnnotationElementPair annotationElementPair = super.elements[bb];
+        for (int elementCountValue = super.elementCount; bg < elementCountValue; elementCountValue = super.elementCount) {
+            AnnotationElementPair annotationElementPair = super.elements[elementIndex];
             AnnotationElementValue annotationElementValue = annotationElementPair.getValue();
             switch (annotationElementPair.getElementName()) {
                 case "k":
@@ -199,7 +199,7 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                     }
             }
 
-            bg = ++bb;
+            bg = ++elementIndex;
         }
     }
 
@@ -214,33 +214,33 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
             set1.add((ProgramClass) super.annotationClass);
         }
 
-        int ba = 0;
-        int bb = ba;
+        int elementIndex = 0;
+        int elementIndexValue = elementIndex;
 
-        for (int i = super.elementCount; bb < i; i = super.elementCount) {
-            super.elements[ba].collectReferencedMembers(super.annotationClass, set1, set2, set3, set4);
-            bb = ++ba;
+        for (int elementCountValue = super.elementCount; elementIndexValue < elementCountValue; elementCountValue = super.elementCount) {
+            super.elements[elementIndex].collectReferencedMembers(super.annotationClass, set1, set2, set3, set4);
+            elementIndexValue = ++elementIndex;
         }
     }
 
     @Override
     public String getElementClassValue(String string, boolean bl) {
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
-        for (int i = super.elementCount; bb < i; i = super.elementCount) {
+        for (int elementCountValue = super.elementCount; bb < elementCountValue; elementCountValue = super.elementCount) {
             String string1;
             if (bl) {
-                string1 = super.elements[ba].getResolvedElementName();
+                string1 = super.elements[elementIndex].getResolvedElementName();
             } else {
-                string1 = super.elements[ba].getElementName();
+                string1 = super.elements[elementIndex].getElementName();
             }
 
             if (string.equals(string1)) {
-                return super.elements[ba].getClassValueName();
+                return super.elements[elementIndex].getClassValueName();
             }
 
-            bb = ++ba;
+            bb = ++elementIndex;
         }
 
         return null;
@@ -249,8 +249,8 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
     @Override
     public String getTypeName() {
         if (super.valid) {
-            String string = super.typeConstant.getValue();
-            return string.substring(1, string.length() - 1);
+            String value = super.typeConstant.getValue();
+            return value.substring(1, value.length() - 1);
         } else {
             return null;
         }
@@ -282,39 +282,39 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
         if (super.annotationClass != null) {
             String string = ClassFileBase.extractClassName(super.typeConstant.getValue());
             if (!super.annotationClass.getClassName().equals(string)) {
-                String string1 = ClassFileBase.toTypeDescriptor(super.annotationClass.getClassName(), super.arrayDimensions);
-                super.typeConstant.setValue(string1);
+                String value = ClassFileBase.toTypeDescriptor(super.annotationClass.getClassName(), super.arrayDimensions);
+                super.typeConstant.setValue(value);
             }
 
             this.getOwningClass();
-            int ba = 0;
-            int bb = 0;
+            int intValueValue = 0;
+            int elementIndex = 0;
             int be = 0;
 
-            for (int i = super.elementCount; be < i; i = super.elementCount) {
-                AnnotationElementPair annotationElementPair = super.elements[bb];
+            for (int elementCountValue = super.elementCount; be < elementCountValue; elementCountValue = super.elementCount) {
+                AnnotationElementPair annotationElementPair = super.elements[elementIndex];
                 AnnotationElementValue annotationElementValue = annotationElementPair.getValue();
                 switch (annotationElementPair.getElementName()) {
                     case "k":
-                        ba = ((IntElementValue) annotationElementValue).getIntValue();
+                        intValueValue = ((IntElementValue) annotationElementValue).getIntValue();
                         break;
                     case "d1":
-                        if (ba != 4 || !annotationElementValue.isArrayOrClassValue()) {
+                        if (intValueValue != 4 || !annotationElementValue.isArrayOrClassValue()) {
                             break;
                         }
 
                         AnnotationElementValue[] annotationElementValues1 = ((NestedAnnotationElementValue) annotationElementValue).getElementValues();
 
-                        for (int j = 0; j < annotationElementValues1.length; j++) {
-                            AnnotationElementValue annotationElementValue2 = annotationElementValues1[j];
+                        for (int annotationElementValues1ElementIndex = 0; annotationElementValues1ElementIndex < annotationElementValues1.length; annotationElementValues1ElementIndex++) {
+                            AnnotationElementValue annotationElementValue2 = annotationElementValues1[annotationElementValues1ElementIndex];
                             if (annotationElementValue2 instanceof StringElementValue) {
                                 StringElementValue stringElementValue2 = (StringElementValue) annotationElementValue2;
-                                String string8 = stringElementValue2.getStringValue();
-                                if (ZkmStringUtils.countChar(string8, '/') >= 1) {
+                                String stringValue = stringElementValue2.getStringValue();
+                                if (ZkmStringUtils.countChar(stringValue, '/') >= 1) {
                                     BooleanFlag booleanFlag2 = new BooleanFlag();
-                                    String string11 = ConstantPoolEntry.remapClassNameString(string8, hashMap, booleanFlag2);
-                                    if (booleanFlag2.getValue() && !string11.equals(string8)) {
-                                        stringElementValue2.setStringValue(string11);
+                                    String stringValueValue = ConstantPoolEntry.remapClassNameString(stringValue, hashMap, booleanFlag2);
+                                    if (booleanFlag2.getValue() && !stringValueValue.equals(stringValue)) {
+                                        stringElementValue2.setStringValue(stringValueValue);
                                     }
                                 }
                             }
@@ -326,26 +326,26 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                         }
 
                         AnnotationElementValue[] annotationElementValues = ((NestedAnnotationElementValue) annotationElementValue).getElementValues();
-                        int bc = 0;
+                        int annotationElementValueIndex = 0;
 
-                        for (; bc < annotationElementValues.length; bc++) {
-                            AnnotationElementValue annotationElementValue1 = annotationElementValues[bc];
+                        for (; annotationElementValueIndex < annotationElementValues.length; annotationElementValueIndex++) {
+                            AnnotationElementValue annotationElementValue1 = annotationElementValues[annotationElementValueIndex];
                             if (annotationElementValue1 instanceof StringElementValue) {
                                 StringElementValue stringElementValue1 = (StringElementValue) annotationElementValue1;
-                                String string4 = stringElementValue1.getStringValue();
-                                if (string4.startsWith("(") && string4.indexOf(41) < string4.length() && ZkmStringUtils.countChar(string4, ')') == 1) {
-                                    String string9 = MethodSignature.getParameterPart(string4);
-                                    String string10 = MethodSignature.getReturnPart(string4);
-                                    String string6 = '(' + ConstantPoolEntry.remapDescriptorClassNames(string9.substring(1, string9.length() - 1), hashMap) + ')';
-                                    String string7 = ConstantPoolEntry.remapClassNameString(string10, hashMap, new BooleanFlag());
-                                    if (!string6.equals(string9) || !string7.equals(string10)) {
+                                String stringValueValue2 = stringElementValue1.getStringValue();
+                                if (stringValueValue2.startsWith("(") && stringValueValue2.indexOf(41) < stringValueValue2.length() && ZkmStringUtils.countChar(stringValueValue2, ')') == 1) {
+                                    String parameterPart = MethodSignature.getParameterPart(stringValueValue2);
+                                    String returnPart = MethodSignature.getReturnPart(stringValueValue2);
+                                    String string6 = '(' + ConstantPoolEntry.remapDescriptorClassNames(parameterPart.substring(1, parameterPart.length() - 1), hashMap) + ')';
+                                    String string7 = ConstantPoolEntry.remapClassNameString(returnPart, hashMap, new BooleanFlag());
+                                    if (!string6.equals(parameterPart) || !string7.equals(returnPart)) {
                                         stringElementValue1.setStringValue(string6 + string7);
                                     }
-                                } else if (string4.startsWith("L") && string4.endsWith(";") || ZkmStringUtils.countChar(string4, '/') >= 1) {
+                                } else if (stringValueValue2.startsWith("L") && stringValueValue2.endsWith(";") || ZkmStringUtils.countChar(stringValueValue2, '/') >= 1) {
                                     BooleanFlag booleanFlag1 = new BooleanFlag();
-                                    String string5 = ConstantPoolEntry.remapClassNameString(string4, hashMap, booleanFlag1);
-                                    if (booleanFlag1.getValue() && !string5.equals(string4)) {
-                                        stringElementValue1.setStringValue(string5);
+                                    String stringValueValue3 = ConstantPoolEntry.remapClassNameString(stringValueValue2, hashMap, booleanFlag1);
+                                    if (booleanFlag1.getValue() && !stringValueValue3.equals(stringValueValue2)) {
+                                        stringElementValue1.setStringValue(stringValueValue3);
                                     }
                                 }
                             }
@@ -354,12 +354,12 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                     case "xs":
                         if (annotationElementValue instanceof StringElementValue) {
                             StringElementValue stringElementValue = (StringElementValue) annotationElementValue;
-                            String string2 = stringElementValue.getStringValue();
-                            if (ZkmStringUtils.countChar(string2, '/') >= 1) {
+                            String stringValueValue4 = stringElementValue.getStringValue();
+                            if (ZkmStringUtils.countChar(stringValueValue4, '/') >= 1) {
                                 BooleanFlag booleanFlag = new BooleanFlag();
-                                String string3 = ConstantPoolEntry.remapClassNameString(string2, hashMap, booleanFlag);
-                                if (booleanFlag.getValue() && !string3.equals(string2)) {
-                                    stringElementValue.setStringValue(string3);
+                                String stringValueValue5 = ConstantPoolEntry.remapClassNameString(stringValueValue4, hashMap, booleanFlag);
+                                if (booleanFlag.getValue() && !stringValueValue5.equals(stringValueValue4)) {
+                                    stringElementValue.setStringValue(stringValueValue5);
                                 }
                             }
                         }
@@ -369,7 +369,7 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                     case "xi":
                 }
 
-                be = ++bb;
+                be = ++elementIndex;
             }
         }
     }
@@ -392,51 +392,51 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                 listMultimap.addValue(abstractFieldInfo.getOriginalMemberName(), abstractFieldInfo);
             }
 
-            int bb = 0;
+            int elementIndex = 0;
             int bc = 0;
 
-            for (int i = super.elementCount; bc < i; i = super.elementCount) {
-                AnnotationElementPair annotationElementPair = super.elements[bb];
+            for (int elementCountValue = super.elementCount; bc < elementCountValue; elementCountValue = super.elementCount) {
+                AnnotationElementPair annotationElementPair = super.elements[elementIndex];
                 if (annotationElementPair.getElementName().equals("d2")) {
                     NestedAnnotationElementValue nestedAnnotationElementValue = (NestedAnnotationElementValue) annotationElementPair.getValue();
 
                     for (AnnotationElementValue annotationElementValue : nestedAnnotationElementValue.getElementValues()) {
                         if (annotationElementValue instanceof StringElementValue) {
                             StringElementValue stringElementValue = (StringElementValue) annotationElementValue;
-                            String string = stringElementValue.getStringValue();
-                            List list1 = listMultimap.getValues(string);
-                            if (list1 != null && !hashSet.contains(string)) {
+                            String stringValue = stringElementValue.getStringValue();
+                            List list1 = listMultimap.getValues(stringValue);
+                            if (list1 != null && !hashSet.contains(stringValue)) {
                                 boolean bl = true;
-                                String string1 = null;
+                                String sourceName = null;
                                 Iterator iterator = list1.iterator();
 
                                 while (iterator.hasNext()) {
                                     AbstractFieldInfo abstractFieldInfo1 = (AbstractFieldInfo) iterator.next();
-                                    if (string1 == null) {
-                                        string1 = abstractFieldInfo1.getSourceName();
-                                    } else if (!string1.equals(abstractFieldInfo1.getSourceName())) {
+                                    if (sourceName == null) {
+                                        sourceName = abstractFieldInfo1.getSourceName();
+                                    } else if (!sourceName.equals(abstractFieldInfo1.getSourceName())) {
                                         bl = false;
                                         break;
                                     }
                                 }
 
-                                if (bl && !string.equals(string1)) {
-                                    stringElementValue.setStringValue(string1);
+                                if (bl && !stringValue.equals(sourceName)) {
+                                    stringElementValue.setStringValue(sourceName);
                                 }
                             }
                         }
                     }
                 }
 
-                bc = ++bb;
+                bc = ++elementIndex;
             }
         } else {
-            int ba = 0;
-            int be = ba;
+            int elementIndexValue = 0;
+            int elementIndexValue2 = elementIndexValue;
 
-            for (int i = super.elementCount; be < i; i = super.elementCount) {
-                super.elements[ba].updateAfterFieldRename();
-                be = ++ba;
+            for (int elementCountValue2 = super.elementCount; elementIndexValue2 < elementCountValue2; elementCountValue2 = super.elementCount) {
+                super.elements[elementIndexValue].updateAfterFieldRename();
+                elementIndexValue2 = ++elementIndexValue;
             }
         }
     }
@@ -470,11 +470,11 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                 listMultimap.addValue(abstractMethodInfo.getOriginalMemberName(), abstractMethodInfo);
             }
 
-            int bb = 0;
+            int elementIndex = 0;
             int bc = 0;
 
-            for (int i = super.elementCount; bc < i; i = super.elementCount) {
-                AnnotationElementPair annotationElementPair = super.elements[bb];
+            for (int elementCountValue = super.elementCount; bc < elementCountValue; elementCountValue = super.elementCount) {
+                AnnotationElementPair annotationElementPair = super.elements[elementIndex];
                 if (annotationElementPair.getElementName().equals("d2")) {
                     AnnotationElementValue annotationElementValue1 = annotationElementPair.getValue();
                     if (annotationElementValue1.isArrayOrClassValue()) {
@@ -483,25 +483,25 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                         for (AnnotationElementValue annotationElementValue : nestedAnnotationElementValue.getElementValues()) {
                             if (annotationElementValue instanceof StringElementValue) {
                                 StringElementValue stringElementValue = (StringElementValue) annotationElementValue;
-                                String string = stringElementValue.getStringValue();
-                                List list1 = listMultimap.getValues(string);
-                                if (list1 != null && !hashSet.contains(string)) {
+                                String stringValue = stringElementValue.getStringValue();
+                                List list1 = listMultimap.getValues(stringValue);
+                                if (list1 != null && !hashSet.contains(stringValue)) {
                                     boolean bl = true;
-                                    String string1 = null;
+                                    String sourceName = null;
                                     Iterator iterator = list1.iterator();
 
                                     while (iterator.hasNext()) {
                                         AbstractMethodInfo abstractMethodInfo1 = (AbstractMethodInfo) iterator.next();
-                                        if (string1 == null) {
-                                            string1 = abstractMethodInfo1.getSourceName();
-                                        } else if (!string1.equals(abstractMethodInfo1.getSourceName())) {
+                                        if (sourceName == null) {
+                                            sourceName = abstractMethodInfo1.getSourceName();
+                                        } else if (!sourceName.equals(abstractMethodInfo1.getSourceName())) {
                                             bl = false;
                                             break;
                                         }
                                     }
 
-                                    if (bl && !string.equals(string1)) {
-                                        stringElementValue.setStringValue(string1);
+                                    if (bl && !stringValue.equals(sourceName)) {
+                                        stringElementValue.setStringValue(sourceName);
                                     }
                                 }
                             }
@@ -509,15 +509,15 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
                     }
                 }
 
-                bc = ++bb;
+                bc = ++elementIndex;
             }
         } else {
-            int ba = 0;
-            int be = ba;
+            int elementIndexValue = 0;
+            int elementIndexValue2 = elementIndexValue;
 
-            for (int i = super.elementCount; be < i; i = super.elementCount) {
-                super.elements[ba].updateAfterMethodRename();
-                be = ++ba;
+            for (int elementCountValue2 = super.elementCount; elementIndexValue2 < elementCountValue2; elementCountValue2 = super.elementCount) {
+                super.elements[elementIndexValue].updateAfterMethodRename();
+                elementIndexValue2 = ++elementIndexValue;
             }
         }
     }
@@ -525,20 +525,20 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
     @Override
     public void resolveReferences(ClassResolver classResolver1, IgnoreMissingReferencesSpec ignoreMissingReferencesSpec1, ScriptEnvironment scriptEnvironment1) throws ZkmException, IOException {
         MutableInt mutableInt = new MutableInt(0);
-        String string = ClassFileBase.extractClassName(super.typeConstant.getValue(), mutableInt);
+        String key = ClassFileBase.extractClassName(super.typeConstant.getValue(), mutableInt);
         super.arrayDimensions = mutableInt.getValue();
-        if (string != null) {
+        if (key != null) {
             super.annotationClass = classResolver1.getClassFile(
-                    string, "analyzing annotations in class '" + this.getDisplayLocationName() + "' (C)", ignoreMissingReferencesSpec1
+                    key, "analyzing annotations in class '" + this.getDisplayLocationName() + "' (C)", ignoreMissingReferencesSpec1
             );
         }
 
-        int ba = 0;
+        int elementIndex = 0;
         int bb = 0;
 
-        for (int i = super.elementCount; bb < i; i = super.elementCount) {
-            super.elements[ba].resolveReferences(super.annotationClass, classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
-            bb = ++ba;
+        for (int elementCountValue = super.elementCount; bb < elementCountValue; elementCountValue = super.elementCount) {
+            super.elements[elementIndex].resolveReferences(super.annotationClass, classResolver1, ignoreMissingReferencesSpec1, scriptEnvironment1);
+            bb = ++elementIndex;
         }
     }
 
@@ -546,12 +546,12 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
     public void collectUsedConstants(char bd, int be, UsedConstantsCollector usedConstantsCollector, char bf) {
         if (super.valid) {
             super.typeConstant.registerUsage(usedConstantsCollector, this, this.getParent());
-            int ba = 0;
+            int elementIndex = 0;
             int bb = 0;
 
-            for (int i = super.elementCount; bb < i; i = super.elementCount) {
-                super.elements[ba].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
-                bb = ++ba;
+            for (int elementCountValue = super.elementCount; bb < elementCountValue; elementCountValue = super.elementCount) {
+                super.elements[elementIndex].collectUsedConstants('\u0000', 1103830477, usedConstantsCollector, '鞍');
+                bb = ++elementIndex;
             }
         }
     }
@@ -564,12 +564,12 @@ public class KotlinMetadataAnnotation extends AnnotationEntry {
         int bf = (int) (bj << 48 >>> 48);
         dataOutputStream.writeShort(super.typeConstant.getIndex());
         dataOutputStream.writeShort(super.elementCount);
-        int bg = 0;
+        int elementIndex = 0;
         int bi = 0;
 
-        for (int i = super.elementCount; bi < i; i = super.elementCount) {
-            super.elements[bg].write(bd, dataOutputStream, (char) be, (char) bf);
-            bi = ++bg;
+        for (int elementCountValue = super.elementCount; bi < elementCountValue; elementCountValue = super.elementCount) {
+            super.elements[elementIndex].write(bd, dataOutputStream, (char) be, (char) bf);
+            bi = ++elementIndex;
         }
     }
 }

@@ -95,6 +95,8 @@ public class ASTLoadStatement extends SummarizingStatementNode {
             file1 = new File(valueValue);
         }
 
+        file1 = com.zelix.klassmaster.script.ExecutionObserver.inputPath(file1);
+        valueValue = file1.getPath();
         if (file1.exists()) {
             map1.put(file1.getAbsolutePath(), valueValue);
         } else if (valueValue.indexOf("*") > -1

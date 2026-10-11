@@ -22,6 +22,11 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ZKM extends ZkmApiBase {
     public static void main(String[] stringArray) {
+        if (com.zelix.klassmaster.web.WebLauncher.launchIfRequested(stringArray)) return;
+        legacyMain(stringArray);
+    }
+
+    public static void legacyMain(String[] stringArray) {
         try {
             SystemPropertiesFileLoader.loadSystemProperties();
             if (HiddenOptionFlags.DEBUG_REDIRECT_OUT) {

@@ -26,3 +26,12 @@ replay_pid*.log
 
 # Local evaluation/demo binaries
 !demo/ZKM27-eval.jar
+
+# Web workbench
+web/node_modules/
+web/dist/
+web/test-results/
+web/playwright-report/
+.zkm-web/
+web/tsconfig.tsbuildinfo
+web/public/third-party-licenses.txt

@@ -1,0 +1,214 @@
+{
+  "baseline": "9931aab23d87a00a738c334adc7156b0c0679aaa",
+  "checks": [
+    {
+      "name": "compile baseline",
+      "command": [
+        "javac",
+        "--release",
+        "8",
+        "-g",
+        "-nowarn",
+        "-encoding",
+        "UTF-8",
+        "-cp",
+        "<repository>/lib/ant-1.10.11.jar:<repository>/lib/stubs-wtk.jar",
+        "-d",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/classes",
+        "@/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/sources.txt"
+      ],
+      "seconds": 3.977,
+      "returncode": 0,
+      "output": "Note: Some input files use unchecked or unsafe operations.\nNote: Recompile with -Xlint:unchecked for details.\n"
+    },
+    {
+      "name": "build current",
+      "command": [
+        "bash",
+        "gradlew",
+        "jar",
+        "--offline"
+      ],
+      "seconds": 0.443,
+      "returncode": 0,
+      "output": "> Task :compileJava UP-TO-DATE\n> Task :processResources UP-TO-DATE\n> Task :classes UP-TO-DATE\n> Task :jar UP-TO-DATE\n\nBUILD SUCCESSFUL in 336ms\n3 actionable tasks: 3 up-to-date\n"
+    },
+    {
+      "name": "compile regression tools",
+      "command": [
+        "javac",
+        "-d",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/test-tools",
+        "<repository>/tools/deobfuscation/FlowEquivalenceChecks.java",
+        "<repository>/tools/deobfuscation/ObfuscatorEquivalence.java",
+        "<repository>/tools/deobfuscation/ParserEquivalence.java",
+        "<repository>/tools/deobfuscation/FrontendEquivalence.java",
+        "<repository>/tools/deobfuscation/EntryPointEquivalenceChecks.java",
+        "<repository>/tools/deobfuscation/SerializationContracts.java"
+      ],
+      "seconds": 0.554,
+      "returncode": 0,
+      "output": "Note: <repository>/tools/deobfuscation/FlowEquivalenceChecks.java uses unchecked or unsafe operations.\nNote: Recompile with -Xlint:unchecked for details.\n"
+    },
+    {
+      "name": "isolated algorithm comparisons",
+      "command": [
+        "python3",
+        "<repository>/tools/deobfuscation/verify_behavior.py",
+        "--baseline-ref",
+        "9931aab23d87a00a738c334adc7156b0c0679aaa"
+      ],
+      "seconds": 6.946,
+      "returncode": 0,
+      "output": "AccessFlags differential checks passed: 9306112\nTracedObjectType differential checks passed: 1140\nNote: Some input files use unchecked or unsafe operations.\nNote: Recompile with -Xlint:unchecked for details.\nappendIntConstant differential instruction/pool/length checks passed: 3097157\nRenameFilterModel differential output/exception/call-order checks passed: 700000\nhasMatchingMonitors differential result/exception/call-order checks passed: 80000\nNote: Some input files use unchecked or unsafe operations.\nNote: Recompile with -Xlint:unchecked for details.\ndescriptor differential result/exception/call-order checks passed: 800722\nconstant usage differential result/exception/call-order checks passed: 46440\nNote: Some input files use unchecked or unsafe operations.\nNote: Recompile with -Xlint:unchecked for details.\nserialPersistentFields differential result/exception/call-order checks passed: 60000\nattribute readers differential close/suppression/diagnostic/state checks passed: 5041\n"
+    },
+    {
+      "name": "FlowEquivalenceChecks",
+      "command": [
+        "java",
+        "-Xmx512m",
+        "-Djava.awt.headless=true",
+        "-Djava.security.manager=allow",
+        "-cp",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/test-tools",
+        "FlowEquivalenceChecks",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/classes",
+        "<repository>/build/classes/java/main",
+        "<repository>/lib/ant-1.10.11.jar",
+        "<repository>/lib/stubs-wtk.jar"
+      ],
+      "seconds": 0.646,
+      "returncode": 0,
+      "output": "PASS: 13946 baseline/current control-flow comparisons\n"
+    },
+    {
+      "name": "ObfuscatorEquivalence",
+      "command": [
+        "java",
+        "-Xmx512m",
+        "-Djava.awt.headless=true",
+        "-Djava.security.manager=allow",
+        "-cp",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/test-tools",
+        "ObfuscatorEquivalence",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/classes",
+        "<repository>/build/classes/java/main"
+      ],
+      "seconds": 0.445,
+      "returncode": 0,
+      "output": "Obfuscator equivalence: 34868 comparisons passed\n"
+    },
+    {
+      "name": "ParserEquivalence",
+      "command": [
+        "java",
+        "-Xmx512m",
+        "-Djava.awt.headless=true",
+        "-Djava.security.manager=allow",
+        "-cp",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/test-tools",
+        "ParserEquivalence",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/classes",
+        "<repository>/build/classes/java/main"
+      ],
+      "seconds": 0.421,
+      "returncode": 0,
+      "output": "Parser equivalence: 1885 comparisons passed\n"
+    },
+    {
+      "name": "FrontendEquivalence",
+      "command": [
+        "java",
+        "-Xmx512m",
+        "-Djava.awt.headless=true",
+        "-Djava.security.manager=allow",
+        "-cp",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/test-tools",
+        "FrontendEquivalence",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/classes",
+        "<repository>/build/classes/java/main"
+      ],
+      "seconds": 1.068,
+      "returncode": 0,
+      "output": "Frontend equivalence: 3458 comparisons passed.\n"
+    },
+    {
+      "name": "EntryPointEquivalenceChecks",
+      "command": [
+        "java",
+        "-Xmx512m",
+        "-Djava.awt.headless=true",
+        "-Djava.security.manager=allow",
+        "-cp",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/test-tools",
+        "EntryPointEquivalenceChecks",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/classes",
+        "<repository>/build/classes/java/main",
+        "<repository>/lib/ant-1.10.11.jar",
+        "<repository>/lib/stubs-wtk.jar"
+      ],
+      "seconds": 1.377,
+      "returncode": 0,
+      "output": "WARNING: A terminally deprecated method in java.lang.System has been called\nWARNING: System::setSecurityManager has been called by EntryPointEquivalenceChecks (file:<temporary-baseline>/test-tools/)\nWARNING: Please consider reporting this to the maintainers of EntryPointEquivalenceChecks\nWARNING: System::setSecurityManager will be removed in a future release\nPASS: 19 entry-point output, exit and redirection-failure comparisons\n"
+    },
+    {
+      "name": "baseline serialization contracts",
+      "command": [
+        "java",
+        "-Djava.awt.headless=true",
+        "-cp",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/test-tools",
+        "SerializationContracts",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/classes",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/baseline-serialization.tsv"
+      ],
+      "seconds": 0.408,
+      "returncode": 0,
+      "output": "Recorded 196 serialization contracts.\n"
+    },
+    {
+      "name": "current serialization contracts",
+      "command": [
+        "java",
+        "-Djava.awt.headless=true",
+        "-cp",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/test-tools",
+        "SerializationContracts",
+        "<repository>/build/classes/java/main",
+        "/var/folders/45/y5gp95h96cqgr5rrgbpw8g0w0000gn/T/zkm-reference-wx0bfabp/current-serialization.tsv"
+      ],
+      "seconds": 0.348,
+      "returncode": 0,
+      "output": "Recorded 196 serialization contracts.\n"
+    },
+    {
+      "name": "serialization compatibility",
+      "returncode": 0,
+      "output": "All UIDs and wire fields identical"
+    }
+  ],
+  "recorded_date": "2026-10-08",
+  "environment": "macOS; JDK 21.0.5; Java 8 application target; Gradle 8.14.5 offline",
+  "naming_pass_check": {
+    "result": "PASS",
+    "classes": 1552,
+    "scope": "Session-only pre-naming compiled snapshot compared to final classes through VerifyRenaming; reverse applied member names; exclude source/debug metadata and separately verified serialVersionUID constants. This is not a bytecode identity claim for the control-flow rewrites."
+  },
+  "summary": {
+    "java_sources_parsed": 1551,
+    "variable_declarations_audited": 57566,
+    "recorded_symbol_renames": 8431,
+    "eliminated_decompiler_labels": 388,
+    "remaining_lexer_scan_labels": 4,
+    "boolean_expressions_simplified": 167,
+    "differential_comparisons": 14150788,
+    "serialization_contracts": 196,
+    "remaining_weak_name_candidates": 11350,
+    "remaining_candidates_by_kind": {
+      "PARAMETER": 6023,
+      "LOCAL_VARIABLE": 5175,
+      "FIELD": 152
+    },
+    "preserved_serialized_weak_field_names": 131
+  }
+}

@@ -17,8 +17,8 @@ bilibili：【最新最热 zkm 27 原始码泄露视频 开源去验证可直接
 
 ## requirements
 
-- JDK 8 or newer
-- highiq
+- Java 17 or newer to run the packaged application
+- JDK 17+, Node.js 22+ and npm to build from source
 
 ## modify
 
@@ -27,17 +27,17 @@ full offline, deobf, rename, fix, patch auth, and more....
 ## build
 
 ```
-./gradlew jar
+sh gradlew jar
 ```
 
 output: `build/libs/zkm27.jar`
 
 ## runnnnnnnnnn
 
-GUI mode:
+Web UI (default; opens the browser automatically):
 
 ```
-./gradlew run
+sh gradlew run
 ```
 
 or directly:
@@ -45,6 +45,17 @@ or directly:
 ```
 java -jar build/libs/zkm27.jar
 ```
+
+Original Swing interface:
+
+```sh
+java -jar build/libs/zkm27.jar --swing
+```
+
+Use `--web --port 8270 --no-browser` for a fixed local port without opening the browser.
+The single JAR includes the React/Monaco frontend and CFR 0.152 / Vineflower 1.12.0; runtime is fully offline.
+
+[Web workbench guide / 中文使用说明](docs/WEB_WORKBENCH.md) · [Swing feature migration checklist](docs/WEB_FEATURES.md)
 
 Script mode:
 
@@ -55,7 +66,7 @@ java -jar build/libs/zkm27.jar script.zkm
 ## IntelliJ IDEA
 
 1. open the project folder, wait for the gradle sync.
-2. set the project SDK to JDK 8+.
+2. set the project SDK to JDK 17+.
 3. select the **start** run configuration in `.idea/runConfigurations/` and hit run.
 
 ## join us

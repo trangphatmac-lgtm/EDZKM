@@ -221,7 +221,9 @@ public class ScriptPreprocessor {
         BufferedReader bufferedReader = null;
 
         try {
-            bufferedReader = ZkmFileUtils.openReaderForPath(string, HiddenOptionFlags.SCRIPT_ENCODING);
+            ExecutionObserver observer = ExecutionObserver.CURRENT.get();
+            String source = observer == null ? null : observer.source(new File(string));
+            bufferedReader = source == null ? ZkmFileUtils.openReaderForPath(ExecutionObserver.inputPath(new File(string)).getPath(), HiddenOptionFlags.SCRIPT_ENCODING) : new BufferedReader(new StringReader(source));
             StringBuffer stringBuffer1 = new StringBuffer();
             int be = bufferedReader.read();
 
@@ -288,6 +290,8 @@ public class ScriptPreprocessor {
             HiddenOptionFlags.skipFrameCompatibilityCheck = false;
         }
 
+        ExecutionObserver observer = ExecutionObserver.CURRENT.get();
+        if (observer != null) this.includeDirectory = observer.includeDirectory();
         ArrayList arrayList = new ArrayList();
         this.processedText = this.preprocessFile(string, arrayList);
     }

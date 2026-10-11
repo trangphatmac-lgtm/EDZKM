@@ -42,8 +42,13 @@ public class ZkmScriptASTInput extends ZkmScriptSimpleNode {
         ScriptEnvironment scriptEnvironment1 = (ScriptEnvironment) object;
         int ba = this.jjtGetNumChildren();
 
+        com.zelix.klassmaster.script.ExecutionObserver initialObserver = com.zelix.klassmaster.script.ExecutionObserver.CURRENT.get();
+        if (initialObserver != null) initialObserver.start(ba);
         for (int childrenElementIndex = 0; childrenElementIndex < ba; childrenElementIndex++) {
+            com.zelix.klassmaster.script.ExecutionObserver observer = com.zelix.klassmaster.script.ExecutionObserver.CURRENT.get();
+            if (observer != null) observer.before(this.jjtGetChild(childrenElementIndex), scriptEnvironment1);
             this.jjtGetChild(childrenElementIndex).execute(this, scriptEnvironment1);
+            if (observer != null) observer.after(this.jjtGetChild(childrenElementIndex), scriptEnvironment1);
         }
     }
 }

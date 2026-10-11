@@ -1,19 +1,25 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.gradleup.shadow' version '8.3.6'
 }
 
 group = 'com.zelix'
 version = ''
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories { mavenCentral() }
 
 dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.6'
+    implementation 'org.benf:cfr:0.152'
+    implementation 'org.vineflower:vineflower:1.12.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
     
     implementation files('lib/ant-1.10.11.jar', 'lib/stubs-wtk.jar')
     
@@ -24,12 +30,7 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    if (JavaVersion.current().isJava8()) {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
-    } else {
-        options.release = 8
-    }
+    options.release = 17
     options.compilerArgs += ['-nowarn', '-Xmaxerrs', '10000']
 }
 
@@ -38,6 +39,8 @@ application {
 }
 
 jar {
+    archiveClassifier = 'thin'
+    finalizedBy tasks.named('shadowJar')
     manifest { attributes 'Main-Class': 'com.zelix.ZKM' }
     
     if (file('lib/zkm-runtime.jar').exists()) from(zipTree('lib/zkm-runtime.jar')) { exclude 'META-INF/**' }
@@ -46,20 +49,67 @@ jar {
 }
 
 tasks.register('runJar', JavaExec) {
-    dependsOn tasks.named('jar')
-    classpath = files(tasks.named('jar').get().archiveFile) + configurations.runtimeClasspath
+    dependsOn tasks.named('shadowJar')
+    classpath = files(tasks.named('shadowJar').get().archiveFile) + configurations.runtimeClasspath
     mainClass = application.mainClass
     workingDir = projectDir
 }
 
 // Make the standard Gradle Application run use the packaged classes/resources too.
 tasks.named('run', JavaExec) {
-    dependsOn tasks.named('jar')
-    classpath = files(tasks.named('jar').get().archiveFile) + configurations.runtimeClasspath
+    dependsOn tasks.named('shadowJar')
+    classpath = files(tasks.named('shadowJar').get().archiveFile) + configurations.runtimeClasspath
 }
 
 
-jar.doLast { // checkEvaluationExpiry
+tasks.named('shadowJar') {
+    archiveClassifier = ''
+    mergeServiceFiles()
+    filesMatching('META-INF/services/**') { duplicatesStrategy = DuplicatesStrategy.INCLUDE }
+    exclude 'META-INF/*.SF', 'META-INF/*.RSA', 'META-INF/*.DSA', 'module-info.class', 'META-INF/versions/*/module-info.class'
+    manifest { attributes 'Main-Class': 'com.zelix.ZKM' }
+}
+
+def npmCommand = System.getProperty('os.name').toLowerCase().contains('windows')
+    ? ['cmd', '/c', 'npm.cmd']
+    : [(System.getenv('PATH') ?: '').split(File.pathSeparator).collect { new File(it, 'npm') }.find { it.canExecute() }?.absolutePath ?: 'npm']
+tasks.register('npmInstall', Exec) {
+    workingDir 'web'
+    commandLine(npmCommand + ['ci', '--no-audit', '--no-fund'])
+    inputs.files 'web/package.json', 'web/package-lock.json'
+    outputs.dir 'web/node_modules'
+}
+tasks.register('webBuild', Exec) {
+    dependsOn 'npmInstall'
+    workingDir 'web'
+    commandLine(npmCommand + ['run', 'build'])
+    inputs.dir 'web/src'
+    inputs.dir 'web/scripts'
+    inputs.files 'web/index.html', 'web/tsconfig.json', 'web/vite.config.ts'
+    outputs.dir 'web/dist'
+}
+tasks.register('thirdPartyNotices') {
+    inputs.files configurations.runtimeClasspath
+    outputs.dir layout.buildDirectory.dir('generated/notices')
+    doLast {
+        configurations.runtimeClasspath.files.findAll { it.name.endsWith('.jar') }.each { artifact ->
+            copy {
+                from zipTree(artifact)
+                include '**/*LICENSE*', '**/*NOTICE*', '**/*license*', '**/*notice*'
+                into layout.buildDirectory.dir("generated/notices/META-INF/licenses/${artifact.name}")
+            }
+        }
+    }
+}
+processResources {
+    dependsOn 'thirdPartyNotices'
+    from layout.buildDirectory.dir('generated/notices')
+    dependsOn 'webBuild'
+    from('web/dist') { into 'web' }
+}
+test { useJUnitPlatform() }
+
+shadowJar.doLast { // Preserve existing entry timestamps required by the legacy startup
     def times = [:]
     file('entry-times.tsv').eachLine { l ->
         if (!l.startsWith('#')) { def p = l.split('\t'); times[p[0]] = java.time.LocalDateTime.parse(p[1]) }

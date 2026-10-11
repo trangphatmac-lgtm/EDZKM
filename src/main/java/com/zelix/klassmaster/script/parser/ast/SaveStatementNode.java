@@ -434,7 +434,7 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
         );
         System.out.println(ZkmScriptSimpleNode.getTimestampPrefix() + " Saving " + classRepository1.getTotalClassCount() + " classes...");
         if (file4 == null) {
-            file4 = scriptEnvironment1.getDefaultDirectory();
+            file4 = com.zelix.klassmaster.script.ExecutionObserver.outputPath(scriptEnvironment1.getDefaultDirectory());
         }
 
         if (!ZkmFileUtils.looksLikeArchiveName(file4.getName())) {
@@ -491,7 +491,7 @@ public abstract class SaveStatementNode extends LiteralParamStatementNode {
             file2 = new File(string1);
         }
 
-        return file2;
+        return com.zelix.klassmaster.script.ExecutionObserver.outputPath(file2);
     }
 
     static {

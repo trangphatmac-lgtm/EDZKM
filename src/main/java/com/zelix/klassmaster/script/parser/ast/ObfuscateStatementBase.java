@@ -341,6 +341,7 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
                         file1 = new File(string1);
                     }
 
+                    file1 = com.zelix.klassmaster.script.ExecutionObserver.inputPath(file1);
                     if (file1.isDirectory()) {
                         scriptEnvironment1.logFatalError(
                                 "Input change log file cannot be a directory : \""
@@ -484,6 +485,8 @@ public abstract class ObfuscateStatementBase extends KeyValueStatementNode {
                     file1 = new File(absolutePathValue);
                 }
 
+                file1 = com.zelix.klassmaster.script.ExecutionObserver.outputPath(file1);
+                absolutePathValue = file1.getAbsolutePath();
                 String absolutePath;
                 String fileSeparator;
                 if (file1.isDirectory()) {

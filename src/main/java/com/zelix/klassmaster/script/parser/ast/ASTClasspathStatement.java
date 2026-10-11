@@ -125,6 +125,11 @@ public class ASTClasspathStatement extends SummarizingStatementNode {
                 stringBuilder.append(pathSeparator);
             }
 
+            if (com.zelix.klassmaster.script.ExecutionObserver.CURRENT.get() != null) {
+                File candidate = new File(string);
+                if (!candidate.isAbsolute()) candidate = new File(scriptEnvironment1.getDefaultDirectory(), string);
+                string = com.zelix.klassmaster.script.ExecutionObserver.inputPath(candidate).getPath();
+            }
             stringBuilder.append(string);
             bf = ++elementIndex;
         }

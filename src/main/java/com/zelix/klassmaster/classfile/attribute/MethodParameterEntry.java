@@ -1,5 +1,6 @@
 package com.zelix.klassmaster.classfile.attribute;
 
+import com.zelix.klassmaster.obfuscator.rename.CustomNaming;
 import com.zelix.klassmaster.classfile.ClassFileComponent;
 import com.zelix.klassmaster.classfile.ClassFileInputStream;
 import com.zelix.klassmaster.classfile.constpool.AbstractConstantPool;
@@ -31,6 +32,11 @@ public class MethodParameterEntry extends ClassFileComponent implements Utf8Cons
     }
 
     public void obfuscateName() {
+        ConstantUtf8 custom = CustomNaming.debugName("Parameter", this.nameConstant, this.getParent().getParent());
+        if (custom != null) {
+            this.nameConstant = custom;
+            return;
+        }
         if (this.nameConstant != null) {
             if (HiddenOptionFlags.MARK_RENAMED_LOCALS) {
                 String value = this.nameConstant.getValue() + (int) nameSeparator + "a";

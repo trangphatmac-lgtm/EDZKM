@@ -43,8 +43,12 @@ public class UniqueNameGenerator {
     }
 
     public UniqueNameGenerator(char[] destinationArray, char[] subsequentChars, char[] destinationArrayArgument, char[] subsequentCharsArgument, List list1, boolean bl) {
-        this.defaultGenerator = new SequentialNameGenerator(destinationArray, subsequentChars, list1, bl);
-        this.archiveGenerator = new SequentialNameGenerator(destinationArrayArgument, subsequentCharsArgument, list1, bl);
+        this(destinationArray, subsequentChars, destinationArrayArgument, subsequentCharsArgument, list1, bl, null);
+    }
+
+    public UniqueNameGenerator(char[] first, char[] rest, char[] archiveFirst, char[] archiveRest, List names, boolean randomize, String kind) {
+        this.defaultGenerator = new SequentialNameGenerator(first, rest, names, randomize, kind);
+        this.archiveGenerator = new SequentialNameGenerator(archiveFirst, archiveRest, names, randomize, kind);
     }
 
     static {

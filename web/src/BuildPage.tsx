@@ -26,6 +26,8 @@ import {
   saveOptions,
   ruleKeywords,
 } from "./options";
+import NamingSettings from "./NamingSettings";
+import { namingKeys } from "./naming";
 import ProjectActions from "./ProjectActions";
 import { Editor } from "./Editor";
 export default function BuildPage() {
@@ -347,8 +349,16 @@ export default function BuildPage() {
                 />
                 {t("Enable obfuscation", "启用混淆")}
               </label>
+              {group === "names" && (
+                <NamingSettings
+                  value={b.obfuscation}
+                  onChange={(obfuscation) => update({ obfuscation })}
+                />
+              )}
               <OptionFields
-                options={obfuscationOptions.filter((o) => o.group === group)}
+                options={obfuscationOptions.filter(
+                  (o) => o.group === group && !namingKeys.includes(o.key),
+                )}
                 value={b.obfuscation}
                 onChange={(obfuscation) => update({ obfuscation })}
               />

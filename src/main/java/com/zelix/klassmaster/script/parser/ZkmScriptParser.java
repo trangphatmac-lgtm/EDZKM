@@ -1,5 +1,6 @@
 package com.zelix.klassmaster.script.parser;
 
+import com.zelix.klassmaster.obfuscator.rename.CustomNaming;
 import com.zelix.klassmaster.script.ZkmScriptParserJJCalls;
 import com.zelix.klassmaster.script.ZkmScriptParserLookaheadSuccess;
 import com.zelix.klassmaster.script.ZkmScriptTreeState;
@@ -3209,12 +3210,33 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
         return ((this.jj_scan_token(RANDOM)) || (this.jj_scan_token(DOT)));
     }
 
+    public final void CustomNamingParameter() throws ZkmScriptParseException {
+        if (!CustomNaming.isOption(this.jj_nt.image)) {
+            this.jj_consume_token(-1);
+            throw new ZkmScriptParseException();
+        }
+        var parameter = new com.zelix.klassmaster.script.parser.ast.ASTCustomNamingParameter();
+        this.jjtree.openNodeScope(parameter);
+        try {
+            ZkmScriptToken key = this.jj_consume_token(NAME);
+            this.jj_consume_token(ASSIGN);
+            if (key.image.endsWith("Length")) this.IntegerLiteral();
+            else this.StringLiteral();
+            parameter.setParameterName(key.image);
+        } catch (ZkmScriptParseException | RuntimeException e) {
+            this.jjtree.clearNodeScope();
+            throw e;
+        }
+        this.jjtree.closeNodeScope(parameter);
+    }
+
     public final void ObfuscateParameter() throws ZkmScriptParseException {
         ASTObfuscateParameter aSTObfuscateParameter = new ASTObfuscateParameter();
         boolean bl = true;
         this.jjtree.openNodeScope(aSTObfuscateParameter);
         try {
             switch (this.jj_nt.kind) {
+                case NAME: { this.CustomNamingParameter(); break; }
                 case 110:
                 case 143: {
                     this.ChangeLogInParameter();
@@ -15894,6 +15916,7 @@ public class ZkmScriptParser implements ZkmScriptTreeConstants, ZkmScriptConstan
 
             while (true) {
                 switch (zkmScriptToken1.kind) {
+                    case NAME:
                     case PREVERIFY:
                     case RANDOMIZE:
                     case LINE_NUMBERS:

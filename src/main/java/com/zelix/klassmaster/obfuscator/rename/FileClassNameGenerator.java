@@ -103,7 +103,7 @@ public class FileClassNameGenerator extends ClassNameGenerator {
     }
 
     public UniqueNameGenerator createNameGenerator(char[] destinationArray, char[] subsequentCharsArgument, char[] destinationArrayArgument, char[] subsequentCharsArgument2, List list1) {
-        return new UniqueNameGenerator(destinationArray, subsequentCharsArgument, destinationArrayArgument, subsequentCharsArgument2, list1, super.randomizeNames);
+        return new UniqueNameGenerator(destinationArray, subsequentCharsArgument, destinationArrayArgument, subsequentCharsArgument2, list1, super.randomizeNames, "Class");
     }
 
     @Override

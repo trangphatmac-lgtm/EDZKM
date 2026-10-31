@@ -30,7 +30,7 @@ public class SharedSequenceClassNamer extends FileClassNameGenerator {
     @Override
     public UniqueNameGenerator createNameGenerator(char[] destinationArray, char[] subsequentChars, char[] destinationArrayArgument, char[] subsequentCharsArgument, List list1) {
         if (this.sharedGenerator == null) {
-            this.sharedGenerator = new UniqueNameGenerator(destinationArray, subsequentChars, destinationArrayArgument, subsequentCharsArgument, list1, super.randomizeNames);
+            this.sharedGenerator = new UniqueNameGenerator(destinationArray, subsequentChars, destinationArrayArgument, subsequentCharsArgument, list1, super.randomizeNames, "Class");
         }
 
         return this.sharedGenerator;

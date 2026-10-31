@@ -36,7 +36,7 @@ public class PackageNameGenerator extends PackageNameGeneratorBase {
         UniqueNameGenerator uniqueNameGenerator = (UniqueNameGenerator) this.generatorsByParent.get(key);
         if (uniqueNameGenerator == null) {
             uniqueNameGenerator = new UniqueNameGenerator(
-                    this.firstChars, this.subsequentChars, this.archiveFirstChars, this.archiveSubsequentChars, this.nameFileNames, this.isRandomizeNames()
+                    this.firstChars, this.subsequentChars, this.archiveFirstChars, this.archiveSubsequentChars, this.nameFileNames, this.isRandomizeNames(), "Package"
             );
             this.generatorsByParent.put(key, uniqueNameGenerator);
         }

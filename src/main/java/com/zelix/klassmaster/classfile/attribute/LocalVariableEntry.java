@@ -1,5 +1,6 @@
 package com.zelix.klassmaster.classfile.attribute;
 
+import com.zelix.klassmaster.obfuscator.rename.CustomNaming;
 import com.zelix.klassmaster.classfile.ClassFileBase;
 import com.zelix.klassmaster.classfile.ClassFileComponent;
 import com.zelix.klassmaster.classfile.ClassFileInputStream;
@@ -236,6 +237,11 @@ public class LocalVariableEntry extends ClassFileComponent implements Utf8Consta
     }
 
     public void obfuscateName() {
+        ConstantUtf8 custom = CustomNaming.debugName("LocalVariable", this.nameConstant, this.getParent().getParent());
+        if (custom != null) {
+            this.nameConstant = custom;
+            return;
+        }
         if (HiddenOptionFlags.MARK_RENAMED_LOCALS) {
             String value = this.getNameConstant().getValue() + '_' + "a";
             this.getNameConstant().setValue(value);

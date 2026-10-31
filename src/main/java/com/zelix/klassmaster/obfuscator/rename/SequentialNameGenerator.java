@@ -1937,10 +1937,20 @@ public class SequentialNameGenerator extends JavaKeywords {
         return JavaKeywords.RESERVED_WORDS.contains(object);
     }
 
+    private int fixedLength;
+    private boolean exhausted;
+    private String namingKind = "Name";
+
     public String nextRawName() {
+        if (this.exhausted) throw new IllegalStateException(this.namingKind
+                + " names exhausted at length " + this.fixedLength + "; increase the length or character set");
         this.nameBuffer.setLength(0);
         this.firstDigit.appendTo(this.nameBuffer);
         if (this.lastDigit.increment()) {
+            if (this.fixedLength > 0) {
+                this.exhausted = true;
+                return this.nameBuffer.toString();
+            }
             NameGeneratorDigit nameGeneratorDigit = this.lastDigit;
             this.lastDigit = new NameGeneratorDigit(this.subsequentChars);
             this.lastDigit.setCarryDigit(nameGeneratorDigit);
@@ -1991,6 +2001,22 @@ public class SequentialNameGenerator extends JavaKeywords {
     }
 
     public SequentialNameGenerator(char[] destinationArrayArgument, char[] subsequentChars, List list1, boolean bl) {
+        this(destinationArrayArgument, subsequentChars, list1, bl, null);
+    }
+
+    public SequentialNameGenerator(char[] destinationArrayArgument, char[] subsequentChars, List list1, boolean bl, String kind) {
+        CustomNaming.Policy policy = CustomNaming.policy(kind);
+        if (policy != null) {
+            this.fixedLength = policy.length();
+            this.namingKind = kind;
+            if (policy.names() != null) list1 = policy.names();
+            if (policy.characters() != null) {
+                subsequentChars = policy.characters().toCharArray();
+                StringBuilder first = new StringBuilder();
+                for (char c : subsequentChars) if (Character.isJavaIdentifierStart(c)) first.append(c);
+                destinationArrayArgument = first.toString().toCharArray();
+            }
+        }
         this.presetNames = list1 != null ? new ArrayList(list1) : null;
         if (bl && !HiddenOptionFlags.DONT_SHUFFLE_NAME_CHARS) {
             Random random1 = ZkmUtils.createRandom(322);
@@ -2011,5 +2037,10 @@ public class SequentialNameGenerator extends JavaKeywords {
         this.firstDigit = new NameGeneratorDigit(destinationArrayArgument, String.valueOf(this.digitCounter++));
         this.subsequentChars = subsequentChars;
         this.lastDigit = this.firstDigit;
+        for (int i = 1; i < this.fixedLength; i++) {
+            NameGeneratorDigit previous = this.lastDigit;
+            this.lastDigit = new NameGeneratorDigit(this.subsequentChars);
+            this.lastDigit.setCarryDigit(previous);
+        }
     }
 }

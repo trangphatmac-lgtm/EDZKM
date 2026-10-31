@@ -566,3 +566,247 @@ test("retained workspaces, automatic source previews and runtime output", async 
   expect(errors).toEqual([]);
   expect(outside).toEqual([]);
 });
+
+test("custom naming editor, TXT import, saved settings and build", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(url);
+  await expect(
+    page.locator("nav").getByRole("button", { name: "Project", exact: true }),
+  ).toBeVisible();
+  const directory = resolve("../build/playwright/naming-" + Date.now());
+  await page.evaluate(
+    async ({ directory, fixtureJar }) => {
+      const project = await (
+        await fetch("/api/v1/projects/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ directory, name: "Custom naming" }),
+        })
+      ).json();
+      project.build.inputs = [fixtureJar];
+      project.build.obfuscation = {
+        obfuscateFlow: "none",
+        encryptStringLiterals: "none",
+        randomize: "false",
+      };
+      await fetch("/api/v1/project", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(project),
+      });
+    },
+    { directory, fixtureJar },
+  );
+  await page.reload();
+  const naming = async () => {
+    await page
+      .locator("nav")
+      .getByRole("button", { name: "Build Helper", exact: true })
+      .click();
+    await page
+      .locator(".stepper")
+      .getByRole("button", { name: "Obfuscation" })
+      .click();
+    await page.getByRole("button", { name: "Naming", exact: true }).click();
+  };
+  await naming();
+  await page
+    .getByRole("combobox", { name: "Name source", exact: true })
+    .selectOption("editor");
+  await page
+    .getByRole("textbox", { name: /^Name dictionary/ })
+    .fill("迷雾\nEcho\n迷雾\n# comment");
+  await expect(page.getByText("2 unique names")).toBeVisible();
+  await page.getByLabel("Generated name length", { exact: false }).fill("8");
+  await page.getByLabel("Custom character set", { exact: false }).fill("Il");
+  await page.getByRole("tab", { name: "Method names", exact: true }).click();
+  await page
+    .getByLabel("Import name dictionary", { exact: true })
+    .setInputFiles({
+      name: "methods.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("\uFEFF方法甲\r\n方法乙\r\n方法甲"),
+    });
+  await expect(
+    page.getByRole("textbox", { name: /^Name dictionary/ }),
+  ).toHaveValue("方法甲\r\n方法乙\r\n方法甲".replaceAll("\r\n", "\n"));
+  await expect(page.getByText("2 unique names")).toBeVisible();
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export TXT", exact: true }).click();
+  expect((await download).suggestedFilename()).toBe("method-names.txt");
+  await page
+    .getByRole("tab", { name: "Local variable names", exact: true })
+    .click();
+  await page.getByLabel("Generated name length", { exact: false }).fill("6");
+  await expect(
+    page.getByRole("combobox", { name: "Debug name handling", exact: true }),
+  ).toHaveValue("obfuscate");
+  await page.getByRole("tab", { name: "Field names", exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "Name source", exact: true })
+    .selectOption("file");
+  await page
+    .getByLabel("TXT dictionary path", { exact: false })
+    .fill("fields.txt");
+  await writeFile(resolve(directory, "fields.txt"), "字段甲\n字段乙\n");
+  await page.getByRole("button", { name: "Save project", exact: true }).click();
+  await expect
+    .poll(async () =>
+      page.evaluate(
+        async () =>
+          (await (await fetch("/api/v1/state")).json()).project.build
+            .obfuscation.newClassNameLength,
+      ),
+    )
+    .toBe("8");
+  await page.reload();
+  await naming();
+  await expect(
+    page.getByRole("textbox", { name: /^Name dictionary/ }),
+  ).toHaveValue("迷雾\nEcho\n迷雾\n# comment");
+  await expect(
+    page.getByLabel("Generated name length", { exact: false }),
+  ).toHaveValue("8");
+  await expect(
+    page.getByLabel("Custom character set", { exact: false }),
+  ).toHaveValue("Il");
+  await page.getByRole("tab", { name: "Method names", exact: true }).click();
+  await expect(
+    page.getByRole("textbox", { name: /^Name dictionary/ }),
+  ).toContainText("方法乙");
+  await page.screenshot({
+    path: "../build/playwright/custom-naming.png",
+    fullPage: true,
+  });
+  // Opening the unified editor must leave existing category settings untouched.
+  await page
+    .getByRole("tab", { name: "Unified settings", exact: true })
+    .click();
+  await expect(
+    page.getByRole("textbox", { name: /^Name dictionary/ }),
+  ).toHaveValue("方法甲\n方法乙\n方法甲");
+  await page.getByLabel("Generated name length", { exact: false }).fill("12");
+  await page.getByRole("tab", { name: "Class names", exact: true }).click();
+  await expect(
+    page.getByLabel("Generated name length", { exact: false }),
+  ).toHaveValue("8");
+  // Applying a file source clears stale inline dictionaries.
+  await page.getByRole("tab", { name: "Field names", exact: true }).click();
+  await page
+    .getByRole("tab", { name: "Unified settings", exact: true })
+    .click();
+  await expect(
+    page.getByLabel("TXT dictionary path", { exact: false }),
+  ).toHaveValue("fields.txt");
+  await page.getByRole("button", { name: "Apply to all", exact: true }).click();
+  await page.getByRole("tab", { name: "Class names", exact: true }).click();
+  await expect(
+    page.getByRole("combobox", { name: "Name source", exact: true }),
+  ).toHaveValue("file");
+  // Imported text, length and alphabet apply to all six kinds and are persisted normally.
+  await page
+    .getByRole("tab", { name: "Unified settings", exact: true })
+    .click();
+  await page
+    .getByLabel("Import name dictionary", { exact: true })
+    .setInputFiles({
+      name: "shared.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("共用甲\n共用乙"),
+    });
+  await expect(
+    page.getByRole("textbox", { name: /^Name dictionary/ }),
+  ).toHaveValue("共用甲\n共用乙");
+  await page.getByLabel("Generated name length", { exact: false }).fill("12");
+  await page.getByLabel("Custom character set", { exact: false }).fill("xyz");
+  await page.getByRole("button", { name: "Apply to all", exact: true }).click();
+  for (const name of [
+    "Package names",
+    "Class names",
+    "Method names",
+    "Field names",
+    "Local variable names",
+    "Parameter names",
+  ]) {
+    await page.getByRole("tab", { name, exact: true }).click();
+    await expect(
+      page.getByRole("textbox", { name: /^Name dictionary/ }),
+    ).toHaveValue("共用甲\n共用乙");
+    await expect(
+      page.getByLabel("Generated name length", { exact: false }),
+    ).toHaveValue("12");
+  }
+  await page.getByRole("tab", { name: "Field names", exact: true }).click();
+  await page.getByLabel("Generated name length", { exact: false }).fill("10");
+  const savedResponse = page.waitForResponse(
+    (r) =>
+      r.url().endsWith("/api/v1/project") && r.request().method() === "POST",
+  );
+  await page.getByRole("button", { name: "Save project", exact: true }).click();
+  const saved = await (await savedResponse).json();
+  for (const kind of [
+    "Package",
+    "Class",
+    "Method",
+    "Field",
+    "LocalVariable",
+    "Parameter",
+  ]) {
+    expect(saved.build.obfuscation[`new${kind}Names`]).toBe("共用甲\n共用乙");
+    expect(saved.build.obfuscation[`new${kind}NameLength`]).toBe(
+      kind === "Field" ? "10" : "12",
+    );
+    expect(saved.build.obfuscation[`new${kind}NameCharacters`]).toBe("xyz");
+    expect(saved.build.obfuscation[`new${kind}NameFile`]).toBeUndefined();
+  }
+  expect(saved.build.obfuscation.localVariables).toBe("obfuscate");
+  expect(saved.build.obfuscation.methodParameters).toBe("obfuscate");
+  await page.reload();
+  await naming();
+  await expect(
+    page.getByLabel("Generated name length", { exact: false }),
+  ).toHaveValue("12");
+  await page.getByRole("tab", { name: "Field names", exact: true }).click();
+  await expect(
+    page.getByLabel("Generated name length", { exact: false }),
+  ).toHaveValue("10");
+  const job = await page.evaluate(async () =>
+    (
+      await fetch("/api/v1/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "build" }),
+      })
+    ).json(),
+  );
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(
+          async (id) =>
+            (await (await fetch("/api/v1/jobs")).json()).find(
+              (j: any) => j.id === id,
+            )?.status,
+          job.id,
+        ),
+      { timeout: 30000 },
+    )
+    .toBe("succeeded");
+  await page.getByRole("button", { name: "中文", exact: true }).click();
+  await expect(
+    page.getByText("自定义名称与长度", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "切换主题" }).click();
+  await page.getByRole("tab", { name: "统一设置", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "应用到全部", exact: true }),
+  ).toBeVisible();
+  await page.screenshot({
+    path: "../build/playwright/custom-naming-zh.png",
+    fullPage: true,
+  });
+  expect(errors).toEqual([]);
+});

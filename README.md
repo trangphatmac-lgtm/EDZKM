@@ -10,6 +10,7 @@
 
 - **Project workspace** — manage JARs, class directories, dependencies, build settings, scripts, and run history in one place.
 - **Build Helper** — configure trimming, name exclusions, obfuscation, and output options; preview the generated script or run the build.
+- **Custom naming** — edit name dictionaries in the browser, import/export UTF-8 TXT, or use a dictionary path; set a character set and fixed generated length for packages, classes, methods, fields, local variables, and parameters.
 - **Class browser** — explore package and inheritance trees, inspect bytecode, and edit supported class properties, fields, method modifiers, and constants.
 - **Source comparison** — view original and obfuscated classes side by side using bundled CFR 0.152 or Vineflower 1.12.0, with ChangeLog mapping and manual pairing.
 - **Script studio** — edit multiple ZKM scripts with Monaco, syntax highlighting, completion, validation, and execution logs.
@@ -108,6 +109,35 @@ EDZKM retains the existing ZKM script syntax, `.zkm` files, Java package names, 
 6. Send the generated configuration to **Script studio** when you need more control or repeatable command-line builds.
 
 Preview output is stored under the run directory. Script `execute` statements retain their normal behavior during both previews and regular builds.
+
+## Custom names and length
+
+In **Build Helper → Obfuscation → Naming → Custom names & length**, select a name category and choose automatic generation, the built-in dictionary editor, or a TXT file path. **Import TXT** copies the file contents into the editor; imported text and all naming settings are saved with the project. **Export TXT** saves the editor contents as UTF-8. File paths can be absolute or relative to the project directory.
+
+**Unified settings** starts from the category currently selected. Edit the source, dictionary, character set and length, then click **Apply to all** to copy those settings to all six categories and enable local-variable/parameter name obfuscation. Switching to this tab alone does not change the project. You can still adjust individual categories afterwards; save the project to retain the applied settings.
+
+Use one complete Java identifier per line, including Chinese identifiers. The editor ignores blank lines, duplicate names, and lines beginning with `#` or `//`; imported files may include a UTF-8 BOM. Invalid editor entries are reported with their line number during a build. The editor/import limit is 1 MiB and 128 characters per name.
+
+Dictionaries are consumed first without padding or truncation. When a dictionary runs out, generated names use the optional character set and fixed length (1–128, blank for the original automatic behavior). A custom character set accepts BMP Java identifier characters and must contain a valid starting character. Length applies to the generated name segment, excluding `newNamesPrefix`, the package path, and enclosing class names. A fixed-length namespace that runs out fails with an error; increase its length or character set. Existing exclusions, mappings, and name prefixes continue to apply.
+
+Changing a local-variable or parameter naming setting selects **Obfuscate names** automatically. These settings only rename debug tables that exist in the input (`javac -g` for local variables, `javac -parameters` for parameter metadata). A decompiler may display names it generates itself.
+
+Generated scripts retain these settings and can run through EDZKM's command-line launcher. For example:
+
+```text
+obfuscate
+    newClassNames="迷雾\n星河"
+    newClassNameLength=12
+    newClassNameCharacters="Il"
+    newMethodNameFile="methods.txt"
+    newMethodNameLength=8
+    localVariables=obfuscate
+    newLocalVariableNames="变量甲\n变量乙"
+    methodParameters=obfuscate
+    newParameterNameLength=6;
+```
+
+The new `new{Kind}Names`, `new{Kind}NameLength`, and `new{Kind}NameCharacters` options support `Package`, `Class`, `Method`, `Field`, `LocalVariable`, and `Parameter`. The latter two also support `newLocalVariableNameFile` and `newParameterNameFile`. These additions are EDZKM extensions to the original script syntax.
 
 ## Project data
 

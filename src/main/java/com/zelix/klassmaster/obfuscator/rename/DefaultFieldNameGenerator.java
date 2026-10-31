@@ -167,21 +167,21 @@ public class DefaultFieldNameGenerator extends FieldNameAssigner {
             super.currentClassNode = classHierarchyNode;
             if (!this.asciiNames) {
                 this.nameGenerator = new SequentialNameGenerator(
-                        SequentialNameGenerator.UNICODE_MIXED_CASE_CHARS, SequentialNameGenerator.UNICODE_MIXED_CASE_CHARS, this.nameFileNames, super.randomizeNames
+                        SequentialNameGenerator.UNICODE_MIXED_CASE_CHARS, SequentialNameGenerator.UNICODE_MIXED_CASE_CHARS, this.nameFileNames, super.randomizeNames, "Field"
                 );
             } else if (this.letterStartNames) {
                 if (HiddenOptionFlags.ALT_FIELD_NAME_CHARS) {
                     this.nameGenerator = new SequentialNameGenerator(
-                            SequentialNameGenerator.LETTER_CHARS, SequentialNameGenerator.ALPHANUMERIC_CHARS, this.nameFileNames, super.randomizeNames
+                            SequentialNameGenerator.LETTER_CHARS, SequentialNameGenerator.ALPHANUMERIC_CHARS, this.nameFileNames, super.randomizeNames, "Field"
                     );
                 } else {
                     this.nameGenerator = new SequentialNameGenerator(
-                            SequentialNameGenerator.LETTER_UNDERSCORE_CHARS, SequentialNameGenerator.IDENTIFIER_CHARS, this.nameFileNames, super.randomizeNames
+                            SequentialNameGenerator.LETTER_UNDERSCORE_CHARS, SequentialNameGenerator.IDENTIFIER_CHARS, this.nameFileNames, super.randomizeNames, "Field"
                     );
                 }
             } else {
                 this.nameGenerator = new SequentialNameGenerator(
-                        SequentialNameGenerator.DIGIT_CHARS, SequentialNameGenerator.IDENTIFIER_CHARS, this.nameFileNames, super.randomizeNames
+                        SequentialNameGenerator.DIGIT_CHARS, SequentialNameGenerator.IDENTIFIER_CHARS, this.nameFileNames, super.randomizeNames, "Field"
                 );
             }
         }

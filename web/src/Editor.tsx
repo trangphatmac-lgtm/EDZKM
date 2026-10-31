@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+import { namingKeys } from "./naming";
 import { useEffect, useRef } from "react";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import "monaco-editor/esm/vs/basic-languages/java/java.contribution";
@@ -44,6 +45,7 @@ monaco.languages.registerCompletionItemProvider("zkm", {
     return {
       suggestions: [
         ...keywords,
+        ...namingKeys,
         ...obfuscationOptions.map((o) => o.key),
         ...trimOptions.map((o) => o.key),
         ...saveOptions.map((o) => o.key),

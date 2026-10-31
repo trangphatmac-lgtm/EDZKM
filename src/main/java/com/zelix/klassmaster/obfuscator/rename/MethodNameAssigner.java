@@ -130,24 +130,24 @@ public class MethodNameAssigner extends MethodNameGeneratorBase {
         if (sequentialNameGenerator == null) {
             if (!this.asciiNames) {
                 sequentialNameGenerator = new SequentialNameGenerator(
-                        SequentialNameGenerator.UNICODE_MIXED_CASE_CHARS, SequentialNameGenerator.UNICODE_MIXED_CASE_CHARS, this.nameFileNames, super.randomizeNames
+                        SequentialNameGenerator.UNICODE_MIXED_CASE_CHARS, SequentialNameGenerator.UNICODE_MIXED_CASE_CHARS, this.nameFileNames, super.randomizeNames, "Method"
                 );
                 map1 = this.generatorsByDescriptor;
             } else if (this.letterStartNames) {
                 if (HiddenOptionFlags.ALT_METHOD_NAME_CHARS) {
                     sequentialNameGenerator = new SequentialNameGenerator(
-                            SequentialNameGenerator.LETTER_CHARS, SequentialNameGenerator.ALPHANUMERIC_CHARS, this.nameFileNames, super.randomizeNames
+                            SequentialNameGenerator.LETTER_CHARS, SequentialNameGenerator.ALPHANUMERIC_CHARS, this.nameFileNames, super.randomizeNames, "Method"
                     );
                     map1 = this.generatorsByDescriptor;
                 } else {
                     sequentialNameGenerator = new SequentialNameGenerator(
-                            SequentialNameGenerator.LETTER_UNDERSCORE_CHARS, SequentialNameGenerator.IDENTIFIER_CHARS, this.nameFileNames, super.randomizeNames
+                            SequentialNameGenerator.LETTER_UNDERSCORE_CHARS, SequentialNameGenerator.IDENTIFIER_CHARS, this.nameFileNames, super.randomizeNames, "Method"
                     );
                     map1 = this.generatorsByDescriptor;
                 }
             } else {
                 sequentialNameGenerator = new SequentialNameGenerator(
-                        SequentialNameGenerator.DIGIT_CHARS, SequentialNameGenerator.IDENTIFIER_CHARS, this.nameFileNames, super.randomizeNames
+                        SequentialNameGenerator.DIGIT_CHARS, SequentialNameGenerator.IDENTIFIER_CHARS, this.nameFileNames, super.randomizeNames, "Method"
                 );
                 map1 = this.generatorsByDescriptor;
             }

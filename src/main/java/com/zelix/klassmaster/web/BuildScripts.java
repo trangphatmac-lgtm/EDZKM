@@ -1,5 +1,6 @@
 package com.zelix.klassmaster.web;
 
+import com.zelix.klassmaster.obfuscator.rename.CustomNaming;
 import com.zelix.klassmaster.web.Models.*;
 import java.nio.file.*;
 import java.util.*;
@@ -16,6 +17,8 @@ public final class BuildScripts {
           "newClassNameFile",
           "newMethodNameFile",
           "newFieldNameFile",
+          "newLocalVariableNameFile",
+          "newParameterNameFile",
           "autoReflectionPackage",
           "obfuscateReferencesPackage",
           "methodParameterChangesPackage",
@@ -27,6 +30,11 @@ public final class BuildScripts {
     return "\""
         + s.replace("\\", "/").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r")
         + "\"";
+  }
+
+  private static String quoteText(String value) {
+    return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"")
+        .replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t") + "\"";
   }
 
   public static String path(ProjectConfig p, String s) {
@@ -77,7 +85,9 @@ public final class BuildScripts {
               "newPackageNameFile",
               "newClassNameFile",
               "newMethodNameFile",
-              "newFieldNameFile"))
+              "newFieldNameFile",
+              "newLocalVariableNameFile",
+              "newParameterNameFile"))
         if (options.containsKey(k) && !options.get(k).isEmpty())
           options.put(k, path(p, options.get(k)));
       out.append(statement("obfuscate", options)).append("\n");
@@ -109,9 +119,10 @@ public final class BuildScripts {
         (k, v) -> {
           if (!k.matches("[a-zA-Z][a-zA-Z0-9]*"))
             throw new IllegalArgumentException("Invalid option: " + k);
-          if (!QUOTED.contains(k) && !v.matches("[a-zA-Z0-9_.+-]+"))
+          boolean text = CustomNaming.isTextOption(k);
+          if (!QUOTED.contains(k) && !text && !v.matches("[a-zA-Z0-9_.+-]+"))
             throw new IllegalArgumentException("Invalid value for " + k);
-          out.append("\n    ").append(k).append('=').append(QUOTED.contains(k) ? quote(v) : v);
+          out.append("\n    ").append(k).append('=').append(text ? quoteText(v) : QUOTED.contains(k) ? quote(v) : v);
         });
     return out.toString();
   }
